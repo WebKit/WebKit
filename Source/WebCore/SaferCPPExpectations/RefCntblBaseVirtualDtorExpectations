@@ -1,6 +1,5 @@
 Modules/webtransport/WebTransportReceiveStream.h
 css/CSSAppleColorFilterPropertyValue.h
-css/CSSAspectRatioValue.h
 css/CSSAttrValue.h
 css/CSSBackgroundRepeatValue.h
 css/CSSBasicShapeValue.h
@@ -47,6 +46,7 @@ css/CSSPendingSubstitutionValue.h
 css/CSSPositionTryRule.h
 css/CSSPrimitiveValue.h
 css/CSSQuadValue.h
+css/CSSRatioValue.h
 css/CSSRayValue.h
 css/CSSRectValue.h
 css/CSSReflectValue.h

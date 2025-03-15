@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,19 +24,31 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "CSSPrimitiveNumericTypes.h"
 
 namespace WebCore {
+namespace CSS {
 
-class CSSParserTokenRange;
-class CSSValue;
-struct CSSParserContext;
+using namespace Literals;
 
-namespace CSSPropertyParserHelpers {
+// <ratio> = <number [0,∞]> [ / <number [0,∞]> ]?
+// https://drafts.csswg.org/css-values-4/#ratio-value
+struct Ratio {
+    Number<Nonnegative> numerator;
+    Number<Nonnegative> denominator { 1_css_number };
 
-// MARK: <contain-intrinsic-size> consuming
-// https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
-RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange&, const CSSParserContext&);
+    bool operator==(const Ratio&) const = default;
+};
 
-} // namespace CSSPropertyParserHelpers
+template<size_t I> const auto& get(const Ratio& value)
+{
+    if constexpr (!I)
+        return value.numerator;
+    else if constexpr (I == 1)
+        return value.denominator;
+}
+
+} // namespace CSS
 } // namespace WebCore
+
+DEFINE_SLASH_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Ratio, 2)

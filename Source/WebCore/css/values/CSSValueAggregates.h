@@ -103,6 +103,11 @@ template<typename> inline constexpr ASCIILiteral SerializationSeparator = ""_s;
     DEFINE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
     template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<t> = ", "_s;
 
+// Helper to define a tuple-like conformance and that the type should be serialized as slash separated.
+#define DEFINE_SLASH_SEPARATED_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
+    DEFINE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
+    template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<t> = " / "_s;
+
 // Helper to define a tuple-like conformance based on the type being extended.
 #define DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_EXTENDER(t) \
     DEFINE_TUPLE_LIKE_CONFORMANCE(t, std::tuple_size_v<t::Wrapped>) \

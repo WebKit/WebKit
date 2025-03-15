@@ -69,6 +69,7 @@ WrapperMap::WrapperMap()
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestImage, &RenderStyle::testImage, &RenderStyle::setTestImage), // CSSPropertyID::CSSPropertyTestImage
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestImageNoImageSet, &RenderStyle::testImageNoImageSet, &RenderStyle::setTestImageNoImageSet), // CSSPropertyID::CSSPropertyTestImageNoImageSet
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestKeyword, &RenderStyle::testKeyword, &RenderStyle::setTestKeyword), // CSSPropertyID::CSSPropertyTestKeyword
+        new DiscreteWrapper(CSSPropertyID::CSSPropertyTestKeywordFontFamilyName, &RenderStyle::testKeywordFontFamilyName, &RenderStyle::setTestKeywordFontFamilyName), // CSSPropertyID::CSSPropertyTestKeywordFontFamilyName
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo, &RenderStyle::testKeywordWithAliasedTo, &RenderStyle::setTestKeywordWithAliasedTo), // CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestMatchAllAnyOrder, &RenderStyle::testMatchAllAnyOrder, &RenderStyle::setTestMatchAllAnyOrder), // CSSPropertyID::CSSPropertyTestMatchAllAnyOrder
         new DiscreteWrapper(CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptional, &RenderStyle::testMatchAllAnyOrderWithOptional, &RenderStyle::setTestMatchAllAnyOrderWithOptional), // CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptional

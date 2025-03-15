@@ -1632,7 +1632,8 @@ class ReferenceTerm:
         BuiltinSchema.Entry('dashed-ident'),
         BuiltinSchema.Entry('url'),
         BuiltinSchema.Entry('feature-tag-value'),
-        BuiltinSchema.Entry('variation-tag-value')
+        BuiltinSchema.Entry('variation-tag-value'),
+        BuiltinSchema.Entry('unicode-range-token')
     )
 
     class StringParameter:
@@ -1796,6 +1797,7 @@ class KeywordTerm:
         self.status = status
         self.annotation = annotation
 
+        self.type = None
         self._process_annotation(annotation)
 
     def __str__(self):
@@ -1818,6 +1820,8 @@ class KeywordTerm:
                 self.aliased_to = ValueKeywordName(directive.value[0])
             elif directive.name == 'settings-flag':
                 self.settings_flag = directive.value[0]
+            elif directive.name == 'type':
+                self.type = directive.value[0]
             else:
                 raise Exception(f"Unknown keyword annotation directive '{directive}'.")
 
@@ -1846,9 +1850,9 @@ class KeywordTerm:
 
     @property
     def is_eligible_for_fast_path(self):
-        # Keyword terms that are aliased as not eligible for the fast path as the fast
-        # path can only support a basic predicate.
-        return not self.aliased_to
+        # Keyword terms that are aliased or have non-standard type representation are eligible for the fast
+        # path as the fast path can only support a basic predicate.
+        return not self.aliased_to and not self.type
 
     @property
     def name(self):
@@ -4525,6 +4529,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Position.h",
                     "CSSPropertyParserConsumer+PositionTry.h",
                     "CSSPropertyParserConsumer+Primitives.h",
+                    "CSSPropertyParserConsumer+Ratio.h",
                     "CSSPropertyParserConsumer+ResolutionDefinitions.h",
                     "CSSPropertyParserConsumer+SVG.h",
                     "CSSPropertyParserConsumer+ScrollSnap.h",
@@ -4540,6 +4545,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Transitions.h",
                     "CSSPropertyParserConsumer+UI.h",
                     "CSSPropertyParserConsumer+URL.h",
+                    "CSSPropertyParserConsumer+UnicodeRange.h",
                     "CSSPropertyParserConsumer+ViewTransition.h",
                     "CSSPropertyParserConsumer+WillChange.h",
                     "CSSQuadValue.h",
@@ -6167,6 +6173,8 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return True
             elif isinstance(builtin, BuiltinVariationTagValueConsumer):
                 return True
+            elif isinstance(builtin, BuiltinUnicodeRangeTokenConsumer):
+                return False
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -6217,9 +6225,14 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                 conditions.append(f"!isUASheetBehavior({context_string}.mode)")
 
             if keyword_term.aliased_to:
-                return_value = keyword_term.aliased_to.id
+                return_keyword = keyword_term.aliased_to.id
             else:
-                return_value = "keyword"
+                return_keyword = "keyword"
+
+            if keyword_term.type and keyword_term.type == 'FontFamilyValue':
+                return_value = f"CSSValuePool::singleton().createFontFamilyValue(nameString({return_keyword}))"
+            else:
+                return_value = f"CSSPrimitiveValue::create({return_keyword})"
 
             keyword_term_and_return_expressions.append(KeywordTermAndReturnExpression(keyword_term, ReturnExpression(conditions, return_value)))
 
@@ -6238,7 +6251,7 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                         to.write(f"{default_string};")
 
                 to.write(f"{range_string}.consumeIncludingWhitespace();")
-                to.write(f"return CSSPrimitiveValue::create({return_expression.return_value});")
+                to.write(f"return {return_expression.return_value};")
 
         to.write(f"default:")
         with to.indent():
@@ -7240,6 +7253,7 @@ class BNFKeywordNode:
         SUPPORTED_DIRECTIVES = {
             'aliased-to',
             'settings-flag',
+            'type',
         }
 
         for directive in annotation.directives:

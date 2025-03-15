@@ -758,7 +758,7 @@ bool CSSPropertyParser::consumeFont(bool important)
             return false;
     }
 
-    fontFamily = consumeFontFamily(range, m_context);
+    fontFamily = CSSPropertyParsing::consumeFontFamily(range, m_context);
     if (!fontFamily || !range.atEnd())
         return false;
 

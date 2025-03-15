@@ -599,6 +599,13 @@
             "codegen-properties": {
                 "parser-grammar": "foo@(aliased-to=baz) | bar"
             }
+        },
+        "test-keyword-font-family-name": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo | bar@(type=FontFamilyValue) | baz@(type=FontFamilyValue) | bat"
+            }
         }
     },
     "descriptors": {

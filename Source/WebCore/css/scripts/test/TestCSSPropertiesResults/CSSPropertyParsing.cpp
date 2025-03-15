@@ -44,6 +44,7 @@
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+PositionTry.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+Ratio.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+SVG.h"
 #include "CSSPropertyParserConsumer+ScrollSnap.h"
@@ -59,6 +60,7 @@
 #include "CSSPropertyParserConsumer+Transitions.h"
 #include "CSSPropertyParserConsumer+UI.h"
 #include "CSSPropertyParserConsumer+URL.h"
+#include "CSSPropertyParserConsumer+UnicodeRange.h"
 #include "CSSPropertyParserConsumer+ViewTransition.h"
 #include "CSSPropertyParserConsumer+WillChange.h"
 #include "CSSQuadValue.h"
@@ -75,6 +77,17 @@ static bool isKeywordValidForTestKeyword(CSSValueID keyword)
 {
     switch (keyword) {
     case CSSValueID::CSSValueBar:
+    case CSSValueID::CSSValueFoo:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isKeywordValidForTestKeywordFontFamilyName(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueBat:
     case CSSValueID::CSSValueFoo:
         return true;
     default:
@@ -876,6 +889,22 @@ static RefPtr<CSSValue> consumeTestFunctionUnboundedParametersWithMinimum(CSSPar
         return CSSFunctionValue::create(CSSValueID::CSSValueFoo, WTFMove(*result));
     };
     return consumeFooFunction(range, context);
+}
+
+static RefPtr<CSSValue> consumeTestKeywordFontFamilyName(CSSParserTokenRange& range)
+{
+    // bat | foo
+    if (auto result = consumeIdent(range, isKeywordValidForTestKeywordFontFamilyName))
+        return result;
+    // bar@(type=FontFamilyValue) | baz@(type=FontFamilyValue)
+    switch (auto keyword = range.peek().id(); keyword) {
+    case CSSValueID::CSSValueBar:
+    case CSSValueID::CSSValueBaz:
+        range.consumeIncludingWhitespace();
+        return CSSValuePool::singleton().createFontFamilyValue(nameString(keyword));
+    default:
+        return nullptr;
+    }
 }
 
 static RefPtr<CSSValue> consumeTestKeywordWithAliasedTo(CSSParserTokenRange& range)
@@ -2209,6 +2238,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStyleProperty(CSSParserTokenRange& ran
         return consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
     case CSSPropertyID::CSSPropertyTestKeyword:
         return consumeIdent(range, isKeywordValidForTestKeyword);
+    case CSSPropertyID::CSSPropertyTestKeywordFontFamilyName:
+        return consumeTestKeywordFontFamilyName(range);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
         return consumeTestKeywordWithAliasedTo(range);
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrder:
@@ -2287,6 +2318,8 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
     switch (id) {
     case CSSPropertyID::CSSPropertyTestKeyword:
         return isKeywordValidForTestKeyword(keyword);
+    case CSSPropertyID::CSSPropertyTestKeywordFontFamilyName:
+        return isKeywordValidForTestKeywordFontFamilyName(keyword);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
         return isKeywordValidForTestKeywordWithAliasedTo(keyword);
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:
@@ -2312,6 +2345,7 @@ bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id
 {
     switch (id) {
     case CSSPropertyID::CSSPropertyTestKeyword:
+    case CSSPropertyID::CSSPropertyTestKeywordFontFamilyName:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestMatchOneWithKeywordWithSettingsFlag:

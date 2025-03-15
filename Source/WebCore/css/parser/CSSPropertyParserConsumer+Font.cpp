@@ -65,7 +65,6 @@
 #include "FontCustomPlatformData.h"
 #include "FontFace.h"
 #include "WebKitFontFamilyNames.h"
-#include <wtf/text/ParsingUtilities.h>
 
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontStyleRangeValue.h"
@@ -297,17 +296,6 @@ static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRa
     return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi>(range);
 }
 
-static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
-{
-    if (auto familyName = consumeGenericFamilyUnresolved(range)) {
-        // FIXME: Remove special case for system-ui.
-        if (*familyName == CSSValueSystemUi)
-            return CSSValuePool::singleton().createFontFamilyValue(nameString(*familyName));
-        return CSSPrimitiveValue::create(*familyName);
-    }
-    return nullptr;
-}
-
 static std::optional<UnresolvedFontFamily> consumeFontFamilyUnresolved(CSSParserTokenRange& range)
 {
     // <'font-family'> = [ <family-name> | <generic-family> ]#
@@ -335,18 +323,6 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range, const CSSParserCo
     if (familyName.isNull())
         return nullptr;
     return CSSValuePool::singleton().createFontFamilyValue(familyName);
-}
-
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'font-family'> = [ <family-name> | <generic-family> ]#
-    // https://drafts.csswg.org/css-fonts-4/#font-family-prop
-
-    return consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) -> RefPtr<CSSValue> {
-        if (auto parsedValue = consumeGenericFamily(range))
-            return parsedValue;
-        return consumeFamilyName(range, context);
-    });
 }
 
 // MARK: - 'font-size'
@@ -498,24 +474,6 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range, const CSSPars
 // MARK: - @-rule descriptor consumers:
 
 // MARK: - @font-face
-
-// MARK: @font-face 'font-family'
-RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'font-family'> = <family-name>
-    // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-family
-
-    auto name = consumeFamilyName(range, context);
-    if (!name || !range.atEnd())
-        return nullptr;
-
-    // FIXME-NEWPARSER: https://bugs.webkit.org/show_bug.cgi?id=196381 For compatibility with the old parser, we have to make
-    // a list here, even though the list always contains only a single family name.
-    // Once the old parser is gone, we can delete this function, make the caller
-    // use consumeFamilyName instead, and then patch the @font-face code to
-    // not expect a list with a single name in it.
-    return CSSValueList::createCommaSeparated(name.releaseNonNull());
-}
 
 // MARK: @font-face 'src'
 
@@ -702,134 +660,9 @@ RefPtr<CSSValue> parseFontFaceSizeAdjust(const String& string, ScriptExecutionCo
 
 // MARK: @font-face 'unicode-range'
 
-static bool consumeOptionalDelimiter(CSSParserTokenRange& range, UChar value)
-{
-    if (!(range.peek().type() == DelimiterToken && range.peek().delimiter() == value))
-        return false;
-    range.consume();
-    return true;
-}
-
-static StringView consumeIdentifier(CSSParserTokenRange& range)
-{
-    if (range.peek().type() != IdentToken)
-        return { };
-    return range.consume().value();
-}
-
-static bool consumeAndAppendOptionalNumber(StringBuilder& builder, CSSParserTokenRange& range, CSSParserTokenType type = NumberToken)
-{
-    if (range.peek().type() != type)
-        return false;
-    auto originalText = range.consume().originalText();
-    if (originalText.isNull())
-        return false;
-    builder.append(originalText);
-    return true;
-}
-
-static bool consumeAndAppendOptionalDelimiter(StringBuilder& builder, CSSParserTokenRange& range, UChar value)
-{
-    if (!consumeOptionalDelimiter(range, value))
-        return false;
-    builder.append(value);
-    return true;
-}
-
-static void consumeAndAppendOptionalQuestionMarks(StringBuilder& builder, CSSParserTokenRange& range)
-{
-    while (consumeAndAppendOptionalDelimiter(builder, range, '?')) { }
-}
-
-static String consumeUnicodeRangeString(CSSParserTokenRange& range)
-{
-    if (!equalLettersIgnoringASCIICase(consumeIdentifier(range), "u"_s))
-        return { };
-    StringBuilder builder;
-    if (consumeAndAppendOptionalNumber(builder, range, DimensionToken))
-        consumeAndAppendOptionalQuestionMarks(builder, range);
-    else if (consumeAndAppendOptionalNumber(builder, range)) {
-        if (!(consumeAndAppendOptionalNumber(builder, range, DimensionToken) || consumeAndAppendOptionalNumber(builder, range)))
-            consumeAndAppendOptionalQuestionMarks(builder, range);
-    } else if (consumeOptionalDelimiter(range, '+')) {
-        builder.append('+');
-        if (auto identifier = consumeIdentifier(range); !identifier.isNull())
-            builder.append(identifier);
-        else if (!consumeAndAppendOptionalDelimiter(builder, range, '?'))
-            return { };
-        consumeAndAppendOptionalQuestionMarks(builder, range);
-    } else
-        return { };
-    return builder.toString();
-}
-
-struct UnicodeRange {
-    char32_t start;
-    char32_t end;
-};
-
-static std::optional<UnicodeRange> consumeUnicodeRange(CSSParserTokenRange& range)
-{
-    return readCharactersForParsing(consumeUnicodeRangeString(range), [&](auto buffer) -> std::optional<UnicodeRange> {
-        if (!skipExactly(buffer, '+'))
-            return std::nullopt;
-        char32_t start = 0;
-        unsigned hexDigitCount = 0;
-        while (buffer.hasCharactersRemaining() && isASCIIHexDigit(*buffer)) {
-            if (++hexDigitCount > 6)
-                return std::nullopt;
-            start <<= 4;
-            start |= toASCIIHexValue(*buffer++);
-        }
-        auto end = start;
-        while (skipExactly(buffer, '?')) {
-            if (++hexDigitCount > 6)
-                return std::nullopt;
-            start <<= 4;
-            end <<= 4;
-            end |= 0xF;
-        }
-        if (!hexDigitCount)
-            return std::nullopt;
-        if (start == end && buffer.hasCharactersRemaining()) {
-            if (!skipExactly(buffer, '-'))
-                return std::nullopt;
-            end = 0;
-            hexDigitCount = 0;
-            while (buffer.hasCharactersRemaining() && isASCIIHexDigit(*buffer)) {
-                if (++hexDigitCount > 6)
-                    return std::nullopt;
-                end <<= 4;
-                end |= toASCIIHexValue(*buffer++);
-            }
-            if (!hexDigitCount)
-                return std::nullopt;
-        }
-        if (buffer.hasCharactersRemaining())
-            return std::nullopt;
-        return { { start, end } };
-    });
-}
-
-RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // <'unicode-range'> = <urange>#
-    // https://drafts.csswg.org/css-fonts/#descdef-font-face-unicode-range
-
-    CSSValueListBuilder values;
-    do {
-        auto unicodeRange = consumeUnicodeRange(range);
-        range.consumeWhitespace();
-        if (!unicodeRange || unicodeRange->end > UCHAR_MAX_VALUE || unicodeRange->start > unicodeRange->end)
-            return nullptr;
-        values.append(CSSUnicodeRangeValue::create(unicodeRange->start, unicodeRange->end));
-    } while (consumeCommaIncludingWhitespace(range));
-    return CSSValueList::createCommaSeparated(WTFMove(values));
-}
-
 RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String& string, ScriptExecutionContext& context)
 {
-    // <'unicode-range'> = <urange>#
+    // <'unicode-range'> = <unicode-range-token>#
     // https://drafts.csswg.org/css-fonts/#descdef-font-face-unicode-range
 
     CSSParserContext parserContext(parserMode(context));
@@ -841,11 +674,11 @@ RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String& string, ScriptExecu
     if (range.atEnd())
         return nullptr;
 
-    RefPtr parsedValue = consumeFontFaceUnicodeRange(range, parserContext);
+    RefPtr parsedValue = CSSPropertyParsing::consumeFontFaceUnicodeRange(range);
     if (!parsedValue || !range.atEnd())
         return nullptr;
 
-    return parsedValue;
+    return dynamicDowncast<CSSValueList>(parsedValue);
 }
 
 // MARK: @font-face 'font-display'

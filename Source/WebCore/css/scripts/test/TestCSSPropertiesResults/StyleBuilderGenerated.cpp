@@ -452,6 +452,18 @@ public:
     {
         builderState.style().setTestKeyword(fromCSSValueDeducingType(builderState, value));
     }
+    static void applyInitialTestKeywordFontFamilyName(BuilderState& builderState)
+    {
+        builderState.style().setTestKeywordFontFamilyName(RenderStyle::initialTestKeywordFontFamilyName());
+    }
+    static void applyInheritTestKeywordFontFamilyName(BuilderState& builderState)
+    {
+        builderState.style().setTestKeywordFontFamilyName(forwardInheritedValue(builderState.parentStyle().testKeywordFontFamilyName()));
+    }
+    static void applyValueTestKeywordFontFamilyName(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestKeywordFontFamilyName(fromCSSValueDeducingType(builderState, value));
+    }
     static void applyInitialTestKeywordWithAliasedTo(BuilderState& builderState)
     {
         builderState.style().setTestKeywordWithAliasedTo(RenderStyle::initialTestKeywordWithAliasedTo());
@@ -1403,6 +1415,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestKeyword(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestKeywordFontFamilyName:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestKeywordFontFamilyName(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestKeywordFontFamilyName(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestKeywordFontFamilyName(builderState, value);
             break;
         }
         break;

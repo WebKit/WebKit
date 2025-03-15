@@ -49,6 +49,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
 #include "CSSQuadValue.h"
+#include "CSSRatioValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
@@ -4552,12 +4553,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueAuto);
         case AspectRatioType::AutoZero:
         case AspectRatioType::AutoAndRatio:
-        case AspectRatioType::Ratio:
-            auto ratioList = CSSValueList::createSlashSeparated(CSSPrimitiveValue::create(style.aspectRatioWidth()),
-                CSSPrimitiveValue::create(style.aspectRatioHeight()));
+        case AspectRatioType::Ratio: {
+            auto ratio = CSSRatioValue::create(CSS::Ratio { style.aspectRatioWidth(), style.aspectRatioHeight() });
             if (style.aspectRatioType() != AspectRatioType::AutoAndRatio)
-                return ratioList;
-            return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto), WTFMove(ratioList));
+                return ratio;
+            return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto), WTFMove(ratio));
+        }
         }
         ASSERT_NOT_REACHED();
         return nullptr;

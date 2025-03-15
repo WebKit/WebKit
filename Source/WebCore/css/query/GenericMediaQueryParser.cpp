@@ -25,7 +25,6 @@
 #include "config.h"
 #include "GenericMediaQueryParser.h"
 
-#include "CSSAspectRatioValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserImpl.h"
 #include "CSSPropertyParser.h"
@@ -34,7 +33,9 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+Ratio.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSRatioValue.h"
 #include "CSSValue.h"
 #include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"
@@ -218,25 +219,6 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
     return Feature { WTFMove(featureName), Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
 }
 
-static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range, const MediaQueryParserContext& context)
-{
-    RefPtr leftValue = CSSPropertyParserHelpers::consumeNumber(range, context.context, ValueRange::NonNegative);
-    if (!leftValue)
-        return nullptr;
-
-    if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
-        return nullptr;
-
-    RefPtr rightValue = CSSPropertyParserHelpers::consumeNumber(range, context.context, ValueRange::NonNegative);
-    if (!rightValue)
-        return nullptr;
-
-    return CSSAspectRatioValue::create(
-        leftValue->resolveAsNumberDeprecated<float>(),
-        rightValue->resolveAsNumberDeprecated<float>()
-    );
-}
-
 RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     if (range.atEnd())
@@ -244,12 +226,8 @@ RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const M
 
     if (RefPtr value = CSSPropertyParserHelpers::consumeIdent(range))
         return value;
-
-    auto rangeCopy = range;
-    if (RefPtr value = consumeRatioWithSlash(range, context))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeRatioWithBothNumeratorAndDenominator(range, context.context))
         return value;
-    range = rangeCopy;
-
     if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range, context.context))
         return value;
     if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range, context.context))
@@ -288,13 +266,13 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
 
         case FeatureSchema::ValueType::Ratio:
             if (primitiveValue && primitiveValue->isNumberOrInteger()) {
-                auto number = primitiveValue->template resolveAsNumberDeprecated<float>();
+                auto number = primitiveValue->template resolveAsNumberDeprecated<double>();
                 if (number < 0)
                     return false;
-                value = CSSAspectRatioValue::create(number, 1);
+                value = CSSRatioValue::create(CSS::Ratio { number, 1.0 });
                 return true;
             }
-            return is<CSSAspectRatioValue>(value.get());
+            return is<CSSRatioValue>(value.get());
 
         case FeatureSchema::ValueType::CustomProperty:
             return value && value->isCustomPropertyValue();

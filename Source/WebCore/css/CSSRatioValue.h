@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +24,28 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "CSSRatio.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
-class CSSParserTokenRange;
-class CSSValue;
-struct CSSParserContext;
+class CSSRatioValue final : public CSSValue {
+public:
+    static Ref<CSSRatioValue> create(CSS::Ratio&&);
 
-namespace CSSPropertyParserHelpers {
+    const CSS::Ratio& ratio() const { return m_ratio; }
 
-// MARK: <contain-intrinsic-size> consuming
-// https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
-RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange&, const CSSParserContext&);
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSRatioValue&) const;
 
-} // namespace CSSPropertyParserHelpers
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+
+private:
+    CSSRatioValue(CSS::Ratio&&);
+
+    CSS::Ratio m_ratio;
+};
+
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSRatioValue, isRatioValue())

@@ -25,9 +25,11 @@
 #include "config.h"
 #include "GenericMediaQueryEvaluator.h"
 
-#include "CSSAspectRatioValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSRatioValue.h"
 #include "CSSToLengthConversionData.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
+#include "StyleRatio.h"
 
 namespace WebCore {
 namespace MQ {
@@ -133,20 +135,21 @@ EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length
     return leftResult & rightResult;
 };
 
-static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData&)
+static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    RefPtr ratioValue = dynamicDowncast<CSSAspectRatioValue>(comparison->value);
+    RefPtr ratioValue = dynamicDowncast<CSSRatioValue>(comparison->value);
     if (!ratioValue)
         return EvaluationResult::Unknown;
 
-    // Ratio with zero denominator is infinite and compares greater to any value.
-    auto denominator = ratioValue->denominatorValue();
+    auto resolvedRatio = Style::toStyle(ratioValue->ratio(), conversionData);
 
-    auto comparisonA = denominator ? size.height() * ratioValue->numeratorValue() : 1.f;
-    auto comparisonB = denominator ? size.width() * denominator : 0.f;
+    // Ratio with zero denominator is infinite and compares greater to any value.
+
+    auto comparisonA = resolvedRatio.denominator.value ? size.height() * resolvedRatio.numerator.value : 1.0f;
+    auto comparisonB = resolvedRatio.denominator.value ? size.width() * resolvedRatio.denominator.value : 0.0f;
 
     auto left = side == Side::Left ? comparisonA : comparisonB;
     auto right = side == Side::Left ? comparisonB : comparisonA;

@@ -178,20 +178,17 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     }
 
     const StyleProperties& style = fontFaceRule.properties();
-    RefPtr familyList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertyFontFamily));
+    RefPtr family = style.getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr fontStyle = style.getPropertyCSSValue(CSSPropertyFontStyle);
     RefPtr fontWeight = style.getPropertyCSSValue(CSSPropertyFontWeight);
     RefPtr fontWidth = style.getPropertyCSSValue(CSSPropertyFontWidth);
     RefPtr srcList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertySrc));
     RefPtr unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
-    CSSValueList* rangeList = downcast<CSSValueList>(unicodeRange.get());
+    RefPtr rangeList = downcast<CSSValueList>(unicodeRange.get());
     RefPtr featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
     RefPtr display = style.getPropertyCSSValue(CSSPropertyFontDisplay);
     RefPtr sizeAdjust = style.getPropertyCSSValue(CSSPropertySizeAdjust);
-    if (!familyList || !srcList || (unicodeRange && !rangeList))
-        return;
-
-    if (!familyList->length())
+    if (!family || !srcList || (unicodeRange && !rangeList))
         return;
 
     if (!srcList->length())
@@ -200,7 +197,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     SetForScope creatingFont(m_creatingFont, true);
     auto fontFace = CSSFontFace::create(*this, &fontFaceRule);
 
-    fontFace->setFamilies(*familyList);
+    fontFace->setFamily(*family);
     if (fontStyle)
         fontFace->setStyle(*fontStyle);
     if (fontWeight)

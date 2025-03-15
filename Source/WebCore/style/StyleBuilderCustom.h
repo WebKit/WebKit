@@ -36,6 +36,7 @@
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSRatioValue.h"
 #include "CSSRectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSTextShadowPropertyValue.h"
@@ -56,6 +57,7 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleImageSet.h"
+#include "StyleRatio.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleTextShadow.h"
@@ -983,37 +985,27 @@ inline void BuilderCustom::applyInheritAspectRatio(BuilderState&)
 
 inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSSValue& value)
 {
+    auto resolveRatio = [&](const CSSRatioValue& ratioValue) -> std::pair<double, double> {
+        auto styleRatio = Style::toStyle(ratioValue.ratio(), builderState);
+        return { styleRatio.numerator.value, styleRatio.denominator.value };
+    };
+
     if (value.valueID() == CSSValueAuto)
         return builderState.style().setAspectRatioType(AspectRatioType::Auto);
+    if (RefPtr ratio = dynamicDowncast<CSSRatioValue>(value)) {
+        auto [width, height] = resolveRatio(*ratio);
+        builderState.style().setAspectRatioType(AspectRatioType::Ratio);
+        builderState.style().setAspectRatio(width, height);
+    }
 
     auto list = BuilderConverter::requiredListDowncast<CSSValueList, CSSValue, 2>(builderState, value);
     if (!list)
         return;
 
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    auto resolveRatioList = [&](auto& listValue) -> std::optional<std::pair<double, double>> {
-        auto ratioList = BuilderConverter::requiredListDowncast<CSSValueList, CSSPrimitiveValue, 2>(builderState, listValue);
-        if (!ratioList)
-            return { };
-
-        return std::pair { ratioList->item(0).resolveAsNumber(conversionData), ratioList->item(1).resolveAsNumber(conversionData) };
-    };
-
-    if (is<CSSValueList>(list->item(1))) {
-        auto ratio = resolveRatioList(list->item(1));
-        if (!ratio)
-            return;
-        auto [width, height] = *ratio;
-        builderState.style().setAspectRatioType(AspectRatioType::AutoAndRatio);
-        builderState.style().setAspectRatio(width, height);
-        return;
-    }
-
-    auto ratio = resolveRatioList(value);
+    auto ratio = BuilderConverter::requiredDowncast<CSSRatioValue>(builderState, list->item(1));
     if (!ratio)
         return;
-    auto [width, height] = *ratio;
+    auto [width, height] = resolveRatio(*ratio);
     if (!width || !height)
         builderState.style().setAspectRatioType(AspectRatioType::AutoZero);
     else

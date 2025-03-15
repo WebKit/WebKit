@@ -30,7 +30,6 @@
 #include "CSSValue.h"
 
 #include "CSSAppleColorFilterPropertyValue.h"
-#include "CSSAspectRatioValue.h"
 #include "CSSAttrValue.h"
 #include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapeValue.h"
@@ -75,6 +74,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSQuadValue.h"
+#include "CSSRatioValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
@@ -114,8 +114,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAppleColorFilterPropertyValue>(*this));
     case Attr:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAttrValue>(*this));
-    case AspectRatio:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAspectRatioValue>(*this));
     case BackgroundRepeat:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSBackgroundRepeatValue>(*this));
     case BasicShape:
@@ -202,6 +200,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPrimitiveValue>(*this));
     case Quad:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSQuadValue>(*this));
+    case Ratio:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSRatioValue>(*this));
     case Ray:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSRayValue>(*this));
     case Rect:

@@ -68,7 +68,6 @@ public:
 
     bool isAppleColorFilterPropertyValue() const { return m_classType == ClassType::AppleColorFilterProperty; }
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
-    bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
@@ -114,6 +113,7 @@ public:
     bool isPendingSubstitutionValue() const { return m_classType == ClassType::PendingSubstitutionValue; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
+    bool isRatioValue() const { return m_classType == ClassType::Ratio; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
     bool isReflectValue() const { return m_classType == ClassType::Reflect; }
@@ -208,7 +208,6 @@ protected:
 
         // Other non-list classes.
         AppleColorFilterProperty,
-        AspectRatio,
         Attr,
         BackgroundRepeat,
         BasicShape,
@@ -241,6 +240,7 @@ protected:
         Path,
         PendingSubstitutionValue,
         Quad,
+        Ratio,
         Ray,
         Rect,
         Reflect,

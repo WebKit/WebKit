@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +34,10 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: <contain-intrinsic-size> consuming
-// https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
-RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange&, const CSSParserContext&);
+// https://drafts.csswg.org/css-syntax-3/#typedef-unicode-range-token
+
+// MARK: <unicode-range-token> consuming (value)
+RefPtr<CSSValue> consumeUnicodeRangeToken(CSSParserTokenRange&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

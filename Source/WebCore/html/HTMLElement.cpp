@@ -29,6 +29,7 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSRatioValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -572,8 +573,12 @@ void HTMLElement::applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttri
 
 void HTMLElement::addParsedWidthAndHeightToAspectRatioList(double width, double height, MutableStyleProperties& style)
 {
-    style.setProperty(CSSPropertyAspectRatio, CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto),
-        CSSValueList::createSlashSeparated(CSSPrimitiveValue::create(width), CSSPrimitiveValue::create(height))));
+    style.setProperty(CSSPropertyAspectRatio,
+        CSSValueList::createSpaceSeparated(
+            CSSPrimitiveValue::create(CSSValueAuto),
+            CSSRatioValue::create(CSS::Ratio { width, height })
+        )
+    );
 }
 
 void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, MutableStyleProperties& style)

@@ -102,8 +102,6 @@ std::optional<UnresolvedFont> parseUnresolvedFont(const String&, const CSSParser
 RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-family'
-// https://drafts.csswg.org/css-fonts-4/#font-family-prop
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&, const CSSParserContext&);
 // Sub-production of 'font-family': <family-name>
 // https://drafts.csswg.org/css-fonts-4/#family-name-syntax
 RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&, const CSSParserContext&);
@@ -118,10 +116,6 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&, const CSSParserCont
 
 
 // MARK: - @font-face descriptor consumers
-
-// MARK: @font-face 'font-family'
-// https://drafts.csswg.org/css-fonts-4/#font-family-desc
-RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'src'
 // https://drafts.csswg.org/css-fonts-4/#src-desc
@@ -141,7 +135,6 @@ RefPtr<CSSValue> parseFontFaceSizeAdjust(const String&, ScriptExecutionContext&)
 // MARK: @font-face 'unicode-range'
 // https://drafts.csswg.org/css-fonts-4/#unicode-range-desc
 RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
-RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-display'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-display

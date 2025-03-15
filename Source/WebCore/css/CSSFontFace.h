@@ -75,7 +75,7 @@ public:
     static Ref<CSSFontFace> create(CSSFontSelector&, StyleRuleFontFace* cssConnection = nullptr, FontFace* wrapper = nullptr, bool isLocalFallback = false);
     virtual ~CSSFontFace();
 
-    void setFamilies(CSSValueList&);
+    void setFamily(CSSValue&);
     void setStyle(CSSValue&);
     void setWeight(CSSValue&);
     void setWidth(CSSValue&);
@@ -106,7 +106,7 @@ public:
 
     struct UnicodeRange;
 
-    RefPtr<CSSValueList> families() const;
+    RefPtr<const CSSValue> familyValue() const;
     std::span<const UnicodeRange> ranges() const { ASSERT(m_status != Status::Failure); return m_ranges.span(); }
 
     void setFontSelectionCapabilities(FontSelectionCapabilities capabilities) { m_fontSelectionCapabilities = capabilities; }
@@ -182,7 +182,7 @@ private:
     Document* document();
 
     const std::variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> m_propertiesOrCSSConnection;
-    RefPtr<CSSValueList> m_families;
+    RefPtr<CSSValue> m_family;
     Vector<UnicodeRange> m_ranges;
 
     FontFeatureSettings m_featureSettings;
@@ -211,7 +211,7 @@ public:
     virtual ~CSSFontFaceClient() = default;
     virtual void fontLoaded(CSSFontFace&) { }
     virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status /*oldState*/, CSSFontFace::Status /*newState*/) { }
-    virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
+    virtual void fontPropertyChanged(CSSFontFace&, RefPtr<CSSValue> /*oldFamily*/ = nullptr) { }
     virtual void updateStyleIfNeeded(CSSFontFace&) { }
 };
 

@@ -618,9 +618,8 @@
                 "animation-wrapper-requires-override-parameters": [],
                 "style-builder-custom": "All",
                 "high-priority": true,
-                "parser-function": "consumeFontFamily",
-                "parser-grammar-unused": "[ <family-name> | <generic-family> | <-webkit-generic-family> ]#",
-                "parser-grammar-unused-reason": "Needs support for primitive <family-name>."
+                "parser-grammar": "[ <family-name> | <generic-family> ]#@(no-single-item-opt)",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -8406,9 +8405,7 @@
                 "animation-wrapper": "AspectRatioWrapper",
                 "animation-wrapper-requires-override-parameters": [],
                 "style-builder-custom": "All",
-                "parser-function": "consumeAspectRatio",
-                "parser-grammar-unused": "auto || <ratio>",
-                "parser-grammar-unused-reason": "Needs support for primitive <ratio>."
+                "parser-grammar": "auto || <ratio>"
             },
             "specification": {
                 "category": "css-sizing",
@@ -12272,9 +12269,7 @@
         "@font-face": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-function": "consumeFontFaceFontFamily",
-                    "parser-grammar-unused": "<family-name>",
-                    "parser-grammar-unused-reason": "Needs support for primitive <family-name>."
+                    "parser-grammar": "<family-name>"
                 },
                 "specification": {
                     "category": "css-fonts-4",
@@ -12547,9 +12542,8 @@
             },
             "unicode-range": {
                 "codegen-properties": {
-                    "parser-function": "consumeFontFaceUnicodeRange",
-                    "parser-grammar-unused": "<urange>#",
-                    "parser-grammar-unused-reason": "Needs support for primitive <urange>."
+                    "parser-grammar": "<unicode-range-token>#@(no-single-item-opt)",
+                    "parser-exported": true
                 },
                 "specification": {
                     "category": "css-fonts",
@@ -13058,16 +13052,22 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#east-asian-width-values"
             }
         },
+        "<family-name>": {
+            "grammar-unused": "<string> | <custom-ident>+",
+            "grammar-unused-reason": "Needs support for primitive <family-name>.",
+            "grammar-function": "consumeFamilyName",
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts/#family-name-value"
+            }
+        },
         "<generic-family>": {
-            "grammar": "serif | sans-serif | cursive | fantasy | monospace | system-ui | emoji | math | fangsong | ui-serif | ui-sans-serif | ui-monospace | ui-rounded",
+            "grammar": "serif | sans-serif | cursive | fantasy | monospace | system-ui@(type=FontFamilyValue) | -webkit-body | -webkit-pictograph",
+            "grammar-comment": "Current spec grammar is 'generic( fangsong | kai | khmer-mul | nastaliq ) | serif | sans-serif | system-ui | cursive | fantasy | math | monospace | ui-serif | ui-sans-serif | ui-monospace | ui-rounded'",
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#generic-font-families"
             }
-        },
-        "<-webkit-generic-family>": {
-            "grammar": "-webkit-body",
-            "status": "non-standard"
         },
         "<gap-gutter>": {
             "grammar": "normal | <length-percentage [0,inf]>",

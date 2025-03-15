@@ -24,7 +24,7 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 77> computedPropertyIDs {
+const std::array<CSSPropertyID, 78> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestAnimationWrapper,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly,
@@ -60,6 +60,7 @@ const std::array<CSSPropertyID, 77> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestImage,
     CSSPropertyID::CSSPropertyTestImageNoImageSet,
     CSSPropertyID::CSSPropertyTestKeyword,
+    CSSPropertyID::CSSPropertyTestKeywordFontFamilyName,
     CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalInline,
@@ -143,6 +144,7 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-image"_s,
     "test-image-no-image-set"_s,
     "test-keyword"_s,
+    "test-keyword-font-family-name"_s,
     "test-keyword-with-aliased-to"_s,
     "test-match-all-any-order"_s,
     "test-match-all-any-order-with-optional"_s,
@@ -242,6 +244,7 @@ test-function-unbounded-parameters-with-minimum, CSSPropertyID::CSSPropertyTestF
 test-image, CSSPropertyID::CSSPropertyTestImage
 test-image-no-image-set, CSSPropertyID::CSSPropertyTestImageNoImageSet
 test-keyword, CSSPropertyID::CSSPropertyTestKeyword
+test-keyword-font-family-name, CSSPropertyID::CSSPropertyTestKeywordFontFamilyName
 test-keyword-with-aliased-to, CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo
 test-match-all-any-order, CSSPropertyID::CSSPropertyTestMatchAllAnyOrder
 test-match-all-any-order-with-optional, CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptional
@@ -447,6 +450,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestImage
     false, // CSSPropertyID::CSSPropertyTestImageNoImageSet
     false, // CSSPropertyID::CSSPropertyTestKeyword
+    false, // CSSPropertyID::CSSPropertyTestKeywordFontFamilyName
     false, // CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo
     false, // CSSPropertyID::CSSPropertyTestMatchAllAnyOrder
     false, // CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptional

@@ -23,44 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSPropertyParserConsumer+Sizing.h"
+#pragma once
 
-#include "CSSParserContext.h"
-#include "CSSParserTokenRange.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+Length.h"
-#include "CSSValueKeywords.h"
-#include "CSSValuePair.h"
+#include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+namespace CSS {
+struct Ratio;
+}
+
+class CSSParserTokenRange;
+class CSSValue;
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <contain-intrinsic-size> = auto? [ none | <length> ]
-    // https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
+// https://drafts.csswg.org/css-values-4/#ratio-value
 
-    RefPtr<CSSPrimitiveValue> autoValue;
-    if ((autoValue = consumeIdent<CSSValueAuto>(range))) {
-        if (range.atEnd())
-            return nullptr;
-    }
+// MARK: <ratio> consuming (unresolved)
+std::optional<CSS::Ratio> consumeUnresolvedRatio(CSSParserTokenRange&, const CSSParserContext&);
+std::optional<CSS::Ratio> consumeUnresolvedRatioWithBothNumeratorAndDenominator(CSSParserTokenRange&, const CSSParserContext&);
 
-    if (auto noneValue = consumeIdent<CSSValueNone>(range)) {
-        if (autoValue)
-            return CSSValuePair::create(autoValue.releaseNonNull(), noneValue.releaseNonNull());
-        return noneValue;
-    }
-
-    if (auto lengthValue = consumeLength(range, context, HTMLStandardMode, ValueRange::NonNegative)) {
-        if (autoValue)
-            return CSSValuePair::create(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
-        return lengthValue;
-    }
-    return nullptr;
-}
+// MARK: <ratio> consuming (value)
+RefPtr<CSSValue> consumeRatio(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeRatioWithBothNumeratorAndDenominator(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
