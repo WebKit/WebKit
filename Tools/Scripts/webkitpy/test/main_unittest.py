@@ -68,7 +68,7 @@ class TesterTest(unittest.TestCase):
             root_logger.handlers = []
 
             tester.printer.stream = errors
-            tester.finder.find_names = lambda args, run_all: []
+            tester.finder.find_names = lambda args: []
             with OutputCapture(level=logging.INFO) as captured:
                 self.assertFalse(tester.run([]))
 

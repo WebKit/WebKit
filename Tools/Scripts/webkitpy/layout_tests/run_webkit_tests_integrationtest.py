@@ -45,7 +45,7 @@ from webkitpy.port.image_diff import ImageDiffResult
 from webkitpy.xcode.device_type import DeviceType
 
 
-def parse_args(extra_args=None, tests_included=False, new_results=False, print_nothing=True):
+def parse_args(extra_args=None, tests_included=False, new_results=False):
     extra_args = extra_args or []
     args = []
     if not '--platform' in extra_args:
