@@ -44,7 +44,7 @@ class FeatureDefinesChecker(object):
         self._host = SystemHost.get_default()
         self._fs = self._host.filesystem
 
-    def check(self):
+    def check(self, inline=None):
         if self._file_path not in FEATURE_DEFINE_FILES:
             self._handle_style_error(0, 'featuredefines/new', 5, "Patch introduces a new FeatureDefines.xcconfig, which check-webkit-style doesn't know about. Please add it to the list in featuredefines.py.")
             return

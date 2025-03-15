@@ -116,7 +116,7 @@ class MockIo:
     def __init__(self, mock_file):
         self.mock_file = mock_file
 
-    def open(self, _):  # NOLINT
+    def open(self, unused_filename, unused_mode, unused_encoding, _):  # NOLINT
         # (lint doesn't like open as a method name)
         return self.mock_file
 
