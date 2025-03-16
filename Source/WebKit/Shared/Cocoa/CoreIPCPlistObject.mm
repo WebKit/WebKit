@@ -89,13 +89,59 @@ RetainPtr<id> CoreIPCPlistObject::toID() const
     });
 }
 
+CoreIPCPlistObject::CoreIPCPlistObject(const CoreIPCPlistObject& other)
+    : m_value(makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCString()))
+{
+    PlistValue& plistValue = other.m_value.get();
+    WTF::switchOn(plistValue,
+        [&] (const CoreIPCPlistArray array) {
+            RetainPtr arrayPtr = array.toID();
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCPlistArray(arrayPtr));
+            return;
+        },
+        [&] (const CoreIPCData data) {
+            RetainPtr dataPtr = data.toID();
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCData(dataPtr.get()));
+            return;
+        },
+        [&] (const CoreIPCDate date) {
+            RetainPtr datePtr = date.toID();
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCDate(datePtr.get()));
+            return;
+        },
+        [&] (const CoreIPCPlistDictionary dict) {
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCPlistDictionary(dict.toID()));
+            return;
+        },
+        [&] (const CoreIPCNumber number) {
+            RetainPtr numPtr = number.toID();
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCNumber(numPtr.get()));
+            return;
+        },
+        [&] (const CoreIPCString str) {
+            RetainPtr strPtr = str.toID();
+            m_value = makeUniqueRefWithoutFastMallocCheck<PlistValue>(CoreIPCString(strPtr.get()));
+            return;
+    });
+}
+
+CoreIPCPlistObject::CoreIPCPlistObject(CoreIPCPlistObject&& other)
+    : m_value(WTFMove(other.m_value))
+{
+}
+
 } // namespace WebKit
 
 namespace IPC {
 
 void ArgumentCoder<UniqueRef<WebKit::PlistValue>>::encode(Encoder& encoder, const UniqueRef<WebKit::PlistValue>& object)
 {
-    encoder << *object;
+    encoder << object;
+}
+
+void ArgumentCoder<UniqueRef<WebKit::PlistValue>>::encode(StreamConnectionEncoder& encoder, const UniqueRef<WebKit::PlistValue>& object)
+{
+    encoder << object;
 }
 
 std::optional<UniqueRef<WebKit::PlistValue>> ArgumentCoder<UniqueRef<WebKit::PlistValue>>::decode(Decoder& decoder)

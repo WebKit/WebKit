@@ -69,6 +69,8 @@ CoreIPCPlistDictionary::CoreIPCPlistDictionary(CoreIPCPlistDictionary&&) = defau
 
 CoreIPCPlistDictionary::~CoreIPCPlistDictionary() = default;
 
+CoreIPCPlistDictionary::CoreIPCPlistDictionary(const CoreIPCPlistDictionary&) = default;
+
 CoreIPCPlistDictionary::CoreIPCPlistDictionary(ValueType&& keyValuePairs)
     : m_keyValuePairs(WTFMove(keyValuePairs)) { }
 

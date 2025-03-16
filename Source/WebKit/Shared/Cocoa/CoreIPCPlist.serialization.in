@@ -26,15 +26,15 @@ webkit_platform_headers: "ArgumentCodersCocoa.h" "CoreIPCPlistObject.h" "CoreIPC
 
 using WebKit::PlistValue = std::variant<WebKit::CoreIPCPlistArray, WebKit::CoreIPCPlistDictionary, WebKit::CoreIPCString, WebKit::CoreIPCNumber, WebKit::CoreIPCDate, WebKit::CoreIPCData>
 
-[WebKitPlatform] class WebKit::CoreIPCPlistObject {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCPlistObject {
     UniqueRef<WebKit::PlistValue> value();
 }
 
-[WebKitPlatform] class WebKit::CoreIPCPlistArray {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCPlistArray {
     Vector<WebKit::CoreIPCPlistObject> m_array;
 }
 
-[WebKitPlatform] class WebKit::CoreIPCPlistDictionary {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCPlistDictionary {
     Vector<KeyValuePair<WebKit::CoreIPCString, WebKit::CoreIPCPlistObject>> m_keyValuePairs;
 }
 

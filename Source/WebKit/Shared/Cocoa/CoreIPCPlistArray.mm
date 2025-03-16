@@ -52,6 +52,8 @@ CoreIPCPlistArray::CoreIPCPlistArray(const RetainPtr<NSArray>& array)
 
 CoreIPCPlistArray::CoreIPCPlistArray(CoreIPCPlistArray&&) = default;
 
+CoreIPCPlistArray::CoreIPCPlistArray(const CoreIPCPlistArray&) = default;
+
 CoreIPCPlistArray::~CoreIPCPlistArray() = default;
 
 CoreIPCPlistArray::CoreIPCPlistArray(Vector<CoreIPCPlistObject>&& array)

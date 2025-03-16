@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "CoreIPCPlistArray.h"
 #include "CoreIPCPlistObject.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/KeyValuePair.h>
@@ -42,6 +43,7 @@ class CoreIPCPlistDictionary {
 public:
     CoreIPCPlistDictionary(NSDictionary *);
     CoreIPCPlistDictionary(const RetainPtr<NSDictionary>&);
+    CoreIPCPlistDictionary(const CoreIPCPlistDictionary&);
     CoreIPCPlistDictionary(CoreIPCPlistDictionary&&);
     CoreIPCPlistDictionary& operator=(CoreIPCPlistDictionary&&) = default;
     ~CoreIPCPlistDictionary();

@@ -39,6 +39,7 @@ public:
     CoreIPCPlistArray(NSArray *);
     CoreIPCPlistArray(const RetainPtr<NSArray>&);
     CoreIPCPlistArray(CoreIPCPlistArray&&);
+    CoreIPCPlistArray(const CoreIPCPlistArray&);
     CoreIPCPlistArray& operator=(CoreIPCPlistArray&&) = default;
     ~CoreIPCPlistArray();
 

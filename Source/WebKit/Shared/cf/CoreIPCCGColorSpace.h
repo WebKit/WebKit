@@ -27,13 +27,17 @@
 
 #if PLATFORM(COCOA)
 
+#import "CoreIPCPlistDictionary.h"
+
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/Color.h>
 #import <WebCore/ColorSpace.h>
 #import <WebCore/ColorSpaceCG.h>
 #import <wtf/RetainPtr.h>
 
-using CGColorSpaceSerialization = std::variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
+class CoreIPCPlistDictionary;
+
+using CGColorSpaceSerialization = std::variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, WebKit::CoreIPCPlistDictionary>;
 
 namespace WebKit {
 class CoreIPCCGColorSpace {
@@ -44,15 +48,16 @@ public:
             m_cgColorSpace = *colorSpace;
         else if (RetainPtr<CFStringRef> name = CGColorSpaceGetName(cgColorSpace))
             m_cgColorSpace = WTFMove(name);
-        else if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(cgColorSpace)))
-            m_cgColorSpace = WTFMove(propertyList);
-        else
+        else if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(cgColorSpace))) {
+            if (CFGetTypeID(propertyList.get()) == CFDictionaryGetTypeID())
+                m_cgColorSpace = CoreIPCPlistDictionary((NSDictionary*)propertyList.get());
+        } else
             // FIXME: This should be removed once we can prove only non-null cgColorSpaces.
             m_cgColorSpace = WebCore::ColorSpace::SRGB;
     }
 
     CoreIPCCGColorSpace(CGColorSpaceSerialization data)
-        : m_cgColorSpace(data)
+        : m_cgColorSpace(WTFMove(data))
     {
     }
 
@@ -65,8 +70,9 @@ public:
             [](RetainPtr<CFStringRef> name) -> RetainPtr<CGColorSpaceRef> {
                 return adoptCF(CGColorSpaceCreateWithName(name.get()));
             },
-            [](RetainPtr<CFTypeRef> propertyList) -> RetainPtr<CGColorSpaceRef> {
-                return adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
+            [](WebKit::CoreIPCPlistDictionary propertyList) -> RetainPtr<CGColorSpaceRef> {
+                RetainPtr pList = propertyList.toID();
+                return adoptCF(CGColorSpaceCreateWithPropertyList((CFPropertyListRef)pList.get()));
             }
         );
         if (UNLIKELY(!colorSpace))

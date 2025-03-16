@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
+#include "StreamConnectionEncoder.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
 
@@ -53,6 +54,8 @@ class CoreIPCPlistObject {
 public:
     CoreIPCPlistObject(id);
     CoreIPCPlistObject(UniqueRef<PlistValue>&&);
+    CoreIPCPlistObject(const CoreIPCPlistObject&);
+    CoreIPCPlistObject(CoreIPCPlistObject&&);
 
     RetainPtr<id> toID() const;
     static bool isPlistType(id);
@@ -70,6 +73,7 @@ namespace IPC {
 // makeUniqueRefWithoutFastMallocCheck<>, since we can't make the variant fast malloc'ed
 template<> struct ArgumentCoder<UniqueRef<WebKit::PlistValue>> {
     static void encode(Encoder&, const UniqueRef<WebKit::PlistValue>&);
+    static void encode(StreamConnectionEncoder&, const UniqueRef<WebKit::PlistValue>&);
     static std::optional<UniqueRef<WebKit::PlistValue>> decode(Decoder&);
 };
 
