@@ -536,8 +536,10 @@ Page::~Page()
     if (RefPtr scrollingCoordinator = m_scrollingCoordinator)
         scrollingCoordinator->pageDestroyed();
 
+#if ENABLE(RESOURCE_USAGE)
     if (RefPtr resourceUsageOverlay = m_resourceUsageOverlay)
         resourceUsageOverlay->detachFromPage();
+#endif
 
     checkedBackForward()->close();
     if (!isUtilityPage())
