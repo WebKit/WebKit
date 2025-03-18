@@ -1,0 +1,34 @@
+<script>
+var feedback = [];
+
+function logFeedback(line, result) {
+    feedback.push([line, result]);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    let trackElement = document.getElementById('htmlvar00027').src;
+    logFeedback('trackElement.src', 'Valid');
+
+    let sourceUrl = trackElement;
+    logFeedback('sourceUrl', 'Valid');
+
+    let targetUrl = {};
+    logFeedback('targetUrl', 'Valid');
+
+    try {
+        let urlPattern = new URLPattern(sourceUrl, trackElement, targetUrl);
+        logFeedback('URLPattern(sourceUrl, trackElement, targetUrl)', 'Valid');
+    } catch(e) {
+        logFeedback('URLPattern(sourceUrl, trackElement, targetUrl)', e.name);
+    }
+    globalThis.testRunner?.notifyDone();
+}
+</script>
+
+<body onload="runTest()">
+    <p>This test passes if WebKit does not crash.</p>
+    <track id="htmlvar00027" src="Y(HQ(#a6d#" shouldfocus="true">
+</body>
