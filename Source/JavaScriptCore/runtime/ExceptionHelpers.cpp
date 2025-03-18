@@ -357,7 +357,7 @@ JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
 
 JSObject* createPrivateMethodAccessError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Cannot access private method or acessor"_s, defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot access private method or accessor"_s, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
