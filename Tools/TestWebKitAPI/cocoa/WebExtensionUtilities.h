@@ -121,7 +121,7 @@ using CocoaColor = UIColor;
 - (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
-@property (nonatomic, strong) TestWebExtensionTab * activeTab;
+@property (nonatomic, strong) TestWebExtensionTab *activeTab;
 
 - (TestWebExtensionTab *)openNewTab;
 - (TestWebExtensionTab *)openNewTabAtIndex:(NSUInteger)index;
