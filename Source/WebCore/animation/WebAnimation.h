@@ -137,6 +137,8 @@ public:
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
     std::optional<WebAnimationTime> holdTime() const { return m_holdTime; }
 
+    void setPendingStartTime(WebAnimationTime pendingStartTime) { m_pendingStartTime = pendingStartTime; }
+
     virtual std::variant<FramesPerSecond, AnimationFrameRatePreset> bindingsFrameRate() const { return m_bindingsFrameRate; }
     virtual void setBindingsFrameRate(std::variant<FramesPerSecond, AnimationFrameRatePreset>&&);
     std::optional<FramesPerSecond> frameRate() const { return m_effectiveFrameRate; }
@@ -177,6 +179,8 @@ public:
     std::optional<Seconds> convertAnimationTimeToTimelineTime(Seconds) const;
 
     void progressBasedTimelineSourceDidChangeMetrics();
+
+    void markAsReady();
 
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -240,6 +244,7 @@ private:
     UniqueRef<FinishedPromise> m_finishedPromise;
     std::optional<WebAnimationTime> m_previousCurrentTime;
     std::optional<WebAnimationTime> m_startTime;
+    std::optional<WebAnimationTime> m_pendingStartTime;
     std::optional<WebAnimationTime> m_holdTime;
     MarkableDouble m_pendingPlaybackRate;
     double m_playbackRate { 1 };

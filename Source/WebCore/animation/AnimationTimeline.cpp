@@ -47,6 +47,11 @@ void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     updateGlobalPosition(animation);
 
+    if (animation.pending()) {
+        if (CheckedPtr controller = this->controller())
+            controller->addPendingAnimation(animation);
+    }
+
     if (m_animations.add(animation)) {
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
