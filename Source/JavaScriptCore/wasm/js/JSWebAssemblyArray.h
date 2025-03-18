@@ -43,10 +43,10 @@ class JSWebAssemblyArray final : public WebAssemblyGCObjectBase {
 public:
     using Base = WebAssemblyGCObjectBase;
 
-    template<typename CellType, SubspaceAccess mode>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return vm.heap.webAssemblyArraySpace<mode>();
+        return &vm.cellSpace();
     }
 
     DECLARE_INFO;

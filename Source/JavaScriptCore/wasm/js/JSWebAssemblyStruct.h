@@ -44,10 +44,10 @@ public:
     friend TrailingArrayType;
     static_assert(StructureFlags == WebAssemblyGCObjectBase::StructureFlags, "WebAssemblyGCObjectBase must have the same StructureFlags as us");
 
-    template<typename CellType, SubspaceAccess mode>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return vm.heap.webAssemblyStructSpace<mode>();
+        return &vm.cellSpace();
     }
 
     DECLARE_INFO;
