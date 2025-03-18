@@ -482,9 +482,100 @@ void RenderBlockFlow::layoutBlockWithNoChildren()
     clearNeedsLayout();
 }
 
+void RenderBlockFlow::layoutBlockIterative(RelayoutChildren relayoutChildren, RenderBox& subtreeRoot)
+{
+    Vector<BlockContainerLayoutState> layoutStack;
+    auto blockContainerLayoutStateForRoot = BlockContainerLayoutState { downcast<RenderBlockFlow>(subtreeRoot) };
+    blockContainerLayoutStateForRoot.relayoutChildren = relayoutChildren;
+    layoutStack.append(blockContainerLayoutStateForRoot);
+
+    while (!layoutStack.isEmpty()) {
+        auto& blockContainerLayoutState = layoutStack.last();
+        auto& contentSizingState = blockContainerLayoutState.contentSizingState;
+
+        // If we do not have a current child set then we have not started to perform any
+        // sort of content sizing, so we will take this opportunity to do some work on
+        // the block container itself before we start sizing our content.
+        if (!contentSizingState.currentChild) {
+            if (blockContainerLayoutState.relayoutChildren == RelayoutChildren::No && simplifiedLayout()) {
+                layoutStack.takeLast();
+                continue;
+            }
+            updateBlockContainerBeforeContentSizing(blockContainerLayoutState);
+
+            // If we are not going to take the layoutBlockChildren path let's just take
+            // care of that work here.
+            auto& blockContainer = blockContainerLayoutState.blockContainer;
+            if (!blockContainer->firstChild() || blockContainer->childrenInline()) {
+                blockContainer->layoutInFlowChildren(relayoutChildren, blockContainerLayoutState.repaintLogicalTop, blockContainerLayoutState.repaintLogicalBottom, blockContainerLayoutState.maxFloatLogicalBottom);
+                updateBlockContainerAfterContentSizing(blockContainerLayoutState);
+                layoutStack.takeLast();
+                continue;
+            }
+
+            // Set up some initial state before we start sizing our content.
+            blockContainerLayoutState.beforeEdge = blockContainer->borderAndPaddingBefore();
+            blockContainerLayoutState.afterEdge = blockContainer->borderAndPaddingAfter() + scrollbarLogicalHeight();
+
+            blockContainerLayoutState.marginInfo = MarginInfo(blockContainer, blockContainerLayoutState.beforeEdge, blockContainerLayoutState.afterEdge);
+
+            blockContainer->setLogicalHeight(blockContainerLayoutState.beforeEdge);
+        }
+
+        // Content sizing for the block container.
+        if (!contentSizingState.currentChild) {
+            ASSERT(!blockContainerLayoutState.blockContainer->childrenInline());
+
+            if (!addNextChildToLayoutStack(blockContainerLayoutState, layoutStack)) {
+                updateBlockContainerAfterContentSizing(blockContainerLayoutState);
+                layoutStack.takeLast();
+            }
+            continue;
+        }
+
+        if (blockContainerLayoutState.contentSizingState.childLayoutState == ChildLayoutState::DidFirstPassLayout) {
+            performMarginCollapsing(blockContainerLayoutState);
+            auto& child = *blockContainerLayoutState.contentSizingState.currentChild;
+
+
+            if (child.needsLayout()) {
+                blockContainerLayoutState.contentSizingState.childLayoutState = ChildLayoutState::DidSecondPassLayout;
+                layoutStack.append({ downcast<RenderBlockFlow>(child) });
+                continue;
+            }
+
+            // Perform final positioning of child. Get next child if there is one and set
+            // up state.
+            positionAndRepaintChild(blockContainerLayoutState);
+            if (!addNextChildToLayoutStack(blockContainerLayoutState, layoutStack)) {
+                updateBlockContainerAfterContentSizing(blockContainerLayoutState);
+                layoutStack.takeLast();
+            }
+            continue;
+        }
+
+        if (blockContainerLayoutState.contentSizingState.childLayoutState == ChildLayoutState::DidSecondPassLayout) {
+            positionAndRepaintChild(blockContainerLayoutState);
+            if (!addNextChildToLayoutStack(blockContainerLayoutState, layoutStack)) {
+                updateBlockContainerAfterContentSizing(blockContainerLayoutState);
+                layoutStack.takeLast();
+            }
+            continue;
+        }
+
+        ASSERT_NOT_REACHED();
+    }
+
+}
+
 void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
+
+    if (isRenderView() && !childrenInline()) {
+        layoutBlockIterative(relayoutChildren, *this);
+        return;
+    }
 
     if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
@@ -978,6 +1069,352 @@ void RenderBlockFlow::performBlockStepSizing(RenderBox& child, LayoutUnit blockS
         BlockStepSizing::distributeExtraSpaceToChildPadding(child, extraSpace, writingMode());
         break;
     }
+}
+
+
+void RenderBlockFlow::estimateMarginCollapsing(BlockContainerLayoutState& blockContainerLayoutState)
+{
+    auto& blockContainer = blockContainerLayoutState.blockContainer.get();
+    auto& contentSizingState = blockContainerLayoutState.contentSizingState;
+
+    contentSizingState.oldPosMarginBefore = blockContainer.maxPositiveMarginBefore();
+    contentSizingState.oldNegMarginBefore = blockContainer.maxNegativeMarginBefore();
+
+    auto& child = *contentSizingState.currentChild;
+    child.computeAndSetBlockDirectionMargins(blockContainer);
+
+    auto& marginInfo = blockContainerLayoutState.marginInfo.value();
+    auto& previousFloatLogicalBottom = blockContainerLayoutState.previousFloatLogicalBottom;
+
+    // The child is a normal flow object. Compute the margins we will use for collapsing now.
+
+    // Try to guess our correct logical top position. In most cases this guess will
+    // be correct. Only if we're wrong (when we compute the real logical top position)
+    // will we have to potentially relayout.
+    LayoutUnit estimateWithoutPagination;
+    LayoutUnit logicalTopEstimate = blockContainer.estimateLogicalTopPosition(child, marginInfo, estimateWithoutPagination);
+    contentSizingState.logicalTopEstimate = logicalTopEstimate;
+
+    // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
+    contentSizingState.oldRect = child.frameRect();
+    LayoutUnit oldLogicalTop = logicalTopForChild(child);
+
+    // Position the child as though it didn't collapse with the top.
+    blockContainer.setLogicalTopForChild(child, logicalTopEstimate, ApplyLayoutDelta);
+    blockContainer.estimateFragmentRangeForBoxChild(child);
+
+    auto* childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
+    bool markDescendantsWithFloats = false;
+    if (logicalTopEstimate != oldLogicalTop && !child.avoidsFloats() && childBlockFlow && childBlockFlow->containsFloats())
+        markDescendantsWithFloats = true;
+    else if (UNLIKELY(logicalTopEstimate.mightBeSaturated())) {
+        // logicalTopEstimate, returned by estimateLogicalTopPosition, might be saturated for
+        // very large elements. If it does the comparison with oldLogicalTop might yield a
+        // false negative as adding and removing margins, borders etc from a saturated number
+        // might yield incorrect results. If this is the case always mark for layout.
+        markDescendantsWithFloats = true;
+    } else if (!child.avoidsFloats() || child.shrinkToAvoidFloats()) {
+        // If an element might be affected by the presence of floats, then always mark it for
+        // layout.
+        LayoutUnit fb = std::max(previousFloatLogicalBottom, blockContainer.lowestFloatLogicalBottom());
+        if (fb > logicalTopEstimate)
+            markDescendantsWithFloats = true;
+    }
+
+    if (childBlockFlow) {
+        if (markDescendantsWithFloats)
+            childBlockFlow->markAllDescendantsWithFloatsForLayout();
+        if (!child.isWritingModeRoot())
+            previousFloatLogicalBottom = std::max(previousFloatLogicalBottom, oldLogicalTop + childBlockFlow->lowestFloatLogicalBottom());
+    }
+
+    child.markForPaginationRelayoutIfNeeded();
+
+    contentSizingState.childHadLayout = child.everHadLayout();
+    contentSizingState.childNeededLayout = child.needsLayout();
+}
+
+void RenderBlockFlow::performMarginCollapsing(BlockContainerLayoutState& blockContainerLayoutState)
+{
+    auto& blockContainer = blockContainerLayoutState.blockContainer.get();
+    auto& contentSizingState = blockContainerLayoutState.contentSizingState;
+    auto& child = *contentSizingState.currentChild;
+
+    auto& marginInfo = blockContainerLayoutState.marginInfo.value();
+    auto oldPosMarginBefore = contentSizingState.oldPosMarginBefore;
+    auto oldNegMarginBefore = contentSizingState.oldNegMarginBefore;
+
+    // Now determine the correct ypos based off examination of collapsing margin
+    // values.
+    contentSizingState.logicalTopBeforeClear = blockContainer.collapseMargins(child, marginInfo);
+
+    // Now check for clear.
+    contentSizingState.logicalTopAfterClear = blockContainer.clearFloatsIfNeeded(child, marginInfo, oldPosMarginBefore, oldNegMarginBefore, contentSizingState.logicalTopBeforeClear);
+
+    blockContainer.setLogicalTopForChild(child, contentSizingState.logicalTopAfterClear, ApplyLayoutDelta);
+
+    auto* childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
+
+    // Now we have a final top position. See if it really does end up being different from our estimate.
+    // clearFloatsIfNeeded can also mark the child as needing a layout even though we didn't move. This happens
+    // when collapseMargins dynamically adds overhanging floats because of a child with negative margins.
+    if (contentSizingState.logicalTopAfterClear != contentSizingState.logicalTopEstimate || child.needsLayout()) {
+        if (child.shrinkToAvoidFloats()) {
+            // The child's width depends on the line width. When the child shifts to clear an item, its width can
+            // change (because it has more available line width). So mark the item as dirty.
+            child.setChildNeedsLayout(MarkOnlyThis);
+        }
+
+        if (childBlockFlow) {
+            if (!child.avoidsFloats() && childBlockFlow->containsFloats())
+                childBlockFlow->markAllDescendantsWithFloatsForLayout();
+            child.markForPaginationRelayoutIfNeeded();
+        }
+    }
+
+}
+
+void RenderBlockFlow::positionAndRepaintChild(BlockContainerLayoutState& blockContainerLayoutState)
+{
+    auto& marginInfo = blockContainerLayoutState.marginInfo.value();
+    auto& contentSizingState = blockContainerLayoutState.contentSizingState;
+    auto& child = *contentSizingState.currentChild;
+    auto& blockContainer = blockContainerLayoutState.blockContainer.get();
+
+    // We are no longer at the top of the block if we encounter a non-empty child.
+    // This has to be done after checking for clear, so that margins can be reset if a clear occurred.
+    if (marginInfo.atBeforeSideOfBlock() && !child.isSelfCollapsingBlock()) {
+        marginInfo.setAtBeforeSideOfBlock(false);
+
+        if (auto* layoutState = frame().view()->layoutContext().layoutState(); layoutState && layoutState->marginTrimBlockStart())
+            layoutState->setMarginTrimBlockStart(false);
+    }
+    // Now place the child in the correct left position
+    blockContainer.determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
+
+    // Update our height now that the child has been placed in the correct position.
+    blockContainer.setLogicalHeight(blockContainer.logicalHeight() + blockContainer.logicalHeightForChildForFragmentation(child));
+
+    auto* childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
+    // If the child has overhanging floats that intrude into following siblings (or possibly out
+    // of this block), then the parent gets notified of the floats now.
+    if (childBlockFlow && childBlockFlow->containsFloats())
+        blockContainerLayoutState.maxFloatLogicalBottom = std::max(blockContainerLayoutState.maxFloatLogicalBottom, addOverhangingFloats(*childBlockFlow, !contentSizingState.childNeededLayout));
+
+    LayoutSize childOffset = child.location() - contentSizingState.oldRect.location();
+    if (childOffset.width() || childOffset.height()) {
+        view().frameView().layoutContext().addLayoutDelta(childOffset);
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants. An exception is if we need a layout. In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (contentSizingState.childHadLayout && !blockContainer.selfNeedsLayout() && child.checkForRepaintDuringLayout())
+            child.repaintDuringLayoutIfMoved(contentSizingState.oldRect);
+    }
+
+    if (!contentSizingState.childHadLayout && child.checkForRepaintDuringLayout()) {
+        child.repaint();
+        child.repaintOverhangingFloats(true);
+    }
+}
+
+bool RenderBlockFlow::addNextChildToLayoutStack(BlockContainerLayoutState& blockContainerLayoutState, Vector<BlockContainerLayoutState>& layoutStack)
+{
+
+    auto getNextChildCandidateForLayout = [&] (BlockContainerLayoutState& blockContainerLayoutState) -> RenderBox* {
+        auto* startingChild = blockContainerLayoutState.contentSizingState.currentChild ? blockContainerLayoutState.contentSizingState.currentChild->nextSiblingBox() : blockContainerLayoutState.blockContainer->firstChildBox();
+
+        for (auto* currentChild = startingChild; currentChild; currentChild = currentChild->nextSiblingBox()) {
+            if (currentChild->isFloatingOrOutOfFlowPositioned()) {
+                currentChild->containingBlock()->insertPositionedObject(*currentChild);
+                blockContainerLayoutState.blockContainer->adjustPositionedBlock(*currentChild, blockContainerLayoutState.marginInfo.value());
+                continue;
+            }
+
+            if (!currentChild->isRenderBlockFlow()) {
+                blockContainerLayoutState.blockContainer->layoutBlockChild(*currentChild, blockContainerLayoutState.marginInfo.value(), blockContainerLayoutState.previousFloatLogicalBottom, blockContainerLayoutState.maxFloatLogicalBottom);
+                continue;
+            }
+
+            blockContainerLayoutState.blockContainer->updateBlockChildDirtyBitsBeforeLayout(blockContainerLayoutState.relayoutChildren, *currentChild);
+            return currentChild;
+        }
+        return nullptr;
+    };
+
+
+    while (auto* childCandidate = getNextChildCandidateForLayout(blockContainerLayoutState)) {
+        blockContainerLayoutState.contentSizingState.currentChild = childCandidate;
+        // We need to do this every time to match current behavior.
+        estimateMarginCollapsing(blockContainerLayoutState);
+
+        // If the child is already marked for layout just add it onto the stack.
+        if (childCandidate->needsLayout()) {
+            blockContainerLayoutState.contentSizingState.childLayoutState = ChildLayoutState::DidFirstPassLayout;
+            layoutStack.append({ downcast<RenderBlockFlow>(*childCandidate) });
+            return true;
+        }
+
+        performMarginCollapsing(blockContainerLayoutState);
+
+        // Marign collapsing can cause the child to get invalidated and require layout.
+        if (childCandidate->needsLayout()) {
+            blockContainerLayoutState.contentSizingState.childLayoutState = ChildLayoutState::DidSecondPassLayout;
+            layoutStack.append({ downcast<RenderBlockFlow>(*childCandidate) });
+            return true;
+        }
+
+        positionAndRepaintChild(blockContainerLayoutState);
+        childCandidate = getNextChildCandidateForLayout(blockContainerLayoutState);
+    }
+    return false;
+}
+
+void RenderBlockFlow::updateBlockContainerBeforeContentSizing(BlockContainerLayoutState& blockContainerLayoutState)
+{
+    auto& blockContainer = blockContainerLayoutState.blockContainer;
+    // We are at the beginning of layout for this block container, so start be
+    // computing the inline size and then start sizing its content.
+    if (blockContainerLayoutState.relayoutChildren == RelayoutChildren::No && simplifiedLayout())
+        return;
+
+    blockContainerLayoutState.layoutRepainter = LayoutRepainter(blockContainer.get());
+
+    if (blockContainer->recomputeLogicalWidthAndColumnWidth())
+        blockContainerLayoutState.relayoutChildren = RelayoutChildren::Yes;
+
+    if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->legacyLineClamp())
+        blockContainerLayoutState.relayoutChildren = RelayoutChildren::Yes;
+
+
+    blockContainer->rebuildFloatingObjectSetFromIntrudingFloats();
+
+    blockContainerLayoutState.previousHeight = blockContainer->logicalHeight();
+
+    blockContainer->resetLogicalHeightBeforeLayoutIfNeeded();
+
+    // Need to figure out how to do this
+    // blockContainerLayoutState.statePusher = LayoutStateMaintainer(blockContainer.get(), blockContainer->locationOffset(), blockContainer->isTransformed() || blockContainer->hasReflection() || blockContainer->style().writingMode().isBlockFlipped(), 0, false);
+
+    auto& styleToUse = blockContainer->style();
+    bool isCell = blockContainer->isRenderTableCell();
+    if (!isCell) {
+        blockContainer->initMaxMarginValues();
+
+        blockContainer->setHasMarginBeforeQuirk(styleToUse.marginBefore().hasQuirk());
+        blockContainer->setHasMarginAfterQuirk(styleToUse.marginAfter().hasQuirk());
+        blockContainer->setPaginationStrut(0);
+    }
+    if (!blockContainer->firstChild() && !blockContainer->isAnonymousBlock())
+        blockContainer->setChildrenInline(true);
+    blockContainer->dirtyForLayoutFromPercentageHeightDescendants();
+}
+
+void RenderBlockFlow::updateBlockContainerAfterContentSizing(BlockContainerLayoutState& blockContainerLayoutState)
+{
+    auto& blockContainer = blockContainerLayoutState.blockContainer.get();
+    // Expand our intrinsic height to encompass floats.
+    LayoutUnit toAdd = blockContainer.borderAndPaddingAfter() + blockContainer.scrollbarLogicalHeight();
+    if (blockContainer.lowestFloatLogicalBottom() > (blockContainer.logicalHeight() - toAdd) && blockContainer.createsNewFormattingContext())
+        blockContainer.setLogicalHeight(blockContainer.lowestFloatLogicalBottom() + toAdd);
+
+    // Calculate our new height.
+    LayoutUnit oldHeight = blockContainer.logicalHeight();
+    LayoutUnit oldClientAfterEdge = blockContainer.clientLogicalBottom();
+
+    // Before updating the final size of the flow thread make sure a forced break is applied after the content.
+    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
+    if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(blockContainer))
+        fragmentedFlow->applyBreakAfterContent(oldClientAfterEdge);
+
+    blockContainer.updateLogicalHeight();
+    LayoutUnit newHeight = blockContainer.logicalHeight();
+
+    LayoutUnit alignContentShift = 0_lu;
+
+    {
+        // FIXME: This could be removed once relayoutForPagination() either stop recursing or we manage to
+        // re-order them.
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || blockContainer.style().writingMode().isBlockFlipped(), { }, false);
+
+        if (oldHeight != newHeight) {
+            if (oldHeight > newHeight && blockContainerLayoutState.maxFloatLogicalBottom > newHeight && !blockContainer.childrenInline()) {
+                // One of our children's floats may have become an overhanging float for us. We need to look for it.
+                for (auto& blockFlow : childrenOfType<RenderBlockFlow>(blockContainer)) {
+                    if (blockFlow.isFloatingOrOutOfFlowPositioned())
+                        continue;
+                    if (blockFlow.lowestFloatLogicalBottom() + blockFlow.logicalTop() > newHeight)
+                        blockContainer.addOverhangingFloats(blockFlow, false);
+                }
+            }
+        }
+
+        bool heightChanged = (blockContainerLayoutState.previousHeight != newHeight);
+        if (heightChanged || alignContentShift != 0_lu)
+            blockContainerLayoutState.relayoutChildren = RelayoutChildren::Yes;
+        if (blockContainer.isDocumentElementRenderer())
+            blockContainer.layoutPositionedObjects(RelayoutChildren::Yes);
+        else
+            blockContainer.layoutPositionedObjects(blockContainerLayoutState.relayoutChildren);
+    }
+
+    updateDescendantTransformsAfterLayout();
+
+    // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
+    computeOverflow(oldClientAfterEdge);
+
+    auto* state = view().frameView().layoutContext().layoutState();
+    if (state && state->pageLogicalHeight())
+        setPageLogicalOffset(state->pageLogicalOffset(this, logicalTop()));
+
+    updateLayerTransform();
+
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
+    // we overflow or not.
+    updateScrollInfoAfterLayout();
+
+    // FIXME: This repaint logic should be moved into a separate helper function!
+    // Repaint with our new bounds if they are different from our old bounds.
+    auto repaintLogicalTop = blockContainerLayoutState.repaintLogicalTop;
+    auto repaintLogicalBottom = blockContainerLayoutState.repaintLogicalBottom;
+    bool didFullRepaint = blockContainerLayoutState.layoutRepainter.value().repaintAfterLayout();
+    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (blockContainer.style().usedVisibility() == Visibility::Visible || blockContainer.enclosingLayer()->hasVisibleContent())) {
+        // FIXME: We could tighten up the left and right invalidation points if we let layoutInlineChildren fill them in based off the particular lines
+        // it had to lay out. We wouldn't need the hasNonVisibleOverflow() hack in that case either.
+        LayoutUnit repaintLogicalLeft = blockContainer.logicalLeftVisualOverflow();
+        LayoutUnit repaintLogicalRight = blockContainer.logicalRightVisualOverflow();
+        if (blockContainer.hasNonVisibleOverflow()) {
+            // If we have clipped overflow, we should use layout overflow as well, since visual overflow from lines didn't propagate to our block's overflow.
+            // Note the old code did this as well but even for overflow:visible. The addition of hasNonVisibleOverflow() at least tightens up the hack a bit.
+            // layoutInlineChildren should be patched to compute the entire repaint rect.
+            repaintLogicalLeft = std::min(repaintLogicalLeft, blockContainer.logicalLeftLayoutOverflow());
+            repaintLogicalRight = std::max(repaintLogicalRight, blockContainer.logicalRightLayoutOverflow());
+        }
+
+        LayoutRect repaintRect;
+        if (blockContainer.isHorizontalWritingMode())
+            repaintRect = LayoutRect(repaintLogicalLeft, repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop);
+        else
+            repaintRect = LayoutRect(repaintLogicalTop, repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft);
+
+        if (blockContainer.hasNonVisibleOverflow()) {
+            // Adjust repaint rect for scroll offset
+            repaintRect.moveBy(-blockContainer.scrollPosition());
+
+            // Don't allow this rect to spill out of our overflow box.
+            repaintRect.intersect(LayoutRect(LayoutPoint(), blockContainer.size()));
+        }
+
+        // Make sure the rect is still non-empty after intersecting for overflow above
+        if (!repaintRect.isEmpty()) {
+            blockContainer.repaintRectangle(repaintRect); // We need to do a partial repaint of our content.
+            if (blockContainer.hasReflection())
+                blockContainer.repaintRectangle(blockContainer.reflectedRect(repaintRect));
+        }
+    }
+
+    blockContainer.clearNeedsLayout();
+
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)

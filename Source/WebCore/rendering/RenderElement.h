@@ -309,7 +309,6 @@ public:
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-
     bool layerCreationAllowedForSubtree() const;
 
     enum class StylePropagationType {
