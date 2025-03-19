@@ -462,6 +462,7 @@ struct CalendarRecord {
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<TimeZoneRecord> parseTimeZone(StringView);
+std::optional<String> getTimeZoneNameFromId(TimeZoneID id);
 std::optional<Duration> parseDuration(StringView);
 std::optional<int64_t> parseUTCOffset(StringView, Vector<LChar>&, bool parseSubMinutePrecision = true);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
@@ -504,7 +505,7 @@ bool isYearWithinLimits(double year);
 
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
 Int128 getUTCEpochNanoseconds(PlainDateTime);
-Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128);
+Int128 getNamedTimeZoneOffsetNanoseconds(JSGlobalObject*, TimeZoneID, ExactTime);
 
 std::optional<Int128> roundTimeDurationToIncrement(Int128, Int128, RoundingMode);
 

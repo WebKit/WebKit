@@ -1856,7 +1856,7 @@ const Vector<String>& intlAvailableTimeZones()
     std::call_once(initializeOnce, [&] {
         Vector<String> temporary;
         UErrorCode status = U_ZERO_ERROR;
-        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, nullptr, nullptr, &status));
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, nullptr, nullptr, &status));
         ASSERT(U_SUCCESS(status));
 
         int32_t count = uenum_count(enumeration.get(), &status);

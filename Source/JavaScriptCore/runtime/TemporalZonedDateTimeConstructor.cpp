@@ -109,24 +109,10 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     if (timeZoneString.convertToASCIIUppercase() == "UTC"_s)
         timeZone = ISO8601::TimeZone::utc();
     else {
-        std::optional<ISO8601::TimeZoneRecord> timeZoneParse = ISO8601::parseTimeZone(timeZoneString);
+        std::optional<ISO8601::TimeZone> timeZoneParse = TemporalTimeZone::parseTemporalTimeZoneString(timeZoneString);
         if (!timeZoneParse)
             return throwVMRangeError(globalObject, scope, "Couldn't parse time zone name"_s);
-        if (!timeZoneParse->m_offset) {
-            if (timeZoneParse->m_annotation) {
-                if (!timeZoneParse->m_annotation->m_offset) {
-                    auto name = timeZoneParse->m_annotation->m_annotation;
-                    auto identifierRecord = TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(globalObject, name);
-                    RETURN_IF_EXCEPTION(scope, { });
-                    if (!identifierRecord)
-                        return throwVMRangeError(globalObject, scope, "Unknown time zone name"_s);
-                    timeZone = identifierRecord.value();
-                } else
-                    timeZone = ISO8601::TimeZone::offset(timeZoneParse->m_annotation->m_offset.value());
-            } else
-                return throwVMRangeError(globalObject, scope, "Invalid result parsing time zone "_s);
-        } else
-            timeZone = ISO8601::TimeZone::offset(timeZoneParse->m_offset->m_offset);
+        timeZone = timeZoneParse.value();
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, structure, WTFMove(exactTime), WTFMove(timeZone))));
 }

@@ -177,7 +177,9 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
 
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             auto zdt = jsCast<TemporalZonedDateTime*>(itemValue);
-            auto isoDateTime = TemporalTimeZone::getISODateTimeFor(zdt->timeZone(), zdt->exactTime());
+            auto isoDateTime = TemporalTimeZone::getISODateTimeFor(globalObject,
+                zdt->timeZone(), zdt->exactTime());
+            RETURN_IF_EXCEPTION(scope, { });
             if (optionsValue) {
                 toTemporalOverflow(globalObject, optionsValue.value());
                 RETURN_IF_EXCEPTION(scope, { });

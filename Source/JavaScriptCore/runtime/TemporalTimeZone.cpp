@@ -30,7 +30,9 @@
 #include "JSObjectInlines.h"
 #include "ParseInt.h"
 #include "TemporalZonedDateTime.h"
+#include <unicode/ucal.h>
 #include <wtf/text/StringParsingBuffer.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -69,17 +71,27 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
-Int128 TemporalTimeZone::getOffsetNanosecondsFor(ISO8601::TimeZone timeZone, Int128 epochNs)
+Int128 TemporalTimeZone::getOffsetNanosecondsFor(JSGlobalObject* globalObject,
+    ISO8601::TimeZone timeZone, Int128 epochNs)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (timeZone.isOffset())
         return timeZone.offsetNanoseconds();
-    return ISO8601::getNamedTimeZoneOffsetNanoseconds(timeZone.asID(), epochNs);
+    RELEASE_AND_RETURN(scope, ISO8601::getNamedTimeZoneOffsetNanoseconds(
+        globalObject, timeZone.asID(), ISO8601::ExactTime(epochNs)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
-ISO8601::PlainDateTime TemporalTimeZone::getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
+ISO8601::PlainDateTime TemporalTimeZone::getISODateTimeFor(JSGlobalObject* globalObject,
+    ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
 {
-    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto offsetNanoseconds = getOffsetNanosecondsFor(globalObject, timeZone, epochNs.epochNanoseconds());
+    RETURN_IF_EXCEPTION(scope, { });
     auto result = TemporalCalendar::getISOPartsFromEpoch(epochNs);
     auto date = result.date();
     auto time = result.time();
@@ -88,13 +100,133 @@ ISO8601::PlainDateTime TemporalTimeZone::getISODateTimeFor(ISO8601::TimeZone tim
         static_cast<double>(time.nanosecond() + offsetNanoseconds));
 }
 
-// https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
-static Vector<Int128> getNamedTimeZoneEpochNanoseconds(TimeZoneID timeZoneIdentifier, ISO8601::PlainDateTime isoDateTime)
+static UCalendarMonths toICUMonth(double month)
 {
-    // FIXME: handle other named time zones
-    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
-    Int128 epochNanoseconds = ISO8601::getUTCEpochNanoseconds(isoDateTime);
-    return Vector<Int128> { epochNanoseconds };
+    if (month == 1)
+        return UCAL_JANUARY;
+    else if (month == 2)
+        return UCAL_FEBRUARY;
+    else if (month == 3)
+        return UCAL_MARCH;
+    else if (month == 4)
+        return UCAL_APRIL;
+    else if (month == 5)
+        return UCAL_MAY;
+    else if (month == 6)
+        return UCAL_JUNE;
+    else if (month == 7)
+        return UCAL_JULY;
+    else if (month == 8)
+        return UCAL_AUGUST;
+    else if (month == 9)
+        return UCAL_SEPTEMBER;
+    else if (month == 10)
+        return UCAL_OCTOBER;
+    else if (month == 11)
+        return UCAL_NOVEMBER;
+    else
+        return UCAL_DECEMBER;
+}
+
+// https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
+static Vector<Int128> getNamedTimeZoneEpochNanoseconds(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier, ISO8601::PlainDateTime isoDateTime)
+{
+    // Comments based on polyfill
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Get the offset of one day before and after the requested calendar date and
+    // clock time, avoiding overflows if near the edge of the Instant range.
+    Int128 ns = ISO8601::getUTCEpochNanoseconds(isoDateTime);
+    if (timeZoneIdentifier == utcTimeZoneID())
+        return Vector<Int128> { ns };
+
+    Int128 nsEarlier = ns - ISO8601::ExactTime::nsPerDay;
+    if (nsEarlier < ISO8601::ExactTime::minValue)
+        nsEarlier = ns;
+
+    Int128 nsLater = ns + ISO8601::ExactTime::nsPerDay;
+    if (nsLater > ISO8601::ExactTime::maxValue)
+        nsLater = ns;
+
+    auto earlierOffsetNs = ISO8601::getNamedTimeZoneOffsetNanoseconds(globalObject, timeZoneIdentifier, ISO8601::ExactTime(nsEarlier));
+    RETURN_IF_EXCEPTION(scope, { });
+    auto laterOffsetNs = ISO8601::getNamedTimeZoneOffsetNanoseconds(globalObject, timeZoneIdentifier, ISO8601::ExactTime(nsLater));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // If before and after offsets are the same, then we assume there was no
+    // offset transition in between, and therefore only one exact time can
+    // correspond to the provided calendar date and clock time. But if they're
+    // different, then there was an offset transition in between, so test both
+    // offsets to see which one(s) will yield a matching exact time.
+
+    auto found = earlierOffsetNs == laterOffsetNs ? Vector<Int128> { earlierOffsetNs } : Vector<Int128> { earlierOffsetNs, laterOffsetNs };
+
+    // TODO: cache this
+    std::optional<String> timeZoneString = ISO8601::getTimeZoneNameFromId(timeZoneIdentifier);
+    if (!timeZoneString) {
+        throwRangeError(globalObject, scope, "bad time zone ID in getNamedTimeZoneOffsetNanoseconds"_s);
+        return { };
+    }
+    // copied from JSDateMath.cpp
+    UErrorCode status = U_ZERO_ERROR;
+    auto timeZoneName = timeZoneString->charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return { };
+    }
+    Vector<UChar, 32> buffer;
+    UBool isSystemID = false;
+    status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneName->data(), -1, buffer, &isSystemID);
+    ASSERT_UNUSED(isSystemID, isSystemID);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    UCalendar* calendar = ucal_open(buffer.data(), buffer.size(), "", UCAL_DEFAULT, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+
+    Vector<Int128> result;
+
+    for (size_t i = 0; i < found.size(); i++) {
+        Int128 offsetNanoseconds = ns - found[i];
+
+    // TODO: refactor w/ getNamedTimeZoneOffsetNanoseconds
+
+        Int128 offsetMillis = offsetNanoseconds / 1'000'000;
+        ucal_setMillis(calendar, static_cast<double>(offsetMillis), &status);
+        int32_t year = ucal_get(calendar, UCAL_YEAR, &status);
+        int32_t month = ucal_get(calendar, UCAL_MONTH, &status);
+        int32_t day = ucal_get(calendar, UCAL_DATE, &status);
+        int32_t hour = ucal_get(calendar, UCAL_HOUR_OF_DAY, &status);
+        int32_t minute = ucal_get(calendar, UCAL_MINUTE, &status);
+        int32_t second = ucal_get(calendar, UCAL_SECOND, &status);
+        int32_t millisecond = ucal_get(calendar, UCAL_MILLISECOND, &status);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+
+        int32_t expectedYear = static_cast<int32_t>(isoDateTime.date().year());
+        int32_t expectedMonth = toICUMonth(static_cast<int32_t>(isoDateTime.date().month()));
+        int32_t expectedDay = static_cast<int32_t>(isoDateTime.date().day());
+        int32_t expectedHour = static_cast<int32_t>(isoDateTime.time().hour());
+        int32_t expectedMinute = static_cast<int32_t>(isoDateTime.time().minute());
+        int32_t expectedSecond = static_cast<int32_t>(isoDateTime.time().second());
+        int32_t expectedMillisecond = static_cast<int32_t>(isoDateTime.time().millisecond());
+
+        if ((year == expectedYear) && (month == expectedMonth) && (day == expectedDay)
+            && (hour == expectedHour) && (minute == expectedMinute) && (second == expectedSecond)
+            && (millisecond == expectedMillisecond)) {
+            result.append(offsetNanoseconds);
+            if (!ISO8601::ExactTime(offsetNanoseconds).isValid()) {
+                throwRangeError(globalObject, scope, "time is invalid in getNamedTimeZoneEpochNanoseconds()"_s);
+                return { };
+            }
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
+
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    ucal_close(calendar);
+
+    return result;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getpossibleepochnanoseconds
@@ -118,7 +250,9 @@ Vector<Int128> TemporalTimeZone::getPossibleEpochNanoseconds(JSGlobalObject* glo
     } else {
         ISO8601::checkISODaysRange(globalObject, isoDate);
         RETURN_IF_EXCEPTION(scope, { });
-        possibleEpochNanoseconds = getNamedTimeZoneEpochNanoseconds(timeZone.asID(), isoDateTime);
+        possibleEpochNanoseconds = getNamedTimeZoneEpochNanoseconds(globalObject,
+            timeZone.asID(), isoDateTime);
+        RETURN_IF_EXCEPTION(scope, { });
     }
     for (auto epochNanoseconds : possibleEpochNanoseconds) {
         if (!ISO8601::ExactTime(epochNanoseconds).isValid()) {
@@ -160,9 +294,11 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
         throwRangeError(globalObject, scope, "day before is not a valid instant in disambiguatePossibleEpochNanoseconds()"_s);
         return { };
     }
-    auto offsetBefore = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, dayBefore);
+    auto offsetBefore = TemporalTimeZone::getOffsetNanosecondsFor(globalObject, timeZone, dayBefore);
+    RETURN_IF_EXCEPTION(scope, { });
     auto dayAfter = utcNs + ISO8601::ExactTime::nsPerDay;
-    auto offsetAfter = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, dayAfter);
+    auto offsetAfter = TemporalTimeZone::getOffsetNanosecondsFor(globalObject, timeZone, dayAfter);
+    RETURN_IF_EXCEPTION(scope, { });
     auto nanoseconds = offsetAfter - offsetBefore;
     ASSERT(absInt128(nanoseconds) <= ISO8601::ExactTime::nsPerDay);
 
@@ -313,17 +449,12 @@ ISO8601::ExactTime TemporalTimeZone::getEpochNanosecondsFor(JSGlobalObject* glob
 }
 
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
     TimeZoneID timeZoneIdentifier)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (timeZoneIdentifier == utcTimeZoneID())
         return ISO8601::TimeZone::offset(0);
-    // TODO: support named time zones
-    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
-    return { };
+    return ISO8601::TimeZone::named(timeZoneIdentifier);
 }
 
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
@@ -395,10 +526,74 @@ String TemporalTimeZone::formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds
     return formatOffsetTimeZoneIdentifier((int64_t) offsetMinutes, std::nullopt);
 }
 
-static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)
+
+// https://tc39.es/proposal-temporal/#prod-TimeZoneIANAName
+template<typename CharacterType>
+static std::optional<String> parseTimeZoneIANANameComponent(StringParsingBuffer<CharacterType>& buffer)
 {
-    // TODO: support named time zones
-    return std::nullopt;
+   //  TimeZoneIANANameComponent :::
+    //     TZLeadingChar
+    //     TimeZoneIANANameComponent TZChar
+    //
+    //  TZLeadingChar :::
+    //      Alpha
+    //      .
+    //      _
+    //
+    //  TZChar :::
+    //      TZLeadingChar
+    //      DecimalDigit
+    //      -
+    //      +
+
+    if (buffer.atEnd())
+        return std::nullopt;
+
+    unsigned index = 0;
+    for (; index < buffer.lengthRemaining(); ++index) {
+        auto character = buffer[index];
+        if (character == '/')
+            break;
+    }
+    if (index == 1)
+        return std::nullopt;
+
+    return buffer.consume(index).subspan(0, index);
+}
+
+// https://tc39.es/proposal-temporal/#prod-TimeZoneIANAName
+template<typename CharacterType>
+static bool parseTimeZoneIANAName(StringParsingBuffer<CharacterType>& buffer)
+{
+    //  TimeZoneIANAName :::
+    //      TimeZoneIANANameComponent
+    //      TimeZoneIANAName / TimeZoneIANANameComponent
+    //
+
+    bool empty = true;
+
+    while (!buffer.atEnd()) {
+        std::optional<String> component = parseTimeZoneIANANameComponent(buffer);
+        if (!component)
+            return false;
+        if (buffer.atEnd())
+            return true;
+        if (*buffer != '/')
+            return false;
+        buffer.advance();
+    }
+    return !empty;
+}
+
+// https://tc39.es/proposal-temporal/#prod-TimeZoneIANAName
+static bool parseTimeZoneIANAName(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> bool {
+        auto result = parseTimeZoneIANAName(buffer);
+        if (!buffer.atEnd())
+            return false;
+        return result;
+    });
 }
 
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
@@ -411,17 +606,17 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     auto parseResult = ISO8601::parseUTCOffset(identifier, ignore, false); // Don't accept sub-minute precision
     bool isIANAName = false;
     if (!parseResult) {
-        isIANAName = true;
-        parseResult = parseTimeZoneIANAName(identifier);
+        isIANAName = parseTimeZoneIANAName(identifier);
     }
+    if (isIANAName) {
+        std::optional<TimeZoneID> id = ISO8601::parseTimeZoneName(identifier);
+        if (!id)
+            return std::nullopt;
+        return ISO8601::TimeZone::named(id.value());
+    }
+
     if (!parseResult)
         return std::nullopt;
-
-    if (isIANAName) {
-        if (parseResult)
-            return ISO8601::TimeZone::named(parseResult.value());
-        return std::nullopt;
-    }
 
     int64_t offsetNanoseconds = parseResult.value();
     ASSERT(!(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute));

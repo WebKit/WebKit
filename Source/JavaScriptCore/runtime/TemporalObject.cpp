@@ -586,7 +586,7 @@ TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject* globalObj
     return intlOption<TemporalDisambiguation>(globalObject, options, globalObject->vm().propertyNames->disambiguation, {
         { "compatible"_s, TemporalDisambiguation::Compatible }, { "earlier"_s, TemporalDisambiguation::Earlier },
         { "later"_s, TemporalDisambiguation::Later }, { "reject"_s, TemporalDisambiguation::Reject },
-        }, "disambiguation must be \"compatible\", \"earlier\", \"later\", or \"reject\""_s, TemporalDisambiguation::Reject);
+        }, "disambiguation must be \"compatible\", \"earlier\", \"later\", or \"reject\""_s, TemporalDisambiguation::Compatible);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getroundingincrementoption

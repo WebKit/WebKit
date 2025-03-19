@@ -387,7 +387,7 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!options)
-        return toString();
+        RELEASE_AND_RETURN(scope, toString(globalObject));
 
     TemporalTimeZone* timeZone = nullptr;
     JSValue timeZoneValue = options->get(globalObject, vm.propertyNames->timeZone);
@@ -405,7 +405,7 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
 
     // No need to make a new object if we were given explicit defaults.
     if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
-        return toString(timeZone);
+        RELEASE_AND_RETURN(scope, toString(globalObject, timeZone));
 
     auto maybeRounded = exactTime().round(data.increment, data.unit, roundingMode);
     if (!maybeRounded) {
@@ -427,24 +427,29 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
         return { };
     }
 
-    return toString(newExactTime, timeZone, data);
+    RELEASE_AND_RETURN(scope, toString(globalObject, newExactTime, timeZone, data));
 }
 
 // TemporalInstantToString ( instant, timeZone, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalinstanttostring
-String TemporalInstant::toString(ISO8601::ExactTime exactTime, TemporalTimeZone* timeZone, PrecisionData precision)
+String TemporalInstant::toString(JSGlobalObject* globalObject, ISO8601::ExactTime exactTime,
+    TemporalTimeZone* timeZone, PrecisionData precision)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     StringBuilder builder;
 
     auto outputTimeZone = timeZone ? timeZone->timeZone() : ISO8601::TimeZone::utc();
     auto epochNs = exactTime.epochNanoseconds();
-    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(outputTimeZone, exactTime);
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(globalObject, outputTimeZone, exactTime);
+    RETURN_IF_EXCEPTION(scope, { });
     auto dateTimeString = ISO8601::temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
     builder.append(dateTimeString);
 
     if (timeZone) {
-        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(outputTimeZone,
-            epochNs);
+        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(globalObject,
+            outputTimeZone, epochNs);
         builder.append(TemporalTimeZone::formatDateTimeUTCOffsetRounded(offsetNanoseconds));
     } else
         builder.append('Z');

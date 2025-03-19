@@ -33,6 +33,11 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "TemporalInstant.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainMonthDay.h"
+#include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
+#include "TemporalZonedDateTime.h"
 #include <wtf/DateMath.h>
 
 namespace JSC {
@@ -87,25 +92,261 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
+using ExactTime = ISO8601::ExactTime;
+
+// https://tc39.es/proposal-temporal/#sec-temporal-istemporalobject
+static inline bool isTemporalObject(JSValue value)
+{
+    if (!value.isObject())
+        return false;
+    return (jsDynamicCast<TemporalPlainDate*>(value)
+        || jsDynamicCast<TemporalPlainTime*>(value)
+        || jsDynamicCast<TemporalPlainDateTime*>(value)
+        || jsDynamicCast<TemporalZonedDateTime*>(value)
+        || jsDynamicCast<TemporalPlainYearMonth*>(value)
+        || jsDynamicCast<TemporalPlainMonthDay*>(value)
+        || jsDynamicCast<TemporalInstant*>(value));
+}
+
+void IntlDateTimeFormat::checkTimeOptions(JSGlobalObject* globalObject, StringView error)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (m_timeStyle != DateTimeStyle::None)
+        return;
+
+    if (m_userSpecifiedHour) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with hour option"_s));
+        return;
+    }
+    if (m_userSpecifiedMinute) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with minute option"_s));
+        return;
+    }
+    if (m_userSpecifiedSecond) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with second option"_s));
+        return;
+    }
+}
+
+void IntlDateTimeFormat::checkDateOptions(JSGlobalObject* globalObject, StringView error)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (m_dateStyle != DateTimeStyle::None)
+        return;
+
+    if (m_userSpecifiedYear) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with year option"_s));
+        return;
+    }
+    if (m_userSpecifiedMonth) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with month option"_s));
+        return;
+    }
+    if (m_userSpecifiedDay) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with day option"_s));
+        return;
+    }
+    if (m_userSpecifiedWeekday) {
+        throwTypeError(globalObject, scope, makeString(error, " cannot be formatted with weekday option"_s));
+        return;
+    }
+}
+
+void IntlDateTimeFormat::checkOptionsCompatibility(JSGlobalObject* globalObject, JSValue x)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(isTemporalObject(x));
+
+    bool dateStyleExists = m_dateStyle != DateTimeStyle::None;
+    bool timeStyleExists = m_timeStyle != DateTimeStyle::None;
+
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(x);
+    if (instant)
+        return;
+
+    TemporalPlainDate* plainDate = jsDynamicCast<TemporalPlainDate*>(x);
+    if (plainDate) {
+        if (timeStyleExists && !dateStyleExists) {
+            throwTypeError(globalObject, scope, "PlainDate cannot be formatted with timeStyle option and no dateStyle option"_s);
+            return;
+        }
+        if (!(m_userSpecifiedYear || m_userSpecifiedMonth || m_userSpecifiedDay || m_userSpecifiedWeekday)) {
+            checkTimeOptions(globalObject, "PlainDate"_s);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+        return;
+    }
+
+    TemporalPlainDateTime* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(x);
+    if (plainDateTime)
+        return;
+
+    TemporalPlainMonthDay* plainMonthDay = jsDynamicCast<TemporalPlainMonthDay*>(x);
+    if (plainMonthDay) {
+        if (timeStyleExists && !dateStyleExists) {
+            throwTypeError(globalObject, scope, "PlainMonthDay cannot be formatted with timeStyle option and no dateStyle option"_s);
+            return;
+        }
+
+        bool hasMonthDayOptions = m_userSpecifiedMonth || m_userSpecifiedDay;
+
+        if (!hasMonthDayOptions) {
+            checkTimeOptions(globalObject, "PlainMonthDay"_s);
+            RETURN_IF_EXCEPTION(scope, void());
+
+            if (m_userSpecifiedYear) {
+                throwTypeError(globalObject, scope, "PlainMonthDay cannot be formatted with year option"_s);
+                return;
+            }
+        }
+        return;
+    }
+
+    TemporalPlainYearMonth* plainYearMonth = jsDynamicCast<TemporalPlainYearMonth*>(x);
+    if (plainYearMonth) {
+        if (timeStyleExists && !dateStyleExists) {
+            throwTypeError(globalObject, scope, "PlainYearMonth cannot be formatted with timeStyle option and no dateStyle option"_s);
+            return;
+        }
+
+        bool hasYearMonthOptions = m_userSpecifiedYear || m_userSpecifiedMonth;
+
+        if (!hasYearMonthOptions) {
+            checkTimeOptions(globalObject, "PlainYearMonth"_s);
+            RETURN_IF_EXCEPTION(scope, void());
+
+            if (m_userSpecifiedWeekday || m_userSpecifiedDay) {
+                String error = m_userSpecifiedWeekday ? "weekday"_s : "day"_s;
+                throwTypeError(globalObject, scope, makeString("PlainYearMonth cannot be formatted with "_s, error, " option"_s));
+                return;
+            }
+        }
+        return;
+    }
+
+    TemporalPlainTime* plainTime = jsDynamicCast<TemporalPlainTime*>(x);
+    if (plainTime) {
+        if (dateStyleExists && !timeStyleExists) {
+            throwTypeError(globalObject, scope, "PlainTime cannot be formatted with dateStyle option and no timeStyle option"_s);
+            return;
+        }
+
+        if (!(m_userSpecifiedHour || m_userSpecifiedMinute || m_userSpecifiedSecond)) {
+            checkDateOptions(globalObject, "PlainTime"_s);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+        return;
+    }
+
+    TemporalZonedDateTime* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(x);
+    if (zonedDateTime)
+        return;
+
+    RELEASE_ASSERT_NOT_REACHED();
+    
+}
+
 // HandleDateTimeValue ( dateTimeFormat, x )
 // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimevalue
-double IntlDateTimeFormat::handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
+std::tuple<ExactTime, std::optional<TemporalDateTimeFormat>>
+IntlDateTimeFormat::handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (x.isUndefined())
-        RELEASE_AND_RETURN(scope, dateNowImpl().toNumber(globalObject));
+        RELEASE_AND_RETURN(scope, std::tuple(ISO8601::ExactTime::now(), std::nullopt));
 
-    // FIXME:
-    //  - Add all of the other Temporal types
-    //  - Work in epoch nanoseconds
-    //  - Return UDateFormat and UDateIntervalFormat depending on the type
+    // In the spec, these checks are in the PartitionDateTimeRangePattern AO;
+    // but since in the implementation, a single date-time formatter can be re-used
+    // for multiple arguments, the checks have to be done when the argument is known
+    if (isTemporalObject(x)) {
+        checkOptionsCompatibility(globalObject, x);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalinstant
     TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(x);
     if (instant)
-        return instant->exactTime().epochMilliseconds();
+        return std::tuple(instant->exactTime(), std::nullopt);
 
-    RELEASE_AND_RETURN(scope, WTF::timeClip(x.toNumber(globalObject)));
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaldate
+    TemporalPlainDate* plainDate = jsDynamicCast<TemporalPlainDate*>(x);
+    if (plainDate) {
+        ISO8601::PlainDate date = plainDate->plainDate();
+        ISO8601::PlainDateTime isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(date,
+            ISO8601::PlainTime(12, 0, 0, 0, 0, 0));
+        ExactTime result = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
+            m_timeZone, isoDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        RELEASE_AND_RETURN(scope, std::tuple(result, TemporalDateTimeFormat::PlainDate));
+    }
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaldatetime
+    TemporalPlainDateTime* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(x);
+    if (plainDateTime) {
+        ISO8601::PlainDateTime isoDateTime =
+            TemporalPlainDateTime::combineISODateAndTimeRecord(plainDateTime->plainDate(),
+                plainDateTime->plainTime());
+        ExactTime result = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
+            m_timeZone, isoDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, std::tuple(result, TemporalDateTimeFormat::PlainDateTime));
+    }
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalmonthday
+    TemporalPlainMonthDay* plainMonthDay = jsDynamicCast<TemporalPlainMonthDay*>(x);
+    if (plainMonthDay) {
+        auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(
+            plainMonthDay->plainMonthDay().isoPlainDate(),
+            ISO8601::PlainTime(12, 0, 0, 0, 0, 0));
+        ExactTime epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
+            m_timeZone, isoDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        RELEASE_AND_RETURN(scope, std::tuple(epochNs, TemporalDateTimeFormat::PlainMonthDay));
+    }
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalyearmonth
+    TemporalPlainYearMonth* plainYearMonth = jsDynamicCast<TemporalPlainYearMonth*>(x);
+    if (plainYearMonth) {
+        auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(
+            plainYearMonth->plainYearMonth().isoPlainDate(),
+            ISO8601::PlainTime(12, 0, 0, 0, 0, 0));
+        ExactTime epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
+            m_timeZone, isoDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        RELEASE_AND_RETURN(scope, std::tuple(epochNs, TemporalDateTimeFormat::PlainYearMonth));
+    }
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaltime
+    TemporalPlainTime* plainTime = jsDynamicCast<TemporalPlainTime*>(x);
+    if (plainTime) {
+        auto isoDate = ISO8601::PlainDate(1970, 1, 1);
+        auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate,
+            plainTime->plainTime());
+        ExactTime epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
+            m_timeZone, isoDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        RELEASE_AND_RETURN(scope, std::tuple(epochNs, TemporalDateTimeFormat::PlainTime));
+    }
+
+    double x1 = WTF::timeClip(x.toNumber(globalObject));
+    if (std::isnan(x1)) {
+        throwRangeError(globalObject, scope, "handleDateTimeValue: not a number"_s);
+        return { };
+    }
+    auto epochNanoseconds = ExactTime(1'000'000 * static_cast<Int128>(x1));
+    RELEASE_AND_RETURN(scope, std::tuple(epochNanoseconds, std::nullopt));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -120,10 +361,11 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
-    double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
+    auto [value, optionalDateTimeFormat] =
+        format->IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value, optionalDateTimeFormat)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -173,10 +415,38 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobal
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
-    double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
+    auto [value, optionalDateTimeFormat] = dateTimeFormat->handleDateTimeValue(globalObject, date);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject,
+        value, optionalDateTimeFormat)));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-sametemporaltype
+static inline bool sameTemporalType(JSValue x, JSValue y)
+{
+    if (!isTemporalObject(x) || !isTemporalObject(y))
+        return false;
+    if ((jsDynamicCast<TemporalPlainDate*>(x) && !jsDynamicCast<TemporalPlainDate*>(y))
+        || (jsDynamicCast<TemporalPlainTime*>(x) && !jsDynamicCast<TemporalPlainTime*>(y))
+        || (jsDynamicCast<TemporalPlainDateTime*>(x) && !jsDynamicCast<TemporalPlainDateTime*>(y))
+        || (jsDynamicCast<TemporalZonedDateTime*>(x) && !jsDynamicCast<TemporalZonedDateTime*>(y))
+        || (jsDynamicCast<TemporalPlainYearMonth*>(x) && !jsDynamicCast<TemporalPlainYearMonth*>(y))
+        || (jsDynamicCast<TemporalPlainMonthDay*>(x) && !jsDynamicCast<TemporalPlainMonthDay*>(y))
+        || (jsDynamicCast<TemporalInstant*>(x) && !jsDynamicCast<TemporalInstant*>(y)))
+        return false;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-todatetimeformattable
+static JSValue toDateTimeFormattable(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isTemporalObject(value))
+        return value;
+    RELEASE_AND_RETURN(scope, jsNumber(value.toNumber(globalObject)));
 }
 
 // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRange
@@ -196,12 +466,27 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, startDateValue);
+    auto x = toDateTimeFormattable(globalObject, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
+    auto y = toDateTimeFormattable(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject, startDate, endDate)));
+    if (isTemporalObject(x) || isTemporalObject(y)) {
+        if (!sameTemporalType(x, y)) {
+            throwTypeError(globalObject, scope,
+                "formatRange: Temporal objects have different types"_s);
+            return { };
+        }
+    }
+
+    auto [startDate, startFormat] = dateTimeFormat->handleDateTimeValue(globalObject, x);
+    RETURN_IF_EXCEPTION(scope, { });
+    // Note: since sameTemporalType(x, y) is true, startFormat == endFormat
+    auto [endDate, endFormat] = dateTimeFormat->handleDateTimeValue(globalObject, y);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject,
+        startDate, endDate, startFormat)));
 }
 
 // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRangeToParts
@@ -221,12 +506,26 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, startDateValue);
+    auto x = toDateTimeFormattable(globalObject, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
+    auto y = toDateTimeFormattable(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startDate, endDate)));
+    if (isTemporalObject(x) || isTemporalObject(y)) {
+        if (!sameTemporalType(x, y)) {
+            throwTypeError(globalObject, scope,
+                "formatRangeToParts: Temporal objects have different types"_s);
+            return { };
+        }
+    }
+
+    auto [startDate, startFormat] = dateTimeFormat->handleDateTimeValue(globalObject, x);
+    RETURN_IF_EXCEPTION(scope, { });
+    // Note: since sameTemporalType(x, y) is true, startFormat == endFormat
+    auto [endDate, endFormat] = dateTimeFormat->handleDateTimeValue(globalObject, y);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startDate, endDate, startFormat)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))

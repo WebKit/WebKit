@@ -242,7 +242,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToJSON, (JSGlobalObject* gl
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toJSON called on value that's not a Instant"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, instant->toString())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, instant->toString(globalObject))));
 }
 
 // FIXME: Is this better as a JSBuiltin?
@@ -261,8 +261,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString, (JSGlobalOb
     formatter->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::Date);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // FIXME: change IntlDateTimeFormat to use epochNanoseconds
-    RELEASE_AND_RETURN(scope, JSValue::encode(formatter->format(globalObject, instant->exactTime().epochMilliseconds())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(formatter->format(globalObject, instant->exactTime(), std::nullopt)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))

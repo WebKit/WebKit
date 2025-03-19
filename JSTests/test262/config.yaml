@@ -20,8 +20,6 @@ skip:
   paths:
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
-    - test/intl402/Temporal/Now
     - test/intl402/Temporal/PlainDate
     - test/intl402/Temporal/PlainDateTime
     - test/intl402/Temporal/PlainMonthDay
@@ -241,6 +239,7 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/timezone-iso-string.js
     - test/intl402/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
     - test/intl402/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
 
@@ -326,37 +325,3 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js
-
-    # Depends on Temporal support in IntlDateTimeFormat::handleDateTimeValue()
-    - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
-
-    # Depends on support for named time zones
-    - test/built-ins/Temporal/Now/plainDateISO/return-value.js
-    - test/built-ins/Temporal/Now/plainDateTimeISO/return-value-calendar.js
-    - test/built-ins/Temporal/Now/plainDateTimeISO/time-zone-undefined.js
-    - test/built-ins/Temporal/Now/plainTimeISO/return-value.js
-    - test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
-    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js
-    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js
-    - test/intl402/Temporal/Duration/compare/relativeto-hour.js
-    - test/intl402/Temporal/Duration/compare/relativeto-string-datetime.js
-    - test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js
-    - test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js
-    - test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js
-    - test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js
-    - test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js
-    - test/intl402/Temporal/Duration/prototype/round/relativeto-string-datetime.js
-    - test/intl402/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js
-    - test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js
-    - test/intl402/Temporal/Duration/prototype/total/dst-day-length.js
-    - test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js
-    - test/intl402/Temporal/Duration/prototype/total/relativeto-string-datetime.js
-    - test/intl402/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js

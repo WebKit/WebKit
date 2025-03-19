@@ -106,7 +106,7 @@ static ISO8601::PlainDateTime systemDateTime(JSGlobalObject* globalObject, JSVal
     }
     RETURN_IF_EXCEPTION(scope, { });
     auto epochNs = ISO8601::ExactTime::now();
-    return TemporalTimeZone::getISODateTimeFor(timeZone, epochNs);
+    RELEASE_AND_RETURN(scope, TemporalTimeZone::getISODateTimeFor(globalObject, timeZone, epochNs));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.plaindateiso

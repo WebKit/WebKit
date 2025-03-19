@@ -55,10 +55,11 @@ public:
 
     static TemporalTimeZone* from(JSGlobalObject*, JSValue);
 
-    static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone, Int128);
+    static Int128 getOffsetNanosecondsFor(JSGlobalObject*, ISO8601::TimeZone, Int128);
     static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
         ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
-    static ISO8601::PlainDateTime getISODateTimeFor(ISO8601::TimeZone, ISO8601::ExactTime);
+    static ISO8601::PlainDateTime getISODateTimeFor(JSGlobalObject*,
+        ISO8601::TimeZone, ISO8601::ExactTime);
     static Vector<Int128> getPossibleEpochNanoseconds(JSGlobalObject*,
         ISO8601::TimeZone, ISO8601::PlainDateTime);
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
@@ -91,3 +92,4 @@ static inline bool isUTCTimeZoneString(StringView str)
 }
 
 } // namespace JSC
+
