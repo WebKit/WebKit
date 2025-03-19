@@ -280,6 +280,8 @@ private:
     AutoRepeatType autoRepeatRowsType() const;
 
     bool canCreateIntrinsicLogicalHeightsForRowSizingFirstPassCache() const;
+    bool isEligibleForExtrinsicTrackSizesFastPath() const;
+    void performExtrinsicTrackSizesFastPath(GridLayoutState&);
 
     class GridWrapper {
         Grid m_layoutGrid;

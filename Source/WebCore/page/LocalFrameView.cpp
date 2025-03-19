@@ -3133,6 +3133,8 @@ void LocalFrameView::addTrackedRepaintRect(const FloatRect& r)
     if (!m_isTrackingRepaints || r.isEmpty())
         return;
 
+    WTFReportBacktrace();
+
     FloatRect repaintRect = r;
     repaintRect.moveBy(-scrollPosition());
     m_trackedRepaintRects.append(repaintRect);

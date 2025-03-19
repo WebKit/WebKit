@@ -341,10 +341,121 @@ static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid)
     }
 }
 
+bool RenderGrid::isEligibleForExtrinsicTrackSizesFastPath() const
+{
+    if (m_gridAreaLogicalSizesCache.isEmpty())
+        return false;
+
+    auto& gridStyle = style();
+
+    auto participatesInBlockLayout = [&] {
+        if (isInline())
+            return false;
+        if (auto* containingBlock = this->containingBlock())
+            return containingBlock->isBlockContainer();
+        return false;
+    };
+
+    auto allTracksAreExtrinsicallySized = [&] {
+        for (auto& column : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForColumns)) {
+            if (column.isContentSized())
+                return false;
+        }
+
+
+        for (auto& row : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForRows)) {
+            if (row.isContentSized())
+                return false;
+        }
+        return true;
+    };
+
+    auto& currentGrid = this->currentGrid();
+    if (selfNeedsLayout()
+        || gridStyle.logicalWidth().isIntrinsic()
+        || !gridStyle.logicalHeight().isFixed()
+        || !participatesInBlockLayout()
+        || currentGrid.needsItemsPlacement()
+        || !allTracksAreExtrinsicallySized()
+        || currentGrid.autoRepeatTracks(GridTrackSizingDirection::ForColumns)
+        || currentGrid.autoRepeatTracks(GridTrackSizingDirection::ForRows)
+        || isSubgrid()
+        || isMasonry()
+        || gridStyle.hasAspectRatio()
+        || hasNonVisibleOverflow()
+        || isOutOfFlowPositioned()
+        || hasPositionedObjects()
+        || isFieldset()
+        || !firstChildBox()) {
+        return false;
+    }
+
+    for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+        auto& gridItemStyle = gridItem.style();
+
+        auto isSubgridOrMasonry = [&] {
+            if (auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem))
+                return renderGrid->isSubgrid() || renderGrid->isMasonry();
+            return false;
+        };
+
+        auto isReplaced = [&] {
+            if (auto* gridItemElement = gridItem.element())
+                return gridItemElement->isReplaced(gridItem.style());
+            return false;
+        };
+
+        if (gridItem.isOutOfFlowPositioned()
+            || hasAutoMarginsInColumnAxis(gridItem)
+            || hasAutoMarginsInRowAxis(gridItem)
+            || isBaselineAlignmentForGridItem(gridItem)
+            || GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)
+            || isSubgridOrMasonry()
+            || gridItemStyle.hasAspectRatio()
+            || isReplaced()) {
+
+            return false;
+        }
+    }
+    return true;
+}
+
+void RenderGrid::performExtrinsicTrackSizesFastPath(GridLayoutState& gridLayoutState)
+{
+    ASSERT(isEligibleForExtrinsicTrackSizesFastPath());
+
+    for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+        auto [gridAreaLogicalWidth, gridAreaLogicalHeight] = m_gridAreaLogicalSizesCache.get(gridItem);
+        gridItem.setGridAreaContentLogicalWidth(gridAreaLogicalWidth);
+        gridItem.setGridAreaContentLogicalHeight(gridAreaLogicalHeight);
+
+        auto oldGridItemRect = gridItem.frameRect();
+
+        applyStretchAlignmentToGridItemIfNeeded(gridItem, gridLayoutState);
+        gridItem.layoutIfNeeded();
+
+        setLogicalPositionForGridItem(gridItem);
+        if (gridItem.checkForRepaintDuringLayout())
+            gridItem.repaintDuringLayoutIfMoved(oldGridItemRect);
+
+    }
+
+    updateLogicalHeight();
+
+    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+
+    computeOverflow(layoutOverflowLogicalBottom(*this));
+
+    updateDescendantTransformsAfterLayout();
+
+
+    updateLayerTransform();
+
+    clearNeedsLayout();
+}
+
 void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 {
-    m_gridAreaLogicalSizesCache.clear();
-
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
@@ -369,7 +480,12 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
-        updateLogicalWidth();
+        if (!recomputeLogicalWidth() && isEligibleForExtrinsicTrackSizesFastPath()) {
+            performExtrinsicTrackSizesFastPath(gridLayoutState);
+            return;
+        }
+
+        m_gridAreaLogicalSizesCache.clear();
 
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
@@ -1458,7 +1574,7 @@ void RenderGrid::layoutGridItems(GridLayoutState& gridLayoutState)
         auto gridAreaLogicalHeight = gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForRows);
         m_gridAreaLogicalSizesCache.set(gridItem, GridAreaLogicalSize { gridAreaLogicalWidth, gridAreaLogicalHeight });
 
-        updateGridAreaLogicalSize(*gridItem, gridAreaLogicalWidth, gridAreaLogicalHeight);
+        updateGridAreaLogicalSize(gridItem, gridAreaLogicalWidth, gridAreaLogicalHeight);
 
         LayoutRect oldGridItemRect = gridItem.frameRect();
 
