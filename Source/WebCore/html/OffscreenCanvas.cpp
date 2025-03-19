@@ -410,7 +410,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
-    m_placeholderSource->setPlaceholderBuffer(*imageBuffer);
+    m_placeholderSource->setPlaceholderBuffer(WTFMove(imageBuffer));
     }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
