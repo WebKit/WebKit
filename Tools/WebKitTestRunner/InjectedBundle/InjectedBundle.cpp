@@ -403,7 +403,7 @@ void InjectedBundle::done(bool forceRepaint)
     setValue(body, "AudioResult", m_audioResult);
     setValue(body, "ForceRepaint", forceRepaint);
 
-    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("Done").get(), body.get());
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("Done").get(), body.get(), nullptr);
     m_testRunner = nullptr;
 }
 
@@ -444,11 +444,8 @@ void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTest
         return;
     // FIXME: Do we really have to convert to UTF-8 instead of using toWK?
     auto string = output.tryGetUTF8();
-    // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
-    // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
-    // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.
     auto messageName = isFinalTestOutput == IsFinalTestOutput::Yes ? toWK("FinalTextOutput") : toWK("TextOutput");
-    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), toWK(string ? string->data() : "Out of memory\n").get());
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), toWK(string ? string->data() : "Out of memory\n").get(), nullptr);
 }
 
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)

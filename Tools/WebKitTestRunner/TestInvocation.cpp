@@ -360,28 +360,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT_NOT_REACHED();
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "Done")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        m_pixelResultIsPending = booleanValue(messageBodyDictionary, "PixelResultIsPending");
-        if (!m_pixelResultIsPending) {
-            // Postpone page load stop if pixel result is still pending since
-            // cancelled image loads will paint as broken images.
-            WKPageStopLoading(TestController::singleton().mainWebView()->page());
-            m_pixelResult = static_cast<WKImageRef>(value(messageBodyDictionary, "PixelResult"));
-            ASSERT(!m_pixelResult || m_dumpPixels);
-        }
-        m_repaintRects = static_cast<WKArrayRef>(value(messageBodyDictionary, "RepaintRects"));
-        m_audioResult = static_cast<WKDataRef>(value(messageBodyDictionary, "AudioResult"));
-        m_forceRepaint = booleanValue(messageBodyDictionary, "ForceRepaint");
-        done();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
-        m_textOutput.append(toWTFString(stringValue(messageBody)));
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "DumpToStdErr")) {
         fprintf(stderr, "%s", toWTFString(stringValue(messageBody)).utf8().data());
         return;
@@ -774,6 +752,28 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "Done")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        m_pixelResultIsPending = booleanValue(messageBodyDictionary, "PixelResultIsPending");
+        if (!m_pixelResultIsPending) {
+            // Postpone page load stop if pixel result is still pending since
+            // cancelled image loads will paint as broken images.
+            WKPageStopLoading(TestController::singleton().mainWebView()->page());
+            m_pixelResult = static_cast<WKImageRef>(value(messageBodyDictionary, "PixelResult"));
+            ASSERT(!m_pixelResult || m_dumpPixels);
+        }
+        m_repaintRects = static_cast<WKArrayRef>(value(messageBodyDictionary, "RepaintRects"));
+        m_audioResult = static_cast<WKDataRef>(value(messageBodyDictionary, "AudioResult"));
+        m_forceRepaint = booleanValue(messageBodyDictionary, "ForceRepaint");
+        done();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
+        m_textOutput.append(toWTFString(stringValue(messageBody)));
         return nullptr;
     }
 
