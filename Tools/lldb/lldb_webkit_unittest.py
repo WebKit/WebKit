@@ -27,7 +27,6 @@ import atexit
 import lldb
 import lldb_webkit
 import os
-import sys
 import unittest
 
 from webkitpy.common.system.systemhost import SystemHost

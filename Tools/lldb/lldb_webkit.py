@@ -30,7 +30,6 @@
 """
 
 import re
-import string
 import struct
 import sys
 
