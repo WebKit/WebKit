@@ -164,7 +164,6 @@
 		93E4A13728F6B75A006AD994 /* UUIDCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E4A13628F6B75A006AD994 /* UUIDCocoa.mm */; };
 		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		941C64A72CA5A2A000A63214 /* RetainReleaseSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 941C64A62CA5A29400A63214 /* RetainReleaseSwift.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9785729929FAC2BB00350CBA /* ReferenceWrapperVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BC70F05176C379D00101DEC /* AtomStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomStringTable.cpp */; };
 		9BD8464C2980B6C100FAE3BD /* WeakListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8464B2980B6C100FAE3BD /* WeakListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1657D3F2CB46E25003579FC /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = A1657D3D2CB46E25003579FC /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1417,7 +1416,6 @@
 		93F1993D19D7958D00C2390B /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		941C64A62CA5A29400A63214 /* RetainReleaseSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RetainReleaseSwift.h; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
-		9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferenceWrapperVector.h; sourceTree = "<group>"; };
 		996B17841EBA441C007E10EB /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
 		9B67F3F12228D5310030DE9C /* WeakHashSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakHashSet.h; sourceTree = "<group>"; };
 		9B96E9B324FF77B8001756C3 /* CompactUniquePtrTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactUniquePtrTuple.h; sourceTree = "<group>"; };
@@ -2512,7 +2510,6 @@
 				A8A47301151A825B004123FF /* RefCountedLeakCounter.cpp */,
 				A8A47302151A825B004123FF /* RefCountedLeakCounter.h */,
 				86F46F5F1A2840EE00CCBF22 /* RefCounter.h */,
-				9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */,
 				A8A47303151A825B004123FF /* RefPtr.h */,
 				46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */,
 				46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */,
@@ -3623,7 +3620,6 @@
 				DD3DC95727A4BF8E007E5B61 /* RefCountedFixedVector.h in Headers */,
 				DD3DC8BE27A4BF8E007E5B61 /* RefCountedLeakCounter.h in Headers */,
 				DD3DC8D927A4BF8E007E5B61 /* RefCounter.h in Headers */,
-				9785729929FAC2BB00350CBA /* ReferenceWrapperVector.h in Headers */,
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
 				4BF93AD32C8B53C100F0E06C /* RefTrackerMixin.h in Headers */,

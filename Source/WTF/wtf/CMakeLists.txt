@@ -258,7 +258,6 @@ set(WTF_PUBLIC_HEADERS
     RefPtr.h
     RefTrackerMixin.h
     RefVector.h
-    ReferenceWrapperVector.h
     ResourceUsage.h
     RetainPtr.h
     RetainReleaseSwift.h
