@@ -430,14 +430,14 @@ void VideoPresentationInterfaceIOS::applicationDidBecomeActive()
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::applicationDidBecomeActive(%p)", this);
 }
 
-void VideoPresentationInterfaceIOS::enterFullscreen()
+void VideoPresentationInterfaceIOS::enterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&& completionHandler)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::enterFullscreen(%p) %d", this, mode());
 
-    doEnterFullscreen();
+    doEnterFullscreen(WTFMove(completionHandler));
 }
 
-void VideoPresentationInterfaceIOS::doEnterFullscreen()
+void VideoPresentationInterfaceIOS::doEnterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&& completionHandler)
 {
     m_standby = m_targetStandby;
 
@@ -447,13 +447,13 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
         presentFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
             enterFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         });
-        return;
+        return completionHandler(std::nullopt);
     }
 
     if (m_targetMode.hasPictureInPicture() && !m_currentMode.hasPictureInPicture()) {
         m_enterFullscreenNeedsEnterPictureInPicture = true;
         tryToStartPictureInPicture();
-        return;
+        return completionHandler(std::nullopt);
     }
 
     m_enterFullscreenNeedsEnterPictureInPicture = false;
@@ -461,19 +461,19 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
         dismissFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
             exitFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         });
-        return;
+        return completionHandler(std::nullopt);
     }
 
     if (!m_targetMode.hasPictureInPicture() && m_currentMode.hasPictureInPicture()) {
         m_enterFullscreenNeedsExitPictureInPicture = true;
         stopPictureInPicture();
-        return;
+        return completionHandler(std::nullopt);
     }
     m_enterFullscreenNeedsExitPictureInPicture = false;
 
     auto model = videoPresentationModel();
     if (!model)
-        return;
+        return completionHandler(std::nullopt);
 
     FloatSize size;
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
@@ -484,7 +484,7 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
         size = FloatSize(videoFrame.size());
     }
 #endif
-    model->didEnterFullscreen(size);
+    completionHandler(size);
     m_enteringPictureInPicture = false;
     m_changingStandbyOnly = false;
     if (m_currentMode.hasPictureInPicture())
@@ -511,7 +511,7 @@ void VideoPresentationInterfaceIOS::enterFullscreenHandler(BOOL success, NSError
     setShowsPlaybackControls(true);
 
     if (nextActions.contains(NextAction::NeedsEnterFullScreen))
-        doEnterFullscreen();
+        doEnterFullscreen([] (auto) { });
 }
 
 bool VideoPresentationInterfaceIOS::exitFullscreen(const FloatRect& finalRect)
@@ -604,7 +604,7 @@ void VideoPresentationInterfaceIOS::exitFullscreenHandler(BOOL success, NSError*
     }
 
     if (nextActions.contains(NextAction::NeedsEnterFullScreen))
-        doEnterFullscreen();
+        doEnterFullscreen([] (auto) { });
 
     if (nextActions.contains(NextAction::NeedsExitFullScreen))
         doExitFullscreen();
@@ -751,7 +751,7 @@ void VideoPresentationInterfaceIOS::didStartPictureInPicture()
     }
 
     if (m_enterFullscreenNeedsEnterPictureInPicture)
-        doEnterFullscreen();
+        doEnterFullscreen([] (auto) { });
 }
 
 void VideoPresentationInterfaceIOS::failedToStartPictureInPicture()
@@ -767,7 +767,7 @@ void VideoPresentationInterfaceIOS::failedToStartPictureInPicture()
         model->failedToEnterPictureInPicture();
         model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
         model->fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenModeNone);
-        model->failedToEnterFullscreen();
+        // FIXME: Do something here.
     }
     m_changingStandbyOnly = false;
 
@@ -818,7 +818,7 @@ void VideoPresentationInterfaceIOS::didStopPictureInPicture()
         }
 
         if (m_enterFullscreenNeedsExitPictureInPicture)
-            doEnterFullscreen();
+            doEnterFullscreen([] (auto) { });
         return;
     }
 
@@ -828,7 +828,7 @@ void VideoPresentationInterfaceIOS::didStopPictureInPicture()
     playerViewController().view.backgroundColor = clearUIColor();
 
     if (m_enterFullscreenNeedsExitPictureInPicture)
-        doEnterFullscreen();
+        doEnterFullscreen([] (auto) { });
 
     if (m_exitFullscreenNeedsExitPictureInPicture)
         doExitFullscreen();

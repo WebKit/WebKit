@@ -303,10 +303,9 @@ enum class PIPState {
         // as an indication that entering picture-in-picture is completed.
         _pipState = PIPState::InPIP;
 
-        if (auto model = _videoPresentationInterfaceMac->videoPresentationModel()) {
+        if (auto model = _videoPresentationInterfaceMac->videoPresentationModel())
             model->didEnterPictureInPicture();
-            model->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
-        }
+        _videoPresentationInterfaceMac->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
     }
 }
 
@@ -442,6 +441,8 @@ VideoPresentationInterfaceMac::~VideoPresentationInterfaceMac()
         model->removeClient(*this);
     if (auto model = videoPresentationModel())
         model->removeClient(*this);
+    if (m_enterFullscreenCompletionHandler)
+        m_enterFullscreenCompletionHandler(std::nullopt);
 }
 
 void VideoPresentationInterfaceMac::setVideoPresentationModel(VideoPresentationModel* model)
@@ -538,9 +539,10 @@ void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, 
     });
 }
 
-void VideoPresentationInterfaceMac::enterFullscreen()
+void VideoPresentationInterfaceMac::enterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&& completionHandler)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::enterFullscreen(%p)", this);
+    m_enterFullscreenCompletionHandler = WTFMove(completionHandler);
 
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         if (auto model = videoPresentationModel())
@@ -551,6 +553,15 @@ void VideoPresentationInterfaceMac::enterFullscreen()
         [m_playbackSessionInterface->playBackControlsManager() setPictureInPictureActive:YES];
 #endif
     }
+}
+
+void VideoPresentationInterfaceMac::didEnterFullscreen(FloatSize size)
+{
+    if (!m_enterFullscreenCompletionHandler) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_enterFullscreenCompletionHandler(size);
 }
 
 bool VideoPresentationInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow)

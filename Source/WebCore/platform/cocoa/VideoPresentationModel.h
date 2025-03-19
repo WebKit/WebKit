@@ -88,8 +88,6 @@ public:
     virtual void returnVideoContentLayer() { };
     virtual void returnVideoView() { };
     virtual void didSetupFullscreen() { };
-    virtual void didEnterFullscreen(const FloatSize&) { };
-    virtual void failedToEnterFullscreen() { };
     virtual void willExitFullscreen() { };
     virtual void didExitFullscreen() { };
     virtual void didCleanupFullscreen() { };

@@ -97,7 +97,7 @@ public:
     WEBCORE_EXPORT virtual void setupFullscreen(const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT virtual AVPlayerViewController *avPlayerViewController() const = 0;
     WebAVPlayerController *playerController() const;
-    WEBCORE_EXPORT void enterFullscreen();
+    WEBCORE_EXPORT void enterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&&);
     WEBCORE_EXPORT virtual bool exitFullscreen(const FloatRect& finalRect);
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT virtual void cleanupFullscreen();
@@ -244,7 +244,7 @@ protected:
 
     WEBCORE_EXPORT void enterFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
     WEBCORE_EXPORT void exitFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
-    void doEnterFullscreen();
+    void doEnterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&&);
     void doExitFullscreen();
     virtual void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) = 0;
     virtual void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) = 0;

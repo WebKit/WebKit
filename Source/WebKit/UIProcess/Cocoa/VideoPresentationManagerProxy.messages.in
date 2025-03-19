@@ -36,7 +36,7 @@ messages -> VideoPresentationManagerProxy {
     SetupFullscreenWithID(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, WebCore::MediaPlayerEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
     SetPlayerIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier)
 #if !PLATFORM(IOS_FAMILY)
-    EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
+    EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId) -> (std::optional<WebCore::FloatSize> size)
 #endif
     ExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect) -> (bool success)
     SetInlineRect(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect inlineRect, bool visible)

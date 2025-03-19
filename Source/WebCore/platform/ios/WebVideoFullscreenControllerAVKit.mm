@@ -258,7 +258,6 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
 
 void VideoFullscreenControllerContext::requestUpdateInlineRect()
 {
-#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
         IntRect clientRect = elementRectInWindow(m_videoElement.get());
@@ -266,14 +265,10 @@ void VideoFullscreenControllerContext::requestUpdateInlineRect()
             m_interface->setInlineRect(clientRect, clientRect != IntRect(0, 0, 0, 0));
         });
     });
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void VideoFullscreenControllerContext::requestVideoContentLayer()
 {
-#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
@@ -286,14 +281,10 @@ void VideoFullscreenControllerContext::requestVideoContentLayer()
             });
         });
     });
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void VideoFullscreenControllerContext::returnVideoContentLayer()
 {
-#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
@@ -306,28 +297,14 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
             });
         });
     });
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void VideoFullscreenControllerContext::didSetupFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS_FAMILY)
     RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
-        m_interface->enterFullscreen();
+        m_interface->enterFullscreen([] (auto) { });
     });
-#else
-    WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
-        m_presentationModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTFMove(protectedThis), this] () mutable {
-            RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), this] {
-                m_interface->enterFullscreen();
-            });
-        });
-    });
-#endif
 }
 
 void VideoFullscreenControllerContext::willExitFullscreen()
@@ -343,19 +320,9 @@ void VideoFullscreenControllerContext::willExitFullscreen()
 void VideoFullscreenControllerContext::didExitFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS_FAMILY)
     RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
         m_interface->cleanupFullscreen();
     });
-#else
-    WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
-        m_presentationModel->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), this] () mutable {
-            RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), this] {
-                m_interface->cleanupFullscreen();
-            });
-        });
-    });
-#endif
 }
 
 void VideoFullscreenControllerContext::didCleanupFullscreen()

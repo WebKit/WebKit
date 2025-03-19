@@ -409,20 +409,6 @@ void VideoPresentationModelContext::didSetupFullscreen()
         manager->didSetupFullscreen(m_contextId);
 }
 
-void VideoPresentationModelContext::failedToEnterFullscreen()
-{
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (RefPtr manager = m_manager.get())
-        manager->failedToEnterFullscreen(m_contextId);
-}
-
-void VideoPresentationModelContext::didEnterFullscreen(const WebCore::FloatSize& size)
-{
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
-    if (RefPtr manager = m_manager.get())
-        manager->didEnterFullscreen(m_contextId, size);
-}
-
 void VideoPresentationModelContext::willExitFullscreen()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -1111,15 +1097,26 @@ void VideoPresentationManagerProxy::setVideoDimensions(PlaybackSessionContextIde
         this->videosInElementFullscreenChanged();
 }
 
-void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
+void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(std::optional<FloatSize>)>&& completionHandler)
 {
-    if (m_mockVideoPresentationModeEnabled) {
-        didEnterFullscreen(contextId, m_mockPictureInPictureWindowSize);
-        return;
-    }
+    if (m_mockVideoPresentationModeEnabled)
+        return completionHandler(m_mockPictureInPictureWindowSize);
 
     Ref interface = ensureInterface(contextId);
-    interface->enterFullscreen();
+    interface->enterFullscreen([weakThis = WeakPtr { *this }, contextId, completionHandler = WTFMove(completionHandler)] (auto size) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler(std::nullopt);
+        if (!size || size->isEmpty())
+            return completionHandler(std::nullopt);
+        completionHandler(size);
+#if PLATFORM(IOS_FAMILY)
+        if (protectedThis->ensureInterface(contextId)->changingStandbyOnly())
+            return;
+#endif
+        if (RefPtr page = protectedThis->m_page.get())
+            page->didEnterFullscreen(contextId);
+    });
 
     // Only one context can be in a given full screen mode at a time:
     for (auto& contextPair : m_contextMap) {
@@ -1377,7 +1374,9 @@ void VideoPresentationManagerProxy::returnVideoView(PlaybackSessionContextIdenti
 void VideoPresentationManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)
 {
 #if PLATFORM(IOS_FAMILY)
-    enterFullscreen(contextId);
+    enterFullscreen(contextId, [] (auto) {
+        // FIXME: It is unclear what to do here.
+    });
 #else
     if (RefPtr page = m_page.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::VideoPresentationManager::DidSetupFullscreen(contextId), page->webPageIDInMainFrameProcess());
@@ -1406,31 +1405,6 @@ void VideoPresentationManagerProxy::didExitFullscreen(PlaybackSessionContextIden
 #endif
     page->didExitFullscreen(contextId);
     callCloseCompletionHandlers();
-}
-
-void VideoPresentationManagerProxy::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, const WebCore::FloatSize& size)
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
-
-    std::optional<FloatSize> optionalSize;
-    if (!size.isEmpty())
-        optionalSize = size;
-
-    page->protectedLegacyMainFrameProcess()->send(Messages::VideoPresentationManager::DidEnterFullscreen(contextId, optionalSize), page->webPageIDInMainFrameProcess());
-
-#if PLATFORM(IOS_FAMILY)
-    if (ensureInterface(contextId)->changingStandbyOnly())
-        return;
-#endif
-    page->didEnterFullscreen(contextId);
-}
-
-void VideoPresentationManagerProxy::failedToEnterFullscreen(PlaybackSessionContextIdentifier contextId)
-{
-    if (RefPtr page = m_page.get())
-        page->protectedLegacyMainFrameProcess()->send(Messages::VideoPresentationManager::FailedToEnterFullscreen(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier contextId)

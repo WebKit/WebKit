@@ -8652,10 +8652,6 @@ void WebPageProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier)
         pageClient->didCleanupFullscreen();
 }
 
-void WebPageProxy::failedToEnterFullscreen(PlaybackSessionContextIdentifier identifier)
-{
-}
-
 #else
 
 void WebPageProxy::didEnterFullscreen()

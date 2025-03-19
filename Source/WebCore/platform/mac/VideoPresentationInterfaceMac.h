@@ -81,7 +81,8 @@ public:
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier) final { m_playerIdentifier = identifier; }
 
     WEBCORE_EXPORT void setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
-    WEBCORE_EXPORT void enterFullscreen();
+    WEBCORE_EXPORT void enterFullscreen(CompletionHandler<void(std::optional<FloatSize>)>&&);
+    void didEnterFullscreen(FloatSize);
     WEBCORE_EXPORT bool exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow);
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT void cleanupFullscreen();
@@ -137,6 +138,7 @@ private:
     RetainPtr<WebVideoPresentationInterfaceMacObjC> m_webVideoPresentationInterfaceObjC;
     bool m_documentIsVisible { true };
     Function<void()> m_documentBecameVisibleCallback;
+    CompletionHandler<void(std::optional<FloatSize>)> m_enterFullscreenCompletionHandler;
 };
 
 } // namespace WebCore

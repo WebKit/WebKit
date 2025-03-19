@@ -685,8 +685,15 @@ void VideoPresentationManager::didSetupFullscreen(PlaybackSessionContextIdentifi
 
     model->setVideoFullscreenLayer(videoLayer, [protectedThis = Ref { *this }, contextId] () mutable {
         RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), contextId] {
-            if (RefPtr page = protectedThis->m_page.get())
-                page->send(Messages::VideoPresentationManagerProxy::EnterFullscreen(contextId));
+            RefPtr page = protectedThis->m_page.get();
+            if (!page)
+                return;
+            page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::EnterFullscreen(contextId), [protectedThis, contextId] (auto size) {
+                if (size)
+                    protectedThis->didEnterFullscreen(contextId, *size);
+                else
+                    protectedThis->failedToEnterFullscreen(contextId);
+            });
         });
     });
 }
