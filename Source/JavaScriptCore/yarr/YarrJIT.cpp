@@ -2094,8 +2094,11 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         // Remove all trailing character class terms.
-        while (opList.last()->m_term->type == PatternTerm::Type::CharacterClass)
+        while (!opList.isEmpty() && opList.last()->m_term->type == PatternTerm::Type::CharacterClass)
             opList.removeLast();
+
+        if (opList.isEmpty())
+            return;
 
         auto checkedOffset = opList[0]->m_checkedOffset;
 
