@@ -71,29 +71,29 @@ public:
         MediaTime duration;
 
         struct AudioTrackInformation {
-            RefPtr<MediaDescription> description;
-            RefPtr<AudioTrackPrivate> track;
+            Ref<MediaDescription> description;
+            Ref<AudioTrackPrivate> track;
 
-            RefPtr<MediaDescription> protectedDescription() const { return description; }
-            RefPtr<AudioTrackPrivate> protectedTrack() const { return track; }
+            Ref<MediaDescription> protectedDescription() const { return description; }
+            Ref<AudioTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<AudioTrackInformation> audioTracks;
 
         struct VideoTrackInformation {
-            RefPtr<MediaDescription> description;
-            RefPtr<VideoTrackPrivate> track;
+            Ref<MediaDescription> description;
+            Ref<VideoTrackPrivate> track;
 
-            RefPtr<MediaDescription> protectedDescription() const { return description; }
-            RefPtr<VideoTrackPrivate> protectedTrack() const { return track; }
+            Ref<MediaDescription> protectedDescription() const { return description; }
+            Ref<VideoTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<VideoTrackInformation> videoTracks;
 
         struct TextTrackInformation {
-            RefPtr<MediaDescription> description;
-            RefPtr<InbandTextTrackPrivate> track;
+            Ref<MediaDescription> description;
+            Ref<InbandTextTrackPrivate> track;
 
-            RefPtr<MediaDescription> protectedDescription() const { return description; }
-            RefPtr<InbandTextTrackPrivate> protectedTrack() const { return track; }
+            Ref<MediaDescription> protectedDescription() const { return description; }
+            Ref<InbandTextTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<TextTrackInformation> textTracks;
     };
