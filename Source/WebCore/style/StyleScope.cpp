@@ -1098,7 +1098,7 @@ void Scope::updateCachedMatchResult(const Element& element, const MatchResult& m
     // For now we cache match results if there is mutable inline style. This way we can avoid
     // selector matching when it gets mutated again.
     auto* styledElement = dynamicDowncast<StyledElement>(element);
-    if (styledElement && styledElement->inlineStyle() && styledElement->inlineStyle()->isMutable())
+    if (styledElement && ((styledElement->inlineStyle() && styledElement->inlineStyle()->isMutable()) || styledElement->presentationalHintStyle()))
         m_cachedMatchResults.set(element, makeUniqueRef<MatchResult>(matchResult));
     else
         m_cachedMatchResults.remove(element);

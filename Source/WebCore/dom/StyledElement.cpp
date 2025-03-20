@@ -106,7 +106,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
             styleAttributeChanged(newValue, reason);
         else if (hasPresentationalHintsForAttribute(name)) {
             elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyleInternal();
+            Node::invalidateStyle(Style::Validity::InlineStyleOrPresentionalHintInvalid);
         }
     }
 }
@@ -158,7 +158,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
+    Node::invalidateStyle(Style::Validity::InlineStyleOrPresentionalHintInvalid);
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -188,7 +188,7 @@ void StyledElement::invalidateStyleAttribute()
     // Inline style invalidation optimization does not work if there are selectors targeting the style attribute
     // as some rule may start or stop matching.
     auto selectorsForStyleAttribute = styleResolver().ruleSets().selectorsForStyleAttribute();
-    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleInvalid : Style::Validity::ElementInvalid;
+    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleOrPresentionalHintInvalid : Style::Validity::ElementInvalid;
 
     Node::invalidateStyle(validity);
 

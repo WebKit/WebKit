@@ -992,7 +992,7 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
             return ResolutionType::AnimationOnly;
         if (combinedValidity == Validity::Valid && element.hasInvalidRenderer())
             return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
-        if (combinedValidity == Validity::InlineStyleInvalid && existingStyle)
+        if (combinedValidity == Validity::InlineStyleOrPresentionalHintInvalid && existingStyle)
             return ResolutionType::FullWithMatchResultCache;
     }
 
