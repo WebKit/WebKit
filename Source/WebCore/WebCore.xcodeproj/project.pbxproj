@@ -865,6 +865,7 @@
 		1FC40FBA1655CCB90040F29E /* CGSubimageCacheWithTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC40FB71655C5910040F29E /* CGSubimageCacheWithTimer.h */; };
 		1FD992F826AA24F90088E596 /* KeyboardScrollingAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FD992F626AA24F80088E596 /* KeyboardScrollingAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 20D629251253690B00081543 /* InspectorInstrumentation.h */; };
+		222A29FA2CE849FA004AB49D /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 222A29F92CE849F9004AB49D /* ParsingUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		225A16B50D5C11E900090295 /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 225A16B30D5C11E900090295 /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */ = {isa = PBXBuildFile; fileRef = 228C284410D82500009D0D0E /* ScriptWrappable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		24D912B113CA9A1F00D21915 /* SVGAltGlyphDefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912AE13CA9A1F00D21915 /* SVGAltGlyphDefElement.h */; };
@@ -2176,7 +2177,6 @@
 		532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */; };
 		5351D4B11DF916B4008010CD /* FileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5351D4AF1DF916AC008010CD /* FileHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
-		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		538EC8021F96AF81004D22A8 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7FA1F96AA70004D22A8 /* UnifiedSource1.cpp */; };
 		538EC8031F96AF81004D22A8 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7F31F96AA5B004D22A8 /* UnifiedSource1-mm.mm */; };
 		538EC8041F96AF81004D22A8 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7EE1F96AA56004D22A8 /* UnifiedSource2.cpp */; };
@@ -9044,6 +9044,7 @@
 		1FD992F926AA254D0088E596 /* KeyboardScrollingAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardScrollingAnimator.cpp; sourceTree = "<group>"; };
 		20D629241253690B00081543 /* InspectorInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentation.cpp; sourceTree = "<group>"; };
 		20D629251253690B00081543 /* InspectorInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentation.h; sourceTree = "<group>"; };
+		222A29F92CE849F9004AB49D /* ParsingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsingUtilities.h; sourceTree = "<group>"; };
 		225A16B30D5C11E900090295 /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventRegion.h; sourceTree = "<group>"; };
 		225A16B40D5C11E900090295 /* WebEventRegion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEventRegion.mm; sourceTree = "<group>"; };
 		228C284410D82500009D0D0E /* ScriptWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappable.h; sourceTree = "<group>"; };
@@ -11849,7 +11850,6 @@
 		5355E8DD1F9680420031E08C /* GenerateUnifiedSources.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GenerateUnifiedSources.xcconfig; sourceTree = "<group>"; };
 		536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSrcsetParser.cpp; sourceTree = "<group>"; };
 		536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSrcsetParser.h; sourceTree = "<group>"; };
-		536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsingUtilities.h; sourceTree = "<group>"; };
 		538EC7EB1F96AA53004D22A8 /* UnifiedSource6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource6.cpp; sourceTree = "<group>"; };
 		538EC7EC1F96AA54004D22A8 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
 		538EC7ED1F96AA55004D22A8 /* UnifiedSource3-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource3-mm.mm"; sourceTree = "<group>"; };
@@ -30940,7 +30940,6 @@
 				977B37221228721700B81FF8 /* HTMLTreeBuilder.h */,
 				A8805AF116C96AEA000E9D98 /* InputStreamPreprocessor.h */,
 				8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */,
-				536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */,
 				97BC84811236FD93000C6161 /* TextDocumentParser.cpp */,
 				97BC84821236FD93000C6161 /* TextDocumentParser.h */,
 			);
@@ -34973,6 +34972,7 @@
 				07E4BDC22A3A6191000D5509 /* OpacityCaretAnimator.h */,
 				4184F5151EAF059800F18BF0 /* OrientationNotifier.h */,
 				4192BB1227CF638300F29A46 /* PageIdentifier.h */,
+				222A29F92CE849F9004AB49D /* ParsingUtilities.h */,
 				2EE02A1E1F7324280006AF72 /* Pasteboard.cpp */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
 				F40DAAEB25D9F25E0011B4FA /* PasteboardContext.h */,
@@ -42434,7 +42434,7 @@
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 				5C4A0FDA25C3449A00D9EE97 /* ParsedRequestRange.h in Headers */,
 				A853123D11D0471B00D4D077 /* ParserContentPolicy.h in Headers */,
-				536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */,
+				222A29FA2CE849FA004AB49D /* ParsingUtilities.h in Headers */,
 				46893B8427E8D74C002CC13D /* PartitionedSecurityOrigin.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,

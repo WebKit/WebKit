@@ -42,7 +42,7 @@ template<typename CharacterType> inline bool isNotASCIISpace(CharacterType c)
 {
     return !isUnicodeCompatibleASCIIWhitespace(c);
 }
-    
+
 template<typename CharacterType, typename DelimiterType> bool skipExactly(const CharacterType*& position, const CharacterType* end, DelimiterType delimiter)
 {
     if (position < end && *position == delimiter) {
@@ -212,7 +212,7 @@ template<bool characterPredicate(UChar)> void reverseSkipWhile(const UChar*& pos
 template<typename CharacterType> bool skipExactlyIgnoringASCIICase(const CharacterType*& position, const CharacterType* end, ASCIILiteral literal)
 {
     auto literalLength = literal.length();
-    
+
     if (position + literalLength > end)
         return false;
     if (!equalLettersIgnoringASCIICaseWithLength(std::span { position, literalLength }, literal.span8(), literalLength))
