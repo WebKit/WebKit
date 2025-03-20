@@ -45,7 +45,8 @@ enum class SVGLengthType : uint8_t {
     Points,
     Picas,
     Lh,
-    Ch
+    Ch,
+    Rems
 };
 
 enum class SVGLengthMode : uint8_t {
@@ -79,7 +80,7 @@ public:
     SVGLengthMode lengthMode() const { return m_lengthMode; }
 
     bool isZero() const { return !m_valueInSpecifiedUnits;  }
-    bool isRelative() const { return m_lengthType == SVGLengthType::Percentage || m_lengthType == SVGLengthType::Ems || m_lengthType == SVGLengthType::Exs || m_lengthType == SVGLengthType::Ch; }
+    bool isRelative() const { return m_lengthType == SVGLengthType::Percentage || m_lengthType == SVGLengthType::Ems || m_lengthType == SVGLengthType::Exs || m_lengthType == SVGLengthType::Ch || m_lengthType == SVGLengthType::Rems; }
 
     float value(const SVGLengthContext&) const;
     float valueAsPercentage() const { return m_lengthType == SVGLengthType::Percentage ? m_valueInSpecifiedUnits / 100 : m_valueInSpecifiedUnits; }

@@ -135,6 +135,8 @@ ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLen
         return convertValueFromPercentageToUserUnits(value / 100, lengthMode);
     case SVGLengthType::Ems:
         return convertValueFromEMSToUserUnits(value);
+    case SVGLengthType::Rems:
+        return convertValueFromREMSToUserUnits(value);
     case SVGLengthType::Exs:
         return convertValueFromEXSToUserUnits(value);
     case SVGLengthType::Lh:
@@ -168,6 +170,8 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnits(float value, SVGL
         return convertValueFromUserUnitsToPercentage(value * 100, lengthMode);
     case SVGLengthType::Ems:
         return convertValueFromUserUnitsToEMS(value);
+    case SVGLengthType::Rems:
+        return convertValueFromUserUnitsToREMS(value);
     case SVGLengthType::Exs:
         return convertValueFromUserUnitsToEXS(value);
     case SVGLengthType::Lh:
@@ -233,6 +237,23 @@ static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement*
     return nullptr;
 }
 
+static inline const RenderStyle* rootRenderStyleForLength(const SVGElement* svgElement)
+{
+    if (!svgElement)
+        return nullptr;
+
+    Ref svgDocument = svgElement->document();
+    RefPtr rootElement = svgDocument->documentElement();
+
+    const RenderStyle* style = nullptr;
+    if (svgElement != rootElement)
+        style = rootElement->computedStyle();
+    else
+        style = svgDocument->computedStyle();
+
+    return style;
+}
+
 RefPtr<const SVGElement> SVGLengthContext::protectedContext() const
 {
     return m_context.get();
@@ -258,6 +279,28 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEMSToUserUnits(float value)
         return Exception { ExceptionCode::NotSupportedError };
 
     return value * style->computedFontSize();
+}
+
+ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToREMS(float value) const
+{
+    auto* rootStyle = rootRenderStyleForLength(protectedContext().get());
+    if (!rootStyle)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    float fontSize = rootStyle->computedFontSize();
+    if (!fontSize)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    return value / fontSize;
+}
+
+ExceptionOr<float> SVGLengthContext::convertValueFromREMSToUserUnits(float value) const
+{
+    auto* rootStyle = rootRenderStyleForLength(protectedContext().get());
+    if (!rootStyle)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    return value * rootStyle->computedFontSize();
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const

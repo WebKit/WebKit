@@ -64,6 +64,8 @@ static inline ASCIILiteral lengthTypeToString(SVGLengthType lengthType)
         return "lh"_s;
     case SVGLengthType::Ch:
         return "ch"_s;
+    case SVGLengthType::Rems:
+        return "rem"_s;
     }
 
     ASSERT_NOT_REACHED();
@@ -83,8 +85,16 @@ template<typename CharacterType> static inline SVGLengthType parseLengthType(Str
 
     buffer.advance();
 
+    bool hasThirdChar = !buffer.atEnd();
+
+    if (hasThirdChar)
+        buffer.advance();
+
     if (!buffer.atEnd())
         return SVGLengthType::Unknown;
+
+    if (hasThirdChar && compareCharacters(firstCharacterPosition, 'r', 'e', 'm'))
+        return SVGLengthType::Rems;
 
     if (compareCharacters(firstCharacterPosition, 'e', 'm'))
         return SVGLengthType::Ems;
@@ -139,6 +149,8 @@ static inline SVGLengthType primitiveTypeToLengthType(CSSUnitType primitiveType)
         return SVGLengthType::Lh;
     case CSSUnitType::CSS_CH:
         return SVGLengthType::Ch;
+    case WebCore::CSSUnitType::CSS_REM:
+        return SVGLengthType::Rems;
     default:
         return SVGLengthType::Unknown;
     }
@@ -175,6 +187,8 @@ static inline CSSUnitType lengthTypeToPrimitiveType(SVGLengthType lengthType)
         return CSSUnitType::CSS_LH;
     case SVGLengthType::Ch:
         return CSSUnitType::CSS_CH;
+    case SVGLengthType::Rems:
+        return CSSUnitType::CSS_REM;
     }
 
     ASSERT_NOT_REACHED();
@@ -229,7 +243,7 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
         || to.lengthType() == SVGLengthType::Unknown
         || (!from.isZero() && from.lengthType() != SVGLengthType::Percentage && to.lengthType() == SVGLengthType::Percentage)
         || (!to.isZero() && from.lengthType() == SVGLengthType::Percentage && to.lengthType() != SVGLengthType::Percentage)
-        || (!from.isZero() && !to.isZero() && (from.lengthType() == SVGLengthType::Ems || from.lengthType() == SVGLengthType::Exs) && from.lengthType() != to.lengthType()))
+        || (!from.isZero() && !to.isZero() && (from.lengthType() == SVGLengthType::Ems || from.lengthType() == SVGLengthType::Exs || from.lengthType() == SVGLengthType::Rems) && from.lengthType() != to.lengthType()))
         return to;
 
     if (from.lengthType() == SVGLengthType::Percentage || to.lengthType() == SVGLengthType::Percentage) {

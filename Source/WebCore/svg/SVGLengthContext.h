@@ -61,6 +61,9 @@ private:
     ExceptionOr<float> convertValueFromUserUnitsToEMS(float) const;
     ExceptionOr<float> convertValueFromEMSToUserUnits(float) const;
 
+    ExceptionOr<float> convertValueFromUserUnitsToREMS(float) const;
+    ExceptionOr<float> convertValueFromREMSToUserUnits(float) const;
+
     ExceptionOr<float> convertValueFromUserUnitsToEXS(float) const;
     ExceptionOr<float> convertValueFromEXSToUserUnits(float) const;
 
