@@ -1784,12 +1784,29 @@ private:
                             }
                         }
                         // If the Tmp holds a constant then we want to rematerialize its
-                        // value rather than loading it from the stack. In order for that
-                        // optimization to kick in, we need to avoid placing the Tmp's stack
-                        // address into the instruction.
-                        if (!Arg::isColdUse(role) && m_useCounts.isConstDef<bank>(AbsoluteTmpMapper<bank>::absoluteIndex(arg.tmp())))
+                        // value rather than loading it from the stack.
+                        unsigned tmpIndex = AbsoluteTmpMapper<bank>::absoluteIndex(arg.tmp());
+                        if (!Arg::isColdUse(role) && m_useCounts.isConstDef<bank>(tmpIndex)) {
+                            int64_t value = m_useCounts.constant<bank>(tmpIndex);
+                            Arg oldArg = arg;
+                            Arg imm;
+                            if (Arg::isValidImmForm(value))
+                                imm = Arg::imm(value);
+                            else
+                                imm = Arg::bigImm(value);
+                            ASSERT(inst.isValidForm());
+                            arg = imm;
+                            if (inst.isValidForm()) {
+                                m_stats[bank].numRematerializeConst++;
+                                dataLogLnIf(verbose(), "Rematerialized (direct imm), arg=", oldArg, ", inst=", inst);
+                                return;
+                            }
+                            // Couldn't insert the immediate into the instruction directly, so undo.
+                            arg = oldArg;
+                            // We can still rematerialize it into a register. In order for that optimization to kick in,
+                            // we need to avoid placing the Tmp's stack address into the instruction.
                             return;
-
+                        }
                         Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
                         if (Arg::isAnyDef(role) && width < spillWidth) {
                             // Either there are users of this tmp who will use more than width,
