@@ -40,6 +40,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
 #endif
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
+    , targetWithinPseudoElementEnabled(context.targetWithinPseudoElementEnabled)
     , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
     , viewTransitionClassesEnabled(viewTransitionsEnabled && context.propertySettings.viewTransitionClassesEnabled)
@@ -55,6 +56,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
 #endif
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
+    , targetWithinPseudoElementEnabled(document.settings().targetWithinPseudoElementEnabled())
     , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
     , viewTransitionClassesEnabled(viewTransitionsEnabled && document.settings().viewTransitionClassesEnabled())
@@ -72,6 +74,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
 #endif
         context.popoverAttributeEnabled,
         context.targetTextPseudoElementEnabled,
+        context.targetWithinPseudoElementEnabled,
         context.thumbAndTrackPseudoElementsEnabled,
         context.viewTransitionsEnabled,
         context.viewTransitionClassesEnabled,

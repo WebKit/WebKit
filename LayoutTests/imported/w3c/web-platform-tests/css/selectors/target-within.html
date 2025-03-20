@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test target-within</title>
+<link rel="author" href="mailto:alexbdamac@gmail.com"  title="Alexsander Borges Damaceno">
+<link rel="help" href="https://drafts.csswg.org/selectors/#target-within-pseudo">
+<script src="../../resources/testharness.js""></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+    article:target-within {
+        background-color: yellow;
+    }
+</style>
+</head>
+<body onload="onload_test()">
+<p>Article element should have yellow background color</p>
+<h3>Table of Contents</h3>
+<ol>
+    <li><a id="anchor_P1" href="#p1">First paragraph!</a></li>
+    <li><a href="#p2">Second paragraph!</a></li>
+</ol>
+<article id="article1">
+    <h3>My Article</h3>
+    <p id="p1">
+        First paragraph!
+    </p>
+    <p id="p2">
+        Second paragraph!
+    </p>
+</article>
+<div id="console"></div>
+<script>
+setup({single_test: true});
+function verifyElementBackgroundColor() {
+    const element = document.getElementById('article1');
+    backgroundColor = getComputedStyle(element).backgroundColor; 
+    assert_equals(backgroundColor, 'rgb(255, 255, 0)');
+    done();
+}
+
+function onload_test() { 
+    const elem = document.getElementById("anchor_P1");
+    elem.click();
+    verifyElementBackgroundColor();       
+} 
+</script>
+</body>
+</html>

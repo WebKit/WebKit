@@ -1026,6 +1026,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             if (&element == element.document().cssTarget() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::Target))
                 return true;
             break;
+        case CSSSelector::PseudoClass::TargetWithin: {
+            if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::TargetWithin))
+                return true;
+            return element.isUserActionElement() && element.document().userActionElements().hasTargetWithin(element);
+        }
         case CSSSelector::PseudoClass::Autofill:
             return isAutofilled(element);
         case CSSSelector::PseudoClass::WebKitAutofillAndObscured:

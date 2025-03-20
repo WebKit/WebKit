@@ -100,6 +100,7 @@ struct CSSParserContext {
     bool lightDarkColorEnabled : 1 { false };
     bool contrastColorEnabled : 1 { false };
     bool targetTextPseudoElementEnabled : 1 { false };
+    bool targetWithinPseudoElementEnabled : 1 { false };
     bool viewTransitionTypesEnabled : 1 { false };
     bool cssProgressFunctionEnabled : 1 { false };
     bool cssMediaProgressFunctionEnabled : 1 { false };

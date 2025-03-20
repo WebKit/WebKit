@@ -116,6 +116,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , lightDarkColorEnabled { document.settings().cssLightDarkEnabled() }
     , contrastColorEnabled { document.settings().cssContrastColorEnabled() }
     , targetTextPseudoElementEnabled { document.settings().targetTextPseudoElementEnabled() }
+    , targetWithinPseudoElementEnabled { document.settings().targetWithinPseudoElementEnabled() }
     , viewTransitionTypesEnabled { document.settings().viewTransitionsEnabled() && document.settings().viewTransitionTypesEnabled() }
     , cssProgressFunctionEnabled { document.settings().cssProgressFunctionEnabled() }
     , cssMediaProgressFunctionEnabled { document.settings().cssMediaProgressFunctionEnabled() }
@@ -160,7 +161,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssMediaProgressFunctionEnabled           << 25
         | context.cssContainerProgressFunctionEnabled       << 26
         | context.cssRandomFunctionEnabled                  << 27
-        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
+        | context.targetWithinPseudoElementEnabled          << 28
+        | (uint32_t)context.mode                            << 29; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

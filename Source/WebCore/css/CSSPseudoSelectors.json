@@ -227,6 +227,9 @@
             "status": "non-standard"
         },
         "target": {},
+        "target-within": {
+            "settings-flag": "targetWithinPseudoElementEnabled"
+        },
         "user-invalid": {},
         "user-valid": {},
         "valid": {},

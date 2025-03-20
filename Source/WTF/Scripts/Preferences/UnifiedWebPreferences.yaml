@@ -7522,6 +7522,20 @@ TargetTextPseudoElementEnabled:
     WebCore:
       default: true
 
+TargetWithinPseudoElementEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "::target-within pseudo-element"
+  humanReadableDescription: "Enable the ::target-within CSS pseudo-element"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 TelephoneNumberParsingEnabled:
   type: bool
   status: embedder
