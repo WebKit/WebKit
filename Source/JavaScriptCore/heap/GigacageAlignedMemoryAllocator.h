@@ -40,6 +40,7 @@ public:
     ~GigacageAlignedMemoryAllocator() final;
     
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void* tryAllocateAlignedMemory(size_t alignment, size_t, bool&) final;
     void freeAlignedMemory(void*) final;
     
     void dump(PrintStream&) const final;
@@ -47,6 +48,7 @@ public:
     void* tryAllocateMemory(size_t) final;
     void freeMemory(void*) final;
     void* tryReallocateMemory(void*, size_t) final;
+    void zeroMemoryPage(void*, size_t) final;
 
 private:
     Gigacage::Kind m_kind;

@@ -81,11 +81,10 @@ PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Su
     if constexpr (validateDFGDoesGC)
         heap.vm().verifyCanGC();
 
-    size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment + cacheLineAdjustment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
     
     // We must use tryAllocateMemory instead of tryAllocateAlignedMemory since we want to use "realloc" feature.
-    void* space = subspace->alignedMemoryAllocator()->tryAllocateMemory(adjustedAlignmentAllocationSize);
+    void* space = subspace->alignedMemoryAllocator()->tryAllocateMemory(adjustedAlignmentAllocationSize(size));
     if (!space)
         return nullptr;
 
@@ -109,10 +108,10 @@ PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Su
     return new (NotNull, space) PreciseAllocation(heap, size, subspace, indexInSpace, adjustment);
 }
 
-PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subspace)
+PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subspace, ZeroingInfo& info)
 {
     ASSERT(!isLowerTierPrecise());
-    size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment + cacheLineAdjustment;
+    size_t newAllocationSize = adjustedAlignmentAllocationSize(size);
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
 
     ASSERT(subspace == m_subspace);
@@ -121,9 +120,30 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
     unsigned oldAdjustment = m_adjustment;
     void* oldBasePointer = basePointer();
 
-    void* newSpace = subspace->alignedMemoryAllocator()->tryReallocateMemory(oldBasePointer, adjustedAlignmentAllocationSize);
-    if (!newSpace)
-        return nullptr;
+    void* newSpace = nullptr;
+    size_t pageSize = WTF::pageSize();
+    info.usePageZeroing = newAllocationSize > 16 * MB;
+    if (info.shouldZeroFill && info.usePageZeroing) {
+        size_t oldAllocationSize = adjustedAlignmentAllocationSize(oldCellSize);
+        newAllocationSize = roundUpToMultipleOf(pageSize, newAllocationSize);
+        newSpace = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(pageSize, newAllocationSize, info.isZeroed);
+        if (!newSpace)
+            return nullptr;
+
+        uintptr_t newStart = reinterpret_cast<uintptr_t>(newSpace);
+        ASSERT(newStart == roundUpToMultipleOf(pageSize, newStart));
+        info.allocationEndAddress = newStart + newAllocationSize;
+
+        auto destination = unsafeMakeSpan(reinterpret_cast<char8_t*>(newSpace), oldAllocationSize);
+        auto source = unsafeMakeSpan(reinterpret_cast<char8_t*>(oldBasePointer), oldAllocationSize);
+        memcpySpan(destination, source);
+
+        subspace->alignedMemoryAllocator()->freeMemory(oldBasePointer);
+    } else {
+        newSpace = subspace->alignedMemoryAllocator()->tryReallocateMemory(oldBasePointer, newAllocationSize);
+        if (!newSpace)
+            return nullptr;
+    }
 
     void* newBasePointer = newSpace;
     unsigned newAdjustment = halfAlignment;

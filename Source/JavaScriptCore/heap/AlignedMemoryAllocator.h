@@ -42,6 +42,7 @@ public:
     virtual ~AlignedMemoryAllocator();
     
     virtual void* tryAllocateAlignedMemory(size_t alignment, size_t size) = 0;
+    virtual void* tryAllocateAlignedMemory(size_t alignment, size_t, bool&) = 0;
     virtual void freeAlignedMemory(void*) = 0;
     
     // This can't be pure virtual as it breaks our Dumpable concept.
@@ -58,6 +59,7 @@ public:
     virtual void* tryAllocateMemory(size_t) = 0;
     virtual void freeMemory(void*) = 0;
     virtual void* tryReallocateMemory(void*, size_t) = 0;
+    virtual void zeroMemoryPage(void*, size_t) = 0;
 
 private:
     SinglyLinkedListWithTail<BlockDirectory> m_directories;

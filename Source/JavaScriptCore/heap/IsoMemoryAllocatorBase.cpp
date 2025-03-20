@@ -80,6 +80,16 @@ void* IsoMemoryAllocatorBase::tryAllocateAlignedMemory(size_t alignment, size_t 
     return result;
 }
 
+void* IsoMemoryAllocatorBase::tryAllocateAlignedMemory(size_t, size_t, bool&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void IsoMemoryAllocatorBase::zeroMemoryPage(void*, size_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void IsoMemoryAllocatorBase::freeAlignedMemory(void* basePtr)
 {
     Locker locker { m_lock };

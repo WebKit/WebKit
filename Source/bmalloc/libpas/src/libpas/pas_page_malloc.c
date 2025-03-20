@@ -189,6 +189,9 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
 
 void pas_page_malloc_zero_fill(void* base, size_t size)
 {
+    if (PAS_UNLIKELY(!size))
+        return;
+
     size_t page_size;
     void* result_ptr;
 

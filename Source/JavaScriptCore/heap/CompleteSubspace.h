@@ -43,7 +43,7 @@ public:
     Allocator allocatorForNonInline(size_t, AllocatorForMode);
 
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
-    void* reallocatePreciseAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode);
+    void* reallocatePreciseAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode, ZeroingInfo&);
     
     static constexpr ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
     

@@ -144,7 +144,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     return allocation->cell();
 }
 
-void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* oldCell, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* oldCell, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode, ZeroingInfo& info)
 {
     if constexpr (validateDFGDoesGC)
         vm.verifyCanGC();
@@ -175,7 +175,7 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
     if (oldAllocation->isOnList())
         oldAllocation->remove();
 
-    PreciseAllocation* allocation = oldAllocation->tryReallocate(size, this);
+    PreciseAllocation* allocation = oldAllocation->tryReallocate(size, this, info);
     if (UNLIKELY(!allocation)) {
         RELEASE_ASSERT_RESOURCE_AVAILABLE(failureMode != AllocationFailureMode::Assert, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
         m_preciseAllocations.append(oldAllocation);

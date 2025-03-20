@@ -178,6 +178,11 @@ void fastAlignedFree(void* p)
     _aligned_free(p);
 }
 
+void fastZeroMemoryPage(void* p, size_t size)
+{
+    memset(p, 0, size);
+}
+
 #else
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
@@ -198,6 +203,11 @@ void* tryFastAlignedMalloc(size_t alignment, size_t size)
 void fastAlignedFree(void* p) 
 {
     free(p);
+}
+
+void fastZeroMemoryPage(void* p, size_t size)
+{
+    memset(p, 0, size);
 }
 
 #endif // OS(WINDOWS)
@@ -323,6 +333,11 @@ TryMallocReturnValue tryFastCompactCalloc(size_t numElements, size_t elementSize
 TryMallocReturnValue tryFastCompactRealloc(void* ptr, size_t size) { return tryFastRealloc(ptr, size); }
 void* fastCompactAlignedMalloc(size_t alignment, size_t size) { return fastAlignedMalloc(alignment, size); }
 void* tryFastCompactAlignedMalloc(size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
+void* tryFastCompactAlignedMalloc(size_t alignment, size_t size, bool& isZeroed)
+{
+    isZeroed = false;
+    return tryFastAlignedMalloc(alignment, size);
+}
 
 } // namespace WTF
 
@@ -651,6 +666,11 @@ void fastAlignedFree(void* p)
     bmalloc::api::free(p);
 }
 
+void fastZeroMemoryPage(void* p, size_t size)
+{
+    bmalloc::api::zeroMemoryPage(p, size);
+}
+
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
@@ -755,6 +775,19 @@ void* tryFastCompactAlignedMalloc(size_t alignment, size_t size)
     FAIL_IF_EXCEEDS_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
     void* result = bmalloc::api::tryMemalign(alignment, size, bmalloc::CompactAllocationMode::Compact);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    BPROFILE_ALLOCATION(COMPACTIBLE, result, size);
+    return result;
+}
+
+void* tryFastCompactAlignedMalloc(size_t alignment, size_t size, bool& isZeroed)
+{
+    FAIL_IF_EXCEEDS_LIMIT(size);
+    assertMallocRestrictionForCurrentThreadScope();
+    void* result = bmalloc::api::tryMemalign(alignment, size, &isZeroed, bmalloc::CompactAllocationMode::Compact);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
         MallocCallTracker::singleton().recordMalloc(result, size);

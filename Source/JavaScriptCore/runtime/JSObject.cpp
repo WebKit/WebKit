@@ -3789,6 +3789,12 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     unsigned availableOldLength =
         Butterfly::availableContiguousVectorLength(propertyCapacity, oldVectorLength);
     Butterfly* newButterfly = nullptr;
+
+    bool isDouble = hasDouble(indexingType());
+    ZeroingInfo info { .shouldZeroFill = !isDouble };
+    size_t oldPayloadBytes = oldVectorLength * sizeof(EncodedJSValue);
+    size_t newPayloadBytes = availableOldLength * sizeof(EncodedJSValue);
+
     if (availableOldLength >= length) {
         // This is the case where someone else selected a vector length that caused internal
         // fragmentation. If we did our jobs right, this would never happen. But I bet we will mess
@@ -3797,22 +3803,42 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     } else {
         newVectorLength = Butterfly::optimalContiguousVectorLength(
             propertyCapacity, std::min(length * 2, MAX_STORAGE_VECTOR_LENGTH));
+        newPayloadBytes = newVectorLength * sizeof(EncodedJSValue);
         butterfly = butterfly->reallocArrayRightIfPossible(
             vm, deferralContext, this, structure, propertyCapacity, true,
-            oldVectorLength * sizeof(EncodedJSValue),
-            newVectorLength * sizeof(EncodedJSValue));
+            oldPayloadBytes, newPayloadBytes, info);
         if (!butterfly)
             return false;
         newButterfly = butterfly;
     }
 
-    if (hasDouble(indexingType())) {
+    if (!info.shouldZeroFill) {
+        ASSERT(hasDouble(indexingType()));
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
             butterfly->indexingPayload<double>()[i] = PNaN;
-    } else {
-        for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
-            butterfly->indexingPayload<WriteBarrier<Unknown>>()[i].clear();
+    } else if (!info.isZeroed) {
+        char8_t* payloadStart = reinterpret_cast<char8_t*>(&butterfly->indexingPayload<WriteBarrier<Unknown>>()[0]);
+        char8_t* newPayloadStart = payloadStart + oldPayloadBytes;
+        if (info.usePageZeroing) {
+            ASSERT(info.allocationEndAddress && reinterpret_cast<uintptr_t>(payloadStart) + newPayloadBytes <= info.allocationEndAddress);
+
+            size_t pageSize = WTF::pageSize();
+            uintptr_t alignedNewPayloadStart = roundUpToMultipleOf(pageSize, reinterpret_cast<uintptr_t>(newPayloadStart));
+            size_t memSetBytes = alignedNewPayloadStart - reinterpret_cast<uintptr_t>(newPayloadStart);
+            zeroSpan(unsafeMakeSpan(newPayloadStart, memSetBytes));
+
+            ASSERT(info.allocationEndAddress == roundUpToMultipleOf(pageSize, info.allocationEndAddress));
+            vm.auxiliarySpace().alignedMemoryAllocator()->zeroMemoryPage(reinterpret_cast<void*>(alignedNewPayloadStart), info.allocationEndAddress - alignedNewPayloadStart);
+        } else
+            zeroSpan(unsafeMakeSpan(newPayloadStart, newPayloadBytes - oldPayloadBytes));
     }
+
+#if ASSERT_ENABLED
+    if (info.shouldZeroFill) {
+        for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
+            ASSERT(!butterfly->indexingPayload<WriteBarrier<Unknown>>()[i]);
+    }
+#endif
 
     if (newButterfly) {
         butterfly->setVectorLength(newVectorLength);

@@ -198,7 +198,8 @@ inline Butterfly* Butterfly::growArrayRight(
 inline Butterfly* Butterfly::reallocArrayRightIfPossible(
     VM& vm, GCDeferralContext& deferralContext, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity,
     bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes,
-    size_t newIndexingPayloadSizeInBytes)
+    size_t newIndexingPayloadSizeInBytes,
+    ZeroingInfo& info)
 {
     ASSERT_UNUSED(oldStructure, !indexingHeader()->preCapacity(oldStructure));
     ASSERT_UNUSED(intendedOwner, hadIndexingHeader == oldStructure->hasIndexingHeader(intendedOwner));
@@ -213,7 +214,7 @@ inline Butterfly* Butterfly::reallocArrayRightIfPossible(
     // Objects with no properties are common in arrays, and we are focusing on very large array crafted by repeating Array#push, so... that's fine!
     bool canRealloc = !propertyCapacity && !vm.heap.mutatorShouldBeFenced() && std::bit_cast<HeapCell*>(theBase)->isPreciseAllocation();
     if (canRealloc) {
-        void* newBase = vm.auxiliarySpace().reallocatePreciseAllocationNonVirtual(vm, std::bit_cast<HeapCell*>(theBase), newSize, &deferralContext, AllocationFailureMode::ReturnNull);
+        void* newBase = vm.auxiliarySpace().reallocatePreciseAllocationNonVirtual(vm, std::bit_cast<HeapCell*>(theBase), newSize, &deferralContext, AllocationFailureMode::ReturnNull, info);
         if (!newBase)
             return nullptr;
         return fromBase(newBase, 0, propertyCapacity);

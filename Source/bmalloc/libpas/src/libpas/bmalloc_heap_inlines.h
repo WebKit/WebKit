@@ -243,8 +243,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_zeroed_inline(pas_prim
         size).begin;
 }
 
-static PAS_ALWAYS_INLINE void*
-bmalloc_try_allocate_auxiliary_with_alignment_inline(pas_primitive_heap_ref* heap_ref,
+static PAS_ALWAYS_INLINE pas_allocation_result
+bmalloc_try_allocate_auxiliary_with_alignment_inline_impl(pas_primitive_heap_ref* heap_ref,
                                                      size_t size,
                                                      size_t alignment,
                                                      pas_allocation_mode allocation_mode)
@@ -252,8 +252,17 @@ bmalloc_try_allocate_auxiliary_with_alignment_inline(pas_primitive_heap_ref* hea
     pas_allocation_result result;
     result = bmalloc_try_allocate_auxiliary_impl_inline_only(heap_ref, size, alignment, allocation_mode);
     if (PAS_LIKELY(result.did_succeed))
-        return (void*)result.begin;
-    return bmalloc_try_allocate_auxiliary_with_alignment_casual(heap_ref, size, alignment, allocation_mode);
+        return result;
+    return bmalloc_try_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment, allocation_mode);
+}
+
+static PAS_ALWAYS_INLINE void*
+bmalloc_try_allocate_auxiliary_with_alignment_inline(pas_primitive_heap_ref* heap_ref,
+                                                     size_t size,
+                                                     size_t alignment,
+                                                     pas_allocation_mode allocation_mode)
+{
+    return (void*)bmalloc_try_allocate_auxiliary_with_alignment_inline_impl(heap_ref, size, alignment, allocation_mode).begin;
 }
 
 static PAS_ALWAYS_INLINE void*

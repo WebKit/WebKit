@@ -36,6 +36,13 @@ namespace JSC {
 class IsoSubspace;
 class SlotVisitor;
 
+struct ZeroingInfo {
+    bool shouldZeroFill { false };
+    bool usePageZeroing { false };
+    bool isZeroed { false };
+    uintptr_t allocationEndAddress { 0 };
+};
+
 // WebKit has a good malloc that already knows what to do for large allocations. The GC shouldn't
 // have to think about such things. That's where PreciseAllocation comes in. We will allocate large
 // objects directly using malloc, and put the PreciseAllocation header just before them. We can detect
@@ -51,7 +58,7 @@ public:
 
     PreciseAllocation* reuseForLowerTierPrecise();
 
-    PreciseAllocation* tryReallocate(size_t, Subspace*);
+    PreciseAllocation* tryReallocate(size_t, Subspace*, ZeroingInfo&);
     
     ~PreciseAllocation();
     
@@ -154,6 +161,8 @@ public:
 
     bool isLowerTierPrecise() const { return m_lowerTierPreciseIndex != UINT8_MAX; }
     uint8_t lowerTierPreciseIndex() const { return m_lowerTierPreciseIndex; }
+
+    static constexpr size_t adjustedAlignmentAllocationSize(size_t cellSize) { return headerSize() + cellSize + halfAlignment + cacheLineAdjustment; }
 
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;

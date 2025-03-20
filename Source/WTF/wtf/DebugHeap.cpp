@@ -76,6 +76,11 @@ void DebugHeap::free(void* object)
     malloc_zone_free(m_zone, object);
 }
 
+void DebugHeap::zeroMemory(void* object, size_t size)
+{
+    zeroSpan(unsafeMakeSpan(reinterpret_cast<char8_t*>(object), memSetBytes));
+}
+
 } // namespace WTF
 
 #endif // ENABLE(MALLOC_HEAP_BREAKDOWN)

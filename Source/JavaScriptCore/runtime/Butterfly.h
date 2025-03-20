@@ -131,6 +131,7 @@ using ContiguousDoubles = ContiguousData<double>;
 using ContiguousJSValues = ContiguousData<WriteBarrier<Unknown>>;
 using ConstContiguousDoubles = ContiguousData<const double>;
 using ConstContiguousJSValues = ContiguousData<const WriteBarrier<Unknown>>;
+struct ZeroingInfo;
 
 class Butterfly {
     WTF_MAKE_NONCOPYABLE(Butterfly);
@@ -234,7 +235,7 @@ public:
     Butterfly* growArrayRight(VM&, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
     Butterfly* growArrayRight(VM&, JSObject* intendedOwner, Structure*, size_t newIndexingPayloadSizeInBytes);
 
-    Butterfly* reallocArrayRightIfPossible(VM&, GCDeferralContext&, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
+    Butterfly* reallocArrayRightIfPossible(VM&, GCDeferralContext&, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes, ZeroingInfo&); // Assumes that preCapacity is zero, and asserts as much.
 
     Butterfly* resizeArray(VM&, JSObject* intendedOwner, size_t propertyCapacity, bool oldHasIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newPreCapacity, bool newHasIndexingHeader, size_t newIndexingPayloadSizeInBytes);
     Butterfly* resizeArray(VM&, JSObject* intendedOwner, Structure*, size_t newPreCapacity, size_t newIndexingPayloadSizeInBytes); // Assumes that you're not changing whether or not the object has an indexing header.

@@ -166,6 +166,7 @@ WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t numElements, size_t
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastRealloc(void*, size_t);
 
 WTF_EXPORT_PRIVATE void fastFree(void*);
+WTF_EXPORT_PRIVATE void fastZeroMemoryPage(void*, size_t);
 
 // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
 WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
@@ -187,6 +188,7 @@ WTF_EXPORT_PRIVATE char* fastCompactStrDup(const char*) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* fastCompactMemDup(const void*, size_t);
 WTF_EXPORT_PRIVATE void* fastCompactAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* tryFastCompactAlignedMalloc(size_t alignment, size_t);
+WTF_EXPORT_PRIVATE void* tryFastCompactAlignedMalloc(size_t alignment, size_t, bool&);
 
 WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
 
@@ -316,6 +318,8 @@ struct FastCompactMalloc {
 
     static void* zeroedMalloc(size_t size) { return fastCompactZeroedMalloc(size); }
 
+    static void zeroMemoryPage(void* p, size_t size) { fastZeroMemoryPage(p, size); }
+
     static void* tryZeroedMalloc(size_t size)
     {
         auto result = tryFastCompactZeroedMalloc(size);
@@ -417,6 +421,7 @@ using WTF::FastFree;
 using WTF::isFastMallocEnabled;
 using WTF::fastCalloc;
 using WTF::fastFree;
+using WTF::fastZeroMemoryPage;
 using WTF::fastMalloc;
 using WTF::fastMallocGoodSize;
 using WTF::fastMallocSize;

@@ -53,6 +53,11 @@ void* GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment,
 #endif
 }
 
+void* GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t, size_t, bool&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void GigacageAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
@@ -92,6 +97,11 @@ void* GigacageAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_t 
 #else
     return Gigacage::tryRealloc(m_kind, pointer, size);
 #endif
+}
+
+void GigacageAlignedMemoryAllocator::zeroMemoryPage(void*, size_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace JSC

@@ -51,6 +51,7 @@ public:
     WTF_EXPORT_PRIVATE void* memalign(size_t alignment, size_t, bool crashOnFailure);
     WTF_EXPORT_PRIVATE void* realloc(void*, size_t);
     WTF_EXPORT_PRIVATE void free(void*);
+    WTF_EXPORT_PRIVATE void zeroMemory(void*, size_t);
 
 private:
 #if OS(DARWIN)

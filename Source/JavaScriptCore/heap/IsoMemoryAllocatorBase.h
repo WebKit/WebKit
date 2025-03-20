@@ -40,7 +40,9 @@ public:
     ~IsoMemoryAllocatorBase() override;
 
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void* tryAllocateAlignedMemory(size_t alignment, size_t, bool&) final;
     void freeAlignedMemory(void*) final;
+    void zeroMemoryPage(void*, size_t) final;
 
 protected:
     void releaseMemoryFromSubclassDestructor();

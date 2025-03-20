@@ -114,6 +114,15 @@ BINLINE void* zeroedMalloc(size_t size, CompactAllocationMode mode, HeapKind kin
 #endif
 }
 
+BINLINE void zeroMemoryPage(void* base, size_t size)
+{
+#if BUSE(LIBPAS)
+    pas_page_malloc_zero_fill(base, size);
+#else
+    memset(base, 0, size);
+#endif
+}
+
 BEXPORT void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
 
 // Returns null on failure.
@@ -126,6 +135,25 @@ BINLINE void* tryMemalign(size_t alignment, size_t size, CompactAllocationMode m
         &heapForKind(gigacageKind(kind)), size, alignment, asPasAllocationMode(mode));
 #else
     BUNUSED(mode);
+    return Cache::tryAllocate(kind, alignment, size);
+#endif
+}
+
+// Returns null on failure.
+BINLINE void* tryMemalign(size_t alignment, size_t size, bool* isZeroed, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    pas_allocation_result result;
+    if (!isGigacage(kind))
+        result = bmalloc_try_allocate_with_alignment_impl(size, alignment, asPasAllocationMode(mode));
+    else
+        result = bmalloc_try_allocate_auxiliary_with_alignment_inline_impl(
+            &heapForKind(gigacageKind(kind)), size, alignment, asPasAllocationMode(mode));
+    *isZeroed = result.zero_mode == pas_zero_mode_is_all_zero;
+    return (void*)result.begin;
+#else
+    BUNUSED(mode);
+    *isZeroed = false;
     return Cache::tryAllocate(kind, alignment, size);
 #endif
 }

@@ -49,6 +49,16 @@ void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignmen
 
 }
 
+void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size, bool& isZeroed)
+{
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    isZeroed = false;
+    return m_heap.memalign(alignment, size, true);
+#else
+    return tryFastCompactAlignedMalloc(alignment, size, isZeroed);
+#endif
+}
+
 void FastMallocAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
@@ -88,6 +98,15 @@ void* FastMallocAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_
     return m_heap.realloc(pointer, size);
 #else
     return FastCompactMalloc::tryRealloc(pointer, size);
+#endif
+}
+
+void FastMallocAlignedMemoryAllocator::zeroMemoryPage(void* pointer, size_t size)
+{
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    m_heap.zeroMemory(pointer, size);
+#else
+    FastCompactMalloc::zeroMemoryPage(pointer, size);
 #endif
 }
 
