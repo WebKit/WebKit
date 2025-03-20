@@ -87,6 +87,7 @@ TestPage.registerInitializer(() => {
 
         InspectorTest.expectEqual(animation.animationType, animationType, `Animation type should be ${WI.Animation.displayNameForAnimationType(animationType)}.`);
 
+        await animation.ensureEffect();
         if (animation.startDelay)
             InspectorTest.log("startDelay: " + JSON.stringify(animation.startDelay));
         if (animation.endDelay)

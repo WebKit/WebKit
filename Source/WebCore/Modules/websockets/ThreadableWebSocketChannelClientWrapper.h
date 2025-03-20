@@ -49,10 +49,6 @@ class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCountedAndCa
 public:
     static Ref<ThreadableWebSocketChannelClientWrapper> create(ScriptExecutionContext&, WebSocketChannelClient&);
 
-    void clearSyncMethodDone();
-    void setSyncMethodDone();
-    bool syncMethodDone() const;
-
     WorkerThreadableWebSocketChannel::Peer* peer() const;
     void didCreateWebSocketChannel(Ref<WorkerThreadableWebSocketChannel::Peer>&&);
     void clearPeer();
@@ -65,12 +61,6 @@ public:
     void setSubprotocol(const String&);
     String extensions() const;
     void setExtensions(const String&);
-
-    ThreadableWebSocketChannel::SendResult sendRequestResult() const;
-    void setSendRequestResult(ThreadableWebSocketChannel::SendResult);
-
-    unsigned bufferedAmount() const;
-    void setBufferedAmount(unsigned);
 
     void clearClient();
 
@@ -95,12 +85,9 @@ private:
     ThreadSafeWeakPtr<WebSocketChannelClient> m_client;
     RefPtr<WorkerThreadableWebSocketChannel::Peer> m_peer;
     bool m_failedWebSocketChannelCreation;
-    bool m_syncMethodDone;
     // ThreadSafeRefCounted must not have String member variables.
     Vector<UChar> m_subprotocol;
     Vector<UChar> m_extensions;
-    ThreadableWebSocketChannel::SendResult m_sendRequestResult;
-    unsigned m_bufferedAmount;
     bool m_suspended;
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_pendingTasks;
 };

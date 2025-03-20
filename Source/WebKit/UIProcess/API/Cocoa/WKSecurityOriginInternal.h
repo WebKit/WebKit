@@ -26,6 +26,7 @@
 #import <WebKit/WKSecurityOrigin.h>
 
 #import "APISecurityOrigin.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::SecurityOrigin> {
 
 @interface WKSecurityOrigin () <WKObject> {
 @package
-    API::ObjectStorage<API::SecurityOrigin> _securityOrigin;
+    AlignedStorage<API::SecurityOrigin> _securityOrigin;
 }
 @end

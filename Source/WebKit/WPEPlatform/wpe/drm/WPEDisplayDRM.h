@@ -37,6 +37,17 @@
 
 G_BEGIN_DECLS
 
+/**
+ * WPE_SETTING_DRM_SCALE:
+ *
+ * The scale size of the DRM screen.
+ *
+ * VariantType: double
+ *
+ * Default: 1.0
+ */
+#define WPE_SETTING_DRM_SCALE "/wpe-platform/drm/scale"
+
 #define WPE_TYPE_DISPLAY_DRM (wpe_display_drm_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEDisplayDRM, wpe_display_drm, WPE, DISPLAY_DRM, WPEDisplay)
 

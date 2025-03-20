@@ -27,6 +27,7 @@
 #include "SimpleRange.h"
 
 #include "CharacterData.h"
+#include "BoundaryPointInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"

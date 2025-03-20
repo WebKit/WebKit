@@ -60,7 +60,7 @@ public:
 
     void detachKeys() { m_keys = nullptr; }
 
-    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
+    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData, const String& mediaKeysHashSalt);
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
 private:
@@ -71,6 +71,7 @@ private:
     void sendMessage(Uint8Array*, String destinationURL) final;
     void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
     String mediaKeysStorageDirectory() const final;
+    String mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -95,6 +96,7 @@ private:
     WebKitMediaKeys* m_keys;
     String m_keySystem;
     String m_sessionId;
+    String m_mediaKeysHashSalt;
     RefPtr<WebKitMediaKeyError> m_error;
     RefPtr<LegacyCDMSession> m_session;
 

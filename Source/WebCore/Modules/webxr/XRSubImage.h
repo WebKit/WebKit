@@ -37,7 +37,7 @@ class WebXRViewport;
 class XRSubImage : public RefCounted<XRSubImage> {
 public:
     virtual const WebXRViewport& viewport() const = 0;
-    virtual ~XRSubImage() = default;
+    virtual ~XRSubImage();
 };
 
 } // namespace WebCore

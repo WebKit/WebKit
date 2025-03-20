@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PositionIterator.h"
 
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
@@ -40,6 +40,13 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+PositionIterator::PositionIterator(const Position& pos)
+    : m_anchorNode(pos.anchorNode())
+    , m_nodeAfterPositionInAnchor(m_anchorNode->traverseToChildAt(pos.deprecatedEditingOffset()))
+    , m_offsetInAnchor(m_nodeAfterPositionInAnchor ? 0 : pos.deprecatedEditingOffset())
+{
+}
 
 PositionIterator::operator Position() const
 {

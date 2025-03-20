@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
 <canvas id="canvas"></canvas>
 
-<div id="console"></div>
 <script>
-description("This test makes sure that AccessibilityObjects are detached when the node they point to is detached.");
+var output = "This test makes sure that AccessibilityObjects are detached when the node they point to is detached.\n\n";
 
 if (window.testRunner && window.accessibilityController) {
+    window.jsTestIsAsync = true;
     window.testRunner.dumpAsText();
 
     // Create a button on the page, focus it and get its accessibility role.
@@ -22,12 +23,16 @@ if (window.testRunner && window.accessibilityController) {
     // Now remove the node from the tree and get the role of the detached accessibility object.
     // We detect that it's detached just by checking that the role is different (empty or unknown).
     document.body.removeChild(button);
-    window.expectedDetachedRole = axElement.role;
-    shouldBeTrue("expectedButtonRole != expectedDetachedRole");
+    setTimeout(async function() {
+        await waitFor(() => expectedButtonRole != axElement.role);
+        window.expectedDetachedRole = axElement.role;
+        output += await expectAsync("expectedButtonRole != expectedDetachedRole", "true");
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -25,18 +25,21 @@
 
 #pragma once
 
-#include <wtf/Ref.h>
-
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 class CSSValue;
-struct FontVariantSettings;
+class FontVariantAlternates;
+struct FontVariantEastAsianValues;
 struct FontVariantLigaturesValues;
 struct FontVariantNumericValues;
-struct FontVariantEastAsianValues;
 
 FontVariantLigaturesValues extractFontVariantLigatures(const CSSValue&);
 FontVariantNumericValues extractFontVariantNumeric(const CSSValue&);
 FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue&);
+FontVariantAlternates extractFontVariantAlternates(const CSSValue&, Style::BuilderState&);
 
 } // namespace WebCore

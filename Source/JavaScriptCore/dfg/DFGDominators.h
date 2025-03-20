@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 template <typename CFGKind>
 class Dominators : public WTF::Dominators<CFGKind> {
     WTF_MAKE_NONCOPYABLE(Dominators);
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Dominators);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(Dominators);
 public:
     Dominators(Graph& graph)
         : WTF::Dominators<CFGKind>(selectCFG<CFGKind>(graph))
@@ -46,7 +46,7 @@ public:
     }
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, Dominators<CFGKind>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, Dominators<CFGKind>);
 
 using SSADominators = Dominators<SSACFG>;
 using CPSDominators = Dominators<CPSCFG>;

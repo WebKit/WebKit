@@ -66,7 +66,8 @@ void* PreciseSubspace::tryAllocate(size_t size)
     if (!allocation)
         return nullptr;
 
-    m_space.registerPreciseAllocation(allocation);
+    m_preciseAllocations.append(allocation);
+    m_space.registerPreciseAllocation(allocation, /* isNewAllocation */ true);
     return allocation->cell();
 }
 

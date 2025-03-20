@@ -57,6 +57,8 @@ public:
 
     void setCustomTimeout(Seconds duration) { m_timeout = duration; }
     void setDumpJSConsoleLogInStdErr(bool value) { m_dumpJSConsoleLogInStdErr = value; }
+    bool shouldDumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; }
+    bool gotFinalMessage() const { return m_gotFinalMessage; }
 
     Seconds shortTimeout() const;
 
@@ -160,6 +162,7 @@ private:
     bool m_canOpenWindows { true };
     bool m_shouldDumpPrivateClickMeasurement { false };
     bool m_shouldDumpBackForwardListsForAllWindows { false };
+    bool m_shouldDumpAllFrameScrollPositions { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

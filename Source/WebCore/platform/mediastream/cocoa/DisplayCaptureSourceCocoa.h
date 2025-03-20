@@ -40,7 +40,7 @@
 #include <wtf/text/WTFString.h>
 
 using CGImageRef = CGImage*;
-using CVPixelBufferRef = struct __CVBuffer*;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 using IOSurfaceRef = struct __IOSurface*;
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 

@@ -34,7 +34,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/darwin/XPCExtras.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
 

@@ -127,3 +127,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGeolocationManagerProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::GeolocationManager; }
+SPECIALIZE_TYPE_TRAITS_END()

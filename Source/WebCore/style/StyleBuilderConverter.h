@@ -78,6 +78,7 @@
 #include "StyleBasicShape.h"
 #include "StyleBuilderState.h"
 #include "StyleColorScheme.h"
+#include "StyleCornerShapeValue.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
 #include "StylePathData.h"
@@ -170,7 +171,6 @@ public:
     static GridPosition convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
     static Vector<StyleContentAlignmentData> convertContentAlignmentDataList(BuilderState&, const CSSValue&);
-    static MasonryAutoFlow convertMasonryAutoFlow(BuilderState&, const CSSValue&);
     static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
     static std::optional<WebCore::Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
     static FilterOperations convertFilterOperations(BuilderState&, const CSSValue&);
@@ -245,6 +245,7 @@ public:
     static Vector<ScopedName> convertAnchorName(BuilderState&, const CSSValue&);
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
+    static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
 
     static BlockEllipsis convertBlockEllipsis(BuilderState&, const CSSValue&);
     static size_t convertMaxLines(BuilderState&, const CSSValue&);
@@ -261,6 +262,7 @@ public:
     static Style::ScrollPaddingEdge convertScrollPaddingEdge(BuilderState&, const CSSValue&);
     static Style::ScrollMarginEdge convertScrollMarginEdge(BuilderState&, const CSSValue&);
     static Style::DynamicRangeLimit convertDynamicRangeLimit(BuilderState&, const CSSValue&);
+    static Style::CornerShapeValue convertCornerShapeValue(BuilderState&, const CSSValue&);
 
     static Vector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
@@ -285,8 +287,8 @@ public:
 
         CSSValueList::iterator iterator;
     };
-    template<class ValueType> struct TypedList {
-        TypedList(const CSSValueContainingVector& list)
+    template<class ListType, class ValueType> struct TypedList {
+        TypedList(const ListType& list)
             : list(list)
         { }
 
@@ -295,9 +297,10 @@ public:
         TypedListIterator<ValueType> begin() const { return list->begin(); }
         TypedListIterator<ValueType> end() const { return list->end(); }
 
-        Ref<const CSSValueContainingVector> list;
+        Ref<const ListType> list;
     };
-    template<class ListType, class ValueType, unsigned minimumLength = 1> static std::optional<TypedList<ValueType>> requiredListDowncast(BuilderState&, const CSSValue&);
+    template<class ListType, class ValueType, unsigned minimumLength = 1> static std::optional<TypedList<ListType, ValueType>> requiredListDowncast(BuilderState&, const CSSValue&);
+    template<CSSValueID, class ValueType, unsigned minimumLength = 1> static std::optional<TypedList<CSSFunctionValue, ValueType>> requiredFunctionDowncast(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -343,7 +346,7 @@ inline std::optional<std::pair<const ValueType&, const ValueType&>> BuilderConve
 }
 
 template<class ListType, class ValueType, unsigned minimumSize>
-inline auto BuilderConverter::requiredListDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedList<ValueType>>
+inline auto BuilderConverter::requiredListDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedList<ListType, ValueType>>
 {
     auto* listValue = requiredDowncast<ListType>(builderState, value);
     if (UNLIKELY(!listValue))
@@ -356,7 +359,20 @@ inline auto BuilderConverter::requiredListDowncast(BuilderState& builderState, c
         if (UNLIKELY(!requiredDowncast<ValueType>(builderState, value)))
             return { };
     }
-    return TypedList<ValueType> { *listValue };
+    return TypedList<ListType, ValueType> { *listValue };
+}
+
+template<CSSValueID functionName, class ValueType, unsigned minimumSize>
+inline auto BuilderConverter::requiredFunctionDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedList<CSSFunctionValue, ValueType>>
+{
+    auto function = requiredListDowncast<CSSFunctionValue, ValueType, minimumSize>(builderState, value);
+    if (UNLIKELY(!function))
+        return { };
+    if (function->list->name() != functionName) {
+        builderState.setCurrentPropertyInvalidAtComputedValueTime();
+        return { };
+    }
+    return function;
 }
 
 inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderState, const CSSValue& value)
@@ -1149,8 +1165,8 @@ inline IntSize BuilderConverter::convertInitialLetter(BuilderState& builderState
         return { };
 
     return {
-        pair->first.resolveAsNumber<int>(conversionData),
-        pair->second.resolveAsNumber<int>(conversionData)
+        pair->second.resolveAsNumber<int>(conversionData),
+        pair->first.resolveAsNumber<int>(conversionData)
     };
 }
 
@@ -1256,17 +1272,14 @@ inline ScrollSnapType BuilderConverter::convertScrollSnapType(BuilderState& buil
 
 inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState& builderState, const CSSValue& value)
 {
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
+    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
+    if (!pair)
         return { };
 
-    ScrollSnapAlign alignment;
-    alignment.blockAlign = fromCSSValue<ScrollSnapAxisAlignType>(list->item(0));
-    if (list->size() == 1)
-        alignment.inlineAlign = alignment.blockAlign;
-    else
-        alignment.inlineAlign = fromCSSValue<ScrollSnapAxisAlignType>(list->item(1));
-    return alignment;
+    return {
+        fromCSSValue<ScrollSnapAxisAlignType>(pair->first),
+        fromCSSValue<ScrollSnapAxisAlignType>(pair->second)
+    };
 }
 
 inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, const CSSValue& value)
@@ -1596,41 +1609,6 @@ inline Vector<StyleContentAlignmentData> BuilderConverter::convertContentAlignme
     return WTF::map(*list, [&](auto& value) {
         return convertContentAlignmentData(builderState, value);
     });
-}
-
-inline MasonryAutoFlow BuilderConverter::convertMasonryAutoFlow(BuilderState& builderState, const CSSValue& value)
-{
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    if (!(list->size() == 1 || list->size() == 2))
-        return RenderStyle::initialMasonryAutoFlow();
-
-    auto& firstValue = list->item(0);
-    auto* secondValue = list->size() == 2 ? &list->item(1) : nullptr;
-    MasonryAutoFlow masonryAutoFlow;
-    if (secondValue) {
-        ASSERT(firstValue.valueID() == CSSValueID::CSSValuePack || firstValue.valueID() == CSSValueID::CSSValueNext);
-        ASSERT(secondValue->valueID() == CSSValueID::CSSValueOrdered);
-        if (firstValue.valueID() == CSSValueID::CSSValuePack)
-            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::Ordered };
-        else
-            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Next, MasonryAutoFlowPlacementOrder::Ordered };
-
-    } else  {
-        if (firstValue.valueID() == CSSValueID::CSSValuePack)
-            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::DefiniteFirst };
-        else if (firstValue.valueID() == CSSValueID::CSSValueNext)
-            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Next, MasonryAutoFlowPlacementOrder::DefiniteFirst };
-        else if (firstValue.valueID() == CSSValueID::CSSValueOrdered)
-            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::Ordered };
-        else {
-            ASSERT_NOT_REACHED();
-            return RenderStyle::initialMasonryAutoFlow();
-        }
-    }
-    return masonryAutoFlow;
 }
 
 inline float zoomWithTextZoomFactor(BuilderState& builderState)
@@ -2654,6 +2632,23 @@ inline std::optional<PositionArea> BuilderConverter::convertPositionArea(Builder
     };
 }
 
+inline OptionSet<PositionVisibility> BuilderConverter::convertPositionVisibility(BuilderState& builderState, const CSSValue& value)
+{
+    if (value.valueID() == CSSValueAlways)
+        return { };
+
+    auto maybeList = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
+    if (!maybeList)
+        return { };
+    auto list = *maybeList;
+
+    OptionSet<PositionVisibility> result;
+    for (const auto& value : list)
+        result.add(fromCSSValue<PositionVisibility>(value));
+
+    return result;
+}
+
 inline BlockEllipsis BuilderConverter::convertBlockEllipsis(BuilderState& builderState, const CSSValue& value)
 {
     if (value.valueID() == CSSValueNone)
@@ -2713,45 +2708,51 @@ inline NameScope BuilderConverter::convertNameScope(BuilderState& builderState, 
     if (!list)
         return { };
 
-    return { NameScope::Type::Ident, WTF::map(*list, [&](auto& item) {
-        return AtomString { item.stringValue() };
-    }) };
+    ListHashSet<AtomString> nameHashSet;
+    for (auto& name : *list)
+        nameHashSet.add(AtomString { name.stringValue() });
+
+    return { NameScope::Type::Ident, WTFMove(nameHashSet) };
 }
 
-inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks(BuilderState&, const CSSValue& value)
+inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks(BuilderState& builderState, const CSSValue& value)
 {
-    auto fallbackForValueList = [&](const CSSValueList& valueList) -> std::optional<PositionTryFallback> {
-        if (valueList.separator() != CSSValueList::SpaceSeparator)
+    auto convertFallback = [&](const CSSValue& fallbackValue) -> std::optional<PositionTryFallback> {
+        auto* valueList = dynamicDowncast<CSSValueList>(fallbackValue);
+        if (!valueList) {
+            // Turn the inlined position-area fallback into properties object that can be applied similarly to @position-try declarations.
+            auto property = CSSProperty { CSSPropertyPositionArea, Ref { const_cast<CSSValue&>(fallbackValue) } };
+            return PositionTryFallback {
+                .positionAreaProperties = ImmutableStyleProperties::create(std::span { &property, 1 }, HTMLStandardMode)
+            };
+        }
+
+        if (valueList->separator() != CSSValueList::SpaceSeparator)
             return { };
 
-        auto tactics = WTF::map(valueList, [&](auto& item) {
-            return fromCSSValueID<PositionTryFallback::Tactic>(item.valueID());
-        });
-        return PositionTryFallback { .tactics = WTFMove(tactics) };
+        auto fallback = PositionTryFallback { };
+
+        for (auto& item : *valueList) {
+            if (item.isCustomIdent())
+                fallback.positionTryRuleName = Style::ScopedName { AtomString { item.customIdent() }, builderState.styleScopeOrdinal() };
+            else
+                fallback.tactics.append(fromCSSValueID<PositionTryFallback::Tactic>(item.valueID()));
+        }
+        return fallback;
     };
 
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        switch (primitiveValue->valueID()) {
-        case CSSValueNone:
-            return { };
-        default:
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-    }
+    if (value.valueID() == CSSValueNone)
+        return { };
+
+    if (auto fallback = convertFallback(value))
+        return { *fallback };
 
     auto* list = dynamicDowncast<CSSValueList>(value);
     if (!list)
         return { };
 
-    if (auto fallback = fallbackForValueList(*list))
-        return { *fallback };
-
     return WTF::map(*list, [&](auto& item) {
-        auto* itemList = dynamicDowncast<CSSValueList>(item);
-        if (!itemList)
-            return PositionTryFallback { };
-        auto fallback = fallbackForValueList(*itemList);
+        auto fallback = convertFallback(item);
         return fallback ? *fallback : PositionTryFallback { };
     });
 }
@@ -2781,14 +2782,53 @@ inline Style::DynamicRangeLimit BuilderConverter::convertDynamicRangeLimit(Build
         }
 
         builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
+        return Style::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
     }
 
     RefPtr dynamicRangeLimit = requiredDowncast<CSSDynamicRangeLimitValue>(builderState, value);
     if (!dynamicRangeLimit)
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
+        return Style::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
 
     return toStyle(dynamicRangeLimit->dynamicRangeLimit(), builderState);
+}
+
+inline Style::CornerShapeValue BuilderConverter::convertCornerShapeValue(BuilderState& builderState, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueRound:
+            return Style::CornerShapeValue::round();
+        case CSSValueScoop:
+            return Style::CornerShapeValue::scoop();
+        case CSSValueBevel:
+            return Style::CornerShapeValue::bevel();
+        case CSSValueNotch:
+            return Style::CornerShapeValue::notch();
+        case CSSValueStraight:
+            return Style::CornerShapeValue::straight();
+        case CSSValueSquircle:
+            return Style::CornerShapeValue::squircle();
+        default:
+            break;
+        }
+
+        builderState.setCurrentPropertyInvalidAtComputedValueTime();
+        return Style::CornerShapeValue::round();
+    }
+
+    auto superellipseFunction = requiredFunctionDowncast<CSSValueSuperellipse, CSSPrimitiveValue>(builderState, value);
+    if (!superellipseFunction)
+        return Style::CornerShapeValue::round();
+
+    Ref superellipseDescriptor = superellipseFunction->item(0);
+    if (superellipseDescriptor->valueID() == CSSValueInfinity)
+        return { Style::SuperellipseFunction { Style::Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
+
+    if (superellipseDescriptor->isNumber())
+        return { Style::SuperellipseFunction { Style::Number<CSS::Nonnegative>(std::max(0.0, superellipseDescriptor->resolveAsNumber<double>(builderState.cssToLengthConversionData()))) } };
+
+    builderState.setCurrentPropertyInvalidAtComputedValueTime();
+    return Style::CornerShapeValue::round();
 }
 
 } // namespace Style

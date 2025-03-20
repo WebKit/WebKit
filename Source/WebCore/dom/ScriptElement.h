@@ -39,6 +39,7 @@ class CachedScript;
 class ContainerNode;
 class Element;
 class LoadableModuleScript;
+class Node;
 class PendingScript;
 class ScriptSourceCode;
 
@@ -166,7 +167,7 @@ private:
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.
-bool isScriptElement(Element&);
+bool isScriptElement(Node&);
 ScriptElement* dynamicDowncastScriptElement(Element&);
 
 }

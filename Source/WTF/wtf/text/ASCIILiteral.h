@@ -63,14 +63,12 @@ public:
         : ASCIILiteral()
     { }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template<size_t length>
     consteval ASCIILiteral(const char (&literal)[length])
         : m_charactersWithNullTerminator(unsafeMakeSpan(literal, length))
     {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(literal[length - 1] == '\0');
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(m_charactersWithNullTerminator[length - 1] == '\0');
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     unsigned hash() const;
     constexpr bool isNull() const { return m_charactersWithNullTerminator.empty(); }

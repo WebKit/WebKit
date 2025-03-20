@@ -150,6 +150,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 
     uint32_t typeCount() const { return typeSignatures.size(); }
 
+    bool hasGCObjectTypes() const { return m_hasGCObjectTypes; }
     bool hasMemoryImport() const { return memory.isImport(); }
 
     BranchHint getBranchHint(uint32_t functionOffset, uint32_t branchOffset) const
@@ -181,6 +182,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     Vector<Ref<TypeDefinition>> recursionGroups;
 
     MemoryInformation memory;
+    bool m_hasGCObjectTypes { false };
 
     Vector<FunctionData> functions;
 

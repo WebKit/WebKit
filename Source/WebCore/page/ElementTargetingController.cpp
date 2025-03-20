@@ -568,9 +568,9 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element
     return identifiers;
 }
 
-static FloatRect computeClientRect(RenderObject& renderer)
+static FloatRect computeClientRect(const RenderElement& renderer)
 {
-    FloatRect rect = renderer.absoluteBoundingBoxRect();
+    auto rect = FloatRect { renderer.absoluteBoundingBoxRect() };
     renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
     return rect;
 }
@@ -1915,6 +1915,9 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects()
 {
     RefPtr page = m_page.get();
     if (!page)
+        return 0;
+
+    if (!page->hasEverSetVisibilityAdjustment() && !m_shouldRecomputeAdjustedElements)
         return 0;
 
     RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());

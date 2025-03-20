@@ -4,6 +4,7 @@
 Buffer Usages Validation Tests in Render Pass and Compute Pass.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../../common/util/util.js';
+import { MaxLimitsTestMixin } from '../../../../gpu_test.js';
 import { ValidationTest } from '../../validation_test.js';
 
 const kBoundBufferSize = 256;
@@ -27,6 +28,10 @@ export const kAllBufferUsages = [
 'indexedIndirect'];
 
 
+function resourceVisibilityToVisibility(resourceVisibility) {
+  return resourceVisibility === 'compute' ? GPUShaderStage.COMPUTE : GPUShaderStage.FRAGMENT;
+}
+
 export class BufferResourceUsageTest extends ValidationTest {
   createBindGroupLayoutForTest(
   type,
@@ -34,8 +39,7 @@ export class BufferResourceUsageTest extends ValidationTest {
   {
     const bindGroupLayoutEntry = {
       binding: 0,
-      visibility:
-      resourceVisibility === 'compute' ? GPUShaderStage.COMPUTE : GPUShaderStage.FRAGMENT,
+      visibility: resourceVisibilityToVisibility(resourceVisibility),
       buffer: {
         type
       }
@@ -63,7 +67,7 @@ export class BufferResourceUsageTest extends ValidationTest {
   }
 
   beginSimpleRenderPass(encoder) {
-    const colorTexture = this.device.createTexture({
+    const colorTexture = this.createTextureTracked({
       format: 'rgba8unorm',
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
       size: [16, 16, 1]
@@ -138,7 +142,45 @@ function IsBufferUsageInBindGroup(bufferUsage) {
   }
 }
 
-export const g = makeTestGroup(BufferResourceUsageTest);
+function skipIfStorageBuffersNotAvailableInStages(
+t,
+visibility,
+numRequired)
+{
+  if (t.isCompatibility) {
+    t.skipIf(
+      (visibility & GPUShaderStage.FRAGMENT) !== 0 &&
+      !(t.device.limits.maxStorageBuffersInFragmentStage >= numRequired),
+      `maxStorageBuffersInFragmentStage${t.device.limits.maxStorageBuffersInFragmentStage} < ${numRequired}`
+    );
+    t.skipIf(
+      (visibility & GPUShaderStage.VERTEX) !== 0 &&
+      !(t.device.limits.maxStorageBuffersInVertexStage >= numRequired),
+      `maxStorageBuffersInVertexStage${t.device.limits.maxStorageBuffersInVertexStage} < ${numRequired}`
+    );
+  }
+}
+
+/**
+ * Skips test if usage is a storage buffer and there are not numRequired
+ * storage buffers supported for the given visibility.
+ */
+export function skipIfStorageBuffersUsedAndNotAvailableInStages(
+t,
+usage,
+visibility,
+numRequired)
+{
+  if (usage === 'storage' || usage === 'read-only-storage') {
+    skipIfStorageBuffersNotAvailableInStages(
+      t,
+      resourceVisibilityToVisibility(visibility),
+      numRequired
+    );
+  }
+}
+
+export const g = makeTestGroup(MaxLimitsTestMixin(BufferResourceUsageTest));
 
 g.test('subresources,buffer_usage_in_one_compute_pass_with_no_dispatch').
 desc(
@@ -158,6 +200,19 @@ combine('hasOverlap', [true, false])
 ).
 fn((t) => {
   const { usage0, usage1, visibility0, visibility1, hasOverlap } = t.params;
+  const numStorageBuffersNeededInFragmentStage = 1;
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    visibility0,
+    numStorageBuffersNeededInFragmentStage
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    visibility1,
+    numStorageBuffersNeededInFragmentStage
+  );
 
   const buffer = t.createBufferWithState('valid', {
     size: kBoundBufferSize * 2,
@@ -255,6 +310,19 @@ fn((t) => {
     visibility1,
     hasOverlap
   } = t.params;
+  const numStorageBuffersNeededInFragmentStage = 1;
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    visibility0,
+    numStorageBuffersNeededInFragmentStage
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    visibility1,
+    numStorageBuffersNeededInFragmentStage
+  );
 
   const buffer = t.createBufferWithState('valid', {
     size: kBoundBufferSize * 2,
@@ -476,6 +544,20 @@ unless((t) => t.visibility1 === 'compute' && !IsBufferUsageInBindGroup(t.usage1)
 fn((t) => {
   const { usage0, usage1, hasOverlap, visibility0, visibility1 } = t.params;
 
+  const numStorageBuffersNeededInFragmentStage = 1;
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    visibility0,
+    numStorageBuffersNeededInFragmentStage
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    visibility1,
+    numStorageBuffersNeededInFragmentStage
+  );
+
   const UseBufferOnRenderPassEncoder = (
   buffer,
   offset,
@@ -627,6 +709,21 @@ fn((t) => {
     visibility1,
     hasOverlap
   } = t.params;
+
+  const numStorageBuffersNeededInFragmentStage = 1;
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    visibility0,
+    numStorageBuffersNeededInFragmentStage
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    visibility1,
+    numStorageBuffersNeededInFragmentStage
+  );
+
   const buffer = t.createBufferWithState('valid', {
     size: kBoundBufferSize * 2,
     usage:
@@ -694,7 +791,7 @@ fn((t) => {
         renderPassEncoder.drawIndirect(buffer, offset);
         break;
       case 'indexedIndirect':{
-          const indexBuffer = t.device.createBuffer({
+          const indexBuffer = t.createBufferTracked({
             size: 4,
             usage: GPUBufferUsage.INDEX
           });
@@ -849,6 +946,21 @@ fn((t) => {
     GPUBufferUsage.INDEX |
     GPUBufferUsage.INDIRECT
   });
+
+  const numStorageBuffersNeededInFragmentStage = 1;
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    'fragment',
+    numStorageBuffersNeededInFragmentStage
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    'fragment',
+    numStorageBuffersNeededInFragmentStage
+  );
+
   const UseBufferOnRenderPassEncoderInDrawCall = (
   offset,
   usage,

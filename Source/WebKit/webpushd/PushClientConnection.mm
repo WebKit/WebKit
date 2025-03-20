@@ -212,6 +212,12 @@ PushClientConnection::PushClientConnection(xpc_connection_t connection, String&&
 {
 }
 
+PushClientConnection::~PushClientConnection()
+{
+    for (auto& origin : m_inspectedServiceWorkerOrigins)
+        WebPushDaemon::singleton().setServiceWorkerOriginIsBeingInspected(origin, false);
+}
+
 void PushClientConnection::initializeConnection(WebPushDaemonConnectionConfiguration&&)
 {
     RELEASE_LOG_ERROR(Push, "PushClientConnection::initializeConnection(%p): ignoring duplicate message", this);
@@ -386,6 +392,24 @@ void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::opt
 void PushClientConnection::setProtocolVersionForTesting(unsigned version, CompletionHandler<void()>&& completionHandler)
 {
     WebPushDaemon::singleton().setProtocolVersionForTesting(*this, version, WTFMove(completionHandler));
+}
+
+void PushClientConnection::setServiceWorkerIsBeingInspected(URL&& scopeURL, bool isInspected, CompletionHandler<void()>&& completionHandler)
+{
+    auto origin = WebCore::SecurityOriginData::fromURL(scopeURL);
+    if (origin.isOpaque() || origin.isNull())
+        return;
+
+    bool didChange = false;
+    if (!isInspected && m_inspectedServiceWorkerOrigins.remove(origin))
+        didChange = true;
+    else if (isInspected && m_inspectedServiceWorkerOrigins.add(origin).isNewEntry)
+        didChange = true;
+
+    if (didChange)
+        WebPushDaemon::singleton().setServiceWorkerOriginIsBeingInspected(origin, isInspected);
+
+    completionHandler();
 }
 
 } // namespace WebPushD

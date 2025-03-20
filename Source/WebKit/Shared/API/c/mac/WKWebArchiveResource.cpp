@@ -37,26 +37,26 @@ WKTypeID WKWebArchiveResourceGetTypeID()
 
 WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef URLRef, WKStringRef MIMETypeRef, WKStringRef textEncodingRef)
 {
-    auto webArchiveResource = API::WebArchiveResource::create(WebKit::toImpl(dataRef), WebKit::toWTFString(URLRef), WebKit::toWTFString(MIMETypeRef), WebKit::toWTFString(textEncodingRef));
-    return WebKit::toAPI(&webArchiveResource.leakRef());
+    auto webArchiveResource = API::WebArchiveResource::create(WebKit::toProtectedImpl(dataRef).get(), WebKit::toWTFString(URLRef), WebKit::toWTFString(MIMETypeRef), WebKit::toWTFString(textEncodingRef));
+    return WebKit::toAPILeakingRef(WTFMove(webArchiveResource));
 }
 
 WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(webArchiveResourceRef)->data().leakRef());
+    return WebKit::toAPILeakingRef(WebKit::toProtectedImpl(webArchiveResourceRef)->data());
 }
 
 WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toImpl(webArchiveResourceRef)->url());
+    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(webArchiveResourceRef)->url());
 }
 
 WKStringRef WKWebArchiveResourceCopyMIMEType(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->mimeType());
+    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(webArchiveResourceRef)->mimeType());
 }
 
 WKStringRef WKWebArchiveResourceCopyTextEncoding(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->textEncoding());
+    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(webArchiveResourceRef)->textEncoding());
 }

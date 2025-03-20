@@ -32,7 +32,7 @@ namespace WebCore {
 
 using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
-class GStreamerVideoCaptureSource : public RealtimeVideoCaptureSource, GStreamerCapturerObserver {
+class GStreamerVideoCaptureSource final : public RealtimeVideoCaptureSource, GStreamerCapturerObserver {
 public:
     static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     static CaptureSourceOrError createPipewireSource(String&& deviceID, const NodeAndFD&, MediaDeviceHashSalts&&, const MediaConstraints*, CaptureDevice::DeviceType);
@@ -41,30 +41,33 @@ public:
 
     WEBCORE_EXPORT static DisplayCaptureFactory& displayFactory();
 
-    const RealtimeMediaSourceCapabilities& capabilities() override;
-    const RealtimeMediaSourceSettings& settings() override;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceSettings& settings() final;
+    void configurationChanged() final;
+
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
     // GStreamerCapturerObserver
     void sourceCapsChanged(const GstCaps*) final;
     void captureEnded() final;
+    void captureDeviceUpdated(const GStreamerCaptureDevice&) final;
 
     std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const final;
 
 protected:
-    GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
+    GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, ASCIILiteral sourceFactory, CaptureDevice::DeviceType, const NodeAndFD&);
     GStreamerVideoCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);
     virtual ~GStreamerVideoCaptureSource();
-    void startProducingData() override;
-    void stopProducingData() override;
+    void startProducingData() final;
+    void stopProducingData() final;
     bool canResizeVideoFrames() const final { return true; }
-    void generatePresets() override;
-    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
+    void generatePresets() final;
+    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
-    CaptureDevice::DeviceType deviceType() const override { return m_deviceType; }
+    CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
 
 private:
     bool isCaptureSource() const final { return true; }

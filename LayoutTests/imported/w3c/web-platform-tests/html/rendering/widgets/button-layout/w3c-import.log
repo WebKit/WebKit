@@ -17,6 +17,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-none-or-contents-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-none-or-contents-ref.html

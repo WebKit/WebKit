@@ -13,7 +13,7 @@ import { setupWorkerEnvironment } from './utils_worker.js';
  * `g` is the `g` exported from a `.spec.ts` file: a TestGroupBuilder<F> interface,
  * which underneath is actually a TestGroup<F> object.
  *
- * This is used in the generated `.worker.js` files that are generated to use as service workers.
+ * This is used in the generated `.as_worker.js` files that are generated to use as service workers.
  */
 export function wrapTestGroupForWorker(g) {
   self.onmessage = async (ev) => {

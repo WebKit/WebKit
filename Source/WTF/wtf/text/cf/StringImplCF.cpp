@@ -105,7 +105,9 @@ namespace StringWrapperCFAllocator {
 
     static CFAllocatorRef allocator()
     {
+        ASSERT(isMainThread());
         static NeverDestroyed allocator = [] {
+            initializeMainThread();
             CFAllocatorContext context = { 0, nullptr, retain, release, copyDescription, allocate, reallocate, deallocate, preferredSize };
             return adoptCF(CFAllocatorCreate(nullptr, &context));
         }();

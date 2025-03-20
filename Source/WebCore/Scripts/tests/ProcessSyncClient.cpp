@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,12 @@ void ProcessSyncClient::broadcastUserDidInteractWithPageToOtherProcesses(const b
     ProcessSyncDataVariant dataVariant;
     dataVariant.emplace<enumToUnderlyingType(ProcessSyncDataType::UserDidInteractWithPage)>(data);
     broadcastProcessSyncDataToOtherProcesses({ ProcessSyncDataType::UserDidInteractWithPage, WTFMove(dataVariant) });
+}
+void ProcessSyncClient::broadcastAnotherOneToOtherProcesses(const StringifyThis& data)
+{
+    ProcessSyncDataVariant dataVariant;
+    dataVariant.emplace<enumToUnderlyingType(ProcessSyncDataType::AnotherOne)>(data);
+    broadcastProcessSyncDataToOtherProcesses({ ProcessSyncDataType::AnotherOne, WTFMove(dataVariant) });
 }
 
 } // namespace WebCore

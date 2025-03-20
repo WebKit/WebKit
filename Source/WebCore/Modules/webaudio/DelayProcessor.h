@@ -36,6 +36,7 @@ class AudioDSPKernel;
     
 class DelayProcessor final : public AudioDSPKernelProcessor {
     WTF_MAKE_TZONE_ALLOCATED(DelayProcessor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DelayProcessor);
 public:
     DelayProcessor(BaseAudioContext&, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
     virtual ~DelayProcessor();

@@ -1018,6 +1018,7 @@ private:
         case RegExpMatchFast:
         case RegExpMatchFastGlobal:
         case StringReplace:
+        case StringReplaceAll:
         case StringReplaceRegExp:
         case StringReplaceString:
         case GetById:
@@ -1144,6 +1145,12 @@ private:
             break;
         }
 
+        case ArrayIncludes: {
+            setPrediction(SpecBoolean);
+            break;
+        }
+
+        case DataViewGetByteLength:
         case GetTypedArrayByteOffset:
         case GetArrayLength:
         case GetUndetachedTypeArrayLength:
@@ -1152,6 +1159,7 @@ private:
             break;
         }
 
+        case DataViewGetByteLengthAsInt52:
         case GetTypedArrayLengthAsInt52:
         case GetTypedArrayByteOffsetAsInt52: {
             setPrediction(SpecInt52Any);
@@ -1337,8 +1345,13 @@ private:
             setPrediction(speculationFromTypedArrayType(m_currentNode->typedArrayType()));
             break;
         }
+
+        case NewTypedArrayBuffer: {
+            setPrediction(SpecObjectOther);
+            break;
+        }
             
-        case NewRegexp: {
+        case NewRegExp: {
             setPrediction(SpecRegExpObject);
             break;
         }
@@ -1387,6 +1400,10 @@ private:
         }
         case NewStringObject: {
             setPrediction(SpecStringObject);
+            break;
+        }
+        case NewRegExpUntyped: {
+            setPrediction(SpecRegExpObject);
             break;
         }
         case NewSymbol: {
@@ -1577,7 +1594,7 @@ private:
         case PhantomNewArrayBuffer:
         case PhantomNewInternalFieldObject:
         case PhantomClonedArguments:
-        case PhantomNewRegexp:
+        case PhantomNewRegExp:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case PutHint:

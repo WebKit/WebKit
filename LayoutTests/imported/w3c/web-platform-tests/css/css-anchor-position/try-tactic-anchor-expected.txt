@@ -38,11 +38,11 @@ PASS flip-start, left:anchor(self-end), top:anchor(bottom)
 PASS flip-start, top:anchor(self-end), left:anchor(right)
 PASS flip-block, bottom:anchor(self-start), top:anchor(bottom)
 PASS flip-block, top:anchor(self-end), bottom:anchor(top)
-FAIL CSS Anchor Positioning: try-tactic, anchor() assert_equals: offsetWidth expected 80 but got 40
-FAIL flip-inline assert_equals: offsetWidth expected 80 but got 40
-FAIL flip-block assert_equals: offsetWidth expected 80 but got 40
-FAIL flip-start assert_equals: offsetWidth expected 60 but got 40
-FAIL flip-inline flip-start assert_equals: offsetWidth expected 60 but got 40
-FAIL flip-start flip-block assert_equals: offsetWidth expected 60 but got 40
-FAIL Can transform a value post-var-substitution assert_equals: offsetLeft expected 110 but got 450
+PASS CSS Anchor Positioning: try-tactic, anchor()
+PASS flip-inline
+PASS flip-block
+PASS flip-start
+PASS flip-inline flip-start
+PASS flip-start flip-block
+PASS Can transform a value post-var-substitution
 

@@ -46,4 +46,6 @@ private:
 
 }
 
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(WebsiteDataRecord);
+
 #endif // APIWebsiteDataRecord_h

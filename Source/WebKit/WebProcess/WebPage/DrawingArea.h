@@ -70,6 +70,10 @@ class LayerTreeHost;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
+#if ENABLE(DAMAGE_TRACKING)
+class FrameDamageForTesting;
+#endif
+
 class DrawingArea : public RefCounted<DrawingArea>, public IPC::MessageReceiver, public WebCore::DisplayRefreshMonitorFactory {
     WTF_MAKE_TZONE_ALLOCATED(DrawingArea);
     WTF_MAKE_NONCOPYABLE(DrawingArea);
@@ -175,6 +179,10 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual void dispatchPendingCallbacksAfterEnsuringDrawing() = 0;
+#endif
+
+#if ENABLE(DAMAGE_TRACKING)
+    virtual FrameDamageForTesting* frameDamageForTesting() const { return nullptr; }
 #endif
 
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }

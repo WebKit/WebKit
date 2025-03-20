@@ -32,7 +32,7 @@
 
 namespace JSC { namespace B3 {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Variable);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Variable);
 
 Variable::~Variable() = default;
 

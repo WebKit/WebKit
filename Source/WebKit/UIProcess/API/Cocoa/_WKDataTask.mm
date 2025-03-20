@@ -71,7 +71,7 @@ private:
         if (!m_delegate || !m_respondsToWillPerformHTTPRedirection)
             return completionHandler(true);
         auto checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(dataTask:willPerformHTTPRedirection:newRequest:decisionHandler:));
-        [m_delegate dataTask:wrapper(task) willPerformHTTPRedirection:(NSHTTPURLResponse *)response.nsURLResponse() newRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody) decisionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
+        [m_delegate dataTask:wrapper(task) willPerformHTTPRedirection:checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) newRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody) decisionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();

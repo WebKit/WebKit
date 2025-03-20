@@ -32,19 +32,19 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const LengthBox& box)
 {
-    ts << "top: " << box.top() << " right: " << box.right() << " bottom: " << box.bottom() << " left: " << box.left();
+    ts << "top: "_s << box.top() << " right: "_s << box.right() << " bottom: "_s << box.bottom() << " left: "_s << box.left();
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const FloatBoxExtent& box)
 {
-    ts << "top: " << box.top() << " right: " << box.right() << " bottom: " << box.bottom() << " left: " << box.left();
+    ts << "top: "_s << box.top() << " right: "_s << box.right() << " bottom: "_s << box.bottom() << " left: "_s << box.left();
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const IntBoxExtent& box)
 {
-    ts << "top: " << box.top() << " right: " << box.right() << " bottom: " << box.bottom() << " left: " << box.left();
+    ts << "top: "_s << box.top() << " right: "_s << box.right() << " bottom: "_s << box.bottom() << " left: "_s << box.left();
     return ts;
 }
 

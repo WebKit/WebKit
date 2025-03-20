@@ -1,28 +1,28 @@
 
-FAIL Property corner-top-left-shape value 'round' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'scoop' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(5)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(0.2)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(0)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(infinity)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(2)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(1)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse(4)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-left-shape value 'superellipse( .5)' assert_true: corner-top-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-right-shape value 'round' assert_true: corner-top-right-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-top-right-shape value 'superellipse(5)' assert_true: corner-top-right-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-bottom-right-shape value 'scoop' assert_true: corner-bottom-right-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-bottom-left-shape value 'superellipse(5)' assert_true: corner-bottom-left-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'superellipse(5) round' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'round' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'bevel superellipse(0.1) round squircle' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'superellipse(0.1) superellipse(3) superellipse(7) superellipse(0.1)' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'round round round round' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'round scoop' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'round scoop round scoop' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'bevel superellipse(2)' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'superellipse(0.5) superellipse(3) straight' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'superellipse(0.5) superellipse(3) superellipse(1)' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'bevel superellipse(2) squircle     round' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
-FAIL Property corner-shape value 'superellipse(0.5) superellipse(3) superellipse(1) superellipse(infinity)' assert_true: corner-shape doesn't seem to be supported in the computed style expected true got false
+PASS Property corner-top-left-shape value 'round'
+PASS Property corner-top-left-shape value 'scoop'
+PASS Property corner-top-left-shape value 'superellipse(5)'
+PASS Property corner-top-left-shape value 'superellipse(0.2)'
+PASS Property corner-top-left-shape value 'superellipse(0)'
+PASS Property corner-top-left-shape value 'superellipse(infinity)'
+PASS Property corner-top-left-shape value 'superellipse(2)'
+PASS Property corner-top-left-shape value 'superellipse(1)'
+PASS Property corner-top-left-shape value 'superellipse(4)'
+PASS Property corner-top-left-shape value 'superellipse( .5)'
+PASS Property corner-top-right-shape value 'round'
+PASS Property corner-top-right-shape value 'superellipse(5)'
+PASS Property corner-bottom-right-shape value 'scoop'
+PASS Property corner-bottom-left-shape value 'superellipse(5)'
+PASS Property corner-shape value 'superellipse(5) round'
+PASS Property corner-shape value 'round'
+PASS Property corner-shape value 'bevel superellipse(0.1) round squircle'
+PASS Property corner-shape value 'superellipse(0.1) superellipse(3) superellipse(7) superellipse(0.1)'
+PASS Property corner-shape value 'round round round round'
+PASS Property corner-shape value 'round scoop'
+PASS Property corner-shape value 'round scoop round scoop'
+PASS Property corner-shape value 'bevel superellipse(2)'
+PASS Property corner-shape value 'superellipse(0.5) superellipse(3) straight'
+PASS Property corner-shape value 'superellipse(0.5) superellipse(3) superellipse(1)'
+PASS Property corner-shape value 'bevel superellipse(2) squircle     round'
+PASS Property corner-shape value 'superellipse(0.5) superellipse(3) superellipse(1) superellipse(infinity)'
 

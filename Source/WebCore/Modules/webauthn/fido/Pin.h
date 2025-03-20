@@ -135,14 +135,14 @@ private:
 
 struct SetPinRequest {
 public:
-    WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
+    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(const String& newPin, const WebCore::CryptoKeyEC&);
     WEBCORE_EXPORT const Vector<uint8_t>& pinAuth() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
 private:
-    Ref<WebCore::CryptoKeyAES> m_sharedKey;
+    const Ref<WebCore::CryptoKeyAES> m_sharedKey;
     mutable cbor::CBORValue::MapValue m_coseKey;
     Vector<uint8_t> m_newPinEnc;
     Vector<uint8_t> m_pinUvAuthParam;
@@ -161,14 +161,14 @@ public:
 
     // sharedKey returns the shared ECDH key that was used to encrypt the PIN.
     // This is needed to decrypt the response.
-    WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
+    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
 
     friend Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
 
 private:
     TokenRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORValue::MapValue&& coseKey, Vector<uint8_t>&& pinHash);
 
-    Ref<WebCore::CryptoKeyAES> m_sharedKey;
+    const Ref<WebCore::CryptoKeyAES> m_sharedKey;
     mutable cbor::CBORValue::MapValue m_coseKey;
     Vector<uint8_t> m_pinHash; // Only the left 16 bytes are kept.
 };

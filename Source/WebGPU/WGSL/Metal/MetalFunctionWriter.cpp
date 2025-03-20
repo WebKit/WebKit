@@ -48,10 +48,54 @@ namespace Metal {
 #define DECLARE_FORWARD_PROGRESS "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"
 #define CHECK_FORWARD_PROGRESS "if (++__wgslEnsureForwardProgress == 4294967295u) break;"
 
+#define STRINGIFY_(__x) #__x##_s
+#define STRINGIFY(__x) STRINGIFY_(__x)
+
+#define DEFINE_HELPER(__name, ...) \
+    void emit##__name() { m_output.append(STRINGIFY(__VA_ARGS__)); } \
+    bool didEmit##__name { false };
+
+#define DEFINE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __metalFunction, __lowerBound, __upperBound, ...) \
+    DEFINE_HELPER(__capitalizedName,  \
+    template <typename T> \
+    T __wgsl##__capitalizedName(T value) \
+    { \
+        return __metalFunction(select(value, T(0), value < T(__lowerBound) || value > T(__upperBound))); \
+    })
+
+#define DEFINE_BOUND_HELPER(__name, __capitalizedName, __lowerBound, __upperBound, ...) \
+    DEFINE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __name, __lowerBound, __upperBound, __VA_ARGS__)
+
+struct HelperGenerator {
+    StringBuilder& m_output;
+
+    HelperGenerator(StringBuilder& output)
+        : m_output(output)
+    {
+    }
+
+DEFINE_BOUND_HELPER(acos, Acos, -1, 1)
+DEFINE_BOUND_HELPER(asin, Asin, -1, 1)
+DEFINE_BOUND_HELPER(acosh, Acosh, 1, numeric_limits<T>::max())
+DEFINE_BOUND_HELPER(atanh, Atanh, -1, 1)
+DEFINE_BOUND_HELPER_RENAMED(inverseSqrt, InverseSqrt, rsqrt, 0, numeric_limits<T>::infinity())
+DEFINE_BOUND_HELPER(log, Log, 0, numeric_limits<T>::infinity())
+DEFINE_BOUND_HELPER(log2, Log2, 0, numeric_limits<T>::infinity())
+DEFINE_BOUND_HELPER(sqrt, Sqrt, 0, numeric_limits<T>::infinity())
+
+};
+
+#undef DEFINE_TRIG_HELPER
+#undef DEFINE_HELPER
+#undef STRINGIFY
+#undef STRINGIFY_
+
+
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
     FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
-        : m_stringBuilder(stringBuilder)
+        : m_helperGenerator(stringBuilder)
+        , m_output(stringBuilder)
         , m_shaderModule(shaderModule)
         , m_prepareResult(prepareResult)
         , m_constantValues(constantValues)
@@ -121,7 +165,7 @@ public:
 
     void visit(const Type*);
 
-    StringBuilder& stringBuilder() { return m_stringBuilder; }
+    StringBuilder& stringBuilder() { return m_body; }
     Indentation<4>& indent() { return m_indent; }
 
 private:
@@ -134,7 +178,9 @@ private:
     void visitStatements(AST::Statement::List&);
     bool shouldPackType() const;
 
-    StringBuilder& m_stringBuilder;
+    HelperGenerator m_helperGenerator;
+    StringBuilder m_body;
+    StringBuilder& m_output;
     ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
@@ -184,18 +230,20 @@ void FunctionDefinitionWriter::write()
         if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
             visit(entryPoint.function);
     }
+
+    m_output.append(m_body);
 }
 
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
     if (m_shaderModule.usesPackedVec3()) {
-        m_stringBuilder.append(
+        m_body.append(
             m_indent, "template<typename T>\n"_s,
             m_indent, "struct PackedVec3 {\n"_s
         );
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(
+            m_body.append(
                 m_indent, "T x;\n"_s,
                 m_indent, "T y;\n"_s,
                 m_indent, "T z;\n"_s,
@@ -215,215 +263,215 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 m_indent, "threadgroup T& operator[](int i) threadgroup { return i ? i == 2 ? z : y : x; }\n"_s
             );
         }
-        m_stringBuilder.append(m_indent, "};\n\n"_s);
+        m_body.append(m_indent, "};\n\n"_s);
     }
 
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
-        m_stringBuilder.append("struct texture_external {\n"_s);
+        m_body.append("struct texture_external {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n"_s,
+            m_body.append(m_indent, "texture2d<float> FirstPlane;\n"_s,
                 m_indent, "texture2d<float> SecondPlane;\n"_s,
                 m_indent, "float3x2 UVRemapMatrix;\n"_s,
                 m_indent, "float4x3 ColorSpaceConversionMatrix;\n"_s,
                 m_indent, "uint get_width(uint lod = 0) const { return FirstPlane.get_width(lod); }\n"_s,
                 m_indent, "uint get_height(uint lod = 0) const { return FirstPlane.get_height(lod); }\n"_s);
         }
-        m_stringBuilder.append("};\n\n"_s);
+        m_body.append("};\n\n"_s);
     }
 
     if (m_shaderModule.usesPackArray()) {
         m_shaderModule.clearUsesPackArray();
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+        m_body.append(m_indent, "template<typename T, size_t N>\n"_s,
             m_indent, "static array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> packed;\n"_s,
+            m_body.append(m_indent, "array<typename T::PackedType, N> packed;\n"_s,
                 m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "packed[i] = __pack(unpacked[i]);\n"_s);
+                m_body.append(m_indent, "packed[i] = __pack(unpacked[i]);\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return packed;\n"_s);
+            m_body.append(m_indent, "return packed;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
 
         if (m_shaderModule.usesPackedVec3()) {
-            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+            m_body.append(m_indent, "template<typename T, size_t N>\n"_s,
                 m_indent, "static array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
+                m_body.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
                     m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
                 {
                     IndentationScope scope(m_indent);
-                    m_stringBuilder.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
+                    m_body.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
                 }
-                m_stringBuilder.append(m_indent, "return packed;\n"_s);
+                m_body.append(m_indent, "return packed;\n"_s);
             }
-            m_stringBuilder.append(m_indent, "}\n\n"_s);
+            m_body.append(m_indent, "}\n\n"_s);
         }
     }
 
     if (m_shaderModule.usesUnpackArray()) {
         m_shaderModule.clearUsesUnpackArray();
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+        m_body.append(m_indent, "template<typename T, size_t N>\n"_s,
             m_indent, "static array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> unpacked;\n"_s,
+            m_body.append(m_indent, "array<typename T::UnpackedType, N> unpacked;\n"_s,
                 m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n"_s);
+                m_body.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+            m_body.append(m_indent, "return unpacked;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
 
         if (m_shaderModule.usesPackedVec3()) {
-            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+            m_body.append(m_indent, "template<typename T, size_t N>\n"_s,
                 m_indent, "static array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
+                m_body.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
                     m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
                 {
                     IndentationScope scope(m_indent);
-                    m_stringBuilder.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
+                    m_body.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
                 }
-                m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+                m_body.append(m_indent, "return unpacked;\n"_s);
             }
-            m_stringBuilder.append(m_indent, "}\n\n"_s);
+            m_body.append(m_indent, "}\n\n"_s);
         }
     }
 
     if (m_shaderModule.usesPackVector()) {
         m_shaderModule.clearUsesPackVector();
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackVector()) {
         m_shaderModule.clearUsesUnpackVector();
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
 
         if (m_shaderModule.usesPackedVec3()) {
-            m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_body.append(m_indent, "template<typename T>\n"_s,
                 m_indent, "static vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
         }
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
+            m_body.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
                 m_indent, "auto result = *ptr;\n"_s,
                 m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
                 m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesDivision()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
+        m_body.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
             m_indent, "static V __wgslDiv(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s,
+            m_body.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s,
                 m_indent, "if constexpr (is_signed_v<U>)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
+                m_body.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n"_s);
+            m_body.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesModulo()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
+        m_body.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
             m_indent, "static V __wgslMod(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s,
+            m_body.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s,
                 m_indent, "if constexpr (is_signed_v<U>)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
+                m_body.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return select(lhs % V(rhs), V(0), predicate);\n"_s);
+            m_body.append(m_indent, "return select(lhs % V(rhs), V(0), predicate);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
 
     if (m_shaderModule.usesFrexp()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n"_s,
+        m_body.append(m_indent, "template<typename T, typename U>\n"_s,
             m_indent, "struct __frexp_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T fract;\n"_s,
+            m_body.append(m_indent, "T fract;\n"_s,
                 m_indent, "U exp;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n"_s,
+        m_body.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n"_s,
             m_indent, "static __frexp_result<T, U> __wgslFrexp(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "__frexp_result<T, U> result;\n"_s,
+            m_body.append(m_indent, "__frexp_result<T, U> result;\n"_s,
                 m_indent, "result.fract = frexp(value, result.exp);\n"_s,
                 m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesModf()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n"_s,
+        m_body.append(m_indent, "template<typename T, typename U>\n"_s,
             m_indent, "struct __modf_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T fract;\n"_s,
+            m_body.append(m_indent, "T fract;\n"_s,
                 m_indent, "U whole;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n"_s,
+        m_body.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T>\n"_s,
             m_indent, "static __modf_result<T, T> __wgslModf(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "__modf_result<T, T> result;\n"_s,
+            m_body.append(m_indent, "__modf_result<T, T> result;\n"_s,
                 m_indent, "result.fract = modf(value, result.whole);\n"_s,
                 m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesAtomicCompareExchange()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n"_s,
+        m_body.append(m_indent, "template<typename T, typename U = bool>\n"_s,
             m_indent, "struct __atomic_compare_exchange_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T old_value;\n"_s,
+            m_body.append(m_indent, "T old_value;\n"_s,
                 m_indent, "U exchanged;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n"_s,
+        m_body.append(m_indent, "};\n\n"_s,
             m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n"_s,
+            m_body.append(m_indent, "({ auto innerCompare = compare; \\\n"_s,
                 m_indent, "bool exchanged = atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed); \\\n"_s,
                 m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, exchanged }; \\\n"_s,
                 m_indent, "})\n"_s);
@@ -431,117 +479,128 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesDot()) {
-        m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n"_s,
+        m_body.append(m_indent, "template<typename T, unsigned N>\n"_s,
             m_indent, "static T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n"_s,
+            m_body.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n"_s,
                 m_indent, "if constexpr (N > 2) result += lhs[2] * rhs[2];\n"_s,
                 m_indent, "if constexpr (N > 3) result += lhs[3] * rhs[3];\n"_s,
                 m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesDot4I8Packed()) {
-        m_stringBuilder.append(m_indent, "static int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
+        m_body.append(m_indent, "static int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_char4>(lhs);"_s,
+            m_body.append(m_indent, "auto vec1 = as_type<packed_char4>(lhs);"_s,
                 m_indent, "auto vec2 = as_type<packed_char4>(rhs);"_s,
                 m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesDot4U8Packed()) {
-        m_stringBuilder.append(m_indent, "static uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
+        m_body.append(m_indent, "static uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_uchar4>(lhs);"_s,
+            m_body.append(m_indent, "auto vec1 = as_type<packed_uchar4>(lhs);"_s,
                 m_indent, "auto vec2 = as_type<packed_uchar4>(rhs);"_s,
                 m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesFirstLeadingBit()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static T __wgslFirstLeadingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<T>)\n"_s,
+            m_body.append(m_indent, "if constexpr (is_signed_v<T>)\n"_s,
                 m_indent, "    return select(T(31 - select(clz(e), clz(~e), e < T(0))), T(-1), e == T(0) || e == T(-1));\n"_s,
                 m_indent, "else\n"_s,
                 m_indent, "    return select(T(31 - clz(e)), T(-1), e == T(0));\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesFirstTrailingBit()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static T __wgslFirstTrailingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(ctz(e), T(-1), e == T(0));\n"_s);
+            m_body.append(m_indent, "return select(ctz(e), T(-1), e == T(0));\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesSign()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static T __wgslSign(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n"_s);
+            m_body.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesExtractBits()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+        m_body.append(m_indent, "template<typename T>\n"_s,
             m_indent, "static T __wgslExtractBits(T e, uint offset, uint count)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto o = min(offset, 32u);\n"_s,
+            m_body.append(m_indent, "auto o = min(offset, 32u);\n"_s,
                 m_indent, "auto c = min(count, 32u - o);\n"_s,
-                m_indent, "return extract_bits(e, o, c);\n"_s);
+                m_indent, "return extract_bits(e, min(o, 31u), c);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n"_s);
+        m_body.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesMin()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "static T __attribute((always_inline)) __wgslMin(T a, T b)\n"_s,
+        m_body.append(m_indent, "static uint __attribute((always_inline)) __wgslMin(uint a, uint b)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "volatile T va = a;\n"_s,
-                m_indent, "volatile T vb = b;\n"_s,
-                m_indent, "return min(va, vb);\n"_s);
+            m_body.append("return min(a, b);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesFtoi()) {
-        m_stringBuilder.append(m_indent, "template <typename T, typename S>\n"_s,
+        m_body.append(m_indent, "template <typename T, typename S>\n"_s,
             m_indent, "static T __wgslFtoi(S value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "if constexpr (is_same_v<make_scalar_t<S>, half>)\n"_s);
-            m_stringBuilder.append(m_indent, "return T(select(clamp(value, max(S(numeric_limits<T>::min()), numeric_limits<S>::lowest()), numeric_limits<S>::max()), S(0), isnan(value)));\n"_s);
-            m_stringBuilder.append(m_indent, "else\n"_s);
-            m_stringBuilder.append(m_indent, "return T(select(clamp(value, S(numeric_limits<T>::min()), S(numeric_limits<T>::max() - ((128 << (!is_signed_v<T>)) - 1))), S(0), isnan(value)));\n"_s);
+            m_body.append(m_indent, "if constexpr (is_same_v<make_scalar_t<S>, half>)\n"_s);
+            m_body.append(m_indent, "return T(select(clamp(value, max(S(numeric_limits<T>::min()), numeric_limits<S>::lowest()), numeric_limits<S>::max()), S(0), isnan(value)));\n"_s);
+            m_body.append(m_indent, "else\n"_s);
+            m_body.append(m_indent, "return T(select(clamp(value, S(numeric_limits<T>::min()), S(numeric_limits<T>::max() - ((128 << (!is_signed_v<T>)) - 1))), S(0), isnan(value)));\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+        m_body.append(m_indent, "}\n\n"_s);
+    }
+
+    if (m_shaderModule.usesInsertBits()) {
+        m_body.append(m_indent, "template <typename T>\n"_s,
+            m_indent, "static T __wgslInsertBits(T e, T newBits, unsigned offset, unsigned count)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_body.append(m_indent, "constexpr unsigned w = 8 * static_cast<unsigned>(sizeof(make_scalar_t<T>));\n"_s);
+            m_body.append(m_indent, "const unsigned o = min(offset, w);\n"_s);
+            m_body.append(m_indent, "const unsigned c = min(count, w - o);\n"_s);
+            m_body.append(m_indent, "return insert_bits(e, newBits, min(o, w - 1), c);\n"_s);
+        }
+        m_body.append(m_indent, "}\n\n"_s);
     }
 
     m_shaderModule.clearUsesPackedVec3();
@@ -558,19 +617,19 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     // FIXME: visit return attributes
     for (auto& attribute : functionDefinition.attributes()) {
         checkErrorAndVisit(attribute);
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
     }
 
     if (functionDefinition.maybeReturnType())
         visit(functionDefinition.maybeReturnType()->inferredType());
     else
-        m_stringBuilder.append("void"_s);
+        m_body.append("void"_s);
 
-    m_stringBuilder.append(' ', functionDefinition.name(), '(');
+    m_body.append(' ', functionDefinition.name(), '(');
     bool first = true;
     for (auto& parameter : functionDefinition.parameters()) {
         if (!first)
-            m_stringBuilder.append(", "_s);
+            m_body.append(", "_s);
         switch (parameter.role()) {
         case AST::ParameterRole::UserDefined:
         case AST::ParameterRole::PackedResource:
@@ -578,7 +637,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
             break;
         case AST::ParameterRole::StageIn:
             checkErrorAndVisit(parameter);
-            m_stringBuilder.append(" [[stage_in]]"_s);
+            m_body.append(" [[stage_in]]"_s);
             break;
         case AST::ParameterRole::BindGroup:
             visitArgumentBufferParameter(parameter);
@@ -591,9 +650,9 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     m_entryPointStage = std::nullopt;
 
     m_currentFunction = &functionDefinition;
-    m_stringBuilder.append(")\n"_s);
+    m_body.append(")\n"_s);
     checkErrorAndVisit(functionDefinition.body());
-    m_stringBuilder.append("\n\n"_s);
+    m_body.append("\n\n"_s);
 
     m_currentFunction = nullptr;
 }
@@ -602,20 +661,20 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 {
     // FIXME: visit struct attributes
     m_structRole = { structDecl.role() };
-    m_stringBuilder.append(m_indent, "struct "_s, structDecl.name(), " {\n"_s);
+    m_body.append(m_indent, "struct "_s, structDecl.name(), " {\n"_s);
     {
         IndentationScope scope(m_indent);
         unsigned paddingID = 0;
         bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
             ASSERT(shouldPack);
-            m_stringBuilder.append(m_indent, "uint8_t __padding"_s, ++paddingID, '[', String::number(paddingSize), "]; \n"_s);
+            m_body.append(m_indent, "uint8_t __padding"_s, ++paddingID, '[', String::number(paddingSize), "]; \n"_s);
         };
 
         if (structDecl.role() == AST::StructureRole::PackedResource)
-            m_stringBuilder.append(m_indent, "using UnpackedType = struct "_s, structDecl.original()->name(), ";\n\n"_s);
+            m_body.append(m_indent, "using UnpackedType = struct "_s, structDecl.original()->name(), ";\n\n"_s);
         else if (structDecl.role() == AST::StructureRole::UserDefinedResource)
-            m_stringBuilder.append(m_indent, "using PackedType = struct "_s, structDecl.packed()->name(), ";\n\n"_s);
+            m_body.append(m_indent, "using PackedType = struct "_s, structDecl.packed()->name(), ";\n\n"_s);
 
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
@@ -630,54 +689,65 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                         }
                     }
                 }
-                m_stringBuilder.append(m_indent, "texture2d<float> __"_s, name, "_FirstPlane [[id("_s, bindingIndex, ")]];\n"_s,
+                m_body.append(m_indent, "texture2d<float> __"_s, name, "_FirstPlane [[id("_s, bindingIndex, ")]];\n"_s,
                     m_indent, "texture2d<float> __"_s, name, "_SecondPlane [[id("_s, (bindingIndex + 1), ")]];\n"_s,
                     m_indent, "float3x2 __"_s, name, "_UVRemapMatrix [[id("_s, (bindingIndex + 2), ")]];\n"_s,
                     m_indent, "float4x3 __"_s, name, "_ColorSpaceConversionMatrix [[id("_s, (bindingIndex + 3), ")]];\n"_s);
                 continue;
             }
 
-            m_stringBuilder.append(m_indent);
+            m_body.append(m_indent);
             visit(member.type().inferredType());
-            m_stringBuilder.append(' ', name);
+            m_body.append(' ', name);
             for (auto &attribute : member.attributes()) {
-                m_stringBuilder.append(' ');
+                m_body.append(' ');
                 visit(attribute);
             }
-            m_stringBuilder.append(";\n"_s);
+            m_body.append(";\n"_s);
 
             if (shouldPack && member.padding())
                 addPadding(member.padding());
         }
 
         if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {
-            m_stringBuilder.append('\n', m_indent, "template<typename T>\n"_s,
+            m_body.append('\n', m_indent, "template<typename T>\n"_s,
                 m_indent, structDecl.name(), "(const thread T& other)\n"_s);
             {
                 IndentationScope scope(m_indent);
                 char prefix = ':';
                 for (auto& member : structDecl.members()) {
                     auto& name = member.name();
-                    m_stringBuilder.append(m_indent, prefix, ' ', name, "(other."_s, name, ")\n"_s);
+                    m_body.append(m_indent, prefix, ' ', name, "(other."_s, name, ")\n"_s);
                     prefix = ',';
                 }
             }
-            m_stringBuilder.append(m_indent, "{ }\n"_s);
+            m_body.append(m_indent, "{ }\n"_s);
         } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper) {
             ASSERT(structDecl.members().size() == 1);
             auto& member = structDecl.members()[0];
 
-            m_stringBuilder.append('\n', m_indent, "template<typename T>\n"_s,
+            m_body.append('\n', m_indent, "template<typename T>\n"_s,
                 m_indent, structDecl.name(), "(T value)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, ": "_s, member.name(), "(value)\n"_s);
+                m_body.append(m_indent, ": "_s, member.name(), "(value)\n"_s);
             }
-            m_stringBuilder.append(m_indent, "{ }\n"_s);
+            m_body.append(m_indent, "{ }\n"_s);
         }
     }
-    m_stringBuilder.append(m_indent, "};\n\n"_s);
+    m_body.append(m_indent, "};\n\n"_s);
     m_structRole = std::nullopt;
+
+    if (structDecl.role() == AST::StructureRole::BindGroup) {
+        for (auto& member : structDecl.members()) {
+            auto* type = member.type().inferredType();
+            if (auto* reference = std::get_if<Types::Reference>(type))
+                type = reference->element;
+            if (auto maybeSize = type->maybeSize(); maybeSize && *maybeSize < std::numeric_limits<unsigned>::max())
+                m_body.append(m_indent, "static_assert(sizeof("_s, structDecl.name(), "::"_s, member.name(), ") == "_s, *maybeSize, ");\n\n"_s);
+        }
+    }
+
 }
 
 void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
@@ -688,36 +758,36 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     const String& packedName = structure.name();
     auto unpackedName = structure.original()->name();
 
-    m_stringBuilder.append(m_indent, "static "_s, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
+    m_body.append(m_indent, "static "_s, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
-        m_stringBuilder.append(m_indent, packedName, " packed;\n"_s);
+        m_body.append(m_indent, packedName, " packed;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
             if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
-                m_stringBuilder.append(m_indent, "packed."_s, name, " = __pack(unpacked."_s, name, ");\n"_s);
+                m_body.append(m_indent, "packed."_s, name, " = __pack(unpacked."_s, name, ");\n"_s);
             else
-                m_stringBuilder.append(m_indent, "packed."_s, name, " = unpacked."_s, name, ";\n"_s);
+                m_body.append(m_indent, "packed."_s, name, " = unpacked."_s, name, ";\n"_s);
         }
-        m_stringBuilder.append(m_indent, "return packed;\n"_s);
+        m_body.append(m_indent, "return packed;\n"_s);
     }
-    m_stringBuilder.append(m_indent, "}\n\n"_s,
+    m_body.append(m_indent, "}\n\n"_s,
         m_indent, "static "_s, unpackedName, " __unpack("_s, packedName, " packed)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
-        m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n"_s);
+        m_body.append(m_indent, unpackedName, " unpacked;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
             if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
-                m_stringBuilder.append(m_indent, "unpacked."_s, name, " = __unpack(packed."_s, name, ");\n"_s);
+                m_body.append(m_indent, "unpacked."_s, name, " = __unpack(packed."_s, name, ");\n"_s);
             else
-                m_stringBuilder.append(m_indent, "unpacked."_s, name, " = packed."_s, name, ";\n"_s);
+                m_body.append(m_indent, "unpacked."_s, name, " = packed."_s, name, ";\n"_s);
         }
-        m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+        m_body.append(m_indent, "return unpacked;\n"_s);
     }
-    m_stringBuilder.append(m_indent, "}\n\n"_s);
+    m_body.append(m_indent, "}\n\n"_s);
 }
 
 bool FunctionDefinitionWriter::shouldPackType() const
@@ -746,17 +816,17 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     switch (primitive.kind) {
     case Types::Primitive::AbstractInt:
     case Types::Primitive::I32:
-        m_stringBuilder.append("packed_int"_s, vector.size);
+        m_body.append("packed_int"_s, vector.size);
         break;
     case Types::Primitive::U32:
-        m_stringBuilder.append("packed_uint"_s, vector.size);
+        m_body.append("packed_uint"_s, vector.size);
         break;
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::F32:
-        m_stringBuilder.append("packed_float"_s, vector.size);
+        m_body.append("packed_float"_s, vector.size);
         break;
     case Types::Primitive::F16:
-        m_stringBuilder.append("packed_half"_s, vector.size);
+        m_body.append("packed_half"_s, vector.size);
         break;
     case Types::Primitive::Bool:
     case Types::Primitive::Void:
@@ -791,22 +861,22 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
     const Type* type = variable.storeType();
     if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
         ASSERT(variable.maybeInitializer());
-        m_stringBuilder.append("texture_external "_s, variable.name(), " { "_s);
+        m_body.append("texture_external "_s, variable.name(), " { "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_FirstPlane, "_s);
+        m_body.append("_FirstPlane, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_SecondPlane, "_s);
+        m_body.append("_SecondPlane, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_UVRemapMatrix, "_s);
+        m_body.append("_UVRemapMatrix, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_ColorSpaceConversionMatrix }"_s);
+        m_body.append("_ColorSpaceConversionMatrix }"_s);
         return;
     }
 
     if (auto* qualifier = variable.maybeQualifier()) {
         switch (qualifier->addressSpace()) {
         case AddressSpace::Workgroup:
-            m_stringBuilder.append("threadgroup "_s);
+            m_body.append("threadgroup "_s);
             break;
         case AddressSpace::Function:
         case AddressSpace::Handle:
@@ -818,16 +888,16 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
     }
 
     visit(type);
-    m_stringBuilder.append(' ', variable.name());
+    m_body.append(' ', variable.name());
 
     if (variable.flavor() == AST::VariableFlavor::Override)
         return;
 
     if (auto* initializer = variable.maybeInitializer()) {
-        m_stringBuilder.append(" = "_s);
+        m_body.append(" = "_s);
         visit(type, *initializer);
     } else
-        m_stringBuilder.append(" { }"_s);
+        m_body.append(" { }"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
@@ -845,40 +915,40 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
 
     switch (builtin.builtin()) {
     case Builtin::FragDepth:
-        m_stringBuilder.append("[[depth(any)]]"_s);
+        m_body.append("[[depth(any)]]"_s);
         break;
     case Builtin::FrontFacing:
-        m_stringBuilder.append("[[front_facing]]"_s);
+        m_body.append("[[front_facing]]"_s);
         break;
     case Builtin::GlobalInvocationId:
-        m_stringBuilder.append("[[thread_position_in_grid]]"_s);
+        m_body.append("[[thread_position_in_grid]]"_s);
         break;
     case Builtin::InstanceIndex:
-        m_stringBuilder.append("[[instance_id]]"_s);
+        m_body.append("[[instance_id]]"_s);
         break;
     case Builtin::LocalInvocationId:
-        m_stringBuilder.append("[[thread_position_in_threadgroup]]"_s);
+        m_body.append("[[thread_position_in_threadgroup]]"_s);
         break;
     case Builtin::LocalInvocationIndex:
-        m_stringBuilder.append("[[thread_index_in_threadgroup]]"_s);
+        m_body.append("[[thread_index_in_threadgroup]]"_s);
         break;
     case Builtin::NumWorkgroups:
-        m_stringBuilder.append("[[threadgroups_per_grid]]"_s);
+        m_body.append("[[threadgroups_per_grid]]"_s);
         break;
     case Builtin::Position:
-        m_stringBuilder.append("[[position]]"_s);
+        m_body.append("[[position]]"_s);
         break;
     case Builtin::SampleIndex:
-        m_stringBuilder.append("[[sample_id]]"_s);
+        m_body.append("[[sample_id]]"_s);
         break;
     case Builtin::SampleMask:
-        m_stringBuilder.append("[[sample_mask]]"_s);
+        m_body.append("[[sample_mask]]"_s);
         break;
     case Builtin::VertexIndex:
-        m_stringBuilder.append("[[vertex_id]]"_s);
+        m_body.append("[[vertex_id]]"_s);
         break;
     case Builtin::WorkgroupId:
-        m_stringBuilder.append("[[threadgroup_position_in_grid]]"_s);
+        m_body.append("[[threadgroup_position_in_grid]]"_s);
         break;
     }
 }
@@ -888,13 +958,13 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
     m_entryPointStage = { stage.stage() };
     switch (stage.stage()) {
     case ShaderStage::Vertex:
-        m_stringBuilder.append("[[vertex]]"_s);
+        m_body.append("[[vertex]]"_s);
         break;
     case ShaderStage::Fragment:
-        m_stringBuilder.append("[[fragment]]"_s);
+        m_body.append("[[fragment]]"_s);
         break;
     case ShaderStage::Compute:
-        m_stringBuilder.append("[[kernel]]"_s);
+        m_body.append("[[kernel]]"_s);
         break;
     }
 }
@@ -907,12 +977,12 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
         auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
-    m_stringBuilder.append("[[buffer("_s, bufferIndex, ")]]"_s);
+    m_body.append("[[buffer("_s, bufferIndex, ")]]"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id("_s, binding.binding().constantValue()->integerValue(), ")]]"_s);
+    m_body.append("[[id("_s, binding.binding().constantValue()->integerValue(), ")]]"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -922,7 +992,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc"_s, location.location().constantValue()->integerValue(), ")]]"_s);
+            m_body.append("[[user(loc"_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
@@ -933,10 +1003,10 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::FragmentOutputWrapper:
             RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
-            m_stringBuilder.append("[[color("_s, location.location().constantValue()->integerValue(), ")]]"_s);
+            m_body.append("[[color("_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute("_s, location.location().constantValue()->integerValue(), ")]]"_s);
+            m_body.append("[[attribute("_s, location.location().constantValue()->integerValue(), ")]]"_s);
             break;
         }
     }
@@ -995,7 +1065,7 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
 
 void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
 {
-    m_stringBuilder.append("[["_s, convertToSampleMode(attribute.type(), attribute.sampling()), "]]"_s);
+    m_body.append("[["_s, convertToSampleMode(attribute.type(), attribute.sampling()), "]]"_s);
 }
 
 // Types
@@ -1007,28 +1077,28 @@ void FunctionDefinitionWriter::visit(const Type* type)
             switch (primitive.kind) {
             case Types::Primitive::AbstractInt:
             case Types::Primitive::I32:
-                m_stringBuilder.append("int"_s);
+                m_body.append("int"_s);
                 break;
             case Types::Primitive::U32:
-                m_stringBuilder.append("unsigned"_s);
+                m_body.append("unsigned"_s);
                 break;
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::F32:
-                m_stringBuilder.append("float"_s);
+                m_body.append("float"_s);
                 break;
             case Types::Primitive::F16:
-                m_stringBuilder.append("half"_s);
+                m_body.append("half"_s);
                 break;
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
             case Types::Primitive::Sampler:
-                m_stringBuilder.append(*type);
+                m_body.append(*type);
                 break;
             case Types::Primitive::SamplerComparison:
-                m_stringBuilder.append("sampler"_s);
+                m_body.append("sampler"_s);
                 break;
             case Types::Primitive::TextureExternal:
-                m_stringBuilder.append("texture_external"_s);
+                m_body.append("texture_external"_s);
                 break;
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
@@ -1039,48 +1109,48 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Vector& vector) {
             if (emitPackedVector(vector))
                 return;
-            m_stringBuilder.append("vec<"_s);
+            m_body.append("vec<"_s);
             visit(vector.element);
-            m_stringBuilder.append(", "_s, vector.size, '>');
+            m_body.append(", "_s, vector.size, '>');
         },
         [&](const Matrix& matrix) {
-            m_stringBuilder.append("matrix<"_s);
+            m_body.append("matrix<"_s);
             visit(matrix.element);
-            m_stringBuilder.append(", "_s, matrix.columns, ", "_s, matrix.rows, '>');
+            m_body.append(", "_s, matrix.columns, ", "_s, matrix.rows, '>');
         },
         [&](const Array& array) {
-            m_stringBuilder.append("array<"_s);
+            m_body.append("array<"_s);
             auto* vector = std::get_if<Types::Vector>(array.element);
             if (vector && vector->size == 3 && shouldPackType()) {
-                m_stringBuilder.append("PackedVec3<"_s);
+                m_body.append("PackedVec3<"_s);
                 visit(vector->element);
-                m_stringBuilder.append(">"_s);
+                m_body.append(">"_s);
             } else
                 visit(array.element);
-            m_stringBuilder.append(", "_s);
+            m_body.append(", "_s);
             WTF::switchOn(array.size,
-                [&](unsigned size) { m_stringBuilder.append(size); },
-                [&](std::monostate) { m_stringBuilder.append(1); },
+                [&](unsigned size) { m_body.append(size); },
+                [&](std::monostate) { m_body.append(1); },
                 [&](AST::Expression* size) {
                     visit(*size);
                 });
-            m_stringBuilder.append('>');
+            m_body.append('>');
         },
         [&](const Struct& structure) {
-            m_stringBuilder.append(structure.structure.name());
+            m_body.append(structure.structure.name());
             if (shouldPackType() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
-                m_stringBuilder.append("::PackedType"_s);
+                m_body.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
-            m_stringBuilder.append(structure.name, '<');
+            m_body.append(structure.name, '<');
             bool first = true;
             for (auto& value : structure.values) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
                 visit(value);
             }
-            m_stringBuilder.append('>');
+            m_body.append('>');
         },
         [&](const Texture& texture) {
             ASCIILiteral type;
@@ -1109,9 +1179,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 access = "read"_s;
                 break;
             }
-            m_stringBuilder.append(type, '<');
+            m_body.append(type, '<');
             visit(texture.element);
-            m_stringBuilder.append(", access::"_s, access, '>');
+            m_body.append(", access::"_s, access, '>');
         },
         [&](const TextureStorage& texture) {
             ASCIILiteral base;
@@ -1141,9 +1211,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 mode = "read_write"_s;
                 break;
             }
-            m_stringBuilder.append(base, '<');
+            m_body.append(base, '<');
             visit(shaderTypeForTexelFormat(texture.format, m_shaderModule.types()));
-            m_stringBuilder.append(", access::"_s, mode, '>');
+            m_body.append(", access::"_s, mode, '>');
         },
         [&](const TextureDepth& texture) {
             ASCIILiteral base;
@@ -1164,7 +1234,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 base = "depth2d_ms"_s;
                 break;
             }
-            m_stringBuilder.append(base, "<float>"_s);
+            m_body.append(base, "<float>"_s);
         },
         [&](const Reference& reference) {
             auto addressSpace = serializeAddressSpace(reference.addressSpace);
@@ -1173,25 +1243,25 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 return;
             }
             if (reference.accessMode == AccessMode::Read)
-                m_stringBuilder.append("const "_s);
-            m_stringBuilder.append(addressSpace, ' ');
+                m_body.append("const "_s);
+            m_body.append(addressSpace, ' ');
             visit(reference.element);
-            m_stringBuilder.append('&');
+            m_body.append('&');
         },
         [&](const Pointer& pointer) {
             auto addressSpace = serializeAddressSpace(pointer.addressSpace);
             if (pointer.accessMode == AccessMode::Read)
-                m_stringBuilder.append("const "_s);
+                m_body.append("const "_s);
             if (addressSpace)
-                m_stringBuilder.append(addressSpace, ' ');
+                m_body.append(addressSpace, ' ');
             visit(pointer.element);
-            m_stringBuilder.append('*');
+            m_body.append('*');
         },
         [&](const Atomic& atomic) {
             if (atomic.element == m_shaderModule.types().i32Type())
-                m_stringBuilder.append("atomic_int"_s);
+                m_body.append("atomic_int"_s);
             else
-                m_stringBuilder.append("atomic_uint"_s);
+                m_body.append("atomic_uint"_s);
         },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -1208,20 +1278,20 @@ void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
     auto parameterRoleScope = SetForScope(m_parameterRole, parameter.role());
     visit(parameter.typeName().inferredType());
-    m_stringBuilder.append(' ', parameter.name());
+    m_body.append(' ', parameter.name());
     for (auto& attribute : parameter.attributes()) {
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
         checkErrorAndVisit(attribute);
     }
 }
 
 void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
-    m_stringBuilder.append("constant "_s);
+    m_body.append("constant "_s);
     visit(parameter.typeName().inferredType());
-    m_stringBuilder.append("& "_s, parameter.name());
+    m_body.append("& "_s, parameter.name());
     for (auto& attribute : parameter.attributes()) {
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
         checkErrorAndVisit(attribute);
     }
 }
@@ -1259,15 +1329,21 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
 
 static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
+    const auto* vector = std::get_if<Types::Vector>(call.inferredType());
     const auto& get = [&](ASCIILiteral property) {
         writer->visit(call.arguments()[0]);
         writer->stringBuilder().append(".get_"_s, property, '(');
-        if (call.arguments().size() > 1)
+        if (vector && call.arguments().size() > 1) {
+            writer->stringBuilder().append("min("_s);
+            writer->visit(call.arguments()[0]);
+            writer->stringBuilder().append(".get_num_mip_levels(), uint("_s);
             writer->visit(call.arguments()[1]);
+            writer->stringBuilder().append(')');
+            writer->stringBuilder().append(')');
+        }
         writer->stringBuilder().append(')');
     };
 
-    const auto* vector = std::get_if<Types::Vector>(call.inferredType());
     if (!vector) {
         get("width"_s);
         return;
@@ -1407,9 +1483,21 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
             writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n"_s);
         }
         {
+            writer->stringBuilder().append(writer->indent(), "auto __xAdjustment = "_s);
+            writer->visit(texture);
+            writer->stringBuilder().append(writer->indent(), ".SecondPlane.get_width(0) / static_cast<float>("_s);
+            writer->visit(texture);
+            writer->stringBuilder().append(writer->indent(), ".FirstPlane.get_width(0));"_s);
+
+            writer->stringBuilder().append(writer->indent(), "auto __yAdjustment = "_s);
+            writer->visit(texture);
+            writer->stringBuilder().append(writer->indent(), ".SecondPlane.get_height(0) / static_cast<float>("_s);
+            writer->visit(texture);
+            writer->stringBuilder().append(writer->indent(), ".FirstPlane.get_height(0));"_s);
+
             writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n"_s);
+            writer->stringBuilder().append(".SecondPlane.read(uint2(uint(__coords.x * __xAdjustment), uint(__coords.y * __yAdjustment))).rg);\n"_s);
         }
         writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n"_s);
         {
@@ -1935,24 +2023,24 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (call.isConstructor() && (isArray || isStruct)) {
         visit(type);
-        m_stringBuilder.append('(');
+        m_body.append('(');
         const Type* arrayElementType = nullptr;
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
 
-        m_stringBuilder.append("{\n"_s);
+        m_body.append("{\n"_s);
         {
             IndentationScope scope(m_indent);
             for (auto& argument : call.arguments()) {
-                m_stringBuilder.append(m_indent);
+                m_body.append(m_indent);
                 if (isStruct)
                     visit(argument);
                 else
                     visit(arrayElementType, argument);
-                m_stringBuilder.append(",\n"_s);
+                m_body.append(",\n"_s);
             }
         }
-        m_stringBuilder.append(m_indent, "})"_s);
+        m_body.append(m_indent, "})"_s);
         return;
     }
 
@@ -2010,54 +2098,75 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             return;
         }
 
-        static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
-            { "atomicCompareExchangeWeak"_s, "__wgslAtomicCompareExchangeWeak"_s },
-            { "countLeadingZeros"_s, "clz"_s },
-            { "countOneBits"_s, "popcount"_s },
-            { "countTrailingZeros"_s, "ctz"_s },
-            { "dot"_s, "__wgslDot"_s },
-            { "dot4I8Packed"_s, "__wgslDot4I8Packed"_s },
-            { "dot4U8Packed"_s, "__wgslDot4U8Packed"_s },
-            { "dpdx"_s, "dfdx"_s },
-            { "dpdxCoarse"_s, "dfdx"_s },
-            { "dpdxFine"_s, "dfdx"_s },
-            { "dpdy"_s, "dfdy"_s },
-            { "dpdyCoarse"_s, "dfdy"_s },
-            { "dpdyFine"_s, "dfdy"_s },
-            { "extractBits"_s, "__wgslExtractBits"_s },
-            { "faceForward"_s, "faceforward"_s },
-            { "firstLeadingBit"_s, "__wgslFirstLeadingBit"_s },
-            { "firstTrailingBit"_s, "__wgslFirstTrailingBit"_s },
-            { "frexp"_s, "__wgslFrexp"_s },
-            { "fwidthCoarse"_s, "fwidth"_s },
-            { "fwidthFine"_s, "fwidth"_s },
-            { "insertBits"_s, "insert_bits"_s },
-            { "inverseSqrt"_s, "rsqrt"_s },
-            { "modf"_s, "__wgslModf"_s },
-            { "pack2x16snorm"_s, "pack_float_to_snorm2x16"_s },
-            { "pack2x16unorm"_s, "pack_float_to_unorm2x16"_s },
-            { "pack4x8snorm"_s, "pack_float_to_snorm4x8"_s },
-            { "pack4x8unorm"_s, "pack_float_to_unorm4x8"_s },
-            { "reverseBits"_s, "reverse_bits"_s },
-            { "round"_s, "rint"_s },
-            { "sign"_s, "__wgslSign"_s },
-            { "unpack2x16snorm"_s, "unpack_snorm2x16_to_float"_s },
-            { "unpack2x16unorm"_s, "unpack_unorm2x16_to_float"_s },
-            { "unpack4x8snorm"_s, "unpack_snorm4x8_to_float"_s },
-            { "unpack4x8unorm"_s, "unpack_unorm4x8_to_float"_s },
+#define EMIT_HELPER(name) \
+    [](HelperGenerator& helperGenerator) { \
+        if (!std::exchange(helperGenerator.didEmit##name, true)) \
+            helperGenerator.emit##name(); \
+        return "__wgsl"#name##_s;\
+    }
+
+#define NOOP_HELPER(name) \
+    [](HelperGenerator&) { return #name##_s; }
+
+        static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral(*)(HelperGenerator&)> directMappings[] {
+            { "acos"_s, EMIT_HELPER(Acos) },
+            { "acosh"_s, EMIT_HELPER(Acosh) },
+            { "asin"_s, EMIT_HELPER(Asin) },
+            { "atanh"_s, EMIT_HELPER(Atanh) },
+            { "atomicCompareExchangeWeak"_s, NOOP_HELPER(__wgslAtomicCompareExchangeWeak) },
+            { "countLeadingZeros"_s, NOOP_HELPER(clz) },
+            { "countOneBits"_s, NOOP_HELPER(popcount) },
+            { "countTrailingZeros"_s, NOOP_HELPER(ctz) },
+            { "dot"_s, NOOP_HELPER(__wgslDot) },
+            { "dot4I8Packed"_s, NOOP_HELPER(__wgslDot4I8Packed) },
+            { "dot4U8Packed"_s, NOOP_HELPER(__wgslDot4U8Packed) },
+            { "dpdx"_s, NOOP_HELPER(dfdx) },
+            { "dpdxCoarse"_s, NOOP_HELPER(dfdx) },
+            { "dpdxFine"_s, NOOP_HELPER(dfdx) },
+            { "dpdy"_s, NOOP_HELPER(dfdy) },
+            { "dpdyCoarse"_s, NOOP_HELPER(dfdy) },
+            { "dpdyFine"_s, NOOP_HELPER(dfdy) },
+            { "extractBits"_s, NOOP_HELPER(__wgslExtractBits) },
+            { "faceForward"_s, NOOP_HELPER(faceforward) },
+            { "firstLeadingBit"_s, NOOP_HELPER(__wgslFirstLeadingBit) },
+            { "firstTrailingBit"_s, NOOP_HELPER(__wgslFirstTrailingBit) },
+            { "frexp"_s, NOOP_HELPER(__wgslFrexp) },
+            { "fwidthCoarse"_s, NOOP_HELPER(fwidth) },
+            { "fwidthFine"_s, NOOP_HELPER(fwidth) },
+            { "insertBits"_s, NOOP_HELPER(__wgslInsertBits) },
+            { "inverseSqrt"_s, EMIT_HELPER(InverseSqrt) },
+            { "log"_s, EMIT_HELPER(Log) },
+            { "log2"_s, EMIT_HELPER(Log2) },
+            { "modf"_s, NOOP_HELPER(__wgslModf) },
+            { "pack2x16snorm"_s, NOOP_HELPER(pack_float_to_snorm2x16) },
+            { "pack2x16unorm"_s, NOOP_HELPER(pack_float_to_unorm2x16) },
+            { "pack4x8snorm"_s, NOOP_HELPER(pack_float_to_snorm4x8) },
+            { "pack4x8unorm"_s, NOOP_HELPER(pack_float_to_unorm4x8) },
+            { "reverseBits"_s, NOOP_HELPER(reverse_bits) },
+            { "round"_s, NOOP_HELPER(rint) },
+            { "sign"_s, NOOP_HELPER(__wgslSign) },
+            { "sqrt"_s, EMIT_HELPER(Sqrt) },
+            { "unpack2x16snorm"_s, NOOP_HELPER(unpack_snorm2x16_to_float) },
+            { "unpack2x16unorm"_s, NOOP_HELPER(unpack_unorm2x16_to_float) },
+            { "unpack4x8snorm"_s, NOOP_HELPER(unpack_snorm4x8_to_float) },
+            { "unpack4x8unorm"_s, NOOP_HELPER(unpack_unorm4x8_to_float) },
         };
+
+#undef EMIT_HELPER
+#undef NOOP_HELPER
+
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {
             if (call.isFloatToIntConversion()) {
-                m_stringBuilder.append("__wgslFtoi<"_s);
+                m_body.append("__wgslFtoi<"_s);
                 visit(type);
-                m_stringBuilder.append(">"_s);
+                m_body.append(">"_s);
             } else
                 visit(type);
         } else if (auto mappedName = mappedNames.get(targetName))
-            m_stringBuilder.append(mappedName);
+            m_body.append(mappedName(m_helperGenerator));
         else
-            m_stringBuilder.append(targetName);
+            m_body.append(targetName);
         visitArguments(this, call);
         return;
     }
@@ -2068,26 +2177,26 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
-    m_stringBuilder.append('(');
+    m_body.append('(');
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
-        m_stringBuilder.append('~');
+        m_body.append('~');
         break;
     case AST::UnaryOperation::Negate:
-        m_stringBuilder.append('-');
+        m_body.append('-');
         break;
     case AST::UnaryOperation::Not:
-        m_stringBuilder.append('!');
+        m_body.append('!');
         break;
     case AST::UnaryOperation::AddressOf:
-        m_stringBuilder.append('&');
+        m_body.append('&');
         break;
     case AST::UnaryOperation::Dereference:
-        m_stringBuilder.append('*');
+        m_body.append('*');
         break;
     }
     visit(unary.expression());
-    m_stringBuilder.append(')');
+    m_body.append(')');
 }
 
 void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, AST::BinaryOperation operation, AST::Expression& rhs)
@@ -2110,78 +2219,78 @@ void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, A
             helperFunction = "fmod"_s;
 
         if (!helperFunction.isNull()) {
-            m_stringBuilder.append(helperFunction, '(');
+            m_body.append(helperFunction, '(');
             visit(lhs);
-            m_stringBuilder.append(", "_s);
+            m_body.append(", "_s);
             visit(rhs);
-            m_stringBuilder.append(')');
+            m_body.append(')');
             return;
         }
     }
 
-    m_stringBuilder.append('(');
+    m_body.append('(');
     visit(lhs);
     switch (operation) {
     case AST::BinaryOperation::Add:
-        m_stringBuilder.append(" + "_s);
+        m_body.append(" + "_s);
         break;
     case AST::BinaryOperation::Subtract:
-        m_stringBuilder.append(" - "_s);
+        m_body.append(" - "_s);
         break;
     case AST::BinaryOperation::Multiply:
-        m_stringBuilder.append(" * "_s);
+        m_body.append(" * "_s);
         break;
     case AST::BinaryOperation::Divide:
-        m_stringBuilder.append(" / "_s);
+        m_body.append(" / "_s);
         break;
     case AST::BinaryOperation::Modulo:
-        m_stringBuilder.append(" % "_s);
+        m_body.append(" % "_s);
         break;
     case AST::BinaryOperation::And:
-        m_stringBuilder.append(" & "_s);
+        m_body.append(" & "_s);
         break;
     case AST::BinaryOperation::Or:
-        m_stringBuilder.append(" | "_s);
+        m_body.append(" | "_s);
         break;
     case AST::BinaryOperation::Xor:
-        m_stringBuilder.append(" ^ "_s);
+        m_body.append(" ^ "_s);
         break;
 
     case AST::BinaryOperation::LeftShift:
-        m_stringBuilder.append(" << "_s);
+        m_body.append(" << "_s);
         break;
     case AST::BinaryOperation::RightShift:
-        m_stringBuilder.append(" >> "_s);
+        m_body.append(" >> "_s);
         break;
 
     case AST::BinaryOperation::Equal:
-        m_stringBuilder.append(" == "_s);
+        m_body.append(" == "_s);
         break;
     case AST::BinaryOperation::NotEqual:
-        m_stringBuilder.append(" != "_s);
+        m_body.append(" != "_s);
         break;
     case AST::BinaryOperation::GreaterThan:
-        m_stringBuilder.append(" > "_s);
+        m_body.append(" > "_s);
         break;
     case AST::BinaryOperation::GreaterEqual:
-        m_stringBuilder.append(" >= "_s);
+        m_body.append(" >= "_s);
         break;
     case AST::BinaryOperation::LessThan:
-        m_stringBuilder.append(" < "_s);
+        m_body.append(" < "_s);
         break;
     case AST::BinaryOperation::LessEqual:
-        m_stringBuilder.append(" <= "_s);
+        m_body.append(" <= "_s);
         break;
 
     case AST::BinaryOperation::ShortCircuitAnd:
-        m_stringBuilder.append(" && "_s);
+        m_body.append(" && "_s);
         break;
     case AST::BinaryOperation::ShortCircuitOr:
-        m_stringBuilder.append(" || "_s);
+        m_body.append(" || "_s);
         break;
     }
     visit(rhs);
-    m_stringBuilder.append(')');
+    m_body.append(')');
 }
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
@@ -2191,33 +2300,33 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 
 void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerDereference)
 {
-    m_stringBuilder.append("(*"_s);
+    m_body.append("(*"_s);
     visit(pointerDereference.target());
-    m_stringBuilder.append(')');
+    m_body.append(')');
 }
 void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 {
     bool isPointer = std::holds_alternative<Types::Pointer>(*access.base().inferredType());
     if (isPointer)
-        m_stringBuilder.append("(*("_s);
+        m_body.append("(*("_s);
     visit(access.base());
     if (isPointer)
-        m_stringBuilder.append("))"_s);
-    m_stringBuilder.append('[');
+        m_body.append("))"_s);
+    m_body.append('[');
     visit(access.index());
-    m_stringBuilder.append(']');
+    m_body.append(']');
 }
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
     auto it = m_constantValues.find(identifier.identifier());
     if (UNLIKELY(it != m_constantValues.end())) {
-        m_stringBuilder.append('(');
+        m_body.append('(');
         serializeConstant(identifier.inferredType(), it->value);
-        m_stringBuilder.append(')');
+        m_body.append(')');
         return;
     }
-    m_stringBuilder.append(identifier.identifier());
+    m_body.append(identifier.identifier());
 }
 
 void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
@@ -2225,51 +2334,51 @@ void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
     visit(access.base());
     auto* baseType = access.base().inferredType();
     if (baseType && std::holds_alternative<Types::Pointer>(*baseType))
-        m_stringBuilder.append("->"_s);
+        m_body.append("->"_s);
     else
-        m_stringBuilder.append('.');
-    m_stringBuilder.append(access.fieldName());
+        m_body.append('.');
+    m_body.append(access.fieldName());
 }
 
 void FunctionDefinitionWriter::visit(AST::BoolLiteral& literal)
 {
-    m_stringBuilder.append(literal.value() ? "true"_s : "false"_s);
+    m_body.append(literal.value() ? "true"_s : "false"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
 {
-    m_stringBuilder.append(literal.value());
+    m_body.append(literal.value());
     auto& primitiveType = std::get<Types::Primitive>(*literal.inferredType());
     if (primitiveType.kind == Types::Primitive::U32)
-        m_stringBuilder.append('u');
+        m_body.append('u');
 }
 
 void FunctionDefinitionWriter::visit(AST::Signed32Literal& literal)
 {
-    m_stringBuilder.append(literal.value());
+    m_body.append(literal.value());
 }
 
 void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 {
-    m_stringBuilder.append(literal.value(), 'u');
+    m_body.append(literal.value(), 'u');
 }
 
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 {
     NumberToStringBuffer buffer;
-    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
+    m_body.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 {
     NumberToStringBuffer buffer;
-    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
+    m_body.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float16Literal& literal)
 {
     NumberToStringBuffer buffer;
-    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
+    m_body.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
@@ -2280,7 +2389,7 @@ void FunctionDefinitionWriter::visit(AST::Statement& statement)
 void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
     visit(assignment.lhs());
-    m_stringBuilder.append(" = "_s);
+    m_body.append(" = "_s);
     const auto* assignmentType = assignment.lhs().inferredType();
     if (!assignmentType) {
         // In theory this should never happen, but the assignments generated by
@@ -2316,24 +2425,24 @@ void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement
     if (!serialized)
         visit(statement.leftExpression());
 
-    m_stringBuilder.append(" = "_s);
+    m_body.append(" = "_s);
     serializeBinaryExpression(statement.leftExpression(), statement.operation(), statement.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
 {
-    m_stringBuilder.append("{\n"_s);
+    m_body.append("{\n"_s);
     {
         IndentationScope scope(m_indent);
         visitStatements(statement.statements());
     }
-    m_stringBuilder.append(m_indent, '}');
+    m_body.append(m_indent, '}');
 }
 
 void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
 {
     for (auto& statement : statements) {
-        m_stringBuilder.append(m_indent);
+        m_body.append(m_indent);
         checkErrorAndVisit(statement);
         switch (statement.kind()) {
         case AST::NodeKind::AssignmentStatement:
@@ -2346,12 +2455,12 @@ void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
         case AST::NodeKind::PhonyAssignmentStatement:
         case AST::NodeKind::ReturnStatement:
         case AST::NodeKind::VariableStatement:
-            m_stringBuilder.append(';');
+            m_body.append(';');
             break;
         default:
             break;
         }
-        m_stringBuilder.append('\n');
+        m_body.append('\n');
     }
 }
 
@@ -2360,10 +2469,10 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
     visit(statement.expression());
     switch (statement.operation()) {
     case AST::DecrementIncrementStatement::Operation::Increment:
-        m_stringBuilder.append("++"_s);
+        m_body.append("++"_s);
         break;
     case AST::DecrementIncrementStatement::Operation::Decrement:
-        m_stringBuilder.append("--"_s);
+        m_body.append("--"_s);
         break;
     }
 }
@@ -2371,29 +2480,29 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
 void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
 {
 #if CPU(X86_64)
-    m_stringBuilder.append("__asm volatile(\"\"); discard_fragment()"_s);
+    m_body.append("__asm volatile(\"\"); discard_fragment()"_s);
 #else
-    m_stringBuilder.append("discard_fragment()"_s);
+    m_body.append("discard_fragment()"_s);
 #endif
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
 {
-    m_stringBuilder.append("if ("_s);
+    m_body.append("if ("_s);
     visit(statement.test());
-    m_stringBuilder.append(") "_s);
+    m_body.append(") "_s);
     visit(statement.trueBody());
     if (statement.maybeFalseBody()) {
-        m_stringBuilder.append(" else "_s);
+        m_body.append(" else "_s);
         visit(*statement.maybeFalseBody());
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
 {
-    m_stringBuilder.append("(void)("_s);
+    m_body.append("(void)("_s);
     visit(statement.rhs());
-    m_stringBuilder.append(')');
+    m_body.append(')');
 }
 
 static std::optional<std::pair<String, String>> fragDepthIdentifierForFunction(AST::Function* function)
@@ -2427,47 +2536,47 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
     auto fragDepthIdentifier = fragDepthIdentifierForFunction(m_currentFunction);
     if (fragDepthIdentifier)
-        m_stringBuilder.append(fragDepthIdentifier->first, " __wgslFragmentReturnResult = "_s);
+        m_body.append(fragDepthIdentifier->first, " __wgslFragmentReturnResult = "_s);
     else
-        m_stringBuilder.append("return"_s);
+        m_body.append("return"_s);
     if (statement.maybeExpression()) {
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
         visit(*statement.maybeExpression());
     }
 
     if (fragDepthIdentifier) {
-        m_stringBuilder.append(";\n__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, " = clamp(__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, ", as_type<float>(__DynamicOffsets[0]), as_type<float>(__DynamicOffsets[1]));\n"_s);
-        m_stringBuilder.append("return __wgslFragmentReturnResult"_s);
+        m_body.append(";\n__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, " = clamp(__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, ", as_type<float>(__DynamicOffsets[0]), as_type<float>(__DynamicOffsets[1]));\n"_s);
+        m_body.append("return __wgslFragmentReturnResult"_s);
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
 {
-    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " for ("_s);
+    m_body.append("{ " DECLARE_FORWARD_PROGRESS " for ("_s);
     if (auto* initializer = statement.maybeInitializer())
         visit(*initializer);
-    m_stringBuilder.append(';');
+    m_body.append(';');
     if (auto* test = statement.maybeTest()) {
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
         visit(*test);
     }
-    m_stringBuilder.append(';');
+    m_body.append(';');
     if (auto* update = statement.maybeUpdate()) {
-        m_stringBuilder.append(' ');
+        m_body.append(' ');
         visit(*update);
     }
-    m_stringBuilder.append(") { " CHECK_FORWARD_PROGRESS " "_s);
+    m_body.append(") { " CHECK_FORWARD_PROGRESS " "_s);
     visit(statement.body());
-    m_stringBuilder.append('}');
-    m_stringBuilder.append('}');
+    m_body.append('}');
+    m_body.append('}');
 }
 
 void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
-    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " while (true) { " CHECK_FORWARD_PROGRESS " \n"_s);
+    m_body.append("{ " DECLARE_FORWARD_PROGRESS " while (true) { " CHECK_FORWARD_PROGRESS " \n"_s);
     {
         if (statement.containsSwitch())
-            m_stringBuilder.append("bool __continuing = false;\n"_s, m_indent);
+            m_body.append("bool __continuing = false;\n"_s, m_indent);
         auto& continuing = statement.continuing();
         SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
 
@@ -2475,12 +2584,12 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
         visitStatements(statement.body());
 
         if (continuing.has_value()) {
-            m_stringBuilder.append(m_indent);
+            m_body.append(m_indent);
             visit(*continuing);
         }
     }
-    m_stringBuilder.append(m_indent, '}');
-    m_stringBuilder.append(m_indent, '}');
+    m_body.append(m_indent, '}');
+    m_body.append(m_indent, '}');
 }
 
 void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
@@ -2488,91 +2597,91 @@ void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
     // Do not emit the same continuing for continue statements within the continuing block
     SetForScope continuingScope(m_continuing, nullptr);
 
-    m_stringBuilder.append("{\n"_s);
+    m_body.append("{\n"_s);
     {
         IndentationScope scope(m_indent);
         visitStatements(continuing.body);
 
         if (auto* breakIf = continuing.breakIf) {
-            m_stringBuilder.append(m_indent, "if ("_s);
+            m_body.append(m_indent, "if ("_s);
             visit(*breakIf);
-            m_stringBuilder.append(")\n"_s);
+            m_body.append(")\n"_s);
 
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "break;\n"_s);
+            m_body.append(m_indent, "break;\n"_s);
         }
     }
-    m_stringBuilder.append(m_indent, "}\n"_s);
+    m_body.append(m_indent, "}\n"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 {
-    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " while ("_s);
+    m_body.append("{ " DECLARE_FORWARD_PROGRESS " while ("_s);
     visit(statement.test());
-    m_stringBuilder.append(") { " CHECK_FORWARD_PROGRESS " "_s);
+    m_body.append(") { " CHECK_FORWARD_PROGRESS " "_s);
     visit(statement.body());
-    m_stringBuilder.append('}');
-    m_stringBuilder.append('}');
+    m_body.append('}');
+    m_body.append('}');
 }
 
 void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
 {
     const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
         for (auto& selector : clause.selectors) {
-            m_stringBuilder.append('\n', m_indent, "case "_s);
+            m_body.append('\n', m_indent, "case "_s);
             visit(selector);
-            m_stringBuilder.append(':');
+            m_body.append(':');
         }
         if (isDefault)
-            m_stringBuilder.append('\n', m_indent, "default:"_s);
-        m_stringBuilder.append(' ');
+            m_body.append('\n', m_indent, "default:"_s);
+        m_body.append(' ');
         visit(clause.body);
 
         IndentationScope scope(m_indent);
-        m_stringBuilder.append('\n', m_indent, "break;"_s);
+        m_body.append('\n', m_indent, "break;"_s);
     };
 
-    m_stringBuilder.append("switch ("_s);
+    m_body.append("switch ("_s);
     visit(statement.value());
-    m_stringBuilder.append(") {"_s);
+    m_body.append(") {"_s);
     for (auto& clause : statement.clauses())
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
-    m_stringBuilder.append('\n', m_indent, '}');
+    m_body.append('\n', m_indent, '}');
     if (statement.isInsideLoop()) {
-        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        m_body.append('\n', m_indent, "if (__continuing) {"_s);
         {
             auto scope = IndentationScope(m_indent);
             visit(*m_continuing);
         }
-        m_stringBuilder.append('\n', m_indent, '}');
+        m_body.append('\n', m_indent, '}');
     } else if (statement.isNestedInsideLoop()) {
-        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        m_body.append('\n', m_indent, "if (__continuing) {"_s);
         {
             auto scope = IndentationScope(m_indent);
-            m_stringBuilder.append('\n', m_indent, "break;"_s);
+            m_body.append('\n', m_indent, "break;"_s);
         }
-        m_stringBuilder.append('\n', m_indent, '}');
+        m_body.append('\n', m_indent, '}');
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 {
-    m_stringBuilder.append("break"_s);
+    m_body.append("break"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::ContinueStatement& statement)
 {
     if (statement.isFromSwitchToContinuing()) {
-        m_stringBuilder.append("__continuing = true;\n"_s);
-        m_stringBuilder.append(m_indent, "break"_s);
+        m_body.append("__continuing = true;\n"_s);
+        m_body.append(m_indent, "break"_s);
         return;
     }
     if (m_continuing) {
         visit(*m_continuing);
-        m_stringBuilder.append(m_indent);
+        m_body.append(m_indent);
     }
-    m_stringBuilder.append("continue"_s);
+    m_body.append("continue"_s);
 }
 
 void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue value)
@@ -2583,31 +2692,31 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
             case Primitive::AbstractInt:
-                m_stringBuilder.append(std::get<int64_t>(value));
+                m_body.append(std::get<int64_t>(value));
                 break;
             case Primitive::I32:
-                m_stringBuilder.append(std::get<int32_t>(value));
+                m_body.append(std::get<int32_t>(value));
                 break;
             case Primitive::U32:
-                m_stringBuilder.append(std::get<uint32_t>(value), 'u');
+                m_body.append(std::get<uint32_t>(value), 'u');
                 break;
             case Primitive::AbstractFloat: {
                 NumberToStringBuffer buffer;
-                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer));
+                m_body.append(WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer));
                 break;
             }
             case Primitive::F32: {
                 NumberToStringBuffer buffer;
-                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer));
+                m_body.append(WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer));
                 break;
             }
             case Primitive::F16: {
                 NumberToStringBuffer buffer;
-                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer), 'h');
+                m_body.append(WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer), 'h');
                 break;
             }
             case Primitive::Bool:
-                m_stringBuilder.append(std::get<bool>(value) ? "true"_s : "false"_s);
+                m_body.append(std::get<bool>(value) ? "true"_s : "false"_s);
                 break;
             case Primitive::Void:
             case Primitive::Sampler:
@@ -2625,78 +2734,78 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         [&](const Vector& vectorType) {
             auto& vector = std::get<ConstantVector>(value);
             visit(type);
-            m_stringBuilder.append('(');
+            m_body.append('(');
             bool first = true;
             for (auto& element : vector.elements) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
                 serializeConstant(vectorType.element, element);
             }
-            m_stringBuilder.append(')');
+            m_body.append(')');
         },
         [&](const Array& arrayType) {
             auto& array = std::get<ConstantArray>(value);
             visit(type);
-            m_stringBuilder.append('{');
+            m_body.append('{');
             bool first = true;
             for (auto& element : array.elements) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
                 serializeConstant(arrayType.element, element);
             }
-            m_stringBuilder.append('}');
+            m_body.append('}');
         },
         [&](const Matrix& matrixType) {
             auto& matrix = std::get<ConstantMatrix>(value);
-            m_stringBuilder.append("matrix<"_s);
+            m_body.append("matrix<"_s);
             visit(matrixType.element);
-            m_stringBuilder.append(", "_s, matrixType.columns, ", "_s, matrixType.rows, ">("_s);
+            m_body.append(", "_s, matrixType.columns, ", "_s, matrixType.rows, ">("_s);
             bool first = true;
             for (auto& element : matrix.elements) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
                 serializeConstant(matrixType.element, element);
             }
-            m_stringBuilder.append(')');
+            m_body.append(')');
         },
         [&](const Struct& structType) {
             auto& constantStruct = std::get<ConstantStruct>(value);
-            m_stringBuilder.append(structType.structure.name(), " { "_s);
+            m_body.append(structType.structure.name(), " { "_s);
             for (auto& member : structType.structure.members()) {
-                m_stringBuilder.append('.', member.name(), " = "_s);
+                m_body.append('.', member.name(), " = "_s);
                 serializeConstant(structType.fields.get(member.originalName()), constantStruct.fields.get(member.originalName()));
-                m_stringBuilder.append(", "_s);
+                m_body.append(", "_s);
             }
-            m_stringBuilder.append(" }"_s);
+            m_body.append(" }"_s);
         },
         [&](const PrimitiveStruct& primitiveStruct) {
             auto& constantStruct = std::get<ConstantStruct>(value);
             const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
 
-            m_stringBuilder.append(primitiveStruct.name, '<');
+            m_body.append(primitiveStruct.name, '<');
             bool first = true;
             for (auto& value : primitiveStruct.values) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
                 visit(value);
             }
-            m_stringBuilder.append("> {"_s);
+            m_body.append("> {"_s);
             first = true;
             for (auto& entry : constantStruct.fields) {
                 if (!first)
-                    m_stringBuilder.append(", "_s);
+                    m_body.append(", "_s);
                 first = false;
-                m_stringBuilder.append('.', entry.key, " = "_s);
+                m_body.append('.', entry.key, " = "_s);
                 auto* key = keys.tryGet(entry.key);
                 RELEASE_ASSERT(key);
                 auto* type = primitiveStruct.values[*key];
                 serializeConstant(type, entry.value);
             }
-            m_stringBuilder.append('}');
+            m_body.append('}');
         },
         [&](const Pointer&) {
             RELEASE_ASSERT_NOT_REACHED();

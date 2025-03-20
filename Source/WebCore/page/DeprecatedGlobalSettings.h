@@ -120,6 +120,10 @@ public:
     static bool modelDocumentEnabled() { return shared().m_modelDocumentEnabled; }
 #endif
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    static void setUsesWebContentRestrictionsForFilter(bool uses) { shared().m_usesWebContentRestrictionsForFilter = uses; }
+    static bool usesWebContentRestrictionsForFilter() { return shared().m_usesWebContentRestrictionsForFilter; };
+#endif
 
 private:
     WEBCORE_EXPORT static DeprecatedGlobalSettings& shared();
@@ -177,6 +181,9 @@ private:
     bool m_modelDocumentEnabled { false };
 #endif
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    bool m_usesWebContentRestrictionsForFilter { false };
+#endif
     friend class NeverDestroyed<DeprecatedGlobalSettings>;
 };
 

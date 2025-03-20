@@ -55,7 +55,7 @@ bool URLInputType::typeMismatchFor(const String& value) const
 bool URLInputType::typeMismatch() const
 {
     ASSERT(element());
-    return typeMismatchFor(element()->value());
+    return typeMismatchFor(protectedElement()->value());
 }
 
 String URLInputType::typeMismatchText() const

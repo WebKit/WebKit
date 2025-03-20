@@ -462,6 +462,11 @@ bool ThemeMac::userPrefersContrast() const
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
+bool ThemeMac::userPrefersDifferentiationWithoutColor() const
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldDifferentiateWithoutColor];
+}
+
 bool ThemeMac::userPrefersReducedMotion() const
 {
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];

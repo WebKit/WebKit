@@ -15,9 +15,9 @@ Test Coverage:
     - Test non-ASCII strings.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { kEncoderTypes } from '../../../../util/command_buffer_maker.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
-export const g = makeTestGroup(ValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
 
 g.test('debug_group_balanced').
 params((u) =>

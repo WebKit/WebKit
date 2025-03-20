@@ -56,7 +56,7 @@ bool shouldBlockRequestForDisplayableContent(LocalFrame&, const URL&, ContentTyp
 bool shouldBlockRequestForRunnableContent(LocalFrame&, SecurityOrigin&, const URL&, ShouldLogWarning = ShouldLogWarning::Yes);
 void checkFormForMixedContent(LocalFrame&, const URL&);
 
-WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator, bool shouldUpgradeIPAddressAndLocalhostForTesting);
+WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator);
 
 } // namespace MixedContentChecker
 } // namespace WebCore

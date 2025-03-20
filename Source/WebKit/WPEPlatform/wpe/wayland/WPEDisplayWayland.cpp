@@ -49,6 +49,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringView.h>
 
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
@@ -219,32 +220,34 @@ const struct wl_registry_listener registryListener = {
         auto* display = WPE_DISPLAY_WAYLAND(data);
         auto* priv = display->priv;
 
-        if (!std::strcmp(interface, "wl_compositor"))
+        const auto interfaceName = StringView::fromLatin1(interface);
+
+        if (interfaceName == "wl_compositor"_s)
             priv->wlCompositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, std::min<uint32_t>(version, 5)));
-        else if (!std::strcmp(interface, "xdg_wm_base"))
+        else if (interfaceName == "xdg_wm_base"_s)
             priv->xdgWMBase = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
         // FIXME: support zxdg_shell_v6?
-        else if (!std::strcmp(interface, "wl_seat"))
+        else if (interfaceName == "wl_seat"_s)
             priv->wlSeat = makeUnique<WPE::WaylandSeat>(static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, std::min<uint32_t>(version, 8))));
-        else if (!std::strcmp(interface, "wl_output")) {
+        else if (interfaceName == "wl_output"_s) {
             GRefPtr<WPEScreen> screen = adoptGRef(wpeScreenWaylandCreate(name, static_cast<struct wl_output*>(wl_registry_bind(registry, name, &wl_output_interface, std::min<uint32_t>(version, 2)))));
             auto* screenPtr = screen.get();
             priv->screens.append(WTFMove(screen));
             wpe_display_screen_added(WPE_DISPLAY(display), screenPtr);
-        } else if (!std::strcmp(interface, "wl_shm"))
+        } else if (interfaceName == "wl_shm"_s)
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
-        else if (!std::strcmp(interface, "zwp_linux_dmabuf_v1"))
+        else if (interfaceName == "zwp_linux_dmabuf_v1"_s)
             priv->linuxDMABuf = static_cast<struct zwp_linux_dmabuf_v1*>(wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, std::min<uint32_t>(version, 4)));
-        else if (!std::strcmp(interface, "zwp_linux_explicit_synchronization_v1"))
+        else if (interfaceName == "zwp_linux_explicit_synchronization_v1"_s)
             priv->linuxExplicitSync = static_cast<struct zwp_linux_explicit_synchronization_v1*>(wl_registry_bind(registry, name, &zwp_linux_explicit_synchronization_v1_interface, 1));
-        else if (!std::strcmp(interface, "zwp_text_input_manager_v1")) {
+        else if (interfaceName == "zwp_text_input_manager_v1"_s) {
             priv->textInputManagerV1 = static_cast<struct zwp_text_input_manager_v1*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v1_interface, 1));
             priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
-        } else if (!std::strcmp(interface, "zwp_text_input_manager_v3")) {
+        } else if (interfaceName == "zwp_text_input_manager_v3"_s) {
             priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
-        } else if (!std::strcmp(interface, "zwp_pointer_constraints_v1")) {
+        } else if (interfaceName == "zwp_pointer_constraints_v1"_s) {
             priv->pointerConstraints = static_cast<struct zwp_pointer_constraints_v1*>(wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, 1));
-        } else if (!std::strcmp(interface, "zwp_relative_pointer_manager_v1")) {
+        } else if (interfaceName == "zwp_relative_pointer_manager_v1"_s) {
             priv->relativePointerManager = static_cast<struct zwp_relative_pointer_manager_v1*>(wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, 1));
         }
     },
@@ -431,16 +434,16 @@ static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
     return view;
 }
 
-static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display)
+static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display, WPEView* view)
 {
     auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
     if (!priv->wlDisplay || !priv->wlCompositor)
         return nullptr;
 
     if (priv->textInputManagerV3)
-        return wpe_im_context_wayland_v3_new(WPE_DISPLAY_WAYLAND(display));
+        return wpe_im_context_wayland_v3_new(WPE_DISPLAY_WAYLAND(display), view);
     if (priv->textInputManagerV1)
-        return wpe_im_context_wayland_v1_new(WPE_DISPLAY_WAYLAND(display));
+        return wpe_im_context_wayland_v1_new(WPE_DISPLAY_WAYLAND(display), view);
 
     return nullptr;
 }

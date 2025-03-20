@@ -356,10 +356,12 @@ String ShorthandSerializer::serialize()
     case CSSPropertyTextEmphasis:
     case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextStroke:
+    case CSSPropertyPositionTry:
         return serializeLonghandsOmittingInitialValues();
     case CSSPropertyBorderColor:
     case CSSPropertyBorderStyle:
     case CSSPropertyBorderWidth:
+    case CSSPropertyCornerShape:
     case CSSPropertyInset:
     case CSSPropertyMargin:
     case CSSPropertyPadding:
@@ -828,6 +830,11 @@ String ShorthandSerializer::serializeBorder(unsigned sectionLength) const
 
 String ShorthandSerializer::serializeBorderImage() const
 {
+    auto isLength = [](const CSSValue& value) {
+        RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value);
+        return primitive && primitive->isLength();
+    };
+
     ASSERT(length() == 5);
     StringBuilder result;
     bool omittedSlice = false;
@@ -849,7 +856,7 @@ String ShorthandSerializer::serializeBorderImage() const
         // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
         if (auto* width = dynamicDowncast<CSSBorderImageWidthValue>(longhand.value)) {
             auto& widths = width->widths();
-            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && (widths.top().isLength() || widths.right().isLength() || widths.bottom().isLength() || widths.left().isLength());
+            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && (isLength(widths.top()) || isLength(widths.right()) || isLength(widths.bottom()) || isLength(widths.left()));
             if (overridesBorderWidths != width->overridesBorderWidths())
                 return String();
             valueText = widths.cssText(m_serializationContext);

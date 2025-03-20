@@ -26,6 +26,7 @@
 #import "APIFeature.h"
 #import "WKObject.h"
 #import "_WKFeature.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::Feature> {
 
 @interface _WKFeature () <WKObject> {
 @package
-    API::ObjectStorage<API::Feature> _wrappedFeature;
+    AlignedStorage<API::Feature> _wrappedFeature;
 }
 @end

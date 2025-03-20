@@ -34,6 +34,7 @@
 #include "DFGNodeAbstractValuePair.h"
 #include "DFGStructureClobberState.h"
 #include "Operands.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -238,7 +239,7 @@ public:
     float executionCount;
     
     struct SSAData {
-        WTF_MAKE_TZONE_ALLOCATED(SSAData);
+        WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SSAData);
     public:
         void invalidate()
         {

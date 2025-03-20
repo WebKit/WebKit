@@ -84,13 +84,13 @@ void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomStr
 {
     switch (name.nodeName()) {
     case AttributeNames::titleAttr:
-        if (sheet() && !isInShadowTree())
-            sheet()->setTitle(newValue);
+        if (RefPtr sheet = this->sheet(); sheet && !isInShadowTree())
+            sheet->setTitle(newValue);
         break;
     case AttributeNames::mediaAttr:
         m_styleSheetOwner.setMedia(newValue);
-        if (sheet()) {
-            sheet()->setMediaQueries(MQ::MediaQueryParser::parse(newValue, MediaQueryParserContext(document())));
+        if (RefPtr sheet = this->sheet()) {
+            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, MediaQueryParserContext(document())));
             if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else
@@ -175,8 +175,8 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (RefPtr styleSheet = this->sheet()) {
-        styleSheet->contents().traverseSubresources([&] (auto& resource) {
+    if (RefPtr sheet = this->sheet()) {
+        sheet->protectedContents()->traverseSubresources([&] (auto& resource) {
             urls.add(resource.url());
             return false;
         });
@@ -185,16 +185,14 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 bool HTMLStyleElement::disabled() const
 {
-    if (!sheet())
-        return false;
-
-    return sheet()->disabled();
+    RefPtr sheet = this->sheet();
+    return sheet && sheet->disabled();
 }
 
-void HTMLStyleElement::setDisabled(bool setDisabled)
+void HTMLStyleElement::setDisabled(bool disabled)
 {
-    if (CSSStyleSheet* styleSheet = sheet())
-        styleSheet->setDisabled(setDisabled);
+    if (RefPtr sheet = this->sheet())
+        sheet->setDisabled(disabled);
 }
 
 }

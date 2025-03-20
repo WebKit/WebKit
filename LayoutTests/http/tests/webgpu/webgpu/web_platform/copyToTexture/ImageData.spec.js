@@ -3,12 +3,15 @@
 **/export const description = `
 copyExternalImageToTexture from ImageData source.
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
-import { kTextureFormatInfo, kValidTextureFormatsForCopyE2T } from '../../format_info.js';
-import { CopyToTextureUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
+import {
+  getBaseFormatForRegularTextureFormat,
+  kValidTextureFormatsForCopyE2T } from
+'../../format_info.js';
+import { TextureUploadingUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
 
 import { kTestColorsAll, makeTestColorsTexelView } from './util.js';
 
-export const g = makeTestGroup(CopyToTextureUtils);
+export const g = makeTestGroup(TextureUploadingUtils);
 
 g.test('from_ImageData').
 desc(
@@ -24,15 +27,15 @@ desc(
   of dst texture, and read the contents out to compare with the ImageData contents.
 
   Expect alpha to get premultiplied in the copy if, and only if, 'premultipliedAlpha'
-  in 'GPUImageCopyTextureTagged' is set to 'true'.
+  in 'GPUCopyExternalImageDestInfo' is set to 'true'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped.
 
   The tests covers:
   - Valid dstColorFormat of copyExternalImageToTexture()
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcDoFlipYDuringCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcDoFlipYDuringCopy' in cases)
 
   And the expected results are all passed.
   `
@@ -47,10 +50,11 @@ combine('width', [1, 2, 4, 15, 255, 256]).
 combine('height', [1, 2, 4, 15, 255, 256])
 ).
 beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
+  t.skipIf(typeof ImageData === 'undefined', 'ImageData does not exist in this environment');
 }).
 fn((t) => {
   const { width, height, dstColorFormat, dstPremultiplied, srcDoFlipYDuringCopy } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
 
   const testColors = kTestColorsAll;
 
@@ -71,14 +75,14 @@ fn((t) => {
     subrectSize: { width, height }
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: { width, height },
     format: dstColorFormat,
     usage:
     GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
 
-  const expFormat = kTextureFormatInfo[dstColorFormat].baseFormat ?? dstColorFormat;
+  const expFormat = getBaseFormatForRegularTextureFormat(dstColorFormat) ?? dstColorFormat;
   const flipSrcBeforeCopy = false;
   const texelViewExpected = t.getExpectedDstPixelsFromSrcPixels({
     srcPixels: imageData.data,
@@ -130,16 +134,16 @@ desc(
   with the ImageBitmap contents.
 
   Expect alpha to get premultiplied in the copy if, and only if, 'premultipliedAlpha'
-  in 'GPUImageCopyTextureTagged' is set to 'true'.
+  in 'GPUCopyExternalImageDestInfo' is set to 'true'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped, and origin is top-left consistantly.
 
   The tests covers:
   - Source WebGPU Canvas lives in the same GPUDevice or different GPUDevice as test
   - Valid dstColorFormat of copyExternalImageToTexture()
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcDoFlipYDuringCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcDoFlipYDuringCopy' in cases)
   - Valid subrect copies.
 
   And the expected results are all passed.
@@ -152,6 +156,9 @@ combine('dstPremultiplied', [true, false]).
 beginSubcases().
 combine('copySubRectInfo', kCopySubrectInfo)
 ).
+beforeAllSubcases((t) => {
+  t.skipIf(typeof ImageData === 'undefined', 'ImageData does not exist in this environment');
+}).
 fn((t) => {
   const { copySubRectInfo, dstPremultiplied, srcDoFlipYDuringCopy } = t.params;
 
@@ -176,7 +183,7 @@ fn((t) => {
     subrectSize: srcSize
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: dstSize,
     format: kColorFormat,
     usage:

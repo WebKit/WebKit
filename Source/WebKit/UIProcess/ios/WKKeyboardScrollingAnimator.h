@@ -31,22 +31,20 @@ namespace WebCore {
 class FloatPoint;
 }
 
-
-@class WKVelocityTrackingScrollView;
 @class WebEvent;
+@class WKBaseScrollView;
 
 @protocol WKKeyboardScrollViewAnimatorDelegate;
 
 @interface WKKeyboardScrollViewAnimator : NSObject
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithScrollView:(WKVelocityTrackingScrollView *)scrollView;
+- (instancetype)init;
 
 - (void)invalidate;
 
 - (void)willStartInteractiveScroll;
 
-- (BOOL)beginWithEvent:(::WebEvent *)event;
+- (BOOL)beginWithEvent:(::WebEvent *)event scrollView:(WKBaseScrollView *)scrollView;
 - (void)handleKeyEvent:(::WebEvent *)event;
 
 - (BOOL)scrollTriggeringKeyIsPressed;
@@ -54,6 +52,8 @@ class FloatPoint;
 - (void)stopScrollingImmediately;
 
 @property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
+
+- (WKBaseScrollView *)scrollView;
 
 @end
 

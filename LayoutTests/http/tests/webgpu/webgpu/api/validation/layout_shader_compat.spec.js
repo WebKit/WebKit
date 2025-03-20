@@ -12,6 +12,7 @@ import {
 
 '../../capability_info.js';
 import { GPUConst } from '../../constants.js';
+import { MaxLimitsTestMixin } from '../../gpu_test.js';
 
 import { ValidationTest } from './validation_test.js';
 
@@ -156,7 +157,7 @@ shaderStages)
   return true;
 };
 
-export const g = makeTestGroup(F);
+export const g = makeTestGroup(MaxLimitsTestMixin(F));
 
 g.test('pipeline_layout_shader_exact_match').
 desc(
@@ -194,6 +195,46 @@ fn((t) => {
     shaderStageWithBinding,
     isBindingStaticallyUsed
   } = t.params;
+
+  if (t.isCompatibility) {
+    const bindingUsedWithVertexStage =
+    (shaderStageWithBinding & GPUShaderStage.VERTEX) !== 0 ||
+    (pipelineLayoutVisibility & GPUShaderStage.VERTEX) !== 0;
+    const bindingUsedWithFragmentStage =
+    (shaderStageWithBinding & GPUShaderStage.FRAGMENT) !== 0 ||
+    (pipelineLayoutVisibility & GPUShaderStage.FRAGMENT) !== 0;
+    const bindingIsStorageBuffer =
+    bindingInPipelineLayout === 'readonlyStorageBuf' ||
+    bindingInPipelineLayout === 'storageBuf';
+    const bindingIsStorageTexture =
+    bindingInPipelineLayout === 'readonlyStorageTex' ||
+    bindingInPipelineLayout === 'readwriteStorageTex' ||
+    bindingInPipelineLayout === 'writeonlyStorageTex';
+    t.skipIf(
+      bindingUsedWithVertexStage &&
+      bindingIsStorageBuffer &&
+      t.device.limits.maxStorageBuffersInVertexStage === 0,
+      'Storage buffers can not be used in vertex shaders because maxStorageBuffersInVertexStage === 0'
+    );
+    t.skipIf(
+      bindingUsedWithVertexStage &&
+      bindingIsStorageTexture &&
+      t.device.limits.maxStorageTexturesInVertexStage === 0,
+      'Storage textures can not be used in vertex shaders because maxStorageTexturesInVertexStage === 0'
+    );
+    t.skipIf(
+      bindingUsedWithFragmentStage &&
+      bindingIsStorageBuffer &&
+      t.device.limits.maxStorageBuffersInFragmentStage === 0,
+      'Storage buffers can not be used in fragment shaders because maxStorageBuffersInFragmentStage === 0'
+    );
+    t.skipIf(
+      bindingUsedWithFragmentStage &&
+      bindingIsStorageTexture &&
+      t.device.limits.maxStorageTexturesInFragmentStage === 0,
+      'Storage textures can not be used in fragment shaders because maxStorageTexturesInFragmentStage === 0'
+    );
+  }
 
   const layout = t.createPipelineLayout(bindingInPipelineLayout, pipelineLayoutVisibility);
   const bindResourceDeclaration = `@group(0) @binding(0) ${t.GetBindableResourceShaderDeclaration(
@@ -252,7 +293,8 @@ fn((t) => {
             module: t.device.createShaderModule({
               code: vertexShader
             })
-          }
+          },
+          depthStencil: { format: 'depth32float', depthWriteEnabled: true, depthCompare: 'always' }
         });
         break;
       }

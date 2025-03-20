@@ -763,6 +763,10 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     // FIXME: The "!context.enclosingRuleType" is suspicious.
     ASSERT(!CSSProperty::isDescriptorOnly(propertyId) || parsingDescriptor || !context.enclosingRuleType);
 
+    // Fast path keyword parsing is currently only supported for style properties.
+    if (parsingDescriptor)
+        return nullptr;
+
     if (!CSSParserFastPaths::isKeywordFastPathEligibleStyleProperty(propertyId)) {
         // All properties, including non-keyword properties, accept the CSS-wide keywords.
         if (!isUniversalKeyword(string))
@@ -771,10 +775,6 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
         // Leave shorthands to parse CSS-wide keywords using CSSPropertyParser.
         if (shorthandForProperty(propertyId).length())
             return nullptr;
-
-        // Descriptors do not support the CSS-wide keywords.
-        if (parsingDescriptor)
-            return nullptr;
     }
 
     CSSValueID valueID = cssValueKeywordID(string);
@@ -782,7 +782,7 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     if (!valueID)
         return nullptr;
 
-    if (!parsingDescriptor && isCSSWideKeyword(valueID))
+    if (isCSSWideKeyword(valueID))
         return CSSPrimitiveValue::create(valueID);
 
     if (CSSParserFastPaths::isKeywordValidForStyleProperty(propertyId, valueID, context))

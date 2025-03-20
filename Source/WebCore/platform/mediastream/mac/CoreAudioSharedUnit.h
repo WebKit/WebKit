@@ -213,7 +213,7 @@ private:
 
     LongCapabilityRange m_sampleRateCapabilities;
 
-    uint64_t m_microphoneProcsCalled { 0 };
+    std::atomic<uint64_t> m_microphoneProcsCalled { 0 };
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
 

@@ -1,10 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 </head>
 <body>
-<div id="console"></div>
 
 <script>
     shouldBe('document.evaluate(\'""\', document, null, XPathResult.STRING_TYPE, null).stringValue', '""');
@@ -48,6 +47,5 @@
     shouldBe('document.evaluate(\'-42\', document, null, XPathResult.NUMBER_TYPE, null).numberValue', '-42.0');
 
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

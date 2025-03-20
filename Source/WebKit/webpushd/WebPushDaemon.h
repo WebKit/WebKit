@@ -119,6 +119,8 @@ public:
 
     void setProtocolVersionForTesting(PushClientConnection&, unsigned, CompletionHandler<void()>&&);
 
+    void setServiceWorkerOriginIsBeingInspected(const WebCore::SecurityOriginData&, bool isInspected);
+
 private:
     WebPushDaemon();
 
@@ -145,7 +147,7 @@ private:
     HashSet<xpc_connection_t> m_pendingConnectionSet;
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
 
-    RefPtr<PushService> m_pushService;
+    const RefPtr<PushService> m_pushService;
     bool m_usingMockPushService { false };
     bool m_pushServiceStarted { false };
     Deque<Function<void()>> m_pendingPushServiceFunctions;
@@ -178,6 +180,8 @@ private:
     std::unique_ptr<WebClipCache> m_webClipCache;
     String m_webClipCachePath;
 #endif
+
+    HashMap<WebCore::SecurityOriginData, int> m_inspectedServiceWorkerOrigins;
 };
 
 } // namespace WebPushD

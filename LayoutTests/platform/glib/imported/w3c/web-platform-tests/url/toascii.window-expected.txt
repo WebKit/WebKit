@@ -531,15 +531,15 @@ PASS look۝out.net (using <a>.hostname)
 PASS look۝out.net (using <area>)
 PASS look۝out.net (using <area>.host)
 PASS look۝out.net (using <area>.hostname)
-PASS look᠎out.net (using URL)
-PASS look᠎out.net (using URL.host)
-PASS look᠎out.net (using URL.hostname)
-PASS look᠎out.net (using <a>)
-PASS look᠎out.net (using <a>.host)
-PASS look᠎out.net (using <a>.hostname)
-PASS look᠎out.net (using <area>)
-PASS look᠎out.net (using <area>.host)
-PASS look᠎out.net (using <area>.hostname)
+FAIL look᠎out.net (using URL) "https://look᠎out.net/x" cannot be parsed as a URL.
+FAIL look᠎out.net (using URL.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look᠎out.net (using URL.hostname) assert_equals: expected "lookout.net" but got "x"
+FAIL look᠎out.net (using <a>) "https://look᠎out.net/x" cannot be parsed as a URL.
+FAIL look᠎out.net (using <a>.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look᠎out.net (using <a>.hostname) assert_equals: expected "lookout.net" but got "x"
+FAIL look᠎out.net (using <area>) "https://look᠎out.net/x" cannot be parsed as a URL.
+FAIL look᠎out.net (using <area>.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look᠎out.net (using <area>.hostname) assert_equals: expected "lookout.net" but got "x"
 PASS look⁠out.net (using URL)
 PASS look⁠out.net (using URL.host)
 PASS look⁠out.net (using URL.hostname)
@@ -603,15 +603,15 @@ PASS look‮out.net (using <a>.hostname)
 PASS look‮out.net (using <area>)
 PASS look‮out.net (using <area>.host)
 PASS look‮out.net (using <area>.hostname)
-PASS look⁫out.net (using URL)
-PASS look⁫out.net (using URL.host)
-PASS look⁫out.net (using URL.hostname)
-PASS look⁫out.net (using <a>)
-PASS look⁫out.net (using <a>.host)
-PASS look⁫out.net (using <a>.hostname)
-PASS look⁫out.net (using <area>)
-PASS look⁫out.net (using <area>.host)
-PASS look⁫out.net (using <area>.hostname)
+FAIL look⁫out.net (using URL) "https://look⁫out.net/x" cannot be parsed as a URL.
+FAIL look⁫out.net (using URL.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look⁫out.net (using URL.hostname) assert_equals: expected "lookout.net" but got "x"
+FAIL look⁫out.net (using <a>) "https://look⁫out.net/x" cannot be parsed as a URL.
+FAIL look⁫out.net (using <a>.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look⁫out.net (using <a>.hostname) assert_equals: expected "lookout.net" but got "x"
+FAIL look⁫out.net (using <area>) "https://look⁫out.net/x" cannot be parsed as a URL.
+FAIL look⁫out.net (using <area>.host) assert_equals: expected "lookout.net" but got "x"
+FAIL look⁫out.net (using <area>.hostname) assert_equals: expected "lookout.net" but got "x"
 PASS look󠀁out.net (using URL)
 PASS look󠀁out.net (using URL.host)
 PASS look󠀁out.net (using URL.hostname)
@@ -666,15 +666,15 @@ PASS ͸.net (using <a>.hostname)
 PASS ͸.net (using <area>)
 PASS ͸.net (using <area>.host)
 PASS ͸.net (using <area>.hostname)
-PASS Ӏ.com (using URL)
-PASS Ӏ.com (using URL.host)
-PASS Ӏ.com (using URL.hostname)
-PASS Ӏ.com (using <a>)
-PASS Ӏ.com (using <a>.host)
-PASS Ӏ.com (using <a>.hostname)
-PASS Ӏ.com (using <area>)
-PASS Ӏ.com (using <area>.host)
-PASS Ӏ.com (using <area>.hostname)
+FAIL Ӏ.com (using URL) "https://Ӏ.com/x" cannot be parsed as a URL.
+FAIL Ӏ.com (using URL.host) assert_equals: expected "xn--s5a.com" but got "x"
+FAIL Ӏ.com (using URL.hostname) assert_equals: expected "xn--s5a.com" but got "x"
+FAIL Ӏ.com (using <a>) "https://Ӏ.com/x" cannot be parsed as a URL.
+FAIL Ӏ.com (using <a>.host) assert_equals: expected "xn--s5a.com" but got "x"
+FAIL Ӏ.com (using <a>.hostname) assert_equals: expected "xn--s5a.com" but got "x"
+FAIL Ӏ.com (using <area>) "https://Ӏ.com/x" cannot be parsed as a URL.
+FAIL Ӏ.com (using <area>.host) assert_equals: expected "xn--s5a.com" but got "x"
+FAIL Ӏ.com (using <area>.hostname) assert_equals: expected "xn--s5a.com" but got "x"
 FAIL 㛼.com (using URL) "https://㛼.com/x" cannot be parsed as a URL.
 FAIL 㛼.com (using URL.host) assert_equals: expected "xn--snl.com" but got "x"
 FAIL 㛼.com (using URL.hostname) assert_equals: expected "xn--snl.com" but got "x"
@@ -684,15 +684,15 @@ FAIL 㛼.com (using <a>.hostname) assert_equals: expected "xn--snl.com" but got
 FAIL 㛼.com (using <area>) "https://㛼.com/x" cannot be parsed as a URL.
 FAIL 㛼.com (using <area>.host) assert_equals: expected "xn--snl.com" but got "x"
 FAIL 㛼.com (using <area>.hostname) assert_equals: expected "xn--snl.com" but got "x"
-PASS Ↄ.com (using URL)
-PASS Ↄ.com (using URL.host)
-PASS Ↄ.com (using URL.hostname)
-PASS Ↄ.com (using <a>)
-PASS Ↄ.com (using <a>.host)
-PASS Ↄ.com (using <a>.hostname)
-PASS Ↄ.com (using <area>)
-PASS Ↄ.com (using <area>.host)
-PASS Ↄ.com (using <area>.hostname)
+FAIL Ↄ.com (using URL) "https://Ↄ.com/x" cannot be parsed as a URL.
+FAIL Ↄ.com (using URL.host) assert_equals: expected "xn--r5g.com" but got "x"
+FAIL Ↄ.com (using URL.hostname) assert_equals: expected "xn--r5g.com" but got "x"
+FAIL Ↄ.com (using <a>) "https://Ↄ.com/x" cannot be parsed as a URL.
+FAIL Ↄ.com (using <a>.host) assert_equals: expected "xn--r5g.com" but got "x"
+FAIL Ↄ.com (using <a>.hostname) assert_equals: expected "xn--r5g.com" but got "x"
+FAIL Ↄ.com (using <area>) "https://Ↄ.com/x" cannot be parsed as a URL.
+FAIL Ↄ.com (using <area>.host) assert_equals: expected "xn--r5g.com" but got "x"
+FAIL Ↄ.com (using <area>.hostname) assert_equals: expected "xn--r5g.com" but got "x"
 PASS look͏out.net (using URL)
 PASS look͏out.net (using URL.host)
 PASS look͏out.net (using URL.hostname)

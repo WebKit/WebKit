@@ -39,11 +39,10 @@ export class ImageCopyTest extends ValidationTest {
           break;
         }
       case 'CopyB2T':{
-          const buffer = this.device.createBuffer({
+          const buffer = this.createBufferTracked({
             size: dataSize,
             usage: GPUBufferUsage.COPY_SRC
           });
-          this.trackForCleanup(buffer);
 
           const encoder = this.device.createCommandEncoder();
           encoder.copyBufferToTexture({ buffer, ...textureDataLayout }, textureCopyView, size);
@@ -67,11 +66,10 @@ export class ImageCopyTest extends ValidationTest {
               'copyTextureToBuffer is not supported for compressed texture formats in compatibility mode.'
             );
           }
-          const buffer = this.device.createBuffer({
+          const buffer = this.createBufferTracked({
             size: dataSize,
             usage: GPUBufferUsage.COPY_DST
           });
-          this.trackForCleanup(buffer);
 
           const encoder = this.device.createCommandEncoder();
           encoder.copyTextureToBuffer(textureCopyView, { buffer, ...textureDataLayout }, size);
@@ -113,7 +111,7 @@ export class ImageCopyTest extends ValidationTest {
       height: align(Math.max(1, size.height + origin.y), info.blockHeight),
       depthOrArrayLayers: Math.max(1, size.depthOrArrayLayers + origin.z)
     };
-    return this.device.createTexture({
+    return this.createTextureTracked({
       size: alignedSize,
       dimension,
       format,

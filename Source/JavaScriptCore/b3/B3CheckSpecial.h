@@ -30,6 +30,7 @@
 #include "AirKind.h"
 #include "B3StackmapSpecial.h"
 #include <wtf/HashMap.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
@@ -50,7 +51,7 @@ struct Inst;
 // - CheckMul(a, b), which turns into Mul32 b, a but we pass Any for a's ValueRep.
 
 class CheckSpecial final : public StackmapSpecial {
-    WTF_MAKE_TZONE_ALLOCATED(CheckSpecial);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CheckSpecial);
 public:
     // Support for hash consing these things.
     class Key {

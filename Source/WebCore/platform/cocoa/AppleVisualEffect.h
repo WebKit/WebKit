@@ -45,6 +45,7 @@ enum class AppleVisualEffect : uint8_t {
 #if HAVE(MATERIAL_HOSTING)
     HostedBlurMaterial,
     HostedThinBlurMaterial,
+    HostedMediaControlsMaterial,
 #endif
     VibrancyLabel,
     VibrancySecondaryLabel,
@@ -68,11 +69,15 @@ struct AppleVisualEffectData {
     AppleVisualEffect effect { AppleVisualEffect::None };
     AppleVisualEffect contextEffect { AppleVisualEffect::None };
 
+    enum class ColorScheme : uint8_t { Light, Dark };
+    ColorScheme colorScheme { ColorScheme::Light };
+
     std::optional<FloatRoundedRect> borderRect;
 
     bool operator==(const AppleVisualEffectData&) const = default;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, AppleVisualEffectData::ColorScheme);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AppleVisualEffectData);
 
 } // namespace WebCore

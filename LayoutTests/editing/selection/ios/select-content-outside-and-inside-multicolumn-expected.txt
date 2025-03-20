@@ -1,0 +1,18 @@
+When selecting content outside and inside multi-column, the highlight boxes should not be coalesced.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 5
+PASS selectionRects[0].width is 310
+PASS selectionRects[1].width is 310
+PASS selectionRects[2].width is 150
+PASS selectionRects[3].width is 150
+PASS 150 is > selectionRects[4].width
+PASS firstMultiColumnLineTop is > outsideContentLineBottom
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The selected content outside of the multi-column element.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula.

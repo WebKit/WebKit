@@ -41,6 +41,7 @@ protected:
     explicit FidoAuthenticator(Ref<CtapDriver>&&);
 
     CtapDriver& driver() const;
+    Ref<CtapDriver> protectedDriver() const;
     Ref<CtapDriver> releaseDriver();
 
     String transportForDebugging() const;

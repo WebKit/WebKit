@@ -54,7 +54,6 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
         this._cachedData = super.data;
         this._cachedData.type = this.record.eventType;
         this._cachedData.name = this.displayName();
-        this._cachedData.target = this.record.target.type === WI.TargetType.Worker ? WI.UIString("Worker \u201C%s\u201D").format(this.record.target.displayName) : WI.UIString("Page");
         this._cachedData.startTime = startTime - baseStartTime;
         this._cachedData.selfTime = duration;
         this._cachedData.totalTime = duration;

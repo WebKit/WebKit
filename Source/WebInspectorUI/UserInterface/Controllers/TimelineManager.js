@@ -634,6 +634,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     scriptProfilerTrackingCompleted(target, timestamp, samples)
     {
         if (this._enabled) {
+            let scriptTimeline = this._activeRecording.timelineForRecordType(WI.TimelineRecord.Type.Script);
+
             let scriptProfilerRecords = this._scriptProfilerRecordsForTarget.get(target);
             console.assert(scriptProfilerRecords, this._scriptProfilerRecordsForTarget, target);
 
@@ -680,7 +682,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 // FIXME: This transformation should not be needed after introducing ProfileView.
                 // Once we eliminate ProfileNodeTreeElements and ProfileNodeDataGridNodes.
                 // <https://webkit.org/b/154973> Web Inspector: Timelines UI redesign: Remove TimelineSidebarPanel
-                let topDownCallingContextTree = this._activeRecording.callingContextTree(target, WI.CallingContextTree.Type.TopDown);
+                let topDownCallingContextTree = scriptTimeline.callingContextTree(target, WI.CallingContextTree.Type.TopDown);
                 for (let i = 0; i < scriptProfilerRecords.length; ++i) {
                     let record = scriptProfilerRecords[i];
                     record.profilePayload = topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
@@ -698,8 +700,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             this._scriptProfilerRecordsForTarget.delete(target);
 
-            let timeline = this._activeRecording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-            timeline.refresh();
+            scriptTimeline.refresh();
         }
 
         this.capturingStopped(timestamp);

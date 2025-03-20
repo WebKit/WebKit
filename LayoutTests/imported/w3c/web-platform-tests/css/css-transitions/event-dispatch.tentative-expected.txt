@@ -26,4 +26,7 @@ PASS Set timeline and play transition after clear the timeline
 PASS Set null target effect after canceling the transition
 PASS Cancel the transition after clearing the target effect
 PASS Cancel the transition after it finishes
+PASS Replacing a running transition should get transitioncancel earlier than transitionrun and transitionstart
+PASS Replacing two running transitions on the same target should get two transitioncancel events earlier than two transitionrun events, per transition generation
+PASS Replacing a running transition and forcing to flush the style together should get the correct event order
 

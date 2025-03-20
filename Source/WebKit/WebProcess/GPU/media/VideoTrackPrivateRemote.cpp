@@ -55,7 +55,7 @@ void VideoTrackPrivateRemote::setSelected(bool selected)
         return;
 
     if (selected != this->selected())
-        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_id, selected), m_playerIdentifier);
+        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_id, selected), m_playerIdentifier);
 
     VideoTrackPrivate::setSelected(selected);
 }

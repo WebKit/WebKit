@@ -162,40 +162,40 @@ FloatSize ScrollingStateStickyNode::scrollDeltaSinceLastCommit(const LayoutRect&
 
 void ScrollingStateStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Sticky node";
+    ts << "Sticky node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
     if (m_constraints.anchorEdges()) {
         TextStream::GroupScope scope(ts);
-        ts << "anchor edges: ";
+        ts << "anchor edges: "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
-            ts << "AnchorEdgeLeft ";
+            ts << "AnchorEdgeLeft "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
-            ts << "AnchorEdgeRight ";
+            ts << "AnchorEdgeRight "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
-            ts << "AnchorEdgeTop ";
+            ts << "AnchorEdgeTop "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
-            ts << "AnchorEdgeBottom";
+            ts << "AnchorEdgeBottom"_s;
     }
 
     if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
-        ts.dumpProperty("left offset", m_constraints.leftOffset());
+        ts.dumpProperty("left offset"_s, m_constraints.leftOffset());
     if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
-        ts.dumpProperty("right offset", m_constraints.rightOffset());
+        ts.dumpProperty("right offset"_s, m_constraints.rightOffset());
     if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
-        ts.dumpProperty("top offset", m_constraints.topOffset());
+        ts.dumpProperty("top offset"_s, m_constraints.topOffset());
     if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
-        ts.dumpProperty("bottom offset", m_constraints.bottomOffset());
+        ts.dumpProperty("bottom offset"_s, m_constraints.bottomOffset());
 
-    ts.dumpProperty("containing block rect", m_constraints.containingBlockRect());
+    ts.dumpProperty("containing block rect"_s, m_constraints.containingBlockRect());
 
-    ts.dumpProperty("sticky box rect", m_constraints.stickyBoxRect());
+    ts.dumpProperty("sticky box rect"_s, m_constraints.stickyBoxRect());
 
-    ts.dumpProperty("constraining rect", m_constraints.constrainingRectAtLastLayout());
+    ts.dumpProperty("constraining rect"_s, m_constraints.constrainingRectAtLastLayout());
 
-    ts.dumpProperty("sticky offset at last layout", m_constraints.stickyOffsetAtLastLayout());
+    ts.dumpProperty("sticky offset at last layout"_s, m_constraints.stickyOffsetAtLastLayout());
 
-    ts.dumpProperty("layer position at last layout", m_constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("layer position at last layout"_s, m_constraints.layerPositionAtLastLayout());
 }
 
 } // namespace WebCore

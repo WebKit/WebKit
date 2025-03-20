@@ -58,6 +58,7 @@ public:
     String text() const;
 
     WebCore::Range& coreRange() const;
+    Ref<WebCore::Range> protectedCoreRange() const;
 
 private:
     InjectedBundleRangeHandle(WebCore::Range&);
@@ -68,3 +69,7 @@ private:
 RefPtr<InjectedBundleRangeHandle> createHandle(const std::optional<WebCore::SimpleRange>&);
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::InjectedBundleRangeHandle)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BundleRangeHandle; }
+SPECIALIZE_TYPE_TRAITS_END()

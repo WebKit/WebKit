@@ -52,6 +52,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 - (NSArray<WKDataListTextSuggestion *> *)textSuggestions;
 - (NSInteger)suggestionsCount;
 - (String)suggestionAtIndex:(NSInteger)index;
+- (String)suggestionLabelAtIndex:(NSInteger)index;
 - (NSTextAlignment)textAlignment;
 
 @end
@@ -212,6 +213,11 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 - (String)suggestionAtIndex:(NSInteger)index
 {
     return _suggestions[index].value;
+}
+
+- (String)suggestionLabelAtIndex:(NSInteger)index
+{
+    return _suggestions[index].label;
 }
 
 - (NSTextAlignment)textAlignment
@@ -538,6 +544,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             [strongSelf didSelectOptionAtIndex:index];
         }];
+        suggestionAction.subtitle = [self suggestionLabelAtIndex:index];
 
         [suggestions addObject:suggestionAction];
     }

@@ -19,7 +19,8 @@
 
         testRunner.setUserMediaPermission(true);
 
-        await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        const captureFailurePromise = new Promise(resolve => stream.getAudioTracks()[0].onended = resolve);
 
         let devices = await navigator.mediaDevices.enumerateDevices();
 
@@ -38,6 +39,7 @@
             }, 5000);
             testRunner.addMockCameraDevice("id1", "my camera");
         });
+        return captureFailurePromise;
     }, "Capture 'devicechange' event with addEventListener");
     </script>
 </head>

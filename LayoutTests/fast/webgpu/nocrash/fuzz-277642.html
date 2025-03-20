@@ -31,9 +31,13 @@ async function run() {
     renderPassEncoder.setPipeline(pipeline);
     renderPassEncoder.draw(10530, 519, 4_294_967_295)
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
 
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

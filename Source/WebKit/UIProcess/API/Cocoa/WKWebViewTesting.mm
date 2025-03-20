@@ -87,7 +87,7 @@
 
     {
         TextStream::GroupScope scope(ts);
-        ts << "CALayer tree root ";
+        ts << "CALayer tree root "_s;
 #if PLATFORM(IOS_FAMILY)
         dumpCALayer(ts, [_contentView layer], true);
 #else
@@ -113,48 +113,48 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (interactionRegionLayerType) {
         traverse = false;
 
-        ts.dumpProperty("type", interactionRegionLayerType);
+        ts.dumpProperty("type"_s, interactionRegionLayerType);
 
         if (layer.mask) {
             TextStream::GroupScope scope(ts);
-            ts << "mask";
-            ts.dumpProperty("frame", rectToString(layer.mask.frame));
+            ts << "mask"_s;
+            ts.dumpProperty("frame"_s, rectToString(layer.mask.frame));
         }
     }
 #endif
 
-    ts.dumpProperty("layer bounds", rectToString(layer.bounds));
+    ts.dumpProperty("layer bounds"_s, rectToString(layer.bounds));
 
     if (layer.position.x || layer.position.y)
-        ts.dumpProperty("layer position", pointToString(layer.position));
+        ts.dumpProperty("layer position"_s, pointToString(layer.position));
 
     if (layer.zPosition)
-        ts.dumpProperty("layer zPosition", makeString(layer.zPosition));
+        ts.dumpProperty("layer zPosition"_s, makeString(layer.zPosition));
 
     if (layer.anchorPoint.x != 0.5 || layer.anchorPoint.y != 0.5)
-        ts.dumpProperty("layer anchorPoint", pointToString(layer.anchorPoint));
+        ts.dumpProperty("layer anchorPoint"_s, pointToString(layer.anchorPoint));
 
     if (layer.anchorPointZ)
-        ts.dumpProperty("layer anchorPointZ", makeString(layer.anchorPointZ));
+        ts.dumpProperty("layer anchorPointZ"_s, makeString(layer.anchorPointZ));
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (layer.separated)
-        ts.dumpProperty("separated", true);
+        ts.dumpProperty("separated"_s, true);
 #endif
 
     if (layer.opacity != 1.0)
-        ts.dumpProperty("layer opacity", makeString(layer.opacity));
+        ts.dumpProperty("layer opacity"_s, makeString(layer.opacity));
 
     if (layer.cornerRadius != 0.0)
-        ts.dumpProperty("layer cornerRadius", makeString(layer.cornerRadius));
+        ts.dumpProperty("layer cornerRadius"_s, makeString(layer.cornerRadius));
 
     constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
     if (layer.maskedCorners != allCorners)
-        ts.dumpProperty("layer masked corners", makeString(layer.maskedCorners));
+        ts.dumpProperty("layer masked corners"_s, makeString(layer.maskedCorners));
     
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
-        ts << "sublayers";
+        ts << "sublayers"_s;
         for (CALayer *sublayer in layer.sublayers) {
             TextStream::GroupScope scope(ts);
             dumpCALayer(ts, sublayer, true);
@@ -277,7 +277,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (pid_t)_networkProcessIdentifier
 {
-    auto* networkProcess = _page->websiteDataStore().networkProcessIfExists();
+    RefPtr networkProcess = _page->websiteDataStore().networkProcessIfExists();
     RELEASE_ASSERT(networkProcess);
     return networkProcess->processID();
 }
@@ -348,7 +348,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         completionHandler();
         return;
     }
-    _page->legacyMainFrameProcess().sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, 0.0, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->protectedLegacyMainFrameProcess()->sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, 0.0, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -356,13 +356,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_processWillSuspendImminentlyForTesting
 {
     if (_page)
-        _page->legacyMainFrameProcess().sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, 0.0, [] { });
+        _page->protectedLegacyMainFrameProcess()->sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, 0.0, [] { });
 }
 
 - (void)_processDidResumeForTesting
 {
     if (_page)
-        _page->legacyMainFrameProcess().sendProcessDidResume(WebKit::AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
+        _page->protectedLegacyMainFrameProcess()->sendProcessDidResume(WebKit::AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
 }
 
 - (void)_setThrottleStateForTesting:(int)value
@@ -370,7 +370,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (!_page)
         return;
 
-    _page->legacyMainFrameProcess().setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
+    _page->protectedLegacyMainFrameProcess()->setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
 }
 
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting
@@ -914,6 +914,90 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #else
     return NO;
 #endif
+}
+
+- (void)_setMediaVolumeForTesting:(float)mediaVolume
+{
+    _page->setMediaVolume(mediaVolume);
+}
+
+- (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID
+{
+    if (!layerID)
+        return nil;
+    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    if (!layer)
+        return nil;
+
+    return @{
+        @"bounds" : @{
+            @"x" : @(layer.bounds.origin.x),
+            @"y" : @(layer.bounds.origin.x),
+            @"width" : @(layer.bounds.size.width),
+            @"height" : @(layer.bounds.size.height),
+
+        },
+        @"position" : @{
+            @"x" : @(layer.position.x),
+            @"y" : @(layer.position.y),
+        },
+        @"zPosition" : @(layer.zPosition),
+        @"anchorPoint" : @{
+            @"x" : @(layer.anchorPoint.x),
+            @"y" : @(layer.anchorPoint.y),
+        },
+        @"anchorPointZ" : @(layer.anchorPointZ),
+        @"transform" : @{
+            @"m11" : @(layer.transform.m11),
+            @"m12" : @(layer.transform.m12),
+            @"m13" : @(layer.transform.m13),
+            @"m14" : @(layer.transform.m14),
+
+            @"m21" : @(layer.transform.m21),
+            @"m22" : @(layer.transform.m22),
+            @"m23" : @(layer.transform.m23),
+            @"m24" : @(layer.transform.m24),
+
+            @"m31" : @(layer.transform.m31),
+            @"m32" : @(layer.transform.m32),
+            @"m33" : @(layer.transform.m33),
+            @"m34" : @(layer.transform.m34),
+
+            @"m41" : @(layer.transform.m41),
+            @"m42" : @(layer.transform.m42),
+            @"m43" : @(layer.transform.m43),
+            @"m44" : @(layer.transform.m44),
+        },
+        @"sublayerTransform" : @{
+            @"m11" : @(layer.sublayerTransform.m11),
+            @"m12" : @(layer.sublayerTransform.m12),
+            @"m13" : @(layer.sublayerTransform.m13),
+            @"m14" : @(layer.sublayerTransform.m14),
+
+            @"m21" : @(layer.sublayerTransform.m21),
+            @"m22" : @(layer.sublayerTransform.m22),
+            @"m23" : @(layer.sublayerTransform.m23),
+            @"m24" : @(layer.sublayerTransform.m24),
+
+            @"m31" : @(layer.sublayerTransform.m31),
+            @"m32" : @(layer.sublayerTransform.m32),
+            @"m33" : @(layer.sublayerTransform.m33),
+            @"m34" : @(layer.sublayerTransform.m34),
+
+            @"m41" : @(layer.sublayerTransform.m41),
+            @"m42" : @(layer.sublayerTransform.m42),
+            @"m43" : @(layer.sublayerTransform.m43),
+            @"m44" : @(layer.sublayerTransform.m44),
+        },
+
+        @"hidden" : @(layer.hidden),
+        @"doubleSided" : @(layer.doubleSided),
+        @"masksToBounds" : @(layer.masksToBounds),
+        @"contentsScale" : @(layer.contentsScale),
+        @"rasterizationScale" : @(layer.rasterizationScale),
+        @"opaque" : @(layer.opaque),
+        @"opacity" : @(layer.opacity),
+    };
 }
 
 @end

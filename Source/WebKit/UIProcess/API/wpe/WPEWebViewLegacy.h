@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WPEWebView.h"
+#include "WebKitWebViewAccessible.h"
 #include <wtf/glib/GRefPtr.h>
 
 struct wpe_input_keyboard_event;
@@ -56,6 +57,10 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
+#if USE(ATK)
+    WebKitWebViewAccessible* accessible() const;
+#endif
+
 private:
     ViewLegacy(struct wpe_view_backend*, const API::PageConfiguration&);
 
@@ -72,6 +77,10 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
 #endif
+#if USE(ATK)
+    mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
+#endif
+
 };
 
 } // namespace WKWPE

@@ -58,7 +58,7 @@ int StackStats::s_maxLayoutReentryDepth = 0;
 
 StackStats::PerThreadStats::PerThreadStats()
 {
-    const StackBounds& stack = Thread::current().stack();
+    const StackBounds& stack = Thread::currentSingleton().stack();
     m_reentryDepth = 0;
     m_stackStart = (char*)stack.origin();
     m_currentCheckPoint = 0;
@@ -69,7 +69,7 @@ StackStats::PerThreadStats::PerThreadStats()
 StackStats::CheckPoint::CheckPoint()
 {
     Locker locker { StackStats::s_sharedMutex };
-    Thread& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 
@@ -122,7 +122,7 @@ StackStats::CheckPoint::CheckPoint()
 StackStats::CheckPoint::~CheckPoint()
 {
     Locker locker { StackStats::s_sharedMutex };
-    Thread& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     StackStats::PerThreadStats& t = thread.stackStats();
 
     // Pop to previous checkpoint:
@@ -149,7 +149,7 @@ StackStats::CheckPoint::~CheckPoint()
 void StackStats::probe()
 {
     Locker locker { StackStats::s_sharedMutex };
-    Thread& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 
@@ -204,7 +204,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
     StackStats::probe();
 
     Locker locker { StackStats::s_sharedMutex };
-    Thread& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 

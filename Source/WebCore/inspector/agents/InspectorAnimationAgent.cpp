@@ -301,6 +301,23 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::disable()
     return { };
 }
 
+Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> InspectorAnimationAgent::requestEffect(const Inspector::Protocol::Animation::AnimationId& animationId)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    auto* animation = assertAnimation(errorString, animationId);
+    if (!animation)
+        return makeUnexpected(errorString);
+
+    m_animationsIgnoringEffectChanges.remove(*animation);
+
+    RefPtr effect = animation->effect();
+    if (!effect)
+        return { nullptr };
+
+    return { buildObjectForEffect(*effect) };
+}
+
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> InspectorAnimationAgent::requestEffectTarget(const Inspector::Protocol::Animation::AnimationId& animationId)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -308,6 +325,8 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
     auto* animation = assertAnimation(errorString, animationId);
     if (!animation)
         return makeUnexpected(errorString);
+
+    m_animationsIgnoringTargetChanges.remove(*animation);
 
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent)
@@ -478,23 +497,30 @@ void InspectorAnimationAgent::didSetWebAnimationEffect(WebAnimation& animation)
 
 void InspectorAnimationAgent::didChangeWebAnimationEffectTiming(WebAnimation& animation)
 {
+    if (m_animationsIgnoringEffectChanges.contains(animation))
+        return;
+
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
     if (animationId.isEmpty())
         return;
 
-    if (auto* effect = animation.effect())
-        m_frontendDispatcher->effectChanged(animationId, buildObjectForEffect(*effect));
-    else
-        m_frontendDispatcher->effectChanged(animationId, nullptr);
+    m_animationsIgnoringEffectChanges.add(animation);
+
+    m_frontendDispatcher->effectChanged(animationId);
 }
 
 void InspectorAnimationAgent::didChangeWebAnimationEffectTarget(WebAnimation& animation)
 {
+    if (m_animationsIgnoringTargetChanges.contains(animation))
+        return;
+
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
     if (animationId.isEmpty())
         return;
+
+    m_animationsIgnoringTargetChanges.add(animation);
 
     m_frontendDispatcher->targetChanged(animationId);
 }
@@ -581,11 +607,11 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Insp
     else if (auto* cssTransition = dynamicDowncast<CSSTransition>(animation))
         animationPayload->setCssTransitionProperty(cssTransition->transitionProperty());
 
-    if (auto* effect = animation.effect())
-        animationPayload->setEffect(buildObjectForEffect(*effect));
-
     if (backtrace)
         animationPayload->setStackTrace(backtrace.releaseNonNull());
+
+    m_animationsIgnoringEffectChanges.add(animation);
+    m_animationsIgnoringTargetChanges.add(animation);
 
     m_frontendDispatcher->animationCreated(WTFMove(animationPayload));
 }

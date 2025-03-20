@@ -1,0 +1,42 @@
+
+
+PASS event dispatches on click with addEventListener
+PASS event dispatches on click with oncommand property
+PASS setting custom command property to --foo (must include dash) sets event command
+PASS setting custom command attribute to --foo (must include dash) sets event command
+PASS setting custom command property to --foo- (must include dash) sets event command
+PASS setting custom command attribute to --foo- (must include dash) sets event command
+PASS setting custom command property to --cAsE-cArRiEs (must include dash) sets event command
+PASS setting custom command attribute to --cAsE-cArRiEs (must include dash) sets event command
+PASS setting custom command property to -- (must include dash) sets event command
+PASS setting custom command attribute to -- (must include dash) sets event command
+PASS setting custom command property to --a- (must include dash) sets event command
+PASS setting custom command attribute to --a- (must include dash) sets event command
+PASS setting custom command property to --a-b (must include dash) sets event command
+PASS setting custom command attribute to --a-b (must include dash) sets event command
+PASS setting custom command property to --- (must include dash) sets event command
+PASS setting custom command attribute to --- (must include dash) sets event command
+PASS setting custom command property to --show-picker (must include dash) sets event command
+PASS setting custom command attribute to --show-picker (must include dash) sets event command
+PASS setting custom command property to -foo (no dash) did not dispatch an event
+PASS setting custom command attribute to -foo (no dash) did not dispatch an event
+PASS setting custom command property to -foo- (no dash) did not dispatch an event
+PASS setting custom command attribute to -foo- (no dash) did not dispatch an event
+PASS setting custom command property to foo-bar (no dash) did not dispatch an event
+PASS setting custom command attribute to foo-bar (no dash) did not dispatch an event
+PASS setting custom command property to -foo bar (no dash) did not dispatch an event
+PASS setting custom command attribute to -foo bar (no dash) did not dispatch an event
+PASS setting custom command property to —-emdash (no dash) did not dispatch an event
+PASS setting custom command attribute to —-emdash (no dash) did not dispatch an event
+PASS setting custom command property to hidedocument (no dash) did not dispatch an event
+PASS setting custom command attribute to hidedocument (no dash) did not dispatch an event
+PASS event does not dispatch if click:preventDefault is called
+PASS event does not dispatch on input[type=button]
+PASS event does not dispatch if invoker is disabled
+PASS event does NOT dispatch if button is form associated, with implicit type
+PASS event does NOT dispatch if button is form associated, with explicit type=invalid
+PASS event dispatches if button is form associated, with explicit type=button
+PASS event does NOT dispatch if button is form associated, with explicit type=submit
+PASS event does NOT dispatch if button is form associated, with explicit type=reset
+PASS event dispatches if invokee is non-HTML Element
+

@@ -1,0 +1,5 @@
+Hello, world!
+
+PASS IntersectionObserverV2 detects occlusion from -webkit-box-reflect (if supported).
+FAIL First rAF. assert_equals: Occluded if -webkit-box-reflect is supported. expected (boolean) false but got (undefined) undefined
+

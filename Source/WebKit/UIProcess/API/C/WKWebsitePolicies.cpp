@@ -44,7 +44,7 @@ WKTypeID WKWebsitePoliciesGetTypeID()
 
 WKWebsitePoliciesRef WKWebsitePoliciesCreate()
 {
-    return toAPI(&API::WebsitePolicies::create().leakRef());
+    return toAPILeakingRef(API::WebsitePolicies::create());
 }
 
 void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef websitePolicies, bool enabled)

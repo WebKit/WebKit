@@ -1,8 +1,77 @@
 
 PASS :timestampWrites,query_set_type:queryType="occlusion"
 PASS :timestampWrites,query_set_type:queryType="timestamp"
-PASS :timestampWrites,invalid_query_set:querySetState="valid"
+FAIL :timestampWrites,invalid_query_set:querySetState="valid" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(1) || endOfPassWriteIndex(1) >= querySetCount(1) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :timestampWrites,invalid_query_set:querySetState="invalid"
-PASS :timestampWrites,query_index:
-PASS :timestamp_query_set,device_mismatch:
+FAIL :timestampWrites,query_index: assert_unreached:
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=0
+    OK
+  - VALIDATION FAILED: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(2) || endOfPassWriteIndex(0) >= querySetCount(2) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(0)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :timestamp_query_set,device_mismatch: assert_unreached:
+  - INFO: subcase: mismatched=false
+    OK
+  - INFO: subcase: mismatched=true
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(1) || endOfPassWriteIndex(1) >= querySetCount(1) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 

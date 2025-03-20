@@ -37,6 +37,9 @@ list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 
     Tests/WebCore/UserAgentQuirks.cpp
+
+    Tests/WebCore/glib/Damage.cpp
+
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstElementHarness.cpp
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp

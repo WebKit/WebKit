@@ -61,10 +61,12 @@ private:
     WebArchiveResource(API::Data*, const WTF::String& URL, const WTF::String& MIMEType, const WTF::String& textEncoding);
     WebArchiveResource(RefPtr<WebCore::ArchiveResource>&&);
 
-    RefPtr<WebCore::ArchiveResource> m_archiveResource;
+    const RefPtr<WebCore::ArchiveResource> m_archiveResource;
 };
 
 } // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(WebArchiveResource);
 
 #endif // PLATFORM(COCOA)
 

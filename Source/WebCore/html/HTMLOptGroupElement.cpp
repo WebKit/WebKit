@@ -101,7 +101,7 @@ void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, const Atom
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } });
 
             Vector<Style::PseudoClassChangeInvalidation> optionInvalidation;
-            for (auto& descendant : descendantsOfType<HTMLOptionElement>(*this))
+            for (Ref descendant : descendantsOfType<HTMLOptionElement>(*this))
                 optionInvalidation.append({ descendant, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } } });
 
             m_isDisabled = newDisabled;
@@ -119,7 +119,7 @@ void HTMLOptGroupElement::recalcSelectOptions()
 
 String HTMLOptGroupElement::groupLabelText() const
 {
-    String itemText = document().displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr));
+    String itemText = protectedDocument()->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr));
     
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.trim(deprecatedIsSpaceOrNewline);

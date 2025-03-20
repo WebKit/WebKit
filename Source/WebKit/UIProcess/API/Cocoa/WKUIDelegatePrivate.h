@@ -35,6 +35,7 @@
 @class UIScrollView;
 @class UIViewController;
 @class WKFrameInfo;
+@class WKScrollGeometry;
 @class _WKContextMenuElementInfo;
 @class _WKActivatedElementInfo;
 @class _WKElementAction;

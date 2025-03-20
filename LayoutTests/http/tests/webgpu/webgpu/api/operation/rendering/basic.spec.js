@@ -4,18 +4,18 @@
 Basic command buffer rendering tests.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { now } from '../../../../common/util/util.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 import { checkElementsEqual } from '../../../util/check_contents.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('clear').fn((t) => {
-  const dst = t.device.createBuffer({
+  const dst = t.createBufferTracked({
     size: 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
 
-  const colorAttachment = t.device.createTexture({
+  const colorAttachment = t.createTextureTracked({
     format: 'rgba8unorm',
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
@@ -45,12 +45,12 @@ g.test('clear').fn((t) => {
 });
 
 g.test('fullscreen_quad').fn((t) => {
-  const dst = t.device.createBuffer({
+  const dst = t.createBufferTracked({
     size: 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
 
-  const colorAttachment = t.device.createTexture({
+  const colorAttachment = t.createTextureTracked({
     format: 'rgba8unorm',
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
@@ -146,17 +146,17 @@ fn(async (t) => {
   const { indexed, indirect } = t.params;
 
   const kBytesPerRow = 256;
-  const dst = t.device.createBuffer({
+  const dst = t.createBufferTracked({
     size: 3 * kBytesPerRow,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
 
-  const paramsBuffer = t.device.createBuffer({
+  const paramsBuffer = t.createBufferTracked({
     size: 8,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
   });
 
-  const indirectBuffer = t.device.createBuffer({
+  const indirectBuffer = t.createBufferTracked({
     size: 20,
     usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST
   });
@@ -173,12 +173,11 @@ fn(async (t) => {
   let indexBuffer = null;
   if (indexed) {
     const kMaxIndices = 16 * 1024 * 1024;
-    indexBuffer = t.device.createBuffer({
+    indexBuffer = t.createBufferTracked({
       size: kMaxIndices * Uint32Array.BYTES_PER_ELEMENT,
       usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
       mappedAtCreation: true
     });
-    t.trackForCleanup(indexBuffer);
     const indexData = new Uint32Array(indexBuffer.getMappedRange());
     for (let i = 0; i < kMaxIndices; ++i) {
       indexData[i] = i;
@@ -186,7 +185,7 @@ fn(async (t) => {
     indexBuffer.unmap();
   }
 
-  const colorAttachment = t.device.createTexture({
+  const colorAttachment = t.createTextureTracked({
     format: 'rgba8unorm',
     size: { width: 3, height: 3, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT

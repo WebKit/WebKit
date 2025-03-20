@@ -94,3 +94,7 @@ inline bool isNotificationIDValid(uint64_t id)
 }
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebNotification)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Notification; }
+SPECIALIZE_TYPE_TRAITS_END()

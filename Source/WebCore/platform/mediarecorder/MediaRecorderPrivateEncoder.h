@@ -62,7 +62,7 @@ public:
 
     void appendVideoFrame(VideoFrame&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
-    void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&);
+    void fetchData(CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, double)>&&);
 
     void pause();
     void resume();

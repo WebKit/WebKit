@@ -42,6 +42,7 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLVideoElement.h"
+#include "NodeInlines.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "Position.h"
@@ -123,7 +124,9 @@ static bool indexIsAtWordBoundary(const String& string, unsigned index)
 // https://wicg.github.io/scroll-to-text-fragment/#visible-text-node
 static bool isVisibleTextNode(const Node& node)
 {
-    return node.isTextNode() && node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(node.renderer()))
+        return renderText->style().visibility() == Visibility::Visible;
+    return false;
 }
 
 static bool isVisibleTextNode(const Text& node)
@@ -236,7 +239,7 @@ static std::optional<SimpleRange> rangeOfStringInRange(const String& query, Simp
         Vector<Ref<Text>> textNodeList;
         // FIXME: this is O^2 since treeOrder will also do traversal, optimize.
         while (currentNode && currentNode->isDescendantOf(blockAncestor) && is_lteq(treeOrder(BoundaryPoint(*currentNode, 0), searchRange.end))) {
-            if (currentNode->renderer() && is<Element>(currentNode) && currentNode->renderer()->style().isDisplayBlockLevel())
+            if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().isDisplayBlockLevel())
                 break;
 
             if (isSearchInvisible(*currentNode)) {

@@ -32,6 +32,7 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"
+#include "NetworkSchemeRegistry.h"
 #include "WebErrors.h"
 
 #define PING_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
@@ -55,7 +56,7 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
     , m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(NetworkLoadChecker::create(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
+    , m_networkLoadChecker(NetworkLoadChecker::create(connection.protectedNetworkProcess(), nullptr,  connection.protectedSchemeRegistry().ptr(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
     for (auto& file : m_blobFiles) {
@@ -102,10 +103,10 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
 
 PingLoad::~PingLoad()
 {
-    if (m_task) {
-        ASSERT(m_task->client() == this);
-        m_task->clearClient();
-        m_task->cancel();
+    if (RefPtr task = m_task) {
+        ASSERT(task->client() == this);
+        task->clearClient();
+        task->cancel();
     }
     for (auto& file : m_blobFiles) {
         if (file)
@@ -126,8 +127,9 @@ void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& req
     if (auto* networkSession = networkProcess.networkSession(m_sessionID)) {
         auto loadParameters = m_parameters;
         loadParameters.request = WTFMove(request);
-        m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
-        m_task->resume();
+        Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+        m_task = task.copyRef();
+        task->resume();
     } else
         ASSERT_NOT_REACHED();
 }
@@ -155,7 +157,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 {
     PING_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        m_networkLoadChecker->protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

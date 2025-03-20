@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: test_is_legacy_name_alias
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: test_is_legacy_name_alias
-
+PASS -webkit-appearance is a legacy name alias for appearance
 

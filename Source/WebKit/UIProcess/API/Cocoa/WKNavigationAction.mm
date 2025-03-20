@@ -233,7 +233,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
     RefPtr mainFrameNavigation = _navigationAction->mainFrameNavigation();
     if (!mainFrameNavigation)
         return;
-    auto& privateClickMeasurement = mainFrameNavigation->privateClickMeasurement();
+    auto* privateClickMeasurement = mainFrameNavigation->privateClickMeasurement();
     if (!privateClickMeasurement || !privateClickMeasurement->isSKAdNetworkAttribution())
         return;
     RefPtr sourceFrame = _navigationAction->sourceFrame();

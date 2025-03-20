@@ -1,0 +1,4 @@
+
+FAIL Main reosurce load matched with the service worker having multiple rules assert_equals: expected "Network\n" but got ""
+FAIL Resource load matched with the rule registered in the imported service worker assert_equals: expected "Network\n" but got ""
+

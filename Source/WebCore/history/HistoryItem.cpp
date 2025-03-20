@@ -312,6 +312,7 @@ void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 
 void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
 {
+    ASSERT(!child->isTargetItem());
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i)  {
         if (m_children[i]->target() == child->target()) {

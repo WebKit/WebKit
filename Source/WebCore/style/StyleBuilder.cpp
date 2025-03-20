@@ -88,8 +88,13 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
+static auto positionTryFallbackProperties(const BuilderContext& context)
+{
+    return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
+}
+
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, OptionSet<PropertyCascade::PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* animatedPropertes)
-    : m_cascade(matchResult, cascadeLevel, includedProperties, animatedPropertes)
+    : m_cascade(matchResult, cascadeLevel, includedProperties, animatedPropertes, positionTryFallbackProperties(context))
     , m_state(*this, style, WTFMove(context))
 {
 }
@@ -294,6 +299,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask, cascadeLevel);
     }
+
+    if (m_state.positionTryFallback())
+        id = AnchorPositionEvaluator::resolvePositionTryFallbackProperty(id, style.writingMode(), *m_state.positionTryFallback());
 
     auto valueID = WebCore::valueID(valueToApply.get());
 

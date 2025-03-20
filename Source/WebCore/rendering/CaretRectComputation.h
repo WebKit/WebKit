@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-enum class CaretRectMode {
+enum class CaretRectMode : bool {
     Normal,
     ExpandToEndOfLine
 };

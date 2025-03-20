@@ -147,12 +147,12 @@ public:
     {
         auto encoderFactory = adoptGRef(gst_element_factory_find(name));
         if (!encoderFactory) {
-            GST_WARNING("Encoder %s not found, will not be used", name.characters());
+            GST_DEBUG("Encoder %s not found, will not be used", name.characters());
             return;
         }
 
         if (gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE_CAST(encoderFactory.get())) < GST_RANK_MARGINAL) {
-            GST_WARNING("Encoder %s rank is below MARGINAL, will not be used.", name.characters());
+            GST_DEBUG("Encoder %s rank is below MARGINAL, will not be used.", name.characters());
             return;
         }
 
@@ -354,11 +354,12 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         gst_bin_add(GST_BIN_CAST(self), priv->inputCapsFilter.get());
     }
 
-    bool useVideoConvertScale = webkitGstCheckVersion(1, 22, 0);
-
-    if (useVideoConvertScale) {
+    // Keep videoconvertscale disabled for now due to some performance issues.
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3815
+    auto useVideoConvertScale = StringView::fromLatin1(std::getenv("WEBKIT_GST_USE_VIDEOCONVERT_SCALE"));
+    if (useVideoConvertScale == "1"_s) {
         if (!priv->videoConvert) {
-            priv->videoConvert = makeGStreamerElement("videoconvertscale", nullptr);
+            priv->videoConvert = makeGStreamerElement("videoconvertscale"_s);
             gst_bin_add(GST_BIN_CAST(self), priv->videoConvert.get());
 
             auto sinkPadTarget = adoptGRef(gst_element_get_static_pad(priv->videoConvert.get(), "sink"));
@@ -371,12 +372,12 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         }
     } else {
         if (!priv->videoScale) {
-            priv->videoScale = makeGStreamerElement("videoscale", nullptr);
+            priv->videoScale = makeGStreamerElement("videoscale"_s);
             gst_bin_add(GST_BIN_CAST(self), priv->videoScale.get());
         }
 
         if (!priv->videoConvert) {
-            priv->videoConvert = makeGStreamerElement("videoconvert", nullptr);
+            priv->videoConvert = makeGStreamerElement("videoconvert"_s);
             gst_bin_add(GST_BIN_CAST(self), priv->videoConvert.get());
 
             auto sinkPadTarget = adoptGRef(gst_element_get_static_pad(priv->videoConvert.get(), "sink"));
@@ -390,7 +391,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     }
 
     if (encoderDefinition->parserName) {
-        priv->parser = makeGStreamerElement(encoderDefinition->parserName, nullptr);
+        priv->parser = makeGStreamerElement(encoderDefinition->parserName);
 
         if (!priv->outputCapsFilter) {
             priv->outputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
@@ -606,7 +607,7 @@ static void videoEncoderConstructed(GObject* encoder)
     self->priv->bitrateMode = CONSTANT_BITRATE_MODE;
     self->priv->latencyMode = REALTIME_LATENCY_MODE;
 
-    auto* sinkPad = webkitGstGhostPadFromStaticTemplate(&encoderSinkTemplate, "sink", nullptr);
+    auto* sinkPad = webkitGstGhostPadFromStaticTemplate(&encoderSinkTemplate, "sink"_s, nullptr);
     GST_OBJECT_FLAG_SET(sinkPad, GST_PAD_FLAG_NEED_PARENT);
     gst_pad_set_event_function(sinkPad, reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject* parent, GstEvent* event) -> gboolean {
         if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM_OOB) {
@@ -646,7 +647,7 @@ static void videoEncoderConstructed(GObject* encoder)
     }));
     gst_element_add_pad(GST_ELEMENT_CAST(self), sinkPad);
 
-    gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&encoderSrcTemplate, "src", nullptr));
+    gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&encoderSrcTemplate, "src"_s, nullptr));
 }
 
 static void setupVaEncoder(WebKitVideoEncoder* self)
@@ -972,7 +973,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                     break;
                 }
             }, [](GstElement* encoder, LatencyMode mode) {
-                if (!gstObjectHasProperty(encoder, "usage-profile"))
+                if (!gstObjectHasProperty(encoder, "usage-profile"_s))
                     return;
                 switch (mode) {
                 case REALTIME_LATENCY_MODE:

@@ -85,28 +85,6 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, const CSSParserC
     return consumeTextEdge(range);
 }
 
-RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // Standard says this should be:
-    //
-    // <'initial-letter'> = normal | <number [1,∞]> <integer [1,∞]> | <number [1,∞]> && [ drop | raise ]?
-    // https://drafts.csswg.org/css-inline-3/#sizing-drop-initials
-
-    if (auto ident = consumeIdent<CSSValueNormal>(range))
-        return ident;
-    auto height = consumeNumber(range, context, ValueRange::NonNegative);
-    if (!height)
-        return nullptr;
-    RefPtr<CSSPrimitiveValue> position;
-    if (!range.atEnd()) {
-        position = consumeNumber(range, context, ValueRange::NonNegative);
-        if (!position || !range.atEnd())
-            return nullptr;
-    } else
-        position = height.copyRef();
-    return CSSValuePair::create(position.releaseNonNull(), height.releaseNonNull());
-}
-
 RefPtr<CSSValue> consumeWebkitLineBoxContain(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'-webkit-line-box-contain'> = none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]

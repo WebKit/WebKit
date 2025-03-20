@@ -18,8 +18,12 @@ async function run() {
         },
     });
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

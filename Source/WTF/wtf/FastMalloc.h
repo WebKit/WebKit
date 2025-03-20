@@ -199,7 +199,7 @@ WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemoryForThisThread();
 WTF_EXPORT_PRIVATE void fastCommitAlignedMemory(void*, size_t);
 WTF_EXPORT_PRIVATE void fastDecommitAlignedMemory(void*, size_t);
 
-WTF_EXPORT_PRIVATE void fastEnableMiniMode();
+WTF_EXPORT_PRIVATE void fastEnableMiniMode(bool forceMiniMode = false);
 
 WTF_EXPORT_PRIVATE void fastDisableScavenger();
 

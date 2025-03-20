@@ -123,6 +123,9 @@ public:
     void navigationPreloadFailed(FetchKey, ResourceError&&);
     void navigationPreloadIsReady(FetchKey, ResourceResponse&&);
 
+    bool hasFetchEventHandler() const { return m_hasFetchEventHandler; }
+    void storeEventTypesToHandle();
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, std::unique_ptr<WorkerClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -137,9 +140,9 @@ private:
     void resetUserGesture() { m_isProcessingUserGesture = false; }
 
     ServiceWorkerContextData m_contextData;
-    Ref<ServiceWorkerRegistration> m_registration;
-    Ref<ServiceWorker> m_serviceWorker;
-    Ref<ServiceWorkerClients> m_clients;
+    const Ref<ServiceWorkerRegistration> m_registration;
+    const Ref<ServiceWorker> m_serviceWorker;
+    const Ref<ServiceWorkerClients> m_clients;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };
@@ -155,6 +158,7 @@ private:
     MonotonicTime m_lastPushEventTime;
     bool m_consoleMessageReportingEnabled { false };
     RefPtr<CookieStore> m_cookieStore;
+    bool m_hasFetchEventHandler { false };
 
     struct FetchTask {
         RefPtr<ServiceWorkerFetch::Client> client;

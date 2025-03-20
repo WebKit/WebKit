@@ -3,11 +3,15 @@
 body { font-family: sans-serif; }
 </style>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
 if (window.internals)
     window.internals.settings.setSansSerifFontFamily("Times", "zyyy");
 
 onload = function() {
     document.body.offsetLeft;
+    if (window.testRunner)
+        testRunner.notifyDone();
     if (window.internals)
         window.internals.settings.setSansSerifFontFamily("Arial", "zyyy");
 }

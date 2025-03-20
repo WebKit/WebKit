@@ -50,8 +50,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._exportDataSampleStackTraces = null;
         this._exportDataSampleDurations = null;
 
-        this._callingContextTreesForTarget = new Map;
-
         for (let type of WI.TimelineManager.availableTimelineTypes()) {
             let timeline = WI.Timeline.create(type);
             this._timelines.set(type, timeline);
@@ -73,7 +71,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     static async import(identifier, json, displayName)
     {
-        const target = WI.assumingMainTarget();
+        // FIXME: <https://webkit.org/b/287738> support exporting and importing data from worker targets
+        let target = WI.assumingMainTarget();
 
         let {startTime, endTime, discontinuities, instrumentTypes, records, markers, memoryPressureEvents, sampleStackTraces, sampleDurations} = json;
         let importedDisplayName = WI.UIString("Imported - %s").format(displayName);
@@ -88,15 +87,22 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         recording.updateCallingContextTrees(target, sampleStackTraces, sampleDurations);
 
-        let topDownCallingContextTree = recording.callingContextTree(target, WI.CallingContextTree.Type.TopDown);
+        let topDownCallingContextTree = undefined;
 
         for (let recordJSON of records) {
             let record = await WI.TimelineRecord.fromJSON(recordJSON);
             if (record) {
                 recording.addRecord(record);
 
-                if (record instanceof WI.ScriptTimelineRecord)
-                    record.profilePayload = topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
+                if (record instanceof WI.ScriptTimelineRecord) {
+                    if (topDownCallingContextTree === undefined) {
+                        let scriptTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
+                        console.assert(scriptTimeline);
+                        topDownCallingContextTree = scriptTimeline?.callingContextTree(target, WI.CallingContextTree.Type.TopDown) || null;
+                    }
+                    if (topDownCallingContextTree)
+                        record.profilePayload = topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
+                }
             }
         }
 
@@ -154,17 +160,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     get imported() { return this._imported; }
     get startTime() { return this._startTime; }
     get endTime() { return this._endTime; }
-
-    get targets()
-    {
-        return Array.from(this._callingContextTreesForTarget.keys());
-    }
-
-    callingContextTree(target, type)
-    {
-        // Note that `updateCallingContextTrees` must have already been called with `target` beforehand.
-        return this._callingContextTreesForTarget.get(target)[type];
-    }
 
     start(initiatedByBackend)
     {
@@ -255,8 +250,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._exportDataMemoryPressureEvents = [];
         this._exportDataSampleStackTraces = [];
         this._exportDataSampleDurations = [];
-
-        this._callingContextTreesForTarget.clear();
 
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);
@@ -439,24 +432,12 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             this._exportDataSampleDurations.pushAll(sampleDurations);
         }
 
-        let targetAdded = false;
+        let scriptTimeline = this._timelines.get(WI.TimelineRecord.Type.Script);
+        console.assert(scriptTimeline, this._timelines);
+        if (!scriptTimeline)
+            return;
 
-        let callingContextTrees = this._callingContextTreesForTarget.getOrInitialize(target, () => {
-            targetAdded = true;
-
-            let callingContextTrees = {};
-            for (const type of Object.values(WI.CallingContextTree.Type))
-                callingContextTrees[type] = new WI.CallingContextTree(target, type);
-            return callingContextTrees;
-        });
-
-        for (let i = 0; i < stackTraces.length; i++) {
-            for (const type of Object.values(WI.CallingContextTree.Type))
-                callingContextTrees[type].updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-        }
-
-        if (targetAdded)
-            this.dispatchEventToListeners(WI.TimelineRecording.Event.TargetAdded);
+        scriptTimeline.updateCallingContextTrees(target, stackTraces, sampleDurations);
     }
 
     get exportMode()

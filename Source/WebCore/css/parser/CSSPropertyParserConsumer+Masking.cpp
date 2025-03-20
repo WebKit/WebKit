@@ -41,7 +41,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static RefPtr<CSSValue> consumeClipRectFunction(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeClipRectFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // rect() = rect( <top>, <right>, <bottom>, <left> )
     // "<top>, <right>, <bottom>, and <left> may either have a <length> value or auto."
@@ -89,16 +89,6 @@ static RefPtr<CSSValue> consumeClipRectFunction(CSSParserTokenRange& range, cons
             left.releaseNonNull()
         }
     );
-}
-
-RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'clip'> = <rect()> | auto
-    // https://drafts.fxtf.org/css-masking/#propdef-clip
-
-    if (range.peek().id() == CSSValueAuto)
-        return consumeIdent(range);
-    return consumeClipRectFunction(range, context);
 }
 
 RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, const CSSParserContext& context)

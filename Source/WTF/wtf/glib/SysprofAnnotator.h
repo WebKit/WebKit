@@ -192,6 +192,7 @@ public:
         case WebXRLayerStartFrameEnd:
         case WebXRLayerEndFrameEnd:
         case WebXRSessionFrameCallbacksEnd:
+        case ProgrammaticScroll:
         case WebHTMLViewPaintEnd:
         case BackingStoreFlushEnd:
         case WaitForCompositionCompletionEnd:
@@ -363,6 +364,8 @@ private:
         case WebXRSessionFrameCallbacksStart:
         case WebXRSessionFrameCallbacksEnd:
             return "WebXRSessionFrameCallbacks"_s;
+        case ProgrammaticScroll:
+            return "ProgrammaticScroll"_s;
 
         case WebHTMLViewPaintStart:
         case WebHTMLViewPaintEnd:

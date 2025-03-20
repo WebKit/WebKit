@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file, uint64_t capacity)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::FileHandle&& file, uint64_t capacity)
 {
     auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTFMove(file), capacity));
     handle->suspendIfNeeded();
     return handle;
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file, uint64_t capacity)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::FileHandle&& file, uint64_t capacity)
     : ActiveDOMObject(&context)
     , m_source(source)
     , m_identifier(identifier)
@@ -64,20 +64,20 @@ ExceptionOr<void> FileSystemSyncAccessHandle::truncate(unsigned long long size)
     if (m_isClosed)
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
-    auto oldSize = FileSystem::fileSize(m_file.handle());
+    auto oldSize = m_file.size();
     if (!oldSize)
         return Exception { ExceptionCode::InvalidStateError, "Failed to get current size"_s };
 
     if (size > *oldSize && !requestSpaceForNewSize(size))
         return Exception { ExceptionCode::QuotaExceededError };
 
-    auto oldOffset = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
-    if (oldOffset < 0)
+    auto oldOffset = m_file.seek(0, FileSystem::FileSeekOrigin::Current);
+    if (!oldOffset)
         return Exception { ExceptionCode::InvalidStateError, "Failed to get current offset"_s };
 
-    if (FileSystem::truncateFile(m_file.handle(), size)) {
-        if (static_cast<uint64_t>(oldOffset) > size)
-            FileSystem::seekFile(m_file.handle(), size, FileSystem::FileSeekOrigin::Beginning);
+    if (m_file.truncate(size)) {
+        if (*oldOffset > size)
+            m_file.seek(size, FileSystem::FileSeekOrigin::Beginning);
 
         return { };
     }
@@ -90,7 +90,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::getSize()
     if (m_isClosed)
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
-    auto result = FileSystem::fileSize(m_file.handle());
+    auto result = m_file.size();
     return result ? ExceptionOr<unsigned long long> { result.value() } : Exception { ExceptionCode::InvalidStateError, "Failed to get file size"_s };
 }
 
@@ -99,7 +99,7 @@ ExceptionOr<void> FileSystemSyncAccessHandle::flush()
     if (m_isClosed)
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
-    bool succeeded = FileSystem::flushFile(m_file.handle());
+    bool succeeded = m_file.flush();
     return succeeded ? ExceptionOr<void> { } : Exception { ExceptionCode::InvalidStateError, "Failed to flush file"_s };
 }
 
@@ -131,16 +131,16 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
-        auto result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
-        if (result == -1)
+        auto result = m_file.seek(options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        if (!result)
             return Exception { ExceptionCode::InvalidStateError, "Failed to read at offset"_s };
     }
 
-    int result = FileSystem::readFromFile(m_file.handle(), buffer.mutableSpan());
-    if (result == -1)
+    auto result = m_file.read(buffer.mutableSpan());
+    if (!result)
         return Exception { ExceptionCode::InvalidStateError, "Failed to read from file"_s };
 
-    return result;
+    return *result;
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
@@ -149,24 +149,24 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
-        auto result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
-        if (result == -1)
+        auto result = m_file.seek(options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        if (!result)
             return Exception { ExceptionCode::InvalidStateError, "Failed to write at offset"_s };
     } else {
-        auto result = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
-        if (result == -1)
+        auto result = m_file.seek(0, FileSystem::FileSeekOrigin::Current);
+        if (!result)
             return Exception { ExceptionCode::InvalidStateError, "Failed to get offset"_s };
-        options.at = result;
+        options.at = *result;
     }
 
     if (!requestSpaceForWrite(*options.at, buffer.length()))
         return Exception { ExceptionCode::QuotaExceededError };
 
-    int result = FileSystem::writeToFile(m_file.handle(), buffer.span());
-    if (result == -1)
+    auto result = m_file.write(buffer.span());
+    if (!result)
         return Exception { ExceptionCode::InvalidStateError, "Failed to write to file"_s };
 
-    return result;
+    return *result;
 }
 
 void FileSystemSyncAccessHandle::stop()

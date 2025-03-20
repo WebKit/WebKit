@@ -34,9 +34,12 @@
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
 #import "LogInitialization.h"
+#import "Logging.h"
 #import "WebPushDaemon.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/LogInitialization.h>
+#import <WebCore/SQLiteFileSystem.h>
+#import <WebKit/Logging.h>
 #import <getopt.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
@@ -115,6 +118,36 @@ static void applySandbox()
 #endif
 }
 
+static String getWebPushDirectoryPathWithMigrationIfNecessary()
+{
+#if PLATFORM(MAC) && !ENABLE(RELOCATABLE_WEBPUSHD)
+    String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    String oldPath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s });
+
+    RetainPtr containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.apple.webkit.webpushd"];
+
+    NSError *error = nil;
+    BOOL canReadContainer = !![[NSFileManager defaultManager] contentsOfDirectoryAtURL:containerURL.get() includingPropertiesForKeys:nil options:0 error:&error];
+    RELEASE_ASSERT_WITH_MESSAGE(canReadContainer, "Could not access webpushd group container: %s", error.description.UTF8String);
+
+    String containerPath = [containerURL path];
+    String newPath = FileSystem::pathByAppendingComponents(containerPath, { "Library"_s, "WebKit"_s, "WebPush"_s });
+
+    String oldDatabasePath = FileSystem::pathByAppendingComponent(oldPath, "PushDatabase.db"_s);
+    String newDatabasePath = FileSystem::pathByAppendingComponent(newPath, "PushDatabase.db"_s);
+    if (FileSystem::fileExists(oldDatabasePath) && !FileSystem::fileExists(newDatabasePath)) {
+        FileSystem::makeAllDirectories(newPath);
+        bool migrated = WebCore::SQLiteFileSystem::moveDatabaseFile(oldDatabasePath, newDatabasePath);
+        RELEASE_LOG(Push, "Moved push database to new container path %" PUBLIC_LOG_STRING " with result: %d", newDatabasePath.utf8().data(), migrated);
+    }
+
+    return newPath;
+#else
+    String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    return FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s });
+#endif
+}
+
 int WebPushDaemonMain(int argc, char** argv)
 {
     @autoreleasepool {
@@ -180,15 +213,14 @@ int WebPushDaemonMain(int argc, char** argv)
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {
-            String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+            String webPushDirectoryPath = getWebPushDirectoryPathWithMigrationIfNecessary();
 
 #if ENABLE(RELOCATABLE_WEBPUSHD)
-            String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.relocatable.db"_s });
+            String pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.relocatable.db"_s);
 #else
-            String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.db"_s });
+            String pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.db"_s);
 #endif
-
-            String webClipCachePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "WebClipCache.plist"_s });
+            String webClipCachePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "WebClipCache.plist"_s);
 
             ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath, webClipCachePath);
         }

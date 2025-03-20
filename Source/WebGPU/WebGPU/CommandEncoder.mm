@@ -129,7 +129,9 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBuffer, *this, m_commandEncoderId++);
+    auto commandEncoder = CommandEncoder::create(commandBuffer, *this, m_commandEncoderId++);
+    m_commandEncoderMap.set(commandEncoder->uniqueId(), commandEncoder.ptr());
+    return commandEncoder;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandEncoder);
@@ -143,9 +145,11 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
     m_managedTextures = [NSMutableSet set];
     m_managedBuffers = [NSMutableSet set];
 #endif
-    m_retainedBuffers = [NSMutableSet set];
-    m_retainedTextures = [NSMutableSet set];
-    m_retainedICBs = [NSMutableSet set];
+    if (device.isShaderValidationEnabled()) {
+        m_retainedBuffers = [NSMutableSet set];
+        m_retainedTextures = [NSMutableSet set];
+        m_retainedICBs = [NSMutableSet set];
+    }
     m_retainedTimestampBuffers = [NSMutableSet set];
 }
 
@@ -166,6 +170,7 @@ CommandEncoder::~CommandEncoder()
     m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil; // Do not remove, this is needed to workaround rdar://143905417
+    m_device->removeCommandEncoder(m_uniqueId);
 }
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
@@ -1393,8 +1398,7 @@ bool CommandEncoder::waitForCommandBufferCompletion()
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const
 {
-    id<MTLCommandEncoder> existingEncoder = m_device->protectedQueue()->encoderForBuffer(m_commandBuffer);
-    return existingEncoder == commandEncoder;
+    return m_existingCommandEncoder == commandEncoder;
 }
 
 void CommandEncoder::makeInvalid(NSString* errorString)
@@ -2267,9 +2271,22 @@ void CommandEncoder::lock(bool shouldLock)
         setExistingEncoder(nil);
 }
 
-void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, WeakHashSet<CommandEncoder>& encoderHashSet)
+size_t CommandEncoder::computeSize(Vector<uint64_t>& container, const Device& device)
 {
-    encoderHashSet.add(commandEncoder);
+    container.removeAllMatching([&](auto commandEncoder) {
+        return !device.commandEncoderFromIdentifier(commandEncoder);
+    });
+    return container.size();
+}
+
+void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, Vector<uint64_t>& encoderContainer)
+{
+    encoderContainer.append(commandEncoder.uniqueId());
+}
+
+void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, WeakHashSet<CommandEncoder>& encoderContainer)
+{
+    encoderContainer.add(commandEncoder);
 }
 
 void CommandEncoder::addOnCommitHandler(Function<bool(CommandBuffer&)>&& onCommitHandler)
@@ -2277,6 +2294,20 @@ void CommandEncoder::addOnCommitHandler(Function<bool(CommandBuffer&)>&& onCommi
     ASSERT(m_commandBuffer);
     m_onCommitHandlers.append(WTFMove(onCommitHandler));
 }
+
+#if ENABLE(WEBGPU_BY_DEFAULT)
+bool CommandEncoder::useResidencySet(id<MTLResidencySet> residencySet)
+{
+    if (residencySet && m_currentResidencySetCount < 32) {
+        [m_commandBuffer useResidencySet:residencySet];
+        [residencySet requestResidency];
+        ++m_currentResidencySetCount;
+        return true;
+    }
+
+    return false;
+}
+#endif
 
 #undef GENERATE_INVALID_ENCODER_STATE_ERROR
 

@@ -196,7 +196,7 @@ void MediaRecorderPrivateAVFImpl::resumeRecording(CompletionHandler<void()>&& co
 
 void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandler)
 {
-    m_encoder->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](RefPtr<FragmentedSharedBuffer>&& buffer, auto timeCode) mutable {
+    m_encoder->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](Ref<FragmentedSharedBuffer>&& buffer, auto timeCode) mutable {
         completionHandler(WTFMove(buffer), mimeType, timeCode);
     });
 }

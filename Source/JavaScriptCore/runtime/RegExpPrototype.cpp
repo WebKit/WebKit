@@ -21,14 +21,18 @@
 #include "config.h"
 #include "RegExpPrototype.h"
 
+#include "CachedCall.h"
+#include "InterpreterInlines.h"
 #include "IntegrityInlines.h"
 #include "JSArray.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
 #include "JSStringInlines.h"
+#include "VMEntryScopeInlines.h"
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
+#include "RegExpPrototypeInlines.h"
 #include "StringRecursionChecker.h"
 #include "YarrFlags.h"
 #include <wtf/text/StringBuilder.h>
@@ -50,6 +54,7 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterUnicode);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterUnicodeSets);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterSource);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterFlags);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncTest);
 
 const ClassInfo RegExpPrototype::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpPrototype) };
 
@@ -80,25 +85,66 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->replaceSymbol, regExpPrototypeReplaceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpPrototypeSearchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpPrototypeTestCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, RegExpTestIntrinsic);
 }
 
 // ------------------------------ Functions ---------------------------
 
-JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncTestFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncTest, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
-    if (UNLIKELY(!regexp))
-        return throwVMTypeError(globalObject, scope);
-    JSString* string = callFrame->argument(0).toStringOrNull(globalObject);
-    EXCEPTION_ASSERT(!!scope.exception() == !string);
-    if (!string)
-        return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regexp->test(globalObject, string))));
+    if (UNLIKELY(!thisValue.isObject()))
+        return throwVMTypeError(globalObject, scope, "RegExp.prototype.test requires that |this| be an Object"_s);
+    JSObject* thisObject = asObject(thisValue);
+
+    JSString* str = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (LIKELY(regExpTestWatchpointIsValid(vm, thisObject))) {
+        auto* regExp = jsDynamicCast<RegExpObject*>(thisValue);
+        if (UNLIKELY(!regExp))
+            return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
+        auto strValue = str->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (LIKELY(!strValue->isNull() && regExp->getLastIndex().isNumber()))
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regExp->test(globalObject, str))));
+    }
+
+    JSValue regExpExec = thisObject->get(globalObject, vm.propertyNames->exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    JSFunction* regExpBuiltinExec = globalObject->regExpProtoExecFunction();
+
+    JSValue match;
+    if (UNLIKELY(regExpExec != regExpBuiltinExec && regExpExec.isCallable())) {
+        auto callData = JSC::getCallData(regExpExec);
+        ASSERT(callData.type != CallData::Type::None);
+        if (LIKELY(callData.type == CallData::Type::JS)) {
+            CachedCall cachedCall(globalObject, jsCast<JSFunction*>(regExpExec), 1);
+            RETURN_IF_EXCEPTION(scope, { });
+            match = cachedCall.callWithArguments(globalObject, thisValue, str);
+            RETURN_IF_EXCEPTION(scope, { });
+        } else {
+            MarkedArgumentBuffer args;
+            args.append(str);
+            ASSERT(!args.hasOverflowed());
+            match = call(globalObject, regExpExec, callData, thisValue, args);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        if (!match.isNull() && !match.isObject())
+            return throwVMTypeError(globalObject, scope, "The result of RegExp exec must be null or an object"_s);
+    } else {
+        auto callData = JSC::getCallData(regExpBuiltinExec);
+        MarkedArgumentBuffer args;
+        args.append(str);
+        ASSERT(!args.hasOverflowed());
+        match = call(globalObject, regExpBuiltinExec, callData, thisValue, args);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsBoolean(!match.isNull()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncExec, (JSGlobalObject* globalObject, CallFrame* callFrame))

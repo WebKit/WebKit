@@ -21,9 +21,9 @@
 #include "CSSNestedDeclarations.h"
 
 #include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
 #include "DeclaredStylePropertyMap.h"
 #include "MutableStyleProperties.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 
@@ -39,10 +39,10 @@ CSSNestedDeclarations::CSSNestedDeclarations(StyleRuleNestedDeclarations& rule, 
 
 CSSNestedDeclarations::~CSSNestedDeclarations() = default;
 
-CSSStyleDeclaration& CSSNestedDeclarations::style()
+CSSStyleProperties& CSSNestedDeclarations::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(m_styleRule->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 

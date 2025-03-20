@@ -22,5 +22,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-order-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-order-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-parsing.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-visibility-computed.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-visibility-parsing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-visibility-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-visibility-parsing.html

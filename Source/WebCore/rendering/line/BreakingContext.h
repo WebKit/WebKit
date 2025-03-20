@@ -272,14 +272,12 @@ inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkSta
 
 // This is currently just used for list markers and inline flows that have line boxes. Neither should
 // have an effect on whitespace at the start of the line.
-inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* o, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
+inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* renderer, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
 {
-    RenderObject* next = nextInlineRendererSkippingEmpty(block, o);
-    auto* nextText = dynamicDowncast<RenderText>(next);
-    if (nextText && nextText->text().length() > 0) {
+    if (CheckedPtr nextText = dynamicDowncast<RenderText>(nextInlineRendererSkippingEmpty(block, renderer)); nextText && nextText->text().length() > 0) {
         UChar nextChar = nextText->characterAt(0);
         if (nextText->style().isCollapsibleWhiteSpace(nextChar)) {
-            lineWhitespaceCollapsingState.startIgnoringSpaces(LegacyInlineIterator(nullptr, o, 0));
+            lineWhitespaceCollapsingState.startIgnoringSpaces(LegacyInlineIterator(nullptr, renderer, 0));
             return true;
         }
     }

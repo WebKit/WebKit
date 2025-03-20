@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="xpath-test-pre.js"></script>
 </head>
 <body>
-<div id="console"></div>
-
 <script>
-
+description("XPath Attribute node predicate test.");
 var ROOT = document.createElement('div');
 ROOT.innerHTML = '<p>a</p><div><span id="21"></span><span id="22"></span><span id="23"></span></div>';
 var CHILD1 = ROOT.firstChild;
@@ -34,6 +32,5 @@ var CHILD23 = CHILD22.nextSibling;
     checkSnapshot("//@id[string()='22']/parent::*", result, [CHILD22]);
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

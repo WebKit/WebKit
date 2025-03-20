@@ -87,7 +87,7 @@ void WebBackForwardCacheEntry::expirationTimerFired()
 {
     ASSERT(m_backForwardItemID);
     RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID->toString().utf8().data(), !!m_suspendedPage);
-    auto* item = WebBackForwardListItem::itemForID(*m_backForwardItemID);
+    RefPtr item = WebBackForwardListItem::itemForID(*m_backForwardItemID);
     ASSERT(item);
     if (RefPtr backForwardCache = m_backForwardCache.get())
         backForwardCache->removeEntry(*item);

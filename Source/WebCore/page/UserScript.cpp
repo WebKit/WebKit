@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,14 +40,14 @@ static WTF::URL generateUserScriptUniqueURL()
     return { { }, makeString("user-script:"_s, ++identifier) };
 }
 
-UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
+UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame)
     : m_source(WTFMove(source))
     , m_url(url.isEmpty() ? generateUserScriptUniqueURL() : WTFMove(url))
     , m_allowlist(WTFMove(allowlist))
     , m_blocklist(WTFMove(blocklist))
     , m_injectionTime(injectionTime)
     , m_injectedFrames(injectedFrames)
-    , m_waitForNotificationBeforeInjecting(waitForNotification)
+    , m_matchParentFrame(matchParentFrame)
 {
 }
 

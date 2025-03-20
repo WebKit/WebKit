@@ -47,6 +47,7 @@ WEBRESOURCELOADER_DIDRECEIVERESOURCE, "[webPageID=%" PRIu64 ", frameID=%" PRIu64
 WEBRESOURCELOADER_DIDRECEIVERESOURCE_UNABLE_TO_CREATE_FRAGMENTEDSHAREDBUFFER, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didReceiveResource: Unable to create FragmentedSharedBuffer", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 
 WEBLOADERSTRATEGY_SCHEDULELOAD, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebLoaderStrategy::scheduleLoad: URL will be scheduled with the NetworkProcess", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBLOADERSTRATEGY_SCHEDULELOAD_URL_LOADED_AS_DATA, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebLoaderStrategy::scheduleLoad: URL will be loaded as data", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WEBLOADERSTRATEGY_SCHEDULELOAD_RESOURCE_SCHEDULED_WITH_NETWORKPROCESS, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebLoaderStrategy::scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", (uint64_t, uint64_t, uint64_t, int, uint64_t), DEFAULT, Network
 
 WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_WEBPAGE, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::navigationActionData: returning std::nullopt because there's no web page", (uint64_t, uint64_t), DEFAULT, Network
@@ -55,3 +56,22 @@ WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_FRAME, "[webFrameID=%" PRIu64 ", we
 WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_SYNC_IPC_FAILED, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC, error = %hhu", (uint64_t, uint64_t, uint8_t), DEFAULT, Network
 WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_SYNC_IPC, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (uint64_t, uint64_t, unsigned), DEFAULT, Network
 WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", (uint64_t, uint64_t, unsigned), DEFAULT, Network
+
+WEBPAGE_MARK_LAYERS_VOLATILE, "[webPageID=%" PRIu64 "] WebPage::markLayersVolatile", (uint64_t), DEFAULT, Layers
+WEBPAGE_FREEZE_LAYER_TREE, "[webPageID=%" PRIu64 "] WebPage::freezeLayerTree: Adding a reason to freeze layer tree (reason=%d, new=%d, old=%d)", (uint64_t, int, int, int), DEFAULT, ProcessSuspension
+WEBPAGE_UNFREEZE_LAYER_TREE, "[webPageID=%" PRIu64 "] WebPage::unfreezeLayerTree: Removing a reason to freeze layer tree (reason=%d, new=%d, old=%d)", (uint64_t, int, int, int), DEFAULT, ProcessSuspension
+WEBPAGE_FAILED_TO_MARK_ALL_LAYERS_VOLATILE, "[webPageID=%" PRIu64 "] WebPage::markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", (uint64_t, double), DEFAULT, ProcessSuspension
+WEBPAGE_LOADREQUEST, "[webPageID=%" PRIu64 "] WebPage::loadRequest: navigationID=%" PRIu64 ", shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, (uint64_t, uint64_t, unsigned, int, uint64_t), DEFAULT, Loading
+
+WEBPROCESS_PREPARE_TO_SUSPEND, "[sessionID=%" PRIu64 "] WebProcess::prepareToSuspend: isSuspensionImminent=%d, remainingRunTime=%fs", (uint64_t, int, double), DEFAULT, ProcessSuspension
+WEBPROCESS_FREEZE_ALL_LAYER_TREES, "[sessionID=%" PRIu64 "] WebProcess::freezeAllLayerTrees: WebProcess is freezing all layer trees", (uint64_t), DEFAULT, ProcessSuspension
+WEBPROCESS_DESTROY_RENDERING_RESOURCES, "[sessionID=%" PRIu64 "] WebProcess::destroyRenderingResources: took %.2fms", (uint64_t, double), DEFAULT, ProcessSuspension
+WEBPROCESS_MARK_ALL_LAYERS_VOLATILE, "[sessionID=%" PRIu64 "] WebProcess::markAllLayersVolatile:", (uint64_t), DEFAULT, ProcessSuspension
+WEBPROCESS_READY_TO_SUSPEND, "[sessionID=%" PRIu64 "] WebProcess::prepareToSuspend: Process is ready to suspend", (uint64_t), DEFAULT, ProcessSuspension
+
+WEBLOCALFRAMELOADERCLIENT_COMPLETE_PAGE_TRANSITION_IF_NEEDED, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::completePageTransitionIfNeeded: dispatching didCompletePageTransition", (uint64_t, uint64_t), DEFAULT, Layout
+WEBLOCALFRAMELOADERCLIENT_DISPATCH_DID_FIRST_LAYOUT_FOR_FRAME, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame", (uint64_t, uint64_t), DEFAULT, Layout
+WEBLOCALFRAMELOADERCLIENT_DISPATCH_DID_REACH_LAYOUT_MILESTONE, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%{public}s)", (uint64_t, uint64_t, CString), DEFAULT, Layout
+WEBLOCALFRAMELOADERCLIENT_DISPATCH_DID_FIRST_VISUALLY_NONEMPTY_LAYOUT, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame", (uint64_t, uint64_t), DEFAULT, Layout
+
+REMOTE_RENDERING_BACKEND_PROXY_CREATED_RENDERING_BACKEND, "[renderingBackend=%" PRIu64 "] Created rendering backend for pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, (uint64_t, uint64_t, uint64_t), DEFAULT, RemoteLayerBuffers

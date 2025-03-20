@@ -26,7 +26,7 @@
         var image = new Image;
         image.onload = (() => {
             if (window.internals)
-                internals.setHeadroomForTesting(image, 5);
+                internals.setHasHDRContentForTesting(image);
 
             var divElement = document.querySelector("div.image-box");
             divElement.style.backgroundImage = 'url(' + image.src + ')';

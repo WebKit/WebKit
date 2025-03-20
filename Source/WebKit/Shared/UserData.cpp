@@ -59,10 +59,8 @@ UserData::~UserData() = default;
 
 static bool shouldTransform(const API::Object& object, const UserData::Transformer& transformer)
 {
-    if (object.type() == API::Object::Type::Array) {
-        const auto& array = static_cast<const API::Array&>(object);
-
-        for (const auto& element : array.elements()) {
+    if (RefPtr array = dynamicDowncast<API::Array>(object)) {
+        for (const auto& element : array->elements()) {
             if (!element)
                 continue;
 
@@ -71,10 +69,8 @@ static bool shouldTransform(const API::Object& object, const UserData::Transform
         }
     }
 
-    if (object.type() == API::Object::Type::Dictionary) {
-        const auto& dictionary = static_cast<const API::Dictionary&>(object);
-
-        for (const auto& keyValuePair : dictionary.map()) {
+    if (RefPtr dictionary = dynamicDowncast<API::Dictionary>(object)) {
+        for (const auto& keyValuePair : dictionary->map()) {
             if (!keyValuePair.value)
                 continue;
 

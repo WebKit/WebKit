@@ -135,6 +135,11 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
         receivedTarget();
 }
 
+RefPtr<EventTarget> Event::protectedTarget() const
+{
+    return m_target;
+}
+
 RefPtr<EventTarget> Event::protectedCurrentTarget() const
 {
     return m_currentTarget;

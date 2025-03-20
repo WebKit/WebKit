@@ -1,6 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-PASS :2d_coords:
-PASS :3d_coords:
-PASS :arrayed_2d_coords:
-PASS :arrayed_3d_coords:
 

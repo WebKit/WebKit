@@ -59,16 +59,14 @@ public:
             Ref<CoordinatedTileBuffer> buffer;
         };
 
-        float scale() const { return m_scale; }
         const Vector<uint32_t>& tilesToCreate() const { return m_tilesToCreate; }
         const Vector<TileUpdate>& tilesToUpdate() const { return m_tilesToUpdate; }
         const Vector<uint32_t>& tilesToRemove() const { return m_tilesToRemove; }
 
-        void appendUpdate(float, Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
+        void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
         void waitUntilPaintingComplete();
 
     private:
-        float m_scale { 1 };
         Vector<uint32_t> m_tilesToCreate;
         Vector<TileUpdate> m_tilesToUpdate;
         Vector<uint32_t> m_tilesToRemove;
@@ -108,6 +106,7 @@ private:
         void addDirtyRect(const IntRect& dirty)
         {
             auto tileDirtyRect = intersection(dirty, rect);
+            ASSERT(!tileDirtyRect.isEmpty());
             dirtyRect.unite(tileDirtyRect);
         }
 
@@ -129,6 +128,7 @@ private:
 
     CoordinatedBackingStoreProxy(float contentsScale, const IntSize& tileSize);
 
+    void reset();
     void invalidateRegion(const Vector<IntRect, 1>&);
     void createOrDestroyTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;

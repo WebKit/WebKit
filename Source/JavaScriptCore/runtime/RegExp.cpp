@@ -164,7 +164,8 @@ void RegExp::finishCreation(VM& vm)
         return;
     }
 
-    setAtom(WTFMove(pattern.m_atom));
+    m_atom = WTFMove(pattern.m_atom);
+    m_specificPattern = pattern.m_specificPattern;
 
     m_numSubpatterns = pattern.m_numSubpatterns;
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndices.isEmpty()) {
@@ -225,7 +226,8 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    setAtom(WTFMove(pattern.m_atom));
+    m_atom = WTFMove(pattern.m_atom);
+    m_specificPattern = pattern.m_specificPattern;
 
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
     if (!m_regExpBytecode) {
@@ -245,7 +247,8 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    setAtom(WTFMove(pattern.m_atom));
+    m_atom = WTFMove(pattern.m_atom);
+    m_specificPattern = pattern.m_specificPattern;
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
@@ -312,7 +315,8 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    setAtom(WTFMove(pattern.m_atom));
+    m_atom = WTFMove(pattern.m_atom);
+    m_specificPattern = pattern.m_specificPattern;
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
@@ -373,6 +377,7 @@ void RegExp::deleteCode()
         return;
     m_state = NotCompiled;
     m_atom = String();
+    m_specificPattern = Yarr::SpecificPattern::None;
 #if ENABLE(YARR_JIT)
     if (m_regExpJITCode)
         m_regExpJITCode->clear(locker);

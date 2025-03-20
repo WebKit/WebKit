@@ -43,8 +43,12 @@ header: "MediaPlaybackTargetContextSerialized.h"
     bool supportsRemoteVideoPlayback();
     WebCore::MediaPlaybackTargetContextType targetType();
     WebCore::MediaPlaybackTargetContextMockState mockState();
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+    WebKit::CoreIPCAVOutputContext context();
+#else
     String contextID();
     String contextType();
+#endif
 };
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -94,6 +94,15 @@ inline bool GetByVariant::canMergeIntrinsicStructures(const GetByVariant& other)
         return logElementSize(thisType) == logElementSize(otherType);
     }
 
+    case DataViewByteLengthIntrinsic: {
+#if ASSERT_ENABLED
+        TypedArrayType thisType = typedArrayType((*m_structureSet.begin())->typeInfo().type());
+        TypedArrayType otherType = typedArrayType((*other.m_structureSet.begin())->typeInfo().type());
+        ASSERT(thisType == TypeDataView && otherType == TypeDataView);
+#endif
+        return true;
+    }
+
     default:
         return true;
     }

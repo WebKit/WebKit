@@ -46,7 +46,7 @@ private:
 
     void respondAsync(ResponseCallback&&, Vector<uint8_t>&& response) const;
 
-    Ref<CcidConnection> m_connection;
+    const Ref<CcidConnection> m_connection;
 };
 
 } // namespace WebKit

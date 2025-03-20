@@ -35,6 +35,7 @@
 #include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "MathMLPresentationElement.h"
+#include "RenderChildIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderTableInlines.h"
 #include "RenderView.h"
@@ -242,9 +243,9 @@ void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
 
 void RenderMathMLBlock::insertPositionedChildrenIntoContainingBlock()
 {
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            child->containingBlock()->insertPositionedObject(*child);
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (child.isOutOfFlowPositioned())
+            child.containingBlock()->insertPositionedObject(child);
     }
 }
 
@@ -256,9 +257,9 @@ void RenderMathMLBlock::layoutFloatingChildren()
     // However, WebKit does not currently do this since `display: math` is unimplemented. See webkit.org/b/278533.
     // Since this leaves floats as neither positioned nor in-flow, perform dummy layout for floating children.
     // FIXME: Per the spec, there should be no floating children inside MathML renderers.
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isFloating())
-            child->layoutIfNeeded();
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (child.isFloating())
+            child.layoutIfNeeded();
     }
 }
 

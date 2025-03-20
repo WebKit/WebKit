@@ -141,6 +141,10 @@ public:
     virtual void visibilityAdjustmentStateDidChange() { }
     virtual void pageMutedStateDidChange() = 0;
 
+#if PLATFORM(IOS_FAMILY)
+    virtual void sceneIdentifierDidChange() { }
+#endif
+
 protected:
     virtual ~MediaProducer() = default;
 };

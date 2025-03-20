@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Error: Invalid value for <image> attribute y="100vh"
+
+PASS IntersectionObserver observing an SVG image element changing position
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.right expected 108 +/- 0 but got 8
+FAIL change image location assert_equals: entries.length expected 2 but got 1
+

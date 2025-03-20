@@ -32,7 +32,7 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const StyleContentAlignmentData& o)
 {
-    return ts << o.position() << " " << o.distribution() << " " << o.overflow();
+    return ts << o.position() << ' ' << o.distribution() << ' ' << o.overflow();
 }
 
 bool StyleContentAlignmentData::isStartward(std::optional<TextDirection> leftRightAxisDirection, bool isFlexReverse) const

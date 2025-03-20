@@ -353,6 +353,9 @@ double ViewportConfiguration::minimumScale() const
     if (m_forceAlwaysUserScalable)
         minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale());
 
+    if (m_configuration.minimumScaleDoesNotAdaptToContent)
+        return minimumScale;
+
     auto scaleForFittingContentIsApproximatelyEqualToMinimumScale = [] (double viewLength, double contentLength, double minimumScale) {
         if (contentLength <= 1 || viewLength <= 1)
             return false;
@@ -697,25 +700,26 @@ bool ViewportConfiguration::setIsKnownToLayOutWiderThanViewport(bool value)
 TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& parameters)
 {
     ts.startGroup();
-    ts << "width " << parameters.width << ", set: " << (parameters.widthIsSet ? "true" : "false");
+    ts << "width "_s << parameters.width << ", set: "_s << (parameters.widthIsSet ? "true"_s : "false"_s);
     ts.endGroup();
 
     ts.startGroup();
-    ts << "height " << parameters.height << ", set: " << (parameters.heightIsSet ? "true" : "false");
+    ts << "height "_s << parameters.height << ", set: "_s << (parameters.heightIsSet ? "true"_s : "false"_s);
     ts.endGroup();
 
     ts.startGroup();
-    ts << "initialScale " << parameters.initialScale << ", set: " << (parameters.initialScaleIsSet ? "true" : "false");
+    ts << "initialScale "_s << parameters.initialScale << ", set: "_s << (parameters.initialScaleIsSet ? "true"_s : "false"_s);
     ts.endGroup();
 
-    ts.dumpProperty("initialScaleIgnoringLayoutScaleFactor", parameters.initialScaleIgnoringLayoutScaleFactor);
-    ts.dumpProperty("minimumScale", parameters.minimumScale);
-    ts.dumpProperty("maximumScale", parameters.maximumScale);
-    ts.dumpProperty("allowsUserScaling", parameters.allowsUserScaling);
-    ts.dumpProperty("allowsShrinkToFit", parameters.allowsShrinkToFit);
-    ts.dumpProperty("avoidsUnsafeArea", parameters.avoidsUnsafeArea);
-    ts.dumpProperty("ignoreInitialScaleForLayoutWidth", parameters.ignoreInitialScaleForLayoutWidth);
-    ts.dumpProperty("shouldHonorMinimumEffectiveDeviceWidthFromClient", parameters.shouldHonorMinimumEffectiveDeviceWidthFromClient);
+    ts.dumpProperty("initialScaleIgnoringLayoutScaleFactor"_s, parameters.initialScaleIgnoringLayoutScaleFactor);
+    ts.dumpProperty("minimumScale"_s, parameters.minimumScale);
+    ts.dumpProperty("maximumScale"_s, parameters.maximumScale);
+    ts.dumpProperty("allowsUserScaling"_s, parameters.allowsUserScaling);
+    ts.dumpProperty("allowsShrinkToFit"_s, parameters.allowsShrinkToFit);
+    ts.dumpProperty("avoidsUnsafeArea"_s, parameters.avoidsUnsafeArea);
+    ts.dumpProperty("ignoreInitialScaleForLayoutWidth"_s, parameters.ignoreInitialScaleForLayoutWidth);
+    ts.dumpProperty("shouldHonorMinimumEffectiveDeviceWidthFromClient"_s, parameters.shouldHonorMinimumEffectiveDeviceWidthFromClient);
+    ts.dumpProperty("minimumScaleDoesNotAdaptToContent"_s, parameters.minimumScaleDoesNotAdaptToContent);
 
     return ts;
 }
@@ -730,37 +734,37 @@ String ViewportConfiguration::description() const
     TextStream ts;
 
     ts.startGroup();
-    ts << "viewport-configuration " << (void*)this;
+    ts << "viewport-configuration "_s << (void*)this;
     {
         TextStream::GroupScope scope(ts);
-        ts << "viewport arguments";
+        ts << "viewport arguments"_s;
         ts << m_viewportArguments;
     }
     {
         TextStream::GroupScope scope(ts);
-        ts << "configuration";
+        ts << "configuration"_s;
         ts << m_configuration;
     }
     {
         TextStream::GroupScope scope(ts);
-        ts << "default configuration";
+        ts << "default configuration"_s;
         ts << m_defaultConfiguration;
     }
 
-    ts.dumpProperty("contentSize", m_contentSize);
-    ts.dumpProperty("minimumLayoutSize", m_minimumLayoutSize);
-    ts.dumpProperty("layoutSizeScaleFactor", m_layoutSizeScaleFactor);
-    ts.dumpProperty("computed initial scale", initialScale());
-    ts.dumpProperty("computed minimum scale", minimumScale());
-    ts.dumpProperty("computed layout size", layoutSize());
-    ts.dumpProperty("ignoring horizontal scaling constraints", shouldIgnoreHorizontalScalingConstraints() ? "true" : "false");
-    ts.dumpProperty("ignoring vertical scaling constraints", shouldIgnoreVerticalScalingConstraints() ? "true" : "false");
-    ts.dumpProperty("avoids unsafe area", avoidsUnsafeArea() ? "true" : "false");
-    ts.dumpProperty("minimum effective device width (for view)", m_minimumEffectiveDeviceWidthForView);
-    ts.dumpProperty("minimum effective device width (for shrink-to-fit)", m_minimumEffectiveDeviceWidthForShrinkToFit);
-    ts.dumpProperty("known to lay out wider than viewport", m_isKnownToLayOutWiderThanViewport ? "true" : "false");
-    ts.dumpProperty("prefers horizontal scrolling", m_prefersHorizontalScrollingBelowDesktopViewportWidths ? "true" : "false");
-    ts.dumpProperty("can ignore viewport width and zoom", m_canIgnoreViewportArgumentsToAvoidExcessiveZoom ? "true" : "false");
+    ts.dumpProperty("contentSize"_s, m_contentSize);
+    ts.dumpProperty("minimumLayoutSize"_s, m_minimumLayoutSize);
+    ts.dumpProperty("layoutSizeScaleFactor"_s, m_layoutSizeScaleFactor);
+    ts.dumpProperty("computed initial scale"_s, initialScale());
+    ts.dumpProperty("computed minimum scale"_s, minimumScale());
+    ts.dumpProperty("computed layout size"_s, layoutSize());
+    ts.dumpProperty("ignoring horizontal scaling constraints"_s, shouldIgnoreHorizontalScalingConstraints() ? "true"_s : "false"_s);
+    ts.dumpProperty("ignoring vertical scaling constraints"_s, shouldIgnoreVerticalScalingConstraints() ? "true"_s : "false"_s);
+    ts.dumpProperty("avoids unsafe area"_s, avoidsUnsafeArea() ? "true"_s : "false"_s);
+    ts.dumpProperty("minimum effective device width (for view)"_s, m_minimumEffectiveDeviceWidthForView);
+    ts.dumpProperty("minimum effective device width (for shrink-to-fit)"_s, m_minimumEffectiveDeviceWidthForShrinkToFit);
+    ts.dumpProperty("known to lay out wider than viewport"_s, m_isKnownToLayOutWiderThanViewport ? "true"_s : "false"_s);
+    ts.dumpProperty("prefers horizontal scrolling"_s, m_prefersHorizontalScrollingBelowDesktopViewportWidths ? "true"_s : "false"_s);
+    ts.dumpProperty("can ignore viewport width and zoom"_s, m_canIgnoreViewportArgumentsToAvoidExcessiveZoom ? "true"_s : "false"_s);
     
     ts.endGroup();
 

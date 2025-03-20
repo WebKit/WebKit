@@ -71,17 +71,17 @@ bool RTCSctpTransport::virtualHasPendingActivity() const
 
 void RTCSctpTransport::onStateChanged(RTCSctpTransportState state, std::optional<double> maxMessageSize, std::optional<unsigned short> maxChannels)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, state, maxMessageSize, maxChannels]() mutable {
-        if (m_state == RTCSctpTransportState::Closed)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [state, maxMessageSize, maxChannels](auto& transport) mutable {
+        if (transport.m_state == RTCSctpTransportState::Closed)
             return;
 
-        m_maxMessageSize = maxMessageSize;
+        transport.m_maxMessageSize = maxMessageSize;
         if (maxChannels)
-            m_maxChannels = *maxChannels;
+            transport.m_maxChannels = *maxChannels;
 
-        if (m_state != state) {
-            m_state = state;
-            dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        if (transport.m_state != state) {
+            transport.m_state = state;
+            transport.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         }
     });
 }

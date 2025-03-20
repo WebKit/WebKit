@@ -41,7 +41,7 @@ namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - ResourceMonitor(frame %p)::" fmt, this, m_frame.get(), ##__VA_ARGS__)
+#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG_IF(m_frame, ResourceMonitoring, "ResourceMonitor(frame %" PRIu64 ")::" fmt, m_frame->frameID().object().toUInt64(), ##__VA_ARGS__)
 
 Ref<ResourceMonitor> ResourceMonitor::create(LocalFrame& frame)
 {
@@ -50,9 +50,17 @@ Ref<ResourceMonitor> ResourceMonitor::create(LocalFrame& frame)
 
 ResourceMonitor::ResourceMonitor(LocalFrame& frame)
     : m_frame(frame)
+    , m_networkUsageThreshold { ResourceMonitorChecker::singleton().networkUsageThresholdWithNoise() }
 {
+    ResourceMonitorChecker::singleton().registerResourceMonitor(*this);
+
     if (RefPtr parentMonitor = parentResourceMonitorIfExists())
         m_eligibility = parentMonitor->eligibility();
+}
+
+ResourceMonitor::~ResourceMonitor()
+{
+    ResourceMonitorChecker::singleton().unregisterResourceMonitor(*this);
 }
 
 void ResourceMonitor::setEligibility(Eligibility eligibility)
@@ -61,9 +69,10 @@ void ResourceMonitor::setEligibility(Eligibility eligibility)
         return;
 
     m_eligibility = eligibility;
-    RESOURCEMONITOR_RELEASE_LOG("The frame is %" PUBLIC_LOG_STRING ".", (eligibility == Eligibility::Eligible ? "eligible" : "not eligible"));
 
     if (isEligible()) {
+        RESOURCEMONITOR_RELEASE_LOG("Frame (%" SENSITIVE_LOG_STRING ") was set as eligible.", m_frameURL.string().utf8().data());
+
         if (RefPtr resourceMonitor = parentResourceMonitorIfExists(); !resourceMonitor || !resourceMonitor->isEligible())
             checkNetworkUsageExcessIfNecessary();
     }
@@ -104,10 +113,32 @@ void ResourceMonitor::didReceiveResponse(const URL& url, OptionSet<ContentExtens
         .type = resourceType
     };
 
-    ResourceMonitorChecker::singleton().checkEligibility(WTFMove(info), [weakThis = WeakPtr { *this }](Eligibility eligibility) {
+    ResourceMonitorChecker::singleton().checkEligibility(WTFMove(info), [weakThis = WeakPtr { *this }, url, resourceType](Eligibility eligibility) {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->setEligibility(eligibility);
+            protectedThis->continueAfterDidReceiveEligibility(eligibility, url, resourceType);
     });
+}
+
+static ASCIILiteral eligibilityToString(ResourceMonitorEligibility eligibility)
+{
+    return eligibility == ResourceMonitorEligibility::Eligible ? "eligible"_s : "not eligible"_s;
+}
+
+void ResourceMonitor::continueAfterDidReceiveEligibility(Eligibility eligibility, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType)
+{
+    RefPtr frame = m_frame.get();
+    RefPtr page = frame ? frame->mainFrame().page() : nullptr;
+    if (!page)
+        return;
+
+    RESOURCEMONITOR_RELEASE_LOG("resourceURL %" SENSITIVE_LOG_STRING " mainDocumentURL %" SENSITIVE_LOG_STRING " frameURL %" SENSITIVE_LOG_STRING " (%" PUBLIC_LOG_STRING ") is set as %" PUBLIC_LOG_STRING ".",
+        url.string().utf8().data(),
+        page->mainFrameURL().string().utf8().data(),
+        m_frameURL.string().utf8().data(),
+        ContentExtensions::resourceTypeToString(resourceType).characters(),
+        eligibilityToString(eligibility).characters()
+    );
+    setEligibility(eligibility);
 }
 
 void ResourceMonitor::addNetworkUsage(size_t bytes)
@@ -117,8 +148,41 @@ void ResourceMonitor::addNetworkUsage(size_t bytes)
 
     m_networkUsage += bytes;
 
-    if (RefPtr parentMonitor = parentResourceMonitorIfExists(); parentMonitor)
+    if (RefPtr parentMonitor = parentResourceMonitorIfExists())
         parentMonitor->addNetworkUsage(bytes);
+    else if (isEligible())
+        checkNetworkUsageExcessIfNecessary();
+}
+
+ResourceMonitor::UsageLevel ResourceMonitor::networkUsageLevel() const
+{
+    if (m_networkUsage.hasOverflowed() || m_networkUsage > m_networkUsageThreshold)
+        return UsageLevel::Critical;
+
+    if (!m_networkUsage)
+        return UsageLevel::Empty;
+
+    auto percentage = static_cast<unsigned>(100.0 * m_networkUsage.value() / m_networkUsageThreshold);
+
+    if (percentage <= static_cast<unsigned>(UsageLevel::Low))
+        return UsageLevel::Low;
+    if (percentage <= static_cast<unsigned>(UsageLevel::Medium))
+        return UsageLevel::Medium;
+    if (percentage <= static_cast<unsigned>(UsageLevel::High))
+        return UsageLevel::High;
+    return UsageLevel::Critical;
+}
+
+void ResourceMonitor::updateNetworkUsageThreshold(size_t threshold)
+{
+    if (m_networkUsageThreshold == threshold)
+        return;
+
+    RESOURCEMONITOR_RELEASE_LOG("Update network usage threshold: threshold=%zu", threshold);
+    m_networkUsageThreshold = threshold;
+
+    if (RefPtr parentMonitor = parentResourceMonitorIfExists())
+        parentMonitor->updateNetworkUsageThreshold(threshold);
     else if (isEligible())
         checkNetworkUsageExcessIfNecessary();
 }
@@ -130,7 +194,7 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
     if (m_networkUsageExceed)
         return;
 
-    if (m_networkUsage.hasOverflowed() || ResourceMonitorChecker::singleton().checkNetworkUsageExceedingThreshold(m_networkUsage)) {
+    if (m_networkUsage.hasOverflowed() || m_networkUsage > m_networkUsageThreshold) {
         m_networkUsageExceed = true;
 
         RefPtr frame = m_frame.get();

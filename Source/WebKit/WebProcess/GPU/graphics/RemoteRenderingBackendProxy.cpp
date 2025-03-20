@@ -64,7 +64,7 @@ using namespace WebCore;
 Ref<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
     Ref instance = adoptRef(*new RemoteRenderingBackendProxy(RunLoop::main()));
-    RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Created rendering backend for pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, instance->renderingBackendIdentifier().toUInt64(),  webPage.webPageProxyIdentifier().toUInt64(), webPage.identifier().toUInt64());
+    RELEASE_LOG_FORWARDABLE(RemoteLayerBuffers, REMOTE_RENDERING_BACKEND_PROXY_CREATED_RENDERING_BACKEND, instance->renderingBackendIdentifier().toUInt64(),  webPage.webPageProxyIdentifier().toUInt64(), webPage.identifier().toUInt64());
     return instance;
 }
 
@@ -184,9 +184,11 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
     // Note: The cache will call back to this to setup a new connection.
     m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
 
-    for (auto bufferSet : m_bufferSets) {
-        bufferSet.value->remoteBufferSetWasDestroyed();
-        send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet.value->identifier(), bufferSet.value->displayListResourceIdentifier()));
+    for (auto weakBufferSet : m_bufferSets.values()) {
+        if (RefPtr bufferSet = weakBufferSet.get()) {
+            bufferSet->remoteBufferSetWasDestroyed();
+            send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet->identifier(), bufferSet->displayListResourceIdentifier()));
+        }
     }
 }
 
@@ -274,8 +276,6 @@ std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::cre
 
 void RemoteRenderingBackendProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (!m_connection)
-        return;
     send(Messages::RemoteRenderingBackend::ReleaseImageBuffer(renderingResourceIdentifier));
 }
 
@@ -385,9 +385,19 @@ void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& han
     send(Messages::RemoteRenderingBackend::CacheNativeImage(WTFMove(handle), renderingResourceIdentifier));
 }
 
+void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseNativeImage(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformDataAttributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
 {
     send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));
+}
+
+void RemoteRenderingBackendProxy::releaseFont(RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseFont(identifier));
 }
 
 void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
@@ -396,9 +406,19 @@ void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCust
     send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(data->serializedData()));
 }
 
+void RemoteRenderingBackendProxy::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseFontCustomPlatformData(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
     send(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
+}
+
+void RemoteRenderingBackendProxy::releaseDecomposedGlyphs(RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseDecomposedGlyphs(identifier));
 }
 
 void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
@@ -406,29 +426,28 @@ void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
     send(Messages::RemoteRenderingBackend::CacheGradient(WTFMove(gradient)));
 }
 
+void RemoteRenderingBackendProxy::releaseGradient(RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseGradient(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
 {
     send(Messages::RemoteRenderingBackend::CacheFilter(WTFMove(filter)));
 }
 
-void RemoteRenderingBackendProxy::releaseAllDrawingResources()
+void RemoteRenderingBackendProxy::releaseFilter(RenderingResourceIdentifier identifier)
 {
-    if (!m_connection)
-        return;
-    send(Messages::RemoteRenderingBackend::ReleaseAllDrawingResources());
+    send(Messages::RemoteRenderingBackend::ReleaseFilter(identifier));
 }
 
-void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::releaseAllDrawingResources()
 {
-    if (!m_connection)
-        return;
-    send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));
+    send(Messages::RemoteRenderingBackend::ReleaseAllDrawingResources());
 }
 
 void RemoteRenderingBackendProxy::releaseAllImageResources()
 {
-    if (!m_connection)
-        return;
     send(Messages::RemoteRenderingBackend::ReleaseAllImageResources());
 }
 
@@ -503,7 +522,7 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
         return;
 
     for (auto& bufferSetIdentifierAndType : markedBufferSets) {
-        auto bufferSet = m_bufferSets.get(bufferSetIdentifierAndType.first);
+        auto bufferSet = m_bufferSets.get(bufferSetIdentifierAndType.first).get();
         if (!bufferSet)
             continue;
 

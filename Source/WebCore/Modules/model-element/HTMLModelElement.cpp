@@ -292,7 +292,10 @@ void HTMLModelElement::createModelPlayer()
     m_boundingBoxCenter = DOMPointReadOnly::create({ });
     m_boundingBoxExtents = DOMPointReadOnly::create({ });
 #endif
-    m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
+    if (!m_modelPlayerProvider)
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
+    if (RefPtr protectedModelPlayerProvider = m_modelPlayerProvider.get())
+        m_modelPlayer = protectedModelPlayerProvider->createModelPlayer(*this);
     if (!m_modelPlayer) {
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::AbortError });
@@ -321,8 +324,10 @@ void HTMLModelElement::createModelPlayer()
 
 void HTMLModelElement::deleteModelPlayer()
 {
-    if (m_modelPlayer && document().page())
-        document().page()->modelPlayerProvider().deleteModelPlayer(*m_modelPlayer);
+    RefPtr protectedModelPlayerProvider = m_modelPlayerProvider.get();
+    if (protectedModelPlayerProvider && m_modelPlayer)
+        protectedModelPlayerProvider->deleteModelPlayer(*m_modelPlayer);
+
     m_modelPlayer = nullptr;
 }
 
@@ -368,8 +373,8 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
 
     if (CheckedPtr renderer = this->renderer())
         renderer->updateFromElement();
-
-    m_readyPromise->resolve(*this);
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 }
 
 void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceError&)
@@ -434,6 +439,9 @@ const DOMMatrixReadOnly& HTMLModelElement::entityTransform() const
 
 ExceptionOr<void> HTMLModelElement::setEntityTransform(const DOMMatrixReadOnly& transform)
 {
+    if (supportsStageModeInteraction())
+        return { };
+
     auto player = m_modelPlayer;
     if (!player) {
         ASSERT_NOT_REACHED();
@@ -1135,6 +1143,24 @@ bool HTMLModelElement::isURLAttribute(const Attribute& attribute) const
         || attribute.name() == environmentmapAttr
 #endif
         || HTMLElement::isURLAttribute(attribute);
+}
+
+Node::InsertedIntoAncestorResult HTMLModelElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    auto insertResult = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+
+    if (insertionType.connectedToDocument)
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
+
+    return insertResult;
+}
+
+void HTMLModelElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    if (removalType.disconnectedFromDocument)
+        deleteModelPlayer();
 }
 
 }

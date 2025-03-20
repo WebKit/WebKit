@@ -68,28 +68,49 @@ void ProgressBarAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     graphicsContext.fillPath(path);
     path.clear();
 
+    bool isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
+    auto setPrimarySize = [&fieldRect, isVertical](float size) {
+        if (isVertical)
+            fieldRect.setHeight(size);
+        else
+            fieldRect.setWidth(size);
+    };
+    auto getPrimarySize = [&fieldRect, isVertical]() -> float {
+        return isVertical ? fieldRect.height() : fieldRect.width();
+    };
+    auto getBordersPrimarySize = [&borderRect, isVertical]() -> float {
+        return isVertical ? borderRect.rect().height() : borderRect.rect().width();
+    };
+    auto movePrimaryAxis = [&fieldRect, isVertical](float offset) {
+        if (isVertical)
+            fieldRect.move(0, offset);
+        else
+            fieldRect.move(offset, 0);
+    };
+
     auto& progressBarPart = owningProgressBarPart();
     bool isDeterminate = progressBarPart.position() >= 0;
     if (isDeterminate) {
-        auto progressWidth = fieldRect.width() * progressBarPart.position();
+        auto progressSize = getPrimarySize() * progressBarPart.position();
         if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
-            fieldRect.move(fieldRect.width() - progressWidth, 0);
-        fieldRect.setWidth(progressWidth);
+            movePrimaryAxis(getPrimarySize() - progressSize);
+
+        setPrimarySize(progressSize);
     } else {
         double animationProgress = currentAnimationProgress(progressBarPart.animationStartTime());
 
         // Never let the progress rect shrink smaller than 2 pixels.
-        fieldRect.setWidth(std::max<float>(2, fieldRect.width() / progressActivityBlocks));
-        auto movableWidth = borderRect.rect().width() - fieldRect.width();
+        setPrimarySize(std::max<float>(2, getPrimarySize() / progressActivityBlocks));
+        auto movableSize = getBordersPrimarySize() - getPrimarySize();
 
         // We want the first 0.5 units of the animation progress to represent the
         // forward motion and the second 0.5 units to represent the backward motion,
         // thus we multiply by two here to get the full sweep of the progress bar with
         // each direction.
         if (animationProgress < 0.5)
-            fieldRect.move(animationProgress * 2 * movableWidth, 0);
+            movePrimaryAxis(animationProgress * 2 * movableSize);
         else
-            fieldRect.move((1.0 - animationProgress) * 2 * movableWidth, 0);
+            movePrimaryAxis((1.0 - animationProgress) * 2 * movableSize);
     }
 
     path.addRoundedRect(fieldRect, corner);

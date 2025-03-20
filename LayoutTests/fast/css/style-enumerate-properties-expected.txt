@@ -15,7 +15,7 @@ PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true
 PASS initialIndexOfGroup4 > initialIndexOfGroup3 is true
 PASS initialIndexOfGroup5 > initialIndexOfGroup4 is true
 PASS initialIndexOfGroup6 > initialIndexOfGroup5 is true
-PASS group1 is ["0", "1", "cssText", "cssRules", "length", "parentRule", "cssFloat"]
+PASS group1 is ["0", "1", "cssFloat"]
 PASS group2 is group2Clone
 PASS group2.some(property => property.startsWith("Webkit")) is true
 PASS group2.some(property => property.startsWith("Epub")) is true
@@ -35,7 +35,7 @@ PASS group5.every(property => !property.startsWith("Webkit")) is true
 PASS group5.every(property => !property.startsWith("Epub")) is true
 PASS group5.every(property => !property.includes("-")) is true
 PASS group5.every(property => property.startsWith("epub")) is true
-PASS group6 is ["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]
+PASS group6 is ["cssText", "cssRules", "length", "parentRule", "item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]
 PASS successfullyParsed is true
 
 TEST COMPLETE

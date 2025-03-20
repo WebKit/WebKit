@@ -66,6 +66,11 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::VirtualAuthenticatorManager)
+static bool isType(const WebKit::AuthenticatorTransportServiceObserver& observer)
+{
+    auto* manager = dynamicDowncast<WebKit::AuthenticatorManager>(observer);
+    return manager && manager->isVirtual();
+}
 static bool isType(const WebKit::AuthenticatorManager& manager) { return manager.isVirtual(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

@@ -108,9 +108,11 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         else:
             implementations.append(self._generate_large_dispatcher_switch_implementation_for_domain(domain))
 
+        use_legacy_async_callbacks = self.model().framework.setting('legacy_async_callbacks', False)
         for command in commands:
-            if command.is_async:
-                implementations.append(self._generate_async_dispatcher_class_for_domain(command, domain))
+            if command.is_async and use_legacy_async_callbacks:
+                implementations.append(self._generate_legacy_async_command_response_thunk_class_for_domain(command, domain))
+
             implementations.append(self._generate_dispatcher_implementation_for_command(command, domain))
 
         return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(implementations))
@@ -162,7 +164,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         return Template(CppTemplates.BackendDispatcherImplementationLargeSwitch).substitute(None, **switch_args)
 
-    def _generate_async_dispatcher_class_for_domain(self, command, domain):
+    def _generate_legacy_async_command_response_thunk_class_for_domain(self, command, domain):
         return_assignments = []
         callback_parameters = []
 
@@ -211,7 +213,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             'callbackParameters': ", ".join(callback_parameters),
             'returnAssignments': "\n".join(return_assignments)
         }
-        return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherImplementationAsyncCommand).substitute(None, **async_args))
+        return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherImplementationAsyncCommandReplyThunk).substitute(None, **async_args))
 
     def _generate_dispatcher_implementation_for_command(self, command, domain):
         parameter_declarations = []
@@ -219,6 +221,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         alternate_dispatcher_method_parameters = ['protocol_requestId']
         method_parameters = []
 
+        # Step 1: build up arguments for the call.
         for parameter in command.call_parameters:
             parameter_name = parameter.parameter_name
             if parameter.is_optional:
@@ -277,8 +280,89 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             }
             parameter_declarations.append('    auto %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(protocol_parameters.get(), "%(parameterKey)s"_s, %(required)s);' % param_args)
 
+        result_destructured_names = []
+        result_conversion_lines = []
+
+        # Step 2: build up return value expressions if needed.
+        for parameter in command.return_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+            parameter_name = 'out_' + parameter_name
+
+            result_destructured_names.append(parameter_name)
+
+            parameter_value = parameter_name
+
+            _type = parameter.type
+            if isinstance(_type, AliasedType):
+                _type = _type.aliased_type
+            if isinstance(_type, EnumType) and _type.is_anonymous:
+                _type = _type.primitive_type
+
+            if _type.is_enum():
+                if parameter.is_optional:
+                    parameter_value = '*' + parameter_value
+                parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+            elif CppGenerator.should_release_argument(_type, parameter.is_optional):
+                parameter_value = parameter_value + '.releaseNonNull()'
+            elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
+                parameter_value = '*' + parameter_value
+            elif CppGenerator.should_move_argument(_type, parameter.is_optional):
+                parameter_value = 'WTFMove(%s)' % parameter_value
+
+            param_args = {
+                'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(_type),
+                'parameterKey': parameter.parameter_name,
+                'parameterName': parameter_name,
+                'parameterValue': parameter_value,
+            }
+
+            if parameter.is_optional:
+                result_conversion_lines.append('    if (!!%(parameterName)s)' % param_args)
+                result_conversion_lines.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+            else:
+                result_conversion_lines.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+
         if command.is_async:
-            method_parameters.append('adoptRef(*new %sBackendDispatcherHandler::%s(m_backendDispatcher.copyRef(), protocol_requestId))' % (domain.domain_name, '%sCallback' % ucfirst(command.command_name)))
+            # FIXME: Remove legacy_async_callbacks when IndexedDBAgent moves off of it. <https://bugs.webkit.org/show_bug.cgi?id=288203>
+            use_legacy_async_callbacks = self.model().framework.setting('legacy_async_callbacks', False)
+            if use_legacy_async_callbacks:
+                callback_name = '%sBackendDispatcherHandler::%sCallback' % (domain.domain_name, ucfirst(command.command_name))
+                method_parameters.append('adoptRef(*new %s(m_backendDispatcher.copyRef(), protocol_requestId))' % callback_name)
+            else:
+                if len(command.return_parameters) > 1:
+                    result_type_alias = 'CommandResultOf'
+                    type_arguments = [CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional) for parameter in command.return_parameters]
+                elif len(command.return_parameters):
+                    result_type_alias = 'CommandResult'
+                    type_arguments = [CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional) for parameter in command.return_parameters]
+                else:
+                    result_type_alias = 'CommandResult'
+                    type_arguments = ['void']
+
+                # Immediately send an error message since this is an async response with a single error.
+                thunkLines = [
+                    '[backendDispatcher = m_backendDispatcher.copyRef(), protocol_requestId](%s<%s> result) {' % (result_type_alias, ", ".join(type_arguments)),
+                    '        if (!result) {',
+                    '           ASSERT(!result.error().isEmpty());',
+                    '           backendDispatcher->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, result.error());',
+                    '           backendDispatcher->sendPendingErrors();',
+                    '           return;',
+                    '        }',
+                ]
+
+                if len(result_destructured_names) > 1:
+                    thunkLines.append('        auto [%s] = WTFMove(result.value());' % ", ".join(result_destructured_names))
+                elif len(result_destructured_names):
+                    thunkLines.append('        auto %s = WTFMove(result.value());' % ", ".join(result_destructured_names))
+
+                thunkLines.append('')
+                thunkLines.append('        auto protocol_jsonMessage = JSON::Object::create();')
+                thunkLines.extend(['    ' + line for line in result_conversion_lines])
+                thunkLines.append('        backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);')
+                thunkLines.append('    }')
+                method_parameters.append("\n".join(thunkLines))
 
         command_args = {
             'domainName': domain.domain_name,
@@ -288,6 +372,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             'alternateInvocationParameters': ', '.join(alternate_dispatcher_method_parameters),
         }
 
+        # Step 3: spit out the generated code one line at a time.
         lines = []
         if len(command.call_parameters) == 0:
             lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long protocol_requestId, RefPtr<JSON::Object>&&)' % command_args)
@@ -314,48 +399,6 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         if command.is_async:
             lines.append('    m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
         else:
-            result_destructured_names = []
-            result_conversion_lines = []
-            for parameter in command.return_parameters:
-                parameter_name = parameter.parameter_name
-                if parameter.is_optional:
-                    parameter_name = 'opt_' + parameter_name
-                parameter_name = 'out_' + parameter_name
-
-                result_destructured_names.append(parameter_name)
-
-                parameter_value = parameter_name
-
-                _type = parameter.type
-                if isinstance(_type, AliasedType):
-                    _type = _type.aliased_type
-                if isinstance(_type, EnumType) and _type.is_anonymous:
-                    _type = _type.primitive_type
-
-                if _type.is_enum():
-                    if parameter.is_optional:
-                        parameter_value = '*' + parameter_value
-                    parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
-                elif CppGenerator.should_release_argument(_type, parameter.is_optional):
-                    parameter_value = parameter_value + '.releaseNonNull()'
-                elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
-                    parameter_value = '*' + parameter_value
-                elif CppGenerator.should_move_argument(_type, parameter.is_optional):
-                    parameter_value = 'WTFMove(%s)' % parameter_value
-
-                param_args = {
-                    'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(_type),
-                    'parameterKey': parameter.parameter_name,
-                    'parameterName': parameter_name,
-                    'parameterValue': parameter_value,
-                }
-
-                if parameter.is_optional:
-                    result_conversion_lines.append('    if (!!%(parameterName)s)' % param_args)
-                    result_conversion_lines.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
-                else:
-                    result_conversion_lines.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
-
             lines.append('    auto result = m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
             lines.append('    if (!result) {')
             lines.append('        ASSERT(!result.error().isEmpty());')

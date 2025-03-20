@@ -3,4 +3,5 @@ PASS <model> with empty source has entityTransform = identity
 PASS <model> gets the updated entityTransform after change
 PASS <model> gets the updated entityTransform after model source change
 PASS <model> gets the identity entityTransform after model source removal
+PASS <model> ignores entityTransform when stagemode is set
 

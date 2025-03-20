@@ -14,8 +14,12 @@ async function run() {
     buffer.unmap();
     commandEncoder.copyBufferToBuffer(buffer2, 278668, buffer, 14060, 64684);
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

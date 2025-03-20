@@ -33,6 +33,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
@@ -43,7 +44,7 @@ namespace Air {
 
 class StackSlot {
     WTF_MAKE_NONCOPYABLE(StackSlot);
-    WTF_MAKE_TZONE_ALLOCATED(StackSlot);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(StackSlot);
 public:
     unsigned byteSize() const { return m_byteSize; }
     StackSlotKind kind() const { return m_kind; }

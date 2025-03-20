@@ -194,10 +194,10 @@ void ShadowData::adjustRectForShadow(FloatRect& rect) const
 
 TextStream& operator<<(TextStream& ts, const ShadowData& data)
 {
-    ts.dumpProperty("location", data.location());
-    ts.dumpProperty("radius", data.radius());
-    ts.dumpProperty("spread", data.spread());
-    ts.dumpProperty("color", data.color());
+    ts.dumpProperty("location"_s, data.location());
+    ts.dumpProperty("radius"_s, data.radius());
+    ts.dumpProperty("spread"_s, data.spread());
+    ts.dumpProperty("color"_s, data.color());
 
     return ts;
 }

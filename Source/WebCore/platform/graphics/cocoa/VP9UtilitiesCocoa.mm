@@ -126,6 +126,11 @@ static ResolutionCategory resolutionCategory(const FloatSize& size)
     return ResolutionCategory::R_480p;
 }
 
+void registerWebKitVP9Decoder()
+{
+    LibWebRTCProvider::registerWebKitVP9Decoder();
+}
+
 void registerSupplementalVP9Decoder()
 {
     if (!VideoToolboxLibrary(true))
@@ -140,6 +145,11 @@ static bool isSWDecodersAlwaysEnabled()
     return VP9TestingOverrides::singleton().swVPDecodersAlwaysEnabled();
 }
 
+bool shouldEnableSWVP9Decoder()
+{
+    return isSWDecodersAlwaysEnabled() || (!vp9HardwareDecoderAvailable() && !systemHasBattery());
+}
+
 bool isVP9DecoderAvailable()
 {
     if (isSWDecodersAlwaysEnabled())
@@ -147,7 +157,7 @@ bool isVP9DecoderAvailable()
 #if PLATFORM(IOS) || PLATFORM(VISION)
     return vp9HardwareDecoderAvailable();
 #else
-    return VideoDecoder::isVPXSupported() || vp9HardwareDecoderAvailable();
+    return (shouldEnableSWVP9Decoder() && VideoDecoder::isVPXSupported()) || vp9HardwareDecoderAvailable();
 #endif
 }
 
@@ -185,11 +195,8 @@ static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRec
     if (codecConfiguration.level > VPConfigurationLevel::Level_6)
         return false;
 
-    if (isSWDecodersAlwaysEnabled())
-        return true;
-
     // Hardware decoders are always available.
-    if (vp9HardwareDecoderAvailable())
+    if (vp9HardwareDecoderAvailable() && !isSWDecodersAlwaysEnabled())
         return true;
 
     // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.

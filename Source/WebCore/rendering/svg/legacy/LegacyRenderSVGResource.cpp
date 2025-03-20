@@ -4,6 +4,7 @@
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,17 +43,6 @@
 #include "SVGURIReference.h"
 
 namespace WebCore {
-
-static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bool applyToFill, Color& color)
-{
-    if (color.isValid())
-        return true;
-    if (!object.parent())
-        return false;
-    Ref parentSVGStyle = object.parent()->style().svgStyle();
-    color = object.style().colorResolvingCurrentColor(applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor());
-    return true;
-}
 
 static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
 {
@@ -104,9 +94,6 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     // If the primary resource is just a color, return immediately.
     LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
     if (paintType < SVGPaintType::URINone) {
-        if (!inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
-            return nullptr;
-
         colorResource->setColor(color);
         return colorResource;
     }
@@ -116,19 +103,14 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     if (!renderer.document().settings().layerBasedSVGEngineEnabled())
         resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
 
-    // If no resources are associated with the given renderer, return the color resource.
-    if (!resources) {
-        if (paintType == SVGPaintType::URINone || !inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
-            return nullptr;
+    LegacyRenderSVGResource* uriResource = nullptr;
+    if (resources)
+        uriResource = mode == RenderSVGResourceMode::ApplyToFill ? resources->fill() : resources->stroke();
 
-        colorResource->setColor(color);
-        return colorResource;
-    }
-
-    // If the requested resource is not available, return the color resource.
-    LegacyRenderSVGResource* uriResource = mode == RenderSVGResourceMode::ApplyToFill ? resources->fill() : resources->stroke();
+    // If the requested resource is not available, return the color resource or 'none'.
     if (!uriResource) {
-        if (!inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
+        // The fallback is 'none'. (SVG2 say 'none' is implied when no fallback is specified.)
+        if (paintType == SVGPaintType::URINone)
             return nullptr;
 
         colorResource->setColor(color);

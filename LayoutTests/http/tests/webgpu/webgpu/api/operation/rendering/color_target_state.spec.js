@@ -9,14 +9,21 @@ TODO:
 - ?
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../common/util/util.js';
-import { kBlendFactors, kBlendOperations } from '../../../capability_info.js';
+import {
+  IsDualSourceBlendingFactor,
+  kBlendFactors,
+  kBlendOperations } from
+'../../../capability_info.js';
 import { GPUConst } from '../../../constants.js';
-import { kRegularTextureFormats, kTextureFormatInfo } from '../../../format_info.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import {
+
+  kPossibleColorRenderableTextureFormats } from
+'../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { clamp } from '../../../util/math.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
-class BlendingTest extends GPUTest {
+class BlendingTest extends AllFeaturesMaxLimitsGPUTest {
   createRenderPipelineForTest(colorTargetState) {
     return this.device.createRenderPipeline({
       layout: 'auto',
@@ -85,6 +92,7 @@ f)
 
 function computeBlendFactor(
 src,
+src1,
 dst,
 blendColor,
 factor)
@@ -120,6 +128,14 @@ factor)
     case 'one-minus-constant':
       assert(blendColor !== undefined);
       return mapColor(blendColor, (v) => 1 - v);
+    case 'src1':
+      return { ...src1 };
+    case 'one-minus-src1':
+      return mapColor(src1, (v) => 1 - v);
+    case 'src1-alpha':
+      return mapColor(src1, () => src1.a);
+    case 'one-minus-src1-alpha':
+      return mapColor(src1, () => 1 - src1.a);
     default:
       unreachable();
   }
@@ -146,6 +162,7 @@ operation)
   }
 }
 
+const kBlendingGPUBlendComponentFormat = 'rgba16float';
 g.test('blending,GPUBlendComponent').
 desc(
   `Test all combinations of parameters for GPUBlendComponent.
@@ -174,6 +191,7 @@ filter((t) => {
   return true;
 }).
 combine('srcColor', [{ r: 0.11, g: 0.61, b: 0.81, a: 0.44 }]).
+combine('srcColor1', [{ r: 0.22, g: 0.41, b: 0.51, a: 0.33 }]).
 combine('dstColor', [
 { r: 0.51, g: 0.22, b: 0.71, a: 0.33 },
 { r: 0.09, g: 0.73, b: 0.93, a: 0.81 }]
@@ -188,13 +206,32 @@ expand('blendConstant', (p) => {
 })
 ).
 fn((t) => {
-  const textureFormat = 'rgba16float';
+  if (
+  IsDualSourceBlendingFactor(t.params.srcFactor) ||
+  IsDualSourceBlendingFactor(t.params.dstFactor))
+  {
+    t.skipIfDeviceDoesNotHaveFeature('dual-source-blending');
+  }
+  const textureFormat = kBlendingGPUBlendComponentFormat;
   const srcColor = t.params.srcColor;
+  const srcColor1 = t.params.srcColor1;
   const dstColor = t.params.dstColor;
   const blendConstant = t.params.blendConstant;
 
-  const srcFactor = computeBlendFactor(srcColor, dstColor, blendConstant, t.params.srcFactor);
-  const dstFactor = computeBlendFactor(srcColor, dstColor, blendConstant, t.params.dstFactor);
+  const srcFactor = computeBlendFactor(
+    srcColor,
+    srcColor1,
+    dstColor,
+    blendConstant,
+    t.params.srcFactor
+  );
+  const dstFactor = computeBlendFactor(
+    srcColor,
+    srcColor1,
+    dstColor,
+    blendConstant,
+    t.params.dstFactor
+  );
 
   const expectedColor = computeBlendOperation(
     srcColor,
@@ -214,6 +251,10 @@ fn((t) => {
       expectedColor.b = srcColor.b;
       break;
   }
+
+  const useBlendSrc1 =
+  IsDualSourceBlendingFactor(t.params.srcFactor) ||
+  IsDualSourceBlendingFactor(t.params.dstFactor);
 
   const pipeline = t.device.createRenderPipeline({
     layout: 'auto',
@@ -236,13 +277,24 @@ fn((t) => {
 
       module: t.device.createShaderModule({
         code: `
+${useBlendSrc1 ? 'enable dual_source_blending;' : ''}
+
 struct Uniform {
-  color: vec4<f32>
+  color: vec4f,
+  blend: vec4f,
 };
 @group(0) @binding(0) var<uniform> u : Uniform;
 
-@fragment fn main() -> @location(0) vec4<f32> {
-  return u.color;
+struct FragOutput {
+  @location(0) ${useBlendSrc1 ? '@blend_src(0)' : ''} color : vec4f,
+  ${useBlendSrc1 ? '@location(0) @blend_src(1) blend : vec4f,' : ''}
+}
+
+@fragment fn main() ->FragOutput {
+  var fragOutput : FragOutput;
+  fragOutput.color = u.color;
+  ${useBlendSrc1 ? 'fragOutput.blend = u.blend;' : ''}
+  return fragOutput;
 }
           `
       }),
@@ -263,7 +315,7 @@ struct Uniform {
     }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [1, 1, 1],
     format: textureFormat
@@ -293,7 +345,16 @@ struct Uniform {
         binding: 0,
         resource: {
           buffer: t.makeBufferWithContents(
-            new Float32Array([srcColor.r, srcColor.g, srcColor.b, srcColor.a]),
+            new Float32Array([
+            srcColor.r,
+            srcColor.g,
+            srcColor.b,
+            srcColor.a,
+            srcColor1.r,
+            srcColor1.g,
+            srcColor1.b,
+            srcColor1.a]
+            ),
             GPUBufferUsage.UNIFORM
           )
         }
@@ -318,11 +379,6 @@ struct Uniform {
   );
 });
 
-const kBlendableFormats = kRegularTextureFormats.filter((f) => {
-  const info = kTextureFormatInfo[f];
-  return info.colorRender && info.color.type === 'float';
-});
-
 g.test('blending,formats').
 desc(
   `Test blending results works for all formats that support it, and that blending is not applied
@@ -330,13 +386,13 @@ desc(
 ).
 params((u) =>
 u //
-.combine('format', kBlendableFormats)
+.combine('format', kPossibleColorRenderableTextureFormats)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-}).
 fn((t) => {
   const { format } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
+  t.skipIfTextureFormatNotBlendable(format);
 
   const pipeline = t.device.createRenderPipeline({
     layout: 'auto',
@@ -374,7 +430,7 @@ fn((t) => {
     }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [1, 1, 1],
     format
@@ -397,7 +453,10 @@ fn((t) => {
   t.device.queue.submit([commandEncoder.finish()]);
 
   const expColor = { R: 0.6, G: 0.6, B: 0.6, A: 0.6 };
-  const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
+  const expTexelView = TexelView.fromTexelsAsColors(
+    format,
+    (_coords) => expColor
+  );
   t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1, 1]);
 });
 
@@ -414,7 +473,7 @@ fn((t) => {
     blend: { color: blendComponent, alpha: blendComponent }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [kSize, kSize],
     format
@@ -472,7 +531,7 @@ fn((t) => {
     blend: { color: blendComponent, alpha: blendComponent }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [kSize, kSize],
     format
@@ -524,7 +583,7 @@ fn((t) => {
     blend: { color: blendComponent, alpha: blendComponent }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [kSize, kSize],
     format
@@ -627,7 +686,7 @@ fn((t) => {
     writeMask: mask
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [kSize, kSize],
     format
@@ -683,7 +742,7 @@ fn((t) => {
     writeMask: GPUColorWrite.RED
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [kSize, kSize],
     format
@@ -779,7 +838,7 @@ fn((t) => {
     }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     size: [1, 1, 1],
     format

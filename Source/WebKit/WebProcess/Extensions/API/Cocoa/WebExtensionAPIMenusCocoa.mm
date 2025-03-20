@@ -361,10 +361,13 @@ void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier,
     if (!parseCreateAndUpdateProperties(ForUpdate::Yes, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return;
 
+    NSString *identifierString;
     if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))
-        identifier = identifierNumber.stringValue;
+        identifierString = identifierNumber.stringValue;
+    else
+        identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifier, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), clickCallback = WTFMove(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifier)](Expected<void, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifierString, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), clickCallback = WTFMove(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifierString)](Expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -398,10 +401,13 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
     if (!validateObject(identifier, @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
         return;
 
+    NSString *identifierString;
     if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))
-        identifier = identifierNumber.stringValue;
+        identifierString = identifierNumber.stringValue;
+    else
+        identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifier), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier = String(identifier)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifierString), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier = String(identifierString)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

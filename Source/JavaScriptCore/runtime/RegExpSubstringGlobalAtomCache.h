@@ -55,6 +55,7 @@ private:
     WriteBarrier<RegExp> m_lastRegExp;
     size_t m_lastNumberOfMatches { 0 };
     size_t m_lastMatchEnd { 0 };
+    MatchResult m_lastResult { };
 };
 
 } // namespace JSC

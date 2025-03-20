@@ -105,7 +105,6 @@ private:
 
     EventTarget* errorEventTarget() final { return this; }
 
-    std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;

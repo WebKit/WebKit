@@ -94,6 +94,7 @@ class Element;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
+class FrameDamageHistory;
 class Geolocation;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -114,6 +115,7 @@ class PopupMenu;
 class PopupMenuClient;
 class RegistrableDomain;
 class SearchPopupMenu;
+class SVGImageElement;
 class ScrollingCoordinator;
 class SecurityOrigin;
 class SecurityOriginData;
@@ -259,6 +261,7 @@ public:
 #endif
 
     virtual void didFinishLoadingImageForElement(HTMLImageElement&) = 0;
+    virtual void didFinishLoadingImageForSVGImage(SVGImageElement&) { }
 
     virtual PlatformPageClient platformPageClient() const = 0;
 
@@ -472,6 +475,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
+    virtual void setPlayerIdentifierForVideoElement(HTMLVideoElement&) { }
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode, bool standby) { UNUSED_PARAM(standby); }
     virtual void setUpPlaybackControlsManager(HTMLMediaElement&) { }
     virtual void clearPlaybackControlsManager() { }
@@ -490,7 +494,11 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const Element&, bool) { return false; }
-    virtual void enterFullScreenForElement(Element&, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler) { completionHandler({ }); }
+    virtual void enterFullScreenForElement(Element&, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
+    {
+        willEnterFullscreen({ });
+        didEnterFullscreen(false);
+    }
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual void updateImageSource(Element&) { }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
@@ -568,6 +576,8 @@ public:
     virtual void didAddFooterLayer(GraphicsLayer&) { }
 
     virtual bool shouldUseTiledBackingForFrameView(const LocalFrameView&) const { return false; }
+
+    virtual void frameViewLayoutOrVisualViewportChanged(const LocalFrameView&) { }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     virtual void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) { };
@@ -729,6 +739,12 @@ public:
     virtual void didDispatchClickEvent(const PlatformMouseEvent&, Node&) { }
 
     virtual void didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement&) { }
+
+#if ENABLE(DAMAGE_TRACKING)
+    virtual void resetDamageHistoryForTesting() { }
+
+    virtual WebCore::FrameDamageHistory* damageHistoryForTesting() const { return nullptr; }
+#endif
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 

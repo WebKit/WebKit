@@ -9,6 +9,7 @@ PASS :parsing:align="trailing_comma"
 PASS :parsing:align="const_u"
 PASS :parsing:align="const_i"
 PASS :parsing:align="const_expr"
+PASS :parsing:align="const_expr_2"
 PASS :parsing:align="large"
 PASS :parsing:align="tabs"
 PASS :parsing:align="comment"
@@ -58,7 +59,7 @@ PASS :required_alignment:address_space="storage";align=1;type={"name":"mat2x4%3C
 PASS :required_alignment:address_space="storage";align=1;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=1;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=1;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
-PASS :required_alignment:address_space="storage";align=1;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="storage";align=1;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="storage";align=1;type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="storage";align=2;type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="storage";align=2;type={"name":"u32","storage":4,"uniform":4}
@@ -90,7 +91,7 @@ PASS :required_alignment:address_space="storage";align=2;type={"name":"mat2x4%3C
 PASS :required_alignment:address_space="storage";align=2;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=2;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=2;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
-PASS :required_alignment:address_space="storage";align=2;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="storage";align=2;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="storage";align=2;type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"u32","storage":4,"uniform":4}
@@ -122,7 +123,7 @@ PASS :required_alignment:address_space="storage";align="alignment";type={"name":
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
-PASS :required_alignment:address_space="storage";align="alignment";type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="storage";align="alignment";type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="storage";align="alignment";type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="storage";align=32;type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="storage";align=32;type={"name":"u32","storage":4,"uniform":4}
@@ -154,7 +155,7 @@ PASS :required_alignment:address_space="storage";align=32;type={"name":"mat2x4%3
 PASS :required_alignment:address_space="storage";align=32;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=32;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="storage";align=32;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
-PASS :required_alignment:address_space="storage";align=32;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="storage";align=32;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="storage";align=32;type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"u32","storage":4,"uniform":4}
@@ -185,32 +186,8 @@ PASS :required_alignment:address_space="uniform";align=1;type={"name":"mat4x4%3C
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"mat2x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
-FAIL :required_alignment:address_space="uniform";align=1;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16} assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-    struct MyStruct {
-          @align(1) a: array<vec2<i32>, 2>,
-        }
-
-        @group(0) @binding(0)
-        var<uniform> a : MyStruct;
-        @fragment
-        fn main() -> @location(0) vec4<f32> {
-          return vec4<f32>(.4, .2, .3, .1);
-        }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/align.spec.js:257:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase:
-    OK
- Reached unreachable code
-PASS :required_alignment:address_space="uniform";align=1;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=1;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=1;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=1;type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"u32","storage":4,"uniform":4}
@@ -241,32 +218,8 @@ PASS :required_alignment:address_space="uniform";align=2;type={"name":"mat4x4%3C
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"mat2x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
-FAIL :required_alignment:address_space="uniform";align=2;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16} assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-    struct MyStruct {
-          @align(2) a: array<vec2<i32>, 2>,
-        }
-
-        @group(0) @binding(0)
-        var<uniform> a : MyStruct;
-        @fragment
-        fn main() -> @location(0) vec4<f32> {
-          return vec4<f32>(.4, .2, .3, .1);
-        }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/align.spec.js:257:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase:
-    OK
- Reached unreachable code
-PASS :required_alignment:address_space="uniform";align=2;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=2;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=2;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=2;type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"u32","storage":4,"uniform":4}
@@ -297,32 +250,8 @@ PASS :required_alignment:address_space="uniform";align="alignment";type={"name":
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"mat2x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
-FAIL :required_alignment:address_space="uniform";align="alignment";type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16} assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-    struct MyStruct {
-          @align(16) a: array<vec2<i32>, 2>,
-        }
-
-        @group(0) @binding(0)
-        var<uniform> a : MyStruct;
-        @fragment
-        fn main() -> @location(0) vec4<f32> {
-          return vec4<f32>(.4, .2, .3, .1);
-        }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/align.spec.js:257:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase:
-    OK
- Reached unreachable code
-PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="uniform";align="alignment";type={"name":"S","storage":8,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"i32","storage":4,"uniform":4}
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"u32","storage":4,"uniform":4}
@@ -353,32 +282,8 @@ PASS :required_alignment:address_space="uniform";align=32;type={"name":"mat4x4%3
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"mat2x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"mat3x4%3Cf16%3E","storage":8,"uniform":8}
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"mat4x4%3Cf16%3E","storage":8,"uniform":8}
-FAIL :required_alignment:address_space="uniform";align=32;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16} assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-    struct MyStruct {
-          @align(32) a: array<vec2<i32>, 2>,
-        }
-
-        @group(0) @binding(0)
-        var<uniform> a : MyStruct;
-        @fragment
-        fn main() -> @location(0) vec4<f32> {
-          return vec4<f32>(.4, .2, .3, .1);
-        }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/align.spec.js:257:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase:
-    OK
- Reached unreachable code
-PASS :required_alignment:address_space="uniform";align=32;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=32;type={"name":"array%3Cvec2%3Ci32%3E,%202%3E","storage":8,"uniform":16}
+PASS :required_alignment:address_space="uniform";align=32;type={"name":"array%3Cvec4%3Ci32%3E,%202%3E","storage":16,"uniform":16}
 PASS :required_alignment:address_space="uniform";align=32;type={"name":"S","storage":8,"uniform":16}
 PASS :placement:scope="private-var";attribute={"private-var":false,"storage-var":false,"struct-member":true,"fn-decl":false,"fn-param":false,"fn-var":false,"fn-return":false,"while-stmt":false}
 PASS :placement:scope="storage-var";attribute={"private-var":false,"storage-var":false,"struct-member":true,"fn-decl":false,"fn-param":false,"fn-var":false,"fn-return":false,"while-stmt":false}

@@ -35,6 +35,7 @@ class IIRDSPKernel;
 
 class IIRProcessor final : public AudioDSPKernelProcessor {
     WTF_MAKE_TZONE_ALLOCATED(IIRProcessor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IIRProcessor);
 public:
     IIRProcessor(float sampleRate, unsigned numberOfChannels, const Vector<double>& feedforward, const Vector<double>& feedback, bool isFilterStable);
     ~IIRProcessor();

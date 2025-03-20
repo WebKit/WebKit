@@ -2,5 +2,5 @@
 PASS Outer animation can see view timeline defined by :host
 PASS Outer animation can see view timeline defined by ::slotted
 PASS Inner animation can see view timeline defined by ::part
-FAIL Slotted element can see view timeline within the shadow assert_equals: expected "y" but got "x"
+PASS Slotted element can see view timeline within the shadow
 

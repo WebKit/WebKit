@@ -174,7 +174,7 @@ void PreviewConverter::iterateClients(T&& callback)
 
 void PreviewConverter::didAddClient(PreviewConverterClient& client)
 {
-    RunLoop::protectedCurrent()->dispatch([this, protectedThis = Ref { *this }, weakClient = WeakPtr { client }]() {
+    RunLoop::currentSingleton().dispatch([this, protectedThis = Ref { *this }, weakClient = WeakPtr { client }]() {
         if (auto client = weakClient.get())
             replayToClient(*client);
     });

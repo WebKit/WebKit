@@ -25,55 +25,36 @@
 
 #pragma once
 
+#include "ScopedName.h"
 #include <wtf/text/AtomString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
+class StyleProperties;
+
+namespace Style {
+
 struct PositionTryFallback {
+    std::optional<ScopedName> positionTryRuleName { };
+
     enum class Tactic : uint8_t {
         FlipBlock,
         FlipInline,
         FlipStart
     };
-    Vector<Tactic> tactics;
+    Vector<Tactic> tactics { };
 
-    bool operator==(const PositionTryFallback&) const = default;
+    // A position-area fallback is mutually exclusive with the rest.
+    RefPtr<const StyleProperties> positionAreaProperties { };
+
+    ~PositionTryFallback();
+    bool operator==(const PositionTryFallback&) const;
 };
 
-inline TextStream& operator<<(TextStream& ts, const PositionTryFallback& positionTryFallback)
-{
-    auto separator = ""_s;
-    for (auto& tactic : positionTryFallback.tactics) {
-        ts << std::exchange(separator, " "_s);
-        switch (tactic) {
-        case PositionTryFallback::Tactic::FlipBlock:
-            ts << "flip-block";
-            break;
-        case PositionTryFallback::Tactic::FlipInline:
-            ts << "flip-inline";
-            break;
-        case PositionTryFallback::Tactic::FlipStart:
-            ts << "flip-start";
-            break;
-        }
-    }
-    return ts;
-}
+TextStream& operator<<(TextStream&, const PositionTryFallback&);
+TextStream& operator<<(TextStream&, const Vector<PositionTryFallback>&);
 
-inline TextStream& operator<<(TextStream& ts, const Vector<PositionTryFallback>& positionTryFallbacks)
-{
-    if (positionTryFallbacks.isEmpty()) {
-        ts << "none";
-        return ts;
-    }
-    auto separator = ""_s;
-    for (auto& item : positionTryFallbacks) {
-        ts << std::exchange(separator, ", "_s);
-        ts << item;
-    }
-    return ts;
-}
-
+} // namespace Style
 } // namespace WebCore
 

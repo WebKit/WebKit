@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(UNIFIED_PDF) && PLATFORM(MAC)
+#if ENABLE(UNIFIED_PDF)
 
 #include "PDFDocumentLayout.h"
 #include "PDFPluginBase.h"
@@ -44,6 +44,7 @@ class WeakPtrImplWithEventTargetData;
     RetainPtr<PDFDocument> _pdfDocument;
     WeakObjCPtr<NSObject> _parent;
     ThreadSafeWeakPtr<WebKit::UnifiedPDFPlugin> _pdfPlugin;
+    RetainPtr<NSMutableArray> _axElements;
 }
 
 @property (assign) WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> pluginElement;
@@ -53,13 +54,16 @@ class WeakPtrImplWithEventTargetData;
 - (void)setPDFDocument:(RetainPtr<PDFDocument>)document;
 - (void)setPDFPlugin:(WebKit::UnifiedPDFPlugin*)plugin;
 - (PDFDocument *)document;
+- (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinates pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex;
+
+#if PLATFORM(MAC)
 - (NSObject *)accessibilityParent;
 - (id)accessibilityHitTest:(NSPoint)point;
 - (void)gotoDestination:(PDFDestination *)destination;
-- (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinate pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex;
 - (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation;
 - (void)setActiveAnnotation:(PDFAnnotation *)annotation;
+#endif // PLATFORM(MAC)
 
 @end
 
-#endif
+#endif // ENABLE(UNIFIED_PDF)

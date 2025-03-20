@@ -182,9 +182,11 @@ static gboolean gstAllocatorFastMallocMemIsSpan(GstMemory* _memory1, GstMemory* 
 static void gstAllocatorFastMallocConstructed(GObject* object)
 {
     G_OBJECT_CLASS(gst_allocator_fast_malloc_parent_class)->constructed(object);
+IGNORE_WARNINGS_BEGIN("cast-align")
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(object), GST_OBJECT_FLAG_MAY_BE_LEAKED);
-
     auto allocator = GST_ALLOCATOR_CAST(object);
+IGNORE_WARNINGS_END
+
     allocator->mem_type = "FastMalloc";
     allocator->mem_map = gstAllocatorFastMallocMemMap;
     allocator->mem_unmap = gstAllocatorFastMallocMemUnmap;

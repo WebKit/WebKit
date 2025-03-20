@@ -76,9 +76,9 @@ class SVGGradientElement : public SVGElement, public SVGURIReference {
 public:
     enum {
         SVG_SPREADMETHOD_UNKNOWN = SVGSpreadMethodUnknown,
-        SVG_SPREADMETHOD_PAD = SVGSpreadMethodReflect,
-        SVG_SPREADMETHOD_REFLECT = SVGSpreadMethodRepeat,
-        SVG_SPREADMETHOD_REPEAT = SVGSpreadMethodUnknown
+        SVG_SPREADMETHOD_PAD = SVGSpreadMethodPad,
+        SVG_SPREADMETHOD_REFLECT = SVGSpreadMethodReflect,
+        SVG_SPREADMETHOD_REPEAT = SVGSpreadMethodRepeat
     };
 
     GradientColorStops buildStops();

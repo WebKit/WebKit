@@ -143,6 +143,35 @@ function generateOp(op) {
     case 'fwidthFine':{
         return `let x = ${op}(0);\n`;
       }
+    case 'subgroupAdd':
+    case 'subgroupInclusiveAdd':
+    case 'subgroupExclusiveAdd':
+    case 'subgroupMul':
+    case 'subgroupInclusiveMul':
+    case 'subgroupExclusiveMul':
+    case 'subgroupMax':
+    case 'subgroupMin':
+    case 'subgroupAnd':
+    case 'subgroupOr':
+    case 'subgroupXor':
+    case 'subgroupBroadcastFirst':
+    case 'quadSwapX':
+    case 'quadSwapY':
+    case 'quadSwapDiagonal':
+      return `let x = ${op}(0);\n`;
+    case 'subgroupAll':
+    case 'subgroupAny':
+    case 'subgroupBallot':
+      return `let x = ${op}(false);\n`;
+    case 'subgroupElect':
+      return `let x = ${op}();\n`;
+    case 'subgroupBroadcast':
+    case 'subgroupShuffle':
+    case 'subgroupShuffleUp':
+    case 'subgroupShuffleDown':
+    case 'subgroupShuffleXor':
+    case 'quadBroadcast':
+      return `let x = ${op}(0, 0);\n`;
     default:{
         unreachable(`Unhandled op`);
       }
@@ -246,6 +275,92 @@ fn((t) => {
   t.expectCompileResult(t.params.expectation, code);
 });
 
+const kSubgroupOps = [
+'subgroupAdd',
+'subgroupInclusiveAdd',
+'subgroupExclusiveAdd',
+'subgroupMul',
+'subgroupInclusiveMul',
+'subgroupExclusiveMul',
+'subgroupMax',
+'subgroupMin',
+'subgroupAll',
+'subgroupAny',
+'subgroupAnd',
+'subgroupOr',
+'subgroupXor',
+'subgroupBallot',
+'subgroupElect',
+'subgroupBroadcast',
+'subgroupBroadcastFirst',
+'subgroupShuffle',
+'subgroupShuffleUp',
+'subgroupShuffleDown',
+'subgroupShuffleXor',
+'quadBroadcast',
+'quadSwapX',
+'quadSwapY',
+'quadSwapDiagonal'];
+
+
+g.test('basics,subgroups').
+desc(`Test subgroup operations in simple uniform or non-uniform control flow.`).
+params((u) =>
+u.
+combine('statement', ['if', 'for', 'while', 'switch']).
+beginSubcases().
+combineWithParams(kConditions).
+combine('op', kSubgroupOps).
+combine('stage', ['compute', 'fragment'])
+).
+fn((t) => {
+  let code = `
+ enable subgroups;
+
+ @group(0) @binding(0) var s : sampler;
+ @group(0) @binding(1) var s_comp : sampler_comparison;
+ @group(0) @binding(2) var tex : texture_2d<f32>;
+ @group(0) @binding(3) var tex_depth : texture_depth_2d;
+
+ @group(1) @binding(0) var<storage, read> ro_buffer : array<f32, 4>;
+ @group(1) @binding(1) var<storage, read_write> rw_buffer : array<f32, 4>;
+ @group(1) @binding(2) var<uniform> uniform_buffer : vec4<f32>;
+
+ @group(2) @binding(0) var ro_storage_texture : texture_storage_2d<rgba8unorm, read>;
+ @group(2) @binding(1) var rw_storage_texture : texture_storage_2d<rgba8unorm, read_write>;
+
+ var<private> priv_var : array<f32, 4> = array(0,0,0,0);
+
+ const c = false;
+ override o : f32;
+`;
+
+  if (t.params.stage === 'compute') {
+    code += `var<workgroup> wg : f32;\n`;
+    code += ` @workgroup_size(16, 1, 1)`;
+  }
+  code += `@${t.params.stage}`;
+  code += `\nfn main(`;
+  if (t.params.stage === 'compute') {
+    code += `@builtin(global_invocation_id) p : vec3<u32>`;
+  } else {
+    code += `@builtin(position) p : vec4<f32>`;
+  }
+  code += `) {
+      let u_let = uniform_buffer.x;
+      let n_let = rw_buffer[0];
+      var u_f = uniform_buffer.z;
+      var n_f = rw_buffer[1];
+    `;
+
+  // Simple control statement containing the op.
+  code += generateConditionalStatement(t.params.statement, t.params.cond, t.params.op);
+
+  code += `\n}\n`;
+
+  t.expectCompileResult(t.params.expectation, code);
+});
+
 const kFragmentBuiltinValues = [
 {
   builtin: `position`,
@@ -262,12 +377,26 @@ const kFragmentBuiltinValues = [
 {
   builtin: `sample_mask`,
   type: `u32`
+},
+{
+  builtin: `subgroup_invocation_id`,
+  type: `u32`
+},
+{
+  builtin: `subgroup_size`,
+  type: `u32`
 }];
 
 
 g.test('fragment_builtin_values').
 desc(`Test uniformity of fragment built-in values`).
 params((u) => u.combineWithParams(kFragmentBuiltinValues).beginSubcases()).
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && ['sample_index', 'sample_mask'].includes(t.params.builtin),
+    'compatibility mode does not support sample_index or sample_mask'
+  );
+}).
 fn((t) => {
   let cond = ``;
   switch (t.params.type) {
@@ -291,7 +420,9 @@ fn((t) => {
         unreachable(`Unhandled type`);
       }
   }
+  const enable = t.params.builtin.includes('subgroup') ? 'enable subgroups;' : '';
   const code = `
+${enable}
 @group(0) @binding(0) var s : sampler;
 @group(0) @binding(1) var tex : texture_2d<f32>;
 
@@ -332,6 +463,16 @@ const kComputeBuiltinValues = [
   builtin: `num_workgroups`,
   type: `vec3<u32>`,
   uniform: true
+},
+{
+  builtin: `subgroup_invocation_id`,
+  type: `u32`,
+  uniform: false
+},
+{
+  builtin: `subgroup_size`,
+  type: `u32`,
+  uniform: true
 }];
 
 
@@ -361,7 +502,9 @@ fn((t) => {
         unreachable(`Unhandled type`);
       }
   }
+  const enable = t.params.builtin.includes('subgroup') ? 'enable subgroups;' : '';
   const code = `
+${enable}
 @compute @workgroup_size(16,1,1)
 fn main(@builtin(${t.params.builtin}) p : ${t.params.type}) {
   if ${cond} {
@@ -770,6 +913,20 @@ const kPointerCases = {
     check: `contents`,
     uniform: `never`,
     needs_deref_sugar: true
+  },
+  contents_rhs_pointer_swizzle_uniform: {
+    code: `func_vector = vec4(uniform_value);
+    let test_val = dot((&func_vector).yw, vec2());`,
+    check: `contents`,
+    uniform: true,
+    needs_deref_sugar: true
+  },
+  contents_rhs_pointer_swizzle_non_uniform: {
+    code: `func_vector = vec4(nonuniform_value);
+    let test_val = dot((&func_vector).yw, vec2());`,
+    check: `contents`,
+    uniform: false,
+    needs_deref_sugar: true
   }
 };
 
@@ -809,6 +966,7 @@ fn needs_uniform(val : u32) -> u32{
 fn main(@builtin(local_invocation_id) lid : vec3<u32>,
         @builtin(global_invocation_id) gid : vec3<u32>) {
   var func_scalar : u32;
+  var func_vector : vec4u;
   var func_array : array<u32, 16>;
   var func_struct : Outer;
 
@@ -2640,4 +2798,28 @@ fn main() {
     t.expectCompileResult(true, `diagnostic(off, derivative_uniformity);\n` + code);
   }
   t.expectCompileResult(res, code);
+});
+
+g.test('subgroups,parameters').
+desc('Test subgroup operations that require a uniform parameter').
+params((u) =>
+u.
+combine('op', ['subgroupShuffleUp', 'subgroupShuffleDown', 'subgroupShuffleXor']).
+combine('uniform', [false, true])
+).
+fn((t) => {
+  const wgsl = `
+enable subgroups;
+
+var<private> non_uniform : u32 = 0;
+
+@group(0) @binding(0)
+var<storage> uniform : u32;
+
+@compute @workgroup_size(16,1,1)
+fn main() {
+  let x = ${t.params.op}(non_uniform, ${t.params.uniform ? 'uniform' : 'non_uniform'});
+}`;
+
+  t.expectCompileResult(t.params.uniform, wgsl);
 });

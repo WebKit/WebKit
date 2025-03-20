@@ -322,6 +322,8 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
 
     if (slotElement->selfOrPrecedingNodesAffectDirAuto())
         slotElement->updateEffectiveTextDirection();
+
+    slotElement->updateAccessibilityOnSlotChange();
 }
 
 void NamedSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot& shadowRoot)

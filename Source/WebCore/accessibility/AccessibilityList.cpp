@@ -96,7 +96,7 @@ bool AccessibilityList::isDescriptionList() const
     return node && node->hasTagName(dlTag);
 }
 
-bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
+bool AccessibilityList::childHasPseudoVisibleListItemMarkers(const Node* node)
 {
     // Check if the list item has a pseudo-element that should be accessible (e.g. an image or text)
     auto* element = dynamicDowncast<Element>(node);
@@ -173,8 +173,8 @@ AccessibilityRole AccessibilityList::determineAccessibilityRoleWithCleanChildren
             listItemCount++;
         else if (child->roleValue() == AccessibilityRole::ListItem) {
             // Rendered list items always count.
-            if (auto* childRenderer = child->renderer(); childRenderer && childRenderer->isRenderListItem()) {
-                if (!hasVisibleMarkers && (childRenderer->style().listStyleType().type != ListStyleType::Type::None || childRenderer->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(childRenderer->node())))
+            if (CheckedPtr renderListItem = dynamicDowncast<RenderListItem>(child->renderer())) {
+                if (!hasVisibleMarkers && (renderListItem->style().listStyleType().type != ListStyleType::Type::None || renderListItem->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(renderListItem->element())))
                     hasVisibleMarkers = true;
                 listItemCount++;
             } else if (node && node->hasTagName(liTag)) {

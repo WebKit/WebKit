@@ -62,7 +62,6 @@ namespace JSC {
   setBigInt64           dataViewProtoFuncSetBigInt64         DontEnum|Function       2
   setBigUint64          dataViewProtoFuncSetBigUint64        DontEnum|Function       2
   buffer                dataViewProtoGetterBuffer            DontEnum|ReadOnly|CustomAccessor
-  byteLength            dataViewProtoGetterByteLength        DontEnum|ReadOnly|CustomAccessor
   byteOffset            dataViewProtoGetterByteOffset        DontEnum|ReadOnly|CustomAccessor
 @end
 */
@@ -89,8 +88,8 @@ static JSC_DECLARE_HOST_FUNCTION(dataViewProtoFuncSetFloat32);
 static JSC_DECLARE_HOST_FUNCTION(dataViewProtoFuncSetFloat64);
 static JSC_DECLARE_HOST_FUNCTION(dataViewProtoFuncSetBigInt64);
 static JSC_DECLARE_HOST_FUNCTION(dataViewProtoFuncSetBigUint64);
+static JSC_DECLARE_HOST_FUNCTION(dataViewProtoGetterByteLength);
 static JSC_DECLARE_CUSTOM_GETTER(dataViewProtoGetterBuffer);
-static JSC_DECLARE_CUSTOM_GETTER(dataViewProtoGetterByteLength);
 static JSC_DECLARE_CUSTOM_GETTER(dataViewProtoGetterByteOffset);
 
 }
@@ -109,20 +108,22 @@ JSDataViewPrototype::JSDataViewPrototype(VM& vm, Structure* structure)
 {
 }
 
-JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
+JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     JSDataViewPrototype* prototype =
         new (NotNull, allocateCell<JSDataViewPrototype>(vm))
         JSDataViewPrototype(vm, structure);
-    prototype->finishCreation(vm);
+    prototype->finishCreation(vm, globalObject);
     return prototype;
 }
 
-void JSDataViewPrototype::finishCreation(VM& vm)
+void JSDataViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+
+    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, dataViewProtoGetterByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, DataViewByteLengthIntrinsic);
 }
 
 Structure* JSDataViewPrototype::createStructure(
@@ -234,13 +235,13 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterBuffer, (JSGlobalObject* globalObjec
     RELEASE_AND_RETURN(scope, JSValue::encode(view->possiblySharedJSBuffer(globalObject)));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteLength, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_HOST_FUNCTION(dataViewProtoGetterByteLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
-    if (!view)
+    JSDataView* view = jsDynamicCast<JSDataView*>(callFrame->thisValue());
+    if (UNLIKELY(!view))
         return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object"_s);
 
     IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;

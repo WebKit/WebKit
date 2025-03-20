@@ -129,9 +129,24 @@ public:
         return yFlippedCopy();
     }
 
+    template<typename F> bool anyOf(F&& functor) const
+    {
+        return std::ranges::any_of(m_sides, std::forward<F>(functor));
+    }
+
+    template<typename F> bool allOf(F&& functor) const
+    {
+        return std::ranges::all_of(m_sides, std::forward<F>(functor));
+    }
+
+    template<typename F> bool noneOf(F&& functor) const
+    {
+        return std::ranges::none_of(m_sides, std::forward<F>(functor));
+    }
+
     bool isZero() const
     {
-        return !top() && !right() && !bottom() && !left();
+        return allOf([](auto& edge) { return !edge; });
     }
 
     bool operator==(const RectEdges<T>&) const = default;
@@ -161,7 +176,7 @@ inline RectEdges<T>& operator+=(RectEdges<T>& a, const RectEdges<T>& b)
 template<typename T>
 TextStream& operator<<(TextStream& ts, const RectEdges<T>& edges)
 {
-    ts << "[top " << edges.top() << " right " << edges.right() << " bottom " << edges.bottom() << " left " << edges.left() << "]";
+    ts << "[top "_s << edges.top() << " right "_s << edges.right() << " bottom "_s << edges.bottom() << " left "_s << edges.left() << ']';
     return ts;
 }
 

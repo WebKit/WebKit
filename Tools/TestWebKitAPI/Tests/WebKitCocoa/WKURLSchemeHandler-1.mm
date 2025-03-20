@@ -1585,8 +1585,8 @@ TEST(URLSchemeHandler, Frames)
     done = false;
     auto emptyWebView = adoptNS([WKWebView new]);
     [emptyWebView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_NOT_NULL(mainFrame.info._handle);
 #if PLATFORM(MAC)
+        EXPECT_NULL(mainFrame);
         EXPECT_EQ(mainFrame.info._handle.frameID, 0u);
 #endif
         [emptyWebView _evaluateJavaScript:@"window.location.href" inFrame:mainFrame.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {

@@ -39,7 +39,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace DFG {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Disassembler);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Disassembler);
 
 Disassembler::Disassembler(Graph& graph)
     : m_graph(graph)

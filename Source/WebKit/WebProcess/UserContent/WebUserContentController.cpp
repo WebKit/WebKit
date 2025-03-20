@@ -37,6 +37,9 @@
 #include "WebProcess.h"
 #include "WebUserContentControllerMessages.h"
 #include "WebUserContentControllerProxyMessages.h"
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
@@ -286,7 +289,7 @@ private:
     }
 
     // WebCore::UserMessageHandlerDescriptor
-    void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value, WTF::Function<void(SerializedScriptValue*, const String&)>&& completionHandler) override
+    void didPostMessage(WebCore::UserMessageHandler& handler, JSC::JSGlobalObject& globalObject, JSC::JSValue message, WTF::Function<void(JSC::JSValue, const String&)>&& completionHandler) override
     {
         auto* frame = handler.frame();
         if (!frame)
@@ -300,17 +303,12 @@ private:
         if (!webPage)
             return;
 
-        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> resultValue, const String& errorMessage) {
-            if (!errorMessage.isNull()) {
-                completionHandler(nullptr, errorMessage);
-                return;
-            }
-
-            auto value = SerializedScriptValue::createFromWireBytes({ resultValue });
-            completionHandler(value.ptr(), { });
-        };
-
-        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, value->wireBytes()), WTFMove(messageReplyHandler), m_controller->identifier());
+        JSRetainPtr context { JSContextGetGlobalContext(toRef(&globalObject)) };
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, JavaScriptEvaluationResult { context.get(), toRef(&globalObject, message) }), [completionHandler = WTFMove(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
+            if (!result)
+                return completionHandler(JSC::jsUndefined(), result.error());
+            completionHandler(toJS(toJS(context.get()), result->toJS(context.get())), { });
+        }, m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;

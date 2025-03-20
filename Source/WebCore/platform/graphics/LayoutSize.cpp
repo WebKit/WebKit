@@ -40,7 +40,7 @@ LayoutSize LayoutSize::constrainedBetween(const LayoutSize& min, const LayoutSiz
 
 TextStream& operator<<(TextStream& ts, const LayoutSize& size)
 {
-    return ts << "width=" << size.width().toFloat() << " height=" << size.height().toFloat();
+    return ts << "width="_s << size.width().toFloat() << " height="_s << size.height().toFloat();
 }
 
 } // namespace WebCore

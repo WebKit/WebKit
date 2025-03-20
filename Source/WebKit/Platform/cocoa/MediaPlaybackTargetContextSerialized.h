@@ -27,6 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "CoreIPCAVOutputContext.h"
 #include <WebCore/MediaPlaybackTargetCocoa.h>
 #include <WebCore/MediaPlaybackTargetMock.h>
 #include <variant>
@@ -46,9 +47,14 @@ public:
     // Used by IPC serializer.
     WebCore::MediaPlaybackTargetContextType targetType() const { return m_targetType; }
     WebCore::MediaPlaybackTargetContextMockState mockState() const { return m_state; }
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+    CoreIPCAVOutputContext context() const { return m_context; }
+    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetContextType, WebCore::MediaPlaybackTargetContextMockState, CoreIPCAVOutputContext&&);
+#else
     String contextID() const { return m_contextID; }
     String contextType() const { return m_contextType; }
     MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetContextType, WebCore::MediaPlaybackTargetContextMockState, String&&, String&&);
+#endif
 
 private:
     String m_deviceName;
@@ -57,8 +63,12 @@ private:
     // This should be const, however IPC's Decoder's handling doesn't allow for const member.
     WebCore::MediaPlaybackTargetContextType m_targetType;
     WebCore::MediaPlaybackTargetContextMockState m_state { WebCore::MediaPlaybackTargetContextMockState::Unknown };
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+    CoreIPCAVOutputContext m_context;
+#else
     String m_contextID;
     String m_contextType;
+#endif
 };
 
 class MediaPlaybackTargetSerialized final : public WebCore::MediaPlaybackTarget {

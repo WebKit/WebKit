@@ -46,4 +46,5 @@
     "dual-source-blending",
     "float16-renderable",
     "float32-renderable",
+    "core-features-and-limits",
 };

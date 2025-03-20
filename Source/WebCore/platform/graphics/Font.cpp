@@ -92,6 +92,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     , m_shouldNotBeUsedForArabic(false)
 #endif
 {
+    relaxAdoptionRequirement();
     platformInit();
     platformGlyphInit();
     platformCharWidthInit();

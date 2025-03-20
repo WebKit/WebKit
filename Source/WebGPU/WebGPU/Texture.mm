@@ -2715,6 +2715,7 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
             resolved.dimension = WGPUTextureViewDimension_3D;
             break;
         case MTLTextureTypeTextureBuffer:
+        default:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -2999,8 +3000,10 @@ void Texture::makeCanvasBacking()
 bool Texture::waitForCommandBufferCompletion()
 {
     bool result = true;
-    for (Ref commandEncoder : m_commandEncoders)
-        result = commandEncoder->waitForCommandBufferCompletion() && result;
+    for (auto commandEncoder : m_commandEncoders) {
+        if (RefPtr ptr = m_device->commandEncoderFromIdentifier(commandEncoder))
+            result = ptr->waitForCommandBufferCompletion() && result;
+    }
 
     return result;
 }
@@ -3227,8 +3230,10 @@ void Texture::destroy()
         }
     }
     if (!m_canvasBacking) {
-        for (Ref commandEncoder : m_commandEncoders)
-            commandEncoder->makeSubmitInvalid();
+        for (auto commandEncoder : m_commandEncoders) {
+            if (RefPtr ptr = m_device->commandEncoderFromIdentifier(commandEncoder))
+                ptr->makeSubmitInvalid();
+        }
     }
     m_commandEncoders.clear();
 

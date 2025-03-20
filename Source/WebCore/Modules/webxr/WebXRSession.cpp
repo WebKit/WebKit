@@ -253,7 +253,7 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
         // 2.1. If the result of running reference space is supported for type and session is false, queue a task to reject promise
         // with a NotSupportedError and abort these steps.
         if (!referenceSpaceIsSupported(type)) {
-            queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)]() mutable {
+            queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)](auto&) mutable {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
             });
             return;
@@ -263,19 +263,19 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
             device->initializeReferenceSpace(type);
 
         // 2.3. Queue a task to run the following steps:
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, type, promise = WTFMove(promise)]() mutable {
-            if (!scriptExecutionContext()) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [type, promise = WTFMove(promise)](auto& session) mutable {
+            if (!session.scriptExecutionContext()) {
                 promise.reject(Exception { ExceptionCode::InvalidStateError });
                 return;
             }
-            auto& document = downcast<Document>(*scriptExecutionContext());
+            Ref document = downcast<Document>(*session.scriptExecutionContext());
             // 2.4. Create a reference space, referenceSpace, with type and session.
             // https://immersive-web.github.io/webxr/#create-a-reference-space
             RefPtr<WebXRReferenceSpace> referenceSpace;
             if (type == XRReferenceSpaceType::BoundedFloor)
-                referenceSpace = WebXRBoundedReferenceSpace::create(document, Ref { *this }, type);
+                referenceSpace = WebXRBoundedReferenceSpace::create(document, session, type);
             else
-                referenceSpace = WebXRReferenceSpace::create(document, Ref { *this }, type);
+                referenceSpace = WebXRReferenceSpace::create(document, session, type);
 
             // 2.5. Resolve promise with referenceSpace.
             promise.resolve(referenceSpace.releaseNonNull());
@@ -463,17 +463,17 @@ void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::FrameData
     // https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession
     // 5.4.11 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
     // events occur after the initial session is resolved.
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, inputSources = WTFMove(inputSources)]() mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [inputSources = WTFMove(inputSources)](auto& session) mutable {
         //  1. Set session's promise resolved flag to true.
-        m_inputInitialized = true;
+        session.m_inputInitialized = true;
         //  2. Let sources be any existing input sources attached to session.
         //  3. If sources is non-empty, perform the following steps:
         if (!inputSources.isEmpty()) {
-            auto timestamp = (MonotonicTime::now() - m_timeOrigin).milliseconds();
+            auto timestamp = (MonotonicTime::now() - session.m_timeOrigin).milliseconds();
             //  3.1. Set session's list of active XR input sources to sources.
             //  3.2. Fire an XRInputSourcesChangeEvent named inputsourceschange on session with added set to sources.
             //  Note: 3.1 and 3.2 steps are handled inside the update() call.
-            m_inputSources->update(timestamp, inputSources);
+            session.m_inputSources->update(timestamp, inputSources);
         }
     });
 }
@@ -623,18 +623,18 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
         return;
 
     // Queue a task to perform the following steps.
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() mutable {
-        if (m_ended || m_visibilityState == XRVisibilityState::Hidden)
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [frameData = WTFMove(frameData)](auto& session) mutable {
+        if (session.m_ended || session.m_visibilityState == XRVisibilityState::Hidden)
             return;
 
-        m_frameData = WTFMove(frameData);
+        session.m_frameData = WTFMove(frameData);
         //  1.Let now be the current high resolution time.
-        auto now = (MonotonicTime::now() - m_timeOrigin).milliseconds();
+        auto now = (MonotonicTime::now() - session.m_timeOrigin).milliseconds();
 
-        auto frame = WebXRFrame::create(*this, WebXRFrame::IsAnimationFrame::Yes);
+        Ref frame = WebXRFrame::create(session, WebXRFrame::IsAnimationFrame::Yes);
         //  2.Let frame be session’s animation frame.
         //  3.Set frame’s time to frameTime.
-        frame->setTime(static_cast<DOMHighResTimeStamp>(m_frameData.predictedDisplayTime));
+        frame->setTime(static_cast<DOMHighResTimeStamp>(session.m_frameData.predictedDisplayTime));
 
         // 4. For each view in list of views, set view’s viewport modifiable flag to true.
         // 5. If the active flag of any view in the list of views has changed since the last XR animation frame, update the viewports.
@@ -642,34 +642,34 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 
         // FIXME: I moved step 7 before 6 because of https://github.com/immersive-web/webxr/issues/1164
         // 7.If session’s pending render state is not null, apply the pending render state.
-        if (m_pendingRenderState)
-            applyPendingRenderState();
+        if (session.m_pendingRenderState)
+            session.applyPendingRenderState();
 
         // 6. If the frame should be rendered for session:
-        if (frameShouldBeRendered() && m_frameData.shouldRender) {
+        if (session.frameShouldBeRendered() && session.m_frameData.shouldRender) {
             // Prepare all layers for render
-            if (isImmersive(m_mode)) {
-                if (m_activeRenderState->baseLayer())
-                    m_activeRenderState->baseLayer()->startFrame(m_frameData);
+            if (isImmersive(session.m_mode)) {
+                if (session.m_activeRenderState->baseLayer())
+                    session.m_activeRenderState->baseLayer()->startFrame(session.m_frameData);
 #if ENABLE(WEBXR_LAYERS)
-                else if (m_activeRenderState->layers().size())
-                    m_activeRenderState->layers()[0]->startFrame(m_frameData);
+                else if (session.m_activeRenderState->layers().size())
+                    session.m_activeRenderState->layers()[0]->startFrame(session.m_frameData);
 #endif
             }
 
             // 6.1.Set session’s list of currently running animation frame callbacks to be session’s list of animation frame callbacks.
             // 6.2.Set session’s list of animation frame callbacks to the empty list.
-            auto callbacks = m_callbacks;
+            auto callbacks = session.m_callbacks;
 
             // 6.3.Set frame’s active boolean to true.
             frame->setActive(true);
 
             // 6.4.Apply frame updates for frame.
-            if (m_inputInitialized)
-                m_inputSources->update(now, m_frameData.inputSources);
+            if (session.m_inputInitialized)
+                session.m_inputSources->update(now, session.m_frameData.inputSources);
 
             tracePoint(WebXRSessionFrameCallbacksStart);
-            minimalUpdateRendering();
+            session.minimalUpdateRendering();
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:
             for (auto& callback : callbacks) {
                 //  6.6.If the entry’s cancelled boolean is true, continue to the next entry.
@@ -684,7 +684,7 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
             tracePoint(WebXRSessionFrameCallbacksEnd);
 
             // 6.9.Set session’s list of currently running animation frame callbacks to the empty list.
-            m_callbacks.removeAllMatching([](auto& callback) {
+            session.m_callbacks.removeAllMatching([](auto& callback) {
                 return callback->isFiredOrCancelled();
             });
 
@@ -692,19 +692,19 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
             // If the session is ended, m_animationFrame->setActive false is set in shutdown().
             frame->setActive(false);
 
-            if (m_ended)
+            if (session.m_ended)
                 return;
 
             // Submit current frame layers to the device.
             Vector<PlatformXR::Device::Layer> frameLayers;
-            if (isImmersive(m_mode) && m_activeRenderState->baseLayer())
-                frameLayers.append(m_activeRenderState->baseLayer()->endFrame());
+            if (isImmersive(session.m_mode) && session.m_activeRenderState->baseLayer())
+                frameLayers.append(session.m_activeRenderState->baseLayer()->endFrame());
 
-            if (auto device = m_device.get())
+            if (auto device = session.m_device.get())
                 device->submitFrame(WTFMove(frameLayers));
         }
 
-        requestFrameIfNeeded();
+        session.requestFrameIfNeeded();
     });
 }
 

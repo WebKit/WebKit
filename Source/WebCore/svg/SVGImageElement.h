@@ -34,7 +34,7 @@ class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference 
 public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
-    CachedImage* cachedImage() const;
+    WEBCORE_EXPORT CachedImage* cachedImage() const;
     bool renderingTaintsOrigin() const;
     const AtomString& imageSourceURL() const final;
 

@@ -84,16 +84,16 @@ FloatPoint ScrollingTreeOverflowScrollProxyNode::computeLayerPosition() const
 
 void ScrollingTreeOverflowScrollProxyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "overflow scroll proxy node";
+    ts << "overflow scroll proxy node"_s;
     ScrollingTreeNode::dumpProperties(ts, behavior);
 
     if (auto* relatedOverflowNode = scrollingTree()->nodeForID(m_overflowScrollingNodeID)) {
         if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(relatedOverflowNode))
-            ts.dumpProperty("related overflow scrolling node scroll position", scrollingNode->currentScrollPosition());
+            ts.dumpProperty("related overflow scrolling node scroll position"_s, scrollingNode->currentScrollPosition());
     }
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
-        ts.dumpProperty("overflow scrolling node", m_overflowScrollingNodeID);
+        ts.dumpProperty("overflow scrolling node"_s, m_overflowScrollingNodeID);
 }
 
 } // namespace WebCore

@@ -193,12 +193,12 @@ const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::speakerDevices()
     return m_speakerDevices;
 }
 
-void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
+std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::captureDeviceFromGstDevice(GRefPtr<GstDevice>&& device)
 {
     GUniquePtr<GstStructure> properties(gst_device_get_properties(device.get()));
     auto deviceClassString = gstStructureGetString(properties.get(), "device.class"_s);
     if (deviceClassString == "monitor"_s)
-        return;
+        return { };
 
     auto types = deviceTypes();
     GUniquePtr<char> deviceClassChar(gst_device_get_device_class(device.get()));
@@ -210,16 +210,15 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
         else if (types.contains(CaptureDevice::DeviceType::Speaker) && deviceClass.endsWith("Sink"_s))
             type = CaptureDevice::DeviceType::Speaker;
         else
-            return;
+            return { };
     } else if (types.contains(CaptureDevice::DeviceType::Camera) && deviceClass.startsWith("Video"_s))
         type = CaptureDevice::DeviceType::Camera;
     else
-        return;
+        return { };
 
     // This isn't really a UID but should be good enough (libwebrtc
     // itself does that at least for pulseaudio devices).
     auto deviceName = adoptGMallocString(gst_device_get_display_name(device.get()));
-    GST_INFO("Registering device %s", deviceName.span().data());
     auto isDefault = gstStructureGet<bool>(properties.get(), "is-default"_s).value_or(false);
     auto label = makeString(isDefault ? "default: "_s : ""_s, deviceName.span());
 
@@ -234,9 +233,20 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 
     auto gstCaptureDevice = GStreamerCaptureDevice(WTFMove(device), identifier, type, makeString(deviceName.span()));
     gstCaptureDevice.setEnabled(true);
+    gstCaptureDevice.setIsDefault(isDefault);
     gstCaptureDevice.setIsMockDevice(isMock);
+    return gstCaptureDevice;
+}
 
-    m_gstreamerDevices.append(WTFMove(gstCaptureDevice));
+void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
+{
+    auto gstCaptureDevice = captureDeviceFromGstDevice(WTFMove(device));
+    if (!gstCaptureDevice)
+        return;
+
+    GST_INFO("Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", gstCaptureDevice->label().utf8().data());
+    const auto type = gstCaptureDevice->type();
+    m_gstreamerDevices.append(WTFMove(*gstCaptureDevice));
     if (type == CaptureDevice::DeviceType::Speaker)
         m_speakerDevices.append(m_gstreamerDevices.last());
     else
@@ -252,8 +262,45 @@ void GStreamerCaptureDeviceManager::removeDevice(GRefPtr<GstDevice>&& gstDevice)
         m_devices.removeFirstMatching([&](auto& device) -> bool {
             return device.persistentId() == captureDevice.persistentId();
         });
+        m_speakerDevices.removeFirstMatching([&](auto& device) -> bool {
+            return device.persistentId() == captureDevice.persistentId();
+        });
         return true;
     });
+}
+
+void GStreamerCaptureDeviceManager::updateDevice(GRefPtr<GstDevice>&& gstDevice, GRefPtr<GstDevice>&& oldGstDevice)
+{
+    GUniquePtr<GstStructure> oldProperties(gst_device_get_properties(oldGstDevice.get()));
+    GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Old props: %" GST_PTR_FORMAT, oldProperties.get());
+    auto wasDefault = gstStructureGet<bool>(oldProperties.get(), "is-default"_s).value_or(false);
+    if (wasDefault) {
+        auto oldGstCaptureDevice = captureDeviceFromGstDevice(GRefPtr(oldGstDevice));
+        if (!oldGstCaptureDevice)
+            return;
+
+        for (auto& capturer : m_capturers) {
+            if (capturer->devicePersistentId() == oldGstCaptureDevice->persistentId()) {
+                m_defaultCapturer = capturer;
+                break;
+            }
+        }
+    }
+
+    GUniquePtr<GstStructure> properties(gst_device_get_properties(gstDevice.get()));
+    GST_DEBUG_OBJECT(m_deviceMonitor.get(), "New props: %" GST_PTR_FORMAT, properties.get());
+    auto isDefault = gstStructureGet<bool>(properties.get(), "is-default"_s).value_or(false);
+    if (isDefault && m_defaultCapturer) {
+        auto gstCaptureDevice = captureDeviceFromGstDevice(GRefPtr(gstDevice));
+        if (!gstCaptureDevice)
+            return;
+
+        m_defaultCapturer->setDevice(WTFMove(gstCaptureDevice));
+        m_defaultCapturer = nullptr;
+    }
+
+    removeDevice(WTFMove(oldGstDevice));
+    addDevice(WTFMove(gstDevice));
 }
 
 void GStreamerCaptureDeviceManager::refreshCaptureDevices()
@@ -304,7 +351,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
     gst_bus_set_flushing(bus.get(), TRUE);
     gst_bus_set_flushing(bus.get(), FALSE);
 
-    // Monitor the bus for future device-added and device-removed messages.
+    // Monitor the bus for future device messages.
     gst_bus_add_watch(bus.get(), reinterpret_cast<GstBusFunc>(+[](GstBus*, GstMessage* message, GStreamerCaptureDeviceManager* manager) -> gboolean {
         GRefPtr<GstDevice> device;
 #ifndef GST_DISABLE_GST_DEBUG
@@ -327,11 +374,22 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 #endif
             manager->removeDevice(WTFMove(device));
             break;
+        case GST_MESSAGE_DEVICE_CHANGED: {
+            GRefPtr<GstDevice> oldDevice;
+
+            gst_message_parse_device_changed(message, &device.outPtr(), &oldDevice.outPtr());
+#ifndef GST_DISABLE_GST_DEBUG
+            name.reset(gst_device_get_display_name(device.get()));
+            GST_INFO("Device changed: %s", name.get());
+#endif
+            manager->updateDevice(WTFMove(device), WTFMove(oldDevice));
+            break;
+        }
         default:
             break;
         }
         return G_SOURCE_CONTINUE;
-    }),  this);
+    }), this);
 }
 
 #undef GST_CAT_DEFAULT

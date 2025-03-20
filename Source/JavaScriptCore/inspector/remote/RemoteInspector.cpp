@@ -184,7 +184,7 @@ void RemoteInspector::setupFailed(TargetID targetIdentifier)
     Locker locker { m_mutex };
 
     m_targetConnectionMap.remove(targetIdentifier);
-    m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
+    m_automaticInspectionCandidates.remove(targetIdentifier);
 
     updateHasActiveDebugSession();
     updateTargetListing(targetIdentifier);
@@ -195,14 +195,7 @@ void RemoteInspector::setupCompleted(TargetID targetIdentifier)
 {
     Locker locker { m_mutex };
 
-    m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
-}
-
-bool RemoteInspector::waitingForAutomaticInspection(TargetID targetIdentifier)
-{
-    Locker locker { m_mutex };
-
-    return m_pausedAutomaticInspectionCandidates.contains(targetIdentifier);
+    m_automaticInspectionCandidates.remove(targetIdentifier);
 }
 
 void RemoteInspector::clientCapabilitiesDidChange()

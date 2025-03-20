@@ -10,7 +10,7 @@ Click at 45, 275 for right of second line : 61,22,20,2
 Click at 65, 5 for left of third line : 61,22,20,2
 Click at 65, 275 for right of third line : 61,177,20,2
 Click at 85, 5 for left of fourth line : 81,22,20,2
-Click at 85, 275 for right of fourth line : 81,263,20,2
+Click at 85, 275 for right of fourth line : 101,22,19,2
 Click at 105, 5 for left of fifth line : 101,22,19,2
 Click at 105, 275 for right of fifth line : 120,22,20,2
 Click at 125, 5 for left of sixth line : 120,22,20,2

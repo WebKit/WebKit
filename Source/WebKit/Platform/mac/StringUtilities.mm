@@ -35,7 +35,7 @@ namespace WebKit {
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PhoneNumbers);
 
-typedef struct __CFPhoneNumber* CFPhoneNumberRef;
+typedef struct CF_BRIDGED_TYPE(id) __CFPhoneNumber* CFPhoneNumberRef;
 
 // These functions are declared with __attribute__((visibility ("default")))
 // We currently don't have a way to soft link such functions, so we forward declare them again here.

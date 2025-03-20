@@ -65,7 +65,8 @@ struct _WPEDisplayClass
     const char             *(* get_drm_render_node)           (WPEDisplay *display);
     gboolean                (* use_explicit_sync)             (WPEDisplay *display);
 
-    WPEInputMethodContext   *(* create_input_method_context)    (WPEDisplay *display);
+    WPEInputMethodContext  *(* create_input_method_context)   (WPEDisplay *display,
+                                                               WPEView    *view);
 
     gpointer padding[32];
 };

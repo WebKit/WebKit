@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "LayoutSize.h"
 #include "LayoutUnit.h"
 #include "RectEdges.h"
 #include "RenderObjectEnums.h"
@@ -42,6 +43,7 @@ public:
     BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
 
     BorderStyle style() const { return m_style; }
+    LayoutUnit width() const { return m_width; }
     const Color& color() const { return m_color; }
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
@@ -49,7 +51,7 @@ public:
     inline bool hasVisibleColorAndStyle() const { return m_style > BorderStyle::Hidden && !m_isTransparent; }
     inline bool shouldRender() const { return m_isPresent && widthForPainting() && hasVisibleColorAndStyle(); }
     inline bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
-    inline float widthForPainting() const { return m_isPresent ?  m_flooredToDevicePixelWidth : 0; }
+    inline float widthForPainting() const { return m_isPresent ? m_flooredToDevicePixelWidth : 0; }
     void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const;
     bool obscuresBackgroundEdge(float scale) const;
     bool obscuresBackground() const;
@@ -67,7 +69,8 @@ private:
 };
 
 using BorderEdges = RectEdges<BorderEdge>;
-BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true }, bool setColorsToBlack = false);
+// inflation is only added to edges with non-zero widths.
+BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true }, LayoutSize inflation = { }, bool setColorsToBlack = false);
 BorderEdges borderEdgesForOutline(const RenderStyle&, float deviceScaleFactor);
 
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return firstEdge.color() == secondEdge.color(); }

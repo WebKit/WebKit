@@ -102,7 +102,7 @@ ExceptionOr<ViewTimeline::SpecifiedViewTimelineInsets> ViewTimeline::validateSpe
         CSSTokenizer tokenizer(*insetString);
         auto tokenRange = tokenizer.tokenRange();
         tokenRange.consumeWhitespace();
-        auto consumedInset = CSSPropertyParserHelpers::consumeViewTimelineInsetListItem(tokenRange, Ref { document }->cssParserContext());
+        auto consumedInset = CSSPropertyParserHelpers::consumeSingleViewTimelineInsetItem(tokenRange, Ref { document }->cssParserContext());
         if (!consumedInset)
             return Exception { ExceptionCode::TypeError };
 
@@ -305,7 +305,7 @@ void ViewTimeline::cacheCurrentTime()
             return { };
 
         CheckedPtr sourceRenderer = sourceScrollerRenderer();
-        auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), subject->element.document());
+        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), subject->element.document());
         if (!sourceScrollableArea)
             return { };
 
@@ -438,6 +438,13 @@ TimelineRange ViewTimeline::defaultRange() const
     return TimelineRange::defaultForViewTimeline();
 }
 
+Element* ViewTimeline::bindingsSource() const
+{
+    if (auto subject = m_subject.styleable())
+        subject->element.protectedDocument()->updateStyleIfNeeded();
+    return ScrollTimeline::bindingsSource();
+}
+
 Element* ViewTimeline::source() const
 {
     if (CheckedPtr sourceRender = sourceScrollerRenderer())
@@ -495,44 +502,56 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData() const
 
 std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const ScrollTimeline::Data& data, const SingleTimelineRange::Name name) const
 {
-    auto subjectRangeStart = [&]() {
+    auto subjectRangeStart = [&]() -> double {
         switch (name) {
         case SingleTimelineRange::Name::Normal:
         case SingleTimelineRange::Name::Omitted:
         case SingleTimelineRange::Name::Cover:
-        case SingleTimelineRange::Name::Entry:
         case SingleTimelineRange::Name::EntryCrossing:
             return data.rangeStart;
+        case SingleTimelineRange::Name::Entry:
+            // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry
+            // 0% is equivalent to 0% of the cover range.
+            return intervalForTimelineRangeName(data, SingleTimelineRange::Name::Cover).first;
         case SingleTimelineRange::Name::Contain:
             return data.rangeStart + m_cachedCurrentTimeData.subjectSize + m_cachedCurrentTimeData.stickinessData.entryDistanceAdjustment();
         case SingleTimelineRange::Name::Exit:
+            // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit
+            // 0% is equivalent to 100% of the contain range.
+            return intervalForTimelineRangeName(data, SingleTimelineRange::Name::Contain).second;
         case SingleTimelineRange::Name::ExitCrossing:
             return data.rangeEnd - m_cachedCurrentTimeData.subjectSize - m_cachedCurrentTimeData.stickinessData.exitDistanceAdjustment();
         default:
             break;
         }
         ASSERT_NOT_REACHED();
-        return 0.f;
+        return 0.0;
     }();
 
-    auto subjectRangeEnd = [&]() {
+    auto subjectRangeEnd = [&]() -> double {
         switch (name) {
         case SingleTimelineRange::Name::Normal:
         case SingleTimelineRange::Name::Omitted:
         case SingleTimelineRange::Name::Cover:
-        case SingleTimelineRange::Name::Exit:
         case SingleTimelineRange::Name::ExitCrossing:
             return data.rangeEnd;
+        case SingleTimelineRange::Name::Exit:
+            // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit
+            // 100% is equivalent to 100% of the cover range.
+            return intervalForTimelineRangeName(data, SingleTimelineRange::Name::Cover).second;
         case SingleTimelineRange::Name::Contain:
             return data.rangeEnd - m_cachedCurrentTimeData.subjectSize - m_cachedCurrentTimeData.stickinessData.exitDistanceAdjustment();
         case SingleTimelineRange::Name::Entry:
+            // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry
+            // 100% is equivalent to 0% of the contain range.
+            return intervalForTimelineRangeName(data, SingleTimelineRange::Name::Contain).first;
         case SingleTimelineRange::Name::EntryCrossing:
             return data.rangeStart + m_cachedCurrentTimeData.subjectSize + m_cachedCurrentTimeData.stickinessData.entryDistanceAdjustment();
         default:
             break;
         }
         ASSERT_NOT_REACHED();
-        return 0.f;
+        return 0.0;
     }();
 
     if (subjectRangeEnd < subjectRangeStart)
@@ -614,18 +633,18 @@ Ref<CSSNumericValue> ViewTimeline::endOffset() const
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData& stickiness)
 {
-    ts << "[ TopOrLeftAdjustment: " << stickiness.stickyTopOrLeftAdjustment << ", TopOrLeftLocation: " << stickiness.topOrLeftAdjustmentLocation << ", BottomOrRightAdjustment: " << stickiness.stickyBottomOrRightAdjustment << ", BottomOrRightLocation: " << stickiness.bottomOrRightAdjustmentLocation << " ]";
+    ts << "[ TopOrLeftAdjustment: "_s << stickiness.stickyTopOrLeftAdjustment << ", TopOrLeftLocation: "_s << stickiness.topOrLeftAdjustmentLocation << ", BottomOrRightAdjustment: "_s << stickiness.stickyBottomOrRightAdjustment << ", BottomOrRightLocation: "_s << stickiness.bottomOrRightAdjustmentLocation << " ]"_s;
     return ts;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData::StickinessLocation& stickiness)
 {
     switch (stickiness) {
-    case StickinessAdjustmentData::StickinessLocation::BeforeEntry: ts << "BeforeEntry"; break;
-    case StickinessAdjustmentData::StickinessLocation::DuringEntry: ts << "DuringEntry"; break;
-    case StickinessAdjustmentData::StickinessLocation::WhileContained: ts << "WhileContained"; break;
-    case StickinessAdjustmentData::StickinessLocation::DuringExit: ts << "DuringExit"; break;
-    case StickinessAdjustmentData::StickinessLocation::AfterExit: ts << "AfterExit"; break;
+    case StickinessAdjustmentData::StickinessLocation::BeforeEntry: ts << "BeforeEntry"_s; break;
+    case StickinessAdjustmentData::StickinessLocation::DuringEntry: ts << "DuringEntry"_s; break;
+    case StickinessAdjustmentData::StickinessLocation::WhileContained: ts << "WhileContained"_s; break;
+    case StickinessAdjustmentData::StickinessLocation::DuringExit: ts << "DuringExit"_s; break;
+    case StickinessAdjustmentData::StickinessLocation::AfterExit: ts << "AfterExit"_s; break;
     }
     return ts;
 }

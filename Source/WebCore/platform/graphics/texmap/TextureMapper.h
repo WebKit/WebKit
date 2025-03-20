@@ -24,6 +24,7 @@
 #include "BitmapTexturePool.h"
 #include "ClipStack.h"
 #include "Color.h"
+#include "Damage.h"
 #include "FilterOperation.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -70,6 +71,9 @@ public:
     void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&);
 
     WEBCORE_EXPORT void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, AllEdgesExposed = AllEdgesExposed::Yes);
+#if ENABLE(DAMAGE_TRACKING)
+    void drawTextureFragment(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect);
+#endif
     void drawTexture(GLuint texture, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, AllEdgesExposed = AllEdgesExposed::Yes);
     void drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 16>& yuvToRgbMatrix, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, std::optional<GLuint> alphaPlane, AllEdgesExposed = AllEdgesExposed::Yes);
     void drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, AllEdgesExposed = AllEdgesExposed::Yes);
@@ -83,9 +87,11 @@ public:
     BitmapTexture* currentSurface();
     void beginClip(const TransformationMatrix&, const FloatRoundedRect&);
     void beginClip(const TransformationMatrix&, const ClipPath&);
+    void beginClipWithoutApplying(const TransformationMatrix&, const FloatRect&);
     WEBCORE_EXPORT void beginPainting(FlipY = FlipY::No, BitmapTexture* = nullptr);
     WEBCORE_EXPORT void endPainting();
     void endClip();
+    void endClipWithoutApplying();
     IntRect clipBounds();
     IntSize maxTextureSize() const;
     void setDepthRange(double zNear, double zFar);
@@ -106,6 +112,11 @@ public:
 #endif
 
     Ref<TextureMapperGPUBuffer> acquireBufferFromPool(size_t, TextureMapperGPUBuffer::Type);
+
+#if ENABLE(DAMAGE_TRACKING)
+    void setDamage(const Damage& damage) { m_damage = damage; }
+    const Damage& damage() const { return m_damage; }
+#endif
 
 private:
     bool isInMaskMode() const { return m_isMaskMode; }
@@ -140,6 +151,9 @@ private:
     WrapMode m_wrapMode { WrapMode::Stretch };
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
+#if ENABLE(DAMAGE_TRACKING)
+    Damage m_damage;
+#endif
 };
 
 } // namespace WebCore

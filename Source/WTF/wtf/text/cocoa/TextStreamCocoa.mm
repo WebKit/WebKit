@@ -34,16 +34,16 @@ TextStream& TextStream::operator<<(id object)
     }
 
     auto outputArray = [&](NSArray *array) {
-        *this << "[";
+        *this << '[';
 
         for (NSUInteger i = 0; i < array.count; ++i) {
             id item = array[i];
             *this << item;
             if (i < array.count - 1)
-                *this << ", ";
+                *this << ", "_s;
         }
 
-        *this << "]";
+        *this << ']';
     };
 
     if ([object isKindOfClass:[NSArray class]]) {
@@ -52,20 +52,20 @@ TextStream& TextStream::operator<<(id object)
     }
 
     auto outputDictionary = [&](NSDictionary *dictionary) {
-        *this << "{";
+        *this << '{';
         bool needLeadingComma = false;
 
         [dictionary enumerateKeysAndObjectsUsingBlock:[&](id key, id value, BOOL *) {
             if (needLeadingComma)
-                *this << ", ";
+                *this << ", "_s;
             needLeadingComma = true;
 
             *this << key;
-            *this << ": ";
+            *this << ": "_s;
             *this << value;
         }];
 
-        *this << "}";
+        *this << '}';
     };
 
     if ([object isKindOfClass:[NSDictionary class]]) {
@@ -76,26 +76,26 @@ TextStream& TextStream::operator<<(id object)
     if ([object conformsToProtocol:@protocol(NSObject)])
         m_text.append([object description]);
     else
-        *this << "(id)";
+        *this << "(id)"_s;
 
     return *this;
 }
 
 TextStream& operator<<(TextStream& ts, CGRect rect)
 {
-    ts << "{{" << rect.origin.x << ", " << rect.origin.y << "}, {" << rect.size.width << ", " << rect.size.height << "}}";
+    ts << "{{"_s << rect.origin.x << ", "_s << rect.origin.y << "}, {"_s << rect.size.width << ", "_s << rect.size.height << "}}"_s;
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, CGSize size)
 {
-    ts << "{" << size.width << ", " << size.height << "}";
+    ts << '{' << size.width << ", "_s << size.height << '}';
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, CGPoint point)
 {
-    ts << "{" << point.x << ", " << point.y << "}";
+    ts << '{' << point.x << ", "_s << point.y << '}';
     return ts;
 }
 

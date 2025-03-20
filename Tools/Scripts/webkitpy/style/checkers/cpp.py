@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2025 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -133,6 +133,17 @@ _WEBKIT_ADDITIONS_HEADER = 6
 _AUTO_GENERATED_FILES = [
     # VisualStudio resource files
     'Tools/MiniBrowser/win/MiniBrowserLibResource.h',
+
+    # Generated Test Results
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyNames.gperf',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyNames.h',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyParsing.cpp',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyParsing.h',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StyleBuilderGenerated.cpp',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StyleInterpolationWrapperMap.cpp',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StyleInterpolationWrapperMap.h',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StylePropertyShorthandFunctions.cpp',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StylePropertyShorthandFunctions.h',
 ]
 
 
@@ -3561,11 +3572,15 @@ def check_safer_cpp(clean_lines, line_number, error):
 
     uses_xpc_dictionary_get_data = search(r'xpc_dictionary_get_data\(', line)
     if uses_xpc_dictionary_get_data:
-        error(line_number, 'safercpp/xpc_dictionary_get_data', 4, "Use xpc_dictionary_get_data_span() instead of xpc_dictionary_get_data().")
+        error(line_number, 'safercpp/xpc_dictionary_get_data', 4, "Use xpcDictionaryGetData() instead of xpc_dictionary_get_data().")
 
     uses_xpc_dictionary_get_string = search(r'xpc_dictionary_get_string\(', line)
     if uses_xpc_dictionary_get_string:
-        error(line_number, 'safercpp/xpc_dictionary_get_string', 4, "Use xpc_dictionary_get_wtfstring() instead of xpc_dictionary_get_string().")
+        error(line_number, 'safercpp/xpc_dictionary_get_string', 4, "Use xpcDictionaryGetString() instead of xpc_dictionary_get_string().")
+
+    uses_xpc_string_get_string_ptr = search(r'xpc_string_get_string_ptr\(', line)
+    if uses_xpc_string_get_string_ptr:
+        error(line_number, 'safercpp/xpc_string_get_string_ptr', 4, "Use xpcStringGetString() instead of xpc_string_get_string_ptr().")
 
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
@@ -4916,6 +4931,7 @@ class CppChecker(object):
         'safercpp/timer_exception',
         'safercpp/xpc_dictionary_get_data',
         'safercpp/xpc_dictionary_get_string',
+        'safercpp/xpc_string_get_string_ptr',
         'security/assertion',
         'security/assertion_fallthrough',
         'security/javascriptcore_wtf_blockptr',

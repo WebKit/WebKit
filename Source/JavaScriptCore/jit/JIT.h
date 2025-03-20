@@ -39,6 +39,7 @@
 #include "JSInterfaceJIT.h"
 #include "LLIntData.h"
 #include "PCToCodeOriginMap.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -205,6 +206,9 @@ namespace JSC {
             call(function, OperationPtrTag);
         }
 
+        template<size_t minAlign, typename Bytecode>
+        Address computeBaseAddressForMetadata(const Bytecode&, GPRReg);
+
         template <typename Bytecode>
         void loadPtrFromMetadata(const Bytecode&, size_t offset, GPRReg);
 
@@ -246,7 +250,6 @@ namespace JSC {
 
         void exceptionCheck(Jump jumpToHandler);
         void exceptionCheck();
-        void exceptionChecksWithCallFrameRollback(Jump jumpToHandler);
 
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
@@ -477,7 +480,7 @@ namespace JSC {
         void emit_op_new_async_generator_func(const JSInstruction*);
         void emit_op_new_async_generator_func_exp(const JSInstruction*);
         void emit_op_new_object(const JSInstruction*);
-        void emit_op_new_regexp(const JSInstruction*);
+        void emit_op_new_reg_exp(const JSInstruction*);
         void emit_op_create_lexical_environment(const JSInstruction*);
         void emit_op_create_direct_arguments(const JSInstruction*);
         void emit_op_create_scoped_arguments(const JSInstruction*);
@@ -779,16 +782,6 @@ namespace JSC {
             return appendCall(operation);
         }
 
-        template<typename OperationType, typename... Args>
-        MacroAssembler::Call callThrowOperationWithCallFrameRollback(OperationType operation, Args... args)
-        {
-            setupArguments<OperationType>(args...);
-            updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
-            MacroAssembler::Call call = appendCall(operation);
-            exceptionChecksWithCallFrameRollback(jump());
-            return call;
-        }
-
         enum class ProfilingPolicy {
             ShouldEmitProfiling,
             NoProfiling
@@ -911,8 +904,8 @@ namespace JSC {
         MathICHolder m_mathICs;
 
         Vector<JITConstantPool::Value> m_constantPool;
-        SegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
-        SegmentedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
+        SaSegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
+        SaSegmentedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
         FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
 

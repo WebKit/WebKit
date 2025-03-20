@@ -1,0 +1,19 @@
+
+
+PASS invoker should reflect  properly
+PASS invoker should reflect show-modal properly
+PASS invoker should reflect toggle-popover properly
+PASS invoker should reflect hide-popover properly
+PASS invoker should reflect show-popover properly
+PASS invoker should reflect close properly
+PASS invoker should reflect --custom properly
+PASS invoker should reflect odd cased sHoW-MoDaL properly - as show-modal
+PASS invoker should reflect odd cased tOgGlE-pOpOvEr properly - as toggle-popover
+PASS invoker should reflect odd cased hIdE-pOpOvEr properly - as hide-popover
+PASS invoker should reflect odd cased sHoW-pOpOvEr properly - as show-popover
+PASS invoker should reflect odd cased ClOsE properly - as close
+PASS invoker should reflect odd cased --cUsToM properly - as --cUsToM
+PASS invoker should reflect the invalid value "invalid" as the empty string
+PASS invoker should reflect the invalid value "show-invalid" as the empty string
+PASS invoker should reflect the invalid value "foo-bar" as the empty string
+

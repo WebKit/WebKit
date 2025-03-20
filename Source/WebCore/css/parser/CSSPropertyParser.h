@@ -72,7 +72,6 @@ private:
 
     // @font-face descriptors.
     bool parseFontFaceDescriptor(CSSPropertyID);
-    bool parseFontFaceDescriptorShorthand(CSSPropertyID);
 
     // @font-palette-values descriptors.
     bool parseFontPaletteValuesDescriptor(CSSPropertyID);
@@ -162,6 +161,7 @@ private:
     bool consumeTextWrapShorthand(bool important);
     bool consumeWhiteSpaceShorthand(bool important);
 
+    bool consumePositionTryShorthand(bool important);
 private:
     // Inputs:
     CSSParserTokenRange m_range;

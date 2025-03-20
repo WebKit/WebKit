@@ -100,12 +100,12 @@ void ScrollingTreeFrameHostingNode::applyLayerPositions()
 
 void ScrollingTreeFrameHostingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "frame hosting node";
+    ts << "frame hosting node"_s;
     if (auto hostingContextIdentifier = m_hostingContext) {
         if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
-            ts.dumpProperty("hosting context identifier", *m_hostingContext);
+            ts.dumpProperty("hosting context identifier"_s, *m_hostingContext);
         else
-            ts.dumpProperty("has hosting context identifier", "");
+            ts.dumpProperty("has hosting context identifier"_s, "");
     }
     ScrollingTreeNode::dumpProperties(ts, behavior);
 }

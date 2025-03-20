@@ -82,7 +82,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion The app extension bundle must contain a `manifest.json` file in its resources directory. If the manifest is invalid or missing,
  or the bundle is otherwise improperly configured, an error will be returned.
  */
-+ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
++ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL, which can point to either a directory or a ZIP archive.
@@ -91,7 +91,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion The URL must be a file URL that points to either a directory with a `manifest.json` file or a ZIP archive containing a `manifest.json` file.
  If the manifest is invalid or missing, or the URL points to an unsupported format or invalid archive, an error will be returned.
  */
-+ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
++ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract An array of all errors that occurred during the processing of the extension.

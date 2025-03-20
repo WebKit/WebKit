@@ -79,7 +79,7 @@ std::unique_ptr<FilterEffectApplier> SourceGraphic::createSoftwareApplier() cons
 
 TextStream& SourceGraphic::externalRepresentation(TextStream& ts, FilterRepresentation) const
 {
-    ts << indent << "[SourceGraphic]\n";
+    ts << indent << "[SourceGraphic]\n"_s;
     return ts;
 }
 

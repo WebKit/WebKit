@@ -47,12 +47,29 @@ WebFileSystemStorageConnection::WebFileSystemStorageConnection(Ref<IPC::Connecti
 {
 }
 
+void WebFileSystemStorageConnection::errorWritable(WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::FileSystemWritableFileStreamIdentifier writableIdentifier)
+{
+    if (errorFileSystemWritable(writableIdentifier))
+        return;
+
+    WebCore::ScriptExecutionContext::postTaskTo(contextIdentifier, [writableIdentifier, protectedThis = Ref { *this }](auto& context) mutable {
+        RefPtr globalScope = dynamicDowncast<WebCore::WorkerGlobalScope>(context);
+        RefPtr connection = globalScope ? globalScope->fileSystemStorageConnection() : nullptr;
+        if (connection)
+            connection->errorFileSystemWritable(writableIdentifier);
+    });
+}
+
 void WebFileSystemStorageConnection::connectionClosed()
 {
     m_connection = nullptr;
 
     for (auto identifier : m_syncAccessHandles.keys())
         invalidateAccessHandle(identifier);
+
+    auto writableIdentifiers = std::exchange(m_writableIdentifiers, { });
+    for (auto keyValue : writableIdentifiers)
+        errorWritable(keyValue.value, keyValue.key);
 }
 
 void WebFileSystemStorageConnection::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
@@ -214,18 +231,26 @@ void WebFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSystemS
     }
 }
 
-void WebFileSystemStorageConnection::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, StreamCallback&& completionHandler)
+void WebFileSystemStorageConnection::createWritable(WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, StreamCallback&& completionHandler)
 {
     RefPtr connection = m_connection;
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateWritable(identifier, keepExistingData), [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateWritable(identifier, keepExistingData), [protectedThis = Ref { *this }, contextIdentifier, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
+        ASSERT(!protectedThis->m_writableIdentifiers.contains(result.value()));
+        protectedThis->m_writableIdentifiers.add(result.value(), contextIdentifier);
         completionHandler(WTFMove(result.value()));
     });
+}
+
+void WebFileSystemStorageConnection::invalidateWritable(WebCore::FileSystemWritableFileStreamIdentifier identifier)
+{
+    if (auto contextIdentifier = m_writableIdentifiers.take(identifier))
+        errorWritable(contextIdentifier, identifier);
 }
 
 void WebFileSystemStorageConnection::closeWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCloseReason reason, VoidCallback&& completionHandler)
@@ -234,6 +259,7 @@ void WebFileSystemStorageConnection::closeWritable(WebCore::FileSystemHandleIden
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
+    m_writableIdentifiers.remove(streamIdentifier);
     connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseWritable(identifier, streamIdentifier, reason), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });

@@ -101,7 +101,9 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
         limits.limits.maxComputeWorkgroupSizeZ,
         limits.limits.maxComputeWorkgroupsPerDimension,
         limits.limits.maxStorageBuffersInFragmentStage,
-        limits.limits.maxStorageTexturesInFragmentStage);
+        limits.limits.maxStorageTexturesInFragmentStage,
+        limits.limits.maxStorageBuffersInVertexStage,
+        limits.limits.maxStorageTexturesInVertexStage);
 }
 
 static bool isFallbackAdapter(WGPUAdapter adapter)
@@ -229,6 +231,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         SET_MAX_VALUE(maxComputeWorkgroupsPerDimension)
         SET_MAX_VALUE(maxStorageBuffersInFragmentStage)
         SET_MAX_VALUE(maxStorageTexturesInFragmentStage)
+        SET_MAX_VALUE(maxStorageBuffersInVertexStage)
+        SET_MAX_VALUE(maxStorageTexturesInVertexStage)
         else {
             callback(nullptr);
             return;
@@ -243,8 +247,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
     WGPUDeviceDescriptor backingDescriptor {
         .nextInChain = nullptr,
         .label = label.data(),
-        .requiredFeatureCount = static_cast<uint32_t>(features.size()),
-        .requiredFeatures = features.data(),
+        .requiredFeatureCount = features.size(),
+        .requiredFeatures = features.size() ? features.data() : nullptr,
         .requiredLimits = &requiredLimits,
         .defaultQueue = {
             { },
@@ -287,7 +291,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxComputeWorkgroupSizeZ,
         limits.maxComputeWorkgroupsPerDimension,
         limits.maxStorageBuffersInFragmentStage,
-        limits.maxStorageTexturesInFragmentStage);
+        limits.maxStorageTexturesInFragmentStage,
+        limits.maxStorageBuffersInVertexStage,
+        limits.maxStorageTexturesInVertexStage);
 
     auto requestedFeatures = supportedFeatures(features);
     auto blockPtr = makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus status, WGPUDevice device, const char*) mutable {

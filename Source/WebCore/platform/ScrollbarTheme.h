@@ -110,6 +110,7 @@ public:
     virtual void didCreateScrollerImp(Scrollbar&) { };
 
     virtual bool isMockTheme() const { return false; }
+    virtual bool isScrollbarThemeMac() const { return false; }
 
     WEBCORE_EXPORT static ScrollbarTheme& theme();
 

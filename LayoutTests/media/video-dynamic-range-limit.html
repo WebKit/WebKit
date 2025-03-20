@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true ] -->
+<html>
+  <head>
+    <title>object-fit, video</title>
+    <style>
+        video {
+            width: 120px;
+            height: 120px;
+            border: 1px solid blue;
+            background-color: gray;
+            margin: 10px;
+        }
+    </style>
+    <script src=media-file.js></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', event => {
+            let videos = Array.from(document.getElementsByTagName('video'));
+            let totalCount = videos.length;
+            var count = totalCount;
+
+            videos.forEach(video => {
+                video.src = findMediaFile('video', 'content/test');
+                video.requestVideoFrameCallback((now, metadata) => {
+                    if (!--count && window.testRunner)
+                        testRunner.notifyDone()
+                });
+            });
+        });
+    </script>
+
+  </head>
+  <body>
+    <video style="dynamic-range-limit: no-limit"></video>
+    <video style="dynamic-range-limit: standard"></video>
+    <video style="dynamic-range-limit: constrained-high"></video>
+    <video style="dynamic-range-limit: dynamic-range-limit-mix(standard 25%, constrained-high 75%)"></video>
+    <p>Note: These are SDR videos anyway, this tests the minimal code paths when specifying dynamic-range-limit.
+    FIXME: Add HDR videos.
+  </body>
+</html>

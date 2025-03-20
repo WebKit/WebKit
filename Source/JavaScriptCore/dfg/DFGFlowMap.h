@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 // values of Phis. This makes it easy to do both of those things.
 template<typename T>
 class FlowMap {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(FlowMap);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(FlowMap);
 public:
     FlowMap(Graph& graph)
         : m_graph(graph)
@@ -121,7 +121,7 @@ private:
     Vector<T, 0, UnsafeVectorOverflow> m_shadowMap;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, FlowMap<T>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename T>, FlowMap<T>);
 
 } } // namespace JSC::DFG
 

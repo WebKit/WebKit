@@ -359,4 +359,10 @@ void ServiceWorkerGlobalScope::navigationPreloadIsReady(FetchKey key, ResourceRe
     iterator->value.navigationPreload = makeUniqueRef<ResourceResponse>(WTFMove(response));
 }
 
+void ServiceWorkerGlobalScope::storeEventTypesToHandle()
+{
+    m_hasFetchEventHandler = hasEventListeners(eventNames().fetchEvent);
+}
+
+
 } // namespace WebCore

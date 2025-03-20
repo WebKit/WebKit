@@ -479,7 +479,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         if (![WKMaterialHostingSupport isMaterialHostingAvailable])
             return makeWithLayer(adoptNS([[CALayer alloc] init]));
 
-        return makeWithLayer(adoptNS([WKMaterialHostingSupport createHostingLayer]));
+        return makeWithLayer([WKMaterialHostingSupport hostingLayer]);
     }
 #endif
 

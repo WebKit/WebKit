@@ -5,9 +5,38 @@ Execution tests for the 'textureNumLayers' builtin function
 
 Returns the number of layers (elements) of an array texture.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../../../gpu_test.js';
+import {
+  isTextureFormatPossiblyStorageReadWritable,
+  kPossibleStorageTextureFormats } from
+'../../../../../format_info.js';
+import { kShaderStages } from '../../../../validation/decl/util.js';
 
-export const g = makeTestGroup(GPUTest);
+import { kSampleTypeInfo, WGSLTextureQueryTest } from './texture_utils.js';
+
+const kNumLayers = 36;
+
+function getLayerSettingsAndExpected({
+  view_type,
+  isCubeArray
+
+
+
+}) {
+  const divisor = isCubeArray ? 6 : 1;
+  return view_type === 'partial' ?
+  {
+    baseArrayLayer: 11,
+    arrayLayerCount: 6,
+    expected: [6 / divisor]
+  } :
+  {
+    baseArrayLayer: 0,
+    arrayLayerCount: kNumLayers,
+    expected: [kNumLayers / divisor]
+  };
+}
+
+export const g = makeTestGroup(WGSLTextureQueryTest);
 
 g.test('sampled').
 specURL('https://www.w3.org/TR/WGSL/#texturenumlayers').
@@ -25,10 +54,50 @@ Parameters
 params((u) =>
 u.
 combine('texture_type', ['texture_2d_array', 'texture_cube_array']).
+combine('view_type', ['full', 'partial']).
 beginSubcases().
-combine('sampled_type', ['f32-only', 'i32', 'u32'])
+combine('sampled_type', ['f32', 'i32', 'u32']).
+combine('stage', kShaderStages)
 ).
-unimplemented();
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.view_type === 'partial',
+    'compatibility mode does not support partial layer views'
+  );
+  t.skipIf(
+    t.isCompatibility && t.params.texture_type === 'texture_cube_array',
+    'compatibility mode does not support cube arrays'
+  );
+}).
+fn((t) => {
+  const { stage, texture_type, sampled_type, view_type } = t.params;
+  const { format } = kSampleTypeInfo[sampled_type];
+
+  const texture = t.createTextureTracked({
+    format,
+    usage: GPUTextureUsage.TEXTURE_BINDING,
+    size: [1, 1, kNumLayers]
+  });
+
+  const code = `
+@group(0) @binding(0) var t: ${texture_type}<${sampled_type}>;
+fn getValue() -> u32 {
+  return textureNumLayers(t);
+}
+    `;
+
+  const { baseArrayLayer, arrayLayerCount, expected } = getLayerSettingsAndExpected({
+    view_type,
+    isCubeArray: texture_type === 'texture_cube_array'
+  });
+  const viewDescription = {
+    dimension: texture_type === 'texture_2d_array' ? '2d-array' : 'cube-array',
+    baseArrayLayer,
+    arrayLayerCount
+  };
+
+  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+});
 
 g.test('arrayed').
 specURL('https://www.w3.org/TR/WGSL/#texturenumlayers').
@@ -42,9 +111,51 @@ Parameters
 `
 ).
 params((u) =>
-u.combine('texture_type', ['texture_depth_2d_array', 'texture_depth_cube_array'])
+u.
+combine('texture_type', ['texture_depth_2d_array', 'texture_depth_cube_array']).
+combine('view_type', ['full', 'partial']).
+beginSubcases().
+combine('stage', kShaderStages)
 ).
-unimplemented();
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.view_type === 'partial',
+    'compatibility mode does not support partial layer views'
+  );
+  t.skipIf(
+    t.isCompatibility && t.params.texture_type === 'texture_depth_cube_array',
+    'compatibility mode does not support cube arrays'
+  );
+}).
+fn((t) => {
+  const { stage, texture_type, view_type } = t.params;
+
+  const texture = t.createTextureTracked({
+    format: 'depth32float',
+    usage: GPUTextureUsage.TEXTURE_BINDING,
+    size: [1, 1, kNumLayers]
+  });
+
+  const code = `
+@group(0) @binding(0) var t: ${texture_type};
+@group(0) @binding(1) var<storage, read_write> result: u32;
+fn getValue() -> u32 {
+  return textureNumLayers(t);
+}
+    `;
+
+  const { baseArrayLayer, arrayLayerCount, expected } = getLayerSettingsAndExpected({
+    view_type,
+    isCubeArray: texture_type === 'texture_depth_cube_array'
+  });
+  const viewDescription = {
+    dimension: texture_type === 'texture_depth_2d_array' ? '2d-array' : 'cube-array',
+    baseArrayLayer,
+    arrayLayerCount
+  };
+
+  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+});
 
 g.test('storage').
 specURL('https://www.w3.org/TR/WGSL/#texturenumlayers').
@@ -76,25 +187,53 @@ Parameters
 ).
 params((u) =>
 u.
+combine('format', kPossibleStorageTextureFormats).
+combine('view_type', ['full', 'partial']).
 beginSubcases().
-combine('texel_format', [
-'rgba8unorm',
-'rgba8snorm',
-'rgba8uint',
-'rgba8sint',
-'rgba16uint',
-'rgba16sint',
-'rgba16float',
-'r32uint',
-'r32sint',
-'r32float',
-'rg32uint',
-'rg32sint',
-'rg32float',
-'rgba32uint',
-'rgba32sint',
-'rgba32float']
+combine('stage', kShaderStages).
+combine('access_mode', ['read', 'write', 'read_write']).
+filter(
+  (t) => t.access_mode !== 'read_write' || !isTextureFormatPossiblyStorageReadWritable(t.format)
+)
+// Vertex stage can not use writable storage textures.
+.unless((t) => t.stage === 'vertex' && t.access_mode !== 'read')
 ).
-combine('access_mode', ['read', 'write', 'read_write'])
-).
-unimplemented();
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.view_type === 'partial',
+    'compatibility mode does not support partial layer views'
+  );
+}).
+fn((t) => {
+  const { stage, format, access_mode, view_type } = t.params;
+  t.skipIfNoStorageTexturesInStage(stage);
+  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+  if (access_mode === 'read_write') {
+    t.skipIfTextureFormatNotUsableAsReadWriteStorageTexture(format);
+  }
+
+  const texture = t.createTextureTracked({
+    format,
+    usage: GPUTextureUsage.STORAGE_BINDING,
+    size: [1, 1, kNumLayers]
+  });
+
+  const code = `
+@group(0) @binding(0) var t: texture_storage_2d_array<${format}, ${access_mode}>;
+@group(0) @binding(1) var<storage, read_write> result: u32;
+fn getValue() -> u32 {
+  return textureNumLayers(t);
+}
+    `;
+
+  const { baseArrayLayer, arrayLayerCount, expected } = getLayerSettingsAndExpected({
+    view_type
+  });
+  const viewDescription = {
+    dimension: '2d-array',
+    baseArrayLayer,
+    arrayLayerCount
+  };
+
+  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+});

@@ -83,14 +83,14 @@ static void dumpWasmSource(const Vector<uint8_t>& source)
     auto fileHandle = FileSystem::openFile(WTF::makeString(unsafeSpan(file), (count++), ".wasm"_s),
         FileSystem::FileOpenMode::Truncate,
         FileSystem::FileAccessPermission::All,
+        { },
         /* failIfFileExists = */ true);
-    if (fileHandle == FileSystem::invalidPlatformFileHandle) {
+    if (!fileHandle) {
         dataLogLn("Error dumping wasm");
         return;
     }
     dataLogLn("Dumping ", source.size(), " wasm source bytes to ", WTF::makeString(unsafeSpan(file), (count - 1), ".wasm"_s));
-    FileSystem::writeToFile(fileHandle, source.span());
-    FileSystem::closeFile(fileHandle);
+    fileHandle.write(source.span());
 }
 #endif
 

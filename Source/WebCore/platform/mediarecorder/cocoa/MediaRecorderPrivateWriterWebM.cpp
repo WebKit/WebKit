@@ -40,6 +40,14 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(mkvmuxer::AudioTrack)
+    static bool isType(const mkvmuxer::Track& track) { return track.type() == mkvmuxer::Tracks::kAudio; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(mkvmuxer::VideoTrack)
+    static bool isType(const mkvmuxer::Track& track) { return track.type() == mkvmuxer::Tracks::kVideo; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateWriterWebM);
@@ -97,7 +105,7 @@ public:
         auto trackIndex = m_segment.AddAudioTrack(info.rate, info.channels, 0);
         if (!trackIndex)
             return { };
-        auto* audioTrack = reinterpret_cast<mkvmuxer::AudioTrack*>(m_segment.GetTrackByNumber(trackIndex));
+        auto* audioTrack = downcast<mkvmuxer::AudioTrack>(m_segment.GetTrackByNumber(trackIndex));
         ASSERT(audioTrack);
         audioTrack->set_bit_depth(32u);
         audioTrack->set_codec_id(mkvCodeIcForMediaVideoCodecId(info.codecName));
@@ -115,7 +123,7 @@ public:
         auto trackIndex = m_segment.AddVideoTrack(info.size.width(), info.size.height(), 0);
         if (!trackIndex)
             return { };
-        auto* videoTrack = reinterpret_cast<mkvmuxer::VideoTrack*>(m_segment.GetTrackByNumber(trackIndex));
+        auto* videoTrack = downcast<mkvmuxer::VideoTrack>(m_segment.GetTrackByNumber(trackIndex));
         ASSERT(videoTrack);
         videoTrack->set_codec_id(mkvCodeIcForMediaVideoCodecId(info.codecName));
         if (RefPtr atomData = info.atomData; atomData && atomData->span().size())

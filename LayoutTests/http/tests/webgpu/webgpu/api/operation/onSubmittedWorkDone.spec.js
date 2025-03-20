@@ -6,9 +6,9 @@ Tests for the behavior of GPUQueue.onSubmittedWorkDone().
 Note that any promise timeouts will be detected by the framework.
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { range } from '../../../common/util/util.js';
-import { GPUTest } from '../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../gpu_test.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('without_work').
 desc(`Await onSubmittedWorkDone once without having submitted any work.`).
@@ -19,7 +19,7 @@ fn(async (t) => {
 g.test('with_work').
 desc(`Await onSubmittedWorkDone once after submitting some work (writeBuffer).`).
 fn(async (t) => {
-  const buffer = t.device.createBuffer({ size: 4, usage: GPUBufferUsage.COPY_DST });
+  const buffer = t.createBufferTracked({ size: 4, usage: GPUBufferUsage.COPY_DST });
   t.queue.writeBuffer(buffer, 0, new Uint8Array(4));
   await t.queue.onSubmittedWorkDone();
 });

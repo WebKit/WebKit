@@ -51,12 +51,12 @@ void DeviceMotionClientIOS::setController(DeviceMotionController* controller)
     m_controller = controller;
 }
 
-void DeviceMotionClientIOS::startUpdating()
+void DeviceMotionClientIOS::startUpdating(const SecurityOriginData& origin)
 {
     m_updating = true;
 
     if (m_deviceOrientationUpdateProvider) {
-        m_deviceOrientationUpdateProvider->startUpdatingDeviceMotion(*this);
+        m_deviceOrientationUpdateProvider->startUpdatingDeviceMotion(*this, origin);
         return;
     }
 

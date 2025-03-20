@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<style>
+body, html {
+    width: 100%;
+    margin: 0;
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+main.container {
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid red;
+    box-sizing: border-box;
+    z-index: 0;
+    position: relative;
+}
+
+div.scroller {
+    overflow: scroll;
+    width: 100%;
+    height: 250px;
+    border: 1px solid green;
+    box-sizing: border-box;
+}
+
+p.tall {
+    width: 100%;
+    margin: 200px auto;
+    text-align: center;
+}
+
+#base {
+    border: 1px solid red;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that a text selection on text outside of an overflow scrolling container does not prevent the user from scrolling the container");
+
+    const base = document.getElementById("base");
+    const extent = document.getElementById("extent");
+    const scroller = document.querySelector(".scroller");
+
+    await UIHelper.longPressElement(base);
+    await UIHelper.waitForSelectionToAppear();
+
+    const range = getSelection().getRangeAt(0);
+    range.setEndAfter(extent);
+    getSelection().removeAllRanges(0);
+    getSelection().addRange(range);
+    await UIHelper.ensurePresentationUpdate();
+
+    const scrollerMidpoint = UIHelper.midPointOfRect(scroller.getBoundingClientRect());
+
+    const swipeStart = { x : scrollerMidpoint.x + 100, y : scrollerMidpoint.y + 50 };
+    const swipeEnd = { x : scrollerMidpoint.x + 100, y : scrollerMidpoint.y - 250 };
+    const maxNumberOfAttempts = 8;
+    let numberOfAttemptsRemaining = maxNumberOfAttempts;
+
+    do {
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(swipeStart.x, swipeStart.y)
+            .move(swipeEnd.x, swipeEnd.y, 0.5)
+            .end()
+            .takeResult());
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+
+        if (scroller.scrollTop >= 100) {
+            testPassed("Scrolled overflow container");
+            finishJSTest();
+            return;
+        }
+
+        await UIHelper.delayFor(200);
+    } while (--numberOfAttemptsRemaining)
+
+    testFailed(`Failed to scroll after ${maxNumberOfAttempts} swipes`);
+    finishJSTest();
+
+});
+</script>
+</head>
+<body>
+    <main class="container">
+        <div class="scroller">
+            <p class="tall">Start <span id="base">selection</span> here</p>
+        </div>
+        <p id="extent">End selection here</p>
+    </main>
+</body>

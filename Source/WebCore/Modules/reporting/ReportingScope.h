@@ -44,31 +44,31 @@ class Report;
 class ReportingObserver;
 class ScriptExecutionContext;
 
-class WEBCORE_EXPORT ReportingScope final : public RefCountedAndCanMakeWeakPtr<ReportingScope>, public ContextDestructionObserver {
+class ReportingScope final : public RefCountedAndCanMakeWeakPtr<ReportingScope>, public ContextDestructionObserver {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ReportingScope, WEBCORE_EXPORT);
 public:
     static Ref<ReportingScope> create(ScriptExecutionContext&);
-    virtual ~ReportingScope();
+    WEBCORE_EXPORT virtual ~ReportingScope();
 
     void removeAllObservers();
     void clearReports();
 
     void registerReportingObserver(ReportingObserver&);
     void unregisterReportingObserver(ReportingObserver&);
-    void notifyReportObservers(Ref<Report>&&);
+    WEBCORE_EXPORT void notifyReportObservers(Ref<Report>&&);
     void appendQueuedReportsForRelevantType(ReportingObserver&);
 
     bool containsObserver(const ReportingObserver&) const;
 
-    static MemoryCompactRobinHoodHashMap<String, String> parseReportingEndpointsFromHeader(const String&, const URL& baseURL);
+    WEBCORE_EXPORT static MemoryCompactRobinHoodHashMap<String, String> parseReportingEndpointsFromHeader(const String&, const URL& baseURL);
     void parseReportingEndpoints(const String&, const URL& baseURL);
 
     String endpointURIForToken(const String&) const;
 
-    void generateTestReport(String&& message, String&& group);
+    WEBCORE_EXPORT void generateTestReport(String&& message, String&& group);
 
 private:
-    explicit ReportingScope(ScriptExecutionContext&);
+    WEBCORE_EXPORT explicit ReportingScope(ScriptExecutionContext&);
 
     Vector<Ref<ReportingObserver>> m_reportingObservers;
     Deque<Ref<Report>> m_queuedReports;

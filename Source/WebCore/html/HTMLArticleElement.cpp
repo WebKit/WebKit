@@ -28,6 +28,7 @@
 
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "NodeInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ auto HTMLArticleElement::insertedIntoAncestor(InsertionType insertionType, Conta
     auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
     if (insertionType.connectedToDocument) {
-        if (auto* newDocument = dynamicDowncast<HTMLDocument>(parentOfInsertedTree.document()))
+        if (RefPtr newDocument = dynamicDowncast<HTMLDocument>(parentOfInsertedTree.document()))
             newDocument->registerArticleElement(*this);
     }
 
@@ -60,7 +61,7 @@ auto HTMLArticleElement::insertedIntoAncestor(InsertionType insertionType, Conta
 void HTMLArticleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        oldParentOfRemovedTree.document().unregisterArticleElement(*this);
+        oldParentOfRemovedTree.protectedDocument()->unregisterArticleElement(*this);
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }

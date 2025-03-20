@@ -45,6 +45,7 @@ messages -> WebIDBConnectionToServer {
     DidIterateCursor(WebKit::WebIDBResult result)
 
     FireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
+    GenerateIndexKeyForRecord(WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IDBIndexInfo indexInfo, std::optional<WebCore::IDBKeyPath> keyPath, WebCore::IDBKeyData key, WebCore::IDBValue value, std::optional<int64_t> recordID)
     DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
     DidCloseFromServer(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, WebCore::IDBError error) final;
     NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)

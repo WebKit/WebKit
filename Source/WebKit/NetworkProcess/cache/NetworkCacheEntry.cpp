@@ -106,9 +106,10 @@ Storage::Record Entry::encodeAsStorageRecord() const
 
     Data header(encoder.span());
     Data body;
-    if (m_buffer) {
-        m_buffer = m_buffer->makeContiguous();
-        body = { downcast<WebCore::SharedBuffer>(*m_buffer).span() };
+    if (RefPtr buffer = m_buffer) {
+        Ref contiguousBuffer = buffer->makeContiguous();
+        m_buffer = contiguousBuffer.copyRef();
+        body = { contiguousBuffer->span() };
     }
 
     return { m_key, m_timeStamp, header, body, { } };
@@ -208,15 +209,17 @@ RefPtr<WebCore::FragmentedSharedBuffer> Entry::protectedBuffer() const
 #if ENABLE(SHAREABLE_RESOURCE)
 std::optional<WebCore::ShareableResource::Handle> Entry::shareableResourceHandle() const
 {
-    if (m_shareableResource)
-        return m_shareableResource->createHandle();
+    if (RefPtr shareableResource = m_shareableResource)
+        return shareableResource->createHandle();
 
     auto sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
     if (!sharedMemory)
         return std::nullopt;
 
-    if ((m_shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size())))
-        return m_shareableResource->createHandle();
+    RefPtr shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size());
+    m_shareableResource = shareableResource;
+    if (shareableResource)
+        return shareableResource->createHandle();
     return std::nullopt;
 }
 #endif

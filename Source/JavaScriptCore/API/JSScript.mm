@@ -161,15 +161,12 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     String cacheFilename = [m_cachePath path];
 
-    auto fd = FileSystem::openAndLockFile(cacheFilename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
-    if (!FileSystem::isHandleValid(fd))
+    auto handle = FileSystem::openFile(cacheFilename, FileSystem::FileOpenMode::Read, FileSystem::FileAccessPermission::All, { FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking });
+    if (!handle)
         return;
-    auto closeFD = makeScopeExit([&] {
-        FileSystem::unlockAndCloseFile(fd);
-    });
 
     bool success;
-    FileSystem::MappedFileData mappedFile(fd, FileSystem::MappedFileMode::Private, success);
+    FileSystem::MappedFileData mappedFile(handle, FileSystem::MappedFileMode::Private, success);
     if (!success)
         return;
 
@@ -205,7 +202,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
         m_cachedBytecode = WTFMove(cachedBytecode);
     else
-        FileSystem::truncateFile(fd, 0);
+        handle.truncate(0);
 }
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
@@ -307,41 +304,33 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     NSString *cachePathString = [m_cachePath path];
     const char* cacheFileName = cachePathString.UTF8String;
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
-    int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
-    if (fd == -1) {
+    auto fileHandle = FileSystem::FileHandle::adopt(open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600));
+    if (!fileHandle) {
         error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: "_s, safeStrerror(errno).span());
         return NO;
     }
 
-    auto closeFD = makeScopeExit([&] {
-        close(fd);
-    });
-
-    int tempFD = open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600);
-    if (tempFD == -1) {
+    auto tempFileHandle = FileSystem::FileHandle::adopt(open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600));
+    if (!tempFileHandle) {
         error = makeString("Could not open or lock the bytecode cache temp file. Error: "_s, safeStrerror(errno).span());
         return NO;
     }
-
-    auto closeTempFD = makeScopeExit([&] {
-        close(tempFD);
-    });
 
     JSC::BytecodeCacheError cacheError;
     JSC::SourceCode sourceCode = [self sourceCode];
     JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     switch (m_type) {
     case kJSScriptTypeModule:
-        m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, tempFD, cacheError);
+        m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, tempFileHandle, cacheError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateProgramBytecode(vm, sourceCode, tempFD, cacheError);
+        m_cachedBytecode = JSC::generateProgramBytecode(vm, sourceCode, tempFileHandle, cacheError);
         break;
     }
 
     if (cacheError.isValid()) {
         m_cachedBytecode = JSC::CachedBytecode::create();
-        FileSystem::truncateFile(fd, 0);
+        fileHandle.truncate(0);
         error = makeString("Unable to generate bytecode for this JSScript because: "_s, cacheError.message());
         return NO;
     }
@@ -350,9 +339,9 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     SHA1 sha1;
     sha1.addBytes(m_cachedBytecode->span());
     sha1.computeHash(computedHash);
-    FileSystem::writeToFile(tempFD, computedHash);
+    tempFileHandle.write(computedHash);
 
-    fsync(tempFD);
+    tempFileHandle.flush();
     rename(tempFileName, cacheFileName);
     return YES;
 }

@@ -31,6 +31,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CSSViewTransitionRule.h"
@@ -568,6 +569,11 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
     queries.reverse();
 
     return queries;
+}
+
+const RefPtr<const StyleRulePositionTry> RuleSet::positionTryRuleForName(const AtomString& name) const
+{
+    return m_positionTryRules.get(name);
 }
 
 } // namespace Style

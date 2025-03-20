@@ -12,5 +12,8 @@ EXPECTED ((videoHeight == 240 || videoHeight == 0) == 'true') OK
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '0') OK
+EXPECTED (video.textTracks.length == '0') OK
 END OF TEST
 

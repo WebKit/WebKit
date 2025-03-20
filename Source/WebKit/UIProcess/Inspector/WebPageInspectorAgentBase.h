@@ -40,8 +40,8 @@ class WebPageProxy;
 
 // FIXME: move this to Inspector namespace when remaining agents move.
 struct WebPageAgentContext {
-    Inspector::FrontendRouter& frontendRouter;
-    Inspector::BackendDispatcher& backendDispatcher;
+    Ref<Inspector::FrontendRouter> frontendRouter;
+    Ref<Inspector::BackendDispatcher> backendDispatcher;
     WeakRef<WebPageProxy> inspectedPage;
 };
 

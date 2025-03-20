@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,54 +31,55 @@
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyGCObjectBase.h"
 #include <wtf/Ref.h>
+#include <wtf/TrailingArray.h>
 
 namespace JSC {
 
 class JSWebAssemblyInstance;
 
-class JSWebAssemblyStruct final : public WebAssemblyGCObjectBase {
+class JSWebAssemblyStruct final : public WebAssemblyGCObjectBase, private TrailingArray<JSWebAssemblyStruct, uint8_t> {
 public:
     using Base = WebAssemblyGCObjectBase;
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
-
-    static void destroy(JSCell*);
+    using TrailingArrayType = TrailingArray<JSWebAssemblyStruct, uint8_t>;
+    friend TrailingArrayType;
+    static_assert(StructureFlags == WebAssemblyGCObjectBase::StructureFlags, "WebAssemblyGCObjectBase must have the same StructureFlags as us");
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return vm.webAssemblyStructSpace<mode>();
+        return vm.heap.webAssemblyStructSpace<mode>();
     }
 
-    DECLARE_EXPORT_INFO;
+    DECLARE_INFO;
 
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    static JSWebAssemblyStruct* create(VM&, Structure*, JSWebAssemblyInstance*, uint32_t, RefPtr<const Wasm::RTT>&&);
+    static inline WebAssemblyGCStructure* createStructure(VM&, JSGlobalObject*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
+    static JSWebAssemblyStruct* create(VM&, WebAssemblyGCStructure*);
 
     DECLARE_VISIT_CHILDREN;
 
     uint64_t get(uint32_t) const;
     void set(uint32_t, uint64_t);
     void set(uint32_t, v128_t);
-    const Wasm::StructType* structType() const { return m_type->as<Wasm::StructType>(); }
-    Wasm::FieldType fieldType(uint32_t fieldIndex) const { return structType()->field(fieldIndex); }
+    const Wasm::TypeDefinition& typeDefinition() const { return gcStructure()->typeDefinition(); }
+    const Wasm::StructType& structType() const { return *typeDefinition().as<Wasm::StructType>(); }
+    Wasm::FieldType fieldType(uint32_t fieldIndex) const { return structType().field(fieldIndex); }
 
-    // Returns the offset for m_payload.m_storage
-    static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyStruct, m_payload) + FixedVector<uint8_t>::offsetOfStorage(); }
+    uint8_t* fieldPointer(uint32_t fieldIndex) { return &at(structType().offsetOfFieldInPayload(fieldIndex)); }
+    const uint8_t* fieldPointer(uint32_t fieldIndex) const { return const_cast<JSWebAssemblyStruct*>(this)->fieldPointer(fieldIndex); }
 
-    const uint8_t* fieldPointer(uint32_t fieldIndex) const;
-    uint8_t* fieldPointer(uint32_t fieldIndex);
+    using TrailingArrayType::offsetOfData;
 
 protected:
-    JSWebAssemblyStruct(VM&, Structure*, Ref<const Wasm::TypeDefinition>&&, RefPtr<const Wasm::RTT>&&);
+    JSWebAssemblyStruct(VM&, WebAssemblyGCStructure*);
     DECLARE_DEFAULT_FINISH_CREATION;
-
-    // FIXME: It is possible to encode the type information in the structure field of Wasm.Struct and remove this field.
-    // https://bugs.webkit.org/show_bug.cgi?id=244838
-    Ref<const Wasm::TypeDefinition> m_type;
-
-    FixedVector<uint8_t> m_payload;
 };
+
+WebAssemblyGCStructure* JSWebAssemblyStruct::createStructure(VM& vm, JSGlobalObject* globalObject, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+{
+    RELEASE_ASSERT(rtt->kind() == Wasm::RTTKind::Struct);
+    RELEASE_ASSERT(type->is<Wasm::StructType>());
+    return WebAssemblyGCStructure::create(vm, globalObject, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTFMove(type), WTFMove(rtt));
+}
 
 } // namespace JSC
 

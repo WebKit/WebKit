@@ -232,6 +232,8 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_ClipDistances;
     case FeatureName::DualSourceBlending:
         return WGPUFeatureName_DualSourceBlending;
+    case FeatureName::CoreFeaturesAndLimits:
+        return WGPUFeatureName_CoreFeaturesAndLimits;
     }
 }
 

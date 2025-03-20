@@ -107,9 +107,9 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scroll
 
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {
-    ts << offset.offset << " snapTargetID: " <<  offset.snapTargetID << " isFocused: " << offset.isFocused;
+    ts << offset.offset << " snapTargetID: "_s <<  offset.snapTargetID << " isFocused: "_s << offset.isFocused;
     if (offset.stop == ScrollSnapStop::Always)
-        ts << " (always)";
+        ts << " (always)"_s;
     return ts;
 }
 

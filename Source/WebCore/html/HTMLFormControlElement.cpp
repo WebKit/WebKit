@@ -394,7 +394,7 @@ void HTMLFormControlElement::setPopoverTargetAction(const AtomString& value)
 }
 
 // https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior
-void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventTarget) const
+void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventTarget)
 {
     RefPtr popover = popoverTargetElement();
     if (!popover)

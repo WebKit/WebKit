@@ -61,15 +61,15 @@ void writeResources(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTex
 template<typename Item>
 WTF::TextStream& operator<<(WTF::TextStream& ts, const Vector<Item*>& v)
 {
-    ts << "[";
+    ts << '[';
 
     for (unsigned i = 0; i < v.size(); i++) {
         ts << *v[i];
         if (i < v.size() - 1)
-            ts << ", ";
+            ts << ", "_s;
     }
 
-    ts << "]";
+    ts << ']';
     return ts;
 }
 

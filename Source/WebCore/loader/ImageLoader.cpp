@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ImageLoader.h"
 
+#include "ArchiveResource.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -88,10 +89,10 @@ namespace WebCore {
 static TextStream& operator<<(TextStream& ts, LazyImageLoadState state)
 {
     switch (state) {
-    case LazyImageLoadState::None: ts << "None"; break;
-    case LazyImageLoadState::Deferred: ts << "Deferred"; break;
-    case LazyImageLoadState::LoadImmediately: ts << "LoadImmediately"; break;
-    case LazyImageLoadState::FullImage: ts << "FullImage"; break;
+    case LazyImageLoadState::None: ts << "None"_s; break;
+    case LazyImageLoadState::Deferred: ts << "Deferred"_s; break;
+    case LazyImageLoadState::LoadImmediately: ts << "LoadImmediately"_s; break;
+    case LazyImageLoadState::FullImage: ts << "FullImage"_s; break;
     }
 
     return ts;
@@ -100,8 +101,8 @@ static TextStream& operator<<(TextStream& ts, LazyImageLoadState state)
 static TextStream& operator<<(TextStream& ts, ImageLoading loading)
 {
     switch (loading) {
-    case ImageLoading::Immediate: ts << "Immediate"; break;
-    case ImageLoading::DeferredUntilVisible: ts << "DeferredUntilVisible"; break;
+    case ImageLoading::Immediate: ts << "Immediate"_s; break;
+    case ImageLoading::DeferredUntilVisible: ts << "DeferredUntilVisible"_s; break;
     }
 
     return ts;
@@ -127,7 +128,7 @@ static bool canReuseFromListOfAvailableImages(const CachedResourceRequest& reque
     if (!resource || resource->stillNeedsLoad() || resource->isPreloaded())
         return false;
 
-    if (resource->options().mode == FetchOptions::Mode::Cors && !document.protectedSecurityOrigin()->isSameOriginAs(*resource->origin()))
+    if (resource->options().mode == FetchOptions::Mode::Cors && !document.protectedSecurityOrigin()->isSameOriginAs(*resource->protectedOrigin()))
         return false;
 
     if (resource->options().mode != request.options().mode || resource->options().credentials != request.options().credentials)

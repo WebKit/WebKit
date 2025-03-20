@@ -1,5 +1,6 @@
 
-PASS unsupported_scheme
+PASS non-parsable URL
+FAIL unsupported_scheme The operation is insecure.
 PASS data_url
 FAIL about_blank The operation is insecure.
 FAIL example_invalid The operation is insecure.

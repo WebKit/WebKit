@@ -44,7 +44,10 @@ std::optional<Error> ShaderModule::validateOverrides(const HashMap<String, Const
             if (auto maybeError = validator(*maybeValue))
                 return { Error(*maybeError, expression->span()) };
         }
-
+    }
+    for (const auto& validator : m_finalOverrideValidations) {
+        if (auto maybeError = validator())
+            return maybeError;
     }
     return std::nullopt;
 }

@@ -64,13 +64,10 @@ public:
 
     void setSelected(bool) override;
 
-    void setPlayerItemTrack(AVPlayerItemTrack*);
     AVPlayerItemTrack* playerItemTrack();
 
-    void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();
 
-    void setMediaSelectonOption(MediaSelectionOptionAVFObjC&);
     MediaSelectionOptionAVFObjC* mediaSelectionOption();
 
 private:

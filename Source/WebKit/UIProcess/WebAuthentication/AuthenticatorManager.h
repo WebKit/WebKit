@@ -99,10 +99,11 @@ private:
     // AuthenticatorTransportServiceObserver
     void authenticatorAdded(Ref<Authenticator>&&) final;
     void serviceStatusUpdated(WebAuthenticationStatus) final;
+    bool isAuthenticatorManager() const final { return true; }
 
     // AuthenticatorObserver
     void respondReceived(Respond&&) final;
-    void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
+    void downgrade(Authenticator& id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
     void requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&&) final;
@@ -135,5 +136,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::AuthenticatorManager)
+static bool isType(const WebKit::AuthenticatorTransportServiceObserver& observer) { return observer.isAuthenticatorManager(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_AUTHN)

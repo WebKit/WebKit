@@ -161,6 +161,8 @@ CFArrayRef _LSCopyMatchingApplicationsWithItems(LSSessionID, CFIndex count, CFTy
 typedef void (^ _LSOpenCompletionHandler)(LSASNRef, Boolean, CFErrorRef);
 void _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(CFArrayRef, CFStringRef, CFDictionaryRef, _LSOpenCompletionHandler);
 
+Boolean _LSApplicationCheckInProxy(LSSessionID, const audit_token_t, CFDictionaryRef applicationInfoRef, void(^block)(CFDictionaryRef result, CFErrorRef));
+
 WTF_EXTERN_C_END
 
 #endif // PLATFORM(MAC)

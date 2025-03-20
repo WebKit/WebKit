@@ -110,6 +110,7 @@ if (window.accessibilityController) {
         const isCocoa = platform === "ios" || platform === "mac";
         output += expect("hasTitleUIElement(axElement('control6'))", isCocoa ? "false" : "true");
         output += evalAndReturn("document.getElementById('label6c').remove()");
+        await waitFor(() => axElement('control6').titleUIElement() != null);
         output += await expectAsync("axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
 
         document.getElementById('container').style.display = 'none';

@@ -21,7 +21,7 @@
 #pragma once
 
 #include "SVGPropertyOwner.h"
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -29,7 +29,7 @@ namespace WebCore {
 enum class SVGPropertyAccess : uint8_t { ReadWrite, ReadOnly };
 enum class SVGPropertyState : uint8_t { Clean, Dirty };
 
-class SVGProperty : public RefCounted<SVGProperty> {
+class SVGProperty : public ThreadSafeRefCounted<SVGProperty> {
 public:
     virtual ~SVGProperty() = default;
 

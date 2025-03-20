@@ -93,7 +93,6 @@ mac/WebCoreSupport/WebDragClient.mm
 mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebSecurityOrigin.mm
-mac/WebView/WebArchive.mm
 mac/WebView/WebDataSource.mm
 mac/WebView/WebDynamicScrollBarsView.mm
 mac/WebView/WebFrame.mm

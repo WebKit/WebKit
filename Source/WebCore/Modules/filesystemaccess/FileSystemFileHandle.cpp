@@ -134,7 +134,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().createWritable(identifier(), options.keepExistingData, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+    connection().createWritable(scriptExecutionContext()->identifier(), identifier(), options.keepExistingData, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -163,6 +163,8 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
             Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
             stream = FileSystemWritableFileStream::create(*globalObject, sink.releaseReturnValue());
         }
+        if (!stream.hasException())
+            connection().registerFileSystemWritable(streamIdentifier, stream.returnValue());
 
         promise.settle(WTFMove(stream));
     });
@@ -170,6 +172,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
 
 void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCloseReason reason)
 {
+    connection().unregisterFileSystemWritable(streamIdentifier);
     if (!isClosed())
         connection().closeWritable(identifier(), streamIdentifier, reason, [](auto) { });
 }

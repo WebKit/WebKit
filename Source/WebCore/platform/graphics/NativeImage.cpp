@@ -78,7 +78,11 @@ NativeImage::NativeImage(UniqueRef<NativeImageBackend> backend, RenderingResourc
 {
 }
 
-NativeImage::~NativeImage() = default;
+NativeImage::~NativeImage()
+{
+    for (auto& observer : m_observers)
+        observer.willDestroyNativeImage(renderingResourceIdentifier());
+}
 
 const PlatformImagePtr& NativeImage::platformImage() const
 {

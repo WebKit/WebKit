@@ -1505,6 +1505,13 @@ std::pair<GstClockTime, GstClockTime> RealtimeMediaSource::queryCaptureLatency()
 }
 #endif
 
+void RealtimeMediaSource::configurationChanged()
+{
+    forEachObserver([](auto& observer) {
+        observer.sourceConfigurationChanged();
+    });
+}
+
 #if !RELEASE_LOG_DISABLED
 void RealtimeMediaSource::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {

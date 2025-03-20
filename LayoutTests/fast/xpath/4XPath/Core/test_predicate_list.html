@@ -1,12 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="test.js"></script>
 <script src="../../xpath-test-pre.js"></script>
 </head>
 <body>
-<div id="console"></div>
 
 <script>
     result = DOM.evaluate("self::node()[true() and false()][true()]", ROOT, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -41,6 +40,5 @@
     checkSnapshot("//element[descendant::y[.='z']][2]", result, []);
 
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

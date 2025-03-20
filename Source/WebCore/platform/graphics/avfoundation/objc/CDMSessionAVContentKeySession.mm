@@ -29,6 +29,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "CDMFairPlayStreaming.h"
+#import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "LegacyCDM.h"
 #import "Logging.h"
@@ -70,7 +71,7 @@ typedef NSString *AVContentKeySystem;
 @end
 
 @interface WebCDMSessionAVContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
-    WeakPtr<WebCore::CDMSessionAVContentKeySession> m_parent;
+    ThreadSafeWeakPtr<WebCore::CDMSessionAVContentKeySession> m_parent;
 }
 - (void)invalidate;
 @end
@@ -100,14 +101,14 @@ typedef NSString *AVContentKeySystem;
 - (void)contentKeySessionContentProtectionSessionIdentifierDidChange:(AVContentKeySession *)session
 {
     RefPtr parent = m_parent.get();
-    if (!m_parent)
+    if (!parent)
         return;
 
     NSData* identifier = [session contentProtectionSessionIdentifier];
     RetainPtr<NSString> sessionIdentifierString = identifier ? adoptNS([[NSString alloc] initWithData:identifier encoding:NSUTF8StringEncoding]) : nil;
     callOnMainThread([self, protectedSelf = RetainPtr { self }, sessionIdentifierString = WTFMove(sessionIdentifierString)] {
         RefPtr parent = m_parent.get();
-        if (!m_parent)
+        if (!parent)
             return;
 
         parent->setSessionId(sessionIdentifierString.get());
@@ -314,16 +315,24 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         ASSERT(contentKeyRequest);
         RetainPtr certificateData = toNSData(m_certificate->span());
 
-        RetainPtr<NSDictionary> options;
+        RetainPtr options = CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKeyRequestWithHashSalt(m_client->mediaKeysHashSalt());
+
         if (!m_protocolVersions.isEmpty() && PAL::canLoad_AVFoundation_AVContentKeyRequestProtocolVersionsKey()) {
-            options = @{ AVContentKeyRequestProtocolVersionsKey: createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
+            RetainPtr mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
+            [mutableOptions addEntriesFromDictionary:options.get()];
+            [mutableOptions setValue:createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
                 return version ? @(version) : nil;
-            }).get() };
+            }).get() forKey:AVContentKeyRequestProtocolVersionsKey];
+            options = WTFMove(mutableOptions);
         }
 
         errorCode = MediaPlayer::NoError;
         systemCode = 0;
-        RetainPtr nsIdentifier = m_identifier ? RetainPtr<id>(toNSData(m_identifier->span())) : retainPtr(contentKeyRequest.get().identifier);
+        RetainPtr<id> nsIdentifier;
+        if (m_identifier)
+            nsIdentifier = toNSData(m_identifier->span());
+        else
+            nsIdentifier = contentKeyRequest.get().identifier;
 
         RetainPtr<NSError> error;
         RetainPtr<NSData> requestData;
@@ -438,7 +447,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsi
 bool CDMSessionAVContentKeySession::hasContentKeyRequest() const
 {
     Locker holder { m_keyRequestLock };
-    return m_keyRequest;
+    return !!m_keyRequest;
 }
 
 RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest() const

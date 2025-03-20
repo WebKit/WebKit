@@ -34,6 +34,7 @@ from pathlib import Path
 import argparse
 import os
 import re
+import platform
 import sys
 import shutil
 import logging
@@ -60,8 +61,11 @@ def is_dir_virtually_empty(dir_path: Union[Path, str]) -> None:
 
 def gen_template_environment():
     env = {}
+    is_arm32_on_arm64 = platform.architecture()[0] == "32bit"
     env["header_file_platform_specific_flags"] = \
         "-xobjective-c++," if sys.platform == "darwin" else ""
+    env["platform_specific_flags"] = \
+        "-m32,-march=armv7-a+fp," if is_arm32_on_arm64 else ""
     return env
 
 # This warning is better placed in the code than in the template file, as

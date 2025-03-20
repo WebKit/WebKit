@@ -516,7 +516,7 @@ TEST(_WKDataTask, Basic)
     constexpr auto html = "<script>document.cookie='testkey=value'</script>"_s;
     constexpr auto secondResponse = "second response"_s;
     Vector<char> secondRequest;
-    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
@@ -593,6 +593,19 @@ TEST(_WKDataTask, Basic)
     Util::run(&done);
     EXPECT_NOT_NULL(retainedTask.get());
     EXPECT_NULL(retainedTask.get().delegate);
+
+    done = false;
+    [webView _dataTaskWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org<>/"]] completionHandler:^(_WKDataTask *task) {
+        retainedTask = task;
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didCompleteWithError = ^(_WKDataTask *task, NSError *error) {
+            EXPECT_WK_STREQ(error.domain, WebKitErrorDomain);
+            EXPECT_EQ(error.code, _WKErrorCodeCannotShowURL);
+            done = true;
+        };
+    }];
+    Util::run(&done);
 }
 
 TEST(_WKDataTask, Challenge)
@@ -832,7 +845,7 @@ TEST(WKWebView, CrossOriginDoubleRedirectAuthentication)
         return memmem(request.data(), request.size(), field, strlen(field));
     };
 
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);

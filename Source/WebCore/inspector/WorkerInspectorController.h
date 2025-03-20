@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WorkerDebuggerAgent.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
@@ -54,7 +55,7 @@ public:
 
     void workerTerminating();
 
-    void connectFrontend();
+    void connectFrontend(bool isAutomaticInspection = false, bool immediatelyPause = false);
     void disconnectFrontend(Inspector::DisconnectReason);
 
     void dispatchMessageFromFrontend(const String&);
@@ -64,7 +65,7 @@ public:
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
-    void frontendInitialized() override { }
+    void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const override;
     JSC::Debugger* debugger() override;
     JSC::VM& vm() override;
@@ -74,6 +75,7 @@ private:
 
     WorkerAgentContext workerAgentContext();
     void createLazyAgents();
+    WorkerDebuggerAgent& ensureDebuggerAgent();
 
     void updateServiceWorkerPageFrontendCount();
 
@@ -84,9 +86,13 @@ private:
     Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<WorkerDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
+    CheckedPtr<WorkerDebuggerAgent> m_debuggerAgent;
     WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     bool m_didCreateLazyAgents { false };
+    bool m_isAutomaticInspection { false };
+    bool m_pauseAfterInitialization { false };
+    Function<void()> m_frontendInitializedCallback;
 };
 
 } // namespace WebCore

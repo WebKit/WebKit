@@ -31,7 +31,6 @@
 namespace WebCore {
 
 enum class UserScriptInjectionTime : bool { DocumentStart, DocumentEnd };
-enum class WaitForNotificationBeforeInjecting : bool { No, Yes };
 
 class DOMWrapperWorld;
 class UserScript;

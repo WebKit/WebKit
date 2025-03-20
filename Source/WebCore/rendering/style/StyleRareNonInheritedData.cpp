@@ -98,6 +98,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollSnapStop
     , pseudoElementNameArgument(nullAtom())
     , anchorNames(RenderStyle::initialAnchorNames())
+    , anchorScope(RenderStyle::initialAnchorScope())
     , positionAnchor(RenderStyle::initialPositionAnchor())
     , positionArea(RenderStyle::initialPositionArea())
     , positionTryFallbacks(RenderStyle::initialPositionTryFallbacks())
@@ -132,12 +133,14 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , hasClip(false)
     , positionTryOrder(static_cast<unsigned>(RenderStyle::initialPositionTryOrder()))
+    , positionVisibility(RenderStyle::initialPositionVisibility().toRaw())
     , fieldSizing(static_cast<unsigned>(RenderStyle::initialFieldSizing()))
     , nativeAppearanceDisabled(static_cast<unsigned>(RenderStyle::initialNativeAppearanceDisabled()))
 #if HAVE(CORE_MATERIAL)
     , appleVisualEffect(static_cast<unsigned>(RenderStyle::initialAppleVisualEffect()))
 #endif
     , scrollbarWidth(static_cast<unsigned>(RenderStyle::initialScrollbarWidth()))
+    , usesAnchorFunctions(false)
 {
 }
 
@@ -203,6 +206,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapStop(o.scrollSnapStop)
     , pseudoElementNameArgument(o.pseudoElementNameArgument)
     , anchorNames(o.anchorNames)
+    , anchorScope(o.anchorScope)
     , positionAnchor(o.positionAnchor)
     , positionArea(o.positionArea)
     , positionTryFallbacks(o.positionTryFallbacks)
@@ -237,12 +241,14 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , overflowAnchor(o.overflowAnchor)
     , hasClip(o.hasClip)
     , positionTryOrder(o.positionTryOrder)
+    , positionVisibility(o.positionVisibility)
     , fieldSizing(o.fieldSizing)
     , nativeAppearanceDisabled(o.nativeAppearanceDisabled)
 #if HAVE(CORE_MATERIAL)
     , appleVisualEffect(o.appleVisualEffect)
 #endif
     , scrollbarWidth(o.scrollbarWidth)
+    , usesAnchorFunctions(o.usesAnchorFunctions)
 {
 }
 
@@ -313,6 +319,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapStop == o.scrollSnapStop
         && pseudoElementNameArgument == o.pseudoElementNameArgument
         && anchorNames == o.anchorNames
+        && anchorScope == o.anchorScope
         && positionAnchor == o.positionAnchor
         && positionArea == o.positionArea
         && positionTryFallbacks == o.positionTryFallbacks
@@ -349,12 +356,14 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip
         && positionTryOrder == o.positionTryOrder
+        && positionVisibility == o.positionVisibility
         && fieldSizing == o.fieldSizing
         && nativeAppearanceDisabled == o.nativeAppearanceDisabled
 #if HAVE(CORE_MATERIAL)
         && appleVisualEffect == o.appleVisualEffect
 #endif
-        && scrollbarWidth == o.scrollbarWidth;
+        && scrollbarWidth == o.scrollbarWidth
+        && usesAnchorFunctions == o.usesAnchorFunctions;
 }
 
 OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
@@ -472,9 +481,11 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT(pseudoElementNameArgument);
 
     LOG_IF_DIFFERENT(anchorNames);
+    LOG_IF_DIFFERENT(anchorScope);
     LOG_IF_DIFFERENT(positionAnchor);
     LOG_IF_DIFFERENT(positionArea);
     LOG_IF_DIFFERENT(positionTryFallbacks);
+    LOG_IF_DIFFERENT(positionVisibility);
 
     LOG_IF_DIFFERENT(blockStepSize);
 
@@ -528,6 +539,8 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
 #endif
 
     LOG_IF_DIFFERENT(scrollbarWidth);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, usesAnchorFunctions);
 }
 #endif // !LOG_DISABLED
 

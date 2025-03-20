@@ -85,13 +85,15 @@ template<typename... Types> struct VariantDeserializer<std::variant<Types...>> {
 
 DeserializedAction DeserializedAction::deserialize(std::span<const uint8_t> serializedActions, uint32_t location)
 {
-    RELEASE_ASSERT(location < serializedActions.size());
+    auto serializedActionSize = serializedActions.size();
+    RELEASE_ASSERT(location < serializedActionSize, location, serializedActionSize);
     return { location, VariantDeserializer<ActionData>::deserialize(serializedActions.subspan(location + 1), serializedActions[location]) };
 }
 
 size_t DeserializedAction::serializedLength(std::span<const uint8_t> serializedActions, uint32_t location)
 {
-    RELEASE_ASSERT(location < serializedActions.size());
+    auto serializedActionSize = serializedActions.size();
+    RELEASE_ASSERT(location < serializedActionSize, location, serializedActionSize);
     return 1 + VariantDeserializer<ActionData>::serializedLength(serializedActions.subspan(location + 1), serializedActions[location]);
 }
 

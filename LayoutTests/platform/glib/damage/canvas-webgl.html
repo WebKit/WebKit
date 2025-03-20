@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var gl = canvas.getContext("webgl");
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              gl.enable(gl.SCISSOR_TEST);
+              gl.scissor(5, 5, 10, 10);
+              gl.clearColor(0.0, 0.0, 1.0, 1.0);
+              gl.clear(gl.COLOR_BUFFER_BIT);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 50, 50]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

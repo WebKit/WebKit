@@ -81,7 +81,7 @@ void GStreamerQuirkRialto::configureElement(GstElement* element, const OptionSet
 
 GstElement* GStreamerQuirkRialto::createAudioSink()
 {
-    auto sink = makeGStreamerElement("rialtomseaudiosink", nullptr);
+    auto sink = makeGStreamerElement("rialtomseaudiosink"_s);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rialtomseaudiosink should be available in the system but it is not");
     return sink;
 }
@@ -91,7 +91,7 @@ GstElement* GStreamerQuirkRialto::createWebAudioSink()
     if (GstElement* sink = webkitAudioSinkNew())
         return sink;
 
-    auto sink = makeGStreamerElement("rialtowebaudiosink", nullptr);
+    auto sink = makeGStreamerElement("rialtowebaudiosink"_s);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rialtowebaudiosink should be available in the system but it is not");
     return sink;
 }

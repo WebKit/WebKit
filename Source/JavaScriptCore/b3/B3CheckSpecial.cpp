@@ -37,7 +37,7 @@
 
 namespace JSC { namespace B3 {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CheckSpecial);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(CheckSpecial);
 
 using Inst = Air::Inst;
 using Arg = Air::Arg;

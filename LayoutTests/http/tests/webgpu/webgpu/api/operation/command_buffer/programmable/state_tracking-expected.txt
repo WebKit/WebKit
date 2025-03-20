@@ -1,19 +1,299 @@
 
 PASS :bind_group_indices:encoderType="compute%20pass"
-PASS :bind_group_indices:encoderType="render%20pass"
-PASS :bind_group_indices:encoderType="render%20bundle"
+FAIL :bind_group_indices:encoderType="render%20pass" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":0,"b":1,"out":2}
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:80:23
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":1,"b":2,"out":0}
+    Type error
+    createPipelineLayout@[native code]
+    createBindingStatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/programmable_state_test.js:163:53
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:45:48
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":2,"b":0,"out":1}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":0,"b":2,"out":1}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":2,"b":1,"out":0}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":1,"b":0,"out":2}
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";groupIndices={"a":0,"b":1,"out":2}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":1,"b":2,"out":0}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":2,"b":0,"out":1}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":0,"b":2,"out":1}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":2,"b":1,"out":0}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":1,"b":0,"out":2}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":0,"b":1,"out":2}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":1,"b":2,"out":0}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":2,"b":0,"out":1}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":0,"b":2,"out":1}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":2,"b":1,"out":0}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":1,"b":0,"out":2}
+    OK
+ Reached unreachable code
+FAIL :bind_group_indices:encoderType="render%20bundle" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":0,"b":1,"out":2}
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:80:23
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":1,"b":2,"out":0}
+    Type error
+    createPipelineLayout@[native code]
+    createBindingStatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/programmable_state_test.js:163:53
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:45:48
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":2,"b":0,"out":1}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":0,"b":2,"out":1}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":2,"b":1,"out":0}
+    Type error
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";groupIndices={"a":1,"b":0,"out":2}
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";groupIndices={"a":0,"b":1,"out":2}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":1,"b":2,"out":0}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":2,"b":0,"out":1}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":0,"b":2,"out":1}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":2,"b":1,"out":0}
+    OK
+  - INFO: subcase: type="uniform";groupIndices={"a":1,"b":0,"out":2}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":0,"b":1,"out":2}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":1,"b":2,"out":0}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":2,"b":0,"out":1}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":0,"b":2,"out":1}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":2,"b":1,"out":0}
+    OK
+  - INFO: subcase: type="storage";groupIndices={"a":1,"b":0,"out":2}
+    OK
+ Reached unreachable code
 PASS :bind_group_order:encoderType="compute%20pass"
-PASS :bind_group_order:encoderType="render%20pass"
-PASS :bind_group_order:encoderType="render%20bundle"
+FAIL :bind_group_order:encoderType="render%20pass" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["a","b","out"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:146:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["b","out","a"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:146:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["out","a","b"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["b","a","out"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["a","out","b"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["out","b","a"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";setOrder=["a","b","out"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["b","out","a"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["out","a","b"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["b","a","out"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["a","out","b"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["out","b","a"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["a","b","out"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["b","out","a"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["out","a","b"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["b","a","out"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["a","out","b"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["out","b","a"]
+    OK
+ Reached unreachable code
+FAIL :bind_group_order:encoderType="render%20bundle" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["a","b","out"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:146:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["b","out","a"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:146:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["out","a","b"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["b","a","out"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["a","out","b"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setOrder=["out","b","a"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";setOrder=["a","b","out"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["b","out","a"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["out","a","b"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["b","a","out"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["a","out","b"]
+    OK
+  - INFO: subcase: type="uniform";setOrder=["out","b","a"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["a","b","out"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["b","out","a"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["out","a","b"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["b","a","out"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["a","out","b"]
+    OK
+  - INFO: subcase: type="storage";setOrder=["out","b","a"]
+    OK
+ Reached unreachable code
 PASS :bind_group_before_pipeline:encoderType="compute%20pass"
-PASS :bind_group_before_pipeline:encoderType="render%20pass"
-PASS :bind_group_before_pipeline:encoderType="render%20bundle"
+FAIL :bind_group_before_pipeline:encoderType="render%20pass" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a","b"];setAfter=["out"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:217:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a"];setAfter=["b","out"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:217:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["out","b"];setAfter=["a"]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a","b","out"];setAfter=[]
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";setBefore=["a","b"];setAfter=["out"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["a"];setAfter=["b","out"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["out","b"];setAfter=["a"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["a","b","out"];setAfter=[]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a","b"];setAfter=["out"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a"];setAfter=["b","out"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["out","b"];setAfter=["a"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a","b","out"];setAfter=[]
+    OK
+ Reached unreachable code
+FAIL :bind_group_before_pipeline:encoderType="render%20bundle" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a","b"];setAfter=["out"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:217:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a"];setAfter=["b","out"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:217:25
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["out","b"];setAfter=["a"]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - EXCEPTION: TypeError: subcase: type="uniform";setBefore=["a","b","out"];setAfter=[]
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+      at (elided: only 2 shown)
+  - INFO: subcase: type="uniform";setBefore=["a","b"];setAfter=["out"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["a"];setAfter=["b","out"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["out","b"];setAfter=["a"]
+    OK
+  - INFO: subcase: type="uniform";setBefore=["a","b","out"];setAfter=[]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a","b"];setAfter=["out"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a"];setAfter=["b","out"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["out","b"];setAfter=["a"]
+    OK
+  - INFO: subcase: type="storage";setBefore=["a","b","out"];setAfter=[]
+    OK
+ Reached unreachable code
 PASS :one_bind_group_multiple_slots:encoderType="compute%20pass"
-PASS :one_bind_group_multiple_slots:encoderType="render%20pass"
-PASS :one_bind_group_multiple_slots:encoderType="render%20bundle"
+FAIL :one_bind_group_multiple_slots:encoderType="render%20pass" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform"
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:272:23
+  - INFO: subcase: type="uniform"
+    OK
+  - INFO: subcase: type="storage"
+    OK
+ Reached unreachable code
+FAIL :one_bind_group_multiple_slots:encoderType="render%20bundle" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform"
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:272:23
+  - INFO: subcase: type="uniform"
+    OK
+  - INFO: subcase: type="storage"
+    OK
+ Reached unreachable code
 PASS :bind_group_multiple_sets:encoderType="compute%20pass"
-PASS :bind_group_multiple_sets:encoderType="render%20pass"
-PASS :bind_group_multiple_sets:encoderType="render%20bundle"
+FAIL :bind_group_multiple_sets:encoderType="render%20pass" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform"
+    Argument 2 ('bindGroup') to GPURenderPassEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:345:23
+  - INFO: subcase: type="uniform"
+    OK
+  - INFO: subcase: type="storage"
+    OK
+ Reached unreachable code
+FAIL :bind_group_multiple_sets:encoderType="render%20bundle" assert_unreached:
+  - EXCEPTION: TypeError: subcase: type="uniform"
+    Argument 2 ('bindGroup') to GPURenderBundleEncoder.setBindGroup must be an instance of GPUBindGroup
+    setBindGroup@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js:345:23
+  - INFO: subcase: type="uniform"
+    OK
+  - INFO: subcase: type="storage"
+    OK
+ Reached unreachable code
 PASS :compatible_pipelines:encoderType="compute%20pass"
 PASS :compatible_pipelines:encoderType="render%20pass"
 PASS :compatible_pipelines:encoderType="render%20bundle"

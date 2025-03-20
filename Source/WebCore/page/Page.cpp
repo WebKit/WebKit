@@ -58,6 +58,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplayRefreshMonitorManager.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -80,7 +81,6 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
-#include "FullscreenManager.h"
 #include "GeolocationController.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
@@ -320,13 +320,13 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
 #define GCC_MAYBE_NO_INLINE
 #endif
 
-GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::MainFrameCreationParameters&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier)
+GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::MainFrameCreationParameters&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {
     page.relaxAdoptionRequirement();
     return switchOn(WTFMove(clientCreator), [&] (PageConfiguration::LocalMainFrameCreationParameters&& creationParameters) -> Ref<Frame> {
-        return LocalFrame::createMainFrame(page, WTFMove(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, mainFrameOpener.get());
+        return LocalFrame::createMainFrame(page, WTFMove(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, mainFrameOpener.get(), WTFMove(frameTreeSyncData));
     }, [&] (CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>&& remoteFrameClientCreator) -> Ref<Frame> {
-        return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClientCreator), identifier, mainFrameOpener.get());
+        return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClientCreator), identifier, mainFrameOpener.get(), WTFMove(frameTreeSyncData));
     });
 }
 
@@ -367,7 +367,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_processSyncClient(WTFMove(pageConfiguration.processSyncClient))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
-    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.mainFrameCreationParameters), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier))
+    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.mainFrameCreationParameters), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier, FrameTreeSyncData::create()))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
@@ -499,9 +499,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 
     settingsDidChange();
-
-    if (!pageConfiguration.userScriptsShouldWaitUntilNotification)
-        m_hasBeenNotifiedToInjectUserScripts = true;
 
     if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
         m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
@@ -842,8 +839,6 @@ void Page::setMainFrameURLAndOrigin(const URL& url, RefPtr<SecurityOrigin>&& ori
     RELEASE_ASSERT(url == m_topDocumentSyncData->documentURL);
     if (!origin)
         RELEASE_ASSERT(!m_topDocumentSyncData->documentSecurityOrigin);
-    else
-        RELEASE_ASSERT(origin->equal(*m_topDocumentSyncData->documentSecurityOrigin));
 
     processSyncClient().broadcastTopDocumentSyncDataToOtherProcesses(m_topDocumentSyncData.get());
 }
@@ -926,6 +921,8 @@ void Page::updateProcessSyncData(const ProcessSyncData& data)
 #endif
         protectedTopDocumentSyncData()->update(data);
         break;
+    case ProcessSyncDataType::FrameCanCreatePaymentSession:
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -1074,6 +1071,11 @@ PluginData& Page::pluginData()
     if (!m_pluginData)
         m_pluginData = PluginData::create(*this);
     return *m_pluginData;
+}
+
+Ref<PluginData> Page::protectedPluginData()
+{
+    return pluginData();
 }
 
 void Page::clearPluginData()
@@ -2154,7 +2156,7 @@ void Page::updateRendering()
 
 #if ENABLE(FULLSCREEN_API)
     runProcessingStep(RenderingUpdateStep::Fullscreen, [] (Document& document) {
-        document.fullscreenManager().dispatchPendingEvents();
+        document.protectedFullscreen()->dispatchPendingEvents();
     });
 #else
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
@@ -2970,6 +2972,17 @@ void Page::setMuted(MediaProducerMutedStateFlags mutedState)
             document.screenshareCaptureStateDidChange();
 #endif
         document.pageMutedStateDidChange();
+    });
+}
+
+void Page::setShouldSuppressHDR(bool shouldSuppressHDR)
+{
+    if (m_shouldSuppressHDR == shouldSuppressHDR)
+        return;
+
+    m_shouldSuppressHDR = shouldSuppressHDR;
+    forEachDocument([](auto& document) {
+        document.shouldSuppressHDRDidChange();
     });
 }
 
@@ -3814,15 +3827,6 @@ Ref<UserContentProvider> Page::protectedUserContentProvider()
     return m_userContentProvider;
 }
 
-void Page::notifyToInjectUserScripts()
-{
-    m_hasBeenNotifiedToInjectUserScripts = true;
-
-    forEachLocalFrame([] (LocalFrame& frame) {
-        frame.injectUserScriptsAwaitingNotification();
-    });
-}
-
 void Page::setUserContentProvider(Ref<UserContentProvider>&& userContentProvider)
 {
     protectedUserContentProvider()->removePage(*this);
@@ -4230,16 +4234,6 @@ void Page::setFullscreenAutoHideDuration(Seconds duration)
     });
 }
 
-#if HAVE(SUPPORT_HDR_DISPLAY)
-bool Page::canDrawHDRContents() const
-{
-    if (!(m_settings->supportHDRDisplayEnabled() || m_settings->canvasPixelFormatEnabled()))
-        return false;
-
-    return screenSupportsHighDynamicRange();
-}
-#endif
-
 Document* Page::outermostFullscreenDocument() const
 {
 #if ENABLE(FULLSCREEN_API)
@@ -4250,7 +4244,7 @@ Document* Page::outermostFullscreenDocument() const
     RefPtr<Document> outermostFullscreenDocument;
     RefPtr currentDocument = localMainFrame->document();
     while (currentDocument) {
-        RefPtr fullscreenElement = currentDocument->fullscreenManager().fullscreenElement();
+        RefPtr fullscreenElement = currentDocument->protectedFullscreen()->fullscreenElement();
         if (!fullscreenElement)
             break;
 
@@ -4667,6 +4661,11 @@ void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
     });
 }
 
+void Page::didFinishLoadingImageForSVGImage(SVGImageElement& element)
+{
+    chrome().client().didFinishLoadingImageForSVGImage(element);
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 void Page::recomputeTextAutoSizingInAllFrames()
@@ -4804,37 +4803,37 @@ SpeechRecognitionConnection& Page::speechRecognitionConnection()
 WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 {
     switch (step) {
-    case RenderingUpdateStep::Reveal: ts << "Reveal"; break;
-    case RenderingUpdateStep::FlushAutofocusCandidates: ts << "FlushAutofocusCandidates"; break;
-    case RenderingUpdateStep::Resize: ts << "Resize"; break;
-    case RenderingUpdateStep::Scroll: ts << "Scroll"; break;
-    case RenderingUpdateStep::MediaQueryEvaluation: ts << "MediaQueryEvaluation"; break;
-    case RenderingUpdateStep::Animations: ts << "Animations"; break;
-    case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
-    case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
-    case RenderingUpdateStep::PerformPendingViewTransitions: ts << "PerformPendingViewTransitions"; break;
-    case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
-    case RenderingUpdateStep::UpdateContentRelevancy: ts << "UpdateContentRelevancy"; break;
-    case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
-    case RenderingUpdateStep::Images: ts << "Images"; break;
-    case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"; break;
-    case RenderingUpdateStep::CursorUpdate: ts << "CursorUpdate"; break;
-    case RenderingUpdateStep::EventRegionUpdate: ts << "EventRegionUpdate"; break;
-    case RenderingUpdateStep::LayerFlush: ts << "LayerFlush"; break;
+    case RenderingUpdateStep::Reveal: ts << "Reveal"_s; break;
+    case RenderingUpdateStep::FlushAutofocusCandidates: ts << "FlushAutofocusCandidates"_s; break;
+    case RenderingUpdateStep::Resize: ts << "Resize"_s; break;
+    case RenderingUpdateStep::Scroll: ts << "Scroll"_s; break;
+    case RenderingUpdateStep::MediaQueryEvaluation: ts << "MediaQueryEvaluation"_s; break;
+    case RenderingUpdateStep::Animations: ts << "Animations"_s; break;
+    case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"_s; break;
+    case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"_s; break;
+    case RenderingUpdateStep::PerformPendingViewTransitions: ts << "PerformPendingViewTransitions"_s; break;
+    case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"_s; break;
+    case RenderingUpdateStep::UpdateContentRelevancy: ts << "UpdateContentRelevancy"_s; break;
+    case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"_s; break;
+    case RenderingUpdateStep::Images: ts << "Images"_s; break;
+    case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"_s; break;
+    case RenderingUpdateStep::CursorUpdate: ts << "CursorUpdate"_s; break;
+    case RenderingUpdateStep::EventRegionUpdate: ts << "EventRegionUpdate"_s; break;
+    case RenderingUpdateStep::LayerFlush: ts << "LayerFlush"_s; break;
 #if ENABLE(ASYNC_SCROLLING)
-    case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
+    case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"_s; break;
 #endif
-    case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
-    case RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush: ts << "PrepareCanvasesForDisplayOrFlush"; break;
-    case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
-    case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
-    case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"; break;
+    case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"_s; break;
+    case RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush: ts << "PrepareCanvasesForDisplayOrFlush"_s; break;
+    case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"_s; break;
+    case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"_s; break;
+    case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"_s; break;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"; break;
+    case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"_s; break;
 #endif
-    case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"; break;
-    case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"; break;
-    case RenderingUpdateStep::SnapshottedScrollOffsets: ts << "SnapshottedScrollOffsets"; break;
+    case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"_s; break;
+    case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"_s; break;
+    case RenderingUpdateStep::SnapshottedScrollOffsets: ts << "SnapshottedScrollOffsets"_s; break;
     }
     return ts;
 }
@@ -5179,7 +5178,7 @@ CheckedRef<ElementTargetingController> Page::checkedElementTargetingController()
     return m_elementTargetingController.get();
 }
 
-String Page::sceneIdentifier() const
+const String& Page::sceneIdentifier() const
 {
 #if PLATFORM(IOS_FAMILY)
     return m_sceneIdentifier;
@@ -5191,7 +5190,13 @@ String Page::sceneIdentifier() const
 #if PLATFORM(IOS_FAMILY)
 void Page::setSceneIdentifier(String&& sceneIdentifier)
 {
+    if (m_sceneIdentifier == sceneIdentifier)
+        return;
     m_sceneIdentifier = WTFMove(sceneIdentifier);
+
+    forEachDocument([&] (Document& document) {
+        document.sceneIdentifierDidChange();
+    });
 }
 #endif
 
@@ -5468,7 +5473,7 @@ void Page::setLastAuthentication(LoginStatus::AuthenticationType authType)
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool Page::isFullscreenManagerEnabled() const
+bool Page::isDocumentFullscreenEnabled() const
 {
     Ref settings = protectedSettings();
     return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();

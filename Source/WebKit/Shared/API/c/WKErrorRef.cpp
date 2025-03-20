@@ -41,12 +41,12 @@ WKStringRef WKErrorCopyWKErrorDomain()
 
 WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(errorRef)->domain());
+    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(errorRef)->domain());
 }
 
 int WKErrorGetErrorCode(WKErrorRef errorRef)
 {
-    auto errorCode = WebKit::toImpl(errorRef)->errorCode();
+    auto errorCode = WebKit::toProtectedImpl(errorRef)->errorCode();
     switch (errorCode) {
     case API::Error::Policy::CannotShowMIMEType:
         return kWKErrorCodeCannotShowMIMEType;
@@ -87,10 +87,10 @@ int WKErrorGetErrorCode(WKErrorRef errorRef)
 
 WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toImpl(errorRef)->failingURL());
+    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(errorRef)->failingURL());
 }
 
 WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef errorRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(errorRef)->localizedDescription());
+    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(errorRef)->localizedDescription());
 }

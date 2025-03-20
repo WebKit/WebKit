@@ -210,12 +210,12 @@ void WorkerOrWorkletScriptController::disableWebAssembly(const String& errorMess
     m_globalScopeWrapper->setWebAssemblyEnabled(false, errorMessage);
 }
 
-void WorkerOrWorkletScriptController::setRequiresTrustedTypes(bool required)
+void WorkerOrWorkletScriptController::setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement enforcement)
 {
     initScriptIfNeeded();
     JSLockHolder lock { vm() };
 
-    m_globalScopeWrapper->setRequiresTrustedTypes(required);
+    m_globalScopeWrapper->setTrustedTypesEnforcement(enforcement);
 }
 
 void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)

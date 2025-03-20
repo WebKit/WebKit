@@ -43,7 +43,10 @@ namespace WebCore {
 class RenderingResourceObserver : public CanMakeWeakPtr<RenderingResourceObserver> {
 public:
     virtual ~RenderingResourceObserver() = default;
-    virtual void releaseRenderingResource(RenderingResourceIdentifier) = 0;
+    virtual void willDestroyNativeImage(RenderingResourceIdentifier) = 0;
+    virtual void willDestroyGradient(RenderingResourceIdentifier) = 0;
+    virtual void willDestroyDecomposedGlyphs(RenderingResourceIdentifier) = 0;
+    virtual void willDestroyFilter(RenderingResourceIdentifier) = 0;
 protected:
     RenderingResourceObserver() = default;
 };
@@ -51,14 +54,7 @@ protected:
 class RenderingResource
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderingResource> {
 public:
-    virtual ~RenderingResource()
-    {
-        if (!hasValidRenderingResourceIdentifier())
-            return;
-
-        for (auto& observer : m_observers)
-            observer.releaseRenderingResource(renderingResourceIdentifier());
-    }
+    virtual ~RenderingResource() = default;
 
     virtual bool isNativeImage() const { return false; }
     virtual bool isGradient() const { return false; }
@@ -81,16 +77,10 @@ public:
         return m_renderingResourceIdentifier;
     }
 
-    void addObserver(RenderingResourceObserver& observer)
+    void addObserver(WeakRef<RenderingResourceObserver>&& observer)
     {
         ASSERT(hasValidRenderingResourceIdentifier());
-        m_observers.add(observer);
-    }
-
-    void removeObserver(RenderingResourceObserver& observer)
-    {
-        ASSERT(hasValidRenderingResourceIdentifier());
-        m_observers.remove(observer);
+        m_observers.add(WTFMove(observer));
     }
 
 protected:

@@ -79,7 +79,7 @@ public:
 // IPC call.
 // FIXME: It would be nice if this could actually be a subclass of ImageBufferSet, but
 // probably can't while it uses batching for prepare and volatility.
-class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver, public Identified<RemoteImageBufferSetIdentifier> {
+class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>, public Identified<RemoteImageBufferSetIdentifier> {
 public:
     RemoteImageBufferSetProxy(RemoteRenderingBackendProxy&);
     ~RemoteImageBufferSetProxy();

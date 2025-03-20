@@ -106,8 +106,8 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
 void* CompleteSubspace::allocateSlow(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     void* result = tryAllocateSlow(vm, size, deferralContext);
-    if (failureMode == AllocationFailureMode::Assert)
-        RELEASE_ASSERT(result);
+    if (UNLIKELY(!result))
+        RELEASE_ASSERT_RESOURCE_AVAILABLE(failureMode != AllocationFailureMode::Assert, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
     return result;
 }
 
@@ -130,7 +130,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     
     vm.heap.collectIfNecessaryOrDefer(deferralContext);
     if (UNLIKELY(Options::maxHeapSizeAsRAMSizeMultiple())) {
-        if (vm.heap.capacity() > Options::maxHeapSizeAsRAMSizeMultiple() * WTF::ramSize())
+        if (vm.heap.capacity() > static_cast<uint64_t>(Options::maxHeapSizeAsRAMSizeMultiple()) * static_cast<uint64_t>(WTF::ramSize()))
             return nullptr;
     }
 
@@ -139,7 +139,8 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     if (!allocation)
         return nullptr;
     
-    m_space.registerPreciseAllocation(allocation);
+    m_preciseAllocations.append(allocation);
+    m_space.registerPreciseAllocation(allocation, /* isNewAllocation */ true);
     return allocation->cell();
 }
 
@@ -160,8 +161,7 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
 
     sanitizeStackForVM(vm);
 
-    if (size <= Options::preciseAllocationCutoff()
-        && size <= MarkedSpace::largeCutoff) {
+    if (UNLIKELY(size <= Options::preciseAllocationCutoff() && size <= MarkedSpace::largeCutoff)) {
         dataLog("FATAL: attampting to allocate small object using large allocation.\n");
         dataLog("Requested allocation size: ", size, "\n");
         RELEASE_ASSERT_NOT_REACHED();
@@ -176,8 +176,8 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
         oldAllocation->remove();
 
     PreciseAllocation* allocation = oldAllocation->tryReallocate(size, this);
-    if (!allocation) {
-        RELEASE_ASSERT(failureMode != AllocationFailureMode::Assert);
+    if (UNLIKELY(!allocation)) {
+        RELEASE_ASSERT_RESOURCE_AVAILABLE(failureMode != AllocationFailureMode::Assert, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
         m_preciseAllocations.append(oldAllocation);
         return nullptr;
     }

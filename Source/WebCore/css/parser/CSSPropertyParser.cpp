@@ -35,7 +35,6 @@
 #include "CSSBorderImageWidthValue.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
-#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"
@@ -52,7 +51,6 @@
 #include "CSSPropertyParserConsumer+AppleVisualEffect.h"
 #include "CSSPropertyParserConsumer+Background.h"
 #include "CSSPropertyParserConsumer+Color.h"
-#include "CSSPropertyParserConsumer+Conditional.h"
 #include "CSSPropertyParserConsumer+Easing.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+Grid.h"
@@ -67,7 +65,6 @@
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
-#include "CSSPropertyParserConsumer+Sizing.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+TextDecoration.h"
 #include "CSSPropertyParserConsumer+Time.h"
@@ -419,9 +416,9 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
         case CSSCustomPropertySyntax::Type::String:
             return consumeString(range);
         case CSSCustomPropertySyntax::Type::TransformFunction:
-            return consumeTransformFunction(m_range, m_context);
+            return CSSPropertyParsing::consumeTransformFunction(m_range, m_context);
         case CSSCustomPropertySyntax::Type::TransformList:
-            return consumeTransformList(m_range, m_context);
+            return CSSPropertyParsing::consumeTransformList(m_range, m_context);
         case CSSCustomPropertySyntax::Type::Unknown:
             return nullptr;
         }
@@ -433,19 +430,14 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
         switch (component.multiplier) {
         case CSSCustomPropertySyntax::Multiplier::Single:
             return consumeSingleValue(range, component);
-        case CSSCustomPropertySyntax::Multiplier::CommaList: {
-            return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&](auto& range) {
+        case CSSCustomPropertySyntax::Multiplier::CommaList:
+            return consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) {
                 return consumeSingleValue(range, component);
             });
-        }
-        case CSSCustomPropertySyntax::Multiplier::SpaceList: {
-            CSSValueListBuilder valueList;
-            while (RefPtr value = consumeSingleValue(range, component))
-                valueList.append(value.releaseNonNull());
-            if (valueList.isEmpty())
-                return nullptr;
-            return CSSValueList::createSpaceSeparated(WTFMove(valueList));
-        }
+        case CSSCustomPropertySyntax::Multiplier::SpaceList:
+            return consumeListSeparatedBy<' ', OneOrMore>(range, [&](auto& range) {
+                return consumeSingleValue(range, component);
+            });
         }
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -623,27 +615,12 @@ bool CSSPropertyParser::parsePositionTryDescriptor(CSSPropertyID property, bool 
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
 {
-    if (isShorthand(property))
-        return parseFontFaceDescriptorShorthand(property);
-
     RefPtr parsedValue = CSSPropertyParsing::parseFontFaceDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
         return false;
 
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
     return true;
-}
-
-bool CSSPropertyParser::parseFontFaceDescriptorShorthand(CSSPropertyID property)
-{
-    ASSERT(isExposed(property, m_context.propertySettings));
-
-    switch (property) {
-    case CSSPropertyFontVariant:
-        return consumeFontVariantShorthand(false);
-    default:
-        return false;
-    }
 }
 
 bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool important)
@@ -741,7 +718,7 @@ bool CSSPropertyParser::consumeFont(bool important)
             continue;
         if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueSmallCaps>(range)))
             continue;
-        if (!fontWeight && (fontWeight = consumeFontWeight(range, m_context)))
+        if (!fontWeight && (fontWeight = CSSPropertyParsing::consumeFontWeight(range, m_context)))
             continue;
         if (!fontWidth && (fontWidth = CSSPropertyParsing::consumeFontWidthAbsolute(range)))
             continue;
@@ -830,7 +807,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         if (!positionValue && (positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range)))
             continue;
 
-        if (!alternatesValue && (alternatesValue = consumeFontVariantAlternates(m_range, m_context)))
+        if (!alternatesValue && (alternatesValue = CSSPropertyParsing::consumeFontVariantAlternates(m_range)))
             continue;
 
         CSSFontVariantLigaturesParser::ParseResult ligaturesParseResult = ligaturesParser.consumeLigature(m_range);
@@ -848,7 +825,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
             || numericParseResult == CSSFontVariantNumericParser::ParseResult::DisallowedValue)
             return false;
 
-        if (!eastAsianValue && (eastAsianValue = consumeFontVariantEastAsian(m_range, m_context)))
+        if (!eastAsianValue && (eastAsianValue = CSSPropertyParsing::consumeFontVariantEastAsian(m_range)))
             continue;
 
         if (m_context.propertySettings.cssFontVariantEmojiEnabled && !emojiValue && (emojiValue = CSSPropertyParsing::consumeFontVariantEmoji(m_range)))
@@ -1312,6 +1289,10 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return InitialNumericValue { 50, CSSUnitType::CSS_PERCENTAGE };
     case CSSPropertyPosition:
         return CSSValueStatic;
+    case CSSPropertyPositionTryOrder:
+        return CSSValueNormal;
+    case CSSPropertyPositionTryFallbacks:
+        return CSSValueNone;
     case CSSPropertyPrintColorAdjust:
         return CSSValueEconomy;
     case CSSPropertyScrollTimelineAxis:
@@ -1986,7 +1967,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     switch (property) {
     // background-*
     case CSSPropertyBackgroundClip:
-        return consumeSingleBackgroundClip(range, context);
+        return CSSPropertyParsing::consumeSingleBackgroundClip(range, context);
     case CSSPropertyBackgroundBlendMode:
         return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
     case CSSPropertyBackgroundAttachment:
@@ -2545,7 +2526,7 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
 
 bool CSSPropertyParser::consumeContainerShorthand(bool important)
 {
-    RefPtr name = consumeContainerName(m_range, m_context);
+    RefPtr name = parseSingleValue(CSSPropertyContainerName, CSSPropertyContainer);
     if (!name)
         return false;
 
@@ -2557,7 +2538,7 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
         if (!consumeSlashIncludingWhitespace(m_range))
             return nullptr;
         sawSlash = true;
-        return parseSingleValue(CSSPropertyContainerType);
+        return parseSingleValue(CSSPropertyContainerType, CSSPropertyContainer);
     };
 
     auto type = consumeSlashType();
@@ -2578,7 +2559,7 @@ bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
     if (m_range.atEnd())
         return false;
 
-    RefPtr containIntrinsicWidth = consumeContainIntrinsicSize(m_range, m_context);
+    RefPtr containIntrinsicWidth = CSSPropertyParsing::consumeContainIntrinsicWidth(m_range, m_context);
     if (!containIntrinsicWidth)
         return false;
 
@@ -2587,7 +2568,7 @@ bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
     if (m_range.atEnd())
         containIntrinsicHeight = containIntrinsicWidth;
     else {
-        containIntrinsicHeight = consumeContainIntrinsicSize(m_range, m_context);
+        containIntrinsicHeight = CSSPropertyParsing::consumeContainIntrinsicHeight(m_range, m_context);
         m_range.consumeWhitespace();
         if (!m_range.atEnd() || !containIntrinsicHeight)
             return false;
@@ -2906,7 +2887,7 @@ bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
     CSSValueListBuilder startList;
     CSSValueListBuilder endList;
     do {
-        RefPtr start = consumeAnimationRange(m_range, m_context, SingleTimelineRange::Type::Start);
+        RefPtr start = consumeSingleAnimationRangeStart(m_range, m_context);
         if (!start)
             return false;
 
@@ -2929,7 +2910,7 @@ bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
                 end = rangeEndValueForStartValue(startPair->first());
             }
         } else {
-            end = consumeAnimationRange(m_range, m_context, SingleTimelineRange::Type::End);
+            end = consumeSingleAnimationRangeEnd(m_range, m_context);
             m_range.consumeWhitespace();
             if (!end)
                 return false;
@@ -2995,7 +2976,7 @@ bool CSSPropertyParser::consumeViewTimelineShorthand(bool important)
         // Both a view-timeline-axis and a view-timeline-inset are optional.
         if (m_range.peek().type() != CommaToken && !m_range.atEnd()) {
             RefPtr axis = CSSPropertyParsing::consumeAxis(m_range);
-            RefPtr insets = consumeViewTimelineInsetListItem(m_range, m_context);
+            RefPtr insets = consumeSingleViewTimelineInsetItem(m_range, m_context);
             // Since the order of view-timeline-axis and view-timeline-inset is not guaranteed, let's try view-timeline-axis again.
             if (!axis)
                 axis = CSSPropertyParsing::consumeAxis(m_range);
@@ -3015,6 +2996,18 @@ bool CSSPropertyParser::consumeViewTimelineShorthand(bool important)
     addProperty(CSSPropertyViewTimelineName, CSSPropertyViewTimeline, CSSValueList::createCommaSeparated(WTFMove(namesList)), important);
     addProperty(CSSPropertyViewTimelineAxis, CSSPropertyViewTimeline, CSSValueList::createCommaSeparated(WTFMove(axesList)), important);
     addProperty(CSSPropertyViewTimelineInset, CSSPropertyViewTimeline, CSSValueList::createCommaSeparated(WTFMove(insetsList)), important);
+    return true;
+}
+
+bool CSSPropertyParser::consumePositionTryShorthand(bool important)
+{
+    auto order = parseSingleValue(CSSPropertyPositionTryOrder);
+    auto fallbacks = parseSingleValue(CSSPropertyPositionTryFallbacks);
+    if (!fallbacks)
+        return false;
+
+    addProperty(CSSPropertyPositionTryOrder, CSSPropertyPositionTry, WTFMove(order), important);
+    addProperty(CSSPropertyPositionTryFallbacks, CSSPropertyPositionTry, WTFMove(fallbacks), important);
     return true;
 }
 
@@ -3040,7 +3033,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyTransition:
         return consumeAnimationShorthand(transitionShorthandForParsing(), important);
     case CSSPropertyTextDecoration: {
-        auto line = consumeTextDecorationLine(m_range, m_context);
+        auto line = CSSPropertyParsing::consumeTextDecorationLine(m_range);
         if (!line || !m_range.atEnd())
             return false;
         addProperty(CSSPropertyTextDecorationLine, property, line.releaseNonNull(), important);
@@ -3156,6 +3149,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
             addProperty(longhand, CSSPropertyBorder, nullptr, important);
         return true;
     }
+    case CSSPropertyCornerShape:
+        return consume4ValueShorthand(cornerShapeShorthand(), important);
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage:
@@ -3184,7 +3179,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyBackground:
         return consumeBackgroundShorthand(backgroundShorthand(), important);
     case CSSPropertyWebkitBackgroundSize: {
-        auto backgroundSize = consumeCommaSeparatedListWithSingleValueOptimization(m_range, [] (auto& range, auto& context) {
+        auto backgroundSize = consumeListSeparatedBy<',', OneOrMore, ListOptimization::SingleValue>(m_range, [] (auto& range, auto& context) {
             return consumeSingleWebkitBackgroundSize(range, context);
         }, m_context);
         if (!backgroundSize || !m_range.atEnd())
@@ -3243,6 +3238,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeWhiteSpaceShorthand(important);
     case CSSPropertyAnimationRange:
         return consumeAnimationRangeShorthand(important);
+    case CSSPropertyPositionTry:
+        return consumePositionTryShorthand(important);
     default:
         return false;
     }

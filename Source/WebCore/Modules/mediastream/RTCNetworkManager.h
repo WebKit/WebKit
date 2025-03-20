@@ -37,6 +37,8 @@ public:
     virtual void setICECandidateFiltering(bool) = 0;
     virtual void unregisterMDNSNames() = 0;
     virtual const String& interfaceNameForTesting() const = 0;
+
+    virtual bool isLibWebRTCNetworkManager() const { return false; }
 };
 
 } // namespace WebCore

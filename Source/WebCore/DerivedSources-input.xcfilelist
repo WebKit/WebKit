@@ -993,6 +993,7 @@ $(PROJECT_DIR)/Modules/webaudio/WebKitAudioPannerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitDynamicsCompressorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOscillatorNode.idl
+$(PROJECT_DIR)/Modules/webauthn/AllAcceptedCredentialsOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/AttestationConveyancePreference.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputsJSON.idl
@@ -1005,6 +1006,7 @@ $(PROJECT_DIR)/Modules/webauthn/AuthenticatorAttestationResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorSelectionCriteria.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorTransport.idl
+$(PROJECT_DIR)/Modules/webauthn/CurrentUserDetailsOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/CredentialPropertiesOutput.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredential.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl
@@ -1022,6 +1024,7 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/RegistrationResponseJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
+$(PROJECT_DIR)/Modules/webauthn/UnknownCredentialOptions.idl
 $(PROJECT_DIR)/Modules/webcodecs/AacEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/AudioSampleFormat.idl
 $(PROJECT_DIR)/Modules/webcodecs/AvcEncoderConfig.idl
@@ -1255,6 +1258,7 @@ $(PROJECT_DIR)/crypto/parameters/X25519Params.idl
 $(PROJECT_DIR)/css/CSSConditionRule.idl
 $(PROJECT_DIR)/css/CSSContainerRule.idl
 $(PROJECT_DIR)/css/CSSCounterStyleRule.idl
+$(PROJECT_DIR)/css/CSSFontFaceDescriptors.idl
 $(PROJECT_DIR)/css/CSSFontFaceRule.idl
 $(PROJECT_DIR)/css/CSSFontFeatureValuesRule.idl
 $(PROJECT_DIR)/css/CSSFontPaletteValuesRule.idl
@@ -1279,6 +1283,7 @@ $(PROJECT_DIR)/css/CSSRuleList.idl
 $(PROJECT_DIR)/css/CSSScopeRule.idl
 $(PROJECT_DIR)/css/CSSStartingStyleRule.idl
 $(PROJECT_DIR)/css/CSSStyleDeclaration.idl
+$(PROJECT_DIR)/css/CSSStyleProperties.idl
 $(PROJECT_DIR)/css/CSSStyleRule.idl
 $(PROJECT_DIR)/css/CSSStyleSheet.idl
 $(PROJECT_DIR)/css/CSSSupportsRule.idl
@@ -1323,10 +1328,10 @@ $(PROJECT_DIR)/css/htmlSwitchControl.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/popover.css
-$(PROJECT_DIR)/css/process-css-properties.py
-$(PROJECT_DIR)/css/process-css-pseudo-selectors.py
-$(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
+$(PROJECT_DIR)/css/scripts/process-css-properties.py
+$(PROJECT_DIR)/css/scripts/process-css-pseudo-selectors.py
+$(PROJECT_DIR)/css/scripts/process-css-values.py
 $(PROJECT_DIR)/css/svg.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl

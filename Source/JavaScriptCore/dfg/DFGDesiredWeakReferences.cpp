@@ -35,15 +35,7 @@
 
 namespace JSC { namespace DFG {
 
-DesiredWeakReferences::DesiredWeakReferences()
-    : m_codeBlock(nullptr)
-{
-}
-
-DesiredWeakReferences::DesiredWeakReferences(CodeBlock* codeBlock)
-    : m_codeBlock(codeBlock)
-{
-}
+DesiredWeakReferences::DesiredWeakReferences() = default;
 
 DesiredWeakReferences::~DesiredWeakReferences() = default;
 

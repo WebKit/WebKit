@@ -47,6 +47,8 @@ public:
     const Vector<Ref<Archive>>& subframeArchives() const { return m_subframeArchives; }
     WEBCORE_EXPORT Expected<Vector<String>, ArchiveError> saveResourcesToDisk(const String& directory);
 
+    virtual bool isLegacyWebArchive() const { return false; }
+
 protected:
     // These methods are meant for subclasses for different archive types to add resources in to the archive,
     // and should not be exposed as archives should be immutable to clients

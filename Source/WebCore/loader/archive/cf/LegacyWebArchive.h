@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(FragmentedSharedBuffer&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&);
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(LocalFrame&)>&& frameFilter = { }, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainFrameFileName = { }, bool saveScriptsFromMemoryCache = true);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter = { }, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainFrameFileName = { }, bool saveScriptsFromMemoryCache = true);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(LocalFrame&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(LocalFrame*, bool saveScriptsFromMemoryCache = true);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&, bool saveScriptsFromMemoryCache = true);
@@ -60,10 +60,11 @@ private:
     bool shouldOverrideBaseURL() const final { return false; }
     bool shouldUseMainResourceEncoding() const final { return true; }
     bool shouldUseMainResourceURL() const final { return true; }
+    bool isLegacyWebArchive() const final { return true; }
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static RefPtr<LegacyWebArchive> create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame&, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainResourceFileName = { });
+    static RefPtr<LegacyWebArchive> create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame&, Vector<Ref<Node>>&& nodes, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainResourceFileName = { });
     static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
@@ -75,3 +76,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyWebArchive)
+static bool isType(const WebCore::Archive& archive) { return archive.isLegacyWebArchive(); }
+SPECIALIZE_TYPE_TRAITS_END()

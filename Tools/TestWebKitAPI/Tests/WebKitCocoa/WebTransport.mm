@@ -61,10 +61,9 @@ static void validateChallenge(NSURLAuthenticationChallenge *challenge, uint16_t 
     verifyCertificateAndPublicKey(challenge.protectionSpace.serverTrust);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
-TEST(WebTransport, DISABLED_ClientBidirectional)
+TEST(WebTransport, ClientBidirectional)
 {
-    WebTransportServer echoServer([](ConnectionGroup group) -> Task {
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
         co_await connection.awaitableSend(WTFMove(request));
@@ -106,10 +105,9 @@ TEST(WebTransport, DISABLED_ClientBidirectional)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
-TEST(WebTransport, DISABLED_Datagram)
+TEST(WebTransport, Datagram)
 {
-    WebTransportServer echoServer([](ConnectionGroup group) -> Task {
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
         auto request = co_await datagramConnection.awaitableReceiveBytes();
         co_await datagramConnection.awaitableSend(WTFMove(request));
@@ -150,10 +148,9 @@ TEST(WebTransport, DISABLED_Datagram)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
-TEST(WebTransport, DISABLED_Unidirectional)
+TEST(WebTransport, Unidirectional)
 {
-    WebTransportServer echoServer([](ConnectionGroup group) -> Task {
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
         auto serverUnidirectionalStream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Unidirectional);
@@ -198,10 +195,10 @@ TEST(WebTransport, DISABLED_Unidirectional)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
+// FIXME: Fix and enable this test.
 TEST(WebTransport, DISABLED_ServerBidirectional)
 {
-    WebTransportServer echoServer([](ConnectionGroup group) -> Task {
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
         auto serverBidirectionalStream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
@@ -248,10 +245,9 @@ TEST(WebTransport, DISABLED_ServerBidirectional)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
-TEST(WebTransport, DISABLED_NetworkProcessCrash)
+TEST(WebTransport, NetworkProcessCrash)
 {
-    WebTransportServer echoServer([](ConnectionGroup group) -> Task {
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
         co_await datagramConnection.awaitableSend(@"abc");
         auto bidiConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
@@ -421,10 +417,9 @@ TEST(WebTransport, DISABLED_NetworkProcessCrash)
     EXPECT_EQ(obj, nil);
 }
 
-// FIXME: Fix WebTransportServer constructor and re-enable these tests once rdar://141009498 is available in OS builds.
-TEST(WebTransport, DISABLED_Worker)
+TEST(WebTransport, Worker)
 {
-    WebTransportServer transportServer([](ConnectionGroup group) -> Task {
+    WebTransportServer transportServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
         auto serverBidirectionalStream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);

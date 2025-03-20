@@ -73,6 +73,7 @@ private:
 
     bool m_contentRequiresVisualReordering { false };
     bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
+    std::optional<bool> m_textContentPopulatedFromCache { };
 };
 
 }

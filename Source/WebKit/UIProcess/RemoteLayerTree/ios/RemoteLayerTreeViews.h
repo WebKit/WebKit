@@ -39,7 +39,7 @@ class FloatRect;
 class FloatSize;
 class IntPoint;
 
-enum class EventListenerRegionType : uint16_t;
+enum class EventListenerRegionType : uint32_t;
 enum class TouchAction : uint8_t;
 }
 
@@ -77,7 +77,7 @@ class WebPageProxy;
 @property (nonatomic, readonly) UIView *contentView;
 
 - (void)updateHostingSize:(WebCore::FloatSize)size;
-- (void)updateMaterialEffectType:(WKHostedMaterialEffectType)materialEffectType cornerRadius:(CGFloat)cornerRadius;
+- (void)updateMaterialEffectType:(WKHostedMaterialEffectType)materialEffectType colorScheme:(WKHostedMaterialColorScheme)colorScheme cornerRadius:(CGFloat)cornerRadius;
 
 @end
 #endif

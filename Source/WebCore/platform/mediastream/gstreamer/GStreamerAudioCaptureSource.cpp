@@ -111,6 +111,13 @@ void GStreamerAudioCaptureSource::captureEnded()
     captureFailed();
 }
 
+void GStreamerAudioCaptureSource::captureDeviceUpdated(const GStreamerCaptureDevice& device)
+{
+    setName(AtomString { device.label() });
+    setPersistentId(device.persistentId());
+    configurationChanged();
+}
+
 std::pair<GstClockTime, GstClockTime> GStreamerAudioCaptureSource::queryCaptureLatency() const
 {
     if (!m_capturer)

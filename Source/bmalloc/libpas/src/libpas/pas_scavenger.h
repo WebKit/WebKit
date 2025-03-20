@@ -52,10 +52,32 @@ PAS_BEGIN_EXTERN_C;
 struct pas_scavenger_data;
 typedef struct pas_scavenger_data pas_scavenger_data;
 
+/* Returns true if any work is still left to be done. */
+typedef bool (*pas_scavenger_foreign_work_callback)(void*);
+
+struct pas_scavenger_foreign_work_descriptor;
+typedef struct pas_scavenger_foreign_work_descriptor pas_scavenger_foreign_work_descriptor;
+struct pas_scavenger_foreign_work_data;
+typedef struct pas_scavenger_foreign_work_data pas_scavenger_foreign_work_data;
+#define PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS 1
+
+struct pas_scavenger_foreign_work_descriptor {
+    pas_scavenger_foreign_work_callback func;
+    void* userdata;
+    uint32_t period_log2_ticks;
+};
+
+struct pas_scavenger_foreign_work_data {
+    pthread_mutex_t lock; /* Only guards writes. */
+    pas_scavenger_foreign_work_descriptor descriptors[PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS];
+    int next_open_descriptor;
+};
+
 /* Holds data that needs to be initialized somehow. */
 struct pas_scavenger_data {
     pthread_mutex_t lock;
     pthread_cond_t cond;
+    pas_scavenger_foreign_work_data foreign_work;
 };
 
 /* This is available extern for testing and debugging only. */
@@ -91,6 +113,20 @@ PAS_API extern pas_scavenger_activity_callback pas_scavenger_completion_callback
 /* This gets called when the scavenger thread is about to shut down.  It's called from the
    scavenger thread with no locks held. */
 PAS_API extern pas_scavenger_activity_callback pas_scavenger_will_shut_down_callback;
+
+/* If successful, arranges for the scavenger to call the callback
+ * with userdata as an argument. The scavenger will try to call it
+ * approximately once per the specified period, but no faster than once every
+ * pas_scavenger_period_in_milliseconds ms.
+ * This callback will only be called from the scavenger thread with no locks
+ * held.
+ * At most PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS can be installed.
+ * Returns false if the callback could not be installed. */
+PAS_API bool pas_scavenger_try_install_foreign_work_callback(
+    pas_scavenger_foreign_work_callback callback,
+    uint32_t period_log2_ms,
+    void* userdata);
+
 
 /* This defers an eligibility notification. */
 PAS_API bool pas_scavenger_did_create_eligible(void);

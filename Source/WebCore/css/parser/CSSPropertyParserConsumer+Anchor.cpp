@@ -29,9 +29,12 @@
 
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSValue.h"
+#include "CSSValueList.h"
 #include "CSSValuePair.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -303,11 +306,47 @@ RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, const CSSParser
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto maybeDim2 = consumeIdentRaw(range);
-    if (!maybeDim2)
+    if (!maybeDim2) {
+        if (!getKeywordType(dim1))
+            return nullptr;
         return CSSPrimitiveValue::create(dim1);
+    }
     auto dim2 = *maybeDim2;
 
     return valueForPositionArea(dim1, dim2);
+}
+
+RefPtr<CSSValue> consumePositionVisibility(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    if (range.peek().id() == CSSValueAlways) {
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(CSSValueAlways);
+    }
+
+    // Sort the keywords such that the order in the resulting list matches the order in the spec.
+    // e.g "anchors-visible anchors-valid" is parsed to ["anchors-valid", "anchors-visible"]
+
+    OptionSet<PositionVisibility> specifiedValues;
+    while (!range.atEnd()) {
+        auto ident = consumeIdentRaw<CSSValueAnchorsValid, CSSValueAnchorsVisible, CSSValueNoOverflow>(range);
+        if (!ident)
+            return nullptr;
+
+        auto specifiedValue = fromCSSValueID<PositionVisibility>(*ident);
+        if (specifiedValues.contains(specifiedValue))
+            return nullptr;
+
+        specifiedValues.add(specifiedValue);
+    }
+
+    if (specifiedValues.isEmpty())
+        return nullptr;
+
+    CSSValueListBuilder builder;
+    for (auto value : specifiedValues)
+        builder.append(CSSPrimitiveValue::create(toCSSValueID(value)));
+
+    return CSSValueList::createSpaceSeparated(WTFMove(builder));
 }
 
 } // namespace CSSPropertyParserHelpers

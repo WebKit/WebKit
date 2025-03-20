@@ -20,12 +20,11 @@
 
 // https://drafts.csswg.org/css-fonts/#cssfontfacerule
 
-// Introduced in DOM Level 2:
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface CSSFontFaceRule : CSSRule {
-    readonly attribute CSSStyleDeclaration style;
+    readonly attribute CSSFontFaceDescriptors style;
 };
 

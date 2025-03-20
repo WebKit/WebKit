@@ -32,6 +32,7 @@
 #import "NfcConnection.h"
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
@@ -133,7 +134,12 @@ using Mock = WebCore::MockWebAuthenticationConfiguration;
 namespace {
 
 static id<NFReaderSessionDelegate> globalNFReaderSessionDelegate;
-static MockNfcService* globalNfcService;
+
+static WeakPtr<MockNfcService>& weakGlobalNfcService()
+{
+    static NeverDestroyed<WeakPtr<MockNfcService>> service;
+    return service.get();
+}
 
 static void NFReaderSessionSetDelegate(id, SEL, id<NFReaderSessionDelegate> delegate)
 {
@@ -152,6 +158,7 @@ static BOOL NFReaderSessionConnectTag(id, SEL, NFTag *)
 
 static BOOL NFReaderSessionStopPolling(id, SEL)
 {
+    RefPtr globalNfcService = weakGlobalNfcService().get();
     if (!globalNfcService)
         return NO;
     globalNfcService->receiveStopPolling();
@@ -160,6 +167,7 @@ static BOOL NFReaderSessionStopPolling(id, SEL)
 
 static BOOL NFReaderSessionStartPollingWithError(id, SEL, NSError **)
 {
+    RefPtr globalNfcService = weakGlobalNfcService().get();
     if (!globalNfcService)
         return NO;
     globalNfcService->receiveStartPolling();
@@ -168,9 +176,8 @@ static BOOL NFReaderSessionStartPollingWithError(id, SEL, NSError **)
 
 static NSData* NFReaderSessionTransceive(id, SEL, NSData *)
 {
-    if (!globalNfcService)
-        return nil;
-    return globalNfcService->transceive();
+    RefPtr globalNfcService = weakGlobalNfcService().get();
+    return globalNfcService ? globalNfcService->transceive() : nil;
 }
 
 } // namespace
@@ -217,7 +224,7 @@ void MockNfcService::platformStartDiscovery()
 {
 #if HAVE(NEAR_FIELD)
     if (!!m_configuration.nfc) {
-        globalNfcService = this;
+        weakGlobalNfcService() = *this;
 
         Method methodToSwizzle1 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(setDelegate:));
         method_setImplementation(methodToSwizzle1, (IMP)NFReaderSessionSetDelegate);

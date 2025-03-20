@@ -121,9 +121,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Resolver);
 class Resolver::State {
 public:
     State() = default;
-    State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr)
+    State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, TreeResolutionState* treeResolutionState)
         : m_element(&element)
         , m_parentStyle(parentStyle)
+        , m_treeResolutionState(treeResolutionState)
     {
         ASSERT(element.isConnected());
 
@@ -152,12 +153,16 @@ public:
     const RenderStyle* userAgentAppearanceStyle() const { return m_userAgentAppearanceStyle.get(); }
     void setUserAgentAppearanceStyle(std::unique_ptr<RenderStyle> style) { m_userAgentAppearanceStyle = WTFMove(style); }
 
+    CheckedPtr<TreeResolutionState> treeResolutionState() { return m_treeResolutionState; }
+
 private:
     const Element* m_element { };
     std::unique_ptr<RenderStyle> m_style;
     const RenderStyle* m_parentStyle { };
     std::unique_ptr<const RenderStyle> m_ownedParentStyle;
     const RenderStyle* m_rootElementStyle { };
+
+    CheckedPtr<TreeResolutionState> m_treeResolutionState;
 
     std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
 };
@@ -265,7 +270,7 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 
 auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionContext& context) -> State
 {
-    auto state = State { element, context.parentStyle, context.documentElementStyle };
+    auto state = State { element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get() };
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
@@ -294,13 +299,14 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
     return state;
 }
 
-BuilderContext Resolver::builderContext(const State& state)
+BuilderContext Resolver::builderContext(State& state)
 {
     return {
         document(),
         *state.parentStyle(),
         state.rootElementStyle(),
-        state.element()
+        state.element(),
+        state.treeResolutionState()
     };
 }
 
@@ -382,7 +388,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         }
     }
 
-    auto state = State(element, nullptr, context.documentElementStyle);
+    auto state = State(element, nullptr, context.documentElementStyle, context.treeResolutionState.get());
 
     state.setStyle(RenderStyle::clonePtr(elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
@@ -538,7 +544,7 @@ void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& e
 
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
-    auto state = State(element, context.parentStyle, context.documentElementStyle);
+    auto state = State(element, context.parentStyle, context.documentElementStyle, nullptr);
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
@@ -587,7 +593,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
     if (!documentElement || !documentElement->renderStyle())
         return RenderStyle::createPtr();
 
-    auto state = State(*documentElement, document().initialContainingBlockStyle());
+    auto state = State(*documentElement, document().initialContainingBlockStyle(), nullptr, nullptr);
 
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
@@ -632,7 +638,7 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
     if (!element)
         return { };
 
-    auto state = State(*element, nullptr);
+    auto state = State(*element, nullptr, nullptr, nullptr);
 
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);

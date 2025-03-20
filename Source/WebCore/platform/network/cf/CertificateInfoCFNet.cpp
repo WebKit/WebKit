@@ -102,14 +102,11 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
 
 #if PLATFORM(MAC)
     if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate, nullptr, nullptr))) {
-        // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
-        const Seconds absoluteReferenceDate(978307200);
-
         if (auto validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
             if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore, CFSTR("value")))) {
                 double numberValue;
                 if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validFrom = absoluteReferenceDate + Seconds(numberValue);
+                    summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
             }
         }
 
@@ -117,7 +114,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
             if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotAfter, CFSTR("value")))) {
                 double numberValue;
                 if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validUntil = absoluteReferenceDate + Seconds(numberValue);
+                    summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
             }
         }
 

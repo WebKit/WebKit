@@ -1,16 +1,16 @@
 
-FAIL Offsets for position-area: span-all assert_equals: Check expected offsetLeft expected 145 but got 10
-FAIL Offsets for position-area: top left assert_equals: Check expected offsetLeft expected 80 but got 10
-FAIL Offsets for position-area: top center assert_equals: Check expected offsetLeft expected 145 but got 10
-FAIL Offsets for position-area: top right assert_equals: Check expected offsetLeft expected 210 but got 10
-FAIL Offsets for position-area: center left assert_equals: Check expected offsetLeft expected 80 but got 10
-FAIL Offsets for position-area: center center assert_equals: Check expected offsetLeft expected 145 but got 10
-FAIL Offsets for position-area: center right assert_equals: Check expected offsetLeft expected 210 but got 10
-FAIL Offsets for position-area: bottom left assert_equals: Check expected offsetLeft expected 80 but got 10
-FAIL Offsets for position-area: bottom center assert_equals: Check expected offsetLeft expected 145 but got 10
-FAIL Offsets for position-area: bottom right assert_equals: Check expected offsetLeft expected 210 but got 10
-FAIL Offsets for position-area: top span-left assert_equals: Check expected offsetLeft expected 180 but got 10
-FAIL Offsets for position-area: top span-right assert_equals: Check expected offsetLeft expected 110 but got 10
-FAIL Offsets for position-area: span-top left assert_equals: Check expected offsetLeft expected 80 but got 10
-FAIL Offsets for position-area: span-bottom left assert_equals: Check expected offsetLeft expected 80 but got 10
+PASS Offsets for position-area: span-all
+PASS Offsets for position-area: top left
+PASS Offsets for position-area: top center
+PASS Offsets for position-area: top right
+PASS Offsets for position-area: center left
+PASS Offsets for position-area: center center
+PASS Offsets for position-area: center right
+PASS Offsets for position-area: bottom left
+PASS Offsets for position-area: bottom center
+PASS Offsets for position-area: bottom right
+PASS Offsets for position-area: top span-left
+PASS Offsets for position-area: top span-right
+PASS Offsets for position-area: span-top left
+PASS Offsets for position-area: span-bottom left
 

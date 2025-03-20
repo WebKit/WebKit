@@ -8,6 +8,7 @@ FAIL willValidate after upgrade assert_false: in datalist expected false got tru
 PASS willValidate after upgrade (document.createElement)
 PASS willValidate should throw NotSupportedError if the target element is not a form-associated custom element
 PASS validity and setValidity()
+PASS validity.customError should be false if not explicitly set via setValidity()
 PASS "anchor" argument of setValidity()
 PASS checkValidity() should throw NotSupportedError if the target element is not a form-associated custom element
 PASS checkValidity()

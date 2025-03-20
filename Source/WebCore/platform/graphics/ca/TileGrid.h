@@ -37,6 +37,10 @@
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include "DynamicContentScalingDisplayList.h"
+#endif
+
 #if USE(CG)
 typedef struct CGContext *CGContextRef;
 #endif
@@ -118,7 +122,7 @@ private:
     bool getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
-    IntRect ensureTilesForRect(const FloatRect&, UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay, CoverageType);
+    IntRect ensureTilesForRect(const FloatRect&, HashSet<TileIndex>& tilesNeedingDisplay, CoverageType);
 
     struct TileCohortInfo {
         TileCohort cohort;
@@ -156,6 +160,9 @@ private:
     float platformCALayerDeviceScaleFactor() const override;
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
     bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<DynamicContentScalingDisplayList> platformCALayerDynamicContentScalingDisplayList(const PlatformCALayer*) const override;
+#endif
 
     TileGridIdentifier m_identifier;
     CheckedRef<TileController> m_controller;

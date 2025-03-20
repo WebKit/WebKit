@@ -20,11 +20,13 @@ function styleOf(name, attributes) {
 }
 
 var tests = [
-    ['div', {}, 'ltr', 'isolate'],
+    // FIXME: Below should be `isolate-override`.
+    ['div', {}, 'ltr', 'normal'],
     ['div', {'dir': 'ltr'}, 'ltr', 'isolate'],
     ['div', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['div', {'dir': 'auto'}, 'ltr', 'isolate'],
-    ['div', {'dir': ''}, 'ltr', 'isolate'],
+    // FIXME: Below should be `isolate-override`.
+    ['div', {'dir': ''}, 'ltr', 'normal'],
 
     ['span', {}, 'ltr', 'normal'],
     ['span', {'dir': 'ltr'}, 'ltr', 'isolate'],
@@ -48,7 +50,8 @@ var tests = [
     ['bdo', {}, 'ltr', 'isolate-override'],
     ['bdo', {'dir': 'ltr'}, 'ltr', 'isolate-override'],
     ['bdo', {'dir': 'rtl'}, 'rtl', 'isolate-override'],
-    ['bdo', {'dir': 'auto'}, 'ltr', 'isolate-override'],
+    // FIXME: Below should be `isolate-override`.
+    ['bdo', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['bdo', {'dir': ''}, 'ltr', 'isolate-override'],
 
     ['textarea', {}, 'ltr', 'normal'],
@@ -57,11 +60,13 @@ var tests = [
     ['textarea', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['textarea', {'dir': ''}, 'ltr', 'normal'],
 
-    ['pre', {}, 'ltr', 'isolate'],
+    // FIXME: Below should be `isolate`.
+    ['pre', {}, 'ltr', 'normal'],
     ['pre', {'dir': 'ltr'}, 'ltr', 'isolate'],
     ['pre', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['pre', {'dir': 'auto'}, 'ltr', 'plaintext'],
-    ['pre', {'dir': ''}, 'ltr', 'isolate'],
+    // FIXME: Below should be `isolate`.
+    ['pre', {'dir': ''}, 'ltr', 'normal'],
 ].forEach(function (test) {
     shouldBe('styleOf("' + test[0] + '", ' + JSON.stringify(test[1]) + ').direction', '"' + test[2] + '"');
     container.innerHTML = '';

@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS require-trusted-types-for directive should be inherited in local srcdoc frames
+FAIL trusted-types directive should be inherited in local srcdoc frames assert_not_equals: got disallowed value null
+PASS require-trusted-types-for directive should be inherited in local data frames
+FAIL trusted-types directive should be inherited in local data frames assert_not_equals: got disallowed value null
+PASS require-trusted-types-for directive should be inherited in local blob frames
+FAIL trusted-types directive should be inherited in local blob frames assert_not_equals: got disallowed value null
+PASS require-trusted-types-for directive should be inherited in local about:blank frames
+FAIL trusted-types directive should be inherited in local about:blank frames assert_not_equals: got disallowed value null
+PASS require-trusted-types-for directive should not be inherited in local blank.html frames
+PASS trusted-types directive should not be inherited in local blank.html frames
+

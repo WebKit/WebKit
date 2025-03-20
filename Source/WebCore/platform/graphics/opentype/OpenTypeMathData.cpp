@@ -275,8 +275,8 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData&) = default;
 
 OpenTypeMathData::~OpenTypeMathData() = default;
 
-#if ENABLE(OPENTYPE_MATH)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant) const
 {
     int32_t value = 0;

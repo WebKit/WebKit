@@ -35,9 +35,9 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-// <'clip'> = <rect()> | auto
-// https://drafts.fxtf.org/css-masking/#propdef-clip
-RefPtr<CSSValue> consumeClip(CSSParserTokenRange&, const CSSParserContext&);
+// rect() = rect( [ <length> | auto ]#{4} | [ <length> | auto ]{4} )
+// https://drafts.fxtf.org/css-masking/#funcdef-clip-rect
+RefPtr<CSSValue> consumeClipRectFunction(CSSParserTokenRange&, const CSSParserContext&);
 
 // <'clip-path'> = none | <clip-source> | [ <basic-shape> || <geometry-box> ]
 // https://drafts.fxtf.org/css-masking/#propdef-clip-path

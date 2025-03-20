@@ -42,7 +42,7 @@ function checkHasIterator(interfaceName, _obj)
 var media = document.createElement("video");
 checkHasIterator("AudioTrackList", media.audioTracks);
 checkHasIterator("CSSRuleList", document.getElementsByTagName("style")[0].sheet.rules);
-checkHasIterator("CSSStyleDeclaration", window.getComputedStyle(document.body));
+checkHasIterator("CSSStyleProperties", window.getComputedStyle(document.body));
 checkHasIterator("CSSValueList", window.getComputedStyle(document.body).getPropertyCSSValue('background-position'));
 checkHasIterator("MimeTypeArray", navigator.mimeTypes);
 if (navigator.plugins.length)

@@ -55,7 +55,7 @@ public:
     void runFocusingSteps();
 
     bool isValidCommandType(const CommandType) final;
-    bool handleCommandInternal(const HTMLButtonElement& invoker, const CommandType&) final;
+    bool handleCommandInternal(HTMLButtonElement& invoker, const CommandType&) final;
 
     void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState);
 

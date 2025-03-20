@@ -47,11 +47,6 @@ WebSWRegistrationStore::WebSWRegistrationStore(WebCore::SWServer& server, Networ
     ASSERT(RunLoop::isMain());
 }
 
-CheckedPtr<NetworkStorageManager> WebSWRegistrationStore::checkedManager() const
-{
-    return m_manager.get();
-}
-
 RefPtr<WebCore::SWServer> WebSWRegistrationStore::protectedServer() const
 {
     return m_server.get();
@@ -61,10 +56,11 @@ void WebSWRegistrationStore::clearAll(CompletionHandler<void()>&& callback)
 {
     m_updates.clear();
     m_updateTimer.stop();
-    if (!m_manager)
-        return callback();
 
-    checkedManager()->clearServiceWorkerRegistrations(WTFMove(callback));
+    if (RefPtr manager = m_manager.get())
+        manager->clearServiceWorkerRegistrations(WTFMove(callback));
+    else
+        callback();
 }
 
 void WebSWRegistrationStore::flushChanges(CompletionHandler<void()>&& callback)
@@ -77,18 +73,18 @@ void WebSWRegistrationStore::flushChanges(CompletionHandler<void()>&& callback)
 
 void WebSWRegistrationStore::closeFiles(CompletionHandler<void()>&& callback)
 {
-    if (!m_manager)
-        return callback();
-
-    checkedManager()->closeServiceWorkerRegistrationFiles(WTFMove(callback));
+    if (RefPtr manager = m_manager.get())
+        manager->closeServiceWorkerRegistrationFiles(WTFMove(callback));
+    else
+        callback();
 }
 
 void WebSWRegistrationStore::importRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>)>&& callback)
 {
-    if (!m_manager)
-        return callback(std::nullopt);
-
-    checkedManager()->importServiceWorkerRegistrations(WTFMove(callback));
+    if (RefPtr manager = m_manager.get())
+        manager->importServiceWorkerRegistrations(WTFMove(callback));
+    else
+        callback(std::nullopt);
 }
 
 void WebSWRegistrationStore::updateRegistration(const WebCore::ServiceWorkerContextData& registration)
@@ -127,10 +123,11 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
     }
     m_updates.clear();
 
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return callback();
 
-    checkedManager()->updateServiceWorkerRegistrations(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
+    manager->updateServiceWorkerRegistrations(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
         ASSERT(RunLoop::isMain());
 
         RefPtr protectedThis = weakThis.get();

@@ -1,0 +1,10 @@
+
+PASS initial position
+PASS scroll to 100
+FAIL scroll to 101 assert_equals: expected 250 but got 100
+FAIL scroll back to 100 assert_equals: expected 250 but got 100
+PASS redisplay at 100
+FAIL scroll to 299 assert_equals: expected 250 but got 100
+FAIL scroll to 300 assert_equals: expected 250 but got 100
+FAIL scroll back to 0 assert_equals: expected 250 but got 100
+

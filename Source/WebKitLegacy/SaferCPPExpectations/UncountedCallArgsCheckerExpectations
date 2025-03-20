@@ -138,6 +138,7 @@ mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebFrameNetworkingContext.mm
 mac/WebCoreSupport/WebGeolocationClient.mm
 mac/WebCoreSupport/WebKitFullScreenListener.mm
+mac/WebCoreSupport/WebNotificationClient.mm
 mac/WebCoreSupport/WebOpenPanelResultListener.mm
 mac/WebCoreSupport/WebSecurityOrigin.mm
 mac/WebCoreSupport/WebValidationMessageClient.mm

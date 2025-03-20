@@ -40,7 +40,12 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, const CSSParserContext&)
+bool isAnimationRangeKeyword(CSSValueID id)
+{
+    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
+}
+
+RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <scroll()> = scroll( [ <scroller> || <axis> ]? )
     // <scroller> = root | nearest | self
@@ -69,7 +74,7 @@ static RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& rang
     return CSSScrollValue::create(WTFMove(scroller), WTFMove(axis));
 }
 
-static RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <view()> = view( [ <axis> || <'view-timeline-inset'> ]? )
     // <axis> = block | inline | x | y
@@ -99,35 +104,9 @@ static RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range,
     return CSSViewValue::create(WTFMove(axis), WTFMove(startInset), WTFMove(endInset));
 }
 
-static RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeSingleViewTimelineInsetItem(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    // <single-animation-timeline> = auto | none | <dashed-ident> | <scroll()> | <view()>
-    // https://drafts.csswg.org/css-animations-2/#typedef-single-animation-timeline
-
-    auto id = range.peek().id();
-    if (id == CSSValueAuto || id == CSSValueNone)
-        return consumeIdent(range);
-    if (auto name = consumeDashedIdent(range))
-        return name;
-    if (auto scroll = consumeAnimationTimelineScroll(range, context))
-        return scroll;
-    return consumeAnimationTimelineView(range, context);
-}
-
-RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <animation-timeline> = <single-animation-timeline>#
-    // https://drafts.csswg.org/css-animations-2/#animation-timeline
-
-    return consumeCommaSeparatedListWithSingleValueOptimization(range, [context](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        return consumeSingleAnimationTimeline(range, context);
-    });
-}
-
-RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <view-timeline-inset-item> = <single-view-timeline-inset>{1,2}
-    // <single-view-timeline-inset> = auto | <length-percentage>
+    // <single-view-timeline-inset-item-item> = <single-view-timeline-inset>{1,2}
     // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
 
     auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context);
@@ -142,26 +121,10 @@ RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, co
     return startInset;
 }
 
-RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, const CSSParserContext& context, SingleTimelineRange::Type type)
 {
-    // <view-timeline-inset> = <view-timeline-inset-item>#
-    // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
-
-    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [context](CSSParserTokenRange& range) {
-        return consumeViewTimelineInsetListItem(range, context);
-    });
-}
-
-bool isAnimationRangeKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
-}
-
-RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const CSSParserContext& context, SingleTimelineRange::Type type)
-{
+    // <'animation-range-{start|end}'> = normal | <length-percentage> | <timeline-range-name> <length-percentage>?
     // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
-    // normal | <length-percentage> | <timeline-range-name> <length-percentage>?
-    // FIXME: Add extra handling for animation range sequences.
 
     if (auto name = consumeIdent(range)) {
         if (name->valueID() == CSSValueNormal)
@@ -178,18 +141,14 @@ RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const CSSPars
     return consumeLengthPercentage(range, context, ValueRange::All, UnitlessQuirk::Forbid);
 }
 
-RefPtr<CSSValue> consumeAnimationRangeStart(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeSingleAnimationRangeStart(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        return consumeAnimationRange(range, context, SingleTimelineRange::Type::Start);
-    });
+    return consumeSingleAnimationRange(range, context, SingleTimelineRange::Type::Start);
 }
 
-RefPtr<CSSValue> consumeAnimationRangeEnd(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeSingleAnimationRangeEnd(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        return consumeAnimationRange(range, context, SingleTimelineRange::Type::End);
-    });
+    return consumeSingleAnimationRange(range, context, SingleTimelineRange::Type::End);
 }
 
 } // namespace CSSPropertyParserHelpers

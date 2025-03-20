@@ -38,7 +38,6 @@ CacheStorageRecordInformation::CacheStorageRecordInformation(NetworkCache::Key&&
     , m_hasVaryStar(hasVaryStar)
     , m_varyHeaders(WTFMove(varyHeaders))
 {
-    RELEASE_ASSERT(!m_url.string().impl()->isAtom());
 }
 
 void CacheStorageRecordInformation::updateVaryHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse::CrossThreadData& response)
@@ -86,12 +85,6 @@ CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() cons
         m_hasVaryStar,
         crossThreadCopy(m_varyHeaders)
     };
-}
-
-void CacheStorageRecordInformation::setURL(URL&& url)
-{
-    RELEASE_ASSERT(!url.string().impl()->isAtom());
-    m_url = WTFMove(url);
 }
 
 } // namespace WebKit

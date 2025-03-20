@@ -49,6 +49,7 @@ enum class GPUFeatureName : uint8_t {
     DualSourceBlending,
     Float16Renderable,
     Float32Renderable,
+    CoreFeaturesAndLimits,
 };
 
 inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -90,6 +91,8 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::DualSourceBlending;
     case GPUFeatureName::ClipDistances:
         return WebGPU::FeatureName::ClipDistances;
+    case GPUFeatureName::CoreFeaturesAndLimits:
+        return WebGPU::FeatureName::CoreFeaturesAndLimits;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

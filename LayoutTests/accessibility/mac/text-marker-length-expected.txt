@@ -1,11 +1,8 @@
-text block
-This tests the text marker implemention of DRT is working by returning a marker range and by returning its correct length.
+This tests basic LengthForTextMarkerRange.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: root.textMarkerRangeLength(textMarkerRange) === 10
 
-
-PASS text.textMarkerRangeLength(textMarkerRange) is 10
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+text block

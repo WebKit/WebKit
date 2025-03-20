@@ -1,5 +1,6 @@
-Test passes if there is a filled green square, and no scrollbars
+Test passes if there is a filled green square and no scrollbar.
 
 
-PASS Sticky position and its overflow contribution
+PASS Sticky position and its overflow contribution in the vertical axis
+PASS Sticky position and its overflow contribution in the horizontal axis
 

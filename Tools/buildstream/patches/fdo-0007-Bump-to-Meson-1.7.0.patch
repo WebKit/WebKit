@@ -1,0 +1,26 @@
+From 301bf36ef420d0906b63a903531f1badc00fedcb Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 12 Mar 2025 09:17:45 +0000
+Subject: [PATCH] Bump to Meson 1.7.0
+
+GStreamer 1.26 requires at least 1.4.x.
+---
+ elements/components/meson.bst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/elements/components/meson.bst b/elements/components/meson.bst
+index 3fa4448..097e7cb 100644
+--- a/elements/components/meson.bst
++++ b/elements/components/meson.bst
+@@ -11,7 +11,7 @@ sources:
+   track: '*.*.*'
+   exclude:
+   - '*rc*'
+-  ref: 1.2.3-0-g84e437179da05db10aa2457322c54f4ec8be61f1
++  ref: 1.7.0-0-g897b6fcdf9adfa87fe60f420e1b483f0f49af7a3
+ - kind: patch
+   path: patches/meson/meson-no-lib64.patch
+   strip-level: 0
+-- 
+2.48.1
+

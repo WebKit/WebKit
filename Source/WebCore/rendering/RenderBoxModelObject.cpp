@@ -227,12 +227,12 @@ void RenderBoxModelObject::updateFromStyle()
     setPaintContainmentApplies(shouldApplyPaintContainment());
 }
 
-static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
+static LayoutSize accumulateInFlowPositionOffsets(const RenderBoxModelObject& child)
 {
-    if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
+    if (!child.isAnonymousBlock() || !child.isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); parent; parent = parent->parent()) {
+    for (RenderElement* parent = downcast<RenderBlock>(child).inlineContinuation(); parent; parent = parent->parent()) {
         auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent);
         if (!parentRenderInline)
             break;
@@ -365,7 +365,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     auto& top = style.top();
     auto& bottom = style.bottom();
 
-    auto offset = accumulateInFlowPositionOffsets(this);
+    auto offset = accumulateInFlowPositionOffsets(*this);
     if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
         offset.expand(left.value(), top.value());
         return offset;
@@ -626,7 +626,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
             scrollOffset = FloatPoint() + scrollableArea->scrollOffset();
 
         float scrollbarOffset = 0;
-        if (enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceVerticalScrollbarOnLeft() && scrollableArea)
+        if (scrollableArea && enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceVerticalScrollbarOnLeft())
             scrollbarOffset = scrollableArea->verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, isHorizontalWritingMode());
 
         constrainingRect.setLocation(FloatPoint(scrollOffset.x() + scrollbarOffset, scrollOffset.y()));

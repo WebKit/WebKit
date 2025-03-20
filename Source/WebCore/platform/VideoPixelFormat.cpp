@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscardAlpha)
+std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bool shouldDiscardAlpha)
 {
 #if PLATFORM(COCOA)
     if (format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarVideoRange)
@@ -75,7 +75,7 @@ VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscar
     UNUSED_PARAM(format);
     UNUSED_PARAM(shouldDiscardAlpha);
 #endif
-    return VideoPixelFormat::I420;
+    return { };
 }
 
 } // namespace WebCore

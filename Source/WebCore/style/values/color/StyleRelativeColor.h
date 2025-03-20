@@ -115,7 +115,7 @@ template<typename D> String serializationForCSS(const CSS::SerializationContext&
 
 template<typename D> WTF::TextStream& operator<<(WTF::TextStream& ts, const RelativeColor<D>& relative)
 {
-    return ts << "relativeColor(" << serializationForCSS(CSS::defaultSerializationContext(), relative) << ")";
+    return ts << "relativeColor("_s << serializationForCSS(CSS::defaultSerializationContext(), relative) << ')';
 }
 
 } // namespace Style

@@ -88,6 +88,11 @@ enum class AllowTrustedTypePolicy : uint8_t {
     DisallowedDuplicateName,
 };
 
+enum class IncludeReportOnlyPolicies : bool {
+    Yes,
+    No
+};
+
 using HashAlgorithmSet = uint8_t;
 using HashAlgorithmSetCollection = FixedVector<std::pair<HashAlgorithmSet, FixedVector<String>>>;
 
@@ -157,7 +162,7 @@ public:
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false) const;
 
     AllowTrustedTypePolicy allowTrustedTypesPolicy(const String&, bool isDuplicate) const;
-    bool requireTrustedTypesForSinkGroup(const String& sinkGroup) const;
+    bool requireTrustedTypesForSinkGroup(const String& sinkGroup, IncludeReportOnlyPolicies = IncludeReportOnlyPolicies::Yes) const;
     bool allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, StringView source) const;
 
     void setOverrideAllowInlineStyle(bool);
@@ -288,6 +293,7 @@ private:
     bool m_isReportingEnabled { true };
     bool m_upgradeInsecureRequests { false };
     bool m_hasAPIPolicy { false };
+    bool m_trustedEvalEnabled { true };
     int m_httpStatusCode { 0 };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;

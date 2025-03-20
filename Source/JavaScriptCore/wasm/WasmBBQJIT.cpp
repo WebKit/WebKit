@@ -39,7 +39,7 @@
 #include "CompilerTimingScope.h"
 #include "GPRInfo.h"
 #include "JSCast.h"
-#include "JSWebAssemblyArray.h"
+#include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyStruct.h"
 #include "MacroAssembler.h"
@@ -1598,14 +1598,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayInitData(uint32_t dstTypeIndex,
     consume(shouldThrow);
 
     return { };
-}
-
-void BBQJIT::emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value)
-{
-    m_jit.loadPtr(MacroAssembler::Address(structGPR, JSWebAssemblyStruct::offsetOfPayload()), wasmScratchGPR);
-    emitStructPayloadSet(wasmScratchGPR, structType, fieldIndex, value);
-    if (isRefType(structType.field(fieldIndex).type))
-        emitWriteBarrier(structGPR);
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result)
@@ -5159,6 +5151,21 @@ Location BBQJIT::allocateStack(Value value)
     m_frameSize = WTF::roundUpToMultipleOf(value.size(), m_frameSize);
     m_frameSize += value.size();
     return Location::fromStack(-m_frameSize);
+}
+
+void BBQJIT::emitArrayGetPayload(StorageType type, GPRReg arrayGPR, GPRReg payloadGPR)
+{
+    ASSERT(arrayGPR != payloadGPR);
+    if (!JSWebAssemblyArray::needsAlignmentCheck(type)) {
+        m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::offsetOfData()), arrayGPR, payloadGPR);
+        return;
+    }
+
+    // FIXME: This could probably use a moveConditionally but we don't have enough scratches and this case is unlikely to exist in practice.
+    m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::offsetOfData()), arrayGPR, payloadGPR);
+    auto precise = m_jit.branchTestPtr(MacroAssembler::NonZero, arrayGPR, MacroAssembler::TrustedImm32(PreciseAllocation::halfAlignment));
+    m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::v128AlignmentShift), payloadGPR, payloadGPR);
+    precise.link(m_jit);
 }
 
 } // namespace JSC::Wasm::BBQJITImpl

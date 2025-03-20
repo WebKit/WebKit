@@ -51,12 +51,12 @@ void DeviceOrientationClientIOS::setController(DeviceOrientationController* cont
     m_controller = controller;
 }
 
-void DeviceOrientationClientIOS::startUpdating()
+void DeviceOrientationClientIOS::startUpdating(const SecurityOriginData& origin)
 {
     m_updating = true;
 
     if (m_deviceOrientationUpdateProvider) {
-        m_deviceOrientationUpdateProvider->startUpdatingDeviceOrientation(*this);
+        m_deviceOrientationUpdateProvider->startUpdatingDeviceOrientation(*this, origin);
         return;
     }
 

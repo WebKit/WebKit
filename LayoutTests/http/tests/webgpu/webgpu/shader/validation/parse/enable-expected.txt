@@ -12,4 +12,21 @@ PASS :enable:case="multi_line"
 PASS :enable:case="multiple_enables"
 PASS :enable:case="multiple_entries"
 PASS :enable:case="unknown"
+PASS :enable:case="subgroups"
+PASS :enable:case="subgroups_f16_pass1"
+PASS :enable:case="subgroups_f16_pass2"
+FAIL :enable:case="in_comment_f16" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+        /* enable f16; */
+        var<private> v: f16;
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/enable.spec.js:102:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
 

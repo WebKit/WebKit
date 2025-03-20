@@ -845,6 +845,9 @@ private:
 
 inline id JSContainerConvertor::convert(JSValueRef value)
 {
+    if (!value)
+        return nil;
+
     auto iter = m_objectMap.find(value);
     if (iter != m_objectMap.end())
         return iter->value;
@@ -882,6 +885,7 @@ static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue 
 }
 #endif
 
+// Similar to JavaScriptEvaluationResult::toVariant.
 static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef context, JSValueRef value)
 {
     if (!JSValueIsObject(context, value)) {
@@ -899,10 +903,8 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
             primitive = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsstring.get())).bridgingAutorelease();
         } else if (JSValueIsNull(context, value))
             primitive = [NSNull null];
-        else {
-            ASSERT(JSValueIsUndefined(context, value));
+        else
             primitive = nil;
-        }
         return { value, primitive, ContainerNone };
     }
 

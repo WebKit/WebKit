@@ -125,9 +125,10 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
         bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
         bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
         if (!canUseIOSurface || !canSendSync) {
+            Ref protectedThis { *this };
             BinarySemaphore semaphore;
-            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [this, &semaphore](auto pixelBuffer) {
-                m_pixelBuffer = WTFMove(pixelBuffer);
+            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
+                protectedThis->m_pixelBuffer = WTFMove(pixelBuffer);
                 semaphore.signal();
             });
             semaphore.wait();
@@ -151,7 +152,7 @@ Ref<WebCore::VideoFrame> RemoteVideoFrameProxy::clone()
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)
 {
-    ts << "{ reference=" << properties.reference
+    ts << "{ reference="_s << properties.reference
         << ", presentationTime=" << properties.presentationTime
         << ", isMirrored=" << properties.isMirrored
         << ", rotation=" << static_cast<int>(properties.rotation)

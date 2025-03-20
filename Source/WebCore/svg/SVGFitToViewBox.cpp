@@ -117,7 +117,7 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
     auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
 
     if (validate) {
-        Ref document = m_viewBox->contextElement()->document();
+        Ref document = Ref { m_viewBox }->contextElement()->document();
 
         if (!x || !y || !width || !height) {
             document->checkedSVGExtensions()->reportWarning(makeString("Problem parsing viewBox=\""_s, stringToParse, "\""_s));

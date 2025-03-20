@@ -51,6 +51,8 @@ public:
     unsigned size() const { return m_codeOrigins.size(); }
 
 private:
+    CodeOriginPool();
+
     Vector<CodeOrigin, 0, UnsafeVectorOverflow> m_codeOrigins;
     Vector<unsigned> m_callSiteIndexFreeList;
 };

@@ -1,14 +1,38 @@
 
 PASS :index_range,explicit_layout:index=0
-PASS :index_range,explicit_layout:index=1
-PASS :index_range,explicit_layout:index=2
-PASS :index_range,explicit_layout:index=3
+FAIL :index_range,explicit_layout:index=1 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :index_range,explicit_layout:index=2 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :index_range,explicit_layout:index=3 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :index_range,explicit_layout:index=4
 PASS :index_range,explicit_layout:index=5
 PASS :index_range,auto_layout:index=0
-PASS :index_range,auto_layout:index=1
-PASS :index_range,auto_layout:index=2
-PASS :index_range,auto_layout:index=3
+FAIL :index_range,auto_layout:index=1 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :index_range,auto_layout:index=2 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :index_range,auto_layout:index=3 assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: getBindGroupLayout: groupIndex is out of range
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :index_range,auto_layout:index=4
 PASS :index_range,auto_layout:index=5
 PASS :unique_js_object,auto_layout:

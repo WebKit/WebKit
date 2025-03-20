@@ -51,6 +51,7 @@ private:
     bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
 
     bool userPrefersContrast() const final;
+    bool userPrefersDifferentiationWithoutColor() const final;
     bool userPrefersReducedMotion() const final;
 };
 

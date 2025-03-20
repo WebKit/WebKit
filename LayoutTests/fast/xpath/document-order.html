@@ -1,11 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="xpath-test-pre.js"></script>
 </head>
 <body>
-<div id="console"></div>
 
 <script>
 doc = (new DOMParser).parseFromString(
@@ -165,6 +164,5 @@ checkSnapshot("ancestor-or-self::node() (context = attr1)",
     [doc, doc.documentElement, CHILD1, attr1]);
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

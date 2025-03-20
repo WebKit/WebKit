@@ -31,9 +31,6 @@
 
 namespace JSC {
 
-class JSArray;
-
-JS_EXPORT_PRIVATE Ref<Microtask> createJSMicrotask(VM&, JSValue job, JSValue, JSValue, JSValue, JSValue);
-JS_EXPORT_PRIVATE void runJSMicrotask(JSGlobalObject*, MicrotaskIdentifier, JSValue job, JSValue, JSValue, JSValue, JSValue);
+void runJSMicrotask(JSGlobalObject*, MicrotaskIdentifier, JSValue job, std::span<const JSValue>);
 
 } // namespace JSC

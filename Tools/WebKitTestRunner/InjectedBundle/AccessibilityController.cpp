@@ -191,7 +191,7 @@ AXThread::AXThread()
 
 bool AXThread::isCurrentThread()
 {
-    return AXThread::singleton().m_thread == &Thread::current();
+    return AXThread::singleton().m_thread == &Thread::currentSingleton();
 }
 
 void AXThread::dispatch(Function<void()>&& function)

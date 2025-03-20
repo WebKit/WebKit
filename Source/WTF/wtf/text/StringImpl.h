@@ -555,6 +555,7 @@ private:
     template<class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(std::span<const CharacterType> characters, const Predicate&);
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
+    template<typename CharacterType, typename Malloc> static ALWAYS_INLINE MallocSpan<CharacterType, StringImplMalloc> toStringImplMallocSpan(MallocSpan<CharacterType, Malloc>);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternal(size_t, std::span<CharacterType>&);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternalNonEmpty(size_t, std::span<CharacterType>&);
@@ -930,18 +931,22 @@ inline StringImpl::StringImpl(unsigned length)
     STRING_STATS_ADD_16BIT_STRING(m_length);
 }
 
-template<typename Malloc>
-inline StringImpl::StringImpl(MallocSpan<LChar, Malloc> characters)
-    : StringImplShape(s_refCountIncrement, { static_cast<const LChar*>(nullptr), characters.span().size() }, s_hashFlag8BitBuffer | StringNormal | BufferOwned)
+template<typename CharacterType, typename Malloc>
+MallocSpan<CharacterType, StringImplMalloc> StringImpl::toStringImplMallocSpan(MallocSpan<CharacterType, Malloc> characters)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
-        m_data8 = characters.leakSpan().data();
+        return characters;
     else {
-        auto buffer = MallocSpan<LChar, StringImplMalloc>::malloc(characters.sizeInBytes());
+        auto buffer = MallocSpan<CharacterType, StringImplMalloc>::malloc(characters.sizeInBytes());
         copyCharacters(buffer.mutableSpan(), characters.span());
-        m_data8 = buffer.leakSpan().data();
+        return buffer;
     }
+}
 
+template<typename Malloc>
+inline StringImpl::StringImpl(MallocSpan<LChar, Malloc> characters)
+    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
+{
     ASSERT(m_data8);
     ASSERT(m_length);
 
@@ -968,16 +973,8 @@ inline StringImpl::StringImpl(std::span<const LChar> characters, ConstructWithou
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocSpan<UChar, Malloc> characters)
-    : StringImplShape(s_refCountIncrement, { static_cast<const UChar*>(nullptr), characters.span().size() }, s_hashZeroValue | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashZeroValue | StringNormal | BufferOwned)
 {
-    if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
-        m_data16 = characters.leakSpan().data();
-    else {
-        auto buffer = MallocSpan<UChar, StringImplMalloc>::malloc(characters.sizeInBytes());
-        copyCharacters(buffer.mutableSpan(), characters.span());
-        m_data16 = buffer.leakSpan().data();
-    }
-
     ASSERT(m_data16);
     ASSERT(m_length);
 

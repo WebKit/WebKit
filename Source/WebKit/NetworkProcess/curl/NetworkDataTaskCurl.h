@@ -114,7 +114,7 @@ private:
     unsigned m_authFailureCount { 0 };
 
     bool m_allowOverwriteDownload { false };
-    FileSystem::PlatformFileHandle m_downloadDestinationFile { FileSystem::invalidPlatformFileHandle };
+    FileSystem::FileHandle m_downloadDestinationFile;
 
     bool m_blockingCookies { false };
 

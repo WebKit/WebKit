@@ -20,6 +20,6 @@ PASS polyline with no valid points doesn't contribute to parent bbox
 PASS getBBox on path with no height
 PASS path with no height should contribute to parent bbox
 PASS arc bbox should be tight
-FAIL empty foreignObject does not contribute to parent bbox assert_approx_equals: x expected 5 +/- 5.960464477539063e-8 but got 0
-FAIL empty image does not contribute to parent bbox assert_approx_equals: x expected 5 +/- 5.960464477539063e-8 but got 0
+PASS empty foreignObject does not contribute to parent bbox
+PASS empty image does not contribute to parent bbox
 

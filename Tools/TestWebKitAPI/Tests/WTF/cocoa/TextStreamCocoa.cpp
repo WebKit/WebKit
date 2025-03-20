@@ -41,3 +41,16 @@ TEST(WTF_TextStream, Hex)
     ts << hex(31);
     EXPECT_EQ(ts.release(), "1F"_s);
 }
+
+TEST(WTF_TextStream, Span)
+{
+    TextStream ts;
+    int values[] = { 1, 2, 3, 4 };
+    std::span<int> valuesAsSpan(values);
+    ts << valuesAsSpan;
+    EXPECT_EQ(ts.release(), "[1, 2, 3, 4]"_s);
+    std::span<int, 2> valuesAsSpan2 = valuesAsSpan.subspan<1, 2>();
+    TextStream ts2;
+    ts2 << valuesAsSpan2;
+    EXPECT_EQ(ts2.release(), "[2, 3]"_s);
+}

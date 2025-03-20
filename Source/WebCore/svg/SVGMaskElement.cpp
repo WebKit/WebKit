@@ -171,8 +171,8 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
     };
     FloatRect maskRepaintRect;
     for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
-        CheckedPtr renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !renderer)
+        CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
+        if (!renderer || !childNode->isSVGElement())
             continue;
         const auto& style = renderer->style();
         if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)

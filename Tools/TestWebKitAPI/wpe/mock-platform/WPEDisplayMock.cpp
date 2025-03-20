@@ -50,7 +50,7 @@ static WPEView* wpeDisplayMockCreateView(WPEDisplay* display)
     return nullptr;
 }
 
-static WPEInputMethodContext* wpeDisplayMockCreateInputMethodContext(WPEDisplay* display)
+static WPEInputMethodContext* wpeDisplayMockCreateInputMethodContext(WPEDisplay* display, WPEView*)
 {
     return nullptr;
 }

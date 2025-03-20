@@ -51,12 +51,6 @@ void AudioTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
     setLanguage(m_impl->language());
 }
 
-void AudioTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
-{
-    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
-    resetPropertiesFromTrack();
-}
-
 AVAssetTrack* AudioTrackPrivateMediaSourceAVFObjC::assetTrack()
 {
     return m_impl->assetTrack();

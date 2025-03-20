@@ -515,6 +515,7 @@ private:
         }
             
         case NewTypedArray:
+        case NewTypedArrayBuffer:
         case NewArrayWithSize:
         case NewArrayWithConstantSize:
         case NewArrayWithSpecies:

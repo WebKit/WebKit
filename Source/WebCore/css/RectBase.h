@@ -20,16 +20,16 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
 class RectBase {
 public:
-    const CSSPrimitiveValue& top() const { return m_top.get(); }
-    const CSSPrimitiveValue& right() const { return m_right.get(); }
-    const CSSPrimitiveValue& bottom() const { return m_bottom.get(); }
-    const CSSPrimitiveValue& left() const { return m_left.get(); }
+    const CSSValue& top() const { return m_top.get(); }
+    const CSSValue& right() const { return m_right.get(); }
+    const CSSValue& bottom() const { return m_bottom.get(); }
+    const CSSValue& left() const { return m_left.get(); }
 
     bool equals(const RectBase& other) const
     {
@@ -40,13 +40,13 @@ public:
     }
 
 protected:
-    explicit RectBase(Ref<CSSPrimitiveValue> value)
+    explicit RectBase(Ref<CSSValue> value)
         : m_top(value)
         , m_right(value)
         , m_bottom(value)
         , m_left(WTFMove(value))
     { }
-    RectBase(Ref<CSSPrimitiveValue> top, Ref<CSSPrimitiveValue> right, Ref<CSSPrimitiveValue> bottom, Ref<CSSPrimitiveValue> left)
+    RectBase(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left)
         : m_top(WTFMove(top))
         , m_right(WTFMove(right))
         , m_bottom(WTFMove(bottom))
@@ -55,10 +55,10 @@ protected:
     ~RectBase() = default;
 
 private:
-    Ref<const CSSPrimitiveValue> m_top;
-    Ref<const CSSPrimitiveValue> m_right;
-    Ref<const CSSPrimitiveValue> m_bottom;
-    Ref<const CSSPrimitiveValue> m_left;
+    Ref<const CSSValue> m_top;
+    Ref<const CSSValue> m_right;
+    Ref<const CSSValue> m_bottom;
+    Ref<const CSSValue> m_left;
 };
 
 } // namespace WebCore

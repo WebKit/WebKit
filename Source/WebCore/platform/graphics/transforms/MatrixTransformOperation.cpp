@@ -77,13 +77,13 @@ Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation
 
 void MatrixTransformOperation::dump(TextStream& ts) const
 {
-    ts << "("
-        << TextStream::FormatNumberRespectingIntegers(m_a) << ", "
-        << TextStream::FormatNumberRespectingIntegers(m_b) << ", "
-        << TextStream::FormatNumberRespectingIntegers(m_c) << ", "
-        << TextStream::FormatNumberRespectingIntegers(m_d) << ", "
-        << TextStream::FormatNumberRespectingIntegers(m_e) << ", "
-        << TextStream::FormatNumberRespectingIntegers(m_f) << ")";
+    ts << '('
+        << TextStream::FormatNumberRespectingIntegers(m_a) << ", "_s
+        << TextStream::FormatNumberRespectingIntegers(m_b) << ", "_s
+        << TextStream::FormatNumberRespectingIntegers(m_c) << ", "_s
+        << TextStream::FormatNumberRespectingIntegers(m_d) << ", "_s
+        << TextStream::FormatNumberRespectingIntegers(m_e) << ", "_s
+        << TextStream::FormatNumberRespectingIntegers(m_f) << ')';
 }
 
 } // namespace WebCore

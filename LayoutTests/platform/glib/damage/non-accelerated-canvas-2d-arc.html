@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill the arc.
+              ctx.fillStyle = "green";
+              ctx.arc(10, 10, 5, 0, 2 * Math.PI);
+              ctx.fill();
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              // We take a 1px margin into account as we cannot avoid it. It was added in:
+              // https://github.com/WebKit/WebKit/commit/0e8b2662b634fbd074709ee8ac30b3499c10e081
+              assertRectsEq(damage.rects, [[4, 4, 12, 12]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

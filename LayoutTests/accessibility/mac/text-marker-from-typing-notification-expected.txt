@@ -1,0 +1,10 @@
+This test ensures we behave correctly when immediately using an AXTextChangeValueStartMarker from a notification.
+
+PASS: addedNotificationListener === true
+PASS: webarea.indexForTextMarker(textChangeMarker) === 1
+PASS: webarea.indexForTextMarker(textChangeMarker) === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

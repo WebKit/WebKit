@@ -29,7 +29,7 @@ promise_test(async (test) => {
         setTimeout(() => reject("configuration change timeout"), 5000);
     });
     if (window.testRunner)
-        testRunner.triggerMockCaptureConfigurationChange(false, true);
+        testRunner.triggerMockCaptureConfigurationChange(false, false, true);
     await promise;
 
     let videoFrame2;

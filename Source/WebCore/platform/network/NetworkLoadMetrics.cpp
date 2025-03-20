@@ -161,8 +161,8 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     copy.responseBodyBytesReceived = responseBodyBytesReceived;
     copy.responseBodyDecodedSize = responseBodyDecodedSize;
 
-    if (additionalNetworkLoadMetricsForWebInspector)
-        copy.additionalNetworkLoadMetricsForWebInspector = additionalNetworkLoadMetricsForWebInspector->isolatedCopy();
+    if (RefPtr metrics = additionalNetworkLoadMetricsForWebInspector)
+        copy.additionalNetworkLoadMetricsForWebInspector = metrics->isolatedCopy();
 
     return copy;
 }

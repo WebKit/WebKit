@@ -38,6 +38,7 @@ class Microtask;
 class RuntimeFlags;
 class SourceOrigin;
 class Structure;
+class QueuedTask;
 
 enum class CompilationType;
 enum class ScriptExecutionStatus;
@@ -51,7 +52,7 @@ struct GlobalObjectMethodTable {
     bool (*supportsRichSourceInfo)(const JSGlobalObject*);
     bool (*shouldInterruptScript)(const JSGlobalObject*);
     RuntimeFlags (*javaScriptRuntimeFlags)(const JSGlobalObject*);
-    void (*queueMicrotaskToEventLoop)(JSGlobalObject&, Ref<Microtask>&&);
+    void (*queueMicrotaskToEventLoop)(JSGlobalObject&, QueuedTask&&);
     bool (*shouldInterruptScriptBeforeTimeout)(const JSGlobalObject*);
 
     JSInternalPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);

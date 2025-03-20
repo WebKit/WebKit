@@ -194,8 +194,9 @@ void Reverb::process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t
         const AudioChannel* sourceChannelR = sourceBus->channel(1);
         AudioChannel* destinationChannelR = destinationBus->channel(1);
 
-        AudioChannel* tempChannelL = m_tempBuffer->channel(0);
-        AudioChannel* tempChannelR = m_tempBuffer->channel(1);
+        RefPtr tempBuffer = m_tempBuffer;
+        AudioChannel* tempChannelL = tempBuffer->channel(0);
+        AudioChannel* tempChannelR = tempBuffer->channel(1);
 
         // Process left virtual source
         m_convolvers[0]->process(sourceChannelL, destinationChannelL, framesToProcess);
@@ -205,15 +206,16 @@ void Reverb::process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t
         m_convolvers[2]->process(sourceChannelR, tempChannelL, framesToProcess);
         m_convolvers[3]->process(sourceChannelR, tempChannelR, framesToProcess);
 
-        destinationBus->sumFrom(*m_tempBuffer);
+        destinationBus->sumFrom(*tempBuffer);
     } else if (numInputChannels == 1 && numberOfResponseChannels == 4 && numOutputChannels == 2) {
         // Case 3: 1 -> 4 -> 2 (Processing mono with "True" stereo impulse
         // response) This is an inefficient use of a four-channel impulse
         // response, but we should handle the case.
         AudioChannel* destinationChannelR = destinationBus->channel(1);
 
-        AudioChannel* tempChannelL = m_tempBuffer->channel(0);
-        AudioChannel* tempChannelR = m_tempBuffer->channel(1);
+        RefPtr tempBuffer = m_tempBuffer;
+        AudioChannel* tempChannelL = tempBuffer->channel(0);
+        AudioChannel* tempChannelR = tempBuffer->channel(1);
 
         // Process left virtual source
         m_convolvers[0]->process(sourceChannelL, destinationChannelL, framesToProcess);
@@ -223,7 +225,7 @@ void Reverb::process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t
         m_convolvers[2]->process(sourceChannelL, tempChannelL, framesToProcess);
         m_convolvers[3]->process(sourceChannelL, tempChannelR, framesToProcess);
 
-        destinationBus->sumFrom(*m_tempBuffer);
+        destinationBus->sumFrom(*tempBuffer);
     } else {
         ASSERT_NOT_REACHED();
         destinationBus->zero();

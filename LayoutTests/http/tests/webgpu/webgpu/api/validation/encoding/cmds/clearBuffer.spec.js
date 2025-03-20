@@ -6,9 +6,9 @@ API validation tests for clearBuffer.
 import { kBufferUsages } from '../../../../capability_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
 import { kMaxSafeMultipleOf8 } from '../../../../util/math.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsValidationTest {
   TestClearBuffer(options)
 
 
@@ -57,19 +57,18 @@ fn((t) => {
 g.test('buffer,device_mismatch').
 desc(`Tests clearBuffer cannot be called with buffer created from another device.`).
 paramsSubcasesOnly((u) => u.combine('mismatched', [true, false])).
-beforeAllSubcases((t) => {
-  t.selectMismatchedDeviceOrSkipTestCase(undefined);
-}).
+beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
   const { mismatched } = t.params;
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
   const size = 8;
 
-  const buffer = sourceDevice.createBuffer({
-    size,
-    usage: GPUBufferUsage.COPY_DST
-  });
-  t.trackForCleanup(buffer);
+  const buffer = t.trackForCleanup(
+    sourceDevice.createBuffer({
+      size,
+      usage: GPUBufferUsage.COPY_DST
+    })
+  );
 
   t.TestClearBuffer({
     buffer,
@@ -89,7 +88,7 @@ paramsSubcasesOnly([
 fn((t) => {
   const { offset, size } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: GPUBufferUsage.COPY_DST
   });
@@ -111,7 +110,7 @@ u //
 fn((t) => {
   const { usage } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage
   });
@@ -146,7 +145,7 @@ paramsSubcasesOnly([
 fn((t) => {
   const { size, _isSuccess: isSuccess } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: GPUBufferUsage.COPY_DST
   });
@@ -180,7 +179,7 @@ paramsSubcasesOnly([
 fn((t) => {
   const { offset, _isSuccess: isSuccess } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: GPUBufferUsage.COPY_DST
   });
@@ -204,7 +203,7 @@ paramsSubcasesOnly([
 fn((t) => {
   const { offset, size } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: GPUBufferUsage.COPY_DST
   });
@@ -232,7 +231,7 @@ paramsSubcasesOnly([
 fn((t) => {
   const { offset, size, _isSuccess = false } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 32,
     usage: GPUBufferUsage.COPY_DST
   });

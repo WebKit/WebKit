@@ -71,11 +71,11 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
     if (behavior == DumpStyleValues::All || *background != FillLayer::create(FillLayerType::Background).get())
-        ts.dumpProperty("background-image", background);
+        ts.dumpProperty("background-image"_s, background);
     if (behavior == DumpStyleValues::All || color != RenderStyle::initialBackgroundColor())
-        ts.dumpProperty("background-color", color);
+        ts.dumpProperty("background-color"_s, color);
     if (behavior == DumpStyleValues::All || outline != OutlineValue())
-        ts.dumpProperty("outline", outline);
+        ts.dumpProperty("outline"_s, outline);
 }
 
 #if !LOG_DISABLED

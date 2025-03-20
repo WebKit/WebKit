@@ -112,6 +112,7 @@ enum class WebKit::AllowsCellularAccess : bool;
     String resourceMonitorThrottlerDirectory;
     WebKit::SandboxExtensionHandle resourceMonitorThrottlerDirectoryExtensionHandle;
 #endif
+    bool isLegacyTLSAllowed;
 };
 
 #if USE(SOUP)

@@ -50,8 +50,8 @@ typedef UInt32 IOOptionBits;
 typedef uint32_t IOHIDEventOptionBits;
 typedef uint32_t IOHIDEventField;
 
-typedef struct __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
-typedef struct __IOHIDEvent * IOHIDEventRef;
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDEvent * IOHIDEventRef;
 
 #define IOHIDEventFieldBase(type) (type << 16)
 

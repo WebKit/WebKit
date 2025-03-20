@@ -29,9 +29,10 @@ const SIZE = 16*1024*1024*1024;
 (() => {
   let view;
   try {
-    view = new Uint8Array(new WebAssembly.Memory({ index: 'i64', initial: BigInt(SIZE / PAGE) }).buffer);
+    view = new Uint8Array(new WebAssembly.Memory({ address: 'i64', initial: BigInt(SIZE / PAGE) }).buffer);
   } catch (e) {
-    testPassed(`Allocating ${SIZE} threw: ${e}`);
+    let fn = e instanceof RangeError ? testPassed : testFailed;
+    fn(`Allocating ${SIZE} threw: ${e}`);
     return;
   }
 

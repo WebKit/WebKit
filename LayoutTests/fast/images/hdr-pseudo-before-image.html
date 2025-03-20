@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<meta name="fuzzy" content="maxDifference=0-14; totalPixels=0-80000" />
+<style>
+    .container {
+        width: 200px;
+        height: 200px;
+        will-change: transform;
+    }
+    .sdr:before {
+        content: url('resources/green-400x400.png');
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        overflow: hidden;
+    }
+    .hdr:before {
+        content: url('resources/red-100x100.png');
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        overflow: hidden;
+    }
+</style>
+<body>
+    <div style="position: fixed; top: 10px; left: 10px;">
+        <div class="container">&nbsp;</div>
+    </div>
+    <div style="position: fixed; top: 10px; left: 220px;">
+        <div class="container">&nbsp;</div>
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.waitUntilDone();
+        }
+
+        let images = [];
+        let imageSources = ["resources/green-400x400.png", "resources/red-100x100.png"];
+
+        function loadImages() {
+            return imageSources.map((imageSource) => {
+                return new Promise((resolve) => {
+                    let image = new Image;
+                    image.onload = (e) => {
+                        resolve({ width: image.width, height: image.height });
+                    };
+                    image.src = imageSource;
+                    images.push(image);             
+                });
+            });
+        }
+ 
+        (async () => {
+            await Promise.all(loadImages());
+
+            if (window.internals)
+                internals.setHasHDRContentForTesting(images[1]);
+
+            const containerElements = document.querySelectorAll("div.container");
+
+            containerElements[0].classList.add("sdr");
+            containerElements[1].classList.add("hdr");
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })();
+    </script>
+</body>
+</html>

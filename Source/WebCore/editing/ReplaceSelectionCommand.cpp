@@ -40,8 +40,8 @@
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "Editing.h"
 #include "EditingBehavior.h"
+#include "EditingInlines.h"
 #include "ElementIteratorInlines.h"
 #include "EventNames.h"
 #include "FilterOperations.h"
@@ -1514,7 +1514,7 @@ void ReplaceSelectionCommand::doApply()
         m_matchStyle = false;
 
     if (selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph)
-        updateDirectionForStartOfInsertedContentIfNeeded();
+        updateDirectionForStartOfInsertedContentIfNeeded(insertedNodes);
 
     completeHTMLReplacement(lastPositionToSelect);
 }
@@ -1905,7 +1905,7 @@ std::optional<SimpleRange> ReplaceSelectionCommand::insertedContentRange() const
     return makeSimpleRange(m_startOfInsertedContent, m_endOfInsertedContent);
 }
 
-void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded()
+void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded(const InsertedNodes& insertedNodes)
 {
     if (!document().settings().bidiContentAwarePasteEnabled())
         return;
@@ -1919,15 +1919,27 @@ void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded()
     if (!firstParagraphRange)
         return;
 
-    auto direction = baseTextDirection(plainText(*firstParagraphRange));
-    if (!direction)
+    auto newDirection = [&] -> std::optional<TextDirection> {
+        if (RefPtr node = insertedNodes.firstNodeInserted(); node && node->usesEffectiveTextDirection())
+            return node->effectiveTextDirection();
+
+        return baseTextDirection(plainText(*firstParagraphRange));
+    }();
+
+    if (!newDirection)
         return;
 
-    if (direction == directionOfEnclosingBlock(m_startOfInsertedContent))
+    RefPtr blockContainer = enclosingBlock(m_startOfInsertedContent.protectedContainerNode());
+    if (!blockContainer)
         return;
 
-    Ref style = EditingStyle::create(CSSPropertyDirection, toCSSValueID(*direction));
+    if (CheckedPtr renderer = blockContainer->renderer(); !renderer || renderer->writingMode().bidiDirection() == newDirection)
+        return;
+
+    auto directionValueID = toCSSValueID(*newDirection);
+    Ref style = EditingStyle::create(CSSPropertyDirection, directionValueID);
     applyStyle(style.ptr(), m_startOfInsertedContent, m_startOfInsertedContent, EditAction::SetBlockWritingDirection, ApplyStylePropertyLevel::ForceBlock);
+    setNodeAttribute(*blockContainer, dirAttr, nameLiteral(directionValueID));
 }
 
 } // namespace WebCore

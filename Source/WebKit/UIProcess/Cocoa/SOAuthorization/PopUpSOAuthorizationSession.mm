@@ -194,7 +194,7 @@ void PopUpSOAuthorizationSession::initSecretWebView()
     [m_secretWebView setUIDelegate:m_secretDelegate.get()];
     [m_secretWebView setNavigationDelegate:m_secretDelegate.get()];
 
-    RELEASE_ASSERT(!m_secretWebView->_page->preferences().isExtensibleSSOEnabled());
+    RELEASE_ASSERT(!m_secretWebView->_page->protectedPreferences()->isExtensibleSSOEnabled());
     WTFLogAlways("SecretWebView is created.");
 }
 

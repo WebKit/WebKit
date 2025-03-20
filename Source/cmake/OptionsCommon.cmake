@@ -229,8 +229,22 @@ set(CXX_STDLIB_TEST_SOURCE "
 ")
 check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP)
 if (CXX_STDLIB_IS_LIBCPP)
-    set(CXX_STDLIB_VARIANT "LIBCPP")
-    set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_ENABLE_ASSERTIONS)
+    set(CXX_STDLIB_TEST_SOURCE "
+        #include <utility>
+        #if _LIBCPP_VERSION >= 190000
+        int main() { }
+        #else
+        #error libc++ is older than 19.x
+        #endif
+    ")
+    check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
+    if (CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
+        set(CXX_STDLIB_VARIANT "LIBCPP 19+")
+        set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE)
+    else ()
+        set(CXX_STDLIB_VARIANT "LIBCPP <19")
+        set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_ENABLE_ASSERTIONS=1)
+    endif ()
 else ()
     set(CXX_STDLIB_TEST_SOURCE "
     #include <utility>
@@ -239,7 +253,7 @@ else ()
     check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_GLIBCXX)
     if (CXX_STDLIB_IS_GLIBCXX)
         set(CXX_STDLIB_VARIANT "GLIBCXX")
-        set(CXX_STDLIB_ASSERTIONS_MACRO _GLIBCXX_ASSERTIONS)
+        set(CXX_STDLIB_ASSERTIONS_MACRO _GLIBCXX_ASSERTIONS=1)
     endif ()
 endif ()
 message(STATUS "C++ standard library in use: ${CXX_STDLIB_VARIANT}")
@@ -255,8 +269,8 @@ option(USE_CXX_STDLIB_ASSERTIONS
 
 if (USE_CXX_STDLIB_ASSERTIONS)
     if (CXX_STDLIB_ASSERTIONS_MACRO)
-        message(STATUS "  Assertions enabled, ${CXX_STDLIB_ASSERTIONS_MACRO}=1")
-        add_compile_definitions("${CXX_STDLIB_ASSERTIONS_MACRO}=1")
+        message(STATUS "  Assertions enabled, ${CXX_STDLIB_ASSERTIONS_MACRO}")
+        add_compile_definitions("${CXX_STDLIB_ASSERTIONS_MACRO}")
     else ()
         message(STATUS "  Assertions disabled, CXX_STDLIB_ASSERTIONS_MACRO undefined")
     endif ()

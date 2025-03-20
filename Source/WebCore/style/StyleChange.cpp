@@ -87,13 +87,13 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
 TextStream& operator<<(TextStream& ts, Change change)
 {
     switch (change) {
-    case Change::None: ts << "None"; break;
-    case Change::NonInherited: ts << "NonInherited"; break;
-    case Change::FastPathInherited: ts << "FastPathInherited"; break;
-    case Change::NonInheritedAndFastPathInherited: ts << "NonInheritedAndFastPathInherited"; break;
-    case Change::Inherited: ts << "Inherited"; break;
-    case Change::Descendants: ts << "Descendants"; break;
-    case Change::Renderer: ts << "Renderer"; break;
+    case Change::None: ts << "None"_s; break;
+    case Change::NonInherited: ts << "NonInherited"_s; break;
+    case Change::FastPathInherited: ts << "FastPathInherited"_s; break;
+    case Change::NonInheritedAndFastPathInherited: ts << "NonInheritedAndFastPathInherited"_s; break;
+    case Change::Inherited: ts << "Inherited"_s; break;
+    case Change::Descendants: ts << "Descendants"_s; break;
+    case Change::Renderer: ts << "Renderer"_s; break;
     }
     return ts;
 }

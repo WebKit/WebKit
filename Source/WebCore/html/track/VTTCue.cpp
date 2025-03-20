@@ -159,9 +159,9 @@ void VTTCueBox::applyCSSPropertiesWithRegion()
         return;
 
     // the 'left' property must be set to left
-    std::visit(WTF::makeVisitor([&] (double left) {
+    std::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double left) {
         setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_PERCENTAGE);
-    }, [&] (auto) {
+    }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
     setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
@@ -210,16 +210,16 @@ void VTTCueBox::applyCSSProperties()
     setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode());
 
     // the 'top' property must be set to top
-    std::visit(WTF::makeVisitor([&] (double top) {
+    std::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double top) {
         setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_CQH);
-    }, [&] (auto) {
+    }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyTop, CSSValueAuto);
     }), cue->top());
 
     // the 'left' property must be set to left
-    std::visit(WTF::makeVisitor([&] (double left) {
+    std::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double left) {
         setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_CQW);
-    }, [&] (auto) {
+    }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
 
@@ -230,16 +230,16 @@ void VTTCueBox::applyCSSProperties()
     // is not a true viewport, but it is a container, so they serve the same purpose.
 
     // the 'width' property must be set to width
-    std::visit(WTF::makeVisitor([&] (double width) {
+    std::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double width) {
         setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::CSS_CQW);
-    }, [&] (auto) {
+    }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
     }), cue->width());
 
     // the 'height' property must be set to height
-    std::visit(WTF::makeVisitor([&] (double height) {
+    std::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double height) {
         setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_CQH);
-    }, [&] (auto) {
+    }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     }), cue->height());
 
@@ -1019,8 +1019,7 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
 {
     // The display tree may contain WebVTT timestamp objects representing
     // timestamps (processing instructions), along with displayable nodes.
-
-    if (!track() || !track()->isRendered())
+    if (!track() || !protectedTrack()->isRendered())
         return;
 
     // Mutating the VTT contents is safe because it's never exposed to author scripts.
@@ -1045,7 +1044,7 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree()
     ASSERT(track());
 
     RefPtr displayTree = displayTreeInternal();
-    if (!displayTree || !m_displayTreeShouldChange || !track() || !track()->isRendered())
+    if (!displayTree || !m_displayTreeShouldChange || !track() || !protectedTrack()->isRendered())
         return displayTree;
 
     if (region())
@@ -1071,8 +1070,9 @@ void VTTCue::removeDisplayTree()
 
     // The region needs to be informed about the cue removal.
     if (m_notifyRegion && track()) {
-        if (m_region && m_displayTree)
-            m_region->willRemoveTextTrackCueBox(m_displayTree.get());
+        RefPtr region = m_region;
+        if (region && m_displayTree)
+            region->willRemoveTextTrackCueBox(m_displayTree.get());
     }
 
     RefPtr displayTree = displayTreeInternal();
@@ -1155,6 +1155,7 @@ void VTTCue::setCueSettings(const String& inputString)
 
     VTTScanner input(inputString);
 
+    auto identifier = LOGIDENTIFIER;
     while (!input.isAtEnd()) {
 
         // The WebVTT cue settings part of a WebVTT cue consists of zero or more of the following components, in any order, 
@@ -1190,7 +1191,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 m_writingDirection = DirectionSetting::VerticalGrowingRight;
 
             else
-                ERROR_LOG(LOGIDENTIFIER, "Invalid vertical");
+                ERROR_LOG(identifier, "Invalid vertical");
             break;
         }
         case Line: {
@@ -1218,7 +1219,7 @@ void VTTCue::setCueSettings(const String& inputString)
                     else if (input.scan(endKeyword().span8()))
                         alignment = LineAlignSetting::End;
                     else {
-                        ERROR_LOG(LOGIDENTIFIER, "Invalid line setting alignment");
+                        ERROR_LOG(identifier, "Invalid line setting alignment");
                         break;
                     }
                 }
@@ -1260,7 +1261,7 @@ void VTTCue::setCueSettings(const String& inputString)
             } while (0);
 
             if (!isValid)
-                ERROR_LOG(LOGIDENTIFIER, "Invalid line");
+                ERROR_LOG(identifier, "Invalid line");
 
             break;
         }
@@ -1271,7 +1272,7 @@ void VTTCue::setCueSettings(const String& inputString)
             auto parsePosition = [&] (VTTScanner& input, auto end, float& position, auto& alignment) -> bool {
                 // 1. a position value consisting of: a WebVTT percentage.
                 if (!WebVTTParser::parseFloatPercentageValue(input, position)) {
-                    ERROR_LOG(LOGIDENTIFIER, "Invalid position percentage");
+                    ALWAYS_LOG(identifier, "Invalid position percentage");
                     return false;
                 }
 
@@ -1291,7 +1292,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 else if (input.scan(lineRightKeyword().span8()))
                     alignment = PositionAlignSetting::LineRight;
                 else {
-                    ERROR_LOG(LOGIDENTIFIER, "Invalid position setting alignment");
+                    ALWAYS_LOG(identifier, "Invalid position setting alignment");
                     return false;
                 }
 
@@ -1310,7 +1311,7 @@ void VTTCue::setCueSettings(const String& inputString)
             if (WebVTTParser::parseFloatPercentageValue(input, cueSize) && input.isAt(valueRun.end()))
                 m_cueSize = cueSize;
             else
-                ERROR_LOG(LOGIDENTIFIER, "Invalid size");
+                ERROR_LOG(identifier, "Invalid size");
             break;
         }
         case Align: {
@@ -1335,7 +1336,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 m_cueAlignment = AlignSetting::Right;
 
             else
-                ERROR_LOG(LOGIDENTIFIER, "Invalid align");
+                ERROR_LOG(identifier, "Invalid align");
 
             break;
         }

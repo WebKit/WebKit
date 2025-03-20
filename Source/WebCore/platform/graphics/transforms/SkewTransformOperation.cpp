@@ -65,7 +65,7 @@ Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* 
 
 void SkewTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(" << TextStream::FormatNumberRespectingIntegers(m_angleX) << "deg, " << TextStream::FormatNumberRespectingIntegers(m_angleY) << "deg)";
+    ts << type() << '(' << TextStream::FormatNumberRespectingIntegers(m_angleX) << "deg, "_s << TextStream::FormatNumberRespectingIntegers(m_angleY) << "deg)"_s;
 }
 
 } // namespace WebCore

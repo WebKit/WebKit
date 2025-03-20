@@ -1479,4 +1479,26 @@ ALWAYS_INLINE bool sameValue(JSGlobalObject* globalObject, JSValue a, JSValue b)
     return std::bit_cast<uint64_t>(x) == std::bit_cast<uint64_t>(y);
 }
 
+ALWAYS_INLINE bool sameValueZero(JSGlobalObject* globalObject, JSValue a, JSValue b)
+{
+    if (a == b)
+        return true;
+
+    if (!a.isNumber())
+        return JSValue::strictEqual(globalObject, a, b);
+    if (!b.isNumber())
+        return false;
+    double x = a.asNumber();
+    double y = b.asNumber();
+    if (std::isnan(x))
+        return std::isnan(y);
+    if (std::isnan(y))
+        return std::isnan(x);
+    if (!x && y == -0)
+        return true;
+    if (x == -0 && !y)
+        return true;
+    return std::bit_cast<uint64_t>(x) == std::bit_cast<uint64_t>(y);
+}
+
 } // namespace JSC

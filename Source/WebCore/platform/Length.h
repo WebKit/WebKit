@@ -611,6 +611,12 @@ inline bool Length::isContent() const
 Length convertTo100PercentMinusLength(const Length&);
 Length convertTo100PercentMinusLengthSum(const Length&, const Length&);
 
+inline bool lengthsRequireInterpolationForAccumulativeIteration(const Length& from, const Length& to)
+{
+    // If interpolating the values can yield a calc() value, we must go through the interpolation code for iterationComposite.
+    return from.isCalculated() || to.isCalculated() || from.type() != to.type();
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, Length);
 
 } // namespace WebCore

@@ -143,6 +143,11 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
             maximumFrameRate = std::max(maximumFrameRate, rate.maximum);
     }
 
+    if (!maximumWidth || !maximumHeight || !maximumFrameRate) {
+        RELEASE_LOG_ERROR(WebRTC, "RealtimeVideoCaptureSource::updateCapabilities max width, max height or max frame rate is 0");
+        return;
+    }
+
     if (canResizeVideoFrames()) {
         minimumWidth = 1;
         minimumHeight = 1;
@@ -154,8 +159,6 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
     capabilities.setHeight({ minimumHeight, maximumHeight });
     capabilities.setAspectRatio({ minimumAspectRatio, maximumAspectRatio });
     capabilities.setFrameRate({ minimumFrameRate, maximumFrameRate });
-    capabilities.setFrameRate({ minimumFrameRate, maximumFrameRate });
-
     capabilities.setZoom({ minimumZoom, maximumZoom });
 }
 

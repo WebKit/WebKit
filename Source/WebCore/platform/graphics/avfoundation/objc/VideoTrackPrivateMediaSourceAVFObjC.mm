@@ -55,12 +55,6 @@ void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
     setConfiguration(m_impl->videoTrackConfiguration());
 }
 
-void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
-{
-    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
-    resetPropertiesFromTrack();
-}
-
 AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack() const
 {
     return m_impl->assetTrack();

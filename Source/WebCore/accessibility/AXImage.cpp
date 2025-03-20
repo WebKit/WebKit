@@ -63,11 +63,11 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXImage::imageOverlayEl
         return children;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    auto* page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return std::nullopt;
 
-    auto* element = this->element();
+    RefPtr element = this->element();
     if (!element)
         return std::nullopt;
 

@@ -28,6 +28,7 @@
 #include "MediaQueryEvaluator.h"
 #include "RuleSet.h"
 #include "StyleScopeRuleSets.h"
+#include "TreeResolutionState.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -80,6 +81,8 @@ struct ResolutionContext {
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
+    CheckedPtr<TreeResolutionState> treeResolutionState { };
+
     bool isSVGUseTreeRoot { false };
 };
 
@@ -168,7 +171,7 @@ private:
     class State;
 
     State initializeStateAndStyle(const Element&, const ResolutionContext&);
-    BuilderContext builderContext(const State&);
+    BuilderContext builderContext(State&);
 
     void applyMatchedProperties(State&, const MatchResult&);
 

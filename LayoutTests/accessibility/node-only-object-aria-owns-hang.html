@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<a aria-controls="div1">Book</a>
+<div id="div1" role="group" style="display: contents">
+    <span id="owner-span" role="group" aria-owns="zzz">One</span>
+    <span id="zzz">Two</span>
+</div>
+
+<script>
+var output = "This test ensures we don't hang when getting the unignored children for a node-only object.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('div1').childrenCount", "1");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

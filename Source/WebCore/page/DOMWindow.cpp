@@ -28,7 +28,7 @@
 
 #include "BackForwardController.h"
 #include "CSSRuleList.h"
-#include "CSSStyleDeclaration.h"
+#include "CSSStyleProperties.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"

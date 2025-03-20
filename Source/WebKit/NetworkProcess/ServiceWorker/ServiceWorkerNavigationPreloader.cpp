@@ -59,14 +59,15 @@ void ServiceWorkerNavigationPreloader::start()
         return;
     m_isStarted = true;
 
-    if (!m_session) {
+    CheckedPtr session = m_session.get();
+    if (!session) {
         didFailLoading(ResourceError { errorDomainWebKitInternal, 0, { }, "No session for preload"_s });
         return;
     }
 
-    if (m_session->cache()) {
+    if (RefPtr cache = session->cache()) {
         NetworkCache::GlobalFrameID globalID { *m_parameters.webPageProxyID, *m_parameters.webPageID, *m_parameters.webFrameID };
-        m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
+        cache->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || m_isCancelled)
                 return;
@@ -100,17 +101,15 @@ void ServiceWorkerNavigationPreloader::start()
     loadFromNetwork();
 }
 
-ServiceWorkerNavigationPreloader::~ServiceWorkerNavigationPreloader()
-{
-}
+ServiceWorkerNavigationPreloader::~ServiceWorkerNavigationPreloader() = default;
 
 void ServiceWorkerNavigationPreloader::cancel()
 {
     m_isCancelled = true;
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyAction::Ignore);
-    if (m_networkLoad)
-        m_networkLoad->cancel();
+    if (RefPtr networkLoad = m_networkLoad)
+        networkLoad->cancel();
 }
 
 void ServiceWorkerNavigationPreloader::loadWithCacheEntry(NetworkCache::Entry& entry)
@@ -151,8 +150,9 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    m_networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), *m_session);
-    m_networkLoad->start();
+    Ref networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), *m_session);
+    m_networkLoad = networkLoad.copyRef();
+    networkLoad->start();
 }
 
 void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
@@ -181,6 +181,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
     }
 
     m_response = WTFMove(response);
+    m_response.setRedirected(false);
     m_responseCompletionHandler = WTFMove(completionHandler);
 
     if (auto callback = std::exchange(m_responseCallback, { }))

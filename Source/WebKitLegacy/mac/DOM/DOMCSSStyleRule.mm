@@ -25,7 +25,7 @@
 
 #import "DOMCSSStyleRule.h"
 
-#import <WebCore/CSSStyleDeclaration.h>
+#import <WebCore/CSSStyleProperties.h>
 #import <WebCore/CSSStyleRule.h>
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSStyleDeclarationInternal.h"

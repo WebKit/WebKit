@@ -32,7 +32,7 @@ namespace WebKit {
 
 TextStream& operator<<(TextStream& ts, const KeyEventInterpretationContext& context)
 {
-    ts << "KeyEventInterpretationContext(isCharEvent: " << context.isCharEvent << ", scrollingNode: " << context.scrollingNode << ")";
+    ts << "KeyEventInterpretationContext(isCharEvent: "_s << context.isCharEvent << ", scrollingNode: "_s << context.scrollingNode << ')';
     return ts;
 }
 

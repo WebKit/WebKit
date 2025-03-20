@@ -1,0 +1,14 @@
+editing/cocoa/HTMLConverter.mm
+platform/audio/cocoa/AudioSampleBufferConverter.mm
+platform/audio/cocoa/WebAudioBufferList.cpp
+platform/graphics/cg/GraphicsContextCG.cpp
+platform/graphics/cg/ImageDecoderCG.cpp
+platform/graphics/cg/PatternCG.cpp
+platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp
+platform/graphics/cocoa/VideoMediaSampleRenderer.mm
+platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
+platform/mac/PlatformPasteboardMac.mm
+platform/network/cf/DNSResolveQueueCFNet.cpp
+platform/network/cocoa/ProtectionSpaceCocoa.mm
+platform/network/mac/ResourceHandleMac.mm
+testing/cocoa/WebArchiveDumpSupport.mm

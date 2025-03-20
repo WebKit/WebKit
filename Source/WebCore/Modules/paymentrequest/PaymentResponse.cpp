@@ -147,8 +147,8 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
 
 void PaymentResponse::stop()
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this, pendingActivity = std::exchange(m_pendingActivity, nullptr)] {
-        settleRetryPromise(Exception { ExceptionCode::AbortError });
+    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [pendingActivity = std::exchange(m_pendingActivity, nullptr)](auto& response) {
+        response.settleRetryPromise(Exception { ExceptionCode::AbortError });
     });
     m_state = State::Stopped;
 }

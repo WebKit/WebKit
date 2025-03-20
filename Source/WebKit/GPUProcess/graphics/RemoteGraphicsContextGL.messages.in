@@ -328,19 +328,19 @@ messages -> RemoteGraphicsContextGL Stream {
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (std::span<const int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
 #if ENABLE(WEBXR)
-    void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
-    void DeleteExternalImage(uint32_t handle)
-    void BindExternalImage(uint32_t target, uint32_t arg1)
-    void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
+    [EnabledBy=WebXREnabled] void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
+    [EnabledBy=WebXREnabled] void DeleteExternalImage(uint32_t handle)
+    [EnabledBy=WebXREnabled] void BindExternalImage(uint32_t target, uint32_t arg1)
+    [EnabledBy=WebXREnabled] void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
 #endif
     void DeleteExternalSync(uint32_t arg0)
 #if ENABLE(WEBXR)
-    void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
-    void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
-    void EnableFoveation(uint32_t arg0)
-    void DisableFoveation()
-    void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
-    void FramebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
+    [EnabledBy=WebXREnabled] void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
+    [EnabledBy=WebXREnabled] void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
+    [EnabledBy=WebXREnabled] void EnableFoveation(uint32_t arg0)
+    [EnabledBy=WebXREnabled] void DisableFoveation()
+    [EnabledBy=WebXREnabled] void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
+    [EnabledBy=WebXREnabled] void FramebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
 #endif
 }
 

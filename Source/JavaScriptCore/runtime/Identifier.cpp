@@ -74,7 +74,7 @@ void Identifier::checkCurrentAtomStringTable(VM& vm)
 {
     // Check the identifier table accessible through the threadspecific matches the
     // vm's identifier table.
-    ASSERT_UNUSED(vm, vm.atomStringTable() == Thread::current().atomStringTable());
+    ASSERT_UNUSED(vm, vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
 }
 
 #else

@@ -119,7 +119,7 @@ SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource
     : ResourceLoader(frame, options)
     , m_resource(resource)
     , m_state(Uninitialized)
-    , m_requestCountTracker(std::in_place, frame.document()->cachedResourceLoader(), resource)
+    , m_requestCountTracker(std::in_place, frame.protectedDocument()->cachedResourceLoader(), resource)
 {
 #ifndef NDEBUG
     subresourceLoaderCounter.increment();
@@ -231,7 +231,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTFMove(newRequest));
         }
 
-        ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
+        ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
             tracePoint(SubresourceLoadWillStart, identifier() ? identifier()->toUInt64() : 0, PAGE_ID, FRAME_ID);
 
             if (reachedTerminalState()) {
@@ -336,7 +336,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             cancel();
             return completionHandler(WTFMove(newRequest));
         }
-        resource->redirectReceived(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), continueWillSendRequest = WTFMove(continueWillSendRequest)] (ResourceRequest&& request) mutable {
+        resource->redirectReceived(WTFMove(newRequest), redirectResponse, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), continueWillSendRequest = WTFMove(continueWillSendRequest)] (ResourceRequest&& request) mutable {
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_DONE_NOTIFYING_CLIENTS);
             continueWillSendRequest(WTFMove(completionHandler), WTFMove(request));
         });
@@ -490,7 +490,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             if (resource) {
                 resource->responseReceived(m_previousPartResponse);
                 // The resource data will change as the next part is loaded, so we need to make a copy.
-                resource->finishLoading(resourceData()->copy().ptr(), { });
+                resource->finishLoading(protectedResourceData()->copy().ptr(), { });
             }
         }
         clearResourceData();
@@ -510,7 +510,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     bool isResponseMultipart = response.isMultipart();
     if (options().mode != FetchOptions::Mode::Navigate && frame && frame->document())
         LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), protectedDocumentLoader()->url(), *frame->protectedDocument(), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
-    ResourceLoader::didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis), isResponseMultipart, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
+    ResourceLoader::didReceiveResponse(response, [this, protectedThis = Ref { *this }, isResponseMultipart, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
         if (reachedTerminalState())
             return;
 
@@ -930,7 +930,8 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     if (!resource || !ResourceTimingInformation::shouldAddResourceTiming(*resource))
         return;
 
-    RefPtr document = protectedDocumentLoader()->cachedResourceLoader().document();
+    RefPtr documentLoader = this->documentLoader();
+    RefPtr document = documentLoader->cachedResourceLoader().document();
     if (!document)
         return;
 
@@ -947,7 +948,7 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     }
 
     ASSERT(options().initiatorContext == InitiatorContext::Document);
-    documentLoader()->protectedCachedResourceLoader()->resourceTimingInformation().addResourceTiming(*protectedCachedResource(), *document, WTFMove(resourceTiming));
+    documentLoader->protectedCachedResourceLoader()->resourceTimingInformation().addResourceTiming(*protectedCachedResource(), *document, WTFMove(resourceTiming));
 }
 
 const HTTPHeaderMap* SubresourceLoader::originalHeaders() const

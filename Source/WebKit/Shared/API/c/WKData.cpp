@@ -37,7 +37,7 @@ WKTypeID WKDataGetTypeID()
 
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
-    return WebKit::toAPI(&API::Data::create(unsafeMakeSpan(bytes, size)).leakRef());
+    return WebKit::toAPILeakingRef(API::Data::create(unsafeMakeSpan(bytes, size)));
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)

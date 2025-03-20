@@ -53,7 +53,7 @@ IntPoint IntPoint::constrainedWithin(const IntRect& rect) const
 
 TextStream& operator<<(TextStream& ts, const IntPoint& p)
 {
-    return ts << "(" << p.x() << "," << p.y() << ")";
+    return ts << '(' << p.x() << ',' << p.y() << ')';
 }
 
 }

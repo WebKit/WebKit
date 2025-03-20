@@ -27,6 +27,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				312616A02D7BC33B00A29134 /* PBXTargetDependency */,
 				448C3AA12D4C48C400AA535D /* PBXTargetDependency */,
 				4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */,
 				44D88ACE2AF0495A005C956E /* PBXTargetDependency */,
@@ -61,6 +62,8 @@
 		2D6BFF62280A93F400A1A74F /* video_codec_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45F234C81720028A615 /* video_codec_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D6BFF63280A93FA00A1A74F /* video_coding_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45D234C81720028A615 /* video_coding_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D6BFF64280A93FE00A1A74F /* video_error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45C234C81720028A615 /* video_error_codes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3178AB2D2D80C9A8002F8CF9 /* libgmock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3178AB2C2D80C9A8002F8CF9 /* libgmock.a */; };
+		3178AB2F2D810582002F8CF9 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3178AB2E2D810582002F8CF9 /* libgtest.a */; };
 		410091DB242E0BBC00C5EDA2 /* video_codec_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 410091D6242E0BBA00C5EDA2 /* video_codec_constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		410091DC242E0BBC00C5EDA2 /* video_codec_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 410091D7242E0BBB00C5EDA2 /* video_codec_type.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		410091DD242E0BBC00C5EDA2 /* recordable_encoded_frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 410091D8242E0BBB00C5EDA2 /* recordable_encoded_frame.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3427,6 +3430,8 @@
 		514C7F142CB0CB2400808ADE /* webmids.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F132CB0CB2400808ADE /* webmids.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		514C7F172CB1759300808ADE /* mkvwriter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 514C7F162CB1759300808ADE /* mkvwriter.cc */; };
 		514C7F182CB1759300808ADE /* mkvwriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F152CB1759300808ADE /* mkvwriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		51C158162D89433100A768A5 /* WebKitVP9Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */; };
+		51C158172D89434C00A768A5 /* WebKitVP9Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730C1E5513E70042215A /* CoreMedia.framework */; };
 		5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730D1E5513E70042215A /* CoreVideo.framework */; };
 		5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073131E5514020042215A /* VideoToolbox.framework */; };
@@ -4470,6 +4475,8 @@
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
 		9869CBB42A4D5B820031C401 /* video_rtp_depacketizer_h265.h in Headers */ = {isa = PBXBuildFile; fileRef = 9869CBB22A4D5B820031C401 /* video_rtp_depacketizer_h265.h */; };
 		9869CBB52A4D5B820031C401 /* video_rtp_depacketizer_h265.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9869CBB32A4D5B820031C401 /* video_rtp_depacketizer_h265.cc */; };
+		CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */; };
+		CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDC1F47625CF69EA0084CA16 /* opus_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47425CF69E40084CA16 /* opus_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDC1F47725CF6A640084CA16 /* opus_types.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47325CF69E40084CA16 /* opus_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDEBB4B624C019C400ADBD44 /* unknown_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46424C0191A00ADBD44 /* unknown_parser.cc */; };
@@ -5380,6 +5387,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		3126169F2D7BC33B00A29134 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44ABBE882AC63F0C006B44DD;
+			remoteInfo = sdp_integration_fuzzer;
+		};
 		31339FA62CEEFED90054D8D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -5906,6 +5920,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3178AB2C2D80C9A8002F8CF9 /* libgmock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgmock.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3178AB2E2D810582002F8CF9 /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		410091CD242CFD5E00C5EDA2 /* aes_nohw.c.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = aes_nohw.c.inc; sourceTree = "<group>"; };
 		410091D0242CFD8200C5EDA2 /* gcm_nohw.c.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = gcm_nohw.c.inc; sourceTree = "<group>"; };
 		410091D6242E0BBA00C5EDA2 /* video_codec_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_codec_constants.h; sourceTree = "<group>"; };
@@ -7847,6 +7863,8 @@
 		414037B124AB359700BCE9B2 /* vp9_frame_scale_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vp9_frame_scale_neon.c; sourceTree = "<group>"; };
 		414037B224AB359700BCE9B2 /* vp9_quantize_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vp9_quantize_neon.c; sourceTree = "<group>"; };
 		414037B724AB35E100BCE9B2 /* sum_squares_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sum_squares_neon.c; sourceTree = "<group>"; };
+		414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitVP9Decoder.h; sourceTree = "<group>"; };
+		414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitVP9Decoder.cpp; sourceTree = "<group>"; };
 		4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_encoder_pcm.cc; sourceTree = "<group>"; };
 		4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_encoder_pcm.h; sourceTree = "<group>"; };
 		4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_decoder_pcm.cc; sourceTree = "<group>"; };
@@ -10880,6 +10898,8 @@
 		72CDC3792AB0CEFE00640E85 /* vpx_integer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vpx_integer.h; sourceTree = "<group>"; };
 		9869CBB22A4D5B820031C401 /* video_rtp_depacketizer_h265.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_rtp_depacketizer_h265.h; sourceTree = "<group>"; };
 		9869CBB32A4D5B820031C401 /* video_rtp_depacketizer_h265.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_rtp_depacketizer_h265.cc; sourceTree = "<group>"; };
+		CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitDecoderReceiver.cpp; sourceTree = "<group>"; };
+		CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitDecoderReceiver.h; sourceTree = "<group>"; };
 		CDC1F47025CF69E40084CA16 /* opus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
 		CDC1F47125CF69E40084CA16 /* opus_multistream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_multistream.h; sourceTree = "<group>"; };
 		CDC1F47225CF69E40084CA16 /* opus_custom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_custom.h; sourceTree = "<group>"; };
@@ -11585,6 +11605,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3178AB2D2D80C9A8002F8CF9 /* libgmock.a in Frameworks */,
+				3178AB2F2D810582002F8CF9 /* libgtest.a in Frameworks */,
 				446CFE442AC694AB00F870D9 /* libwebrtc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15096,10 +15118,14 @@
 				412FF935253D8F0A001DF036 /* VTVideoDecoderSPI.h */,
 				41E84BC92434C4A200D34E41 /* WebKitDecoder.h */,
 				41E84BCA2434C4A300D34E41 /* WebKitDecoder.mm */,
+				CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */,
+				CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */,
 				4158649623BE05E800A0A61E /* WebKitEncoder.h */,
 				4158649723BE05E900A0A61E /* WebKitEncoder.mm */,
 				41ECEABB206403C1009D5141 /* WebKitUtilities.h */,
 				41ECEABD20640498009D5141 /* WebKitUtilities.mm */,
+				414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */,
+				414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */,
 			);
 			path = WebKit;
 			sourceTree = "<group>";
@@ -18454,6 +18480,8 @@
 				5C00730C1E5513E70042215A /* CoreMedia.framework */,
 				5C00730D1E5513E70042215A /* CoreVideo.framework */,
 				5C316D8A1E66333C008BE64D /* Foundation.framework */,
+				3178AB2C2D80C9A8002F8CF9 /* libgmock.a */,
+				3178AB2E2D810582002F8CF9 /* libgtest.a */,
 				4417F7EE2ADE112D00A7254F /* libgtest.a */,
 				44FD16852AEA37E6003636CB /* OpenGL.framework */,
 				5C0073421E552C800042215A /* Security.framework */,
@@ -23614,8 +23642,10 @@
 				5C4B4C841E431F9C002651C8 /* wav_header.h in Headers */,
 				4131C163234B89E20028A615 /* weak_ptr.h in Headers */,
 				DDF30CF427C5A742006A526F /* WebKitDecoder.h in Headers */,
+				CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */,
 				4158649823BE05E900A0A61E /* WebKitEncoder.h in Headers */,
 				41ECEABC206403C2009D5141 /* WebKitUtilities.h in Headers */,
+				51C158172D89434C00A768A5 /* WebKitVP9Decoder.h in Headers */,
 				5CDD8CAB1E43C6F700621E92 /* webrtc_cng.h in Headers */,
 				416B09F32A3C7F180017367B /* webrtc_key_value_config.h in Headers */,
 				4145E4911EF88EF700FCF6E6 /* webrtc_libyuv.h in Headers */,
@@ -24228,7 +24258,7 @@
 				41F2354122F39AC000B4FCDB /* Check For Inappropriate Objective-C Class Names */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
-				659A86EA279796F800AC37B6 /* Create Symlink to Alt Root Path */,
+				659A86EA279796F800AC37B6 /* Create Symlink to Cryptex Path */,
 			);
 			buildRules = (
 				DDF30D0027C5A994006A526F /* PBXBuildRule */,
@@ -24397,7 +24427,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ \"${ENABLE_LIBFUZZER}\" = \"YES\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
 		};
-		659A86EA279796F800AC37B6 /* Create Symlink to Alt Root Path */ = {
+		659A86EA279796F800AC37B6 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -24406,7 +24436,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Create Symlink to Alt Root Path";
+			name = "Create Symlink to Cryptex Path";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -24415,7 +24445,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-cryptex.sh\"\n";
 		};
 		DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -27091,8 +27121,10 @@
 				5C4B4C831E431F9C002651C8 /* wav_header.cc in Sources */,
 				4131C0F9234B89E20028A615 /* weak_ptr.cc in Sources */,
 				41E84BD524373F7200D34E41 /* WebKitDecoder.mm in Sources */,
+				CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */,
 				4158649923BE05E900A0A61E /* WebKitEncoder.mm in Sources */,
 				41ECEABE20640498009D5141 /* WebKitUtilities.mm in Sources */,
+				51C158162D89433100A768A5 /* WebKitVP9Decoder.cpp in Sources */,
 				5CDD8CAA1E43C6F700621E92 /* webrtc_cng.cc in Sources */,
 				5CDD83671E4325D500621E92 /* webrtc_libyuv.cc in Sources */,
 				4131C27A234B8CC40028A615 /* webrtc_media_engine.cc in Sources */,
@@ -27114,6 +27146,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		312616A02D7BC33B00A29134 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44ABBE882AC63F0C006B44DD /* sdp_integration_fuzzer */;
+			targetProxy = 3126169F2D7BC33B00A29134 /* PBXContainerItemProxy */;
+		};
 		31339FA72CEEFED90054D8D5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;

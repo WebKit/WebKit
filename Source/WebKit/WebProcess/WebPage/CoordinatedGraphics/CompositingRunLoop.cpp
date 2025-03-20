@@ -60,7 +60,7 @@ CompositingRunLoop::~CompositingRunLoop()
     RunLoop::protectedMain()->dispatch([runLoop = m_runLoop] {
         runLoop->stop();
         runLoop->dispatch([] {
-            RunLoop::current().stop();
+            RunLoop::currentSingleton().stop();
         });
     });
 }

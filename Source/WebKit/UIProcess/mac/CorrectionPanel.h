@@ -47,7 +47,7 @@ public:
     static void recordAutocorrectionResponse(WebViewImpl&, NSInteger spellCheckerDocumentTag, NSCorrectionResponse, const String& replacedString, const String& replacementString);
 
 private:
-    bool isShowing() const { return m_view; }
+    bool isShowing() const { return !!m_view; }
     String dismissInternal(WebCore::ReasonForDismissingAlternativeText, bool dismissingExternally);
     void handleAcceptedReplacement(WebViewImpl&, NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
 

@@ -1,5 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Query `webgpu:api,operation,texture_view,read:*` does not match any cases
 
-PASS :format:
-PASS :dimension:
-PASS :aspect:
+Harness Error (FAIL), message = Unhandled rejection: Query `webgpu:api,operation,texture_view,read:*` does not match any cases
+
 

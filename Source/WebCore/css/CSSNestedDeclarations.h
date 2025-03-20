@@ -24,10 +24,10 @@
 namespace WebCore {
 
 class CSSRuleList;
-class CSSStyleDeclaration;
+class CSSStyleProperties;
 class DeclaredStylePropertyMap;
 class StylePropertyMap;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 class StyleRuleNestedDeclarations;
 
 class CSSNestedDeclarations final : public CSSRule, public CanMakeWeakPtr<CSSNestedDeclarations> {
@@ -36,7 +36,7 @@ public:
 
     virtual ~CSSNestedDeclarations();
 
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleProperties& style();
 
 private:
     CSSNestedDeclarations(StyleRuleNestedDeclarations&, CSSStyleSheet*);
@@ -48,7 +48,7 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::NestedDeclarations; }
 
     Ref<StyleRuleNestedDeclarations> m_styleRule;
-    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

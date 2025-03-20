@@ -35,11 +35,18 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreMaterial)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MTMaterialLayer)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipeNone, NSString *)
+
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformChromeLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThickLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentUltraThinLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThinLight, NSString *)
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentDark, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformChromeDark, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThickDark, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentUltraThinDark, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThinDark, NSString *)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryStroke, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryFill, NSString *)

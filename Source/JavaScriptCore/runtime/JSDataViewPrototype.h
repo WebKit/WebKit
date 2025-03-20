@@ -41,7 +41,7 @@ public:
         return &vm.plainObjectSpace();
     }
 
-    static JSDataViewPrototype* create(VM&, Structure*);
+    static JSDataViewPrototype* create(VM&, JSGlobalObject*, Structure*);
     
     DECLARE_INFO;
     
@@ -49,7 +49,7 @@ public:
 
 private:
     JSDataViewPrototype(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

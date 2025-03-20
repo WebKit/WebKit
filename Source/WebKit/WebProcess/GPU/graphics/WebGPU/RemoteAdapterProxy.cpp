@@ -107,7 +107,9 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension,
         supportedLimits.maxStorageBuffersInFragmentStage,
-        supportedLimits.maxStorageTexturesInFragmentStage
+        supportedLimits.maxStorageTexturesInFragmentStage,
+        supportedLimits.maxStorageBuffersInVertexStage,
+        supportedLimits.maxStorageTexturesInVertexStage
     );
     auto result = RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, convertToBackingContext, identifier, queueIdentifier);
     result->setLabel(WTFMove(convertedDescriptor->label));

@@ -46,7 +46,7 @@ class RegExp;
 // m_reifiedResult and m_reifiedInput hold the cached results.
 class RegExpCachedResult {
 public:
-    inline void record(VM&, JSObject* owner, RegExp*, JSString* input, MatchResult);
+    inline void record(VM&, JSObject* owner, RegExp*, JSString* input, MatchResult, bool oneCharacterMatch);
 
     JSArray* lastResult(JSGlobalObject*, JSObject* owner);
     void setInput(JSGlobalObject*, JSObject* owner, JSString*);
@@ -67,12 +67,14 @@ public:
     static constexpr ptrdiff_t offsetOfLastInput() { return OBJECT_OFFSETOF(RegExpCachedResult, m_lastInput); }
     static constexpr ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(RegExpCachedResult, m_result); }
     static constexpr ptrdiff_t offsetOfReified() { return OBJECT_OFFSETOF(RegExpCachedResult, m_reified); }
+    static constexpr ptrdiff_t offsetOfOneCharacterMatch() { return OBJECT_OFFSETOF(RegExpCachedResult, m_oneCharacterMatch); }
 
     MatchResult result() const { return m_result; }
 
 private:
     MatchResult m_result { 0, 0 };
     bool m_reified { false };
+    bool m_oneCharacterMatch { false };
     WriteBarrier<JSString> m_lastInput;
     WriteBarrier<RegExp> m_lastRegExp;
     WriteBarrier<JSArray> m_reifiedResult;

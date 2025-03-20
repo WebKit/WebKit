@@ -55,7 +55,7 @@ namespace WebKit {
 class RemoteVideoFrameObjectHeapProxy;
 class UserMediaCaptureManager;
 
-class RemoteCaptureSampleManager : public IPC::WorkQueueMessageReceiver {
+class RemoteCaptureSampleManager : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCaptureSampleManager);
 public:
     explicit RemoteCaptureSampleManager(UserMediaCaptureManager&);

@@ -237,8 +237,8 @@ InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
 WebPageAgentContext WebPageInspectorController::webPageAgentContext()
 {
     return {
-        m_frontendRouter.get(),
-        m_backendDispatcher.get(),
+        m_frontendRouter,
+        m_backendDispatcher,
         m_inspectedPage,
     };
 }

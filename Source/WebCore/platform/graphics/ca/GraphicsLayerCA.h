@@ -315,10 +315,15 @@ private:
 
     virtual void setLayerContentsToImageBuffer(PlatformCALayer*, ImageBuffer*) { }
 
+    RefPtr<PlatformCALayer> protectedLayer() const { return m_layer; }
+    RefPtr<PlatformCALayer> protectedBackdropLayer() const { return m_backdropLayer; }
+    RefPtr<PlatformCALayer> protectedStructuralLayer() const { return m_structuralLayer; }
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
+    RefPtr<PlatformCALayer> protectedPrimaryLayer() const { return primaryLayer(); }
     PlatformCALayer* hostLayerForSublayers() const;
     PlatformCALayer* layerForSuperlayer() const;
     PlatformCALayer* animatedLayer(AnimatedProperty) const;
+    RefPtr<PlatformCALayer> protectedAnimatedLayer(AnimatedProperty property) const { return animatedLayer(property); }
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 

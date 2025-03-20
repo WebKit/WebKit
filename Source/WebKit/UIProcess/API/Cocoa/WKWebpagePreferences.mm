@@ -353,7 +353,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 - (_WKWebsiteDeviceOrientationAndMotionAccessPolicy)_deviceOrientationAndMotionAccessPolicy
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    return toWKWebsiteDeviceOrientationAndMotionAccessPolicy(_websitePolicies->deviceOrientationAndMotionAccessState());
+    if (auto state = _websitePolicies->deviceOrientationAndMotionAccessState())
+        return toWKWebsiteDeviceOrientationAndMotionAccessPolicy(*state);
+    return _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk;
 #else
     return _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny;
 #endif

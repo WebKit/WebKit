@@ -31,6 +31,7 @@
 #include "ThreadGlobalData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/MainThread.h>
@@ -113,11 +114,7 @@ public:
         return profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, unused);
     }
 
-    static void runTask(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Microtask& task)
-    {
-        JSExecState currentState(lexicalGlobalObject);
-        task.run(lexicalGlobalObject);
-    }
+    static void runTask(JSC::JSGlobalObject*, JSC::QueuedTask&);
 
     static JSC::JSInternalPromise* loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const URL& topLevelModuleURL, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
     {
@@ -219,5 +216,6 @@ JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject*, JSC::JSValue
 JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 ScriptExecutionContext* executionContext(JSC::JSGlobalObject*);
+RefPtr<ScriptExecutionContext> protectedExecutionContext(JSC::JSGlobalObject*);
 
 } // namespace WebCore

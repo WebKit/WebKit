@@ -34,7 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(InPlaceAbstractState);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(InPlaceAbstractState);
 
 namespace DFGInPlaceAbstractStateInternal {
 static constexpr bool verbose = false;

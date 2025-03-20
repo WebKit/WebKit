@@ -79,7 +79,7 @@ private:
     void didElementStateChange();
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    RefPtr<HTMLElement> m_value;
+    RefPtr<HTMLElement> m_valueElement;
 };
 
 } // namespace WebCore

@@ -49,5 +49,20 @@ promise_test(async t => {
     });
 }, `<model> gets the identity entityTransform after model source removal`);
 
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let originalTransform = model.entityTransform;
+    assert_equals(model.stageMode, "");
+    assert_3d_matrix_is_identity(originalTransform, false);
+
+    model.stageMode = "orbit";
+    assert_equals(model.stageMode, "orbit");
+
+    let scaledTransform = originalTransform.scale(2, 2, 2);
+    model.entityTransform = scaledTransform;
+    assert_3d_matrix_equals(model.entityTransform, originalTransform);
+}, `<model> ignores entityTransform when stagemode is set`);
+
 </script>
 </body>

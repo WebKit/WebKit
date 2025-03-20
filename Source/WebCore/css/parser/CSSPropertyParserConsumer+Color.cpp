@@ -87,7 +87,7 @@ struct ColorParserState {
     ColorParserState(const CSSParserContext& context, const CSSColorParsingOptions& options)
         : context { context }
         , allowedColorTypes { options.allowedColorTypes }
-        , acceptQuirkyColors { options.acceptQuirkyColors }
+        , acceptQuirkyColors { options.acceptQuirkyColorsInQuirksMode && context.mode == HTMLQuirksMode }
     {
     }
 

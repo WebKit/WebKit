@@ -35,7 +35,7 @@ using namespace WebCore;
 
 @interface WebCoreAuthenticationClientAsChallengeSender : NSObject <NSURLAuthenticationChallengeSender>
 {
-    AuthenticationClient* m_client;
+    WeakPtr<AuthenticationClient> m_client;
 }
 - (id)initWithAuthenticationClient:(AuthenticationClient*)client;
 - (AuthenticationClient*)client;
@@ -55,42 +55,42 @@ using namespace WebCore;
 
 - (AuthenticationClient*)client
 {
-    return m_client;
+    return m_client.get();
 }
 
 - (void)detachClient
 {
-    m_client = 0;
+    m_client = nullptr;
 }
 
 - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (m_client)
-        m_client->receivedRequestToPerformDefaultHandling(core(challenge));
+    if (RefPtr client = m_client.get())
+        client->receivedRequestToPerformDefaultHandling(core(challenge));
 }
 
 - (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (m_client)
-        m_client->receivedChallengeRejection(core(challenge));
+    if (RefPtr client = m_client.get())
+        client->receivedChallengeRejection(core(challenge));
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (m_client)
-        m_client->receivedCredential(core(challenge), Credential(credential));
+    if (RefPtr client = m_client.get())
+        client->receivedCredential(core(challenge), Credential(credential));
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (m_client)
-        m_client->receivedRequestToContinueWithoutCredential(core(challenge));
+    if (RefPtr client = m_client.get())
+        client->receivedRequestToContinueWithoutCredential(core(challenge));
 }
 
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (m_client)
-        m_client->receivedCancellation(core(challenge));
+    if (RefPtr client = m_client.get())
+        client->receivedCancellation(core(challenge));
 }
 
 @end

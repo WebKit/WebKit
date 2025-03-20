@@ -278,8 +278,7 @@ rtc::scoped_refptr<LibWebRTCStatsCollector> LibWebRTCMediaEndpoint::createStatsC
             return;
 
         Ref peerConnectionBackend = protectedThis->m_peerConnectionBackend.get();
-        Ref peerConnection = peerConnectionBackend->connection();
-        peerConnection->queueTaskKeepingObjectAlive(peerConnection.get(), TaskSource::Networking, [promise = WTFMove(promise), rtcReport] {
+        ActiveDOMObject::queueTaskKeepingObjectAlive(peerConnectionBackend->protectedConnection().get(), TaskSource::Networking, [promise = WTFMove(promise), rtcReport](auto&) {
             promise->resolve<IDLInterface<RTCStatsReport>>(LibWebRTCStatsCollector::createReport(rtcReport));
         });
     });
@@ -335,7 +334,7 @@ MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStreamId(const String& id
 {
     auto mediaStream = m_remoteStreamsById.ensure(id, [id, this]() {
         auto& document = downcast<Document>(*protectedPeerConnectionBackend()->connection().scriptExecutionContext());
-        auto stream = MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, String(id)));
+        auto stream = MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, String(id)), MediaStream::AllowEventTracks::Yes);
         return stream;
     });
     return *mediaStream.iterator->value;
@@ -475,8 +474,10 @@ void LibWebRTCMediaEndpoint::stop()
 
     m_backend->Close();
     m_backend = nullptr;
+
+    for (RefPtr stream : m_remoteStreamsById.values())
+        stream->inactivate();
     m_remoteStreamsById.clear();
-    m_remoteStreamsFromRemoteTrack.clear();
 }
 
 void LibWebRTCMediaEndpoint::OnNegotiationNeededEvent(uint32_t eventId)

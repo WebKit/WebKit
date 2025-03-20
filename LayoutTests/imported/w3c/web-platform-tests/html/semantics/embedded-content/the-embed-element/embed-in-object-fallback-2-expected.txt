@@ -1,3 +1,9 @@
 
-FAIL Test <embed> nesting inside <object> assert_equals: Should have loaded all should-load elements expected 12 but got 0
+
+
+
+
+
+
+PASS Test <embed> nesting inside <object>
 

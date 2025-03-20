@@ -176,6 +176,13 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 #endif
 }
 
+- (void)_corruptContentRuleListActionsMatchingEverythingForIdentifier:(NSString *)identifier
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _contentRuleListStore->corruptContentRuleListActionsMatchingEverything(identifier);
+#endif
+}
+
 - (void)_invalidateContentRuleListHeaderForIdentifier:(NSString *)identifier
 {
 #if ENABLE(CONTENT_EXTENSIONS)

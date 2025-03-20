@@ -149,62 +149,44 @@ String WebSocketChannel::extensions()
     return extensions;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(CString&& message)
+void WebSocketChannel::send(CString&& message)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
-        return ThreadableWebSocketChannel::SendSuccess;
+        return;
 
     LOG(Network, "WebSocketChannel %p send() Sending String '%s'", this, message.data());
     enqueueTextFrame(WTFMove(message));
     processOutgoingFrameQueue();
-    // According to WebSocket API specification, WebSocket.send() should return void instead
-    // of boolean. However, our implementation still returns boolean due to compatibility
-    // concern (see bug 65850).
-    // m_channel->send() may happen later, thus it's not always possible to know whether
-    // the message has been sent to the socket successfully. In this case, we have no choice
-    // but to return true.
-    return ThreadableWebSocketChannel::SendSuccess;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
-        return ThreadableWebSocketChannel::SendSuccess;
+        return;
 
     LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%u byteLength=%u", this, &binaryData, byteOffset, byteLength);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, binaryData.span().subspan(byteOffset, byteLength));
     processOutgoingFrameQueue();
-    return ThreadableWebSocketChannel::SendSuccess;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(Blob& binaryData)
+void WebSocketChannel::send(Blob& binaryData)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
-        return ThreadableWebSocketChannel::SendSuccess;
+        return;
 
     LOG(Network, "WebSocketChannel %p send() Sending Blob '%s'", this, binaryData.url().string().utf8().data());
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     processOutgoingFrameQueue();
-    return ThreadableWebSocketChannel::SendSuccess;
 }
 
-bool WebSocketChannel::send(std::span<const uint8_t> data)
+void WebSocketChannel::send(std::span<const uint8_t> data)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
-        return ThreadableWebSocketChannel::SendSuccess;
+        return;
 
     LOG(Network, "WebSocketChannel %p send() Sending uint8_t* data=%p length=%zu", this, data.data(), data.size());
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, data);
     processOutgoingFrameQueue();
-    return true;
-}
-
-unsigned WebSocketChannel::bufferedAmount() const
-{
-    LOG(Network, "WebSocketChannel %p bufferedAmount()", this);
-    ASSERT(m_handle);
-    ASSERT(!m_suspended);
-    return m_handle->bufferedAmount();
 }
 
 void WebSocketChannel::close(int code, const String& reason)

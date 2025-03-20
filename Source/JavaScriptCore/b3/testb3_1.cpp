@@ -52,6 +52,13 @@ bool shouldRun(const TestConfig* config, const char* testName)
             }
         }
     }
+    // FIXME: rdar://145150735. But note this test is already skipped on ARM64, see above.
+    if (!filter && Options::airUseGreedyRegAlloc()) {
+        if (WTF::findIgnoringASCIICaseWithoutLength(testName, "testPinRegisters") != WTF::notFound) {
+            dataLogLn("*** Warning: Skipping known-bad test: ", testName);
+            return false;
+        }
+    }
 
     if (!filter && isARM_THUMB2()) {
         for (auto& failingTest : {

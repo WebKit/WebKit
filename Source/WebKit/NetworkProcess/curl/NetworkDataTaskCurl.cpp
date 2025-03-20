@@ -199,7 +199,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         RELEASE_ASSERT(download);
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
-            if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->span())) {
+            if (!m_downloadDestinationFile.write(segment.segment->span())) {
                 download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), { });
                 invalidateAndCancel();
                 return;
@@ -222,8 +222,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
     if (isDownload()) {
         auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
-        FileSystem::closeFile(m_downloadDestinationFile);
-        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
+        m_downloadDestinationFile = { };
         download->didFinish();
         return;
     }
@@ -309,8 +308,8 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             invalidateAndCancel();
             break;
         case PolicyAction::Download: {
-            m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate, FileSystem::FileAccessPermission::All, !m_allowOverwriteDownload);
-            if (!FileSystem::isHandleValid(m_downloadDestinationFile)) {
+            m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate, FileSystem::FileAccessPermission::All, { }, !m_allowOverwriteDownload);
+            if (!m_downloadDestinationFile) {
                 if (m_client)
                     m_client->didCompleteWithError(ResourceError(CURLE_WRITE_ERROR, m_response.url()));
                 invalidateAndCancel();
@@ -627,10 +626,9 @@ String NetworkDataTaskCurl::suggestedFilename() const
 
 void NetworkDataTaskCurl::deleteDownloadFile()
 {
-    if (FileSystem::isHandleValid(m_downloadDestinationFile)) {
-        FileSystem::closeFile(m_downloadDestinationFile);
+    if (m_downloadDestinationFile) {
+        m_downloadDestinationFile = { };
         FileSystem::deleteFile(m_pendingDownloadLocation);
-        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
     }
 }
 

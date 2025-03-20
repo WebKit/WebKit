@@ -180,26 +180,6 @@ export const kAddressSpaceInfo = {
   }
 };
 
-/** List of texel formats and their shader representation */
-export const TexelFormats = [
-{ format: 'rgba8unorm', _shaderType: 'f32' },
-{ format: 'rgba8snorm', _shaderType: 'f32' },
-{ format: 'rgba8uint', _shaderType: 'u32' },
-{ format: 'rgba8sint', _shaderType: 'i32' },
-{ format: 'rgba16uint', _shaderType: 'u32' },
-{ format: 'rgba16sint', _shaderType: 'i32' },
-{ format: 'rgba16float', _shaderType: 'f32' },
-{ format: 'r32uint', _shaderType: 'u32' },
-{ format: 'r32sint', _shaderType: 'i32' },
-{ format: 'r32float', _shaderType: 'f32' },
-{ format: 'rg32uint', _shaderType: 'u32' },
-{ format: 'rg32sint', _shaderType: 'i32' },
-{ format: 'rg32float', _shaderType: 'f32' },
-{ format: 'rgba32uint', _shaderType: 'i32' },
-{ format: 'rgba32sint', _shaderType: 'i32' },
-{ format: 'rgba32float', _shaderType: 'f32' }];
-
-
 /**
  * Generate a bunch types (vec, mat, sized/unsized array) for testing.
  */
@@ -217,6 +197,11 @@ export function* generateTypes({
 
 
 })
+
+
+
+
+
 
 
 
@@ -308,6 +293,8 @@ export function* generateTypes({
     let arrayElementCount = kDefaultArrayLength;
     let supportsAtomics = scalarInfo.supportsAtomics;
     let layout = undefined;
+    let accessSuffixes = undefined;
+    let validLayoutForAddressSpace = true;
     if (scalarInfo.layout) {
       // Compute the layout of the array type.
       // Adjust the array element count or element type as needed.
@@ -318,8 +305,11 @@ export function* generateTypes({
         assert(!isAtomic, 'the uniform case is making vec4 of scalar, which cannot handle atomics');
         arrayElemType = `vec4<${baseType}>`;
         supportsAtomics = false;
+        accessSuffixes = ['.x', '.y', '.z', '.w'];
         const arrayElemLayout = vectorLayout('vec4', baseType);
-        // assert(arrayElemLayout.alignment % 16 === 0); // Callers responsibility to avoid
+        // Arrays in uniform address space have to be 16 byte-aligned.
+        // An array of vec4<f16> is only 8byte aligned.
+        validLayoutForAddressSpace = arrayElemLayout.alignment % 16 === 0;
         arrayElementCount = align(arrayElementCount, 4) / 4;
         const arrayByteSize = arrayElementCount * arrayElemLayout.size;
         layout = { alignment: arrayElemLayout.alignment, size: arrayByteSize };
@@ -343,14 +333,17 @@ export function* generateTypes({
       elementBaseType: `${baseType}`,
       arrayLength: arrayElementCount,
       layout,
-      supportsAtomics
+      supportsAtomics,
+      accessSuffixes
     };
 
-    // Sized
-    yield { type: `array<${arrayElemType},${arrayElementCount}>`, _kTypeInfo: arrayTypeInfo };
-    // Unsized
-    if (addressSpace === 'storage') {
-      yield { type: `array<${arrayElemType}>`, _kTypeInfo: arrayTypeInfo };
+    if (validLayoutForAddressSpace) {
+      // Sized
+      yield { type: `array<${arrayElemType},${arrayElementCount}>`, _kTypeInfo: arrayTypeInfo };
+      // Unsized
+      if (addressSpace === 'storage') {
+        yield { type: `array<${arrayElemType}>`, _kTypeInfo: arrayTypeInfo };
+      }
     }
   }
 

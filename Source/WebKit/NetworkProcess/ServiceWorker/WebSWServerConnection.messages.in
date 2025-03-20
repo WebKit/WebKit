@@ -73,6 +73,8 @@ messages -> WebSWServerConnection {
     [EnabledBy=CookieStoreManagerEnabled] RemoveCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (std::optional<WebCore::ExceptionData> result)
     [EnabledBy=CookieStoreManagerEnabled] CookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData> result)
 
+    AddRoutes(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::ServiceWorkerRoute> subscriptions) -> (Expected<void, WebCore::ExceptionData> result)
+
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
 #endif

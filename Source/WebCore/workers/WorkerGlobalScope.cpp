@@ -142,7 +142,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
 
 WorkerGlobalScope::~WorkerGlobalScope()
 {
-    ASSERT(thread().thread() == &Thread::current());
+    ASSERT(thread().thread() == &Thread::currentSingleton());
 
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
@@ -501,23 +501,6 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
 
-std::optional<Vector<uint8_t>> WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key)
-{
-    Ref protectedThis { *this };
-    auto* workerLoaderProxy = thread().workerLoaderProxy();
-    if (!workerLoaderProxy)
-        return std::nullopt;
-
-    BinarySemaphore semaphore;
-    std::optional<Vector<uint8_t>> wrappedKey;
-    workerLoaderProxy->postTaskToLoader([&semaphore, &key, &wrappedKey](auto& context) {
-        wrappedKey = context.wrapCryptoKey(key);
-        semaphore.signal();
-    });
-    semaphore.wait();
-    return wrappedKey;
-}
-
 std::optional<Vector<uint8_t>> WorkerGlobalScope::serializeAndWrapCryptoKey(CryptoKeyData&& keyData)
 {
     Ref protectedThis { *this };
@@ -679,11 +662,7 @@ void WorkerGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
         return;
     }
 #endif
-#if USE(CF) || USE(GLIB)
     vm().heap.reportAbandonedObjectGraph();
-#else
-    vm().heap.collectNow(JSC::Async, JSC::CollectionScope::Full);
-#endif
 }
 
 void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)

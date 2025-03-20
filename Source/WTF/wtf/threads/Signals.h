@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/AlignedStorage.h>
 #include <wtf/CodePtr.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -80,9 +81,7 @@ struct SigInfo {
 };
 
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
-ALLOW_DEPRECATED_DECLARATIONS_END
+using SignalHandlerMemory = AlignedStorage<SignalHandler>;
 
 struct SignalHandlers {
     static void initialize();

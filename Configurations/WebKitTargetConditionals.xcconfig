@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -380,3 +380,14 @@ WK_XCODE_BEFORE_16_1500 = YES;
 WK_XCODE_16 = $(WK_XCODE_16_$(WK_XCODE_BEFORE_16));
 WK_XCODE_16_ = _XCODE_SINCE_16;
 WK_XCODE_16_YES = _XCODE_BEFORE_16;
+
+WK_XCODE_BEFORE_16_3 = $(WK_XCODE_BEFORE_16_3$(WK_XCODE_16));
+WK_XCODE_BEFORE_16_3_XCODE_BEFORE_16 = YES;
+WK_XCODE_BEFORE_16_3_XCODE_SINCE_16 = $(WK_XCODE_BEFORE_16_3_$(XCODE_VERSION_MINOR));
+WK_XCODE_BEFORE_16_3_1600 = YES;
+WK_XCODE_BEFORE_16_3_1610 = YES;
+WK_XCODE_BEFORE_16_3_1620 = YES;
+
+WK_XCODE_16_3 = $(WK_XCODE_16_3_$(WK_XCODE_BEFORE_16_3));
+WK_XCODE_16_3_ = _XCODE_SINCE_16_3;
+WK_XCODE_16_3_YES = _XCODE_BEFORE_16_3;

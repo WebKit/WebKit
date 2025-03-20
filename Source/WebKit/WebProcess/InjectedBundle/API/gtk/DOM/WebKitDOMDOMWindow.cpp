@@ -25,6 +25,8 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include "GObjectEventListener.h"
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
@@ -1074,7 +1076,10 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
         return FALSE;
 
     auto promise = WebCore::DeferredPromise::create(*globalObject);
-    auto result = handler->postMessage(WebCore::SerializedScriptValue::create(String::fromUTF8(message)), adoptRef(*(promise.leakRef())));
+    JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithUTF8CString(message));
+    JSValueRef jsStringValue = JSValueMakeString(toRef(globalObject), jsString.get());
+
+    auto result = handler->postMessage(*globalObject, toJS(globalObject, jsStringValue), adoptRef(*(promise.leakRef())));
     if (result.hasException())
         return FALSE;
 

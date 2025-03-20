@@ -40,6 +40,10 @@
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include "DynamicContentScalingDisplayList.h"
+#endif
+
 namespace WebCore {
 
 class FloatRect;
@@ -137,7 +141,7 @@ public:
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
     IntRect boundsAtLastRevalidateWithoutMargin() const;
     void willRevalidateTiles(TileGrid&, TileRevalidationType);
-    void didRevalidateTiles(TileGrid&, TileRevalidationType, const UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay);
+    void didRevalidateTiles(TileGrid&, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay);
 
     bool shouldAggressivelyRetainTiles() const;
     bool shouldTemporarilyRetainTileCohorts() const;
@@ -151,6 +155,10 @@ public:
     WEBCORE_EXPORT Vector<RefPtr<PlatformCALayer>> containerLayers();
     
     void logFilledVisibleFreshTile(unsigned blankPixelCount);
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayListForTile(const TileGrid&, TileIndex);
+#endif
 
 private:
     TileGrid& tileGrid() { return *m_tileGrid; }

@@ -512,6 +512,39 @@ void TextureMapper::drawTexture(const BitmapTexture& texture, const FloatRect& t
     drawTexture(texture.id(), texture.colorConvertFlags() | (texture.isOpaque() ? OptionSet<TextureMapperFlags> { } : TextureMapperFlags::ShouldBlend), targetRect, matrix, opacity, allEdgesExposed);
 }
 
+#if ENABLE(DAMAGE_TRACKING)
+void TextureMapper::drawTextureFragment(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect)
+{
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram({ TextureMapperShaderProgram::TextureRGB });
+    const auto& textureSize = sourceTexture.size();
+
+    glUseProgram(program->programID());
+
+    auto textureFragmentMatrix = TransformationMatrix::identity;
+
+    textureFragmentMatrix.translate3d(
+        static_cast<double>(sourceRect.x()) / textureSize.width(),
+        static_cast<double>(sourceRect.y()) / textureSize.height(),
+        0
+    ).scale3d(
+        static_cast<double>(sourceRect.width()) / textureSize.width(),
+        static_cast<double>(sourceRect.height()) / textureSize.height(),
+        1
+    );
+
+    program->setMatrix(program->textureSpaceMatrixLocation(), textureFragmentMatrix);
+    program->setMatrix(program->textureColorSpaceMatrixLocation(), colorSpaceMatrixForFlags(sourceTexture.colorConvertFlags()));
+    glUniform1f(program->opacityLocation(), 1.0);
+    glUniform2f(program->texelSizeLocation(), 1.f / textureSize.width(), 1.f / textureSize.height());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, sourceTexture.id());
+    glUniform1i(program->samplerLocation(), 0);
+
+    draw(targetRect, TransformationMatrix(), program.get(), GL_TRIANGLE_FAN, { });
+}
+#endif
+
 void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, AllEdgesExposed allEdgesExposed)
 {
     bool useAntialiasing = allEdgesExposed == AllEdgesExposed::Yes && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
@@ -1434,10 +1467,21 @@ void TextureMapper::beginClip(const TransformationMatrix& modelViewMatrix, const
     clipStack().applyIfNeeded();
 }
 
+void TextureMapper::beginClipWithoutApplying(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
+{
+    clipStack().push();
+    clipStack().intersect(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
+}
+
 void TextureMapper::endClip()
 {
     clipStack().pop();
     clipStack().applyIfNeeded();
+}
+
+void TextureMapper::endClipWithoutApplying()
+{
+    clipStack().pop();
 }
 
 IntRect TextureMapper::clipBounds()

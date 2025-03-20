@@ -99,7 +99,7 @@ using ReplyCallbackAggregator = EagerCallbackAggregator<void(id, IsDefaultReply)
 
 namespace WebKit {
 
-JSValue *WebExtensionAPIRuntimeBase::reportError(NSString *errorMessage, JSGlobalContextRef contextRef, Function<void()>&& handler)
+JSValue *WebExtensionAPIRuntimeBase::reportError(NSString *errorMessage, JSGlobalContextRef contextRef, NOESCAPE const Function<void()>& handler)
 {
     ASSERT(errorMessage.length);
     ASSERT(contextRef);
@@ -562,7 +562,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessageExternal()
     return *m_onMessageExternal;
 }
 
-NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters, const URL& baseURL)
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
@@ -577,8 +577,15 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
         result[frameIdKey] = @(toWebAPI(parameters.frameIdentifier.value()));
 
     if (parameters.url.isValid()) {
+        auto securityOrigin = WebCore::SecurityOrigin::create(parameters.url)->toString();
+        auto baseURLOrigin = makeString(baseURL.protocol(), "://"_s, baseURL.host());
+
+        if (equalIgnoringASCIICase(securityOrigin, baseURLOrigin))
+            result[originKey] = (NSString *)baseURLOrigin;
+        else
+            result[originKey] = (NSString *)securityOrigin;
+
         result[urlKey] = (NSString *)parameters.url.string();
-        result[originKey] = (NSString *)WebCore::SecurityOrigin::create(parameters.url)->toString();
     }
 
     if (parameters.documentIdentifier.isValid())
@@ -618,7 +625,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
     }
 
     id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
-    auto *senderInfo = toWebAPI(senderParameters);
+    auto *senderInfo = toWebAPI(senderParameters, baseURL());
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {

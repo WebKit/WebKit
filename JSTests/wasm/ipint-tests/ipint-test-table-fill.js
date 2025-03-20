@@ -9,7 +9,8 @@ let wat = `
     (func (export "size") (result i32)
         (table.size $table)
     )
-    (func (export "fill") (param i32 i32)
+    (func (export "fill") (param i32 i32) (result i32)
+        (i32.const 42)
         (local.get 0)
         (ref.null func)
         (local.get 1)
@@ -28,7 +29,7 @@ async function test() {
     const { size, fill, isnull } = instance.exports;
     assert.eq(size(), 5);
     assert.eq(isnull(0), 0);
-    fill(0, 5);
+    assert.eq(fill(0, 5), 42);
     assert.eq(isnull(0), 1);
 }
 

@@ -86,11 +86,22 @@ void TextFieldAdwaita::draw(GraphicsContext& graphicsContext, const FloatRounded
     if (style.states.contains(ControlStyle::State::ListButton)) {
         auto zoomedArrowSize = menuListButtonArrowSize * style.zoomFactor;
         FloatRect arrowRect = borderRect.rect();
-        if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
-            arrowRect.move(textFieldBorderSize * 2, 0);
-        else
-            arrowRect.move(arrowRect.width() - (zoomedArrowSize + textFieldBorderSize * 2), 0);
-        arrowRect.setWidth(zoomedArrowSize);
+        auto borderWidth = arrowRect.width();
+        auto borderHeight = arrowRect.height();
+        arrowRect.setSize({ zoomedArrowSize, zoomedArrowSize });
+
+        if (!style.states.contains(ControlStyle::State::VerticalWritingMode)) {
+            auto centerY = (borderHeight / 2) - (zoomedArrowSize / 2);
+
+            if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
+                arrowRect.move(textFieldBorderSize, centerY);
+            else
+                arrowRect.move(borderWidth - zoomedArrowSize + textFieldBorderSize, centerY);
+        } else {
+            auto centerX = (borderWidth / 2) - (zoomedArrowSize / 2);
+            arrowRect.move(centerX, borderHeight - zoomedArrowSize + textFieldBorderSize);
+        }
+
         bool useDarkAppearance = style.states.contains(ControlStyle::State::DarkAppearance);
         Adwaita::paintArrow(graphicsContext, arrowRect, Adwaita::ArrowDirection::Down, useDarkAppearance);
     }

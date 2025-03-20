@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <title>content-visibility demo</title>
+    <style>
+        body {
+            zoom: 60%;
+        }
+        #contents {
+            margin: auto;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        #contents > div {
+            border: 1px solid black;
+            border-radius: 2px;
+            margin: 1em;
+            min-height: 300px;
+        }
+        
+        .cv-auto {
+            content-visibility: auto;
+        }
+        
+        .tall {
+            height: 3000px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        window.testRunner?.waitUntilDone();
+        
+        let lastSkipped = false;
+        window.addEventListener('load', async () => {            
+            const target = document.getElementById('target');
+
+            await UIHelper.ensureStablePresentationUpdate();
+            shouldBe('lastSkipped', 'false');
+            
+            const visibilityChangePromise = new Promise((resolve) => {
+                target.addEventListener('contentvisibilityautostatechange', (event) => {
+                    lastSkipped = event.skipped;
+                    resolve();
+                });
+
+                const scrollDistance = 300 * 0.6 + 15;
+                window.scrollTo(0, scrollDistance);
+            });
+
+            await visibilityChangePromise;
+            shouldBe('lastSkipped', 'true');
+
+            await UIHelper.renderingUpdate();
+            shouldBe('lastSkipped', 'true');
+
+            window.testRunner?.notifyDone()
+        }, false);        
+    </script>
+</head>
+<body>
+    <div id="contents">
+        <div id="target" class="cv-auto"></div>
+        <div class="tall"></div>
+    </div>
+<div id="console"></div>
+</body>
+</html>

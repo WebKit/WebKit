@@ -64,8 +64,11 @@ public:
 private:
     void addDevice(GRefPtr<GstDevice>&&);
     void removeDevice(GRefPtr<GstDevice>&&);
+    void updateDevice(GRefPtr<GstDevice>&& newDevice, GRefPtr<GstDevice>&& oldDevice);
     void stopMonitor();
     void refreshCaptureDevices();
+
+    std::optional<GStreamerCaptureDevice> captureDeviceFromGstDevice(GRefPtr<GstDevice>&&);
 
     GRefPtr<GstDeviceMonitor> m_deviceMonitor;
     Vector<GStreamerCaptureDevice> m_gstreamerDevices;
@@ -73,6 +76,7 @@ private:
     Vector<RefPtr<GStreamerCapturer>> m_capturers;
     bool m_isTearingDown { false };
     Vector<CaptureDevice> m_speakerDevices;
+    RefPtr<GStreamerCapturer> m_defaultCapturer;
 };
 
 class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceManager {

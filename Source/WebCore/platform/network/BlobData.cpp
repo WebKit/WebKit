@@ -53,7 +53,7 @@ long long BlobDataItem::length() const
         ASSERT_NOT_REACHED();
         return m_length;
     case Type::File:
-        return m_file->size();
+        return protectedFile()->size();
     }
 
     ASSERT_NOT_REACHED();

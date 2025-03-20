@@ -699,7 +699,7 @@ void BitmapImageSource::setMinimumDecodingDurationForTesting(Seconds duration)
 
 void BitmapImageSource::dump(TextStream& ts) const
 {
-    ts.dumpProperty("source-utf8", sourceUTF8());
+    ts.dumpProperty("source-utf8"_s, sourceUTF8());
 
     if (m_workQueue)
         m_workQueue->dump(ts);
@@ -709,8 +709,8 @@ void BitmapImageSource::dump(TextStream& ts) const
 
     m_descriptor.dump(ts);
 
-    ts.dumpProperty("decoded-size", m_decodedSize);
-    ts.dumpProperty("decode-count-for-testing", m_decodeCountForTesting);
+    ts.dumpProperty("decoded-size"_s, m_decodedSize);
+    ts.dumpProperty("decode-count-for-testing"_s, m_decodeCountForTesting);
 }
 
 } // namespace WebCore

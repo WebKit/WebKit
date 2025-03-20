@@ -600,9 +600,8 @@ FAIL :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=0;b_use="same
 
           _ = b;
         }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:523:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -626,9 +625,8 @@ FAIL :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=1;b_use="same
 
           _ = b;
         }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:523:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -664,9 +662,8 @@ FAIL :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=0;b_use="same
 
           _ = b;
         }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:523:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -690,9 +687,8 @@ FAIL :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=1;b_use="same
 
           _ = b;
         }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:523:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -711,7 +707,7 @@ FAIL :address_space_access_mode:address_space="private";access_mode="";trailing_
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:3: only variables in the <storage> address space may specify an access mode
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="private";access_mode="";trailing_comma=false
 PASS :address_space_access_mode:address_space="private";access_mode="read";trailing_comma=true
@@ -733,7 +729,7 @@ FAIL :address_space_access_mode:address_space="storage";access_mode="";trailing_
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:34: Expected a Identifier, but got a >
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="storage";access_mode="";trailing_comma=false
 FAIL :address_space_access_mode:address_space="storage";access_mode="read";trailing_comma=true assert_unreached:
@@ -749,7 +745,7 @@ FAIL :address_space_access_mode:address_space="storage";access_mode="read";trail
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:25: Expected a >, but got a ,
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="storage";access_mode="read";trailing_comma=false
 PASS :address_space_access_mode:address_space="storage";access_mode="write";trailing_comma=true
@@ -767,7 +763,7 @@ FAIL :address_space_access_mode:address_space="storage";access_mode="read_write"
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:25: Expected a >, but got a ,
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="storage";access_mode="read_write";trailing_comma=false
 FAIL :address_space_access_mode:address_space="uniform";access_mode="";trailing_comma=true assert_unreached:
@@ -783,7 +779,7 @@ FAIL :address_space_access_mode:address_space="uniform";access_mode="";trailing_
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:25: only variables in the <storage> address space may specify an access mode
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="uniform";access_mode="";trailing_comma=false
 PASS :address_space_access_mode:address_space="uniform";access_mode="read";trailing_comma=true
@@ -805,7 +801,7 @@ FAIL :address_space_access_mode:address_space="function";access_mode="";trailing
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     3:9: only variables in the <storage> address space may specify an access mode
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="function";access_mode="";trailing_comma=false
 PASS :address_space_access_mode:address_space="function";access_mode="read";trailing_comma=true
@@ -827,7 +823,7 @@ FAIL :address_space_access_mode:address_space="workgroup";access_mode="";trailin
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:3: only variables in the <storage> address space may specify an access mode
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :address_space_access_mode:address_space="workgroup";access_mode="";trailing_comma=false
 PASS :address_space_access_mode:address_space="workgroup";access_mode="read";trailing_comma=true
@@ -889,7 +885,19 @@ PASS :write_access:addressSpace="function";explicitSpace=false;explicitAccess=tr
 PASS :initializer_type:
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="storage,";suffix=",storage"
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="storage,";suffix=",read"
-PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="storage,";suffix=","
+FAIL :var_access_mode_bad_other_template_contents:accessMode="read";prefix="storage,";suffix="," assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    2:22: error: Expected a >, but got a ,
+
+    ---- shader ----
+    @group(0) @binding(0)
+                      var<storage,read,> x: i32;
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:21: Expected a >, but got a ,
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="storage,";suffix=""
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="";suffix=",storage"
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix="";suffix=",read"
@@ -901,7 +909,19 @@ PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix=",";s
 PASS :var_access_mode_bad_other_template_contents:accessMode="read";prefix=",";suffix=""
 PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="storage,";suffix=",storage"
 PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="storage,";suffix=",read"
-PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="storage,";suffix=","
+FAIL :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="storage,";suffix="," assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    2:22: error: Expected a >, but got a ,
+
+    ---- shader ----
+    @group(0) @binding(0)
+                      var<storage,read_write,> x: i32;
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:21: Expected a >, but got a ,
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="storage,";suffix=""
 PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="";suffix=",storage"
 PASS :var_access_mode_bad_other_template_contents:accessMode="read_write";prefix="";suffix=",read"
@@ -966,9 +986,8 @@ FAIL :shader_stage:stage="vertex";kind="handle_wo" assert_unreached:
               _ = v;
               return vec4f();
             }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:860:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -985,9 +1004,8 @@ FAIL :shader_stage:stage="vertex";kind="handle_rw" assert_unreached:
               _ = v;
               return vec4f();
             }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:860:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -1007,9 +1025,8 @@ FAIL :shader_stage:stage="vertex";kind="storage_rw" assert_unreached:
               _ = v;
               return vec4f();
             }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:860:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -1027,9 +1044,8 @@ FAIL :shader_stage:stage="vertex";kind="workgroup" assert_unreached:
               _ = v;
               return vec4f();
             }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:860:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -1053,9 +1069,8 @@ FAIL :shader_stage:stage="fragment";kind="workgroup" assert_unreached:
 
               _ = v;
             }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:860:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code

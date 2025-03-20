@@ -45,6 +45,7 @@ bool appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
 #if HAVE(MATERIAL_HOSTING)
     case AppleVisualEffect::HostedBlurMaterial:
     case AppleVisualEffect::HostedThinBlurMaterial:
+    case AppleVisualEffect::HostedMediaControlsMaterial:
 #endif
     case AppleVisualEffect::VibrancyLabel:
     case AppleVisualEffect::VibrancySecondaryLabel:
@@ -73,6 +74,7 @@ bool appleVisualEffectAppliesFilter(AppleVisualEffect effect)
 #if HAVE(MATERIAL_HOSTING)
     case AppleVisualEffect::HostedBlurMaterial:
     case AppleVisualEffect::HostedThinBlurMaterial:
+    case AppleVisualEffect::HostedMediaControlsMaterial:
 #endif
         return false;
     case AppleVisualEffect::VibrancyLabel:
@@ -96,6 +98,7 @@ bool appleVisualEffectIsHostedMaterial(AppleVisualEffect effect)
     switch (effect) {
     case AppleVisualEffect::HostedBlurMaterial:
     case AppleVisualEffect::HostedThinBlurMaterial:
+    case AppleVisualEffect::HostedMediaControlsMaterial:
         return true;
     case AppleVisualEffect::None:
     case AppleVisualEffect::BlurUltraThinMaterial:
@@ -123,54 +126,70 @@ TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
 {
     switch (effect) {
     case AppleVisualEffect::None:
-        ts << "none";
+        ts << "none"_s;
         break;
     case AppleVisualEffect::BlurUltraThinMaterial:
-        ts << "blur-material-ultra-thin";
+        ts << "blur-material-ultra-thin"_s;
         break;
     case AppleVisualEffect::BlurThinMaterial:
-        ts << "blur-material-thin";
+        ts << "blur-material-thin"_s;
         break;
     case AppleVisualEffect::BlurMaterial:
-        ts << "blur-material";
+        ts << "blur-material"_s;
         break;
     case AppleVisualEffect::BlurThickMaterial:
-        ts << "blur-material-thick";
+        ts << "blur-material-thick"_s;
         break;
     case AppleVisualEffect::BlurChromeMaterial:
-        ts << "blur-material-chrome";
+        ts << "blur-material-chrome"_s;
         break;
 #if HAVE(MATERIAL_HOSTING)
     case AppleVisualEffect::HostedBlurMaterial:
-        ts << "hosted-blur-material";
+        ts << "hosted-blur-material"_s;
         break;
     case AppleVisualEffect::HostedThinBlurMaterial:
-        ts << "hosted-thin-blur-material";
+        ts << "hosted-thin-blur-material"_s;
+        break;
+    case AppleVisualEffect::HostedMediaControlsMaterial:
+        ts << "hosted-media-controls-material";
         break;
 #endif
     case AppleVisualEffect::VibrancyLabel:
-        ts << "vibrancy-label";
+        ts << "vibrancy-label"_s;
         break;
     case AppleVisualEffect::VibrancySecondaryLabel:
-        ts << "vibrancy-secondary-label";
+        ts << "vibrancy-secondary-label"_s;
         break;
     case AppleVisualEffect::VibrancyTertiaryLabel:
-        ts << "vibrancy-tertiary-label";
+        ts << "vibrancy-tertiary-label"_s;
         break;
     case AppleVisualEffect::VibrancyQuaternaryLabel:
-        ts << "vibrancy-quaternary-label";
+        ts << "vibrancy-quaternary-label"_s;
         break;
     case AppleVisualEffect::VibrancyFill:
-        ts << "vibrancy-fill";
+        ts << "vibrancy-fill"_s;
         break;
     case AppleVisualEffect::VibrancySecondaryFill:
-        ts << "vibrancy-secondary-fill";
+        ts << "vibrancy-secondary-fill"_s;
         break;
     case AppleVisualEffect::VibrancyTertiaryFill:
-        ts << "vibrancy-tertiary-fill";
+        ts << "vibrancy-tertiary-fill"_s;
         break;
     case AppleVisualEffect::VibrancySeparator:
-        ts << "vibrancy-separator";
+        ts << "vibrancy-separator"_s;
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, AppleVisualEffectData::ColorScheme colorScheme)
+{
+    switch (colorScheme) {
+    case AppleVisualEffectData::ColorScheme::Light:
+        ts << "light"_s;
+        break;
+    case AppleVisualEffectData::ColorScheme::Dark:
+        ts << "dark"_s;
         break;
     }
     return ts;
@@ -178,8 +197,9 @@ TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
 
 TextStream& operator<<(TextStream& ts, AppleVisualEffectData effectData)
 {
-    ts.dumpProperty("effect", effectData.effect);
-    ts.dumpProperty("contextEffect", effectData.contextEffect);
+    ts.dumpProperty("effect"_s, effectData.effect);
+    ts.dumpProperty("contextEffect"_s, effectData.contextEffect);
+    ts.dumpProperty("colorScheme"_s, effectData.colorScheme);
     return ts;
 }
 

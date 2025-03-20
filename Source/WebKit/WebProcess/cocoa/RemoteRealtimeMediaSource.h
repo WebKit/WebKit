@@ -56,6 +56,7 @@ public:
     void captureStopped(bool didFail);
     void sourceMutedChanged(bool value, bool interrupted);
 
+    using RealtimeMediaSource::configurationChanged;
     void configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
 
 #if ENABLE(GPU_PROCESS)

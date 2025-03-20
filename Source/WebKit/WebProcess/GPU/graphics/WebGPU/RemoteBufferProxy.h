@@ -35,6 +35,7 @@
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+static constexpr size_t maxCrossProcessResourceCopySize = 16 * MB;
 
 class RemoteBufferProxy final : public WebCore::WebGPU::Buffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBufferProxy);

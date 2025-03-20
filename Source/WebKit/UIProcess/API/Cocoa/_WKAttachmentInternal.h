@@ -25,6 +25,7 @@
 
 #import "APIAttachment.h"
 #import <WebKit/_WKAttachment.h>
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -36,7 +37,7 @@ template<> struct WrapperTraits<API::Attachment> {
 
 @interface _WKAttachment () <WKObject> {
 @package
-    API::ObjectStorage<API::Attachment> _attachment;
+    AlignedStorage<API::Attachment> _attachment;
 }
 
 - (void)setData:(NSData *)data newContentType:(NSString *)newContentType;

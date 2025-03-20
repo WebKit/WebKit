@@ -81,8 +81,10 @@ public:
     virtual bool setValueAt(JSGlobalObject*, unsigned int index, JSValue aValue) const;
     virtual JSValue valueAt(JSGlobalObject*, unsigned int index) const;
     virtual unsigned int getLength() const;
-    
+
+#ifdef __OBJC__
     ObjectStructPtr getObjcArray() const { return _array.get(); }
+#endif
 
 private:
     RetainPtr<ObjectStructPtr> _array;

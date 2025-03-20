@@ -34,7 +34,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "BytecodeStructs.h"
 #include "FrameTracers.h"
 #include "JITExceptions.h"
-#include "JSWebAssemblyArray.h"
+#include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntCommon.h"
@@ -375,7 +375,7 @@ WASM_SLOW_PATH_DECL(trace)
 
     WasmOpcodeID opcodeID = pc->opcodeID();
     dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
-        &Thread::current(),
+        &Thread::currentSingleton(),
         CALLEE(),
         callFrame,
         static_cast<intptr_t>(CALLEE()->bytecodeOffset(pc)),
@@ -501,7 +501,8 @@ WASM_SLOW_PATH_DECL(array_set)
 
 WASM_SLOW_PATH_DECL(array_fill)
 {
-    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+    VM& vm = instance->vm();
+    SlowPathFrameTracer tracer(vm, callFrame);
 
     auto instruction = pc->as<WasmArrayFill>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
@@ -511,7 +512,7 @@ WASM_SLOW_PATH_DECL(array_fill)
     EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
 
-    if (!Wasm::arrayFill(arrayref, offset, value, size))
+    if (!Wasm::arrayFill(vm, arrayref, offset, value, size))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayFill);
     WASM_END_IMPL();
 }

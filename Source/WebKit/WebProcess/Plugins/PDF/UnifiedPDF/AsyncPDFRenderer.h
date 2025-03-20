@@ -41,6 +41,11 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <WebCore/DynamicContentScalingDisplayList.h>
+#include <WebCore/DynamicContentScalingResourceCache.h>
+#endif
+
 OBJC_CLASS PDFDocument;
 
 namespace WebKit {
@@ -84,6 +89,15 @@ struct TileRenderData {
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TileRenderData&);
+
+struct RenderedPDFTile {
+    TileRenderInfo tileInfo;
+    RefPtr<WebCore::NativeImage> image;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList;
+#endif
+};
+
 
 struct PDFPagePreviewRenderKey {
     PDFDocumentLayout::PageIndex pageIndex { std::numeric_limits<PDFDocumentLayout::PageIndex>::max() };
@@ -205,7 +219,7 @@ private:
     void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
 
     void willRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType) final;
-    void didRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType, const UncheckedKeyHashSet<WebCore::TileIndex>& tilesNeedingDisplay) final;
+    void didRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType, const HashSet<WebCore::TileIndex>& tilesNeedingDisplay) final;
 
     void willRepaintTilesAfterScaleFactorChange(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void didRepaintTilesAfterScaleFactorChange(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
@@ -213,12 +227,16 @@ private:
     void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayListForTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex) final;
+#endif
+
     std::optional<PDFTileRenderIdentifier> enqueueTileRenderForTileGridRepaint(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect);
     std::optional<PDFTileRenderIdentifier> enqueueTileRenderIfNecessary(const TileForGrid&, TileRenderInfo&&);
 
     void serviceRequestQueues();
 
-    void didCompleteTileRender(RefPtr<WebCore::NativeImage>&&, const TileForGrid&, const TileRenderData&);
+    void didCompleteTileRender(const TileForGrid& renderKey, PDFTileRenderIdentifier, RenderedPDFTile);
 
     struct RevalidationStateForGrid {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -239,8 +257,14 @@ private:
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
     static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
     static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WebCore::DynamicContentScalingResourceCache dynamicContentScalingResourceCache();
+#endif
 
     ThreadSafeWeakPtr<PDFPresentationController> m_presentationController;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
+#endif
 
     HashMap<WebCore::PlatformLayerIdentifier, Ref<WebCore::GraphicsLayer>> m_layerIDtoLayerMap;
     HashMap<WebCore::TileGridIdentifier, WebCore::PlatformLayerIdentifier> m_tileGridToLayerIDMap;
@@ -250,12 +274,8 @@ private:
 
     ListHashSet<TileForGrid> m_pendingTileRenderOrder;
     HashMap<TileForGrid, TileRenderData> m_pendingTileRenders;
-    struct RenderedTile {
-        RefPtr<WebCore::NativeImage> image;
-        TileRenderInfo tileInfo;
-    };
-    HashMap<TileForGrid, RenderedTile> m_rendereredTiles;
-    HashMap<TileForGrid, RenderedTile> m_rendereredTilesForOldState;
+    HashMap<TileForGrid, RenderedPDFTile> m_rendereredTiles;
+    HashMap<TileForGrid, RenderedPDFTile> m_rendereredTilesForOldState;
 
     HashMap<WebCore::TileGridIdentifier, std::unique_ptr<RevalidationStateForGrid>> m_gridRevalidationState;
 

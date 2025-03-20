@@ -18,9 +18,13 @@ async function run() {
         { width: 0, height: 0, depthOrArrayLayers: 0 }
     );
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
 
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

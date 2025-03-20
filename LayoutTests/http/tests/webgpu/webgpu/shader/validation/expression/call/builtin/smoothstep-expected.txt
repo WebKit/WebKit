@@ -6,11 +6,10 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-1000, -1000, 0);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-1000, -1000, 0);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -27,11 +26,10 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-10, -10, 0);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-10, -10, 0);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -58,7 +56,7 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(10, 10, 0);
+    const v  = smoothstep(10, 10, 0);
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -76,7 +74,7 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(1000, 1000, 0);
+    const v  = smoothstep(1000, 1000, 0);
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -84,16 +82,16 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
       at (elided: below max severity)
+  - INFO: subcase: value1=-1000;value2=-1000
+    OK
+  - INFO: subcase: value1=-10;value2=-10
+    OK
   - EXPECTATION FAILED: subcase: value1=10;value2=10
     Expected validation error
       at (elided: below max severity)
   - EXPECTATION FAILED: subcase: value1=1000;value2=1000
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: value1=-1000;value2=-1000
-    OK
-  - INFO: subcase: value1=-10;value2=-10
-    OK
   - INFO: subcase: value1=0;value2=0
     OK
   - INFO: subcase: value1=10;value2=10
@@ -108,11 +106,10 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-1000.0, -1000.0, 0.0);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-1000.0, -1000.0, 0.0);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -129,11 +126,10 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-10.0, -10.0, 0.0);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-10.0, -10.0, 0.0);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -160,7 +156,7 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(10.0, 10.0, 0.0);
+    const v  = smoothstep(10.0, 10.0, 0.0);
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -178,7 +174,7 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(1000.0, 1000.0, 0.0);
+    const v  = smoothstep(1000.0, 1000.0, 0.0);
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -210,11 +206,10 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-1000.0f, -1000.0f, 0.0f);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-1000.0f, -1000.0f, 0.0f);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -231,11 +226,10 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(-10.0f, -10.0f, 0.0f);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-10.0f, -10.0f, 0.0f);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -262,7 +256,7 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(10.0f, 10.0f, 0.0f);
+    const v  = smoothstep(10.0f, 10.0f, 0.0f);
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -280,7 +274,7 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
 
     ---- shader ----
 
-    const v : f32 = smoothstep(1000.0f, 1000.0f, 0.0f);
+    const v  = smoothstep(1000.0f, 1000.0f, 0.0f);
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -312,11 +306,10 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : f16 = smoothstep(-1000.0h, -1000.0h, 0.0h);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-1000.0h, -1000.0h, 0.0h);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -333,11 +326,10 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : f16 = smoothstep(-10.0h, -10.0h, 0.0h);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(-10.0h, -10.0h, 0.0h);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -364,7 +356,7 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : f16 = smoothstep(10.0h, 10.0h, 0.0h);
+    const v  = smoothstep(10.0h, 10.0h, 0.0h);
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -382,7 +374,7 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : f16 = smoothstep(1000.0h, 1000.0h, 0.0h);
+    const v  = smoothstep(1000.0h, 1000.0h, 0.0h);
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -414,11 +406,10 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-1000, -1000), vec2(-1000, -1000), vec2(0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-1000, -1000), vec2(-1000, -1000), vec2(0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -435,11 +426,10 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-10, -10), vec2(-10, -10), vec2(0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-10, -10), vec2(-10, -10), vec2(0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -466,7 +456,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(10, 10), vec2(10, 10), vec2(0, 0));
+    const v  = smoothstep(vec2(10, 10), vec2(10, 10), vec2(0, 0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -484,7 +474,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(1000, 1000), vec2(1000, 1000), vec2(0, 0));
+    const v  = smoothstep(vec2(1000, 1000), vec2(1000, 1000), vec2(0, 0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -516,11 +506,10 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-1000, -1000, -1000), vec3(-1000, -1000, -1000), vec3(0, 0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-1000, -1000, -1000), vec3(-1000, -1000, -1000), vec3(0, 0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -537,11 +526,10 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-10, -10, -10), vec3(-10, -10, -10), vec3(0, 0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-10, -10, -10), vec3(-10, -10, -10), vec3(0, 0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -568,7 +556,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(10, 10, 10), vec3(10, 10, 10), vec3(0, 0, 0));
+    const v  = smoothstep(vec3(10, 10, 10), vec3(10, 10, 10), vec3(0, 0, 0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -586,7 +574,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(1000, 1000, 1000), vec3(1000, 1000, 1000), vec3(0, 0, 0));
+    const v  = smoothstep(vec3(1000, 1000, 1000), vec3(1000, 1000, 1000), vec3(0, 0, 0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -618,11 +606,10 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-1000, -1000, -1000, -1000), vec4(-1000, -1000, -1000, -1000), vec4(0, 0, 0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-1000, -1000, -1000, -1000), vec4(-1000, -1000, -1000, -1000), vec4(0, 0, 0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -639,11 +626,10 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-10, -10, -10, -10), vec4(-10, -10, -10, -10), vec4(0, 0, 0, 0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-10, -10, -10, -10), vec4(-10, -10, -10, -10), vec4(0, 0, 0, 0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -670,7 +656,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(10, 10, 10, 10), vec4(10, 10, 10, 10), vec4(0, 0, 0, 0));
+    const v  = smoothstep(vec4(10, 10, 10, 10), vec4(10, 10, 10, 10), vec4(0, 0, 0, 0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -688,12 +674,18 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(1000, 1000, 1000, 1000), vec4(1000, 1000, 1000, 1000), vec4(0, 0, 0, 0));
+    const v  = smoothstep(vec4(1000, 1000, 1000, 1000), vec4(1000, 1000, 1000, 1000), vec4(0, 0, 0, 0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
       at (elided: below max severity)
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value1=10;value2=10
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value1=1000;value2=1000
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase: value1=-1000;value2=-1000
@@ -702,12 +694,6 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
     OK
   - INFO: subcase: value1=0;value2=0
     OK
-  - EXPECTATION FAILED: subcase: value1=10;value2=10
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value1=1000;value2=1000
-    Expected validation error
-      at (elided: below max severity)
   - INFO: subcase: value1=10;value2=10
     OK
   - INFO: subcase: value1=1000;value2=1000
@@ -720,11 +706,10 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-1000.0, -1000.0), vec2(-1000.0, -1000.0), vec2(0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-1000.0, -1000.0), vec2(-1000.0, -1000.0), vec2(0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -741,11 +726,10 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-10.0, -10.0), vec2(-10.0, -10.0), vec2(0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-10.0, -10.0), vec2(-10.0, -10.0), vec2(0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -772,7 +756,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(10.0, 10.0), vec2(10.0, 10.0), vec2(0.0, 0.0));
+    const v  = smoothstep(vec2(10.0, 10.0), vec2(10.0, 10.0), vec2(0.0, 0.0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -790,7 +774,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(1000.0, 1000.0), vec2(1000.0, 1000.0), vec2(0.0, 0.0));
+    const v  = smoothstep(vec2(1000.0, 1000.0), vec2(1000.0, 1000.0), vec2(0.0, 0.0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -822,11 +806,10 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-1000.0f, -1000.0f), vec2(-1000.0f, -1000.0f), vec2(0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-1000.0f, -1000.0f), vec2(-1000.0f, -1000.0f), vec2(0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -843,11 +826,10 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(-10.0f, -10.0f), vec2(-10.0f, -10.0f), vec2(0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-10.0f, -10.0f), vec2(-10.0f, -10.0f), vec2(0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -874,7 +856,7 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(10.0f, 10.0f), vec2(10.0f, 10.0f), vec2(0.0f, 0.0f));
+    const v  = smoothstep(vec2(10.0f, 10.0f), vec2(10.0f, 10.0f), vec2(0.0f, 0.0f));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -892,7 +874,7 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec2<f32> = smoothstep(vec2(1000.0f, 1000.0f), vec2(1000.0f, 1000.0f), vec2(0.0f, 0.0f));
+    const v  = smoothstep(vec2(1000.0f, 1000.0f), vec2(1000.0f, 1000.0f), vec2(0.0f, 0.0f));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -924,11 +906,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec2<f16> = smoothstep(vec2(-1000.0h, -1000.0h), vec2(-1000.0h, -1000.0h), vec2(0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-1000.0h, -1000.0h), vec2(-1000.0h, -1000.0h), vec2(0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -945,11 +926,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec2<f16> = smoothstep(vec2(-10.0h, -10.0h), vec2(-10.0h, -10.0h), vec2(0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec2(-10.0h, -10.0h), vec2(-10.0h, -10.0h), vec2(0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -976,7 +956,7 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec2<f16> = smoothstep(vec2(10.0h, 10.0h), vec2(10.0h, 10.0h), vec2(0.0h, 0.0h));
+    const v  = smoothstep(vec2(10.0h, 10.0h), vec2(10.0h, 10.0h), vec2(0.0h, 0.0h));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -994,7 +974,7 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec2<f16> = smoothstep(vec2(1000.0h, 1000.0h), vec2(1000.0h, 1000.0h), vec2(0.0h, 0.0h));
+    const v  = smoothstep(vec2(1000.0h, 1000.0h), vec2(1000.0h, 1000.0h), vec2(0.0h, 0.0h));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1026,11 +1006,10 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-1000.0, -1000.0, -1000.0), vec3(-1000.0, -1000.0, -1000.0), vec3(0.0, 0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-1000.0, -1000.0, -1000.0), vec3(-1000.0, -1000.0, -1000.0), vec3(0.0, 0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1047,11 +1026,10 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-10.0, -10.0, -10.0), vec3(-10.0, -10.0, -10.0), vec3(0.0, 0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-10.0, -10.0, -10.0), vec3(-10.0, -10.0, -10.0), vec3(0.0, 0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1078,7 +1056,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(10.0, 10.0, 10.0), vec3(10.0, 10.0, 10.0), vec3(0.0, 0.0, 0.0));
+    const v  = smoothstep(vec3(10.0, 10.0, 10.0), vec3(10.0, 10.0, 10.0), vec3(0.0, 0.0, 0.0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1096,7 +1074,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(1000.0, 1000.0, 1000.0), vec3(1000.0, 1000.0, 1000.0), vec3(0.0, 0.0, 0.0));
+    const v  = smoothstep(vec3(1000.0, 1000.0, 1000.0), vec3(1000.0, 1000.0, 1000.0), vec3(0.0, 0.0, 0.0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1107,9 +1085,6 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: value1=10;value2=10
     Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value1=1000;value2=1000
-    Expected validation error
-      at (elided: below max severity)
   - INFO: subcase: value1=-1000;value2=-1000
     OK
   - INFO: subcase: value1=-10;value2=-10
@@ -1118,6 +1093,9 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
     OK
   - INFO: subcase: value1=10;value2=10
     OK
+  - EXPECTATION FAILED: subcase: value1=1000;value2=1000
+    Expected validation error
+      at (elided: below max severity)
   - INFO: subcase: value1=1000;value2=1000
     OK
  Reached unreachable code
@@ -1128,11 +1106,10 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-1000.0f, -1000.0f, -1000.0f), vec3(-1000.0f, -1000.0f, -1000.0f), vec3(0.0f, 0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-1000.0f, -1000.0f, -1000.0f), vec3(-1000.0f, -1000.0f, -1000.0f), vec3(0.0f, 0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1149,11 +1126,10 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(-10.0f, -10.0f, -10.0f), vec3(-10.0f, -10.0f, -10.0f), vec3(0.0f, 0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-10.0f, -10.0f, -10.0f), vec3(-10.0f, -10.0f, -10.0f), vec3(0.0f, 0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1180,7 +1156,7 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(10.0f, 10.0f, 10.0f), vec3(10.0f, 10.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f));
+    const v  = smoothstep(vec3(10.0f, 10.0f, 10.0f), vec3(10.0f, 10.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1198,7 +1174,7 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec3<f32> = smoothstep(vec3(1000.0f, 1000.0f, 1000.0f), vec3(1000.0f, 1000.0f, 1000.0f), vec3(0.0f, 0.0f, 0.0f));
+    const v  = smoothstep(vec3(1000.0f, 1000.0f, 1000.0f), vec3(1000.0f, 1000.0f, 1000.0f), vec3(0.0f, 0.0f, 0.0f));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1230,11 +1206,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec3<f16> = smoothstep(vec3(-1000.0h, -1000.0h, -1000.0h), vec3(-1000.0h, -1000.0h, -1000.0h), vec3(0.0h, 0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-1000.0h, -1000.0h, -1000.0h), vec3(-1000.0h, -1000.0h, -1000.0h), vec3(0.0h, 0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1251,11 +1226,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec3<f16> = smoothstep(vec3(-10.0h, -10.0h, -10.0h), vec3(-10.0h, -10.0h, -10.0h), vec3(0.0h, 0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec3(-10.0h, -10.0h, -10.0h), vec3(-10.0h, -10.0h, -10.0h), vec3(0.0h, 0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1282,7 +1256,7 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec3<f16> = smoothstep(vec3(10.0h, 10.0h, 10.0h), vec3(10.0h, 10.0h, 10.0h), vec3(0.0h, 0.0h, 0.0h));
+    const v  = smoothstep(vec3(10.0h, 10.0h, 10.0h), vec3(10.0h, 10.0h, 10.0h), vec3(0.0h, 0.0h, 0.0h));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1300,7 +1274,7 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec3<f16> = smoothstep(vec3(1000.0h, 1000.0h, 1000.0h), vec3(1000.0h, 1000.0h, 1000.0h), vec3(0.0h, 0.0h, 0.0h));
+    const v  = smoothstep(vec3(1000.0h, 1000.0h, 1000.0h), vec3(1000.0h, 1000.0h, 1000.0h), vec3(0.0h, 0.0h, 0.0h));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1308,16 +1282,16 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: value1=-1000;value2=-1000
-    OK
-  - INFO: subcase: value1=-10;value2=-10
-    OK
   - EXPECTATION FAILED: subcase: value1=10;value2=10
     Expected validation error
       at (elided: below max severity)
   - EXPECTATION FAILED: subcase: value1=1000;value2=1000
     Expected validation error
       at (elided: below max severity)
+  - INFO: subcase: value1=-1000;value2=-1000
+    OK
+  - INFO: subcase: value1=-10;value2=-10
+    OK
   - INFO: subcase: value1=0;value2=0
     OK
   - INFO: subcase: value1=10;value2=10
@@ -1332,11 +1306,10 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-1000.0, -1000.0, -1000.0, -1000.0), vec4(-1000.0, -1000.0, -1000.0, -1000.0), vec4(0.0, 0.0, 0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-1000.0, -1000.0, -1000.0, -1000.0), vec4(-1000.0, -1000.0, -1000.0, -1000.0), vec4(0.0, 0.0, 0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1353,11 +1326,10 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-10.0, -10.0, -10.0, -10.0), vec4(-10.0, -10.0, -10.0, -10.0), vec4(0.0, 0.0, 0.0, 0.0));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-10.0, -10.0, -10.0, -10.0), vec4(-10.0, -10.0, -10.0, -10.0), vec4(0.0, 0.0, 0.0, 0.0));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1384,7 +1356,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(10.0, 10.0, 10.0, 10.0), vec4(10.0, 10.0, 10.0, 10.0), vec4(0.0, 0.0, 0.0, 0.0));
+    const v  = smoothstep(vec4(10.0, 10.0, 10.0, 10.0), vec4(10.0, 10.0, 10.0, 10.0), vec4(0.0, 0.0, 0.0, 0.0));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1402,7 +1374,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(1000.0, 1000.0, 1000.0, 1000.0), vec4(1000.0, 1000.0, 1000.0, 1000.0), vec4(0.0, 0.0, 0.0, 0.0));
+    const v  = smoothstep(vec4(1000.0, 1000.0, 1000.0, 1000.0), vec4(1000.0, 1000.0, 1000.0, 1000.0), vec4(0.0, 0.0, 0.0, 0.0));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1434,11 +1406,10 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-1000.0f, -1000.0f, -1000.0f, -1000.0f), vec4(-1000.0f, -1000.0f, -1000.0f, -1000.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-1000.0f, -1000.0f, -1000.0f, -1000.0f), vec4(-1000.0f, -1000.0f, -1000.0f, -1000.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1455,11 +1426,10 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(-10.0f, -10.0f, -10.0f, -10.0f), vec4(-10.0f, -10.0f, -10.0f, -10.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-10.0f, -10.0f, -10.0f, -10.0f), vec4(-10.0f, -10.0f, -10.0f, -10.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1486,7 +1456,7 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    const v  = smoothstep(vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1504,7 +1474,7 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
 
     ---- shader ----
 
-    const v : vec4<f32> = smoothstep(vec4(1000.0f, 1000.0f, 1000.0f, 1000.0f), vec4(1000.0f, 1000.0f, 1000.0f, 1000.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    const v  = smoothstep(vec4(1000.0f, 1000.0f, 1000.0f, 1000.0f), vec4(1000.0f, 1000.0f, 1000.0f, 1000.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1512,16 +1482,16 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
       at (elided: below max severity)
+  - INFO: subcase: value1=-1000;value2=-1000
+    OK
+  - INFO: subcase: value1=-10;value2=-10
+    OK
   - EXPECTATION FAILED: subcase: value1=10;value2=10
     Expected validation error
       at (elided: below max severity)
   - EXPECTATION FAILED: subcase: value1=1000;value2=1000
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: value1=-1000;value2=-1000
-    OK
-  - INFO: subcase: value1=-10;value2=-10
-    OK
   - INFO: subcase: value1=0;value2=0
     OK
   - INFO: subcase: value1=10;value2=10
@@ -1536,11 +1506,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec4<f16> = smoothstep(vec4(-1000.0h, -1000.0h, -1000.0h, -1000.0h), vec4(-1000.0h, -1000.0h, -1000.0h, -1000.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-1000.0h, -1000.0h, -1000.0h, -1000.0h), vec4(-1000.0h, -1000.0h, -1000.0h, -1000.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-1000;value2=-10
     OK
   - INFO: subcase: value1=-1000;value2=0
@@ -1557,11 +1526,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec4<f16> = smoothstep(vec4(-10.0h, -10.0h, -10.0h, -10.0h), vec4(-10.0h, -10.0h, -10.0h, -10.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(vec4(-10.0h, -10.0h, -10.0h, -10.0h), vec4(-10.0h, -10.0h, -10.0h, -10.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - INFO: subcase: value1=-10;value2=0
     OK
   - INFO: subcase: value1=-10;value2=10
@@ -1588,7 +1556,7 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec4<f16> = smoothstep(vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
+    const v  = smoothstep(vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
       at (elided: only 2 shown)
   - INFO: subcase: value1=10;value2=1000
     OK
@@ -1606,7 +1574,7 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
 
     ---- shader ----
     enable f16;
-    const v : vec4<f16> = smoothstep(vec4(1000.0h, 1000.0h, 1000.0h, 1000.0h), vec4(1000.0h, 1000.0h, 1000.0h, 1000.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
+    const v  = smoothstep(vec4(1000.0h, 1000.0h, 1000.0h, 1000.0h), vec4(1000.0h, 1000.0h, 1000.0h, 1000.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
@@ -1674,18 +1642,18 @@ FAIL :values:stage="override";type="f32" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -1749,18 +1717,18 @@ FAIL :values:stage="override";type="f16" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -1824,18 +1792,18 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -1899,18 +1867,18 @@ FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -1974,18 +1942,18 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -2049,18 +2017,18 @@ FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -2124,18 +2092,18 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -2199,18 +2167,18 @@ FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: value1=-1000;value2=-1000
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=-10;value2=-10
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:52:37
   - EXPECTATION FAILED: subcase: value1=0;value2=0
     Expected validation error
       at (elided: only 2 shown)
@@ -2231,6 +2199,1534 @@ FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
   - INFO: subcase: value1=1000;value2=1000
     OK
  Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="f32" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : f32;
+      var v_low : f32;
+      var v_high : f32;
+      let tmp = smoothstep(0.0f, 0.0f, x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : f32;
+      var v_low : f32;
+      var v_high : f32;
+      let tmp = smoothstep(0.0f, 0.0f, x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : f32;
+      var v_low : f32;
+      var v_high : f32;
+      let tmp = smoothstep(10.0f, 10.0f, x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : f32;
+      var v_low : f32;
+      var v_high : f32;
+      let tmp = smoothstep(10.0f, 10.0f, x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="f16" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : f16;
+      var v_low : f16;
+      var v_high : f16;
+      let tmp = smoothstep(0.0h, 0.0h, x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : f16;
+      var v_low : f16;
+      var v_high : f16;
+      let tmp = smoothstep(0.0h, 0.0h, x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : f16;
+      var v_low : f16;
+      var v_high : f16;
+      let tmp = smoothstep(10.0h, 10.0h, x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : f16;
+      var v_low : f16;
+      var v_high : f16;
+      let tmp = smoothstep(10.0h, 10.0h, x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec2%3Cf32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec2<f32>;
+      var v_low : vec2<f32>;
+      var v_high : vec2<f32>;
+      let tmp = smoothstep(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec2<f32>;
+      var v_low : vec2<f32>;
+      var v_high : vec2<f32>;
+      let tmp = smoothstep(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec2<f32>;
+      var v_low : vec2<f32>;
+      var v_high : vec2<f32>;
+      let tmp = smoothstep(vec2(10.0f, 10.0f), vec2(10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec2<f32>;
+      var v_low : vec2<f32>;
+      var v_high : vec2<f32>;
+      let tmp = smoothstep(vec2(10.0f, 10.0f), vec2(10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec2%3Cf16%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec2<f16>;
+      var v_low : vec2<f16>;
+      var v_high : vec2<f16>;
+      let tmp = smoothstep(vec2(0.0h, 0.0h), vec2(0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec2<f16>;
+      var v_low : vec2<f16>;
+      var v_high : vec2<f16>;
+      let tmp = smoothstep(vec2(0.0h, 0.0h), vec2(0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec2<f16>;
+      var v_low : vec2<f16>;
+      var v_high : vec2<f16>;
+      let tmp = smoothstep(vec2(10.0h, 10.0h), vec2(10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec2<f16>;
+      var v_low : vec2<f16>;
+      var v_high : vec2<f16>;
+      let tmp = smoothstep(vec2(10.0h, 10.0h), vec2(10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec3%3Cf32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec3<f32>;
+      var v_low : vec3<f32>;
+      var v_high : vec3<f32>;
+      let tmp = smoothstep(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec3<f32>;
+      var v_low : vec3<f32>;
+      var v_high : vec3<f32>;
+      let tmp = smoothstep(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec3<f32>;
+      var v_low : vec3<f32>;
+      var v_high : vec3<f32>;
+      let tmp = smoothstep(vec3(10.0f, 10.0f, 10.0f), vec3(10.0f, 10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec3<f32>;
+      var v_low : vec3<f32>;
+      var v_high : vec3<f32>;
+      let tmp = smoothstep(vec3(10.0f, 10.0f, 10.0f), vec3(10.0f, 10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec3%3Cf16%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec3<f16>;
+      var v_low : vec3<f16>;
+      var v_high : vec3<f16>;
+      let tmp = smoothstep(vec3(0.0h, 0.0h, 0.0h), vec3(0.0h, 0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec3<f16>;
+      var v_low : vec3<f16>;
+      var v_high : vec3<f16>;
+      let tmp = smoothstep(vec3(0.0h, 0.0h, 0.0h), vec3(0.0h, 0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec3<f16>;
+      var v_low : vec3<f16>;
+      var v_high : vec3<f16>;
+      let tmp = smoothstep(vec3(10.0h, 10.0h, 10.0h), vec3(10.0h, 10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec3<f16>;
+      var v_low : vec3<f16>;
+      var v_high : vec3<f16>;
+      let tmp = smoothstep(vec3(10.0h, 10.0h, 10.0h), vec3(10.0h, 10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec4%3Cf32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec4<f32>;
+      var v_low : vec4<f32>;
+      var v_high : vec4<f32>;
+      let tmp = smoothstep(vec4(0.0f, 0.0f, 0.0f, 0.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec4<f32>;
+      var v_low : vec4<f32>;
+      var v_high : vec4<f32>;
+      let tmp = smoothstep(vec4(0.0f, 0.0f, 0.0f, 0.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec4<f32>;
+      var v_low : vec4<f32>;
+      var v_high : vec4<f32>;
+      let tmp = smoothstep(vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(10.0f, 10.0f, 10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_low : f32;
+    override o_high : f32;
+    fn foo() {
+      var x : vec4<f32>;
+      var v_low : vec4<f32>;
+      var v_high : vec4<f32>;
+      let tmp = smoothstep(vec4(10.0f, 10.0f, 10.0f, 10.0f), vec4(10.0f, 10.0f, 10.0f, 10.0f), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="constant";type="vec4%3Cf16%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec4<f16>;
+      var v_low : vec4<f16>;
+      var v_high : vec4<f16>;
+      let tmp = smoothstep(vec4(0.0h, 0.0h, 0.0h, 0.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - VALIDATION FAILED: subcase: low=0;high=0;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec4<f16>;
+      var v_low : vec4<f16>;
+      var v_high : vec4<f16>;
+      let tmp = smoothstep(vec4(0.0h, 0.0h, 0.0h, 0.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h), x);
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:128:24
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec4<f16>;
+      var v_low : vec4<f16>;
+      var v_high : vec4<f16>;
+      let tmp = smoothstep(vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(10.0h, 10.0h, 10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: low=10;high=10;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_low : f16;
+    override o_high : f16;
+    fn foo() {
+      var x : vec4<f16>;
+      var v_low : vec4<f16>;
+      var v_high : vec4<f16>;
+      let tmp = smoothstep(vec4(10.0h, 10.0h, 10.0h, 10.0h), vec4(10.0h, 10.0h, 10.0h, 10.0h), x);
+    }
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="f32" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="f16" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="f32"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="f16"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec4%3Cf16%3E"
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="f32" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="f16" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="f32" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="f16" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf32%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf16%3E" assert_unreached:
+  - INFO: subcase: low=0;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=false
+    OK
+  - INFO: subcase: low=0;high=10;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=false
+    OK
+  - INFO: subcase: low=10;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: low=0;high=0;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - EXPECTATION FAILED: subcase: low=10;high=10;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:133:27
+  - INFO: subcase: low=0;high=0;in_shader=true
+    OK
+  - INFO: subcase: low=10;high=10;in_shader=true
+    OK
+ Reached unreachable code
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="f32"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="f16"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec4%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="f32"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="f16"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="constant";type="vec4%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="f32"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="f16"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="override";type="vec4%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="f32"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="f16"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="runtime";highStage="runtime";type="vec4%3Cf16%3E"
 PASS :argument_types:type="bool"
 PASS :argument_types:type="vec2%3Cbool%3E"
 PASS :argument_types:type="vec3%3Cbool%3E"
@@ -2290,58 +3786,36 @@ PASS :arguments:test="must_use"
 FAIL :early_eval_errors:stage="constant" assert_unreached:
   - INFO: subcase: low=1;high=2
     OK
-  - VALIDATION FAILED: subcase: low=2;high=1
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    const v  = smoothstep(0.0f, 2.0f, 1.0f);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:262:37
+  - INFO: subcase: low=2;high=1
+    OK
   - VALIDATION FAILED: subcase: low=1;high=1
     Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
 
-    const v  = smoothstep(0.0f, 1.0f, 1.0f);
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    const v  = smoothstep(1.0f, 1.0f, 0.0f);
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:262:37
-  - EXPECTATION FAILED: subcase: low=2;high=1
-    Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:329:37
   - EXPECTATION FAILED: subcase: low=1;high=1
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: low=2;high=1
-    OK
   - INFO: subcase: low=1;high=1
     OK
  Reached unreachable code
 FAIL :early_eval_errors:stage="override" assert_unreached:
   - INFO: subcase: low=1;high=2
     OK
-  - EXPECTATION FAILED: subcase: low=2;high=1
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:262:37
-  - EXPECTATION FAILED: subcase: low=1;high=1
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:262:37
   - INFO: subcase: low=2;high=1
     OK
+  - EXPECTATION FAILED: subcase: low=1;high=1
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.spec.js:329:37
   - INFO: subcase: low=1;high=1
     OK
  Reached unreachable code

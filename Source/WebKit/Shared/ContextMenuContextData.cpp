@@ -58,14 +58,14 @@ ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, con
 #endif
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (auto* image = context.controlledImage())
+    if (RefPtr image = context.controlledImage())
         setImage(*image);
 #endif
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    if (auto* image = context.potentialQRCodeNodeSnapshotImage())
+    if (RefPtr image = context.potentialQRCodeNodeSnapshotImage())
         setPotentialQRCodeNodeSnapshotImage(*image);
 
-    if (auto* image = context.potentialQRCodeViewportSnapshotImage())
+    if (RefPtr image = context.potentialQRCodeViewportSnapshotImage())
         setPotentialQRCodeViewportSnapshotImage(*image);
 #endif
 }
@@ -86,16 +86,18 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 void ContextMenuContextData::setImage(WebCore::Image& image)
 {
     // FIXME: figure out the rounding strategy for ShareableBitmap.
-    m_controlledImage = ShareableBitmap::create({ IntSize(image.size()) });
-    if (auto graphicsContext = m_controlledImage->createGraphicsContext())
+
+    RefPtr controlledImage = ShareableBitmap::create({ IntSize(image.size()) });
+    m_controlledImage = controlledImage;
+    if (auto graphicsContext = controlledImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledImageReadOnlyHandle() const
 {
-    if (!m_controlledImage)
-        return std::nullopt;
-    return m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly);
+    if (RefPtr controlledImage = m_controlledImage)
+        return controlledImage->createHandle(SharedMemory::Protection::ReadOnly);
+    return std::nullopt;
 }
 #endif
 
@@ -103,30 +105,32 @@ std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledI
 
 void ContextMenuContextData::setPotentialQRCodeNodeSnapshotImage(WebCore::Image& image)
 {
-    m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
-    if (auto graphicsContext = m_potentialQRCodeNodeSnapshotImage->createGraphicsContext())
+    RefPtr potentialQRCodeNodeSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
+    m_potentialQRCodeNodeSnapshotImage = potentialQRCodeNodeSnapshotImage;
+    if (auto graphicsContext = potentialQRCodeNodeSnapshotImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());
 }
 
 void ContextMenuContextData::setPotentialQRCodeViewportSnapshotImage(WebCore::Image& image)
 {
-    m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
-    if (auto graphicsContext = m_potentialQRCodeViewportSnapshotImage->createGraphicsContext())
+    RefPtr potentialQRCodeViewportSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
+    m_potentialQRCodeViewportSnapshotImage = potentialQRCodeViewportSnapshotImage;
+    if (auto graphicsContext = potentialQRCodeViewportSnapshotImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const
 {
-    if (!m_potentialQRCodeNodeSnapshotImage)
-        return std::nullopt;
-    return m_potentialQRCodeNodeSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly);
+    if (RefPtr image = m_potentialQRCodeNodeSnapshotImage)
+        return image->createHandle(SharedMemory::Protection::ReadOnly);
+    return std::nullopt;
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const
 {
-    if (!m_potentialQRCodeViewportSnapshotImage)
-        return std::nullopt;
-    return m_potentialQRCodeViewportSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly);
+    if (RefPtr image = m_potentialQRCodeViewportSnapshotImage)
+        return image->createHandle(SharedMemory::Protection::ReadOnly);
+    return std::nullopt;
 }
 
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)

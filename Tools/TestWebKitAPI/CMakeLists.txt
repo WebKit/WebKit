@@ -220,6 +220,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/PathTests.cpp
         Tests/WebCore/PixelBufferConversionTests.cpp
+        Tests/WebCore/PlatformDynamicRangeLimitTests.cpp
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RenderStyleChange.cpp
@@ -327,6 +328,7 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames.cpp
         Tests/WebKit/PageLoadBasic.cpp
         Tests/WebKit/PageLoadDidChangeLocationWithinPageForFrame.cpp
+        Tests/WebKit/PageLoadEmptyURL.cpp
         Tests/WebKit/PageLoadState.cpp
         Tests/WebKit/ParentFrame.cpp
         Tests/WebKit/PendingAPIRequestURL.cpp

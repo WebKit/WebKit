@@ -1,0 +1,3 @@
+
+PASS supportedEntryTypes should be consistent with `'PerformanceEventTiming' in Self`
+

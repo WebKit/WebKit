@@ -3075,7 +3075,7 @@
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
 				532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
-				650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */,
+				650473452789431C00AF78A2 /* Create Symlink to Cryptex Path */,
 				DD00C28C2A37905800CBB4D9 /* Work around rdar://109484516 */,
 			);
 			buildRules = (
@@ -3279,7 +3279,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
 		};
-		650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */ = {
+		650473452789431C00AF78A2 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -3288,15 +3288,15 @@
 			);
 			inputPaths = (
 			);
-			name = "Create Symlink to Alt Root Path";
+			name = "Create Symlink to Cryptex Path";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+				"${OUTPUT_CRYPTEX_SYMLINK_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/scripts/create-symlink-to-altroot.sh\"\n";
+			shellScript = "\"${SRCROOT}/scripts/create-symlink-to-cryptex.sh\"\n";
 		};
 		7C02321B251B9A8A00BA7BB6 /* Generate Preferences */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -40,12 +40,12 @@ class AudioBus;
 class MultiChannelResampler;
 class PushPullFIFO;
 
-using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
+using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(const AudioDestinationCreationOptions&);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 class AudioDestinationCocoa : public AudioDestinationResampler, public AudioUnitRenderer, public ThreadSafeRefCounted<AudioDestinationCocoa, WTF::DestructionThread::Main> {
 public:
-    WEBCORE_EXPORT AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate);
+    WEBCORE_EXPORT AudioDestinationCocoa(const CreationOptions&);
     WEBCORE_EXPORT virtual ~AudioDestinationCocoa();
     void ref() const final { return ThreadSafeRefCounted<AudioDestinationCocoa, WTF::DestructionThread::Main>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<AudioDestinationCocoa, WTF::DestructionThread::Main>::deref(); }
@@ -56,7 +56,11 @@ protected:
     WEBCORE_EXPORT OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData) final;
 
 private:
-    friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
+    friend Ref<AudioDestination> AudioDestination::create(const CreationOptions&);
+
+#if PLATFORM(IOS_FAMILY)
+    void setSceneIdentifier(const String&) override;
+#endif
 
     void startRendering(CompletionHandler<void(bool)>&&) override;
     void stopRendering(CompletionHandler<void(bool)>&&) override;
@@ -64,6 +68,9 @@ private:
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
 };
 
 } // namespace WebCore

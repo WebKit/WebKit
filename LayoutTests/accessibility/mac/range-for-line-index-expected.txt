@@ -1,17 +1,21 @@
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: webarea.rangeForLine(0) === null
+PASS: accessibilityController.accessibleElementById('group-wrapping-contenteditable1').rangeForLine(0) === null
+PASS: contenteditable.rangeForLine(0) === '{0, 15}'
+PASS: multilineContenteditable.rangeForLine(0) === '{0, 16}'
+PASS: multilineContenteditable.rangeForLine(0) === '{0, 16}'
+PASS: multilineContenteditable.rangeForLine(1) === '{16, 6}'
+PASS: multilineContenteditable.rangeForLine(2) === '{22, 5}'
+PASS: textChild.rangeForLine(0) === null
+PASS: textChild.rangeForLine(1) === null
+PASS: textChild.rangeForLine(2) === null
+PASS: textarea.rangeForLine(0) === '{0, 15}'
+PASS: textarea.rangeForLine(1) === '{0, 0}'
+PASS: multilineTextarea.rangeForLine(0) === '{0, 16}'
+PASS: multilineTextarea.rangeForLine(1) === '{16, 6}'
+PASS: multilineTextarea.rangeForLine(2) === '{22, 5}'
+PASS: textfield.rangeForLine(0) === '{0, 21}'
+PASS: textfield.rangeForLine(0) === '{0, 5}'
 
-
-PASS contenteditable.rangeForLine(0) is '{0, 15}'
-PASS multilineContenteditable.rangeForLine(0) is '{0, 16}'
-PASS multilineContenteditable.rangeForLine(1) is '{15, 1}'
-PASS multilineContenteditable.rangeForLine(0) is '{0, 16}'
-PASS multilineContenteditable.rangeForLine(1) is '{16, 6}'
-PASS multilineContenteditable.rangeForLine(2) is '{22, 5}'
-PASS textarea.rangeForLine(0) is '{0, 15}'
-PASS multilineTextarea.rangeForLine(0) is '{0, 16}'
-PASS multilineTextarea.rangeForLine(1) is '{16, 6}'
-PASS multilineTextarea.rangeForLine(2) is '{22, 5}'
-PASS textfield.rangeForLine(0) is '{0, 21}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

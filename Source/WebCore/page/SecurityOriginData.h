@@ -157,7 +157,7 @@ public:
     String debugString() const { return toString(); }
 #endif
 
-    static bool shouldTreatAsOpaqueOrigin(const URL&);
+    WEBCORE_EXPORT static bool shouldTreatAsOpaqueOrigin(const URL&);
     
     const std::variant<Tuple, ProcessQualified<OpaqueOriginIdentifier>>& data() const { return m_data; }
 private:

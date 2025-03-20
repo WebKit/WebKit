@@ -1,0 +1,13 @@
+Verifies that switching to an LTR input mode and then pressing Return automatically sets the base writing direction to LTR in a new left-aligned paragraph
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS editorCenter.x is > caretRect.left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+عنوان بريدي الإلكتروني هو foo@me.com. أرسل لي تحديثًا عند وصولك إلى المطار
+
+
+

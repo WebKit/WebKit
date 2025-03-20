@@ -38,7 +38,7 @@ TextStream& operator<<(TextStream& ts, OptionSet<ActivityState> flags)
         if (!flags.contains(flag))
             return;
         if (didAppend)
-            ts << ", ";
+            ts << ", "_s;
         ts << message;
         didAppend = true;
     };

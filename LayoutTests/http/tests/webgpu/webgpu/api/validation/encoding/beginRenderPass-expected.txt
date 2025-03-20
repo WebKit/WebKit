@@ -2,5 +2,13 @@
 PASS :color_attachments,device_mismatch:
 PASS :depth_stencil_attachment,device_mismatch:
 PASS :occlusion_query_set,device_mismatch:
-PASS :timestamp_query_set,device_mismatch:
+FAIL :timestamp_query_set,device_mismatch: assert_unreached:
+  - INFO: subcase: mismatched=false
+    OK
+  - INFO: subcase: mismatched=true
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(1) || endOfPassWriteIndex(1) >= querySetCount(1) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 

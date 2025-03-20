@@ -26,6 +26,7 @@
 #import "DownloadProxy.h"
 #import "WKDownload.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<DownloadProxy> {
 
 @interface WKDownload () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::DownloadProxy> _download;
+    AlignedStorage<WebKit::DownloadProxy> _download;
     WeakObjCPtr<id <WKDownloadDelegate> > _delegate;
 }
 @end

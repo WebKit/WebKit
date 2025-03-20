@@ -37,7 +37,7 @@ WKTypeID WKUserContentURLPatternGetTypeID()
 
 WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef)
 {
-    return WebKit::toAPI(&API::UserContentURLPattern::create(WebKit::toImpl(patternRef)->string()).leakRef());
+    return WebKit::toAPILeakingRef(API::UserContentURLPattern::create(WebKit::toProtectedImpl(patternRef)->string()));
 }
 
 WKStringRef WKUserContentURLPatternCopyHost(WKUserContentURLPatternRef urlPatternRef)
@@ -57,7 +57,7 @@ bool WKUserContentURLPatternIsValid(WKUserContentURLPatternRef urlPatternRef)
 
 bool WKUserContentURLPatternMatchesURL(WKUserContentURLPatternRef urlPatternRef, WKURLRef urlRef)
 {
-    return WebKit::toImpl(urlPatternRef)->matchesURL(WebKit::toWTFString(urlRef));
+    return WebKit::toProtectedImpl(urlPatternRef)->matchesURL(WebKit::toWTFString(urlRef));
 }
 
 bool WKUserContentURLPatternMatchesSubdomains(WKUserContentURLPatternRef urlPatternRef)

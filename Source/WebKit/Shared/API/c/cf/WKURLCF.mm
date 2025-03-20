@@ -48,7 +48,7 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 
     // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClass())
-        return WebKit::toAPI(downcast<API::URL>(&[(WKNSURL *)(__bridge NSURL *)CFRetain(cfURL) _apiObject]));
+        return WebKit::toAPI(RefPtr { downcast<API::URL>(&[(WKNSURL *)(__bridge NSURL *)CFRetain(cfURL) _apiObject]) }.get());
 
     // FIXME: Why is it OK to ignore the base URL in the CFURL here?
     return WebKit::toCopiedURLAPI(bytesAsString(cfURL));

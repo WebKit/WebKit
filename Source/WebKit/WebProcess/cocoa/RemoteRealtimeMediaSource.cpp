@@ -108,10 +108,8 @@ void RemoteRealtimeMediaSource::configurationChanged(String&& persistentID, WebC
     setSettings(WTFMove(settings));
     setCapabilities(WTFMove(capabilities));
     setName(m_settings.label());
-    
-    forEachObserver([](auto& observer) {
-        observer.sourceConfigurationChanged();
-    });
+
+    RealtimeMediaSource::configurationChanged();
 }
 
 void RemoteRealtimeMediaSource::applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&& settings)
@@ -163,7 +161,11 @@ void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnectio
 
     if (isProducingData())
         startProducingData();
-
+    else if (isAudio() && !interrupted()) {
+        // To be able to reenable voice detection, we have to restart the source.
+        startProducingData();
+        stopProducingData();
+    }
 }
 #endif
 

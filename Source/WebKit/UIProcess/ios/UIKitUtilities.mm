@@ -239,6 +239,15 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
     return NO;
 }
 
+- (void)_wk_collectDescendantsIncludingSelf:(Vector<RetainPtr<UIView>>&)descendants matching:(NS_NOESCAPE BOOL(^)(UIView *))block
+{
+    if (block(self))
+        descendants.append(self);
+
+    for (UIView *subview in self.subviews)
+        [subview _wk_collectDescendantsIncludingSelf:descendants matching:block];
+}
+
 - (UIViewController *)_wk_viewControllerForFullScreenPresentation
 {
     auto controller = self.window.rootViewController;

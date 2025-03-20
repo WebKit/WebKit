@@ -18,7 +18,8 @@
  */
 
 [
-    Exposed=Window
+    Exposed=Window,
+    EnabledBySetting=MutationEventsEnabled
 ] interface MutationEvent : Event {
     // attrChangeType
     const unsigned short MODIFICATION = 1;

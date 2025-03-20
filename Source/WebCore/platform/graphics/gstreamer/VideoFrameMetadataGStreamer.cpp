@@ -67,7 +67,9 @@ std::pair<GstBuffer*, VideoFrameMetadataGStreamer*> ensureVideoFrameMetadata(Gst
     if (meta)
         return { buffer, meta };
 
+IGNORE_WARNINGS_BEGIN("cast-align")
     buffer = gst_buffer_make_writable(buffer);
+IGNORE_WARNINGS_END
     return { buffer, VIDEO_FRAME_METADATA_CAST(gst_buffer_add_meta(buffer, videoFrameMetadataGetInfo(), nullptr)) };
 }
 
@@ -105,7 +107,9 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
 
 GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameTimeMetadata(GRefPtr<GstBuffer>&& buffer, std::optional<WebCore::VideoFrameTimeMetadata>&& metadata)
 {
+IGNORE_WARNINGS_BEGIN("cast-align")
     auto modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
+IGNORE_WARNINGS_END
     auto meta = getInternalVideoFrameMetadata(modifiedBuffer.get());
     if (meta) {
         meta->priv->videoSampleMetadata = WTFMove(metadata);

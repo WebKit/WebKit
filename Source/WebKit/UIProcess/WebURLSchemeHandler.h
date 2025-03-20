@@ -57,6 +57,7 @@ public:
     void taskCompleted(WebPageProxyIdentifier, WebURLSchemeTask&);
 
     virtual bool isAPIHandler() { return false; }
+    virtual bool isWebURLSchemeHandlerCocoa() const { return false; }
 
 protected:
     WebURLSchemeHandler();

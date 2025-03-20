@@ -163,6 +163,24 @@ PASS FormData interface: new FormData(form) must inherit property "set(USVString
 PASS FormData interface: calling set(USVString, USVString) on new FormData(form) with too few arguments must throw TypeError
 PASS FormData interface: new FormData(form) must inherit property "set(USVString, Blob, optional USVString)" with the proper type
 PASS FormData interface: calling set(USVString, Blob, optional USVString) on new FormData(form) with too few arguments must throw TypeError
+PASS FormData must be primary interface of new FormData(form, submitter)
+PASS Stringification of new FormData(form, submitter)
+PASS FormData interface: new FormData(form, submitter) must inherit property "append(USVString, USVString)" with the proper type
+PASS FormData interface: calling append(USVString, USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "append(USVString, Blob, optional USVString)" with the proper type
+PASS FormData interface: calling append(USVString, Blob, optional USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "delete(USVString)" with the proper type
+PASS FormData interface: calling delete(USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "get(USVString)" with the proper type
+PASS FormData interface: calling get(USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "getAll(USVString)" with the proper type
+PASS FormData interface: calling getAll(USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "has(USVString)" with the proper type
+PASS FormData interface: calling has(USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "set(USVString, USVString)" with the proper type
+PASS FormData interface: calling set(USVString, USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
+PASS FormData interface: new FormData(form, submitter) must inherit property "set(USVString, Blob, optional USVString)" with the proper type
+PASS FormData interface: calling set(USVString, Blob, optional USVString) on new FormData(form, submitter) with too few arguments must throw TypeError
 PASS ProgressEvent interface: existence and properties of interface object
 PASS ProgressEvent interface object length
 PASS ProgressEvent interface object name

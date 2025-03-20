@@ -91,7 +91,7 @@ static void reboxAccordingToFormat(
     case DataFormatDouble: {
         jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
         jit.move64ToDouble(value, FPRInfo::fpRegT0);
-        jit.purifyNaN(FPRInfo::fpRegT0);
+        jit.purifyNaN(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
         jit.boxDouble(FPRInfo::fpRegT0, value);
         jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
         break;

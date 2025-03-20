@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,7 +96,7 @@ SMILTime SMILTimeContainer::elapsed() const
         return 0_s;
     if (isPaused())
         return m_accumulatedActiveTime;
-    return MonotonicTime::now() + m_accumulatedActiveTime - m_resumeTime;
+    return MonotonicTime::now() + m_accumulatedActiveTime - lastResumeTime();
 }
 
 bool SMILTimeContainer::isActive() const
@@ -142,7 +143,7 @@ void SMILTimeContainer::pause()
 
     m_pauseTime = MonotonicTime::now();
     if (m_beginTime) {
-        m_accumulatedActiveTime += m_pauseTime - m_resumeTime;
+        m_accumulatedActiveTime += m_pauseTime - lastResumeTime();
         m_timer.stop();
     }
 }
@@ -177,11 +178,12 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     MonotonicTime now = MonotonicTime::now();
     m_beginTime = now - Seconds { time.value() };
 
+    m_resumeTime = MonotonicTime();
     if (m_pauseTime) {
-        m_resumeTime = m_pauseTime = now;
+        m_pauseTime = now;
         m_accumulatedActiveTime = Seconds(time.value());
     } else
-        m_resumeTime = m_beginTime;
+        m_accumulatedActiveTime = 0_s;
 
     processScheduledAnimations([](auto& animation) {
         animation.reset();

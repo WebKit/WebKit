@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/monitor-setup.js"></script>
+</head>
+
+<body>
+    <script>
+
+        description(`
+            Test ResourceMonitor doesn't count iframe's request twice.
+            Iframe that using service worker can request regular resource fetch
+            which might be through service worker. In this case we should't count
+            those twice.
+        `);
+        window.jsTestIsAsync = true;
+
+        onload = afterSetup(async () => {
+            const base = 'http://localhost:8080/iframe-monitor/resources';
+
+            let ack = 0;
+            window.addEventListener('message', (e) => {
+                if (e.data) {
+                    ack++;
+                } else {
+                    finishJSTest();
+                }
+            });
+
+            // ---------------------------------------------------------
+            // first just setup an iframe with service worker.
+            document.querySelector('#stage1').innerHTML = `
+                <iframe name="frame1" src="${base}/--eligible--/service-worker.html"></iframe>
+            `;
+
+            while (ack < 1)
+                await pause(10);
+
+            // ---------------------------------------------------------
+            // fetch resource which might not be unloaded.
+            // if the resource is double counted, this must be unloaded.
+            document.querySelector('#stage2').innerHTML = `
+                <iframe name="frame2" src="${base}/--eligible--/using-6k.html"></iframe>
+            `;
+
+            while (ack < 2)
+                await pause(10);
+
+            // ---------------------------------------------------------
+            // another iframe which uses just 1k.
+            document.querySelector('#stage3').innerHTML = `
+                <iframe name="frame3" src="${base}/--eligible--/using-1k.html"></iframe>
+            `;
+
+            while (ack < 3)
+                await pause(10);
+
+            // ---------------------------------------------------------
+            // Request to service worker to fetch extra 5k bytes. This may cause iframe 2 to be unloaded.
+            const frame1 = document.querySelector('iframe[name=frame1]');
+            frame1.contentWindow.postMessage(5 * 1024, '*');
+
+            await waitUntilUnload('frame2');
+
+            shouldBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+            shouldNotBe(`document.querySelector('iframe[name=frame2]').srcdoc`, '""');
+            shouldBe(`document.querySelector('iframe[name=frame3]').srcdoc`, '""');
+
+            document.querySelector('#stage1').innerHTML = `<iframe" src="${base}/--eligible--/unregister-service-worker.html"></iframe>`;
+
+            finishJSTest();
+        });
+
+    </script>
+
+    <div id="stage1"></div>
+    <div id="stage2"></div>
+    <div id="stage3"></div>
+    <div id="stage4"></div>
+</body>
+
+</html>

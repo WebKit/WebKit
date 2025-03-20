@@ -261,7 +261,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
 
     auto& renderElement = downcast<RenderElement>(renderer);
 
-    auto style = RenderStyle::clone(renderer.style());
+    auto style = RenderStyle::clone(renderElement.style());
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderElement)) {
@@ -348,7 +348,6 @@ static void updateListMarkerAttributes(const RenderListMarker& listMarkerRendere
 
 void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
 {
-    auto& rendererStyle = renderer.style();
     auto* layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
     if (!layoutBox) {
         ASSERT_NOT_REACHED();
@@ -358,7 +357,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
         if (auto* inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
             updateContentCharacteristic(*renderText, *inlineTextBox);
-            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(rendererStyle, DisplayType::Inline), firstLineStyleFor(*renderText));
+            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderText->style(), DisplayType::Inline), firstLineStyleFor(*renderText));
             return;
         }
         ASSERT_NOT_REACHED();
@@ -366,7 +365,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     }
 
     auto firstLineNewStyle = firstLineStyleFor(renderer);
-    auto newStyle = RenderStyle::clone(rendererStyle);
+    auto newStyle = RenderStyle::clone(downcast<RenderElement>(renderer).style());
     adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
     layoutBox->updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderer); listMarkerRenderer && is<Layout::ElementBox>(*layoutBox))

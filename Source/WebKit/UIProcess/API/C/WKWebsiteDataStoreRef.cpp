@@ -61,13 +61,13 @@ WKWebsiteDataStoreRef WKWebsiteDataStoreGetDefaultDataStore()
 
 WKWebsiteDataStoreRef WKWebsiteDataStoreCreateNonPersistentDataStore()
 {
-    return WebKit::toAPI(&WebKit::WebsiteDataStore::createNonPersistent().leakRef());
+    return WebKit::toAPILeakingRef(WebKit::WebsiteDataStore::createNonPersistent());
 }
 
 WKWebsiteDataStoreRef WKWebsiteDataStoreCreateWithConfiguration(WKWebsiteDataStoreConfigurationRef configuration)
 {
     auto sessionID = WebKit::toImpl(configuration)->isPersistent() ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
-    return WebKit::toAPI(&WebKit::WebsiteDataStore::create(*WebKit::toImpl(configuration), sessionID).leakRef());
+    return WebKit::toAPILeakingRef(WebKit::WebsiteDataStore::create(*WebKit::toImpl(configuration), sessionID));
 }
 
 void WKWebsiteDataStoreTerminateNetworkProcess(WKWebsiteDataStoreRef dataStore)

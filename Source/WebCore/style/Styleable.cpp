@@ -32,7 +32,6 @@
 #include "AnimationTimeline.h"
 #include "CSSAnimation.h"
 #include "CSSCustomPropertyValue.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
@@ -50,6 +49,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "StyleCustomPropertyData.h"
+#include "StyleInterpolation.h"
 #include "StyleOriginatedAnimation.h"
 #include "StyleOriginatedTimelinesController.h"
 #include "StylePropertyShorthand.h"
@@ -461,7 +461,7 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
 static bool propertyInStyleMatchesValueForTransitionInMap(const AnimatableCSSProperty& property, const RenderStyle& style, AnimatableCSSPropertyToTransitionMap& transitions, const Document& document)
 {
     if (auto* transition = transitions.get(property)) {
-        if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle(), document))
+        if (Style::Interpolation::equals(property, style, transition->targetStyle(), document))
             return true;
     }
     return false;
@@ -625,7 +625,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 
     auto allowsDiscreteTransitions = matchingBackingAnimation && matchingBackingAnimation->allowsDiscreteTransitions();
     auto propertyCanBeInterpolated = [&](const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b) {
-        return allowsDiscreteTransitions || CSSPropertyAnimation::canPropertyBeInterpolated(property, a, b, document);
+        return allowsDiscreteTransitions || Style::Interpolation::canInterpolate(property, a, b, document);
     };
 
     auto createCSSTransition = [&](const RenderStyle& oldStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor) {
@@ -637,7 +637,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     bool hasRunningTransition = styleable.hasRunningTransitionForProperty(property);
     if (!hasRunningTransition
         && hasMatchingTransitionProperty && matchingTransitionDuration > 0
-        && !CSSPropertyAnimation::propertiesEqual(property, beforeChangeStyle, afterChangeStyle, document)
+        && !Style::Interpolation::equals(property, beforeChangeStyle, afterChangeStyle, document)
         && propertyCanBeInterpolated(property, beforeChangeStyle, afterChangeStyle)
         && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {
         // 1. If all of the following are true:
@@ -687,7 +687,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
         //    transition is not equal to the value of the property in the after-change style, then:
-        if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle, document) || !propertyCanBeInterpolated(property, currentStyle, afterChangeStyle)) {
+        if (Style::Interpolation::equals(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle, document) || !propertyCanBeInterpolated(property, currentStyle, afterChangeStyle)) {
             // 1. If the current value of the property in the running transition is equal to the value of the property in the after-change style,
             //    or if these two values cannot be interpolated, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
@@ -695,7 +695,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             // 2. Otherwise, if the combined duration is less than or equal to 0s, or if the current value of the property in the running transition
             //    cannot be interpolated with the value of the property in the after-change style, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
-        } else if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle, document)) {
+        } else if (Style::Interpolation::equals(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle, document)) {
             // 3. Otherwise, if the reversing-adjusted start value of the running transition is the same as the value of the property in the after-change
             //    style (see the section on reversing of transitions for why these case exists), implementations must cancel the running transition
             //    and start a new transition whose:
@@ -992,13 +992,13 @@ void Styleable::setCapturedInViewTransition(AtomString captureName)
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const Styleable& styleable)
 {
-    ts << styleable.element << ", " << styleable.pseudoElementIdentifier;
+    ts << styleable.element << ", "_s << styleable.pseudoElementIdentifier;
     return ts;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const WeakStyleable& styleable)
 {
-    ts << styleable.element() << ", " << styleable.pseudoElementIdentifier();
+    ts << styleable.element() << ", "_s << styleable.pseudoElementIdentifier();
     return ts;
 }
 

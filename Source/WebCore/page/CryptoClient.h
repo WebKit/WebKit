@@ -38,7 +38,6 @@ protected:
     CryptoClient() = default;
 public:
     virtual ~CryptoClient() = default;
-    virtual std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) const { return std::nullopt; };
     virtual std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&) const { return std::nullopt; };
     virtual std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) const { return std::nullopt; };
 };

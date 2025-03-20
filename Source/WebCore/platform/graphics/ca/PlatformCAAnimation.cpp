@@ -35,10 +35,10 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::AnimationType type)
 {
     switch (type) {
-    case PlatformCAAnimation::AnimationType::Basic: ts << "basic"; break;
-    case PlatformCAAnimation::AnimationType::Group: ts << "group"; break;
-    case PlatformCAAnimation::AnimationType::Keyframe: ts << "keyframe"; break;
-    case PlatformCAAnimation::AnimationType::Spring: ts << "spring"; break;
+    case PlatformCAAnimation::AnimationType::Basic: ts << "basic"_s; break;
+    case PlatformCAAnimation::AnimationType::Group: ts << "group"_s; break;
+    case PlatformCAAnimation::AnimationType::Keyframe: ts << "keyframe"_s; break;
+    case PlatformCAAnimation::AnimationType::Spring: ts << "spring"_s; break;
     }
     return ts;
 }
@@ -46,10 +46,10 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::AnimationType type)
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::FillModeType fillMode)
 {
     switch (fillMode) {
-    case PlatformCAAnimation::FillModeType::NoFillMode: ts << "none"; break;
-    case PlatformCAAnimation::FillModeType::Forwards: ts << "forwards"; break;
-    case PlatformCAAnimation::FillModeType::Backwards: ts << "backwards"; break;
-    case PlatformCAAnimation::FillModeType::Both: ts << "both"; break;
+    case PlatformCAAnimation::FillModeType::NoFillMode: ts << "none"_s; break;
+    case PlatformCAAnimation::FillModeType::Forwards: ts << "forwards"_s; break;
+    case PlatformCAAnimation::FillModeType::Backwards: ts << "backwards"_s; break;
+    case PlatformCAAnimation::FillModeType::Both: ts << "both"_s; break;
     }
     return ts;
 }
@@ -57,18 +57,18 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::FillModeType fillMod
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::ValueFunctionType valueFunctionType)
 {
     switch (valueFunctionType) {
-    case PlatformCAAnimation::ValueFunctionType::NoValueFunction: ts << "none"; break;
-    case PlatformCAAnimation::ValueFunctionType::RotateX: ts << "rotateX"; break;
-    case PlatformCAAnimation::ValueFunctionType::RotateY: ts << "rotateY"; break;
-    case PlatformCAAnimation::ValueFunctionType::RotateZ: ts << "rotateZ"; break;
-    case PlatformCAAnimation::ValueFunctionType::ScaleX: ts << "scaleX"; break;
-    case PlatformCAAnimation::ValueFunctionType::ScaleY: ts << "scaleY"; break;
-    case PlatformCAAnimation::ValueFunctionType::ScaleZ: ts << "scaleZ"; break;
-    case PlatformCAAnimation::ValueFunctionType::Scale: ts << "scale"; break;
-    case PlatformCAAnimation::ValueFunctionType::TranslateX: ts << "translateX"; break;
-    case PlatformCAAnimation::ValueFunctionType::TranslateY: ts << "translateY"; break;
-    case PlatformCAAnimation::ValueFunctionType::TranslateZ: ts << "translateZ"; break;
-    case PlatformCAAnimation::ValueFunctionType::Translate: ts << "translate"; break;
+    case PlatformCAAnimation::ValueFunctionType::NoValueFunction: ts << "none"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateX: ts << "rotateX"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateY: ts << "rotateY"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateZ: ts << "rotateZ"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleX: ts << "scaleX"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleY: ts << "scaleY"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleZ: ts << "scaleZ"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::Scale: ts << "scale"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateX: ts << "translateX"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateY: ts << "translateY"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateZ: ts << "translateZ"_s; break;
+    case PlatformCAAnimation::ValueFunctionType::Translate: ts << "translate"_s; break;
     }
     return ts;
 }

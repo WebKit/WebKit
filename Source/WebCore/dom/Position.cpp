@@ -29,7 +29,7 @@
 
 #include "BoundaryPoint.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "ElementInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
@@ -895,34 +895,35 @@ unsigned Position::positionCountBetweenPositions(const Position& a, const Positi
     return posCount;
 }
 
-static int boundingBoxLogicalHeight(RenderObject *o, const IntRect &rect)
-{
-    return o->writingMode().isHorizontal() ? rect.height() : rect.width();
-}
-
 bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement& renderer)
 {
-    RenderObject* stop = renderer.nextInPreOrderAfterChildren();
-    for (RenderObject* o = renderer.firstChild(); o && o != stop; o = o->nextInPreOrder()) {
-        if (!o->nonPseudoNode())
+    auto isHorizontal = renderer.isHorizontalWritingMode();
+    auto* stop = renderer.nextInPreOrderAfterChildren();
+    for (CheckedPtr descendant = renderer.firstChild(); descendant && descendant != stop; descendant = descendant->nextInPreOrder()) {
+        if (!descendant->nonPseudoNode())
             continue;
-        if (auto* renderText = dynamicDowncast<RenderText>(*o)) {
-            if (boundingBoxLogicalHeight(o, renderText->linesBoundingBox()))
+
+        auto boundingBoxLogicalHeight = [&](auto rect) {
+            return isHorizontal ? rect.height() : rect.width();
+        };
+
+        if (CheckedPtr renderText = dynamicDowncast<RenderText>(*descendant)) {
+            if (boundingBoxLogicalHeight(renderText->linesBoundingBox()))
                 return true;
             continue;
         }
-        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(*o)) {
-            if (boundingBoxLogicalHeight(o, renderLineBreak->linesBoundingBox()))
+        if (CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(*descendant)) {
+            if (boundingBoxLogicalHeight(renderLineBreak->linesBoundingBox()))
                 return true;
             continue;
         }
-        if (auto* renderBox = dynamicDowncast<RenderBox>(*o)) {
+        if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*descendant)) {
+            if (isEmptyInline(*renderInline) && boundingBoxLogicalHeight(renderInline->linesBoundingBox()))
+                return true;
+            continue;
+        }
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*descendant)) {
             if (roundToInt(renderBox->logicalHeight()))
-                return true;
-            continue;
-        }
-        if (auto* renderInline = dynamicDowncast<RenderInline>(*o)) {
-            if (isEmptyInline(*renderInline) && boundingBoxLogicalHeight(o, renderInline->linesBoundingBox()))
                 return true;
             continue;
         }
@@ -1555,16 +1556,16 @@ static TextStream& operator<<(TextStream& stream, Position::AnchorType anchorTyp
     return stream;
 }
 
-TextStream& operator<<(TextStream& stream, const Position& position)
+TextStream& operator<<(TextStream& ts, const Position& position)
 {
-    TextStream::GroupScope scope(stream);
-    stream << "Position " << &position;
+    TextStream::GroupScope scope(ts);
+    ts  << "Position "_s << &position;
 
-    stream.dumpProperty("anchor node", position.anchorNode());
-    stream.dumpProperty("offset", position.offsetInContainerNode());
-    stream.dumpProperty("anchor type", position.anchorType());
+    ts.dumpProperty("anchor node"_s, position.anchorNode());
+    ts.dumpProperty("offset"_s, position.offsetInContainerNode());
+    ts.dumpProperty("anchor type"_s, position.anchorType());
 
-    return stream;
+    return ts;
 }
 
 Node* commonInclusiveAncestor(const Position& a, const Position& b)

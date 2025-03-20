@@ -40,15 +40,20 @@ private struct PermissionDecisionView: View {
     }
 }
 
-private struct ScrollBounceBehaviorPicker: View {
-    @Binding var basedOnSize: Bool
+private struct BinaryValuePicker: View {
+    @Binding var value: Bool
+
+    let description: String
+
+    let falseLabel: String
+    let trueLabel: String
 
     var body: some View {
-        Picker(selection: $basedOnSize) {
-            Text("Automatic").tag(false)
-            Text("Based on Size").tag(true)
+        Picker(selection: $value) {
+            Text(falseLabel).tag(false)
+            Text(trueLabel).tag(true)
         } label: {
-            Text("Scroll Bounce Behavior")
+            Text(description)
         }
     }
 }
@@ -60,6 +65,7 @@ struct GeneralSettingsView: View {
     @AppStorage(AppStorageKeys.mediaCaptureAuthorization) private var mediaCaptureAuthorization = WKPermissionDecision.prompt
 
     @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize) private var scrollBounceBehaviorBasedOnSize = false
+    @AppStorage(AppStorageKeys.backgroundHidden) private var backgroundHidden = false
 
     let currentURL: URL?
 
@@ -91,8 +97,19 @@ struct GeneralSettingsView: View {
             }
 
             Section {
-                ScrollBounceBehaviorPicker(basedOnSize: $scrollBounceBehaviorBasedOnSize)
-                    .padding(.top)
+                BinaryValuePicker(
+                    value: $scrollBounceBehaviorBasedOnSize,
+                    description: "Scroll Bounce Behavior",
+                    falseLabel: "Automatic",
+                    trueLabel: "Based on Size"
+                )
+
+                BinaryValuePicker(
+                    value: $backgroundHidden,
+                    description: "Hidden Background Behavior",
+                    falseLabel: "Automatic",
+                    trueLabel: "Always Hide"
+                )
             }
         }
     }

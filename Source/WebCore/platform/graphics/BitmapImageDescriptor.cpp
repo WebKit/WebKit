@@ -43,7 +43,7 @@ MetadataType BitmapImageDescriptor::imageMetadata(MetadataType& cachedValue, con
     if (m_cachedFlags.contains(cachedFlag))
         return cachedValue;
 
-    auto decoder = m_source.decoderIfExists();
+    RefPtr decoder = m_source->decoderIfExists();
     if (!decoder)
         return defaultValue;
 
@@ -52,7 +52,7 @@ MetadataType BitmapImageDescriptor::imageMetadata(MetadataType& cachedValue, con
 
     cachedValue = (*decoder.*functor)();
     m_cachedFlags.add(cachedFlag);
-    const_cast<BitmapImageSource&>(m_source).didDecodeProperties(decoder->bytesDecodedToDetermineProperties());
+    m_source->didDecodeProperties(decoder->bytesDecodedToDetermineProperties());
     return cachedValue;
 }
 
@@ -62,7 +62,7 @@ MetadataType BitmapImageDescriptor::primaryImageFrameMetadata(MetadataType& cach
     if (m_cachedFlags.contains(cachedFlag))
         return cachedValue;
 
-    auto& frame = const_cast<BitmapImageSource&>(m_source).primaryImageFrame(subsamplingLevel);
+    auto& frame = m_source->primaryImageFrame(subsamplingLevel);
 
     // Don't cache any unavailable frame metadata. Just return the default metadata.
     if (!frame.hasMetadata())
@@ -79,7 +79,7 @@ MetadataType BitmapImageDescriptor::primaryNativeImageMetadata(MetadataType& cac
     if (m_cachedFlags.contains(cachedFlag))
         return cachedValue;
 
-    RefPtr nativeImage = const_cast<BitmapImageSource&>(m_source).primaryNativeImage();
+    RefPtr nativeImage = m_source->primaryNativeImage();
     if (!nativeImage)
         return defaultValue;
 
@@ -112,8 +112,8 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
 #if !USE(CG)
     // It's possible that we have decoded the metadata, but not frame contents yet. In that case ImageDecoder claims to
     // have the size available, but the frame cache is empty. Return the decoder size without caching in such case.
-    auto decoder = m_source.decoderIfExists();
-    if (decoder && m_source.frames().isEmpty())
+    RefPtr decoder = m_source->decoderIfExists();
+    if (decoder && m_source->frames().isEmpty())
         size = decoder->size();
     else
 #endif
@@ -157,7 +157,7 @@ DestinationColorSpace BitmapImageDescriptor::colorSpace() const
 
 std::optional<Color> BitmapImageDescriptor::singlePixelSolidColor() const
 {
-    if (!m_source.hasSolidColor())
+    if (!m_source->hasSolidColor())
         return std::nullopt;
 
     return primaryNativeImageMetadata(m_singlePixelSolidColor, std::optional<Color>(), CachedFlag::SinglePixelSolidColor, &NativeImage::singlePixelSolidColor);
@@ -197,7 +197,7 @@ SubsamplingLevel BitmapImageDescriptor::maximumSubsamplingLevel() const
     if (m_cachedFlags.contains(CachedFlag::MaximumSubsamplingLevel))
         return m_maximumSubsamplingLevel;
 
-    auto decoder = m_source.decoderIfExists();
+    RefPtr decoder = m_source->decoderIfExists();
     if (!decoder)
         return SubsamplingLevel::Default;
 
@@ -211,7 +211,7 @@ SubsamplingLevel BitmapImageDescriptor::maximumSubsamplingLevel() const
     auto level = SubsamplingLevel::First;
 
     for (; level < SubsamplingLevel::Last; ++level) {
-        auto area = m_source.frameSizeAtIndex(0, level).unclampedArea();
+        auto area = m_source->frameSizeAtIndex(0, level).unclampedArea();
         if (area < maximumImageAreaBeforeSubsampling)
             break;
     }
@@ -248,7 +248,7 @@ SubsamplingLevel BitmapImageDescriptor::subsamplingLevelForScaleFactor(GraphicsC
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 bool BitmapImageDescriptor::shouldUseQuickLookForFullscreen() const
 {
-    if (auto decoder = m_source.decoderIfExists())
+    if (auto decoder = m_source->decoderIfExists())
         return decoder->shouldUseQuickLookForFullscreen();
     return false;
 }
@@ -257,7 +257,7 @@ bool BitmapImageDescriptor::shouldUseQuickLookForFullscreen() const
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 bool BitmapImageDescriptor::isSpatial() const
 {
-    if (RefPtr decoder = m_source.decoderIfExists())
+    if (RefPtr decoder = m_source->decoderIfExists())
         return decoder->isSpatial();
     return false;
 }
@@ -265,15 +265,15 @@ bool BitmapImageDescriptor::isSpatial() const
 
 void BitmapImageDescriptor::dump(TextStream& ts) const
 {
-    ts.dumpProperty("size", size());
-    ts.dumpProperty("density-corrected-size", densityCorrectedSize());
-    ts.dumpProperty("primary-frame-index", primaryFrameIndex());
-    ts.dumpProperty("frame-count", frameCount());
-    ts.dumpProperty("repetition-count", repetitionCount());
+    ts.dumpProperty("size"_s, size());
+    ts.dumpProperty("density-corrected-size"_s, densityCorrectedSize());
+    ts.dumpProperty("primary-frame-index"_s, primaryFrameIndex());
+    ts.dumpProperty("frame-count"_s, frameCount());
+    ts.dumpProperty("repetition-count"_s, repetitionCount());
 
-    ts.dumpProperty("uti", uti());
-    ts.dumpProperty("filename-extension", filenameExtension());
-    ts.dumpProperty("accessibility-description", accessibilityDescription());
+    ts.dumpProperty("uti"_s, uti());
+    ts.dumpProperty("filename-extension"_s, filenameExtension());
+    ts.dumpProperty("accessibility-description"_s, accessibilityDescription());
 }
 
 } // namespace WebCore

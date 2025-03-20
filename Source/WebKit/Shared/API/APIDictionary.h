@@ -47,20 +47,15 @@ public:
     template<typename T>
     T* get(const WTF::String& key) const
     {
-        RefPtr<Object> item = m_map.get(key);
-        if (!item)
-            return nullptr;
-
-        if (item->type() != T::APIType)
-            return nullptr;
-
-        return static_cast<T*>(item.get());
+        return dynamicDowncast<T>(m_map.get(key));
     }
 
     Object* get(const WTF::String& key) const
     {
         return m_map.get(key);
     }
+
+    RefPtr<Object> getProtected(const WTF::String& key) const { return get(key); }
 
     Object* get(const WTF::String& key, bool& exists) const
     {

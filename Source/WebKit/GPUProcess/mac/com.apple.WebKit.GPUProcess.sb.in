@@ -86,7 +86,18 @@
 
 ;; FIXME: Add check `(with-filter (system-attribute virtual-device)` when this is supported. See rdar://118274636.
 (allow iokit-open-service (iokit-registry-entry-class "AppleVideoToolboxParavirtualizationDriver"))
-(allow iokit-open-user-client (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient"))
+
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open-user-client
+        (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient")
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow iokit-open-user-client
+        (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient")))
 
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
@@ -149,6 +160,7 @@
     ;; OpenCL
     (allow IOKIT_OPEN_SERVICE
         (iokit-connection "IOAccelerator"))
+
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow IOKIT_OPEN_USER_CLIENT
             (iokit-connection "IOAccelerator")
@@ -157,8 +169,13 @@
                     iokit-async-external-method
                     iokit-external-method
                     iokit-external-trap)
+                (when (not (equal? (param "CPU") "arm64"))
+                    (allow iokit-external-method
+                        (iokit-method-number 1 4 9 11 12 20 257))
+                    (allow iokit-async-external-method
+                        (iokit-method-number 0)))
                 (allow iokit-external-method
-                    (iokit-method-number 0 2 5 6 7 8 10 15 16 17 29 31 40 256 258 261 263 264))
+                    (iokit-method-number 0 2 5 6 7 8 9 10 14 15 16 17 28 29 30 31 39 40 256 258 261 263 264))
                 (allow iokit-external-trap
                     (iokit-trap-number 0 1 3))
                 (allow iokit-async-external-method
@@ -744,19 +761,72 @@
     (allow IOKIT_OPEN_USER_CLIENT
         (iokit-user-client-class "AppleUpstreamUserClient")))
 
-(allow IOKIT_OPEN_USER_CLIENT
-    (iokit-user-client-class "RootDomainUserClient")
-    (iokit-user-client-class "IOAudioControlUserClient")
-    (iokit-user-client-class "IOAudioEngineUserClient")
-    ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
-    (iokit-user-client-class "AudioAUUC"))
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "RootDomainUserClient")
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "RootDomainUserClient")))
+
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT (with report) (with telemetry)
+        (iokit-user-client-class "IOAudioControlUserClient")
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "IOAudioControlUserClient")))
+
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "IOAudioEngineUserClient")
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "IOAudioEngineUserClient")))
+
+;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT (with report) (with telemetry)
+        (iokit-user-client-class "AudioAUUC")
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "AudioAUUC")))
 
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
 ;; Following is needed due to <rdar://problem/108282689>
-(allow IOKIT_OPEN_USER_CLIENT
-    (require-all
-        (extension "com.apple.webkit.extension.iokit")
-        (iokit-user-client-class "H11ANEInDirectPathClient")))
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "H11ANEInDirectPathClient"))
+        (apply-message-filter
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "H11ANEInDirectPathClient"))))
 
 (allow iokit-open-service
     (require-all
@@ -1076,95 +1146,149 @@
 (allow mach-lookup
     (global-name "com.apple.relatived.tempest"))
 
-(allow IOKIT_OPEN_USER_CLIENT
-    (iokit-user-client-class "AppleAVDUserClient"))
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "AppleAVDUserClient")
+        (apply-message-filter
+            (allow iokit-external-method
+                (iokit-method-number 0 1 2 3 4))
+            (allow iokit-async-external-method
+                (iokit-method-number 8))
+            (allow (with report) (with telemetry)
+                iokit-async-external-method
+                iokit-external-method
+                iokit-external-trap)))
+    ;; else
+    (allow IOKIT_OPEN_USER_CLIENT
+        (iokit-user-client-class "AppleAVDUserClient")))
 
 (when (equal? (param "CPU") "arm64")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (iokit-user-client-class "IOMobileFramebufferUserClient")
-        ;; VideoToolbox VTImageRotationSession
-        (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow IOKIT_OPEN_USER_CLIENT (with report) (with telemetry)
+            (iokit-user-client-class "IOMobileFramebufferUserClient")
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-method
+                    iokit-external-trap)))
+        ;; else
+        (allow IOKIT_OPEN_USER_CLIENT
+            (iokit-user-client-class "IOMobileFramebufferUserClient"))))
+
+;; VideoToolbox VTImageRotationSession
+(when (equal? (param "CPU") "arm64")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow IOKIT_OPEN_USER_CLIENT
+            (iokit-user-client-class "IOSurfaceAcceleratorClient")
+            (apply-message-filter
+                (allow iokit-external-method
+                    (iokit-method-number 10))
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-method
+                    iokit-external-trap)))
+        ;; else
+        (allow IOKIT_OPEN_USER_CLIENT
+            (iokit-user-client-class "IOSurfaceAcceleratorClient"))))
+
+(define (allowed-mig-routines)
+    (kernel-mig-routine
+        _mach_make_memory_entry
+        clock_get_time
+        host_get_io_master
+        host_get_special_port
+        host_info
+        host_request_notification
+        io_connect_add_client
+        io_connect_async_method
+        io_connect_map_memory_into_task
+        io_connect_method
+        io_connect_method_var_output
+        io_connect_set_notification_port_64
+        io_iterator_is_valid
+        io_iterator_next
+        io_object_conforms_to
+        io_object_get_class
+        io_registry_create_iterator
+        io_registry_entry_create_iterator
+        io_registry_entry_from_path
+        io_registry_entry_get_child_iterator
+        io_registry_entry_get_name
+        io_registry_entry_get_name_in_plane
+        io_registry_entry_get_parent_iterator
+        io_registry_entry_get_properties_bin_buf
+        io_registry_entry_get_property_bin_buf
+        io_registry_entry_get_property_bytes
+        io_registry_entry_get_registry_entry_id
+        io_registry_get_root_entry
+        io_server_version
+        io_service_add_interest_notification_64
+        io_service_add_notification_bin_64
+        io_service_close
+        io_service_get_matching_service_bin
+        io_service_get_matching_services_bin
+        io_service_open_extended
+        mach_exception_raise
+        mach_memory_entry_ownership
+        mach_port_extract_right
+        mach_port_get_context_from_user
+        mach_port_get_refs
+        mach_port_is_connection_for_service
+        mach_port_request_notification
+        mach_port_set_attributes
+        mach_vm_copy
+        mach_vm_map_external
+        mach_vm_remap_external
+        semaphore_create
+        semaphore_destroy
+#if HAVE(AUDIO_CONVERTER_SERVICE)
+        task_create_identity_token
+#endif
+        task_get_special_port_from_user
+        task_info_from_user
+        task_policy_set
+        task_restartable_ranges_synchronize
+        task_set_special_port
+        thread_get_state_to_user
+        thread_info
+        thread_policy_set
+        thread_resume
+        thread_suspend))
+
+#if HAVE(MACH_EVENTLINK)
+(define (mach-eventlink-routines)
+    (kernel-mig-routine
+        mach_eventlink_associate
+        mach_eventlink_create
+        mach_eventlink_destroy))
+#endif
+
+(when (defined? 'syscall-mig)
+#if HAVE(MACH_EVENTLINK)
+    (when (defined? 'mach_eventlink_associate)
+        (allow syscall-mig (mach-eventlink-routines)))
+#endif
+#if HAVE(MACH_RANGE_CREATE)
+    (when (defined? 'mach_vm_range_create)
+        (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
+#endif
+    (allow syscall-mig (allowed-mig-routines)))
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
+(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
 #if HAVE(MACH_EVENTLINK)
             (when (defined? 'mach_eventlink_associate)
-                (allow mach-message-send (kernel-mig-routine
-                    mach_eventlink_associate
-                    mach_eventlink_create
-                    mach_eventlink_destroy)))
+                (allow mach-message-send (mach-eventlink-routines)))
 #endif
 #if HAVE(MACH_RANGE_CREATE)
             ;; <rdar://105161083>
             (when (defined? 'mach_vm_range_create)
                 (allow mach-message-send (kernel-mig-routine mach_vm_range_create)))
 #endif
-
-            (allow mach-message-send (kernel-mig-routine
-                _mach_make_memory_entry
-                clock_get_time
-                host_get_io_master
-                host_get_special_port
-                host_info
-                host_request_notification
-                io_connect_add_client
-                io_connect_async_method
-                io_connect_map_memory_into_task
-                io_connect_method
-                io_connect_method_var_output
-                io_connect_set_notification_port_64
-                io_iterator_is_valid
-                io_iterator_next
-                io_object_conforms_to
-                io_object_get_class
-                io_registry_create_iterator
-                io_registry_entry_create_iterator
-                io_registry_entry_from_path
-                io_registry_entry_get_child_iterator
-                io_registry_entry_get_name
-                io_registry_entry_get_name_in_plane
-                io_registry_entry_get_parent_iterator
-                io_registry_entry_get_properties_bin_buf
-                io_registry_entry_get_property_bin_buf
-                io_registry_entry_get_property_bytes
-                io_registry_entry_get_registry_entry_id
-                io_registry_get_root_entry
-                io_server_version
-                io_service_add_interest_notification_64
-                io_service_add_notification_bin_64
-                io_service_close
-                io_service_get_matching_service_bin
-                io_service_get_matching_services_bin
-                io_service_open_extended
-                mach_exception_raise
-                mach_memory_entry_ownership
-                mach_port_extract_right
-                mach_port_get_context_from_user
-                mach_port_get_refs
-                mach_port_is_connection_for_service
-                mach_port_request_notification
-                mach_port_set_attributes
-                mach_vm_copy
-                mach_vm_map_external
-                mach_vm_remap_external
-                semaphore_create
-                semaphore_destroy
-#if HAVE(AUDIO_CONVERTER_SERVICE)
-                task_create_identity_token
-#endif
-                task_get_special_port_from_user
-                task_info_from_user
-                task_policy_set
-                task_restartable_ranges_synchronize
-                task_set_special_port
-                thread_get_state_to_user
-                thread_info
-                thread_policy_set
-                thread_resume
-                thread_suspend)))))
+            (allow mach-message-send (allowed-mig-routines)))))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)

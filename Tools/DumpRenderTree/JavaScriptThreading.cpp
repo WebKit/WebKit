@@ -104,7 +104,7 @@ void runJavaScriptThread()
             continue;
 
         Locker locker { javaScriptThreadsLock };
-        Thread& thread = Thread::current();
+        auto& thread = Thread::currentSingleton();
         thread.detach();
         javaScriptThreads().remove(&thread);
         javaScriptThreads().add(Thread::create("JavaScript Thread"_s, &runJavaScriptThread));

@@ -28,6 +28,7 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
+#import "VideoPresentationInterfaceLMK.h"
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/MediaSelectionOption.h>
@@ -215,6 +216,12 @@
         model->setVideoReceiverEndpoint(videoReceiverEndpoint);
 }
 
+- (void)linearMediaPlayerClearVideoReceiverEndpoint:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->setVideoReceiverEndpoint(nullptr);
+}
+
 @end
 
 namespace WebKit {
@@ -357,6 +364,12 @@ void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supports
         // support LinearMediaPlayer, exit fullscreen.
         if (m_playbackSessionModel)
             m_playbackSessionModel->exitFullscreen();
+        break;
+    case WKSLinearMediaPresentationStateExternal:
+        // If the player is in external presentation (which uses LinearMediaPlayer) but the current
+        // media engine does not support it, exit external presentation.
+        if (RefPtr videoPresentationInterface = m_videoPresentationInterface.get())
+            videoPresentationInterface->exitExternalPlayback();
         break;
     case WKSLinearMediaPresentationStateInline:
     case WKSLinearMediaPresentationStateExitingFullscreen:

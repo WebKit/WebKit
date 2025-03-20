@@ -81,7 +81,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
         RELEASE_ASSERT_NOT_REACHED();
 
     // No uses.
-    case op_new_regexp:
+    case op_new_reg_exp:
     case op_debug:
     case op_loop_hint:
     case op_jmp:
@@ -474,7 +474,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpNewArrayBuffer, dst)
     DEFS(OpNewArrayWithSize, dst)
     DEFS(OpNewArrayWithSpecies, dst)
-    DEFS(OpNewRegexp, dst)
+    DEFS(OpNewRegExp, dst)
     DEFS(OpNewFunc, dst)
     DEFS(OpNewFuncExp, dst)
     DEFS(OpNewGeneratorFunc, dst)

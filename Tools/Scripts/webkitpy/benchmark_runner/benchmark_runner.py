@@ -2,6 +2,7 @@ import json
 import logging
 import shutil
 import os
+import collections
 from collections import defaultdict, OrderedDict
 
 from webkitpy.benchmark_runner.benchmark_builder import BenchmarkBuilder
@@ -19,7 +20,10 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path, subtests=None, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, pgo_profile_output_dir=None, profile_output_dir=None, trace_type=None, profiling_interval=None, browser_args=None):
+    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform,
+                 browser, browser_path, subtests=None, scale_unit=True, show_iteration_values=False, device_id=None,
+                 diagnose_dir=None, generate_pgo_profiles=False, profile_output_dir=None, trace_type=None,
+                 profiling_interval=None, browser_args=None):
         self._plan_name, self._plan = BenchmarkRunner._load_plan_data(plan_file)
         if 'options' not in self._plan:
             self._plan['options'] = {}
@@ -37,11 +41,8 @@ class BenchmarkRunner(object):
         if self._diagnose_dir:
             os.makedirs(self._diagnose_dir, exist_ok=True)
             _log.info('Collecting diagnostics to {}'.format(self._diagnose_dir))
-        self._pgo_profile_output_dir = os.path.abspath(pgo_profile_output_dir) if pgo_profile_output_dir else None
-        if self._pgo_profile_output_dir:
-            os.makedirs(self._pgo_profile_output_dir, exist_ok=True)
-            _log.info('Collecting PGO profiles to {}'.format(self._pgo_profile_output_dir))
         self._profile_output_dir = os.path.abspath(profile_output_dir) if profile_output_dir else None
+        self._generate_pgo_profiles = generate_pgo_profiles
         if self._profile_output_dir:
             os.makedirs(self._profile_output_dir, exist_ok=True)
             _log.info('Collecting profiles to {}'.format(self._profile_output_dir))
@@ -119,12 +120,19 @@ class BenchmarkRunner(object):
         for subtest in subtests:
             if '/' in subtest:
                 subtest_suite, subtest_name = subtest.split('/')
+            elif subtest in valid_subtests:
+                subtest_suite, subtest_name = subtest, None
             else:
                 subtest_suite, subtest_name = None, subtest
             did_append_subtest = False
             if subtest_suite:
                 if subtest_suite not in valid_subtests:
                     _log.warning('{} does not belong to a valid suite, skipping'.format(subtest))
+                    continue
+                if subtest_name is None:
+                    for name in valid_subtests[subtest_suite]:
+                        subtests_to_run[subtest_suite].append(name)
+                        did_append_subtest = True
                     continue
                 if subtest_name in valid_subtests[subtest_suite]:
                     subtests_to_run[subtest_suite].append(subtest_name)
@@ -143,6 +151,15 @@ class BenchmarkRunner(object):
         else:
             raise Exception('No valid subtests were specified')
 
+    def _construct_subtest_url(self, subtests):
+        if not subtests or not isinstance(subtests, collections.abc.Mapping) or 'subtest_url_format' not in self._plan:
+            return ''
+        subtest_url = ''
+        for suite, tests in subtests.items():
+            for test in tests:
+                subtest_url += self._plan['subtest_url_format'].replace('${SUITE}', suite).replace('${TEST}', test)
+        return subtest_url
+
     def _run_one_test(self, web_root, test_file, iteration):
         raise NotImplementedError('BenchmarkRunner is an abstract class and shouldn\'t be instantiated.')
 
@@ -153,9 +170,8 @@ class BenchmarkRunner(object):
             self._browser_driver.prepare_initial_env(self._config)
             for iteration in range(1, count + 1):
                 _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
-                if self._pgo_profile_output_dir:
-                    shutil.rmtree(self._pgo_profile_output_dir, ignore_errors=True)
-                    os.mkdir(self._pgo_profile_output_dir)
+                if self._generate_pgo_profiles:
+                    self._browser_driver.prepare_pgo_profile_collection()
                 try:
                     self._browser_driver.prepare_env(self._config)
                     if 'entry_point' in self._plan:
@@ -182,8 +198,8 @@ class BenchmarkRunner(object):
                     raise error
                 else:
                     self._browser_driver.restore_env()
-                if self._pgo_profile_output_dir:
-                    shutil.copytree(self._pgo_profile_output_dir, self._diagnose_dir, dirs_exist_ok=True)
+                if self._generate_pgo_profiles:
+                    self._browser_driver.collect_pgo_profile(self._diagnose_dir)
 
                 _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
         except Exception as error:

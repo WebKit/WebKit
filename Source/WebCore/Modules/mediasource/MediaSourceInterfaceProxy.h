@@ -60,6 +60,7 @@ public:
     virtual void setAsSrcObject(bool) = 0;
     virtual void memoryPressure() = 0;
     virtual bool detachable() const = 0;
+    virtual void setLogIdentifier(uint64_t) = 0;
 };
 
 } // namespace WebCore

@@ -159,8 +159,8 @@ void NetworkDataTaskDataURL::didDecodeDataURL(std::optional<WebCore::DataURLDeco
 
 void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
 {
-    FileSystem::PlatformFileHandle downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate, FileSystem::FileAccessPermission::All, !m_allowOverwriteDownload);
-    if (!FileSystem::isHandleValid(downloadDestinationFile)) {
+    auto downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate, FileSystem::FileAccessPermission::All, { }, !m_allowOverwriteDownload);
+    if (!downloadDestinationFile) {
 #if USE(CURL)
         ResourceError error(CURLE_WRITE_ERROR, m_response.url());
 #elif USE(SOUP)
@@ -177,8 +177,8 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
     downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
 
-    if (-1 == FileSystem::writeToFile(downloadDestinationFile, data.span())) {
-        FileSystem::closeFile(downloadDestinationFile);
+    if (!downloadDestinationFile.write(data.span())) {
+        downloadDestinationFile = { };
         FileSystem::deleteFile(m_pendingDownloadLocation);
 #if USE(CURL)
         ResourceError error(CURLE_WRITE_ERROR, m_response.url());
@@ -191,7 +191,6 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
     }
 
     download->didReceiveData(data.size(), 0, 0);
-    FileSystem::closeFile(downloadDestinationFile);
     download->didFinish();
     m_state = State::Completed;
 }

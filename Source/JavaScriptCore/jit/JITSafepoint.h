@@ -54,7 +54,6 @@ public:
         
         bool m_didGetCancelled;
         bool m_wasChecked;
-        bool m_keepDependenciesLive;
     };
     
     Safepoint(JITPlan&, Result&);

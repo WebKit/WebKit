@@ -51,6 +51,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -68,14 +69,14 @@ WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalS
 
 WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
 {
-    if (m_bridge)
-        m_bridge->disconnect();
+    if (RefPtr bridge = m_bridge)
+        bridge->disconnect();
 }
 
 WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::connect(const URL& url, const String& protocol)
 {
-    if (m_bridge)
-        m_bridge->connect(url, protocol);
+    if (RefPtr bridge = m_bridge)
+        bridge->connect(url, protocol);
     // connect is called asynchronously, so we do not have any possibility for synchronous errors.
     return ConnectStatus::OK;
 }
@@ -90,64 +91,53 @@ String WorkerThreadableWebSocketChannel::extensions()
     return m_workerClientWrapper->extensions();
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(CString&& message)
+void WorkerThreadableWebSocketChannel::send(CString&& message)
 {
-    if (!m_bridge)
-        return ThreadableWebSocketChannel::SendFail;
-    return m_bridge->send(WTFMove(message));
+    if (RefPtr bridge = m_bridge)
+        bridge->send(WTFMove(message));
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WorkerThreadableWebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
-    if (!m_bridge)
-        return ThreadableWebSocketChannel::SendFail;
-    return m_bridge->send(binaryData, byteOffset, byteLength);
+    if (RefPtr bridge = m_bridge)
+        bridge->send(binaryData, byteOffset, byteLength);
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(Blob& binaryData)
+void WorkerThreadableWebSocketChannel::send(Blob& binaryData)
 {
-    if (!m_bridge)
-        return ThreadableWebSocketChannel::SendFail;
-    return m_bridge->send(binaryData);
-}
-
-unsigned WorkerThreadableWebSocketChannel::bufferedAmount() const
-{
-    if (!m_bridge)
-        return 0;
-    return m_bridge->bufferedAmount();
+    if (RefPtr bridge = m_bridge)
+        bridge->send(binaryData);
 }
 
 void WorkerThreadableWebSocketChannel::close(int code, const String& reason)
 {
-    if (m_bridge)
-        m_bridge->close(code, reason);
+    if (RefPtr bridge = m_bridge)
+        bridge->close(code, reason);
 }
 
 void WorkerThreadableWebSocketChannel::fail(String&& reason)
 {
-    if (m_bridge)
-        m_bridge->fail(WTFMove(reason));
+    if (RefPtr bridge = m_bridge)
+        bridge->fail(WTFMove(reason));
 }
 
 void WorkerThreadableWebSocketChannel::disconnect()
 {
-    m_bridge->disconnect();
-    m_bridge = nullptr;
+    std::exchange(m_bridge, nullptr)->disconnect();
 }
 
 void WorkerThreadableWebSocketChannel::suspend()
 {
     m_workerClientWrapper->suspend();
-    if (m_bridge)
-        m_bridge->suspend();
+    if (RefPtr bridge = m_bridge)
+        bridge->suspend();
 }
 
 void WorkerThreadableWebSocketChannel::resume()
 {
     m_workerClientWrapper->resume();
-    if (m_bridge)
-        m_bridge->resume();
+    if (RefPtr bridge = m_bridge)
+        bridge->resume();
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel::Peer);
@@ -169,97 +159,53 @@ Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Pe
 WorkerThreadableWebSocketChannel::Peer::~Peer()
 {
     ASSERT(isMainThread());
-    if (m_mainWebSocketChannel)
-        m_mainWebSocketChannel->disconnect();
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->disconnect();
 }
 
 WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
+    RefPtr channel = m_mainWebSocketChannel;
+    if (!channel)
         return WorkerThreadableWebSocketChannel::ConnectStatus::KO;
-    return m_mainWebSocketChannel->connect(url, protocol);
+
+    return channel->connect(url, protocol);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(CString&& message)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ThreadableWebSocketChannel::SendResult sendRequestResult = m_mainWebSocketChannel->send(WTFMove(message));
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), sendRequestResult](ScriptExecutionContext&) mutable {
-        workerClientWrapper->setSendRequestResult(sendRequestResult);
-    }, m_taskMode);
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->send(WTFMove(message));
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(const ArrayBuffer& binaryData)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ThreadableWebSocketChannel::SendResult sendRequestResult = m_mainWebSocketChannel->send(binaryData, 0, binaryData.byteLength());
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), sendRequestResult](ScriptExecutionContext&) mutable {
-        workerClientWrapper->setSendRequestResult(sendRequestResult);
-    }, m_taskMode);
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->send(binaryData, 0, binaryData.byteLength());
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(Blob& binaryData)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ThreadableWebSocketChannel::SendResult sendRequestResult = m_mainWebSocketChannel->send(binaryData);
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), sendRequestResult](ScriptExecutionContext&) mutable {
-        workerClientWrapper->setSendRequestResult(sendRequestResult);
-    }, m_taskMode);
-}
-
-void WorkerThreadableWebSocketChannel::Peer::bufferedAmount()
-{
-    ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    unsigned bufferedAmount = m_mainWebSocketChannel->bufferedAmount();
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), bufferedAmount](ScriptExecutionContext& context) mutable {
-        ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        workerClientWrapper->setBufferedAmount(bufferedAmount);
-    }, m_taskMode);
+    if (RefPtr channel = m_mainWebSocketChannel)
+        m_mainWebSocketChannel->send(binaryData);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::close(int code, const String& reason)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-    m_mainWebSocketChannel->close(code, reason);
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->close(code, reason);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::fail(String&& reason)
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-    m_mainWebSocketChannel->fail(WTFMove(reason));
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->fail(WTFMove(reason));
 }
 
 void WorkerThreadableWebSocketChannel::Peer::disconnect()
@@ -267,24 +213,21 @@ void WorkerThreadableWebSocketChannel::Peer::disconnect()
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
         return;
-    m_mainWebSocketChannel->disconnect();
-    m_mainWebSocketChannel = nullptr;
+    std::exchange(m_mainWebSocketChannel, nullptr)->disconnect();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::suspend()
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-    m_mainWebSocketChannel->suspend();
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->suspend();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::resume()
 {
     ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel)
-        return;
-    m_mainWebSocketChannel->resume();
+    if (RefPtr channel = m_mainWebSocketChannel)
+        channel->resume();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didConnect()
@@ -418,42 +361,35 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider)
+auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider) -> RefPtr<Peer>
 {
     ASSERT(isMainThread());
     ASSERT(context.isDocument());
 
     auto& workerRunLoop = workerThread.runLoop();
-    if (workerRunLoop.terminated()) {
-        clientWrapper->clearPeer();
-        return;
-    }
+    if (workerRunLoop.terminated())
+        return nullptr;
 
-    workerRunLoop.postTaskForMode({
-        ScriptExecutionContext::Task::CleanupTask,
-        [clientWrapper, peer = Peer::create(clientWrapper.copyRef(), context, workerContextIdentifier, taskMode, WTFMove(provider))](auto& context) mutable {
-            ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-            if (!clientWrapper->failedWebSocketChannelCreation())
-                clientWrapper->didCreateWebSocketChannel(WTFMove(peer));
-        }
-    }, taskMode);
+    return Peer::create(clientWrapper.copyRef(), context, workerContextIdentifier, taskMode, WTFMove(provider));
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& scope)
 {
     ASSERT(!m_peer.get());
-    setMethodNotCompleted();
     Ref<Bridge> protectedThis(*this);
 
-    m_loaderProxy.postTaskToLoader([workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider](ScriptExecutionContext& context) mutable {
-        mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTFMove(workerClientWrapper), taskMode, WTFMove(provider));
-    });
-    waitForMethodCompletion();
+    RefPtr<Peer> peer;
 
-    // m_peer may be null when the nested runloop exited before a peer has created.
+    BinarySemaphore semaphore;
+    m_loaderProxy.postTaskToLoader([&semaphore, &peer, workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider](ScriptExecutionContext& context) mutable {
+        peer = mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTFMove(workerClientWrapper), taskMode, WTFMove(provider));
+        semaphore.signal();
+    });
+    semaphore.wait();
+
+    if (peer)
+        m_workerClientWrapper->didCreateWebSocketChannel(peer.releaseNonNull());
     m_peer = m_workerClientWrapper->peer();
-    if (!m_peer.get())
-        m_workerClientWrapper->setFailedWebSocketChannelCreation();
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const String& protocol)
@@ -477,12 +413,11 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
     });
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(CString&& message)
+void WorkerThreadableWebSocketChannel::Bridge::send(CString&& message)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
-        return ThreadableWebSocketChannel::SendFail;
-    setMethodNotCompleted();
+        return;
 
     m_loaderProxy.postTaskToLoader([peer = peer.releaseNonNull(), message = WTFMove(message)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
@@ -490,23 +425,18 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
 
         peer->send(WTFMove(message));
     });
-
-    Ref<Bridge> protectedThis(*this);
-    waitForMethodCompletion();
-    return m_workerClientWrapper->sendRequestResult();
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
-        return ThreadableWebSocketChannel::SendFail;
+        return;
 
     // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<uint8_t>.
     Vector<uint8_t> data(byteLength);
     if (binaryData.byteLength())
         memcpySpan(data.mutableSpan(), binaryData.span().subspan(byteOffset, byteLength));
-    setMethodNotCompleted();
 
     m_loaderProxy.postTaskToLoader([peer = peer.releaseNonNull(), data = WTFMove(data)](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
@@ -515,18 +445,13 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         auto arrayBuffer = ArrayBuffer::create(data.span());
         peer->send(arrayBuffer);
     });
-
-    Ref<Bridge> protectedThis(*this);
-    waitForMethodCompletion();
-    return m_workerClientWrapper->sendRequestResult();
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(Blob& binaryData)
+void WorkerThreadableWebSocketChannel::Bridge::send(Blob& binaryData)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
-        return ThreadableWebSocketChannel::SendFail;
-    setMethodNotCompleted();
+        return;
 
     m_loaderProxy.postTaskToLoader([peer = peer.releaseNonNull(), url = binaryData.url().isolatedCopy(), type = binaryData.type().isolatedCopy(), size = binaryData.size(), memoryCost = binaryData.memoryCost()](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
@@ -534,30 +459,6 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
 
         peer->send(Blob::deserialize(&context, url, type, size, memoryCost, { }));
     });
-
-    Ref<Bridge> protectedThis(*this);
-    waitForMethodCompletion();
-    return m_workerClientWrapper->sendRequestResult();
-}
-
-unsigned WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
-{
-    RefPtr peer = m_peer.get();
-    if (!peer)
-        return 0;
-
-    setMethodNotCompleted();
-
-    m_loaderProxy.postTaskToLoader([peer = peer.releaseNonNull()](ScriptExecutionContext& context) {
-        ASSERT(isMainThread());
-        ASSERT_UNUSED(context, context.isDocument());
-
-        peer->bufferedAmount();
-    });
-
-    Ref<Bridge> protectedThis(*this);
-    waitForMethodCompletion();
-    return m_workerClientWrapper->bufferedAmount();
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& reason)
@@ -626,26 +527,6 @@ void WorkerThreadableWebSocketChannel::Bridge::resume()
 void WorkerThreadableWebSocketChannel::Bridge::clearClientWrapper()
 {
     m_workerClientWrapper->clearClient();
-}
-
-void WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted()
-{
-    m_workerClientWrapper->clearSyncMethodDone();
-}
-
-// Caller of this function should hold a reference to the bridge, because this function may call WebSocket::didClose() in the end,
-// which causes the bridge to get disconnected from the WebSocket and deleted if there is no other reference.
-void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
-{
-    if (!m_workerGlobalScope)
-        return;
-    WorkerRunLoop& runLoop = m_workerGlobalScope->thread().runLoop();
-    bool success = true;
-    ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.ptr();
-    while (m_workerGlobalScope && clientWrapper && !clientWrapper->syncMethodDone() && success) {
-        success = runLoop.runInMode(m_workerGlobalScope.get(), m_taskMode); // May cause this bridge to get disconnected, which makes m_workerGlobalScope become null.
-        clientWrapper = m_workerClientWrapper.ptr();
-    }
 }
 
 } // namespace WebCore

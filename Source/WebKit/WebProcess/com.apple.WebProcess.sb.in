@@ -138,7 +138,10 @@
 )
 
 (allow file-read*
-       file-write-data
+    (literal "/dev/null")
+    (literal "/dev/zero"))
+
+(allow file-write-data (with report) (with telemetry)
     (literal "/dev/null")
     (literal "/dev/zero"))
 
@@ -149,11 +152,10 @@
         (literal "/dev/dtracehelper")
         (require-any
             (csr CSR_ALLOW_APPLE_INTERNAL)
-            (csr CSR_ALLOW_UNRESTRICTED_DTRACE)))
-)
+            (csr CSR_ALLOW_UNRESTRICTED_DTRACE))))
 
 ;;; Allow creation of core dumps.
-(allow file-write-create
+(allow file-write-create (with report) (with telemetry)
     (require-all (prefix "/cores/")
         (vnode-type REGULAR-FILE)))
 
@@ -469,6 +471,7 @@
 
 (deny sysctl-read (with no-report)
     (sysctl-name
+        "security.mac.lockdown_mode_state"
         "sysctl.proc_translated"
         "vm.task_no_footprint_for_debug"))
 
@@ -840,7 +843,8 @@
 (define (allow-read-write-directory-and-issue-read-write-extensions path)
     (if path
         (begin
-            (allow file-read* file-write* (subpath path))
+            (allow file-read* (subpath path))
+            (allow file-write* (with report) (with telemetry) (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
 
@@ -943,12 +947,15 @@
 #endif
 
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
-(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+(define (read-write-extension-with-telemetry) (with report) (with telemetry) (extension "com.apple.app-sandbox.read-write"))
+(read-write-and-issue-extensions (read-write-extension-with-telemetry))
 
 ;; Allow certain Mach extensions. See <rdar://87850345>.
 (allow mach-lookup
     (require-all
+        (require-not (state-flag "WebProcessDidNotInjectStoreBundle"))
         (extension "com.apple.app-sandbox.mach")
+        (extension "com.apple.webkit.mach-bootstrap")
         (global-name "com.apple.commerce")))
 
 ;; Allow the OpenGL Profiler to attach.
@@ -1358,11 +1365,13 @@
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.webinspector"))
 
+#if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
 (with-filter (require-not (state-flag "BlockWebInspectorInWebContentSandbox"))
     (allow mach-lookup (with telemetry-backtrace)
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.webinspector"))))
+#endif
 
 (deny mach-lookup (with telemetry-backtrace)
     (global-name
@@ -1383,11 +1392,13 @@
             "com.apple.iconservices"
             "com.apple.iconservices.store")))
 
+#if !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name
-            "com.apple.coreservices.launchservicesd")))
+        (require-not (webcontent-process-launched))
+        (global-name "com.apple.coreservices.launchservicesd")))
+#endif
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
@@ -1647,18 +1658,11 @@
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
 #endif
 
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (require-not (lockdown-mode))
     (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (allow syscall-unix (syscall-unix-apple-silicon)))
     (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode)))
-#else
-(allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
-(when (equal? (param "CPU") "arm64")
-    (allow syscall-unix (syscall-unix-apple-silicon)))
-(allow syscall-unix (syscalls-rarely-used-blocked-in-lockdown-mode))
-#endif
 
 (when (defined? 'SYS_objc_bp_assist_cfg_np)
     (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
@@ -1673,20 +1677,18 @@
     (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
 
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (lockdown-mode)
     (deny syscall-unix (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (deny syscall-unix (with telemetry) (syscall-unix-apple-silicon))))
-#endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
 (define (mach-bootstrap-message-numbers)
     (message-number 204 207 301 711 800 804))
 
 (define (mach-bootstrap-message-numbers-post-launch)
-    (message-number 207 301 800 804))
+    (message-number 204 207 301 800 804))
 
 (define (allow-mach-bootstrap-with-filter)
     (allow mach-bootstrap
@@ -1783,32 +1785,51 @@
     io_registry_get_root_entry
     io_service_close))
 
-(define (allow-mach-exceptions)
+(define (allow-mach-exceptions operation)
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
     (when (equal? (param "CPU") "arm64")
         (with-filter (require-not (webcontent-process-launched))
-            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
-        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler)))
+            (allow operation (kernel-mig-routine task_register_hardened_exception_handler)))
+        (allow operation (kernel-mig-routine thread_adopt_exception_handler)))
     (when (not (equal? (param "CPU") "arm64"))
-        (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))))
+        (allow operation (kernel-mig-routine thread_set_exception_ports))))
 #else
-    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+    (allow operation (kernel-mig-routine thread_set_exception_ports)))
 #endif
 
-(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
+(when (defined? 'syscall-mig)
+    (deny syscall-mig)
+    (with-filter (require-not (lockdown-mode))
+        (allow-mach-exceptions syscall-mig)
+        (allow syscall-mig (kernel-mig-routines-blocked-in-lockdown-mode)))
+    (with-filter (lockdown-mode)
+        (deny syscall-mig (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
+    (allow syscall-mig (kernel-mig-routines-in-use))
+    (with-filter (require-not (webcontent-process-launched))
+#if HAVE(MACH_RANGE_CREATE)
+        (when (defined? 'mach_vm_range_create)
+            (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
+#endif
+        (allow syscall-mig (kernel-mig-routine task_restartable_ranges_register)))
+    (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+        (allow syscall-mig (kernel-mig-routines-downlevels))
+        (allow syscall-mig (kernel-mig-routines-iokit))
+        (allow syscall-mig (kernel-mig-routines-iokit-service)))
+    (with-filter (state-flag "BlockIOKitInWebContentSandbox")
+        (deny syscall-mig (with no-report) (kernel-mig-routines-iokit-service)))
+    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+        (allow syscall-mig (kernel-mig-routines-downlevels-blocked-in-lockdown-mode))))
+
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send)
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode)))
             (with-filter (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
-#else
-            (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
-#endif
             (with-filter (require-not (lockdown-mode))
-                (allow-mach-exceptions))
+                (allow-mach-exceptions mach-message-send))
 
             (allow mach-message-send (kernel-mig-routines-in-use))
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
@@ -1904,14 +1925,10 @@
     (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
 #endif
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
     (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
     (with-filter (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
-#else
-    (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode))
-#endif
     (when (defined? 'MSC_mach_msg2_trap)
         (allow syscall-mach (machtrap-number MSC_mach_msg2_trap))))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)

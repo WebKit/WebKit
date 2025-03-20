@@ -5,9 +5,9 @@ Compound statement execution.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { keysOf } from '../../../../common/util/data_tables.js';
 
-import { GPUTest } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 /**
  * Builds, runs then checks the output of a statement shader test.
@@ -52,7 +52,7 @@ fn main() {
   });
 
   const maxOutputValues = 1000;
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: 4 * (1 + maxOutputValues),
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });

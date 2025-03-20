@@ -32,7 +32,7 @@
 #import "CAFrameRateRangeUtilities.h"
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
-#import "WKVelocityTrackingScrollView.h"
+#import "WKBaseScrollView.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/KeyEventCodesIOS.h>
@@ -543,7 +543,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 @end
 
 @implementation WKKeyboardScrollViewAnimator {
-    __weak WKVelocityTrackingScrollView *_scrollView;
+    __weak WKBaseScrollView *_scrollView;
     RetainPtr<WKKeyboardScrollingAnimator> _animator;
 
     BOOL _delegateRespondsToIsKeyboardScrollable;
@@ -554,16 +554,10 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
 - (instancetype)init
 {
-    return nil;
-}
-
-- (instancetype)initWithScrollView:(WKVelocityTrackingScrollView *)scrollView
-{
     self = [super init];
     if (!self)
         return nil;
 
-    _scrollView = scrollView;
     _animator = adoptNS([[WKKeyboardScrollingAnimator alloc] initWithScrollable:self]);
 
     return self;
@@ -603,9 +597,20 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     [_animator willStartInteractiveScroll];
 }
 
-- (BOOL)beginWithEvent:(::WebEvent *)event
+- (BOOL)beginWithEvent:(::WebEvent *)event scrollView:(WKBaseScrollView *)scrollView
 {
+    if (!_scrollView)
+        _scrollView = scrollView;
+
+    if (_scrollView != scrollView)
+        return NO;
+
     return [_animator beginWithEvent:event];
+}
+
+- (WKBaseScrollView *)scrollView
+{
+    return _scrollView;
 }
 
 - (void)handleKeyEvent:(::WebEvent *)event
@@ -728,6 +733,8 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 {
     if (_delegateRespondsToDidFinishScrolling)
         [_delegate keyboardScrollViewAnimatorDidFinishScrolling:self];
+
+    _scrollView = nil;
 }
 
 @end

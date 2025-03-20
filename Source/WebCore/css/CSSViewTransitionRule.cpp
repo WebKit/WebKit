@@ -62,7 +62,7 @@ StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properti
                 m_types.append(currentValue.customIdent());
         };
         if (auto* list = dynamicDowncast<CSSValueList>(*value)) {
-            for (auto& currentValue : *list)
+            for (Ref currentValue : *list)
                 processSingleValue(currentValue);
         } else
             processSingleValue(*value);

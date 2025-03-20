@@ -784,7 +784,7 @@ inline const StringImpl* JSString::tryGetValueImpl() const
 
 inline JSString* asString(JSValue value)
 {
-    ASSERT(value.asCell()->isString());
+    ASSERT(value.isString());
     return jsCast<JSString*>(value.asCell());
 }
 

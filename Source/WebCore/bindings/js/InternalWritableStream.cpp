@@ -27,6 +27,7 @@
 #include "InternalWritableStream.h"
 
 #include "Exception.h"
+#include "JSDOMExceptionHandling.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSArrayBufferViewInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
@@ -194,6 +195,31 @@ void InternalWritableStream::closeIfPossible()
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
+    ASSERT(!arguments.hasOverflowed());
+
+    invokeWritableStreamFunction(*globalObject, privateName, arguments);
+    if (UNLIKELY(scope.exception()))
+        scope.clearException();
+}
+
+void InternalWritableStream::errorIfPossible(Exception&& exception)
+{
+    auto* globalObject = this->globalObject();
+    if (!globalObject)
+        return;
+
+    Ref vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto* clientData = downcast<JSVMClientData>(vm->clientData);
+    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamErrorIfPossiblePrivateName();
+
+    auto reason = createDOMException(*globalObject, WTFMove(exception));
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(guardedObject());
+    arguments.append(reason);
     ASSERT(!arguments.hasOverflowed());
 
     invokeWritableStreamFunction(*globalObject, privateName, arguments);

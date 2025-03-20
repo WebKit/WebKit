@@ -28,6 +28,9 @@
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 
+#define _STORE_IN_DLSYM_SECTION __attribute__((section("__TEXT,__dlsym_cstr")))
+#define _STORE_IN_GETCLASS_SECTION __attribute__((section("__TEXT,__getClass_cstr")))
+
 #pragma mark - Soft-link macros for use within a single source file
 
 #define SOFT_LINK_LIBRARY(lib) \
@@ -148,7 +151,8 @@ static void* lib##Library() \
     \
     static resultType init##functionName parameterDeclarations \
     { \
-        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
         RELEASE_ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
         return softLink##functionName parameterNames; \
     } \
@@ -167,7 +171,8 @@ static void* lib##Library() \
     static bool init##functionName() \
     { \
         ASSERT(!softLink##functionName); \
-        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
         return !!softLink##functionName; \
     } \
     \
@@ -192,7 +197,8 @@ static void* lib##Library() \
     \
     static functionName##PtrType functionName##Ptr() \
     { \
-        static functionName##PtrType ptr = reinterpret_cast<functionName##PtrType>(dlsym(framework##Library(), #functionName)); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+        static functionName##PtrType ptr = reinterpret_cast<functionName##PtrType>(dlsym(framework##Library(), auditedName)); \
         return ptr; \
     }
 
@@ -210,7 +216,8 @@ static void* lib##Library() \
     static Class init##className() \
     { \
         framework##Library(); \
-        class##className = objc_getClass(#className); \
+        _STORE_IN_GETCLASS_SECTION static char const auditedClassName[] = #className; \
+        class##className = objc_getClass(auditedClassName); \
         RELEASE_ASSERT(class##className); \
         get##className##Class = className##Function; \
         return class##className; \
@@ -237,7 +244,8 @@ static void* lib##Library() \
     static Class init##className() \
     { \
         framework##Library(); \
-        class##className = objc_getClass(#className); \
+        _STORE_IN_GETCLASS_SECTION static char const auditedClassName[] = #className; \
+        class##className = objc_getClass(auditedClassName); \
         get##className##Class = className##Function; \
         return class##className; \
     } \
@@ -261,7 +269,8 @@ static void* lib##Library() \
     \
     static type init##name() \
     { \
-        void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
         RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
         pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
@@ -280,7 +289,8 @@ static void* lib##Library() \
     \
     static type init##name() \
     { \
-        void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
         if (pointer) \
             pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
@@ -299,7 +309,8 @@ static void* lib##Library() \
     \
     static type init##name() \
     { \
-        void* constant = dlsym(framework##Library(), #name); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
+        void* constant = dlsym(framework##Library(), auditedName); \
         RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
         constant##name = *static_cast<type const *>(constant); \
         get##name = name##Function; \
@@ -325,7 +336,8 @@ static void* lib##Library() \
     static bool init##name() \
     { \
         ASSERT(!get##name); \
-        void* constant = dlsym(framework##Library(), #name); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
+        void* constant = dlsym(framework##Library(), auditedName); \
         if (!constant) \
             return false; \
         constant##name = *static_cast<type const *>(constant); \
@@ -451,7 +463,8 @@ static void* lib##Library() \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             framework##Library(isOptional); \
-            class##className = objc_getClass(#className); \
+            _STORE_IN_GETCLASS_SECTION static char const auditedClassName[] = #className; \
+            class##className = objc_getClass(auditedClassName); \
             if (!isOptional) \
                 RELEASE_ASSERT(class##className); \
             get##className##Class = className##Function; \
@@ -502,7 +515,8 @@ static void* lib##Library() \
         static variableType constant##framework##variableName; \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
-            void* constant = dlsym(framework##Library(), #variableName); \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+            void* constant = dlsym(framework##Library(), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
             constant##framework##variableName = *static_cast<variableType const *>(constant); \
         }); \
@@ -526,7 +540,8 @@ static void* lib##Library() \
     bool init_##framework##_##variableName(); \
     bool init_##framework##_##variableName() \
     { \
-        void* constant = dlsym(framework##Library(), #variableName); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+        void* constant = dlsym(framework##Library(), auditedName); \
         if (!constant) \
             return false; \
         constant##framework##variableName = *static_cast<variableType const *>(constant); \
@@ -571,7 +586,8 @@ static void* lib##Library() \
     { \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
-            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
         }); \
         return softLink##framework##functionName parameterNames; \
@@ -602,7 +618,8 @@ static void* lib##Library() \
     bool init_##framework##_##functionName() \
     { \
         ASSERT(!softLink##framework##functionName); \
-        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
         return !!softLink##framework##functionName; \
     } \
     \
@@ -644,7 +661,8 @@ static void* lib##Library() \
     { \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
-            void** pointer = static_cast<void**>(dlsym(framework##Library(), #variableName)); \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+            void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
             RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
             pointer##framework##variableName = static_cast<variableType>(*pointer); \
             get_##framework##_##variableName = pointer##framework##variableName##Function; \
@@ -672,7 +690,8 @@ static void* lib##Library() \
         static variableType * variable##framework##variableName; \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
-            void* variable = dlsym(framework##Library(), #variableName); \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+            void* variable = dlsym(framework##Library(), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(variable, "%s", dlerror()); \
             variable##framework##variableName = static_cast<variableType *>(variable); \
         }); \

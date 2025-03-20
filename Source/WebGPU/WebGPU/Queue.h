@@ -113,6 +113,7 @@ private:
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
 
     NSString* errorValidatingWriteTexture(const WGPUImageCopyTexture&, const WGPUTextureDataLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
+    std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
 
     id<MTLCommandQueue> m_commandQueue { nil };
     id<MTLCommandBuffer> m_commandBuffer { nil };
@@ -133,6 +134,8 @@ private:
     Lock m_committedNotCompletedBuffersLock;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> *m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
+    id<MTLBuffer> m_temporaryBuffer;
+    uint64_t m_temporaryBufferOffset;
 } SWIFT_SHARED_REFERENCE(refQueue, derefQueue);
 
 } // namespace WebGPU

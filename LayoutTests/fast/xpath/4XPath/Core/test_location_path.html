@@ -1,12 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="test.js"></script>
 <script src="../../xpath-test-pre.js"></script>
 </head>
 <body>
-<div id="console"></div>
 
 <script>
     result = DOM.evaluate("//*", CHILD2, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -25,6 +24,5 @@
     checkSnapshot("child::*/child::*", result, GCHILDREN1.concat(GCHILDREN2, LCHILDREN));
 
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

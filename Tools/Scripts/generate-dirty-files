@@ -29,14 +29,20 @@ import sys
 import re
 
 CHECKER_MAP = {
+    'Correct use of RetainPtr, adoptNS, and adoptCF': 'RetainPtrCtorAdoptChecker',
+    'Forward declared member or local variable or parameter': 'ForwardDeclChecker',
+    'Lambda capture of uncounted or unchecked variable': 'UncountedLambdaCapturesChecker',
+    'Lambda capture of unretained variables': 'UnretainedLambdaCapturesChecker',
     'Member variable is a raw-pointer/reference to reference-countable type': 'NoUncountedMemberChecker',
     'Member variable is a raw-pointer/reference to checked-pointer capable type': 'NoUncheckedPtrMemberChecker',
-    'Lambda capture of uncounted variable': 'UncountedLambdaCapturesChecker',
+    'Member variable is a raw-pointer/reference to retainable type' : 'NoUnretainedMemberChecker',
     "Reference-countable base class doesn't have virtual destructor": 'RefCntblBaseVirtualDtor',
     'Unchecked call argument for a raw pointer/reference parameter': 'UncheckedCallArgsChecker',
     'Unchecked raw pointer or reference not provably backed by checked variable': 'UncheckedLocalVarsChecker',
     'Uncounted call argument for a raw pointer/reference parameter': 'UncountedCallArgsChecker',
     'Uncounted raw pointer or reference not provably backed by ref-counted variable': 'UncountedLocalVarsChecker',
+    'Unretained call argument for a raw pointer/reference parameter': 'UnretainedCallArgsChecker',
+    'Unretained raw pointer or reference not provably backed by a RetainPtr': 'UnretainedLocalVarsChecker',
     'Unsafe cast': 'MemoryUnsafeCastChecker',
 }
 

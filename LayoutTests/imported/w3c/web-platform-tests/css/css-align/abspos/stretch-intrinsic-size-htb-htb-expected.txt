@@ -2,33 +2,21 @@
 
 
 
-FAIL .item 1 assert_equals:
-<div class="container">
-  <div class="item child" style="justify-self: start; align-self: start;" data-expected-width="20" data-expected-height="20"></div>
-</div>
-width expected 20 but got 40
+PASS .item 1
 FAIL .item 2 assert_equals:
 <div class="container">
   <div class="item child" style="justify-self: stretch; align-self: start;" data-expected-width="40" data-expected-height="40"></div>
 </div>
-height expected 40 but got 50
-FAIL .item 3 assert_equals:
-<div class="container">
-  <div class="item child" style="justify-self: start; align-self: stretch;" data-expected-width="50" data-expected-height="50"></div>
-</div>
-width expected 50 but got 40
+height expected 40 but got 20
+PASS .item 3
 PASS .item 4
-FAIL .item 5 assert_equals:
-<div class="container">
-  <div class="item ar" style="justify-self: start; align-self: start;" data-expected-width="20" data-expected-height="20"></div>
-</div>
-width expected 20 but got 40
+PASS .item 5
 PASS .item 6
 FAIL .item 7 assert_equals:
 <div class="container">
   <div class="item ar" style="justify-self: start; align-self: stretch;" data-expected-width="50" data-expected-height="50"></div>
 </div>
-width expected 50 but got 40
+width expected 50 but got 20
 FAIL .item 8 assert_equals:
 <div class="container">
   <div class="item ar" style="justify-self: stretch; align-self: stretch;" data-expected-width="40" data-expected-height="50"></div>

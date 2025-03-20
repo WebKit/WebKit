@@ -47,9 +47,10 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Node.h>
 #include <WebCore/Page.h>
-#include <WebCore/Position.h>
+#include <WebCore/PositionInlines.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>
+#include <WebCore/RenderText.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
@@ -415,11 +416,9 @@ bool InjectedBundleNodeHandle::isSelectElement() const
 
 bool InjectedBundleNodeHandle::isSelectableTextNode() const
 {
-    if (!is<Text>(m_node))
-        return false;
-
-    auto renderer = m_node->renderer();
-    return renderer && renderer->style().usedUserSelect() != UserSelect::None;
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_node->renderer()))
+        return renderText->style().usedUserSelect() != UserSelect::None;
+    return false;
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()

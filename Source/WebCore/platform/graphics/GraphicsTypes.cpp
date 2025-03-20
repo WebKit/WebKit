@@ -138,8 +138,8 @@ TextStream& operator<<(TextStream& ts, BlendMode blendMode)
 
 TextStream& operator<<(TextStream& ts, CompositeMode compositeMode)
 {
-    ts.dumpProperty("composite-operation", compositeMode.operation);
-    ts.dumpProperty("blend-mode", compositeMode.blendMode);
+    ts.dumpProperty("composite-operation"_s, compositeMode.operation);
+    ts.dumpProperty("blend-mode"_s, compositeMode.blendMode);
     return ts;
 }
 
@@ -147,13 +147,13 @@ TextStream& operator<<(TextStream& ts, GradientSpreadMethod spreadMethod)
 {
     switch (spreadMethod) {
     case GradientSpreadMethod::Pad:
-        ts << "pad";
+        ts << "pad"_s;
         break;
     case GradientSpreadMethod::Reflect:
-        ts << "reflect";
+        ts << "reflect"_s;
         break;
     case GradientSpreadMethod::Repeat:
-        ts << "repeat";
+        ts << "repeat"_s;
         break;
     }
     return ts;
@@ -163,19 +163,19 @@ TextStream& operator<<(TextStream& ts, InterpolationQuality interpolationQuality
 {
     switch (interpolationQuality) {
     case InterpolationQuality::Default:
-        ts << "default";
+        ts << "default"_s;
         break;
     case InterpolationQuality::DoNotInterpolate:
-        ts << "do-not-interpolate";
+        ts << "do-not-interpolate"_s;
         break;
     case InterpolationQuality::Low:
-        ts << "low";
+        ts << "low"_s;
         break;
     case InterpolationQuality::Medium:
-        ts << "medium";
+        ts << "medium"_s;
         break;
     case InterpolationQuality::High:
-        ts << "high";
+        ts << "high"_s;
         break;
     }
     return ts;
@@ -185,10 +185,10 @@ TextStream& operator<<(TextStream& ts, WindRule rule)
 {
     switch (rule) {
     case WindRule::NonZero:
-        ts << "NON-ZERO";
+        ts << "NON-ZERO"_s;
         break;
     case WindRule::EvenOdd:
-        ts << "EVEN-ODD";
+        ts << "EVEN-ODD"_s;
         break;
     }
 
@@ -199,13 +199,13 @@ TextStream& operator<<(TextStream& ts, LineCap capStyle)
 {
     switch (capStyle) {
     case LineCap::Butt:
-        ts << "BUTT";
+        ts << "BUTT"_s;
         break;
     case LineCap::Round:
-        ts << "ROUND";
+        ts << "ROUND"_s;
         break;
     case LineCap::Square:
-        ts << "SQUARE";
+        ts << "SQUARE"_s;
         break;
     }
     return ts;
@@ -215,13 +215,13 @@ TextStream& operator<<(TextStream& ts, LineJoin joinStyle)
 {
     switch (joinStyle) {
     case LineJoin::Miter:
-        ts << "MITER";
+        ts << "MITER"_s;
         break;
     case LineJoin::Round:
-        ts << "ROUND";
+        ts << "ROUND"_s;
         break;
     case LineJoin::Bevel:
-        ts << "BEVEL";
+        ts << "BEVEL"_s;
         break;
     }
     return ts;
@@ -231,22 +231,22 @@ TextStream& operator<<(TextStream& ts, StrokeStyle strokeStyle)
 {
     switch (strokeStyle) {
     case StrokeStyle::NoStroke:
-        ts << "no-stroke";
+        ts << "no-stroke"_s;
         break;
     case StrokeStyle::SolidStroke:
-        ts << "solid-stroke";
+        ts << "solid-stroke"_s;
         break;
     case StrokeStyle::DottedStroke:
-        ts << "dotted-stroke";
+        ts << "dotted-stroke"_s;
         break;
     case StrokeStyle::DashedStroke:
-        ts << "dashed-stroke";
+        ts << "dashed-stroke"_s;
         break;
     case StrokeStyle::DoubleStroke:
-        ts << "double-stroke";
+        ts << "double-stroke"_s;
         break;
     case StrokeStyle::WavyStroke:
-        ts << "wavy-stroke";
+        ts << "wavy-stroke"_s;
         break;
     }
     return ts;
@@ -256,10 +256,10 @@ TextStream& operator<<(TextStream& ts, TextDrawingMode textDrawingMode)
 {
     switch (textDrawingMode) {
     case TextDrawingMode::Fill:
-        ts << "fill";
+        ts << "fill"_s;
         break;
     case TextDrawingMode::Stroke:
-        ts << "stroke";
+        ts << "stroke"_s;
         break;
     }
     return ts;

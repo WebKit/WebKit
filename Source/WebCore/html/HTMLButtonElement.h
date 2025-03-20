@@ -40,7 +40,11 @@ public:
     
     const AtomString& value() const;
 
+    const AtomString& command() const;
+    void setCommand(const AtomString&);
+
     RefPtr<Element> commandForElement() const;
+    CommandType commandType() const;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
@@ -65,7 +69,6 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
 
-    CommandType commandType() const;
     void handleCommand();
 
     bool appendFormData(DOMFormData&) final;
@@ -87,6 +90,8 @@ private:
     bool computeWillValidate() const final;
 
     bool isSubmitButton() const final;
+
+    void computeType(const AtomString& typeAttrValue);
 
     Type m_type;
     bool m_isActivatedSubmit;

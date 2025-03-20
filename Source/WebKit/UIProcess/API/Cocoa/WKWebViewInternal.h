@@ -32,6 +32,7 @@
 #import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextAnimationType.h"
+#import <WebCore/CocoaView.h>
 #import <WebCore/FixedContainerEdges.h>
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -42,6 +43,7 @@
 #import <variant>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/HashMap.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -132,6 +134,7 @@ class ViewGestureController;
 
 @class WKContentView;
 @class WKPasswordView;
+@class WKScrollGeometry;
 @class WKScrollView;
 @class WKTextExtractionItem;
 @class WKTextExtractionRequest;
@@ -155,6 +158,10 @@ class ViewGestureController;
 
 #if PLATFORM(MAC)
 @class WKTextFinderClient;
+#endif
+
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+@class WKPDFPageNumberIndicator;
 #endif
 
 @protocol _WKTextManipulationDelegate;
@@ -426,6 +433,18 @@ struct PerWebProcessState {
 #endif
 
     WebCore::FixedContainerEdges _fixedContainerEdges;
+
+    RetainPtr<WKScrollGeometry> _currentScrollGeometry;
+
+    BOOL _allowsMagnification;
+
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+    std::pair<Markable<WebKit::PDFPluginIdentifier>, RetainPtr<WKPDFPageNumberIndicator>> _pdfPageNumberIndicator;
+#endif
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    WebCore::RectEdges<RetainPtr<CocoaView>> _fixedColorExtensionViews;
+#endif
 }
 
 - (BOOL)_isValid;
@@ -450,11 +469,11 @@ struct PerWebProcessState {
 #endif
 
 #if ENABLE(SCREEN_TIME)
-- (void)_installScreenTimeWebpageController;
+- (void)_installScreenTimeWebpageControllerIfNeeded;
 - (void)_uninstallScreenTimeWebpageController;
 
 - (void)_updateScreenTimeViewGeometry;
-- (void)_updateScreenTimeShieldVisibilityForWindow;
+- (void)_updateScreenTimeBasedOnWindowVisibility;
 #endif
 
 #if ENABLE(WRITING_TOOLS)
@@ -502,6 +521,9 @@ struct PerWebProcessState {
 - (void)_dismissDigitalCredentialsPicker:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 #endif
 
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+- (void)_updateFixedColorExtensionViewFrames;
+#endif
 
 #if ENABLE(GAMEPAD)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
@@ -515,6 +537,7 @@ struct PerWebProcessState {
 #endif
 
 - (void)_updateFixedContainerEdges:(const WebCore::FixedContainerEdges&)edges;
+- (void)_updateScrollGeometryWithContentOffset:(CGPoint)contentOffset contentSize:(CGSize)contentSize;
 
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;
@@ -528,11 +551,22 @@ struct PerWebProcessState {
 #endif
 #endif
 
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+
+- (void)_createPDFPageNumberIndicator:(WebKit::PDFPluginIdentifier)identifier withFrame:(CGRect)rect pageCount:(size_t)pageCount;
+- (void)_removePDFPageNumberIndicator:(WebKit::PDFPluginIdentifier)identifier;
+- (void)_updatePDFPageNumberIndicator:(WebKit::PDFPluginIdentifier)identifier withFrame:(CGRect)rect;
+- (void)_updatePDFPageNumberIndicator:(WebKit::PDFPluginIdentifier)identifier currentPage:(size_t)pageIndex;
+- (void)_updatePDFPageNumberIndicatorIfNeeded;
+- (void)_removeAnyPDFPageNumberIndicator;
+
+#endif
+
 @property (nonatomic, setter=_setHasActiveNowPlayingSession:) BOOL _hasActiveNowPlayingSession;
 
 @end
 
-RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&);
+RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 @interface WKWebView (FullScreenAPI_Internal)
@@ -561,6 +595,14 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 #if PLATFORM(MAC)
 @property (nonatomic, setter=_setAlwaysBounceVertical:) BOOL _alwaysBounceVertical;
 @property (nonatomic, setter=_setAlwaysBounceHorizontal:) BOOL _alwaysBounceHorizontal;
+
+- (void)_setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+@property (nonatomic, setter=_setAllowsMagnification:) BOOL _allowsMagnification;
+#endif
+
+- (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
 
 @end

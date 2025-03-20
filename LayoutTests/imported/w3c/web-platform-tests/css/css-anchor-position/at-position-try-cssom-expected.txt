@@ -1,6 +1,6 @@
 
 FAIL CSSPositionTryRule attribute values Can't find variable: CSSPositionTryDescriptors
-FAIL CSSPositionTryRule.style.setProperty setting allowed and disallowed properties assert_equals: expected 0 but got 999999
+PASS CSSPositionTryRule.style.setProperty setting allowed and disallowed properties
 PASS CSSPositionTryDescriptors.item
 PASS CSSPositionTryDescriptors.cssText
 PASS CSSPositionTryDescriptors.getPropertyValue(margin)

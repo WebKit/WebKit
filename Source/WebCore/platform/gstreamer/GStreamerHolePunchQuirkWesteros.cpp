@@ -37,7 +37,7 @@ GstElement* GStreamerHolePunchQuirkWesteros::createHolePunchVideoSink(bool isLeg
         return nullptr;
 
     // Westeros using holepunch.
-    GstElement* videoSink = makeGStreamerElement("westerossink", "WesterosVideoSink");
+    GstElement* videoSink = makeGStreamerElement("westerossink"_s, "WesterosVideoSink"_s);
     g_object_set(videoSink, "zorder", 0.0f, nullptr);
     if (isPIPRequested) {
         g_object_set(videoSink, "res-usage", 0u, nullptr);
@@ -53,7 +53,7 @@ GstElement* GStreamerHolePunchQuirkWesteros::createHolePunchVideoSink(bool isLeg
 
 bool GStreamerHolePunchQuirkWesteros::setHolePunchVideoRectangle(GstElement* videoSink, const IntRect& rect)
 {
-    if (UNLIKELY(!gstObjectHasProperty(videoSink, "rectangle")))
+    if (UNLIKELY(!gstObjectHasProperty(videoSink, "rectangle"_s)))
         return false;
 
     auto rectString = makeString(rect.x(), ',', rect.y(), ',', rect.width(), ',', rect.height());

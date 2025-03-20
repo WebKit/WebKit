@@ -52,7 +52,7 @@ namespace Style {
 using namespace HTMLNames;
 
 struct SameSizeAsRuleData {
-    void* a;
+    uint64_t a;
     unsigned b;
     unsigned c;
     unsigned d[4];
@@ -167,8 +167,7 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
 }
 
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
-    : m_styleRule(&styleRule)
-    , m_selectorIndex(selectorIndex)
+    : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
     , m_position(position)
     , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(*selector())))
@@ -181,7 +180,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 {
     ASSERT(m_position == position);
-    ASSERT(m_selectorIndex == selectorIndex);
+    ASSERT(this->selectorIndex() == selectorIndex);
 }
 
 } // namespace Style

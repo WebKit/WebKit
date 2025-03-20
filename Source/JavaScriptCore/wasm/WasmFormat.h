@@ -291,7 +291,7 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     auto parentRTT = TypeInformation::tryGetCanonicalRTT(parent);
     ASSERT(subRTT.has_value() && parentRTT.has_value());
 
-    return subRTT.value()->isSubRTT(*parentRTT.value());
+    return subRTT.value()->isStrictSubRTT(*parentRTT.value());
 }
 
 bool isSubtype(Type, Type);
@@ -837,6 +837,12 @@ struct WasmOrJSImportableFunctionCallLinkInfo final : public WasmOrJSImportableF
     std::unique_ptr<DataOnlyCallLinkInfo> callLinkInfo { };
     static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WasmOrJSImportableFunctionCallLinkInfo, callLinkInfo); }
 };
+
+#if ASSERT_ENABLED
+void validateWasmValue(uint64_t wasmValue, Type expectedType);
+#else
+ALWAYS_INLINE void validateWasmValue(uint64_t, Type) { }
+#endif
 
 } } // namespace JSC::Wasm
 

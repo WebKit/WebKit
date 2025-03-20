@@ -371,6 +371,27 @@ void ContentFilter::setHostProcessAuditToken(const std::optional<audit_token_t>&
 }
 #endif
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+
+bool ContentFilter::isWebContentRestrictionsUnblockURL(const URL& url)
+{
+#if PLATFORM(MAC)
+    // FIXME: Remove this when rdar://145714903 is fixed.
+    if (url.host() == "127.0.0.1"_s && url.path() == "/webcontentfilter.override.local"_s)
+        return true;
+#endif
+
+    return url.protocolIs(ContentFilter::urlScheme()) && equalIgnoringASCIICase(url.host(), "unblock"_s);
+}
+
+void ContentFilter::setUsesWebContentRestrictions(bool usesWebContentRestrictions)
+{
+    for (auto& contentFilter : m_contentFilters)
+        contentFilter->setUsesWebContentRestrictions(usesWebContentRestrictions);
+}
+
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_FILTERING)

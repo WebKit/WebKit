@@ -54,6 +54,7 @@ public:
     static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(const AtomString& name);
 
     const WeakStyleable& sourceStyleable() const { return m_source; }
+    virtual Element* bindingsSource() const;
     virtual Element* source() const;
     void setSource(Element*);
     void setSource(const Styleable&);

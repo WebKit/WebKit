@@ -141,7 +141,6 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
         });
 
         for (auto&& recordInfo : recordInfos) {
-            RELEASE_ASSERT(!recordInfo.url().string().impl()->isAtom());
             recordInfo.setIdentifier(nextRecordIdentifier());
             protectedThis->m_records.ensure(computeKeyURL(recordInfo.url()), [] {
                 return Vector<CacheStorageRecordInformation> { };
@@ -188,7 +187,6 @@ void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& option
 
         WebCore::CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary };
         for (auto& record : iterator->value) {
-            RELEASE_ASSERT(!record.url().string().impl()->isAtom());
             if (WebCore::DOMCacheEngine::queryCacheMatch(options.request, record.url(), record.hasVaryStar(), record.varyHeaders(), queryOptions))
                 targetRecordInfos.append(record);
         }
@@ -275,7 +273,6 @@ CacheStorageRecordInformation* CacheStorageCache::findExistingRecord(const WebCo
 
     WebCore::CacheQueryOptions options;
     auto index = iterator->value.findIf([&] (auto& record) {
-        RELEASE_ASSERT(!record.url().string().impl()->isAtom());
         bool hasMatchedIdentifier = !identifier || identifier == record.identifier();
         return hasMatchedIdentifier && WebCore::DOMCacheEngine::queryCacheMatch(request, record.url(), record.hasVaryStar(), record.varyHeaders(), options);
     });
@@ -341,7 +338,6 @@ void CacheStorageCache::putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&& r
 
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     for (auto& record : records) {
-        RELEASE_ASSERT(!record.info.url().string().impl()->isAtom());
         if (auto* existingRecord = findExistingRecord(record.request)) {
             record.info.setIdentifier(existingRecord->identifier());
             targetRecordInfos.append(*existingRecord);
@@ -390,11 +386,9 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
                 continue;
             }
 
-            auto existingKey = existingRecordInfo->key();
-            record.info.setKey(WTFMove(existingKey));
+            record.info.setKey(existingRecordInfo->key());
             record.info.setInsertionTime(existingRecordInfo->insertionTime());
-            // FIXME: Remove isolatedCopy() when rdar://105122133 is resolved.
-            record.info.setURL(existingRecordInfo->url().isolatedCopy());
+            record.info.setURL(existingRecordInfo->url());
             record.requestHeadersGuard = existingRecord->requestHeadersGuard;
             record.request = WTFMove(existingRecord->request);
             record.options = WTFMove(existingRecord->options);

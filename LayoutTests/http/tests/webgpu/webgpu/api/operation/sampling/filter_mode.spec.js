@@ -2,14 +2,18 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `
 Tests the behavior of different filtering modes in minFilter/magFilter/mipmapFilter.
+
+Note: It's possible these tests duplicated tests under shader/execution/expression/call/builtin/textureXXX.
+Further, these tests only test encodable/filterable/renderable color formats. Depth, sint, uint,
+and compressed formats are not tested.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { kAddressModes, kMipmapFilterModes } from '../../../capability_info.js';
 import {
 
-  kRenderableColorTextureFormats,
-  kTextureFormatInfo } from
+  getTextureFormatType,
+  kPossiblyRenderableColorTextureFormats } from
 '../../../format_info.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { getTextureCopyLayout } from '../../../util/texture/layout.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
@@ -22,7 +26,18 @@ const kCheckerTextureData = [
 { R: 1.0, G: 1.0, B: 1.0, A: 1.0 }];
 
 
-class FilterModeTest extends TextureTestMixin(GPUTest) {
+/**
+ * These formats are possibly renderable and possibly filterable.
+ * One more both may required certain features to be enabled.
+ */
+const kPossiblyRenderablePossiblyFilterableColorTextureFormats =
+kPossiblyRenderableColorTextureFormats.filter(
+  (format) =>
+  getTextureFormatType(format) === 'float' ||
+  getTextureFormatType(format) === 'unfilterable-float'
+);
+
+class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
   runFilterRenderPipeline(
   sampler,
   module,
@@ -41,7 +56,7 @@ class FilterModeTest extends TextureTestMixin(GPUTest) {
         usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
       }
     );
-    const renderTexture = this.device.createTexture({
+    const renderTexture = this.createTextureTracked({
       format,
       size: renderSize,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
@@ -468,25 +483,15 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
-filter((t) => {
-  return (
-    kTextureFormatInfo[t.format].color.type === 'float' ||
-    kTextureFormatInfo[t.format].color.type === 'unfilterable-float');
-
-}).
+combine('format', kPossiblyRenderablePossiblyFilterableColorTextureFormats).
 beginSubcases().
 combine('addressModeU', kAddressModes).
 combine('addressModeV', kAddressModes)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  if (kTextureFormatInfo[t.params.format].color.type === 'unfilterable-float') {
-    t.selectDeviceOrSkipTestCase('float32-filterable');
-  }
-}).
 fn((t) => {
   const { format, addressModeU, addressModeV } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotFilterable(format);
   const sampler = t.device.createSampler({
     addressModeU,
     addressModeV,
@@ -591,25 +596,15 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
-filter((t) => {
-  return (
-    kTextureFormatInfo[t.format].color.type === 'float' ||
-    kTextureFormatInfo[t.format].color.type === 'unfilterable-float');
-
-}).
+combine('format', kPossiblyRenderablePossiblyFilterableColorTextureFormats).
 beginSubcases().
 combine('addressModeU', kAddressModes).
 combine('addressModeV', kAddressModes)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  if (kTextureFormatInfo[t.params.format].color.type === 'unfilterable-float') {
-    t.selectDeviceOrSkipTestCase('float32-filterable');
-  }
-}).
 fn((t) => {
   const { format, addressModeU, addressModeV } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotFilterable(format);
   const sampler = t.device.createSampler({
     addressModeU,
     addressModeV,
@@ -726,25 +721,15 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
-filter((t) => {
-  return (
-    kTextureFormatInfo[t.format].color.type === 'float' ||
-    kTextureFormatInfo[t.format].color.type === 'unfilterable-float');
-
-}).
+combine('format', kPossiblyRenderablePossiblyFilterableColorTextureFormats).
 beginSubcases().
 combine('addressModeU', kAddressModes).
 combine('addressModeV', kAddressModes)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  if (kTextureFormatInfo[t.params.format].color.type === 'unfilterable-float') {
-    t.selectDeviceOrSkipTestCase('float32-filterable');
-  }
-}).
 fn((t) => {
   const { format, addressModeU, addressModeV } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotFilterable(format);
   const sampler = t.device.createSampler({
     addressModeU,
     addressModeV,
@@ -859,25 +844,15 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
-filter((t) => {
-  return (
-    kTextureFormatInfo[t.format].color.type === 'float' ||
-    kTextureFormatInfo[t.format].color.type === 'unfilterable-float');
-
-}).
+combine('format', kPossiblyRenderablePossiblyFilterableColorTextureFormats).
 beginSubcases().
 combine('addressModeU', kAddressModes).
 combine('addressModeV', kAddressModes)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  if (kTextureFormatInfo[t.params.format].color.type === 'unfilterable-float') {
-    t.selectDeviceOrSkipTestCase('float32-filterable');
-  }
-}).
 fn((t) => {
   const { format, addressModeU, addressModeV } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotFilterable(format);
   const sampler = t.device.createSampler({
     addressModeU,
     addressModeV,
@@ -956,24 +931,14 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
-filter((t) => {
-  return (
-    kTextureFormatInfo[t.format].color.type === 'float' ||
-    kTextureFormatInfo[t.format].color.type === 'unfilterable-float');
-
-}).
+combine('format', kPossiblyRenderablePossiblyFilterableColorTextureFormats).
 beginSubcases().
 combine('filterMode', kMipmapFilterModes)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  if (kTextureFormatInfo[t.params.format].color.type === 'unfilterable-float') {
-    t.selectDeviceOrSkipTestCase('float32-filterable');
-  }
-}).
 fn((t) => {
   const { format, filterMode } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotFilterable(format);
   // Takes a 8x8/4x4 mipmapped texture and renders it on multiple quads with different UVs such
   // that each instanced quad from left to right emulates moving the quad further and further from
   // the camera. Each quad is then rendered to a single pixel in a 1-dimensional texture. Since
@@ -1000,7 +965,7 @@ fn((t) => {
       usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
     }
   );
-  const renderTexture = t.device.createTexture({
+  const renderTexture = t.createTextureTracked({
     format,
     size: [kRenderSize, 1],
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
@@ -1126,7 +1091,7 @@ fn((t) => {
             }
             if (changes !== 1) {
               return Error(
-                `Nearest filtering on mipmaps should change exacly once but found (${changes}):\n` +
+                `Nearest filtering on mipmaps should change exactly once but found (${changes}):\n` +
                 view.toString(
                   { x: 0, y: 0, z: 0 },
                   { width: kRenderSize, height: 1, depthOrArrayLayers: 1 }

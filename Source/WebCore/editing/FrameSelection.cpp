@@ -80,7 +80,6 @@
 #include "ShadowRoot.h"
 #include "SimpleCaretAnimator.h"
 #include "SimpleRange.h"
-#include "SpatialNavigation.h"
 #include "StyleProperties.h"
 #include "StyleTreeResolver.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -1574,7 +1573,7 @@ bool FrameSelection::modify(Alteration alter, SelectionDirection direction, Text
     if (position.isNull())
         return false;
 
-    if (m_document && isSpatialNavigationEnabled(m_document->frame())) {
+    if (m_document && m_document->settings().spatialNavigationEnabled()) {
         if (!wasRange && alter == Alteration::Move && position == originalStartPosition)
             return false;
     }
@@ -1784,6 +1783,7 @@ void FrameSelection::willBeRemovedFromFrame()
         CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
     m_previousCaretNode = nullptr;
     m_typingStyle = nullptr;
+    m_originalBase = { };
 }
 
 void FrameSelection::setStart(const VisiblePosition& position, UserTriggered trigger)

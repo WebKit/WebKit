@@ -226,7 +226,7 @@ inline double percentAvailableMemoryInUse()
 BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);
 #endif
 
-BEXPORT void enableMiniMode();
+BEXPORT void enableMiniMode(bool forceMiniMode = false);
 
 // Used for debugging only.
 BEXPORT void disableScavenger();

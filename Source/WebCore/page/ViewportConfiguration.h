@@ -62,6 +62,7 @@ public:
         bool ignoreInitialScaleForLayoutWidth { false };
 
         bool shouldHonorMinimumEffectiveDeviceWidthFromClient { true };
+        bool minimumScaleDoesNotAdaptToContent { false };
 
         friend bool operator==(const Parameters&, const Parameters&) = default;
     };

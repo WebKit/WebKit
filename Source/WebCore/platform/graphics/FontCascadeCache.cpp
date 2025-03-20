@@ -30,8 +30,10 @@
 #include "config.h"
 #include "FontCascadeCache.h"
 
+#include "CSSFontSelector.h"
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -95,27 +97,35 @@ void FontCascadeCache::pruneSystemFallbackFonts()
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     unsigned familyCount = description.familyCount();
+    auto hasComplexFontSelector = fontSelector && !fontSelector->isSimpleFontSelectorForDescription();
     return FontCascadeCacheKey {
         FontDescriptionKey(description),
         Vector<FontFamilyName, 3>(familyCount, [&](size_t i) { return description.familyAt(i); }),
-        fontSelector ? fontSelector->uniqueId() : 0,
-        fontSelector ? fontSelector->version() : 0
+        hasComplexFontSelector ? fontSelector->uniqueId() : 0,
+        hasComplexFontSelector ? fontSelector->version() : 0,
+        hasComplexFontSelector
     };
 }
 
-Ref<FontCascadeFonts> FontCascadeCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
+Ref<FontCascadeFonts> FontCascadeCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, FontSelector* fontSelector)
 {
-    auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
+    auto key = makeFontCascadeCacheKey(fontDescription, fontSelector);
     auto addResult = m_entries.add(key, nullptr);
     if (!addResult.isNewEntry)
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
-    newEntry = makeUnique<FontCascadeCacheEntry>(FontCascadeCacheEntry { WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)) });
+    newEntry = makeUnique<FontCascadeCacheEntry>(FontCascadeCacheEntry { WTFMove(key), FontCascadeFonts::create() });
     Ref<FontCascadeFonts> fonts = newEntry->fonts.get();
 
+
+#if !PLATFORM(IOS_FAMILY)
+    static constexpr unsigned unreferencedPruneInterval = 1000;
+    static constexpr int maximumEntries = 5000;
+#else
     static constexpr unsigned unreferencedPruneInterval = 50;
     static constexpr int maximumEntries = 400;
+#endif
     static unsigned pruneCounter;
     // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
     if (!(++pruneCounter % unreferencedPruneInterval))

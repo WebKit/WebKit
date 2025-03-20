@@ -51,6 +51,7 @@
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/FrameTreeSyncData.h>
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NavigationScheduler.h>
@@ -60,6 +61,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(APPLE_PAY)
+#include <WebCore/PaymentSession.h>
+#endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 
@@ -287,6 +292,10 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::Cert
     m_MIMEType = contentType;
     m_certificateInfo = certificateInfo;
     m_containsPluginDocument = containsPluginDocument;
+
+    auto webPage = protectedPage();
+    if (webPage && webPage->protectedPreferences()->siteIsolationEnabled())
+        broadcastFrameTreeSyncData(calculateFrameTreeSyncData());
 }
 
 void WebFrameProxy::didFinishLoad()
@@ -317,8 +326,8 @@ void WebFrameProxy::didChangeTitle(const String& title)
 
 WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<BrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&& completionHandler, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData)
 {
-    if (m_activeListener)
-        m_activeListener->ignore();
+    if (RefPtr previousListener = m_activeListener)
+        previousListener->ignore();
     m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (PolicyAction action, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<BrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         if (action != PolicyAction::Use && m_navigateCallback)
             m_navigateCallback(pageIdentifier(), frameID());
@@ -452,11 +461,11 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
     protectedPage()->didCommitLoadForFrame(connection, frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, proxyName, source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
-void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
+void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler)
 {
     class FrameInfoCallbackAggregator : public RefCounted<FrameInfoCallbackAggregator> {
     public:
-        static Ref<FrameInfoCallbackAggregator> create(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler, size_t childCount) { return adoptRef(*new FrameInfoCallbackAggregator(WTFMove(completionHandler), childCount)); }
+        static Ref<FrameInfoCallbackAggregator> create(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler, size_t childCount) { return adoptRef(*new FrameInfoCallbackAggregator(WTFMove(completionHandler), childCount)); }
         void setCurrentFrameData(FrameInfoData&& data) { m_currentFrameData = WTFMove(data); }
         void addChildFrameData(size_t index, FrameTreeNodeData&& data) { m_childFrameData[index] = WTFMove(data); }
         ~FrameInfoCallbackAggregator()
@@ -466,19 +475,19 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
             auto nonEmptyChildFrameData = WTF::compactMap(WTFMove(m_childFrameData), [](std::optional<FrameTreeNodeData>&& data) {
                 return std::forward<decltype(data)>(data);
             });
-            m_completionHandler(FrameTreeNodeData {
-                WTFMove(m_currentFrameData),
+            m_completionHandler(m_currentFrameData ? std::optional(FrameTreeNodeData {
+                WTFMove(*m_currentFrameData),
                 WTFMove(nonEmptyChildFrameData)
-            });
+            }) : std::nullopt);
         }
 
     private:
-        FrameInfoCallbackAggregator(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler, size_t childCount)
+        FrameInfoCallbackAggregator(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler, size_t childCount)
             : m_completionHandler(WTFMove(completionHandler))
             , m_childFrameData(childCount, { }) { }
 
-        CompletionHandler<void(FrameTreeNodeData&&)> m_completionHandler;
-        FrameInfoData m_currentFrameData;
+        CompletionHandler<void(std::optional<FrameTreeNodeData>&&)> m_completionHandler;
+        std::optional<FrameInfoData> m_currentFrameData;
         Vector<std::optional<FrameTreeNodeData>> m_childFrameData;
     };
 
@@ -489,21 +498,21 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
     }, *webPageIDInCurrentProcess());
 
     RefPtr page = this->page();
-    bool isSiteIsolationEnabled = page && page->preferences().siteIsolationEnabled();
+    bool isSiteIsolationEnabled = page && page->protectedPreferences()->siteIsolationEnabled();
     size_t index = 0;
     for (Ref childFrame : m_childFrames) {
-        childFrame->getFrameInfo([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (FrameTreeNodeData&& data) {
-            if (!data.info.frameID)
-                return; // No WebFrame with the requested frameID in the WebProcess.
+        childFrame->getFrameInfo([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (std::optional<FrameTreeNodeData>&& data) {
+            if (!data)
+                return;
 
             // FIXME: m_childFrames currently contains iframes that are in the back/forward cache, not currently
             // connected to this parent frame. They should really not be part of m_childFrames anymore.
             // FIXME: With site isolation enabled, remote frames currently don't have a parentFrameID so we temporarily
             // ignore this check.
-            if (data.info.parentFrameID != frameID && !isSiteIsolationEnabled)
+            if (data->info.parentFrameID != frameID && !isSiteIsolationEnabled)
                 return;
 
-            aggregator->addChildFrameData(index, WTFMove(data));
+            aggregator->addChildFrameData(index, WTFMove(*data));
         });
     }
 }
@@ -514,6 +523,7 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
         m_frameID,
         m_opener ? std::optional(m_opener->frameID()) : std::nullopt,
         m_frameName,
+        calculateFrameTreeSyncData(),
         WTF::map(m_childFrames, [] (auto& frame) {
             return frame->frameTreeCreationParameters();
         })
@@ -537,15 +547,46 @@ bool WebFrameProxy::isFocused() const
     return webPage && webPage->focusedFrame() == this;
 }
 
-void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process)
+void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process, ClearFrameTreeSyncData clearFrameTreeSyncData)
 {
+    // Only clear the FrameTreeSyncData on all child processes once, when handling the main frame.
+    // No point in clearing it multiple times in a tight loop.
+    if (clearFrameTreeSyncData == ClearFrameTreeSyncData::Yes)
+        broadcastFrameTreeSyncData(FrameTreeSyncData::create());
+
     for (Ref child : m_childFrames)
-        child->remoteProcessDidTerminate(process);
+        child->remoteProcessDidTerminate(process, ClearFrameTreeSyncData::No);
     if (process.coreProcessIdentifier() != this->process().coreProcessIdentifier())
         return;
     if (m_frameLoadState.state() == FrameLoadState::State::Finished)
         return;
+
     notifyParentOfLoadCompletion(protectedProcess());
+}
+
+Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
+{
+#if ENABLE(APPLE_PAY)
+    std::optional<const CertificateInfo> certificateInfo = m_certificateInfo.isEmpty() ? std::nullopt : std::optional<const CertificateInfo>(m_certificateInfo);
+    bool isSecureForPaymentSession = PaymentSession::isSecureForSession(url(), WTFMove(certificateInfo));
+#else
+    bool isSecureForPaymentSession = false;
+#endif
+
+    return FrameTreeSyncData::create(isSecureForPaymentSession);
+}
+
+void WebFrameProxy::broadcastFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
+{
+    RefPtr webPage = m_page.get();
+    if (!webPage)
+        return;
+
+    RELEASE_ASSERT(webPage->protectedPreferences()->siteIsolationEnabled());
+
+    webPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::UpdateFrameTreeSyncData(m_frameID, data), pageID);
+    });
 }
 
 void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess)
@@ -559,6 +600,7 @@ void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProc
     Ref parentFrameProcess = parentFrame->process();
     if (parentFrameProcess->coreProcessIdentifier() == childFrameProcess.coreProcessIdentifier())
         return;
+
     parentFrameProcess->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID()), *webPageID);
 }
 
@@ -687,16 +729,6 @@ WebFrameProxy& WebFrameProxy::rootFrame()
 bool WebFrameProxy::isMainFrame() const
 {
     return m_frameLoadState.isMainFrame() == IsMainFrame::Yes;
-}
-
-void WebFrameProxy::setPendingChildBackForwardItem(WebBackForwardListFrameItem* pendingChildBackForwardItem)
-{
-    m_pendingChildBackForwardItem = pendingChildBackForwardItem;
-}
-
-WebBackForwardListFrameItem* WebFrameProxy::takePendingChildBackForwardItem()
-{
-    return std::exchange(m_pendingChildBackForwardItem, nullptr).get();
 }
 
 void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)

@@ -35,23 +35,20 @@
 
 namespace IPC {
 
-std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle handle)
+std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::FileHandle&& handle)
 {
-    return SharedFileHandle { handle };
+    return SharedFileHandle { WTFMove(handle) };
 }
 
 SharedFileHandle::SharedFileHandle(MachSendRight&& fileport)
+    : m_handle(FileSystem::FileHandle::adopt(fileport_makefd(fileport.sendRight())))
 {
-    int fd = fileport_makefd(fileport.sendRight());
-    if (fd == -1)
-        return;
-    m_handle = WebCore::FileHandle { fd };
 }
 
 MachSendRight SharedFileHandle::toMachSendRight() const
 {
     mach_port_name_t fileport = MACH_PORT_NULL;
-    if (fileport_makeport(m_handle.handle(), &fileport) == -1)
+    if (fileport_makeport(m_handle.platformHandle(), &fileport) == -1)
         return { };
 
     return MachSendRight::adopt(fileport);

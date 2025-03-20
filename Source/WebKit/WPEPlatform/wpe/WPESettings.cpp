@@ -96,10 +96,13 @@ struct _WPESettingsPrivate {
             { WPE_SETTING_FONT_HINTING_STYLE, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_HINTING_STYLE_SLIGHT)) },
             { WPE_SETTING_FONT_SUBPIXEL_LAYOUT, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB)) },
             { WPE_SETTING_FONT_DPI, G_VARIANT_TYPE_DOUBLE, g_variant_ref_sink(g_variant_new_double(96.0)) },
+            { WPE_SETTING_KEY_REPEAT_DELAY, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(400)) },
+            { WPE_SETTING_KEY_REPEAT_INTERVAL, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(80)) },
             { WPE_SETTING_CURSOR_BLINK_TIME, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(1200)) },
             { WPE_SETTING_TOPLEVEL_DEFAULT_SIZE, G_VARIANT_TYPE("(uu)"), g_variant_ref_sink(g_variant_new("(uu)", 1024, 768)) },
             { WPE_SETTING_DOUBLE_CLICK_DISTANCE, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(5)) },
             { WPE_SETTING_DOUBLE_CLICK_TIME, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(400)) },
+            { WPE_SETTING_DRAG_THRESHOLD, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(8)) },
         };
 
         for (auto& setting : defaultSettings)

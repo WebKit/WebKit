@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "EventTrackingRegions.h"
+#include <wtf/text/TextStream.h>
 
 #include "EventNames.h"
 
@@ -108,7 +109,7 @@ const AtomString& EventTrackingRegions::eventNameAtomString(const EventNames& ev
     return nullAtom();
 }
 
-TrackingType EventTrackingRegions::trackingTypeForPoint(EventType eventType, const IntPoint& point)
+TrackingType EventTrackingRegions::trackingTypeForPoint(EventType eventType, const IntPoint& point) const
 {
     auto synchronousRegionIterator = eventSpecificSynchronousDispatchRegions.find(eventType);
     if (synchronousRegionIterator != eventSpecificSynchronousDispatchRegions.end()) {
@@ -148,6 +149,15 @@ void EventTrackingRegions::unite(const EventTrackingRegions& eventTrackingRegion
     asynchronousDispatchRegion.unite(eventTrackingRegions.asynchronousDispatchRegion);
     for (auto& slot : eventTrackingRegions.eventSpecificSynchronousDispatchRegions)
         uniteSynchronousRegion(slot.key, slot.value);
+}
+
+TextStream& operator<<(TextStream& ts, const EventTrackingRegions& region)
+{
+    if (!region.asynchronousDispatchRegion.isEmpty())
+        ts << " asynchronousDispatchRegion: " << region.asynchronousDispatchRegion;
+    for (auto& slot : region.eventSpecificSynchronousDispatchRegions)
+        ts << "eventSpecificSynchronousDispatchRegions: eventName: " << EventTrackingRegions::eventName(slot.key) << " eventRect: " << slot.value;
+    return ts;
 }
 
 } // namespace WebCore

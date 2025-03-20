@@ -54,11 +54,11 @@ struct pas_basic_heap_page_caches {
     ((pas_basic_heap_page_caches){ \
         .megapage_large_heap_cache = PAS_MEGAPAGE_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
         .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
-        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
+        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small), \
         .small_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \
             (small_log_shift), pas_share_pages), \
-        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
-        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
+        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small), \
+        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium), \
         .medium_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \
             (medium_log_shift), pas_share_pages) \
     })

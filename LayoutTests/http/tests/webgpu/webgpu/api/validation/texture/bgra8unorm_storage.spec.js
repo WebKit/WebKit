@@ -55,7 +55,7 @@ fn((t) => {
     format: 'bgra8unorm',
     usage: GPUConst.TextureUsage.STORAGE
   };
-  t.device.createTexture(descriptor);
+  t.createTextureTracked(descriptor);
 });
 
 g.test('create_bind_group_layout').

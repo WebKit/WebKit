@@ -39,6 +39,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "MathCommon.h"
 #include "NumberPrototype.h"
+#include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "StringPrototypeInlines.h"
 #include "WasmCallingConvention.h"
@@ -600,6 +601,31 @@ private:
             break;
         }
 
+        case NewRegExpUntyped: {
+            if (m_node->child1().useKind() != StringUse || m_node->child2().useKind() != StringUse)
+                break;
+
+            String pattern = m_node->child1()->tryGetString(m_graph);
+            if (!pattern)
+                break;
+
+            String flagsString = m_node->child2()->tryGetString(m_graph);
+            if (!flagsString)
+                break;
+
+            auto flags = Yarr::parseFlags(flagsString);
+            if (!flags)
+                break;
+
+            auto* regExp = vm().regExpCache()->lookup(vm(), pattern, flags.value());
+            if (!regExp)
+                break;
+
+            m_node->convertToNewRegExp(m_graph.freezeStrong(regExp), m_insertionSet.insertConstantForUse(m_nodeIndex, m_node->origin, jsNumber(0), UntypedUse));
+            m_changed = true;
+            break;
+        }
+
         case RegExpExec:
         case RegExpTest:
         case RegExpMatchFast:
@@ -634,7 +660,7 @@ private:
                     m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                     regExp = regExpObject->regExp();
                     regExpObjectNodeIsConstant = true;
-                } else if (regExpObjectNode->op() == NewRegexp) {
+                } else if (regExpObjectNode->op() == NewRegExp) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(regExpObjectNode->origin.semantic);
                     if (globalObject->isRegExpRecompiled()) {
                         dataLogLnIf(verbose, "Giving up because RegExp recompile happens.");
@@ -1029,6 +1055,7 @@ private:
         }
 
         case StringReplace:
+        case StringReplaceAll:
         case StringReplaceRegExp: {
             Node* stringNode = m_node->child1().node();
             String string = stringNode->tryGetString(m_graph);
@@ -1053,7 +1080,7 @@ private:
                 }
                 m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                 regExp = regExpObject->regExp();
-            } else if (regExpObjectNode->op() == NewRegexp) {
+            } else if (regExpObjectNode->op() == NewRegExp) {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(regExpObjectNode->origin.semantic);
                 if (m_graph.m_plan.isUnlinked() && globalObject != m_graph.globalObjectFor(m_node->origin.semantic)) {
                     dataLogLnIf(verbose, "Giving up because unlinked DFG requires globalObject is the same to the node's origin.");
@@ -1165,9 +1192,6 @@ private:
             if (!replace)
                 break;
 
-            // String/String/String case.
-            // FIXME: Extract these operations and share it with runtime code.
-
             size_t matchStart = string.find(searchString);
             if (matchStart == notFound) {
                 m_changed = true;
@@ -1178,18 +1202,7 @@ private:
 
             size_t searchStringLength = searchString.length();
             size_t matchEnd = matchStart + searchStringLength;
-
-            size_t dollarSignPosition = replace.find('$');
-            if (dollarSignPosition != WTF::notFound) {
-                StringBuilder builder(OverflowPolicy::RecordOverflow);
-                int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
-                substituteBackreferencesSlow(builder, replace, string, ovector, nullptr, dollarSignPosition);
-                if (UNLIKELY(builder.hasOverflowed()))
-                    break;
-                replace = builder.toString();
-            }
-
-            auto result = tryMakeString(StringView(string).substring(0, matchStart), replace, StringView(string).substring(matchEnd, string.length() - matchEnd));
+            String result = tryMakeReplacedString<StringReplaceSubstitutions::Yes>(string, replace, matchStart, matchEnd);
             if (UNLIKELY(!result))
                 break;
 
@@ -1284,6 +1297,22 @@ private:
                 }
                 break;
             }
+
+            case Array::Uint8Array:
+            case Array::Uint16Array:
+            case Array::Uint32Array: {
+                if (m_node->op() == PutByVal || m_node->op() == PutByValDirect || m_node->op() == PutByValAlias) {
+                    Edge& valueEdge = m_graph.child(m_node, 2);
+                    if (valueEdge.useKind() == Int32Use) {
+                        if (valueEdge->op() == UInt32ToNumber && valueEdge->child1().useKind() == Int32Use) {
+                            valueEdge = valueEdge->child1();
+                            m_changed = true;
+                        }
+                    }
+                }
+                break;
+            }
+
             default:
                 break;
             }
@@ -1345,6 +1374,44 @@ private:
 
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
+            break;
+        }
+
+        case CheckInBounds: {
+            auto isInt32OrKnownInt32Use = [](UseKind useKind) {
+                return useKind == Int32Use || useKind == KnownInt32Use;
+            };
+
+            if (!isInt32OrKnownInt32Use(m_node->child1().useKind()) || !isInt32OrKnownInt32Use(m_node->child2().useKind()))
+                break;
+
+            if (m_node->child2()->isInt32Constant()) {
+                int32_t length = m_node->child2()->asInt32();
+                if (length < 0)
+                    break;
+
+                switch (m_node->child1()->op()) {
+                case ArithBitRShift: {
+                    if (!m_node->child1()->isBinaryUseKind(Int32Use))
+                        break;
+                    if (m_node->child1()->child2()->isInt32Constant()) {
+                        int32_t shiftAmount = m_node->child1()->child2()->asInt32();
+                        if (shiftAmount < 0 || shiftAmount > 31)
+                            break;
+                        auto result = static_cast<int64_t>(length) << shiftAmount;
+                        if (result > INT32_MAX)
+                            break;
+                        m_node->child1() = Edge(m_node->child1()->child1().node(), Int32Use);
+                        m_node->child2() = Edge(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, jsNumber(static_cast<int32_t>(result))), KnownInt32Use);
+                        m_changed = true;
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
             break;
         }
 

@@ -45,7 +45,7 @@ public:
     DeviceMotionClientIOS(RefPtr<DeviceOrientationUpdateProvider>&&);
     ~DeviceMotionClientIOS() override;
     void setController(DeviceMotionController*) override;
-    void startUpdating() override;
+    void startUpdating(const SecurityOriginData&) override;
     void stopUpdating() override;
     DeviceMotionData* lastMotion() const override;
     void deviceMotionControllerDestroyed() override;

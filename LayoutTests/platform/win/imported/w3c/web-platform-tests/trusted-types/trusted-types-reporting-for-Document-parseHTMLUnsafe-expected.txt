@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
-
-PASS No violation reported for TrustedHTML.
-PASS Violation report for plain string.
-

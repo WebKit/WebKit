@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Victor Carbune (victor@rosedu.org)
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,13 +64,14 @@ void RenderVTTCue::layout()
     // longer necessary, since cues having the region parameter set do not have
     // any positioning parameters. Also, in this case, the regions themselves
     // have positioning information.
-    if (!m_cue->regionId().isEmpty())
+    RefPtr cue = m_cue.get();
+    if (!cue || !cue->regionId().isEmpty())
         return;
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), true);
 
-    if (m_cue->cueType()== TextTrackCue::WebVTT) {
-        if (m_cue->snapToLines())
+    if (cue->cueType()== TextTrackCue::WebVTT) {
+        if (cue->snapToLines())
             repositionCueSnapToLinesSet();
         else
             repositionCueSnapToLinesNotSet();
@@ -116,10 +117,14 @@ bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& posi
         return false;
 
     // 3. Let line position be the text track cue computed line position.
-    int linePosition = m_cue->calculateComputedLinePosition();
+    RefPtr cue = m_cue.get();
+    if (!cue)
+        return false;
+
+    int linePosition = cue->calculateComputedLinePosition();
 
     // 4. Vertical Growing Left: Add one to line position then negate it.
-    if (m_cue->vertical() == VTTCue::DirectionSetting::VerticalGrowingLeft)
+    if (cue->vertical() == VTTCue::DirectionSetting::VerticalGrowingLeft)
         linePosition = -(linePosition + 1);
 
     // 5. Let position be the result of multiplying step and line position.
@@ -127,7 +132,7 @@ bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& posi
 
     // 6. Vertical Growing Left: Decrease position by the width of the
     // bounding box of the boxes in boxes, then increase position by step.
-    if (m_cue->vertical() == VTTCue::DirectionSetting::VerticalGrowingLeft) {
+    if (cue->vertical() == VTTCue::DirectionSetting::VerticalGrowingLeft) {
         position -= width();
         position += step;
     }
@@ -136,7 +141,7 @@ bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& posi
     if (linePosition < 0) {
         // Horizontal / Vertical: ... then increase position by the
         // height / width of the video's rendering area ...
-        position += m_cue->vertical() == VTTCue::DirectionSetting::Horizontal ? containingBlock()->height() : containingBlock()->width();
+        position += cue->vertical() == VTTCue::DirectionSetting::Horizontal ? containingBlock()->height() : containingBlock()->width();
 
         // ... and negate step.
         step = -step;

@@ -171,7 +171,8 @@ self.addEventListener('install', (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(WKWebsiteDataStore, RemoveDataWaitUntilWebProcessesExit)
+// Fixme rdar://145508632 https://bugs.webkit.org/show_bug.cgi?id=288408
+TEST(WKWebsiteDataStore, DISABLED_RemoveDataWaitUntilWebProcessesExit)
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {

@@ -1,8 +1,0 @@
-This tests basic LengthForTextMarkerRange.
-
-PASS: root.textMarkerRangeLength(textMarkerRange) === 10
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-text block

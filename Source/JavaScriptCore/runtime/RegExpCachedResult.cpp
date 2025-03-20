@@ -57,11 +57,32 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
             m_lastRegExp.set(vm, owner, vm.regExpCache()->ensureEmptyRegExp(vm));
 
         JSArray* result = nullptr;
-        if (m_result)
-            result = createRegExpMatchesArray(globalObject, m_lastInput.get(), m_lastRegExp.get(), m_result.start);
-        else
+        if (m_result) {
+            auto* string = m_lastInput.get();
+            auto input = string->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+
+            if (m_oneCharacterMatch) {
+                ASSERT(m_lastRegExp->hasValidAtom());
+                const String& pattern = m_lastRegExp->atom();
+                ASSERT(!pattern.isEmpty());
+                ASSERT(pattern.length() == 1);
+                // Reify precise m_result.
+                size_t found = input->reverseFind(pattern.characterAt(0));
+                if (found != notFound) {
+                    m_result.start = found;
+                    m_result.end = found + 1;
+                }
+                m_oneCharacterMatch = false;
+            }
+
+            MatchResult ignoreMatched;
+            result = createRegExpMatchesArray(vm, globalObject, string, input, m_lastRegExp.get(), m_result.start, ignoreMatched);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        } else {
             result = createEmptyRegExpMatchesArray(globalObject, m_lastInput.get(), m_lastRegExp.get());
-        RETURN_IF_EXCEPTION(scope, nullptr);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
 
         m_reifiedResult.setWithoutWriteBarrier(result);
         m_reifiedLeftContext.clear();

@@ -70,6 +70,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
     static constexpr std::pair<ComparableASCIILiteral, GPUFeatureName> mappings[] = {
         { "bgra8unorm-storage"_s, GPUFeatureName::Bgra8unormStorage },
         { "clip-distances"_s, GPUFeatureName::ClipDistances },
+        { "core-features-and-limits"_s, GPUFeatureName::CoreFeaturesAndLimits },
         { "depth-clip-control"_s, GPUFeatureName::DepthClipControl },
         { "depth32float-stencil8"_s, GPUFeatureName::Depth32floatStencil8 },
         { "dual-source-blending"_s, GPUFeatureName::DualSourceBlending },

@@ -54,7 +54,7 @@ ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, RefPtr<Deferr
 
 ServiceWorkerJob::~ServiceWorkerJob()
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
 }
 
 RefPtr<DeferredPromise> ServiceWorkerJob::takePromise()
@@ -64,7 +64,7 @@ RefPtr<DeferredPromise> ServiceWorkerJob::takePromise()
 
 void ServiceWorkerJob::failedWithException(const Exception& exception)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
 
     m_completed = true;
@@ -73,7 +73,7 @@ void ServiceWorkerJob::failedWithException(const Exception& exception)
 
 void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
 
     m_completed = true;
@@ -82,7 +82,7 @@ void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& 
 
 void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResult)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
 
     m_completed = true;
@@ -91,7 +91,7 @@ void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResul
 
 void ServiceWorkerJob::startScriptFetch(FetchOptions::Cache cachePolicy)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
 
     m_client.startScriptFetchForJob(*this, cachePolicy);
@@ -117,7 +117,7 @@ static FetchOptions scriptFetchOptions(FetchOptions::Cache cachePolicy, FetchOpt
 
 void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, FetchOptions::Cache cachePolicy)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
 
     auto source = m_jobData.workerType == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
@@ -156,7 +156,7 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
 
 void ServiceWorkerJob::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(!m_completed);
     ASSERT(m_scriptLoader);
 
@@ -173,7 +173,7 @@ void ServiceWorkerJob::didReceiveResponse(ScriptExecutionContextIdentifier, std:
 
 void ServiceWorkerJob::notifyFinished(std::optional<ScriptExecutionContextIdentifier>)
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
+    ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
     ASSERT(m_scriptLoader);
 
     auto scriptLoader = std::exchange(m_scriptLoader, { });

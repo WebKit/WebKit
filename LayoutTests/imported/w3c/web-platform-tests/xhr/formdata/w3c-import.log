@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/append-formelement.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/append.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/constructor-formelement.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/constructor-submitter-coordinate.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/constructor-submitter.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/delete-formelement.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/delete.any.js
@@ -25,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/get.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/has-formelement.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/has.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/iteration.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/set-blob.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/set-formelement.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/set.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata/submitter-coordinate-value.html

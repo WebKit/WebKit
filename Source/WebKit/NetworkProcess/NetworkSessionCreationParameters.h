@@ -138,6 +138,11 @@ struct NetworkSessionCreationParameters {
     String resourceMonitorThrottlerDirectory;
     SandboxExtension::Handle resourceMonitorThrottlerDirectoryExtensionHandle;
 #endif
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+    bool isLegacyTLSAllowed { false };
+#else
+    bool isLegacyTLSAllowed { true };
+#endif
 };
 
 } // namespace WebKit

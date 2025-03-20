@@ -34,7 +34,7 @@
 namespace JSC { namespace DFG {
 
 class CallArrayAllocatorSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
-    WTF_MAKE_TZONE_ALLOCATED(CallArrayAllocatorSlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CallArrayAllocatorSlowPathGenerator);
 public:
     CallArrayAllocatorSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_VmStZB function,
@@ -68,7 +68,7 @@ private:
 };
 
 class CallArrayAllocatorWithVariableSizeSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
-    WTF_MAKE_TZONE_ALLOCATED(CallArrayAllocatorWithVariableSizeSlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CallArrayAllocatorWithVariableSizeSlowPathGenerator);
 public:
     CallArrayAllocatorWithVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,
@@ -123,7 +123,7 @@ private:
 };
 
 class CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
-    WTF_MAKE_TZONE_ALLOCATED(CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator);
 public:
     CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,

@@ -53,7 +53,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GeoclueGeolocationProvider);
 
 GeoclueGeolocationProvider::GeoclueGeolocationProvider()
-    : m_destroyLaterTimer(RunLoop::current(), this, &GeoclueGeolocationProvider::destroyState)
+    : m_destroyLaterTimer(RunLoop::currentSingleton(), this, &GeoclueGeolocationProvider::destroyState)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_destroyLaterTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);

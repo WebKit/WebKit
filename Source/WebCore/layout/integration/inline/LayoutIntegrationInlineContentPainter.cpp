@@ -33,6 +33,7 @@
 #include "RenderInline.h"
 #include "RenderStyleInlines.h"
 #include "TextBoxPainter.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -107,6 +108,12 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box);
         if (!hasVisibleDamage)
             return;
+
+        if (!box.layoutBox().rendererForIntegration()) {
+            // FIXME: For some reason, we are getting to a state in which painting is requested for a box without renderer. We should try to figure out the root cause for this instead of bailing out here.
+            ASSERT_NOT_REACHED();
+            return;
+        }
 
         TextBoxPainter { m_inlineContent, box, box.style(), m_paintInfo, m_paintOffset }.paint();
         return;

@@ -30,7 +30,7 @@ namespace WebCore {
 
 bool GStreamerHolePunchQuirkBcmNexus::setHolePunchVideoRectangle(GstElement* videoSink, const IntRect& rect)
 {
-    if (UNLIKELY(!gstObjectHasProperty(videoSink, "rectangle")))
+    if (UNLIKELY(!gstObjectHasProperty(videoSink, "rectangle"_s)))
         return false;
 
     auto rectString = makeString(rect.x(), ',', rect.y(), ',', rect.width(), ',', rect.height());

@@ -142,7 +142,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
             break;
         }
     });
-    RunLoop::current().observe(*m_runLoopObserver);
+    RunLoop::currentSingleton().observe(*m_runLoopObserver);
 #endif
 
     InspectorTimelineAgent::internalStart(WTFMove(maxCallStackDepth));

@@ -35,6 +35,7 @@
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+String.h"
+#include "CSSPropertyParsing.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -99,24 +100,6 @@ RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange& range, const CSSPa
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <symbol> = [ <string> | <image> | <custom-ident> ]
-    // https://drafts.csswg.org/css-counter-styles-3/#typedef-symbol
-
-    if (auto string = consumeString(range))
-        return string;
-    if (auto customIdent = consumeCustomIdent(range))
-        return customIdent;
-    // There are inherent difficulties in supporting <image> symbols in @counter-styles, so gate them behind a
-    // flag for now. https://bugs.webkit.org/show_bug.cgi?id=167645
-    if (context.counterStyleAtRuleImageSymbolsEnabled) {
-        if (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage }))
-            return image;
-    }
-    return nullptr;
-}
-
 RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'system'> = cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
@@ -160,22 +143,6 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSS
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'negative'> = <symbol> <symbol>?
-    // https://drafts.csswg.org/css-counter-styles-3/#counter-style-negative
-
-    auto prependValue = consumeCounterStyleSymbol(range, context);
-    if (!prependValue || range.atEnd())
-        return prependValue;
-
-    auto appendValue = consumeCounterStyleSymbol(range, context);
-    if (!appendValue || !range.atEnd())
-        return nullptr;
-
-    return CSSValueList::createSpaceSeparated(prependValue.releaseNonNull(), appendValue.releaseNonNull());
-}
-
 RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'range'> = [ [ <integer> | infinite ]{2} ]# | auto
@@ -192,7 +159,7 @@ RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range, const CSSP
     if (auto autoValue = consumeIdent<CSSValueAuto>(range))
         return autoValue;
 
-    auto rangeList = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&](auto& range) -> RefPtr<CSSValue> {
+    auto rangeList = consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) -> RefPtr<CSSValue> {
         auto lowerBound = consumeCounterStyleRangeBound(range);
         if (!lowerBound)
             return nullptr;
@@ -213,57 +180,15 @@ RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range, const CSSP
     return rangeList;
 }
 
-RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'pad'> = <integer [0,∞]> && <symbol>
-    // https://drafts.csswg.org/css-counter-styles-3/#counter-style-pad
-
-    RefPtr<CSSPrimitiveValue> integer;
-    RefPtr<CSSValue> symbol;
-    while (!integer || !symbol) {
-        if (!integer) {
-            integer = consumeNonNegativeInteger(range, context);
-            if (integer)
-                continue;
-        }
-        if (!symbol) {
-            symbol = consumeCounterStyleSymbol(range, context);
-            if (symbol)
-                continue;
-        }
-        return nullptr;
-    }
-    if (!range.atEnd())
-        return nullptr;
-    return CSSValueList::createSpaceSeparated(integer.releaseNonNull(), symbol.releaseNonNull());
-}
-
-RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'symbols'> = <symbol>+
-    // https://drafts.csswg.org/css-counter-styles-3/#descdef-counter-style-symbols
-
-    CSSValueListBuilder symbols;
-    while (!range.atEnd()) {
-        auto symbol = consumeCounterStyleSymbol(range, context);
-        if (!symbol)
-            return nullptr;
-        symbols.append(symbol.releaseNonNull());
-    }
-    if (symbols.isEmpty())
-        return nullptr;
-    return CSSValueList::createSpaceSeparated(WTFMove(symbols));
-}
-
 RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'additive-symbols'> = [ <integer [0,∞]> && <symbol> ]#
     // https://drafts.csswg.org/css-counter-styles-3/#descdef-counter-style-additive-symbols
 
     std::optional<int> lastWeight;
-    auto values = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
+    auto values = consumeListSeparatedBy<',', OneOrMore>(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
         auto integer = consumeNonNegativeInteger(range, context);
-        auto symbol = consumeCounterStyleSymbol(range, context);
+        auto symbol = CSSPropertyParsing::consumeSymbol(range, context);
         if (!integer) {
             if (!symbol)
                 return nullptr;
@@ -286,16 +211,6 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
     if (!range.atEnd() || !values || !values->length())
         return nullptr;
     return values;
-}
-
-RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'speak-as'> = auto | bullets | numbers | words | spell-out | <counter-style-name>
-    // https://drafts.csswg.org/css-counter-styles-3/#counter-style-speak-as
-
-    if (auto speakAsIdent = consumeIdent<CSSValueAuto, CSSValueBullets, CSSValueNumbers, CSSValueWords, CSSValueSpellOut>(range))
-        return speakAsIdent;
-    return consumeCounterStyleName(range, context);
 }
 
 } // namespace CSSPropertyParserHelpers

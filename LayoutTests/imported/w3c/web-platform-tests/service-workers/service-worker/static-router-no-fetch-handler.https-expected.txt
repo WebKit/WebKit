@@ -1,0 +1,5 @@
+
+FAIL The router rule is evaluated without fetch handlers in service worker assert_equals: expected "From cache" but got "{\"error\": {\"code\": 404, \"message\": \"404\"}}"
+PASS addRoutes should raise if the fetch-event source is used without onfetch
+PASS addRoutes should raise if the race-network-and-fetch-handler source is used without onfetch
+

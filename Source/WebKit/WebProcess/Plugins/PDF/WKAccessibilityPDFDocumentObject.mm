@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKAccessibilityPDFDocumentObject.h"
 
-#if ENABLE(UNIFIED_PDF) && PLATFORM(MAC)
+#if ENABLE(UNIFIED_PDF)
 
 #include "PDFKitSPI.h"
 #include "PDFPluginAnnotation.h"
@@ -35,16 +35,28 @@
 #include <PDFKit/PDFKit.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/HTMLPlugInElement.h>
+
+#if PLATFORM(MAC)
 #include <WebCore/WebAccessibilityObjectWrapperMac.h>
 #include <pal/spi/cocoa/NSAccessibilitySPI.h>
+#endif // PLATFORM(MAC)
+
 #include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakObjCPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+@interface NSObject (AXPriv)
+- (id)accessibilityHitTest:(CGPoint)point;
+- (NSArray *)accessibilityElementsWithPlugin:(id)plugin;
+@end
+#endif // PLATFORM(IOS_FAMILY)
+
 @implementation WKAccessibilityPDFDocumentObject
 
 @synthesize pluginElement = _pluginElement;
+
 
 - (id)initWithPDFDocument:(RetainPtr<PDFDocument>)document andElement:(WebCore::HTMLPlugInElement*)element
 {
@@ -53,10 +65,13 @@
 
     _pdfDocument = document;
     _pluginElement = element;
+    _axElements = adoptNS([[NSMutableArray alloc] init]);
     // We are setting the presenter ID of the WKAccessibilityPDFDocumentObject to the hosting application's PID.
     // This way VoiceOver can set AX observers on all the PDF AX nodes which are descendant of this element.
+#if PLATFORM(MAC)
     if ([self respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)self accessibilitySetPresenterProcessIdentifier:legacyPresentingApplicationPID()];
+#endif // PLATFORM(MAC)
     return self;
 }
 
@@ -70,6 +85,69 @@
     _pdfDocument = document;
 }
 
+- (void)setParent:(NSObject *)parent
+{
+    _parent = parent;
+}
+
+- (PDFDocument *)document
+{
+    return _pdfDocument.get();
+}
+
+- (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinates pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex
+{
+    if (RefPtr plugin = _pdfPlugin.get())
+        return plugin->convertFromPDFPageToScreenForAccessibility(rectInPageCoordinates, pageIndex);
+    return rectInPageCoordinates;
+}
+
+#if !PLATFORM(MAC)
+
+- (void)setAXElements
+{
+    if (!_pdfDocument) {
+        if (RefPtr plugin = _pdfPlugin.get())
+            _pdfDocument = plugin->pdfDocument();
+    }
+
+    auto pageCount = [_pdfDocument pageCount];
+    for (NSUInteger pageIndex = 0; pageIndex < pageCount; pageIndex ++) {
+        PDFPage *page = [_pdfDocument pageAtIndex:pageIndex];
+
+        if ([page respondsToSelector:@selector(accessibilityElementsWithPlugin:)])
+            [_axElements addObjectsFromArray:[page accessibilityElementsWithPlugin:self]];
+    }
+}
+
+- (id)accessibilityHitTest:(CGPoint)point
+{
+    if (!_pdfDocument) {
+        if (RefPtr plugin = _pdfPlugin.get())
+            _pdfDocument = plugin->pdfDocument();
+    }
+
+    if (RefPtr plugin = _pdfPlugin.get())
+        return plugin->accessibilityHitTestInPageForIOS(point);
+    return [_pdfDocument accessibilityHitTest:point];
+}
+
+- (NSArray *)accessibilityElements
+{
+    if (![_axElements count])
+        [self setAXElements];
+
+    return _axElements.get();
+}
+
+- (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction
+{
+    return NO;
+}
+
+#endif // !PLATFORM(MAC)
+
+#if PLATFORM(MAC)
 - (BOOL)isAccessibilityElement
 {
     return YES;
@@ -110,11 +188,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-- (PDFDocument*)document
-{
-    return _pdfDocument.get();
-}
-
 - (NSArray *)accessibilityVisibleChildren
 {
     RetainPtr<NSMutableArray> visiblePageElements = adoptNS([[NSMutableArray alloc] init]);
@@ -153,11 +226,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         });
     }
     return protectedSelf->_parent.get().get();
-}
-
-- (void)setParent:(NSObject *)parent
-{
-    _parent = parent;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -244,27 +312,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return nil;
 }
 
-- (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinate pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex
-{
-    if (RefPtr plugin = _pdfPlugin.get())
-        return plugin->convertFromPDFPageToScreenForAccessibility(rectInPageCoordinate, pageIndex);
-    return rectInPageCoordinate;
-}
-
 - (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
 {
-    RefPtr activeAnnotation = _pdfPlugin.get()->activeAnnotation();
-    if (!activeAnnotation)
-        return nil;
-
     id wrapper = nil;
-    callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
+    callOnMainRunLoopAndWait([protectedSelf = retainPtr(self), &wrapper] {
+        RefPtr activeAnnotation = protectedSelf->_pdfPlugin.get()->activeAnnotation();
+        if (!activeAnnotation)
+            return;
+
         if (auto* axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
             if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->element()))
                 wrapper = annotationElementAxObject->wrapper();
         }
     });
-
     return wrapper;
 }
 
@@ -297,6 +357,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         plugin->accessibilityScrollToPage(pageIndex);
     });
 }
+
+#endif // PLATFORM(MAC)
+
 @end
 
-#endif
+#endif // ENABLE(UNIFIED_PDF)

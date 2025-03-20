@@ -135,7 +135,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
 
     // We assign the created instances here instead of adoptRef() because gst_bin_add_many()
     // below will already take the initial reference and we need an additional one for us.
-    m_appsrc = makeGStreamerElement("appsrc", nullptr);
+    m_appsrc = makeGStreamerElement("appsrc"_s);
 
     GRefPtr<GstPad> appsrcPad = adoptGRef(gst_element_get_static_pad(m_appsrc.get(), "src"));
     gst_pad_add_probe(appsrcPad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo* padProbeInfo, void* userData) {
@@ -146,16 +146,16 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     GST_DEBUG_OBJECT(pipeline(), "SourceBuffer containerType: %s", type.utf8().data());
 
     if (type.endsWith("mp4"_s) || type.endsWith("aac"_s)) {
-        m_demux = makeGStreamerElement("qtdemux", nullptr);
-        m_typefind = makeGStreamerElement("identity", nullptr);
+        m_demux = makeGStreamerElement("qtdemux"_s);
+        m_typefind = makeGStreamerElement("identity"_s);
         GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("video/quicktime", "variant", G_TYPE_STRING, "mse-bytestream", NULL));
         gst_app_src_set_caps(GST_APP_SRC(m_appsrc.get()), caps.get());
     } else if (type.endsWith("webm"_s)) {
-        m_demux = makeGStreamerElement("matroskademux", nullptr);
-        m_typefind = makeGStreamerElement("identity", nullptr);
+        m_demux = makeGStreamerElement("matroskademux"_s);
+        m_typefind = makeGStreamerElement("identity"_s);
     } else if (type == "audio/mpeg"_s) {
-        m_demux = makeGStreamerElement("identity", nullptr);
-        m_typefind = makeGStreamerElement("typefind", nullptr);
+        m_demux = makeGStreamerElement("identity"_s);
+        m_typefind = makeGStreamerElement("typefind"_s);
     } else
         ASSERT_NOT_REACHED();
 
@@ -239,7 +239,7 @@ AppendPipeline::~AppendPipeline()
 #if ENABLE(ENCRYPTED_MEDIA)
         gst_pad_remove_probe(appsinkPad.get(), track->appsinkPadEventProbeInformation.probeId);
 #endif
-        m_sourceBufferPrivate.tryUnregisterTrackId(track->trackId);
+        m_sourceBufferPrivate.unregisterTrack(track->trackId);
     }
 
     // We can tear down the pipeline safely now.
@@ -271,7 +271,7 @@ void AppendPipeline::handleErrorSyncMessage([[maybe_unused]] GstMessage* message
 GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo* padProbeInfo)
 {
     ASSERT(!isMainThread());
-    m_streamingThread = &Thread::current();
+    m_streamingThread = &Thread::currentSingleton();
 
     GstBuffer* buffer = GST_BUFFER(padProbeInfo->data);
     ASSERT(GST_IS_BUFFER(buffer));
@@ -297,7 +297,7 @@ void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
     m_playerPrivate->handleNeedContextMessage(message);
 }
 
-std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
+std::tuple<GRefPtr<GstCaps>, StreamType, FloatSize> AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
 {
     ASSERT(isMainThread());
 
@@ -307,7 +307,9 @@ std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> AppendPipeli
 
     auto originalMediaType = capsMediaType(demuxerSrcPadCaps);
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
-    if (!gstRegistryScanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, originalMediaType.toStringWithoutCopying())) {
+    if (doCapsHaveType(demuxerSrcPadCaps, GST_TEXT_CAPS_TYPE_PREFIX) || originalMediaType == "application/x-subtitle-vtt"_s) {
+        streamType = StreamType::Text;
+    } else if (!gstRegistryScanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, originalMediaType.toString())) {
         streamType = StreamType::Invalid;
     } else if (doCapsHaveType(demuxerSrcPadCaps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         presentationSize = getVideoResolutionFromCaps(demuxerSrcPadCaps).value_or(FloatSize());
@@ -315,8 +317,6 @@ std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> AppendPipeli
     } else {
         if (doCapsHaveType(demuxerSrcPadCaps, GST_AUDIO_CAPS_TYPE_PREFIX))
             streamType = StreamType::Audio;
-        else if (doCapsHaveType(demuxerSrcPadCaps, GST_TEXT_CAPS_TYPE_PREFIX))
-            streamType = StreamType::Text;
     }
 
     return { WTFMove(parsedCaps), streamType, WTFMove(presentationSize) };
@@ -338,10 +338,14 @@ void AppendPipeline::appsinkCapsChanged(Track& track)
     // If this is not the first time we're parsing an initialization segment, fail if the track
     // has a different codec or type (e.g. if we were previously demuxing an audio stream and
     // someone appends a video stream).
-    auto currentMediaType = capsMediaType(caps.get());
-    auto trackMediaType = capsMediaType(track.finalCaps.get());
-    if (track.finalCaps && currentMediaType != trackMediaType) {
-        GST_WARNING_OBJECT(pipeline(), "Track received incompatible caps, received '%s' for a track previously handling '%s'. Erroring out.", reinterpret_cast<const char*>(currentMediaType.rawCharacters()), reinterpret_cast<const char*>(trackMediaType.rawCharacters()));
+    auto currentMediaTypeView = capsMediaType(caps.get());
+    auto trackMediaTypeView = capsMediaType(track.caps.get());
+    if (track.finalCaps && currentMediaTypeView != trackMediaTypeView) {
+#ifndef GST_DISABLE_GST_DEBUG
+        auto currentMediaType = currentMediaTypeView.utf8();
+        auto trackMediaType = trackMediaTypeView.utf8();
+        GST_WARNING_OBJECT(pipeline(), "Track received incompatible caps, received '%s' for a track previously handling '%s'. Erroring out.", currentMediaType.data(), trackMediaType.data());
+#endif
         m_sourceBufferPrivate.appendParsingFailed();
         return;
     }
@@ -373,8 +377,10 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
     }
 
     auto* buffer = gst_sample_get_buffer(sample.get());
-    if (!GST_BUFFER_PTS_IS_VALID(buffer)) {
+    auto hasValidPTS = GST_BUFFER_PTS_IS_VALID(buffer);
+    if (!hasValidPTS && track.streamType != StreamType::Text) {
         // When demuxing Vorbis, matroskademux creates several PTS-less frames with header information. We don't need those.
+        // However, for text tracks, that's likely our WebVTT header, which is required for WebVTTParser.
         GST_DEBUG_OBJECT(pipeline(), "Ignoring sample without PTS: %" GST_PTR_FORMAT, buffer);
         return;
     }
@@ -409,7 +415,13 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         mediaSample->extendToTheBeginning();
     }
 
-    m_sourceBufferPrivate.didReceiveSample(mediaSample.get());
+    if (track.streamType == StreamType::Text) {
+        const auto textTrack = static_cast<InbandTextTrackPrivateGStreamer*>(track.webKitTrack.get());
+        textTrack->handleSample(GRefPtr(mediaSample->sample()));
+    }
+
+    if (hasValidPTS)
+        m_sourceBufferPrivate.didReceiveSample(mediaSample.get());
 }
 
 void AppendPipeline::didReceiveInitializationSegment()
@@ -514,20 +526,28 @@ void AppendPipeline::didReceiveInitializationSegment()
         GST_DEBUG_OBJECT(pipeline(), "Adding track to initialization with segment type %s, id %" PRIu64 ".", streamTypeToString(track->streamType), track->trackId);
 #endif // GST_DISABLE_GST_DEBUG
         switch (track->streamType) {
-        case Audio: {
+        case StreamType::Audio: {
             ASSERT(track->webKitTrack);
             SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
             info.track = static_cast<AudioTrackPrivateGStreamer*>(track->webKitTrack.get());
             info.description = GStreamerMediaDescription::create(track->finalCaps);
-            initializationSegment.audioTracks.append(info);
+            initializationSegment.audioTracks.append(WTFMove(info));
             break;
         }
-        case Video: {
+        case StreamType::Video: {
             ASSERT(track->webKitTrack);
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
             info.track = static_cast<VideoTrackPrivateGStreamer*>(track->webKitTrack.get());
             info.description = GStreamerMediaDescription::create(track->finalCaps);
-            initializationSegment.videoTracks.append(info);
+            initializationSegment.videoTracks.append(WTFMove(info));
+            break;
+        }
+        case StreamType::Text: {
+            ASSERT(track->webKitTrack);
+            SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
+            info.track = static_cast<InbandTextTrackPrivateGStreamer*>(track->webKitTrack.get());
+            info.description = GStreamerMediaDescription::create(track->finalCaps);
+            initializationSegment.textTracks.append(WTFMove(info));
             break;
         }
         default:
@@ -665,7 +685,7 @@ void AppendPipeline::pushNewBuffer(GRefPtr<GstBuffer>&& buffer)
 void AppendPipeline::handleAppsinkNewSampleFromStreamingThread(GstElement*)
 {
     ASSERT(!isMainThread());
-    if (&Thread::current() != m_streamingThread) {
+    if (&Thread::currentSingleton() != m_streamingThread) {
         // m_streamingThreadId has been initialized in appsrcEndOfAppendCheckerProbe().
         // For a buffer to reach the appsink, a buffer must have passed through appsrcEndOfAppendCheckerProbe() first.
         // This error will only raise if someone modifies the pipeline to include more than one streaming thread or
@@ -708,7 +728,7 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
     // Since parsers are not needed in every case, we can use an identity element as pass-through
     // parser for cases where a parser is not needed, making the management of elements and pads
     // more orthogonal.
-    const char* elementClass = "identity";
+    ASCIILiteral elementClass = "identity"_s;
 
     if (mediaType == "audio/x-opus"_s) {
         // Necessary for: metadata filling.
@@ -717,7 +737,7 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
         // during quality changes.
         // An example of an Opus audio file lacking durations is car_opus_low.webm
         // https://storage.googleapis.com/ytlr-cert.appspot.com/test/materials/media/car_opus_low.webm
-        elementClass = "opusparse";
+        elementClass = "opusparse"_s;
     } else if (mediaType == "video/x-h264"_s) {
         // Necessary for: metadata filling.
         // Some dubiously muxed content lacks the bit specifying what frames are key frames or not.
@@ -725,7 +745,7 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
         // as the browser will be unaware of any dependencies of those frames and they won't be fed
         // to the decoder.
         // An example of such a stream: http://orange-opensource.github.io/hasplayer.js/1.2.0/player.html?url=http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest
-        elementClass = "h264parse";
+        elementClass = "h264parse"_s;
     } else if (mediaType == "audio/mpeg"_s) {
         // Necessary for: framing.
         // The Media Source Extensions Byte Stream Format Registry includes MPEG Audio Byte Stream Format
@@ -738,7 +758,7 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
             // MPEG-1 Part 3 Audio (ISO 11172-3) Layer I -- MP1, archaic
             // MPEG-1 Part 3 Audio (ISO 11172-3) Layer II -- MP2, common in audio broadcasting, e.g. DVB
             // MPEG-1 Part 3 Audio (ISO 11172-3) Layer III -- MP3, the only one of the three most people actually know
-            elementClass = "mpegaudioparse";
+            elementClass = "mpegaudioparse"_s;
             break;
         case 2:
             // MPEG-2 Part 7 Advanced Audio Coding (ISO 13818-7) -- MPEG-2 AAC, the original AAC format, widely used,
@@ -748,7 +768,7 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
             // defines several extensions to the original AAC, also widely used.
             // Not to be confused with the MP4 file format, which is a container format, not an audio stream format,
             // and can incidentally contain MPEG-4 audio.
-            elementClass = "aacparse";
+            elementClass = "aacparse"_s;
             break;
         default:
             GST_WARNING_OBJECT(bin, "Unsupported audio mpeg caps: %" GST_PTR_FORMAT, caps);
@@ -756,15 +776,15 @@ GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, 
     } else if (mediaType == "video/x-vp9"_s) {
         // Necessary for: metadata filling.
         // Without this parser the codec string set on the corresponding video track will be incomplete.
-        elementClass = "vp9parse";
+        elementClass = "vp9parse"_s;
     }
 
-    GST_DEBUG_OBJECT(bin, "Creating %s parser for stream with caps %" GST_PTR_FORMAT, elementClass, caps);
-    GRefPtr<GstElement> result(makeGStreamerElement(elementClass, parserName.ascii().data()));
-    if (!result && g_strcmp0(elementClass, "identity")) {
+    GST_DEBUG_OBJECT(bin, "Creating %s parser for stream with caps %" GST_PTR_FORMAT, elementClass.characters(), caps);
+    GRefPtr<GstElement> result(makeGStreamerElement(elementClass, parserName));
+    if (!result && elementClass != "identity"_s) {
         GST_WARNING_OBJECT(bin, "Couldn't create %s, there might be problems processing some MSE streams. "
-            "Continue at your own risk and consider adding %s to your build.", elementClass, elementClass);
-        result = makeGStreamerElement("identity", parserName.ascii().data());
+            "Continue at your own risk and consider adding %s to your build.", elementClass.characters(), elementClass.characters());
+        result = makeGStreamerElement("identity"_s, parserName);
     }
     return result;
 }
@@ -774,17 +794,20 @@ GRefPtr<GstElement> createOptionalEncoderForFormat([[maybe_unused]] GstBin* bin,
     GstStructure* structure = gst_caps_get_structure(caps, 0);
     auto mediaType = gstStructureGetName(structure);
 
-    const char* elementClass = "identity";
+    ASCIILiteral elementClass = "identity"_s;
 
+    // FIXME scenarios we haven't tested yet:
+    //   - "Different cues can overlap." (WebVTT, 4.1 WebVTT file structure)
+    //   - SouceBuffer timestampOffset   (Media Source Extensions, 5.1 Attributes)
     if (mediaType == "text/x-raw"_s)
-        elementClass = "webvttenc";
+        elementClass = "webvttenc"_s;
 
-    GST_DEBUG_OBJECT(bin, "Creating %s encoder for stream with caps %" GST_PTR_FORMAT, elementClass, caps);
-    GRefPtr<GstElement> result(makeGStreamerElement(elementClass, encoderName.ascii().data()));
-    if (!result && g_strcmp0(elementClass, "identity")) {
+    GST_DEBUG_OBJECT(bin, "Creating %s encoder for stream with caps %" GST_PTR_FORMAT, elementClass.characters(), caps);
+    GRefPtr<GstElement> result(makeGStreamerElement(elementClass, encoderName));
+    if (!result && elementClass != "identity"_s) {
         GST_WARNING_OBJECT(bin, "Couldn't create %s, there might be problems processing some MSE streams. "
-            "Continue at your own risk and consider adding %s to your build.", elementClass, elementClass);
-        result = makeGStreamerElement("identity", encoderName.ascii().data());
+            "Continue at your own risk and consider adding %s to your build.", elementClass.characters(), elementClass.characters());
+        result = makeGStreamerElement("identity"_s, encoderName);
     }
     return result;
 }
@@ -816,23 +839,16 @@ std::pair<AppendPipeline::CreateTrackResult, AppendPipeline::Track*> AppendPipel
     }
 
     size_t newTrackIndex = m_tracks.size();
-    size_t webkitTrackIndex = std::count_if(m_tracks.begin(), m_tracks.end(), [streamType](std::unique_ptr<Track>& other) -> bool {
-        return other->streamType == streamType;
-    });
 
-    TrackID preferredTrackId = getStreamIdFromPad(demuxerSrcPad).value_or((static_cast<TrackID>(newTrackIndex)));
-    auto assignedTrackId = m_sourceBufferPrivate.tryRegisterTrackId(preferredTrackId);
-    TrackID trackId = assignedTrackId.value_or(preferredTrackId);
+    auto preferredTrackId = getStreamIdFromPad(demuxerSrcPad).value_or((static_cast<TrackID>(newTrackIndex)));
+    auto trackInfo = m_sourceBufferPrivate.registerTrack(preferredTrackId, streamType);
 
-    if (!assignedTrackId)
-        GST_WARNING_OBJECT(pipeline(), "Failed to register track ID %" PRIu64 ", this could cause ID collisions", preferredTrackId);
-
-    GST_DEBUG_OBJECT(pipeline(), "Creating new AppendPipeline::Track with type %s, index %" PRIu64" and id '%" PRIu64 "'", streamTypeToString(streamType), webkitTrackIndex, trackId);
-    m_tracks.append(makeUnique<Track>(trackId, streamType, parsedCaps, presentationSize));
+    GST_DEBUG_OBJECT(pipeline(), "Creating new AppendPipeline::Track with type %s, index %" PRIu64" and id '%" PRIu64"'", streamTypeToString(streamType), static_cast<uint64_t>(trackInfo.index), static_cast<uint64_t>(trackInfo.id));
+    m_tracks.append(makeUnique<Track>(trackInfo.id, streamType, parsedCaps, presentationSize));
     Track& track = *m_tracks.at(newTrackIndex);
 
     track.initializeElements(this, GST_BIN(m_pipeline.get()));
-    track.webKitTrack = makeWebKitTrack(track, webkitTrackIndex, trackId);
+    track.webKitTrack = makeWebKitTrack(track, trackInfo.index, trackInfo.id);
     hookTrackEvents(track);
     return { CreateTrackResult::TrackCreated, &track };
 }
@@ -971,7 +987,7 @@ void AppendPipeline::Track::emplaceOptionalParserForFormat(GstBin* bin, const GR
         gst_bin_remove(bin, parser.get());
     }
 
-    auto parserName = makeString("parser"_s, unsafeSpan8(streamTypeToStringLower(streamType)), "_"_s, trackId);
+    auto parserName = makeString("parser_"_s, unsafeSpan8(streamTypeToStringLower(streamType)), "_"_s, trackId);
     parser = createOptionalParserForFormat(bin, parserName, newCaps.get());
     gst_bin_add(bin, parser.get());
     gst_element_sync_state_with_parent(parser.get());
@@ -982,7 +998,7 @@ void AppendPipeline::Track::emplaceOptionalParserForFormat(GstBin* bin, const GR
 
 void AppendPipeline::Track::emplaceOptionalEncoderForFormat(GstBin* bin, const GRefPtr<GstCaps>& newCaps)
 {
-    auto encoderName = makeString("encoder"_s, unsafeSpan8(streamTypeToStringLower(streamType)), "_"_s, trackId);
+    auto encoderName = makeString("encoder_"_s, unsafeSpan8(streamTypeToStringLower(streamType)), "_"_s, trackId);
     encoder = createOptionalEncoderForFormat(bin, encoderName, newCaps.get());
     gst_bin_add(bin, encoder.get());
     gst_element_sync_state_with_parent(encoder.get());
@@ -1000,7 +1016,7 @@ void AppendPipeline::Track::emplaceOptionalEncoderForFormat(GstBin* bin, const G
 
 void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, GstBin* bin)
 {
-    appsink = makeGStreamerElement("appsink", nullptr);
+    appsink = makeGStreamerElement("appsink"_s);
     gst_app_sink_set_emit_signals(GST_APP_SINK(appsink.get()), TRUE);
     gst_base_sink_set_sync(GST_BASE_SINK(appsink.get()), FALSE);
     gst_base_sink_set_async_enabled(GST_BASE_SINK(appsink.get()), FALSE); // No prerolls, no async state changes.
@@ -1089,6 +1105,7 @@ const char* AppendPipeline::streamTypeToString(StreamType streamType)
         return "(Unsupported stream type)";
     }
 }
+#endif
 
 const char* AppendPipeline::streamTypeToStringLower(StreamType streamType)
 {
@@ -1107,7 +1124,6 @@ const char* AppendPipeline::streamTypeToStringLower(StreamType streamType)
         return "(unsupported_stream_type)";
     }
 }
-#endif
 
 #if !LOG_DISABLED
 static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad* pad, GstPadProbeInfo* info, struct PadProbeInformation* padProbeInformation)

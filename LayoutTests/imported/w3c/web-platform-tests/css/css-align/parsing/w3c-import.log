@@ -30,6 +30,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-column-gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-column-gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-column-gap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-gap-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-gap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-row-gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-row-gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/grid-row-gap-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-valid.html

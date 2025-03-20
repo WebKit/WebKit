@@ -194,6 +194,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 {
     auto request = parameters.request;
     auto url = request.url();
+    if (url.isNull()) {
+        scheduleFailure(FailureType::InvalidURL);
+        return;
+    }
+
     if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && url.protocolIsInHTTPFamily()) {
         m_user = url.user();
         m_password = url.password();
@@ -360,8 +365,8 @@ void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBy
 {
     WTFEmitSignpost(m_task.get(), DataTask, "sent %llu bytes (expected %llu bytes)", totalBytesSent, totalBytesExpectedToSend);
 
-    if (m_client)
-        m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
+    if (RefPtr client = m_client.get())
+        client->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
 void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
@@ -371,8 +376,8 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
 
-    if (m_client)
-        m_client->didReceiveChallenge(WTFMove(challenge), negotiatedLegacyTLS, WTFMove(completionHandler));
+    if (RefPtr client = m_client.get())
+        client->didReceiveChallenge(WTFMove(challenge), negotiatedLegacyTLS, WTFMove(completionHandler));
     else {
         ASSERT_NOT_REACHED();
         completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
@@ -381,16 +386,16 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
 
 void NetworkDataTaskCocoa::didNegotiateModernTLS(const URL& url)
 {
-    if (m_client)
-        m_client->didNegotiateModernTLS(url);
+    if (RefPtr client = m_client.get())
+        client->didNegotiateModernTLS(url);
 }
 
 void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
     WTFEmitSignpost(m_task.get(), DataTask, "completed with error: %d", !error.isNull());
 
-    if (m_client)
-        m_client->didCompleteWithError(error, networkLoadMetrics);
+    if (RefPtr client = m_client.get())
+        client->didCompleteWithError(error, networkLoadMetrics);
 }
 
 void NetworkDataTaskCocoa::didReceiveData(const WebCore::SharedBuffer& data)
@@ -399,8 +404,8 @@ void NetworkDataTaskCocoa::didReceiveData(const WebCore::SharedBuffer& data)
 
     setBytesTransferredOverNetwork([m_task _countOfBytesReceivedEncoded]);
 
-    if (m_client)
-        m_client->didReceiveData(data);
+    if (RefPtr client = m_client.get())
+        client->didReceiveData(data);
 }
 
 void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, WebKit::ResponseCompletionHandler&& completionHandler)
@@ -488,9 +493,10 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler({ });
-        if (!protectedThis->m_client)
+        RefPtr client = protectedThis->m_client.get();
+        if (!client)
             return completionHandler({ });
-        protectedThis->m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), weakThis] (WebCore::ResourceRequest&& request) mutable {
+        client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), weakThis] (WebCore::ResourceRequest&& request) mutable {
             auto protectedThis = weakThis.get();
             if (!protectedThis || !protectedThis->m_session)
                 return completionHandler({ });

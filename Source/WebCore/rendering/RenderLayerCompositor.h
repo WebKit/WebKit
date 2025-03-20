@@ -519,7 +519,8 @@ private:
     FloatRect visibleRectForLayerFlushing() const;
     
     Page& page() const;
-    
+    Ref<Page> protectedPage() const;
+
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
 

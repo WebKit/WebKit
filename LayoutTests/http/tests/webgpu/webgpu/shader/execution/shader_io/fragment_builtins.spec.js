@@ -20,13 +20,17 @@ is evaluated per-fragment or per-sample. With @interpolate(, sample) or usage of
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { ErrorWithExtra, assert, range, unreachable } from '../../../../common/util/util.js';
 
-import { GPUTest } from '../../../gpu_test.js';
+import { getBlockInfoForTextureFormat } from '../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { getProvokingVertexForFlatInterpolationEitherSampling } from '../../../inter_stage.js';
 import { getMultisampleFragmentOffsets } from '../../../multisample_info.js';
-import { dotProduct, subtractVectors } from '../../../util/math.js';
+import { dotProduct, subtractVectors, align } from '../../../util/math.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 import { findFailedPixels } from '../../../util/texture/texture_ok.js';
 
-export const g = makeTestGroup(GPUTest);
+class FragmentBuiltinTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {}
+
+export const g = makeTestGroup(FragmentBuiltinTest);
 
 const s_deviceToPipelineMap = new WeakMap(
 
@@ -138,17 +142,15 @@ textures)
   assert(isTextureSameDimensions(textures[0], textures[3]));
   const { width, height, sampleCount } = textures[0];
 
-  const copyBuffer = t.device.createBuffer({
+  const copyBuffer = t.createBufferTracked({
     size: width * height * sampleCount * 4 * 4,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });
-  t.trackForCleanup(copyBuffer);
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: copyBuffer.size,
     usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(buffer);
 
   const pipeline = getCopyMultisamplePipelineForDevice(t.device, textures);
   const encoder = t.device.createCommandEncoder();
@@ -426,11 +428,17 @@ function computeFragmentPosition({
 /**
  * Creates a function that will compute the interpolation of an inter-stage variable.
  */
-function createInterStageInterpolationFn(
+async function createInterStageInterpolationFn(
+t,
 interStagePoints,
 type,
 sampling)
 {
+  const provokingVertex =
+  type === 'flat' && sampling === 'either' ?
+  await getProvokingVertexForFlatInterpolationEitherSampling(t) :
+  'first';
+
   return function ({
     baseVertexIndex,
     fragmentBarycentricCoords,
@@ -439,7 +447,9 @@ sampling)
   }) {
     const triangleInterStagePoints = interStagePoints.slice(baseVertexIndex, baseVertexIndex + 3);
     const barycentricCoords =
-    sampling === 'center' ? fragmentBarycentricCoords : sampleBarycentricCoords;
+    sampling === 'center' || sampling === undefined ?
+    fragmentBarycentricCoords :
+    sampleBarycentricCoords;
     switch (type) {
       case 'perspective':
         return triangleInterStagePoints[0].map((_, colNum) =>
@@ -456,7 +466,7 @@ sampling)
         );
         break;
       case 'flat':
-        return triangleInterStagePoints[0];
+        return triangleInterStagePoints[provokingVertex === 'first' ? 0 : 2];
         break;
       default:
         unreachable();
@@ -469,12 +479,13 @@ sampling)
  * and then return [1, 0, 0, 0] if all interpolated values are between 0.0 and 1.0 inclusive
  * or [-1, 0, 0, 0] otherwise.
  */
-function createInterStageInterpolationBetween0And1TestFn(
+async function createInterStageInterpolationBetween0And1TestFn(
+t,
 interStagePoints,
 type,
 sampling)
 {
-  const interpolateFn = createInterStageInterpolationFn(interStagePoints, type, sampling);
+  const interpolateFn = await createInterStageInterpolationFn(t, interStagePoints, type, sampling);
   return function (fragData) {
     const interpolatedValues = interpolateFn(fragData);
     const allTrue = interpolatedValues.reduce((all, v) => all && v >= 0 && v <= 1, true);
@@ -517,9 +528,8 @@ function computeSampleMask({ sampleMask }) {
  * backends like M1 Mac so it seems better to stick to rgba8unorm here and test
  * using a storage buffer in a fragment shader separately.
  *
- * We can't use rgba32float because it's optional. We can't use rgba16float
- * because it's optional in compat. We can't we use rgba32uint as that can't be
- * multisampled.
+ * We can't use rgba32float, nor rgba16float, nor rgba32uint as they can't be
+ * multisampled in all feature levels.
  */
 async function renderFragmentShaderInputsTo4TexturesAndReadbackValues(
 t,
@@ -581,7 +591,7 @@ t,
 
       struct FragmentIn {
         @builtin(position) position: vec4f,
-        @location(0) @interpolate(${interpolate}) interpolatedValue: vec4f,
+@location(0) @interpolate(${interpolate}) interpolatedValue: vec4f,
         ${fragInCode}
       };
 
@@ -615,19 +625,17 @@ t,
     `
   });
 
-  const textures = range(4, () => {
-    const texture = t.device.createTexture({
-      size: [width, height],
-      usage:
-      GPUTextureUsage.RENDER_ATTACHMENT |
-      GPUTextureUsage.TEXTURE_BINDING |
-      GPUTextureUsage.COPY_SRC,
-      format: 'rgba8unorm',
-      sampleCount
-    });
-    t.trackForCleanup(texture);
-    return texture;
-  });
+  const textures = range(4, () =>
+  t.createTextureTracked({
+    size: [width, height],
+    usage:
+    GPUTextureUsage.RENDER_ATTACHMENT |
+    GPUTextureUsage.TEXTURE_BINDING |
+    GPUTextureUsage.COPY_SRC,
+    format: 'rgba8unorm',
+    sampleCount
+  })
+  );
 
   const pipeline = t.device.createRenderPipeline({
     layout: 'auto',
@@ -650,11 +658,10 @@ t,
     }
   });
 
-  const uniformBuffer = t.device.createBuffer({
+  const uniformBuffer = t.createBufferTracked({
     size: 8,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(uniformBuffer);
   t.device.queue.writeBuffer(uniformBuffer, 0, new Float32Array([width, height]));
 
   const viewport = [0, 0, width, height, ...nearFar];
@@ -758,7 +765,8 @@ combine('interpolation', [
 { type: 'linear', sampling: 'center' },
 { type: 'linear', sampling: 'centroid' },
 { type: 'linear', sampling: 'sample' },
-{ type: 'flat' }]
+{ type: 'flat', sampling: 'first' },
+{ type: 'flat', sampling: 'either' }]
 )
 ).
 beforeAllSubcases((t) => {
@@ -839,11 +847,15 @@ u //
 .combine('nearFar', [[0, 1], [0.25, 0.75]]).
 combine('sampleCount', [1, 4]).
 combine('interpolation', [
+{ type: 'perspective' },
 { type: 'perspective', sampling: 'center' },
 { type: 'perspective', sampling: 'sample' },
+{ type: 'linear' },
 { type: 'linear', sampling: 'center' },
 { type: 'linear', sampling: 'sample' },
-{ type: 'flat' }]
+{ type: 'flat' },
+{ type: 'flat', sampling: 'first' },
+{ type: 'flat', sampling: 'either' }]
 )
 ).
 beforeAllSubcases((t) => {
@@ -892,7 +904,7 @@ fn(async (t) => {
     nearFar,
     sampleCount,
     clipSpacePoints,
-    interpolateFn: createInterStageInterpolationFn(interStagePoints, type, sampling)
+    interpolateFn: await createInterStageInterpolationFn(t, interStagePoints, type, sampling)
   });
 
   t.expectOK(
@@ -1026,7 +1038,8 @@ fn(async (t) => {
     nearFar,
     sampleCount,
     clipSpacePoints,
-    interpolateFn: createInterStageInterpolationBetween0And1TestFn(
+    interpolateFn: await createInterStageInterpolationBetween0And1TestFn(
+      t,
       interStagePoints,
       type,
       sampling
@@ -1062,7 +1075,8 @@ combine('interpolation', [
 { type: 'linear', sampling: 'center' },
 { type: 'linear', sampling: 'centroid' },
 { type: 'linear', sampling: 'sample' },
-{ type: 'flat' }]
+{ type: 'flat', sampling: 'first' },
+{ type: 'flat', sampling: 'either' }]
 )
 ).
 beforeAllSubcases((t) => {
@@ -1146,7 +1160,8 @@ combine('interpolation', [
 { type: 'linear', sampling: 'center' },
 { type: 'linear', sampling: 'centroid' },
 { type: 'linear', sampling: 'sample' },
-{ type: 'flat' }]
+{ type: 'flat', sampling: 'first' },
+{ type: 'flat', sampling: 'either' }]
 )
 ).
 beforeAllSubcases((t) => {
@@ -1318,7 +1333,8 @@ combine('interpolation', [
 { type: 'linear', sampling: 'center' },
 { type: 'linear', sampling: 'centroid' },
 { type: 'linear', sampling: 'sample' },
-{ type: 'flat' }]
+{ type: 'flat', sampling: 'first' },
+{ type: 'flat', sampling: 'either' }]
 ).
 beginSubcases().
 combineWithParams([
@@ -1351,6 +1367,7 @@ beforeAllSubcases((t) => {
     interpolation: { type, sampling }
   } = t.params;
   t.skipIfInterpolationTypeOrSamplingNotSupported({ type, sampling });
+  t.skipIf(t.isCompatibility, 'sample_mask is not supported in compatibility mode');
 }).
 fn(async (t) => {
   const {
@@ -1406,5 +1423,454 @@ fn(async (t) => {
       expected,
       maxDiffULPsForFloatFormat: 0
     })
+  );
+});
+
+const kSizes = [
+[15, 15],
+[16, 16],
+[17, 17],
+[19, 13],
+[13, 10],
+[111, 2],
+[2, 111],
+[35, 2],
+[2, 35],
+[53, 13],
+[13, 53]];
+
+
+/**
+ * @returns The population count of input.
+ *
+ * @param input Treated as an unsigned 32-bit integer
+ */
+function popcount(input) {
+  let n = input;
+  n = n - (n >> 1 & 0x55555555);
+  n = (n & 0x33333333) + (n >> 2 & 0x33333333);
+  return (n + (n >> 4) & 0xf0f0f0f) * 0x1010101 >> 24;
+}
+
+/**
+ * Runs a subgroup builtin test for fragment shaders
+ *
+ * This test draws a full screen in 2 separate draw calls (half screen each).
+ * Results are checked for each draw.
+ * @param t The base test
+ * @param format The framebuffer format
+ * @param fsShader The fragment shader with the following interface:
+ *                 Location 0 output is framebuffer with format
+ *                 Group 0 binding 0 is a u32 sized data
+ * @param width The framebuffer width
+ * @param height The framebuffer height
+ * @param checker A functor to check the framebuffer values
+ */
+async function runSubgroupTest(
+t,
+format,
+fsShader,
+width,
+height,
+checker)
+{
+  const vsShader = `
+@vertex
+fn vsMain(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f {
+  const vertices = array(
+    vec2(-1, -1), vec2(-1,  1), vec2( 1,  1),
+    vec2(-1, -1), vec2( 1, -1), vec2( 1,  1),
+  );
+  return vec4f(vec2f(vertices[index]), 0, 1);
+}`;
+
+  const pipeline = t.device.createRenderPipeline({
+    layout: 'auto',
+    vertex: {
+      module: t.device.createShaderModule({ code: vsShader })
+    },
+    fragment: {
+      module: t.device.createShaderModule({ code: fsShader }),
+      targets: [{ format }]
+    },
+    primitive: {
+      topology: 'triangle-list'
+    }
+  });
+
+  const { blockWidth, blockHeight, bytesPerBlock } = getBlockInfoForTextureFormat(format);
+  assert(bytesPerBlock !== undefined);
+
+  const blocksPerRow = width / blockWidth;
+  const blocksPerColumn = height / blockHeight;
+  const bytesPerRow = align(blocksPerRow * (bytesPerBlock ?? 1), 256);
+  const byteLength = bytesPerRow * blocksPerColumn;
+  const uintLength = byteLength / 4;
+
+  for (let i = 0; i < 2; i++) {
+    const framebuffer = t.createTextureTracked({
+      size: [width, height],
+      usage:
+      GPUTextureUsage.COPY_SRC |
+      GPUTextureUsage.COPY_DST |
+      GPUTextureUsage.RENDER_ATTACHMENT |
+      GPUTextureUsage.TEXTURE_BINDING,
+      format
+    });
+
+    const encoder = t.device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+      {
+        view: framebuffer.createView(),
+        loadOp: 'clear',
+        storeOp: 'store'
+      }]
+
+    });
+    pass.setPipeline(pipeline);
+    // Draw the upper-left triangle (vertices 0-2) or the lower-right triangle (vertices 3-5)
+    pass.draw(3, 1, i * 3);
+    pass.end();
+    t.queue.submit([encoder.finish()]);
+
+    const buffer = t.copyWholeTextureToNewBufferSimple(framebuffer, 0);
+    const readback = await t.readGPUBufferRangeTyped(buffer, {
+      srcByteOffset: 0,
+      type: Uint32Array,
+      typedLength: uintLength,
+      method: 'copy'
+    });
+    const data = readback.data;
+
+    t.expectOK(checker(data));
+  }
+}
+
+const kMaximumSubgroupSize = 128;
+// A non-zero magic number indicating no expectation error, in order to prevent the false no-error
+// result from zero-initialization.
+const kSubgroupShaderNoError = 17;
+
+/**
+ * Checks subgroup_size builtin value consistency.
+ *
+ * The builtin subgroup_size is not assumed to be uniform in fragment shaders.
+ * Therefore, this function checks the value is a power of two within the device
+ * limits and that the ballot size is less than the stated size.
+ * @param data An array of vec4u that contains (per texel):
+ *             * subgroup_size builtin value
+ *             * balloted active invocations number
+ *             * balloted subgroup size all active invocations agreed on, otherwise 0
+ *             * error flag, should be equal to kSubgroupShaderNoError or shader found
+ *               expectation failed otherwise.
+ * @param format The texture format for data
+ * @param min The minimum subgroup size from the device
+ * @param max The maximum subgroup size from the device
+ * @param width The width of the framebuffer
+ * @param height The height of the framebuffer
+ */
+function checkSubgroupSizeConsistency(
+data,
+format,
+min,
+max,
+width,
+height)
+{
+  const { blockWidth, blockHeight, bytesPerBlock } = getBlockInfoForTextureFormat(format);
+  const blocksPerRow = width / blockWidth;
+  // Image copies require bytesPerRow to be a multiple of 256.
+  const bytesPerRow = align(blocksPerRow * (bytesPerBlock ?? 1), 256);
+  const uintsPerRow = bytesPerRow / 4;
+  const uintsPerTexel = (bytesPerBlock ?? 1) / blockWidth / blockHeight / 4;
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      const offset = uintsPerRow * row + col * uintsPerTexel;
+      const subgroupSize = data[offset];
+      const countActive = data[offset + 1];
+      const ballotedSubgroupSize = data[offset + 2];
+      const error = data[offset + 3];
+
+      if (error === 0) {
+        // Inactive fragment get error `0` instead of noError. Check all output being zero.
+        if (subgroupSize !== 0 || countActive !== 0 || ballotedSubgroupSize !== 0) {
+          return new Error(
+            `Unexpected zero error with non-zero outputs for (${row}, ${col}): got output [${subgroupSize}, ${countActive}, ${ballotedSubgroupSize}, ${error}]`
+          );
+        }
+        continue;
+      }
+
+      if (popcount(subgroupSize) !== 1) {
+        return new Error(`Subgroup size '${subgroupSize}' is not a power of two`);
+      }
+
+      if (subgroupSize < min) {
+        return new Error(`Subgroup size '${subgroupSize}' is less than minimum '${min}'`);
+      }
+      if (max < subgroupSize) {
+        return new Error(`Subgroup size '${subgroupSize}' is greater than maximum '${max}'`);
+      }
+
+      if (subgroupSize < countActive) {
+        return new Error(`Unexpected active invocations number larger than subgroup size
+-       icoord: (${row}, ${col})
+- subgroupSize: ${subgroupSize}
+-  countActive: ${countActive}`);
+      }
+
+      if (subgroupSize !== ballotedSubgroupSize) {
+        return new Error(`Inconsistent subgroup size
+-                 icoord: (${row}, ${col})
+-           subgroupSize: ${subgroupSize}
+- balloted subgroup size: ${ballotedSubgroupSize}`);
+      }
+
+      if (error !== kSubgroupShaderNoError) {
+        return new Error(
+          `Unexpected error value
+-   icoord: (${row}, ${col})
+- expected: noError (${kSubgroupShaderNoError})
+-      got: ${error}`
+        );
+      }
+    }
+  }
+
+  return undefined;
+}
+
+g.test('subgroup_size').
+desc('Tests subgroup_size values').
+params((u) =>
+u.
+combine('size', kSizes).
+beginSubcases().
+combineWithParams([{ format: 'rgba32uint' }])
+).
+fn(async (t) => {
+  t.skipIfDeviceDoesNotHaveFeature('subgroups');
+
+
+
+
+  const { subgroupMinSize, subgroupMaxSize } = t.device.adapterInfo;
+
+  const fsShader = `
+enable subgroups;
+
+const subgroupMaxSize = ${kMaximumSubgroupSize}u;
+const noError = ${kSubgroupShaderNoError}u;
+
+const width = ${t.params.size[0]};
+const height = ${t.params.size[1]};
+
+@fragment
+fn fsMain(
+  @builtin(position) pos : vec4f,
+  @builtin(subgroup_size) sg_size : u32,
+) -> @location(0) vec4u {
+  var error: u32 = noError;
+
+  let ballotActive = countOneBits(subgroupBallot(true));
+  let countActive = ballotActive.x + ballotActive.y + ballotActive.z + ballotActive.w;
+  // Validate that balloted active invocations number no larger than subgroup size
+  if (countActive > sg_size) {
+    error++;
+  }
+
+  var subgroupSizeBallotedInvocations: u32 = 0u;
+  var ballotedSubgroupSize: u32 = 0u;
+  for (var i: u32 = 0; i <= subgroupMaxSize; i++) {
+    let ballotSubgroupSizeEqualI = countOneBits(subgroupBallot(sg_size == i));
+    let countSubgroupSizeEqualI = ballotSubgroupSizeEqualI.x + ballotSubgroupSizeEqualI.y + ballotSubgroupSizeEqualI.z + ballotSubgroupSizeEqualI.w;
+    subgroupSizeBallotedInvocations += countSubgroupSizeEqualI;
+    // Validate that all active invocations see the same subgroup size, i.e. ballotedSubgroupSize
+    ballotedSubgroupSize = select(ballotedSubgroupSize, i, countSubgroupSizeEqualI == countActive);
+    error = select(error, error + 1, countSubgroupSizeEqualI != countActive && countSubgroupSizeEqualI != 0);
+  }
+  // Validate that all active invocations balloted in previous loop
+  if (subgroupSizeBallotedInvocations != countActive) {
+    error++;
+  }
+  // Validate that ballotedSubgroupSize is identical to subgroup_size
+  if (ballotedSubgroupSize != sg_size) {
+    error++;
+  }
+
+  return vec4u(sg_size, countActive, ballotedSubgroupSize, error);
+}`;
+
+  await runSubgroupTest(
+    t,
+    t.params.format,
+    fsShader,
+    t.params.size[0],
+    t.params.size[1],
+    (data) => {
+      return checkSubgroupSizeConsistency(
+        data,
+        t.params.format,
+        subgroupMinSize,
+        subgroupMaxSize,
+        t.params.size[0],
+        t.params.size[1]
+      );
+    }
+  );
+});
+
+/**
+ * Checks subgroup_invocation_id value consistency
+ *
+ * Very little uniformity is expected for subgroup_invocation_id.
+ * This function checks that all ids are less than the subgroup size
+ * (not the ballot size, since the subgroup id can be allocated to
+ * inactivate invocations between active ones) and no id is repeated.
+ * @param data An array of vec4u that contains (per texel):
+ *             * subgroup_invocation_id
+ *             * subgroup size
+ *             * ballot active invocation number
+ *             * error flag, should be equal to kSubgroupShaderNoError or shader found
+ *               expectation failed otherwise.
+ * @param format The texture format of data
+ * @param width The width of the framebuffer
+ * @param height The height of the framebuffer
+ */
+function checkSubgroupInvocationIdConsistency(
+data,
+format,
+width,
+height)
+{
+  const { blockWidth, blockHeight, bytesPerBlock } = getBlockInfoForTextureFormat(format);
+  const blocksPerRow = width / blockWidth;
+  const bytesPerRow = align(blocksPerRow * (bytesPerBlock ?? 1), 256);
+  const uintsPerRow = bytesPerRow / 4;
+  const uintsPerTexel = (bytesPerBlock ?? 1) / blockWidth / blockHeight / 4;
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      const offset = uintsPerRow * row + col * uintsPerTexel;
+      const id = data[offset];
+      const sgSize = data[offset + 1];
+      const ballotSize = data[offset + 2];
+      const error = data[offset + 3];
+
+      if (error === 0) {
+        // Inactive fragment get error `0` instead of noError. Check all output being zero.
+        if (id !== 0 || sgSize !== 0 || ballotSize !== 0) {
+          return new Error(
+            `Unexpected zero error with non-zero outputs for (${row}, ${col}): got output [${id}, ${sgSize}, ${ballotSize}, ${error}]`
+          );
+        }
+        continue;
+      }
+
+      if (sgSize < id) {
+        return new Error(
+          `Invocation id '${id}' is greater than subgroup size '${sgSize}' for (${row}, ${col})`
+        );
+      }
+
+      if (sgSize < ballotSize) {
+        return new Error(
+          `Ballot size '${ballotSize}' is greater than subgroup size '${sgSize}' for (${row}, ${col})`
+        );
+      }
+
+      if (error !== kSubgroupShaderNoError) {
+        return new Error(
+          `Unexpected error value
+-   icoord: (${row}, ${col})
+- expected: noError (${kSubgroupShaderNoError})
+-      got: ${error}`
+        );
+      }
+    }
+  }
+
+  return undefined;
+}
+
+g.test('subgroup_invocation_id').
+desc('Tests subgroup_invocation_id built-in value').
+params((u) =>
+u.
+combine('size', kSizes).
+beginSubcases().
+combineWithParams([{ format: 'rgba32uint' }])
+).
+fn(async (t) => {
+  t.skipIfDeviceDoesNotHaveFeature('subgroups');
+  const fsShader = `
+enable subgroups;
+
+const width = ${t.params.size[0]};
+const height = ${t.params.size[1]};
+
+const subgroupMaxSize = ${kMaximumSubgroupSize}u;
+// A non-zero magic number indicating no expectation error, in order to prevent the
+// false no-error result from zero-initialization.
+const noError = ${kSubgroupShaderNoError}u;
+
+@fragment
+fn fsMain(
+  @builtin(position) pos : vec4f,
+  @builtin(subgroup_invocation_id) id : u32,
+  @builtin(subgroup_size) sg_size : u32,
+) -> @location(0) vec4u {
+
+  var error: u32 = noError;
+
+  // Validate that reported subgroup size is no larger than subgroupMaxSize
+  if (sg_size > subgroupMaxSize) {
+    error++;
+  }
+
+  // Validate that reported subgroup invocation id is smaller than subgroup size
+  if (id >= sg_size) {
+    error++;
+  }
+
+  // Validate that each subgroup id is assigned to at most one active invocation
+  // in the subgroup
+  var countAssignedId: u32 = 0u;
+  for (var i: u32 = 0; i < subgroupMaxSize; i++) {
+    let ballotIdEqualsI = countOneBits(subgroupBallot(id == i));
+    let countInvocationIdEqualsI = ballotIdEqualsI.x + ballotIdEqualsI.y + ballotIdEqualsI.z + ballotIdEqualsI.w;
+    // Validate an id assigned at most once
+    error += select(1u, 0u, countInvocationIdEqualsI <= 1);
+    // Validate id larger than subgroup size will not get balloted
+    error += select(1u, 0u, (id < sg_size) || (countInvocationIdEqualsI == 0));
+    // Sum up the assigned invocation number of each id
+    countAssignedId += countInvocationIdEqualsI;
+  }
+  // Validate that all active invocation get counted during the above loop
+  let ballotActive = countOneBits(subgroupBallot(true));
+  let activeInvocations = ballotActive.x + ballotActive.y + ballotActive.z + ballotActive.w;
+  if (activeInvocations != countAssignedId) {
+    error++;
+  }
+
+  return vec4u(id, sg_size, activeInvocations, error);
+}`;
+
+  await runSubgroupTest(
+    t,
+    t.params.format,
+    fsShader,
+    t.params.size[0],
+    t.params.size[1],
+    (data) => {
+      return checkSubgroupInvocationIdConsistency(
+        data,
+        t.params.format,
+        t.params.size[0],
+        t.params.size[1]
+      );
+    }
   );
 });

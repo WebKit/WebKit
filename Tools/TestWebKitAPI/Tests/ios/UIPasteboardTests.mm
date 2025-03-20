@@ -30,6 +30,7 @@
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TestCocoa.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -92,7 +93,7 @@ NSData *dataForPasteboardType(CFStringRef type)
 RetainPtr<TestWKWebView> setUpWebViewForPasteboardTests(NSString *pageName)
 {
     // UIPasteboard's type coercion codepaths only take effect when the UIApplication has been initialized.
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
 
     [UIPasteboard generalPasteboard].items = @[];
     EXPECT_TRUE(!dataForPasteboardType(kUTTypeUTF8PlainText).length);

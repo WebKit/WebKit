@@ -2023,7 +2023,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
     float previousLineCrossAxisTrailingEdge = correctedCrossAxisLeadingEdge(containerRect);
 
     Vector<RenderBox*> renderChildrenInFlexOrder;
-    Vector<RenderObject*> renderChildrenInDOMOrder;
+    Vector<RenderBox*> renderChildrenInDOMOrder;
     bool hasCustomOrder = false;
 
     auto childOrderIterator = renderFlex.orderIterator();
@@ -2035,7 +2035,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     if (flexOverlay.config.showOrderNumbers) {
         for (auto* child = node->firstChild(); child; child = child->nextSibling()) {
-            if (auto* renderer = child->renderer()) {
+            if (auto* renderer = dynamicDowncast<RenderBox>(child->renderer())) {
                 if (!renderChildrenInFlexOrder.contains(renderer))
                     continue;
 

@@ -10,7 +10,6 @@ import {
   kConvertableToFloatScalarsAndVectors,
   kConcreteIntegerScalarsAndVectors,
   scalarTypeOf,
-  f32,
   isConvertible } from
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
@@ -45,11 +44,6 @@ expand('e', (u) => fullRangeForType(kValuesTypes[u.type], 3)).
 expand('low', (u) => fullRangeForType(kValuesTypes[u.type], 4)).
 expand('high', (u) => fullRangeForType(kValuesTypes[u.type], 4))
 ).
-beforeAllSubcases((t) => {
-  if (scalarTypeOf(kValuesTypes[t.params.type]) === Type.f16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   const type = kValuesTypes[t.params.type];
   const expectedResult = t.params.low <= t.params.high;
@@ -75,18 +69,10 @@ beginSubcases().
 combine('low', keysOf(kValuesTypes)).
 combine('high', keysOf(kValuesTypes))
 ).
-beforeAllSubcases((t) => {
-  if (scalarTypeOf(kValuesTypes[t.params.e]) === Type.f16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   const e = kValuesTypes[t.params.e];
   const low = kValuesTypes[t.params.low];
   const high = kValuesTypes[t.params.high];
-
-  // Skip if shader-16 isn't available.
-  t.skipIf(scalarTypeOf(low) === Type.f16 || scalarTypeOf(high) === Type.f16);
 
   // If there exists 1 type of the 3 args that the other 2 can be converted into, then the args
   // are valid.
@@ -103,6 +89,8 @@ fn((t) => {
   );
 });
 
+const kStages = ['constant', 'override', 'runtime'];
+
 g.test('low_high').
 desc(
   `
@@ -111,7 +99,90 @@ Validates that low <= high.
 ).
 params((u) =>
 u.
-combine('stage', kConstantAndOverrideStages).
+combine('type', keysOf(kValuesTypes)).
+combine('lowStage', kStages).
+combine('highStage', kStages).
+beginSubcases().
+combineWithParams([
+{ low: 0, high: 1 },
+{ low: 1, high: 1 },
+{ low: 1, high: 0 }]
+).
+filter((t) => {
+  // Avoid abstracts since the runtime value will force concretization.
+  const ty = kValuesTypes[t.type];
+  const scalar = scalarTypeOf(ty);
+  return scalar !== Type.abstractInt && scalar !== Type.abstractFloat;
+})
+// in_shader: Is the function call statically accessed by the entry point?
+.combine('in_shader', [false, true])
+).
+fn((t) => {
+  const ty = kValuesTypes[t.params.type];
+  const scalar = scalarTypeOf(ty);
+  let low_arg = '';
+  let high_arg = '';
+  switch (t.params.lowStage) {
+    case 'constant':
+      low_arg = `${ty.create(t.params.low).wgsl()}`;
+      break;
+    case 'override':
+      low_arg = `${ty.toString()}(o_low)`;
+      break;
+    case 'runtime':
+      low_arg = 'v_low';
+      break;
+  }
+  switch (t.params.highStage) {
+    case 'constant':
+      high_arg = `${ty.create(t.params.high).wgsl()}`;
+      break;
+    case 'override':
+      high_arg = `${ty.toString()}(o_high)`;
+      break;
+    case 'runtime':
+      high_arg = 'v_high';
+      break;
+  }
+  const enable = `${ty.requiresF16() ? 'enable f16;' : ''}`;
+  const wgsl = `
+${enable}
+override o_low : ${scalar};
+override o_high : ${scalar};
+fn foo() {
+  var v_low : ${t.params.type};
+  var v_high : ${t.params.type};
+  var v : ${t.params.type};
+  let tmp = clamp(v, ${low_arg}, ${high_arg});
+}`;
+  const error = t.params.low > t.params.high;
+  const shader_error =
+  error && t.params.lowStage === 'constant' && t.params.highStage === 'constant';
+  const pipeline_error =
+  t.params.in_shader &&
+  error &&
+  t.params.lowStage !== 'runtime' &&
+  t.params.highStage !== 'runtime';
+  t.expectCompileResult(!shader_error, wgsl);
+  if (!shader_error) {
+    const constants = {};
+    constants['o_low'] = t.params.low;
+    constants['o_high'] = t.params.high;
+    t.expectPipelineResult({
+      expectedResult: !pipeline_error,
+      code: wgsl,
+      constants,
+      reference: ['o_low', 'o_high'],
+      statements: t.params.in_shader ? ['foo();'] : []
+    });
+  }
+});
+
+g.test('low_high_abstract').
+desc('Values low <= high for abstracts').
+params((u) =>
+u.
+combine('type', ['abstract-int', 'abstract-float']).
 beginSubcases().
 combineWithParams([
 { low: 0, high: 1 },
@@ -120,12 +191,13 @@ combineWithParams([
 )
 ).
 fn((t) => {
+  const ty = kValuesTypes[t.params.type];
   validateConstOrOverrideBuiltinEval(
     t,
     builtin,
     /* expectedResult */t.params.low <= t.params.high,
-    [f32(1), f32(t.params.low), f32(t.params.high)],
-    t.params.stage
+    [ty.create(1), ty.create(t.params.low), ty.create(t.params.high)],
+    'constant'
   );
 });
 

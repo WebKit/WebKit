@@ -51,7 +51,7 @@ public:
 
     MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, StringView, int startOffset, int** ovector);
     MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, StringView, int startOffset);
-    void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
+    void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&, bool oneCharacterMatch);
 
     static constexpr ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
 

@@ -83,7 +83,7 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
     }
     if (obj->inherits<JSBlob>() && (keyPathElement == "size"_s || keyPathElement == "type"_s)) {
         if (keyPathElement == "size"_s) {
-            result = jsNumber(jsCast<JSBlob*>(obj)->wrapped().size());
+            result = jsNumber(jsCast<JSBlob*>(obj)->protectedWrapped()->size());
             return true;
         }
         if (keyPathElement == "type"_s) {
@@ -97,11 +97,11 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
             return true;
         }
         if (keyPathElement == "lastModified"_s) {
-            result = jsNumber(jsCast<JSFile*>(obj)->wrapped().lastModified());
+            result = jsNumber(jsCast<JSFile*>(obj)->protectedWrapped()->lastModified());
             return true;
         }
         if (keyPathElement == "lastModifiedDate"_s) {
-            result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->wrapped().lastModified()).value()));
+            result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->protectedWrapped()->lastModified()).value()));
             return true;
         }
     }
@@ -405,10 +405,11 @@ static JSValue deserializeIDBValueToJSValue(JSGlobalObject& lexicalGlobalObject,
 
     auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
-    lexicalGlobalObject.vm().apiLock().lock();
+    Ref apiLock = lexicalGlobalObject.vm().apiLock();
+    apiLock->lock();
     Vector<Ref<MessagePort>> messagePorts;
     JSValue result = serializedValue->deserialize(lexicalGlobalObject, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
-    lexicalGlobalObject.vm().apiLock().unlock();
+    apiLock->unlock();
 
     return result;
 }
@@ -529,13 +530,15 @@ std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& 
 class IDBSerializationContext {
 public:
     IDBSerializationContext()
-        : m_thread(Thread::current())
+#if ASSERT_ENABLED
+        : m_threadUID(Thread::currentSingleton().uid())
+#endif
     {
     }
 
     ~IDBSerializationContext()
     {
-        ASSERT(&m_thread == &Thread::current());
+        ASSERT(m_threadUID == Thread::currentSingleton().uid());
         if (!m_vm)
             return;
 
@@ -546,7 +549,7 @@ public:
 
     JSC::JSGlobalObject& globalObject()
     {
-        ASSERT(&m_thread == &Thread::current());
+        ASSERT(m_threadUID == Thread::currentSingleton().uid());
 
         initializeVM();
         return *m_globalObject.get();
@@ -569,7 +572,9 @@ private:
 
     RefPtr<JSC::VM> m_vm;
     JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
-    Thread& m_thread;
+#if ASSERT_ENABLED
+    uint32_t m_threadUID;
+#endif
 };
 
 void callOnIDBSerializationThreadAndWait(Function<void(JSC::JSGlobalObject&)>&& function)

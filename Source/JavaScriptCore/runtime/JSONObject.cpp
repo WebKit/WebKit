@@ -868,7 +868,7 @@ inline unsigned FastStringifier<CharType, bufferMode>::usableBufferSize(unsigned
     //    side here is potential loss of some performance opportunity when we encounter
     //    a workload that recurses deeply. We expect such workloads to be rare.
 
-    auto& stack = Thread::current().stack();
+    auto& stack = Thread::currentSingleton().stack();
     uint8_t* stackPointer = std::bit_cast<uint8_t*>(currentStackPointer());
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(stack.recursionLimit());
     size_t stackCapacityForRecursion = stackPointer - stackLimit;

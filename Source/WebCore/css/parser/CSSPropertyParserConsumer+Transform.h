@@ -39,15 +39,21 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: <transform> consuming (CSSValue)
-RefPtr<CSSValue> consumeTransform(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTransformList(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange&, const CSSParserContext&);
+// MARK: <rotate3d()> consuming (CSSValue)
+RefPtr<CSSValue> consumeRotate3dFunction(CSSParserTokenRange&, const CSSParserContext&);
+// MARK: <translate()> consuming (CSSValue)
+RefPtr<CSSValue> consumeTranslateFunction(CSSParserTokenRange&, const CSSParserContext&);
+// MARK: <translate3d()> consuming (CSSValue)
+RefPtr<CSSValue> consumeTranslate3dFunction(CSSParserTokenRange&, const CSSParserContext&);
+
+// MARK: <'translate'> consuming (CSSValue)
 RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange&, const CSSParserContext&);
+// MARK: <'scale'> consuming (CSSValue)
 RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, const CSSParserContext&);
+// MARK: <'rotate'> consuming (CSSValue)
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, const CSSParserContext&);
 
-// MARK: <transform> parsing (raw)
+// MARK: <'transform'> parsing (raw)
 std::optional<TransformOperations> parseTransformRaw(const String&, const CSSParserContext&, const CSSToLengthConversionData&);
 
 } // namespace CSSPropertyParserHelpers

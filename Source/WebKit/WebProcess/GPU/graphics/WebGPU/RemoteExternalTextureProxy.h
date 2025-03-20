@@ -70,7 +70,9 @@ private:
     void setLabelInternal(const String&) final;
     void destroy() final;
     void undestroy() final;
+#if PLATFORM(COCOA)
     void updateExternalTexture(CVPixelBufferRef) final;
+#endif
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

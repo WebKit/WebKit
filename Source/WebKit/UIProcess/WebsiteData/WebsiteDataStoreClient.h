@@ -119,11 +119,6 @@ public:
     {
     }
 
-    virtual void getScreenTimeURLs(std::optional<WTF::UUID>, CompletionHandler<void(HashSet<URL>&&)>&& completionHandler) const
-    {
-        completionHandler({ });
-    }
-
     enum class CanSuspend : bool { No, Yes };
     virtual void didExceedMemoryFootprintThreshold(size_t, const String&, unsigned, Seconds, bool, WebCore::WasPrivateRelayed, CanSuspend)
     {

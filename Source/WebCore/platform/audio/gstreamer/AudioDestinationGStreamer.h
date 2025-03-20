@@ -28,7 +28,7 @@ namespace WebCore {
 
 class AudioDestinationGStreamer : public AudioDestination, public RefCounted<AudioDestinationGStreamer> {
 public:
-    AudioDestinationGStreamer(AudioIOCallback&, unsigned long numberOfOutputChannels, float sampleRate);
+    AudioDestinationGStreamer(const CreationOptions&);
     virtual ~AudioDestinationGStreamer();
 
     void ref() const final { return RefCounted<AudioDestinationGStreamer>::ref(); }

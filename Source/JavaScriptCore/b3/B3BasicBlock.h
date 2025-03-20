@@ -32,6 +32,7 @@
 #include "B3Origin.h"
 #include "B3SuccessorCollection.h"
 #include "B3Type.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +46,7 @@ template<typename> class GenericBlockInsertionSet;
 
 class BasicBlock {
     WTF_MAKE_NONCOPYABLE(BasicBlock);
-    WTF_MAKE_TZONE_ALLOCATED(BasicBlock);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BasicBlock);
 public:
     typedef Vector<Value*> ValueList;
     typedef Vector<BasicBlock*, 2> PredecessorList;

@@ -63,6 +63,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-current-time.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-effect.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-playback-rate.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-start-time.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html

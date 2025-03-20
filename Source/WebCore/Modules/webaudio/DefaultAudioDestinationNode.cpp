@@ -34,6 +34,7 @@
 #include "AudioNodeInput.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "Document.h"
 #include "Logging.h"
 #include "MediaStrategy.h"
 #include "PlatformStrategies.h"
@@ -116,7 +117,11 @@ void DefaultAudioDestinationNode::createDestination()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", sampleRate(), ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
     ASSERT(!m_destination);
-    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), sampleRate());
+    m_destination = platformStrategies()->mediaStrategy().createAudioDestination({ *this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), sampleRate()
+#if PLATFORM(IOS_FAMILY)
+        , context().sceneIdentifier()
+#endif
+        });
 }
 
 void DefaultAudioDestinationNode::recreateDestination()
@@ -290,6 +295,15 @@ void DefaultAudioDestinationNode::updateIsEffectivelyPlayingAudio()
     m_isEffectivelyPlayingAudio = isEffectivelyPlayingAudio;
     context().isPlayingAudioDidChange();
 }
+
+#if PLATFORM(IOS_FAMILY)
+void DefaultAudioDestinationNode::setSceneIdentifier(const String& sceneIdentifier)
+{
+    if (m_destination)
+        m_destination->setSceneIdentifier(sceneIdentifier);
+}
+#endif
+
 
 } // namespace WebCore
 

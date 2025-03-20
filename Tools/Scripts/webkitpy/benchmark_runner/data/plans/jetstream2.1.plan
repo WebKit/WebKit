@@ -518,7 +518,7 @@
             {"path": "worker/segmentation.js", "mode": "100644", "type": "blob"}
         ]
     },
-    "subtest_url_format": "test=${TEST}",
+    "subtest_url_format": "&test=${TEST}",
     "subtests": {
         "": [
             "Air",

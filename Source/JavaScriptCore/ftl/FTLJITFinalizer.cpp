@@ -59,8 +59,16 @@ bool JITFinalizer::finalize()
     m_plan.runMainThreadFinalizationTasks();
 
     CodeBlock* codeBlock = m_plan.codeBlock();
-
+    m_jitCode->setSize(m_codeSize);
     codeBlock->setJITCode(*m_jitCode);
+
+    if (UNLIKELY(Options::dumpFTLCodeSize())) {
+        auto* baselineCodeBlock = codeBlock->baselineAlternative();
+        size_t baselineCodeSize = 0;
+        if (auto jitCode = baselineCodeBlock->jitCode())
+            baselineCodeSize = jitCode->size();
+        dataLogLn("FTL: codeSize:(", m_jitCode->size(), "),nodes:(", m_jitCode->numberOfCompiledDFGNodes(), "),baselineCodeSize:(", baselineCodeSize, "),bytecodeCost:(", baselineCodeBlock->bytecodeCost(), ")");
+    }
 
     if (UNLIKELY(m_plan.compilation()))
         vm.m_perBytecodeProfiler->addCompilation(codeBlock, *m_plan.compilation());

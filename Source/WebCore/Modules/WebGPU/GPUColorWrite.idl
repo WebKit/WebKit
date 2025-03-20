@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long GPUColorWriteFlags;
     Exposed=(Window,Worker),
     SecureContext
 ]
-interface GPUColorWrite {
+namespace GPUColorWrite {
     const GPUFlagsConstant RED   = 0x1;
     const GPUFlagsConstant GREEN = 0x2;
     const GPUFlagsConstant BLUE  = 0x4;

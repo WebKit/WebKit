@@ -1,5 +1,6 @@
 
-PASS unsupported_scheme
+PASS non-parsable URL
+FAIL unsupported_scheme URL of the shared worker is cross-origin
 PASS data_url
 FAIL javascript_url URL of the shared worker is cross-origin
 FAIL about_blank URL of the shared worker is cross-origin

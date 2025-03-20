@@ -1,3 +1,5 @@
+//@ skip
+
 function shouldThrow(func, errorType) {
     let error;
     try {

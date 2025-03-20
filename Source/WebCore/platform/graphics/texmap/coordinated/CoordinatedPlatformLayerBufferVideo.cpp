@@ -33,9 +33,11 @@
 #include "CoordinatedPlatformLayerBufferYUV.h"
 #include "TextureMapper.h"
 
+#if USE(GSTREAMER_GL)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
 #include <epoxy/gl.h>
 #include <gst/gl/gl.h>
+#endif
 
 #if USE(GBM)
 #include "CoordinatedPlatformLayerBufferDMABuf.h"
@@ -93,8 +95,12 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     UNUSED_PARAM(dmabufFormat);
 #endif
 
+#if USE(GSTREAMER_GL)
     if (gstGLEnabled && gst_is_gl_memory(gst_buffer_peek_memory(buffer, 0)))
         return createBufferFromGLMemory(buffer, videoInfo);
+#else
+    UNUSED_PARAM(gstGLEnabled);
+#endif
 
     // When not having a texture, we map the frame here and upload the pixels to a texture in the
     // compositor thread, in paintToTextureMapper(), which also allows us to use the texture mapper
@@ -193,6 +199,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 }
 #endif // USE(GBM)
 
+#if USE(GSTREAMER_GL)
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory(GstBuffer* buffer, GstVideoInfo* videoInfo)
 {
     m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
@@ -244,10 +251,12 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
     return nullptr;
 }
+#endif
 
 void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     if (m_isMapped) {
+#if USE(GSTREAMER_GL)
         if (m_videoDecoderPlatform != GstVideoDecoderPlatform::OpenMAX) {
             if (auto* meta = gst_buffer_get_gl_sync_meta(m_videoFrame.buffer)) {
                 GstMemory* memory = gst_buffer_peek_memory(m_videoFrame.buffer, 0);
@@ -255,6 +264,7 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
                 gst_gl_sync_meta_wait_cpu(meta, context);
             }
         }
+#endif
 
         if (!m_buffer) {
             OptionSet<BitmapTexture::Flags> textureFlags;

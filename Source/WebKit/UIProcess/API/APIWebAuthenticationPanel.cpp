@@ -54,6 +54,11 @@ RefPtr<WebKit::AuthenticatorManager> WebAuthenticationPanel::protectedManager() 
     return m_manager;
 }
 
+Ref<WebAuthenticationPanelClient> WebAuthenticationPanel::protectedClient() const
+{
+    return m_client;
+}
+
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
     : m_client(WebAuthenticationPanelClient::create())
     , m_weakManager(manager)

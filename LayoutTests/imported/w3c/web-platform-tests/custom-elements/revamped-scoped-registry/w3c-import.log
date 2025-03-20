@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Construct.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/CustomElementRegistry-define.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/CustomElementRegistry-initialize.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/CustomElementRegistry-upgrade.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Document-createElement.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Document-createElementNS.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Document-importNode.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Element-customElements-exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Element-customElements.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/Element-innerHTML.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/ShadowRoot-init-customElements.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/ShadowRoot-innerHTML.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/revamped-scoped-registry/template.tentative.window.js

@@ -28,9 +28,11 @@
 #include "ProcessIdentity.h"
 #include "SampleMap.h"
 #include <CoreMedia/CMTime.h>
+#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -41,7 +43,7 @@ OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 typedef struct opaqueCMBufferQueue *CMBufferQueueRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
-typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 
 namespace WTF {
 class WorkQueue;
@@ -53,14 +55,14 @@ class EffectiveRateChangedListener;
 class MediaSample;
 class WebCoreDecompressionSession;
 
-class VideoMediaSampleRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main> {
+class VideoMediaSampleRenderer final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main> {
 public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer) { return adoptRef(*new VideoMediaSampleRenderer(renderer)); }
     ~VideoMediaSampleRenderer();
 
-    bool prefersDecompressionSession() const { return m_prefersDecompressionSession; }
+    bool prefersDecompressionSession() const;
     void setPrefersDecompressionSession(bool);
-    bool isUsingDecompressionSession() const;
+    bool isUsingDecompressionSession() const { return m_isUsingDecompressionSession; }
 
     void setTimebase(RetainPtr<CMTimebaseRef>&&);
     RetainPtr<CMTimebaseRef> timebase() const;
@@ -143,6 +145,7 @@ private:
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(Function<void()>&&) const;
     dispatch_queue_t dispatchQueue() const;
+    RefPtr<WebCoreDecompressionSession> decompressionSession() const;
 
     const RefPtr<WTF::WorkQueue> m_workQueue;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
@@ -156,7 +159,8 @@ private:
     std::atomic<FlushId> m_flushId { 0 };
     Deque<std::pair<RetainPtr<CMSampleBufferRef>, FlushId>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
     RetainPtr<CMBufferQueueRef> m_decodedSampleQueue; // created on the main thread, immutable after creation.
-    RefPtr<WebCoreDecompressionSession> m_decompressionSession;
+    RefPtr<WebCoreDecompressionSession> m_decompressionSession WTF_GUARDED_BY_LOCK(m_lock);
+    std::atomic<bool> m_isUsingDecompressionSession { false };
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_isDisplayingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_forceLateSampleToBeDisplayed WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
@@ -165,7 +169,7 @@ private:
     std::optional<CMTime> m_nextScheduledPurge WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
 
     Function<void()> m_readyForMoreSampleFunction;
-    bool m_prefersDecompressionSession { false };
+    bool m_prefersDecompressionSession WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     std::optional<uint32_t> m_currentCodec;
     std::atomic<bool> m_gotDecodingError { false };
 

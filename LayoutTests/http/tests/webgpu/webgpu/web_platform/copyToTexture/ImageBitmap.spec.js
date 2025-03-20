@@ -11,12 +11,15 @@ TODO: Test ImageBitmap generated from all possible ImageBitmapSource, relevant I
 
 TODO: Test zero-sized copies from all sources (just make sure params cover it) (e.g. 0x0, 0x4, 4x0).
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
-import { kTextureFormatInfo, kValidTextureFormatsForCopyE2T } from '../../format_info.js';
-import { CopyToTextureUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
+import {
+  getBaseFormatForRegularTextureFormat,
+  kValidTextureFormatsForCopyE2T } from
+'../../format_info.js';
+import { TextureUploadingUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
 
 import { kTestColorsAll, kTestColorsOpaque, makeTestColorsTexelView } from './util.js';
 
-export const g = makeTestGroup(CopyToTextureUtils);
+export const g = makeTestGroup(TextureUploadingUtils);
 
 g.test('from_ImageData').
 desc(
@@ -31,17 +34,17 @@ desc(
   Then call copyExternalImageToTexture() to do a full copy to the 0 mipLevel
   of dst texture, and read the contents out to compare with the ImageBitmap contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped.
 
   The tests covers:
   - Valid dstFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcFlipYInCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcFlipYInCopy' in cases)
 
   And the expected results are all passed.
   `
@@ -59,7 +62,7 @@ combine('width', [1, 2, 4, 15, 255, 256]).
 combine('height', [1, 2, 4, 15, 255, 256])
 ).
 beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstFormat);
+  t.skipIf(typeof ImageData === 'undefined', 'ImageData does not exist in this environment');
 }).
 fn(async (t) => {
   const {
@@ -72,6 +75,7 @@ fn(async (t) => {
     dstPremultiplied,
     srcFlipYInCopy
   } = t.params;
+  t.skipIfTextureFormatNotSupported(dstFormat);
 
   const testColors = kTestColorsAll;
 
@@ -98,14 +102,14 @@ fn(async (t) => {
     colorSpaceConversion
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: { width, height },
     format: dstFormat,
     usage:
     GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
 
-  const expFormat = kTextureFormatInfo[dstFormat].baseFormat ?? dstFormat;
+  const expFormat = getBaseFormatForRegularTextureFormat(dstFormat) ?? dstFormat;
   const flipSrcBeforeCopy = orientation === 'flipY';
   const texelViewExpected = t.getExpectedDstPixelsFromSrcPixels({
     srcPixels: imageData.data,
@@ -151,10 +155,10 @@ desc(
   Then call copyExternalImageToTexture() to do a full copy to the 0 mipLevel
   of dst texture, and read the contents out to compare with the ImageBitmap contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped.
 
   The tests covers:
@@ -162,7 +166,7 @@ desc(
   - Valid dstFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcFlipYInCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcFlipYInCopy' in cases)
 
   And the expected results are all passed.
   `
@@ -179,7 +183,7 @@ combine('width', [1, 2, 4, 15, 255, 256]).
 combine('height', [1, 2, 4, 15, 255, 256])
 ).
 beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstFormat);
+  t.skipIf(typeof ImageData === 'undefined', 'ImageData does not exist in this environment');
 }).
 fn(async (t) => {
   const {
@@ -191,6 +195,7 @@ fn(async (t) => {
     dstPremultiplied,
     srcFlipYInCopy
   } = t.params;
+  t.skipIfTextureFormatNotSupported(t.params.dstFormat);
 
   // CTS sometimes runs on worker threads, where document is not available.
   // In this case, OffscreenCanvas can be used instead of <canvas>.
@@ -245,14 +250,14 @@ fn(async (t) => {
     colorSpaceConversion
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: { width, height },
     format: dstFormat,
     usage:
     GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
 
-  const expFormat = kTextureFormatInfo[dstFormat].baseFormat ?? dstFormat;
+  const expFormat = getBaseFormatForRegularTextureFormat(dstFormat) ?? dstFormat;
   const flipSrcBeforeCopy = orientation === 'flipY';
   const texelViewExpected = t.getExpectedDstPixelsFromSrcPixels({
     srcPixels: imageData.data,
@@ -299,10 +304,10 @@ desc(
   rect info list, to the 0 mipLevel of dst texture, and read the contents out to compare
   with the ImageBitmap contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped, and origin is top-left consistantly.
 
   The tests covers:
@@ -310,7 +315,7 @@ desc(
   - Valid dstFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcFlipYInCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcFlipYInCopy' in cases)
   - Valid subrect copies.
 
   And the expected results are all passed.
@@ -326,6 +331,9 @@ combine('dstPremultiplied', [true, false]).
 beginSubcases().
 combine('copySubRectInfo', kCopySubrectInfo)
 ).
+beforeAllSubcases((t) => {
+  t.skipIf(typeof ImageData === 'undefined', 'ImageData does not exist in this environment');
+}).
 fn(async (t) => {
   const {
     copySubRectInfo,
@@ -363,7 +371,7 @@ fn(async (t) => {
     colorSpaceConversion
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: dstSize,
     format: kColorFormat,
     usage:
@@ -416,10 +424,10 @@ desc(
   rect info list, to the 0 mipLevel of dst texture, and read the contents out to compare
   with the ImageBitmap contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped, and origin is top-left consistantly.
 
   The tests covers:
@@ -427,7 +435,7 @@ desc(
   - Valid dstFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcFlipYInCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcFlipYInCopy' in cases)
   - Valid subrect copies.
 
   And the expected results are all passed.
@@ -502,7 +510,7 @@ fn(async (t) => {
     colorSpaceConversion
   });
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: dstSize,
     format: kColorFormat,
     usage:

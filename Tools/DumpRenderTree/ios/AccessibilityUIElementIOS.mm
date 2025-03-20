@@ -149,6 +149,13 @@ static JSRetainPtr<JSStringRef> concatenateAttributeAndValue(NSString *attribute
     return adopt(JSStringCreateWithCharacters(buffer.data(), buffer.size()));
 }
 
+bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
+{
+    if (!otherElement)
+        return false;
+    return platformUIElement() == otherElement->platformUIElement();
+}
+
 #pragma mark iPhone Attributes
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier()

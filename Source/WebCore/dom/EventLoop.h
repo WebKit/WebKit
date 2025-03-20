@@ -38,6 +38,11 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class QueuedTask;
+class MicrotaskDispatcher;
+}
+
 namespace WebCore {
 
 class ActiveDOMCallbackMicrotask;
@@ -98,6 +103,8 @@ enum class HasReachedMaxNestingLevel : bool { No, Yes };
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
 class EventLoop : public RefCountedAndCanMakeWeakPtr<EventLoop> {
 public:
+    using TaskVector = Vector<std::unique_ptr<EventLoopTask>, 4>;
+
     virtual ~EventLoop();
 
     typedef Function<void ()> TaskFunction;
@@ -110,7 +117,7 @@ public:
     void removeRepeatingTimer(EventLoopTimer&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
-    void queueMicrotask(std::unique_ptr<EventLoopTask>&&);
+    void queueMicrotask(JSC::QueuedTask&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
     void performMicrotaskCheckpoint();
@@ -144,7 +151,7 @@ private:
     virtual bool isContextThread() const = 0;
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
-    Vector<std::unique_ptr<EventLoopTask>> m_tasks;
+    TaskVector m_tasks;
     WeakHashSet<EventLoopTimer> m_scheduledTasks;
     WeakHashSet<EventLoopTimer> m_repeatingTasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
@@ -159,17 +166,8 @@ class EventLoopTaskGroup final : public CanMakeWeakPtr<EventLoopTaskGroup>, publ
     WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventLoopTaskGroup);
 public:
-    EventLoopTaskGroup(EventLoop& eventLoop)
-        : m_eventLoop(eventLoop)
-    {
-        eventLoop.registerGroup(*this);
-    }
-
-    ~EventLoopTaskGroup()
-    {
-        if (RefPtr eventLoop = m_eventLoop.get())
-            eventLoop->unregisterGroup(*this);
-    }
+    EventLoopTaskGroup(EventLoop&);
+    ~EventLoopTaskGroup();
 
     bool hasSameEventLoopAs(EventLoopTaskGroup& otherGroup)
     {
@@ -208,6 +206,7 @@ public:
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
     WEBCORE_EXPORT void queueMicrotask(EventLoop::TaskFunction&&);
+    WEBCORE_EXPORT void queueMicrotask(JSC::QueuedTask&&);
     MicrotaskQueue& microtaskQueue() { return protectedEventLoop()->microtaskQueue(); }
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
@@ -232,6 +231,8 @@ public:
     void didAddTimer(EventLoopTimer&);
     void didRemoveTimer(EventLoopTimer&);
 
+    Ref<JSC::MicrotaskDispatcher> jsMicrotaskDispatcher() const;
+
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 
@@ -239,6 +240,7 @@ private:
 
     WeakPtr<EventLoop> m_eventLoop;
     WeakHashSet<EventLoopTimer> m_timers;
+    Ref<JSC::MicrotaskDispatcher> m_jsMicrotaskDispatcher;
     State m_state { State::Running };
 };
 

@@ -29,6 +29,7 @@
 
 #include "DFGNode.h"
 #include <wtf/HashSet.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +38,7 @@ namespace JSC { namespace DFG {
 class Graph;
 
 class PhiChildren {
-    WTF_MAKE_TZONE_ALLOCATED(PhiChildren);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(PhiChildren);
 public:
     typedef Vector<Node*, 3> List;
     

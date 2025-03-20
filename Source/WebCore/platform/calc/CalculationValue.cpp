@@ -79,7 +79,7 @@ bool CalculationValue::operator==(const CalculationValue& other) const
 
 TextStream& operator<<(TextStream& ts, const CalculationValue& value)
 {
-    return ts << "calc(" << value.tree() << ")";
+    return ts << "calc("_s << value.tree() << ')';
 }
 
 } // namespace WebCore

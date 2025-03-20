@@ -1,6 +1,5 @@
 Modules/webtransport/WebTransportReceiveStream.h
 css/CSSAppleColorFilterPropertyValue.h
-css/CSSAspectRatioValue.h
 css/CSSAttrValue.h
 css/CSSBackgroundRepeatValue.h
 css/CSSBasicShapeValue.h
@@ -16,17 +15,15 @@ css/CSSCounterValue.h
 css/CSSCrossfadeValue.h
 css/CSSCursorImageValue.h
 css/CSSCustomPropertyValue.h
-css/CSSEasingFunctionValue.h
 css/CSSDynamicRangeLimitValue.h
+css/CSSEasingFunctionValue.h
 css/CSSFilterImageValue.h
 css/CSSFilterPropertyValue.h
 css/CSSFontFaceSrcValue.h
 css/CSSFontFeatureValue.h
-css/CSSFontPaletteValuesOverrideColorsValue.h
 css/CSSFontStyleRangeValue.h
 css/CSSFontStyleWithAngleValue.h
 css/CSSFontValue.h
-css/CSSFontVariantAlternatesValue.h
 css/CSSFontVariationValue.h
 css/CSSFunctionValue.h
 css/CSSGradientValue.h
@@ -49,6 +46,7 @@ css/CSSPendingSubstitutionValue.h
 css/CSSPositionTryRule.h
 css/CSSPrimitiveValue.h
 css/CSSQuadValue.h
+css/CSSRatioValue.h
 css/CSSRayValue.h
 css/CSSRectValue.h
 css/CSSReflectValue.h

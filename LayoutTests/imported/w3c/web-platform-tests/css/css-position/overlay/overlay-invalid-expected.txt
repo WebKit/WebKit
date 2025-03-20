@@ -1,0 +1,8 @@
+
+PASS e.style['overlay'] = "browser" should not set the property value
+PASS e.style['overlay'] = "normal" should not set the property value
+PASS e.style['overlay'] = "none auto" should not set the property value
+PASS e.style['overlay'] = "none, auto" should not set the property value
+PASS e.style['overlay'] = "'auto'" should not set the property value
+PASS e.style['overlay'] = "'none'" should not set the property value
+

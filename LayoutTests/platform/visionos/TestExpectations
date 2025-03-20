@@ -138,6 +138,21 @@ fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]
 
 webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
 
+# webkit.org/b/288683 REGRESSION(291033@main): Broke visionOS layout tests
+interaction-region/guard-crash.html [ Failure ]
+interaction-region/interaction-layers-culling-layer-type-change.html [ Failure ]
+interaction-region/interaction-layers-culling.html [ Failure ]
+interaction-region/layer-tree-shape-reset.html [ Failure ]
+interaction-region/layer-tree.html [ Failure ]
+platform/visionos/transforms/separated-image-downgrade-content.html [ Failure ]
+platform/visionos/transforms/separated-image-downgrade-tiled.html [ Failure ]
+platform/visionos/transforms/separated-image-downgrade.html [ Failure ]
+platform/visionos/transforms/separated-image-upgrade-tiled.html [ Failure ]
+platform/visionos/transforms/separated-image-upgrade.html [ Failure ]
+platform/visionos/transforms/separated-update.html [ Failure ]
+platform/visionos/transforms/separated-video.html [ Failure ]
+platform/visionos/transforms/separated.html [ Failure ]
+
 ### END OF Triaged failures
 ###################################################################################################
 

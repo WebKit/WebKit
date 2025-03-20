@@ -99,7 +99,7 @@ TEST(GraphicsContextTests, CGBitmapRenderingModeIsUnaccelerated)
 {
     auto srgb = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, 3, 3, 8, 4 * 3, srgb.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    ASSERT_NE(cgContext, nullptr);
+    ASSERT_NE(cgContext.get(), nullptr);
     GraphicsContextCG context(cgContext.get());
     EXPECT_EQ(context.renderingMode(), RenderingMode::Unaccelerated);
 }

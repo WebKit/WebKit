@@ -3766,7 +3766,7 @@ instructionLabel(_memory_init)
     move sp, a2
     loadi 1[MC], a1
     operationCallMayThrow(macro() cCall3(_ipint_extern_memory_init) end)
-    addq 3*StackValueSize, sp
+    addq 3 * StackValueSize, sp
     loadb [MC], t0
     advancePCByReg(t0)
     advanceMC(constexpr (sizeof(IPInt::Const32Metadata))) # xxx check
@@ -3810,7 +3810,7 @@ instructionLabel(_table_init)
     move sp, a1
     leap [MC], a2 # IPInt::tableInitMetadata
     operationCallMayThrow(macro() cCall3(_ipint_extern_table_init) end)
-    addp 3*StackValueSize, sp
+    addp 3 * StackValueSize, sp
     loadb IPInt::TableInitMetadata::instructionLength[MC], t0
     advancePCByReg(t0)
     advanceMC(constexpr (sizeof(IPInt::TableInitMetadata)))
@@ -3830,7 +3830,7 @@ instructionLabel(_table_copy)
     move sp, a1
     move MC, a2
     operationCallMayThrow(macro() cCall3(_ipint_extern_table_copy) end)
-    addp 3*StackValueSize, sp
+    addp 3 * StackValueSize, sp
     loadb IPInt::TableCopyMetadata::instructionLength[MC], t0
     advancePCByReg(t0)
     advanceMC(constexpr (sizeof(IPInt::TableCopyMetadata)))
@@ -3863,6 +3863,7 @@ instructionLabel(_table_fill)
     move sp, a1
     move MC, a2
     operationCallMayThrow(macro() cCall3(_ipint_extern_table_fill) end)
+    addp 3 * StackValueSize, sp
     loadb IPInt::TableFillMetadata::instructionLength[MC], t0
     advancePCByReg(t0)
     advanceMC(constexpr (sizeof(IPInt::TableFillMetadata)))

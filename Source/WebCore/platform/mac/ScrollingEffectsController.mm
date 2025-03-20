@@ -583,14 +583,14 @@ static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase,
 static TextStream& operator<<(TextStream& ts, WheelEventStatus status)
 {
     switch (status) {
-    case WheelEventStatus::UserScrollBegin: ts << "UserScrollBegin"; break;
-    case WheelEventStatus::UserScrolling: ts << "UserScrolling"; break;
-    case WheelEventStatus::UserScrollEnd: ts << "UserScrollEnd"; break;
-    case WheelEventStatus::MomentumScrollBegin: ts << "MomentumScrollBegin"; break;
-    case WheelEventStatus::MomentumScrolling: ts << "MomentumScrolling"; break;
-    case WheelEventStatus::MomentumScrollEnd: ts << "MomentumScrollEnd"; break;
-    case WheelEventStatus::DiscreteScrollEvent: ts << "DiscreteScrollEvent"; break;
-    case WheelEventStatus::Unknown: ts << "Unknown"; break;
+    case WheelEventStatus::UserScrollBegin: ts << "UserScrollBegin"_s; break;
+    case WheelEventStatus::UserScrolling: ts << "UserScrolling"_s; break;
+    case WheelEventStatus::UserScrollEnd: ts << "UserScrollEnd"_s; break;
+    case WheelEventStatus::MomentumScrollBegin: ts << "MomentumScrollBegin"_s; break;
+    case WheelEventStatus::MomentumScrolling: ts << "MomentumScrolling"_s; break;
+    case WheelEventStatus::MomentumScrollEnd: ts << "MomentumScrollEnd"_s; break;
+    case WheelEventStatus::DiscreteScrollEvent: ts << "DiscreteScrollEvent"_s; break;
+    case WheelEventStatus::Unknown: ts << "Unknown"_s; break;
     }
     return ts;
 }

@@ -45,6 +45,7 @@
 namespace WebGPU {
 
 constexpr static auto largeBufferSize = 32 * 1024 * 1024;
+constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
 
@@ -495,6 +496,33 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
 #endif
 }
 
+static std::span<uint8_t> span(id<MTLBuffer> buffer)
+{
+    return unsafeMakeSpan(static_cast<uint8_t*>(buffer.contents), buffer.length);
+}
+
+std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<uint8_t> dataSpan, bool noCopy)
+{
+    auto device = m_device.get();
+    if (!device)
+        return std::make_pair(nil, 0ull);
+
+    auto dataSize = dataSpan.size();
+    auto data = dataSpan.data();
+    if (noCopy)
+        return std::make_pair(device->newBufferWithBytesNoCopy(data, dataSize, MTLResourceStorageModeShared, skipMemoryAttribution), 0ull);
+
+    if (!m_temporaryBuffer || m_temporaryBufferOffset + dataSize > m_temporaryBuffer.length) {
+        m_temporaryBuffer = device->safeCreateBuffer(std::max(dataSize, 64 * KB), skipMemoryAttribution);
+        m_temporaryBufferOffset = 0;
+    }
+
+    auto priorOffset = m_temporaryBufferOffset;
+    m_temporaryBufferOffset += WTF::roundUpToMultipleOf(16, dataSize);
+    memcpySpan(span(m_temporaryBuffer).subspan(priorOffset), dataSpan);
+    return std::make_pair(m_temporaryBuffer, priorOffset);
+}
+
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
     auto device = m_device.get();
@@ -502,10 +530,10 @@ void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<u
         return;
 
     ensureBlitCommandEncoder();
-    // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
-    // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     bool noCopy = data.size() >= largeBufferSize;
-    id<MTLBuffer> temporaryBuffer = noCopy ? device->newBufferWithBytesNoCopy(data.data(), data.size(), MTLResourceStorageModeShared) : device->newBufferWithBytes(data.data(), data.size(), MTLResourceStorageModeShared);
+    auto bufferWithOffset = newTemporaryBufferWithBytes(data, noCopy);
+    id<MTLBuffer> temporaryBuffer = bufferWithOffset.first;
+    uint64_t temporaryBufferOffset = bufferWithOffset.second;
     if (!temporaryBuffer) {
         ASSERT_NOT_REACHED();
         return;
@@ -513,7 +541,7 @@ void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<u
 
     [m_blitCommandEncoder
         copyFromBuffer:temporaryBuffer
-        sourceOffset:0
+        sourceOffset:temporaryBufferOffset
         toBuffer:buffer
         destinationOffset:bufferOffset
         size:data.size()];
@@ -997,9 +1025,12 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     NSUInteger newBufferSize = dataByteSize - dataLayoutOffset;
     bool noCopy = newBufferSize >= largeBufferSize;
-    id<MTLBuffer> temporaryBuffer = noCopy ? device->newBufferWithBytesNoCopy(byteCast<char>(data.subspan(dataLayoutOffset).data()), static_cast<NSUInteger>(newBufferSize), MTLResourceStorageModeShared) : device->newBufferWithBytes(byteCast<char>(data.subspan(dataLayoutOffset).data()), static_cast<NSUInteger>(newBufferSize), MTLResourceStorageModeShared);
+    auto temporaryBufferWithOffset = newTemporaryBufferWithBytes(data.subspan(dataLayoutOffset), noCopy);
+    id<MTLBuffer> temporaryBuffer = temporaryBufferWithOffset.first;
+    auto temporaryBufferOffset = temporaryBufferWithOffset.second;
     if (!temporaryBuffer)
         return;
+    ASSERT(temporaryBuffer.length >= newBufferSize);
 
     switch (texture->dimension()) {
     case WGPUTextureDimension_1D: {
@@ -1026,14 +1057,14 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
             auto sourceOffsetSum = checkedSum<NSUInteger>(sourceOffset, widthTimesBlockSize.value());
             if (sourceOffsetSum.hasOverflowed())
                 return;
-            if (sourceOffsetSum.value() > temporaryBuffer.length)
+            if (sourceOffsetSum.value() > newBufferSize)
                 continue;
             if (sourceOffset % blockSize)
                 continue;
 
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
-                sourceOffset:sourceOffset
+                sourceOffset:sourceOffset + temporaryBufferOffset
                 sourceBytesPerRow:0
                 sourceBytesPerImage:0
                 sourceSize:sourceSize
@@ -1066,7 +1097,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                 continue;
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
-                sourceOffset:sourceOffset
+                sourceOffset:sourceOffset + temporaryBufferOffset
                 sourceBytesPerRow:bytesPerRow
                 sourceBytesPerImage:0
                 sourceSize:sourceSize
@@ -1086,7 +1117,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
 
         [m_blitCommandEncoder
             copyFromBuffer:temporaryBuffer
-            sourceOffset:0
+            sourceOffset:temporaryBufferOffset
             sourceBytesPerRow:bytesPerRow
             sourceBytesPerImage:bytesPerImage
             sourceSize:sourceSize

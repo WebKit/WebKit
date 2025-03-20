@@ -1,0 +1,4 @@
+Click me.
+
+FAIL Event Timing: showing modal dialogs is an alternative end point. assert_implements: Event Timing is not supported. undefined
+

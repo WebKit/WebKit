@@ -78,6 +78,9 @@ public:
     virtual void togglePlayState() = 0;
     virtual void beginScrubbing() = 0;
     virtual void endScrubbing() = 0;
+#if HAVE(PIP_SKIP_PREROLL)
+    virtual void skipAd() { }
+#endif
     virtual void seekToTime(double time, double toleranceBefore = 0, double toleranceAfter = 0) = 0;
     virtual void fastSeek(double time) = 0;
     virtual void beginScanningForward() = 0;
@@ -90,6 +93,7 @@ public:
     virtual void togglePictureInPicture() = 0;
     virtual void enterInWindowFullscreen() = 0;
     virtual void exitInWindowFullscreen() = 0;
+    virtual void setPlayerIdentifierForVideoElement() = 0;
     virtual void enterFullscreen() = 0;
     virtual void exitFullscreen() = 0;
     virtual void toggleMuted() = 0;
@@ -174,6 +178,9 @@ public:
     virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
+#if HAVE(PIP_SKIP_PREROLL)
+    virtual void canSkipAdChanged(bool) { }
+#endif
     virtual void volumeChanged(double) { }
     virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }

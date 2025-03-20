@@ -155,7 +155,7 @@ void RemoteInspector::setPendingMainThreadInitialization(bool pendingInitializat
 
     m_pendingMainThreadInitialization = pendingInitialization;
     if (!m_pendingMainThreadInitialization && !m_automaticInspectionEnabled)
-        m_pausedAutomaticInspectionCandidates.clear();
+        m_automaticInspectionCandidates.clear();
 }
 
 void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
@@ -189,7 +189,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
             return;
         }
 
-        m_pausedAutomaticInspectionCandidates.add(targetIdentifier);
+        m_automaticInspectionCandidates.add(targetIdentifier);
 
         // If we are pausing before we have connected to webinspectord the candidate message will be sent as soon as the connection is established.
         if (m_relayConnection) {
@@ -197,22 +197,19 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
             sendAutomaticInspectionCandidateMessage(targetIdentifier);
         }
 
-        // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a
-        // short period of time.
+        // In case debuggers fail to respond, or we cannot connect to webinspectord, assume a rejection for
+        // automatic inspection after a short period of time.
         int64_t debuggerTimeoutDelay = 10;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, debuggerTimeoutDelay * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             Locker locker { m_mutex };
-            if (m_pausedAutomaticInspectionCandidates.remove(targetIdentifier))
+            if (m_automaticInspectionCandidates.remove(targetIdentifier)) {
                 WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", targetIdentifier);
+                target->unpauseForResolvedAutomaticInspection();
+            }
         });
     }
 
     target->pauseWaitingForAutomaticInspection();
-
-    {
-        Locker locker { m_mutex };
-        m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
-    }
 }
 
 void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
@@ -220,7 +217,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
     ASSERT(m_enabled);
     ASSERT(m_automaticInspectionEnabled);
     ASSERT(m_relayConnection);
-    ASSERT(m_pausedAutomaticInspectionCandidates.contains(targetID));
+    ASSERT(m_automaticInspectionCandidates.contains(targetID));
 
     NSDictionary *details = @{ WIRTargetIdentifierKey: @(targetID) };
     m_relayConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
@@ -299,7 +296,7 @@ void RemoteInspector::stopInternal(StopSource source)
 
     updateHasActiveDebugSession();
 
-    m_pausedAutomaticInspectionCandidates.clear();
+    m_automaticInspectionCandidates.clear();
 
     if (m_relayConnection) {
         switch (source) {
@@ -338,11 +335,11 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     m_relayConnection = adoptRef(new RemoteInspectorXPCConnection(connection.get(), m_xpcQueue, this));
     m_relayConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
 
-    if (m_pausedAutomaticInspectionCandidates.size()) {
+    if (m_automaticInspectionCandidates.size()) {
         // We already have a debuggable waiting to be automatically inspected.
         pushListingsNow();
 
-        for (auto targetID : m_pausedAutomaticInspectionCandidates)
+        for (auto targetID : m_automaticInspectionCandidates)
             sendAutomaticInspectionCandidateMessage(targetID);
     } else
         pushListingsSoon();
@@ -439,7 +436,7 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayCon
 
     updateHasActiveDebugSession();
 
-    m_pausedAutomaticInspectionCandidates.clear();
+    m_automaticInspectionCandidates.clear();
 
     // The XPC connection will close itself.
     m_relayConnection = nullptr;
@@ -636,7 +633,7 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target, connectionIdentifier, sender));
 
     if (is<RemoteInspectionTarget>(target)) {
-        bool isAutomaticInspection = m_pausedAutomaticInspectionCandidates.contains(target->targetIdentifier());
+        bool isAutomaticInspection = m_automaticInspectionCandidates.contains(target->targetIdentifier());
         if (!connectionToTarget->setup(isAutomaticInspection, automaticallyPause)) {
             connectionToTarget->close();
             return;
@@ -800,7 +797,7 @@ void RemoteInspector::receivedAutomaticInspectionConfigurationMessage(NSDictiona
     m_automaticInspectionEnabled = automaticInspectionEnabledNumber.boolValue;
 
     if (!m_automaticInspectionEnabled)
-        m_pausedAutomaticInspectionCandidates.clear();
+        m_automaticInspectionCandidates.clear();
 }
 
 void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo)
@@ -812,8 +809,9 @@ void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *use
     if (!targetIdentifier)
         return;
 
-    ASSERT(m_pausedAutomaticInspectionCandidates.contains(targetIdentifier));
-    m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
+    ASSERT(m_automaticInspectionCandidates.contains(targetIdentifier));
+    if (m_automaticInspectionCandidates.remove(targetIdentifier))
+        downcast<RemoteInspectionTarget>(m_targetMap.get(targetIdentifier))->unpauseForResolvedAutomaticInspection();
 }
 
 void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *userInfo)

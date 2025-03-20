@@ -46,7 +46,7 @@ ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode() = defa
 
 void ScrollingTreeOverflowScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "overflow scrolling node";
+    ts << "overflow scrolling node"_s;
     ScrollingTreeScrollingNode::dumpProperties(ts, behavior);
 }
 

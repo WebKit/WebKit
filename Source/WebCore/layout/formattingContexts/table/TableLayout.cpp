@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,6 @@ struct GridSpace {
     enum class Type {
         Percent,
         Fixed,
-        Relative,
         Auto
     };
     Type type { Type::Auto };
@@ -240,7 +239,6 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             return;
         // Setup the priority lists. We use these when expanding/shrinking slots.
         Vector<size_t> autoColumnIndexes;
-        Vector<size_t> relativeColumnIndexes;
         Vector<size_t> fixedColumnIndexes;
         Vector<size_t> percentColumnIndexes;
 
@@ -251,9 +249,6 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
                 break;
             case GridSpace::Type::Fixed:
                 fixedColumnIndexes.append(columnIndex);
-                break;
-            case GridSpace::Type::Relative:
-                relativeColumnIndexes.append(columnIndex);
                 break;
             case GridSpace::Type::Auto:
                 autoColumnIndexes.append(columnIndex);
@@ -290,8 +285,6 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             if (hasSpaceToDistribute())
                 expandSpace(percentColumnIndexes);
             if (hasSpaceToDistribute())
-                expandSpace(relativeColumnIndexes);
-            if (hasSpaceToDistribute())
                 expandSpace(autoColumnIndexes);
             ASSERT(!hasSpaceToDistribute());
             return;
@@ -322,8 +315,6 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
         };
         shrinkSpace(autoColumnIndexes);
         if (needsMoreSpace())
-            shrinkSpace(relativeColumnIndexes);
-        if (needsMoreSpace())
             shrinkSpace(fixedColumnIndexes);
         if (needsMoreSpace())
             shrinkSpace(percentColumnIndexes);
@@ -351,9 +342,6 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         case LengthType::Percent:
             columnWidth = computedLogicalWidth.value() * availableHorizontalSpace / 100.0f;
             type = GridSpace::Type::Percent;
-            break;
-        case LengthType::Relative:
-            ASSERT_NOT_IMPLEMENTED_YET();
             break;
         default:
             break;

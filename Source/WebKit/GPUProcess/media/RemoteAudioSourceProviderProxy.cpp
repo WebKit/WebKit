@@ -40,8 +40,8 @@ Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCo
     localProvider.setConfigureAudioStorageCallback([remoteProvider](auto&&... args) {
         return remoteProvider->configureAudioStorage(args...);
     });
-    localProvider.setAudioCallback([remoteProvider](auto startFrame, auto numberOfFrames) {
-        remoteProvider->newAudioSamples(startFrame, numberOfFrames);
+    localProvider.setAudioCallback([remoteProvider](auto startFrame, auto numberOfFrames, bool needsFlush) {
+        remoteProvider->newAudioSamples(startFrame, numberOfFrames, needsFlush);
     });
 
     return remoteProvider;
@@ -66,9 +66,9 @@ std::unique_ptr<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::configure
     return caRingBuffer;
 }
 
-void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64_t numberOfFrames, bool needsFlush)
 {
-    protectedConnection()->send(Messages::RemoteAudioSourceProviderManager::AudioSamplesAvailable { m_identifier, startFrame, numberOfFrames }, 0);
+    protectedConnection()->send(Messages::RemoteAudioSourceProviderManager::AudioSamplesAvailable { m_identifier, startFrame, numberOfFrames, needsFlush }, 0);
 }
 
 } // namespace WebKit

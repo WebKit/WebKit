@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 17px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 30px;
+          background-color: green;
+      }
+      .contentRect {
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          left: 25%;
+          top: 25%;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <div class="rect" style="background-color: blue; transform: perspective(500px) translate3d(0, 0, -250px);">
+      <div class="contentRect"></div>
+    </div>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var contentRect = document.getElementsByClassName("contentRect")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              contentRect.style.backgroundColor = "yellow";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[51, 102, 22, 22]]);
+          },
+          () => {
+              contentRect.style.backgroundColor = "green";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[51, 102, 22, 22]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

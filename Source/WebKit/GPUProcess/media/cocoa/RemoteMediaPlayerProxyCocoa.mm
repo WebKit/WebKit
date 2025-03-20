@@ -30,10 +30,14 @@
 
 #import "LayerHostingContext.h"
 #import "MediaPlayerPrivateRemoteMessages.h"
+#import "RemoteVideoFrameObjectHeap.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/DestinationColorSpace.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/FloatSize.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/VideoFrameCV.h>
+#import <WebCore/VideoFrameMetadata.h>
 #import <wtf/MachSendRight.h>
 
 #if USE(EXTENSIONKIT)
@@ -80,7 +84,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 #endif
         m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
         if (m_configuration.videoLayerSize.isEmpty())
-            m_configuration.videoLayerSize = enclosingIntRect(FloatRect(layer.frame)).size();
+            m_configuration.videoLayerSize = enclosingIntRect(WebCore::FloatRect(layer.frame)).size();
         auto& size = m_configuration.videoLayerSize;
         [layer setFrame:CGRectMake(0, 0, size.width(), size.height())];
         protectedConnection()->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextIdChanged(m_inlineLayerHostingContext->contextID(), size), m_id);
@@ -133,14 +137,16 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
 #endif
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
+void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    auto properties = protectedVideoFrameObjectHeap()->add(WebCore::VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTFMove(buffer)));
+    auto properties = protectedVideoFrameObjectHeap()->add(WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTFMove(buffer)));
     protectedConnection()->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
 }
 
 void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)
 {
+    using namespace WebCore;
+
     RefPtr player = m_player;
     if (!player) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
@@ -172,7 +178,7 @@ void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::Destinat
 {
     RefPtr player = m_player;
     if (!player) {
-        completionHandler(DestinationColorSpace::SRGB());
+        completionHandler(WebCore::DestinationColorSpace::SRGB());
         return;
     }
 

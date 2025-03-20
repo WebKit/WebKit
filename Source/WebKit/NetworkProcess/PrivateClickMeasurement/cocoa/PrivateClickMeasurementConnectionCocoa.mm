@@ -29,6 +29,7 @@
 #import "DaemonEncoder.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/darwin/XPCExtras.h>
 
 namespace WebKit::PCM {
 
@@ -49,7 +50,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
-    String debugMessage = xpc_dictionary_get_wtfstring(request, protocolDebugMessageKey);
+    String debugMessage = xpcDictionaryGetString(request, protocolDebugMessageKey);
     if (!debugMessage)
         return;
     auto messageLevel = static_cast<JSC::MessageLevel>(xpc_dictionary_get_uint64(request, protocolDebugMessageLevelKey));

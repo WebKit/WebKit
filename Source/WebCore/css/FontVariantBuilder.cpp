@@ -26,9 +26,11 @@
 #include "config.h"
 #include "FontVariantBuilder.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "StyleBuilderState.h"
 #include "TextFlags.h"
 
 namespace WebCore {
@@ -182,6 +184,102 @@ FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue& value)
         ASSERT(value.valueID() == CSSValueNormal);
 
     return FontVariantEastAsianValues(variant, width, ruby);
+}
+
+FontVariantAlternates extractFontVariantAlternates(const CSSValue& value, Style::BuilderState& builderState)
+{
+    auto processSingleItemFunction = [&](const CSSFunctionValue& function, String& parameterToSet) -> bool {
+        if (function.size() != 1) {
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return false;
+        }
+        RefPtr primitiveArgument = dynamicDowncast<CSSPrimitiveValue>(function[0]);
+        if (!primitiveArgument || !primitiveArgument->isCustomIdent()) {
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return false;
+        }
+        parameterToSet = primitiveArgument->customIdent();
+        return true;
+    };
+
+    auto processListFunction = [&](const CSSFunctionValue& function, Vector<String>& parameterToSet) -> bool {
+        if (!function.size()) {
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return false;
+        }
+        for (Ref argument : function) {
+            RefPtr primitiveArgument = dynamicDowncast<CSSPrimitiveValue>(argument);
+            if (!primitiveArgument || !primitiveArgument->isCustomIdent()) {
+                builderState.setCurrentPropertyInvalidAtComputedValueTime();
+                return false;
+            }
+            parameterToSet.append(primitiveArgument->customIdent());
+        }
+        return true;
+    };
+
+    auto result = FontVariantAlternates::Normal();
+
+    if (RefPtr valueList = dynamicDowncast<CSSValueList>(value)) {
+        for (Ref item : *valueList) {
+            if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(item)) {
+                switch (primitive->valueID()) {
+                case CSSValueHistoricalForms:
+                    result.valuesRef().historicalForms = true;
+                    break;
+                default:
+                    builderState.setCurrentPropertyInvalidAtComputedValueTime();
+                    return FontVariantAlternates::Normal();
+                }
+            } else if (RefPtr function = dynamicDowncast<CSSFunctionValue>(item)) {
+                switch (function->name()) {
+                case CSSValueSwash:
+                    if (!processSingleItemFunction(*function, result.valuesRef().swash))
+                        return FontVariantAlternates::Normal();
+                    break;
+                case CSSValueStylistic:
+                    if (!processSingleItemFunction(*function, result.valuesRef().stylistic))
+                        return FontVariantAlternates::Normal();
+                    break;
+                case CSSValueStyleset:
+                    if (!processListFunction(*function, result.valuesRef().styleset))
+                        return FontVariantAlternates::Normal();
+                    break;
+                case CSSValueCharacterVariant:
+                    if (!processListFunction(*function, result.valuesRef().characterVariant))
+                        return FontVariantAlternates::Normal();
+                    break;
+                case CSSValueOrnaments:
+                    if (!processSingleItemFunction(*function, result.valuesRef().ornaments))
+                        return FontVariantAlternates::Normal();
+                    break;
+                case CSSValueAnnotation:
+                    if (!processSingleItemFunction(*function, result.valuesRef().annotation))
+                        return FontVariantAlternates::Normal();
+                    break;
+                default:
+                    builderState.setCurrentPropertyInvalidAtComputedValueTime();
+                    return FontVariantAlternates::Normal();
+                }
+            } else {
+                builderState.setCurrentPropertyInvalidAtComputedValueTime();
+                return FontVariantAlternates::Normal();
+            }
+        }
+    } else if (is<CSSPrimitiveValue>(value)) {
+        switch (value.valueID()) {
+        case CSSValueNormal:
+            break;
+        case CSSValueHistoricalForms:
+            result.valuesRef().historicalForms = true;
+            break;
+        default:
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return FontVariantAlternates::Normal();
+        }
+    }
+
+    return result;
 }
 
 } // WebCore namespace

@@ -24,7 +24,7 @@
  */
 
 [
-    ExceptionForEnabledBy,
+    EnabledBy=PermissionsAPIEnabled,
     DispatchedFrom=WebContent,
     DispatchedTo=UI
 ]

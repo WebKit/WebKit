@@ -1,0 +1,15 @@
+PAL/pal/spi/cocoa/DataDetectorsCoreSPI.h
+PAL/pal/spi/mac/NSGraphicsSPI.h
+accessibility/mac/AccessibilityObjectMac.mm
+accessibility/mac/WebAccessibilityObjectWrapperBase.mm
+page/EventHandler.h
+page/cocoa/ResourceUsageOverlayCocoa.mm
+page/mac/TextIndicatorWindow.h
+platform/ValidationBubble.h
+platform/graphics/FontPlatformData.h
+platform/graphics/cg/CGContextStateSaver.h
+platform/graphics/cg/CGSubimageCacheWithTimer.cpp
+platform/graphics/coretext/ComplexTextControllerCoreText.mm
+platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h
+platform/network/ResourceHandleInternal.h
+platform/network/cf/FormDataStreamCFNet.cpp

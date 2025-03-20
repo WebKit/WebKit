@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-transitions-2/#cssstartingstylerule
+
 [
     EnabledBySetting=CSSStartingStyleAtRuleEnabled,
     Exposed=Window

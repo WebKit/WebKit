@@ -1,0 +1,17 @@
+
+
+
+
+PASS input type=reset in form should trigger form reset and not toggle popover
+PASS input type=submit in form should trigger form submit and not toggle popover
+PASS input type=button in form should toggle popover
+PASS input type=image in form should trigger form submit and not toggle popover
+PASS input type=reset with form attr should trigger form reset and not toggle popover
+PASS input type=submit with form attr should trigger form submit and not toggle popover
+PASS input type=button with form attr should toggle popover
+PASS input type=image with form attr should trigger form submit and not toggle popover
+PASS input type=reset outside form should toggle popover
+PASS input type=submit outside form should toggle popover
+PASS input type=button outside form should toggle popover
+PASS input type=image outside form should toggle popover
+

@@ -30,7 +30,6 @@
 
 #include "AnimationEffect.h"
 #include "BlendingKeyframes.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "FilterOperations.h"
@@ -38,6 +37,7 @@
 #include "KeyframeEffect.h"
 #include "LayoutSize.h"
 #include "OffsetRotation.h"
+#include "StyleInterpolation.h"
 #include "StyleOriginatedAnimation.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
@@ -98,7 +98,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AcceleratedEffect);
 static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCSSProperty property, const Settings& settings)
 {
 #if ASSERT_ENABLED
-    ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
+    ASSERT(Style::Interpolation::isAccelerated(property, settings));
 #else
     UNUSED_PARAM(settings);
 #endif
@@ -228,7 +228,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
     for (auto& srcKeyframe : effect.blendingKeyframes()) {
         OptionSet<AcceleratedEffectProperty> animatedProperties;
         for (auto animatedCSSProperty : srcKeyframe.properties()) {
-            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedCSSProperty, settings)) {
+            if (Style::Interpolation::isAccelerated(animatedCSSProperty, settings)) {
                 auto acceleratedProperty = acceleratedPropertyFromCSSProperty(animatedCSSProperty, settings);
                 if (disallowedProperties.contains(acceleratedProperty))
                     continue;
@@ -416,12 +416,12 @@ void AcceleratedEffect::apply(WebAnimationTime currentTime, AcceleratedEffectVal
             blend(animatedProperty, values, startKeyframeValues, endKeyframeValues, context, bounds);
         };
 
-        KeyframeInterpolation::RequiresBlendingForAccumulativeIterationCallback requiresBlendingForAccumulativeIterationCallback = [&]() {
+        KeyframeInterpolation::RequiresInterpolationForAccumulativeIterationCallback requiresInterpolationForAccumulativeIterationCallback = [&]() {
             // FIXME: implement accumulation.
             return false;
         };
 
-        interpolateKeyframes(animatedProperty, interval, progress, *resolvedTiming.currentIteration, m_timing.iterationDuration, resolvedTiming.before, composeProperty, accumulateProperty, interpolateProperty, requiresBlendingForAccumulativeIterationCallback);
+        interpolateKeyframes(animatedProperty, interval, progress, *resolvedTiming.currentIteration, m_timing.iterationDuration, resolvedTiming.before, composeProperty, accumulateProperty, interpolateProperty, requiresInterpolationForAccumulativeIterationCallback);
     }
 }
 
@@ -535,7 +535,7 @@ const TimingFunction* AcceleratedEffect::timingFunctionForKeyframe(const Keyfram
 bool AcceleratedEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property property) const
 {
     return WTF::switchOn(property, [&](const AcceleratedEffectProperty acceleratedProperty) {
-        return CSSPropertyAnimation::isPropertyAdditiveOrCumulative(cssPropertyFromAcceleratedProperty(acceleratedProperty));
+        return Style::Interpolation::isAdditiveOrCumulative(cssPropertyFromAcceleratedProperty(acceleratedProperty));
     }, [] (auto&) {
         ASSERT_NOT_REACHED();
         return false;

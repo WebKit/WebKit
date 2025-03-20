@@ -130,13 +130,11 @@ String extractTemporaryZipArchive(const String& path)
     return temporaryDirectory;
 }
 
-std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix)
+std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix)
 {
-    PlatformFileHandle platformFileHandle = invalidPlatformFileHandle;
-
     Vector<char> temporaryFilePath(PATH_MAX);
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.data(), temporaryFilePath.size()))
-        return { String(), invalidPlatformFileHandle };
+        return { String(), FileHandle() };
 
     // Shrink the vector.
     temporaryFilePath.shrink(strlenSpan(temporaryFilePath.span()));
@@ -151,11 +149,11 @@ std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, Strin
     CString suffixUTF8 = suffix.utf8();
     temporaryFilePath.append(suffixUTF8.spanIncludingNullTerminator());
 
-    platformFileHandle = mkostemps(temporaryFilePath.data(), suffixUTF8.length(), O_CLOEXEC);
-    if (platformFileHandle == invalidPlatformFileHandle)
-        return { nullString(), invalidPlatformFileHandle };
+    auto fileHandle = FileHandle::adopt(mkostemps(temporaryFilePath.data(), suffixUTF8.length(), O_CLOEXEC));
+    if (!fileHandle)
+        return { nullString(), FileHandle() };
 
-    return { String::fromUTF8(temporaryFilePath.data()), platformFileHandle };
+    return { String::fromUTF8(temporaryFilePath.data()), WTFMove(fileHandle) };
 }
 
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
@@ -186,13 +184,13 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
 }
 
-std::pair<PlatformFileHandle, CString> createTemporaryFileInDirectory(const String& directory, const String& suffix)
+std::pair<FileHandle, CString> createTemporaryFileInDirectory(const String& directory, const String& suffix)
 {
     auto fsSuffix = fileSystemRepresentation(suffix);
     auto templatePath = pathByAppendingComponents(directory, { StringView { "XXXXXX"_s }, StringView { suffix } });
     auto fsTemplatePath = fileSystemRepresentation(templatePath);
-    int fd = mkstemps(fsTemplatePath.mutableSpanIncludingNullTerminator().data(), fsSuffix.length());
-    return { fd, WTFMove(fsTemplatePath) };
+    auto fileHandle = FileHandle::adopt(mkstemps(fsTemplatePath.mutableSpanIncludingNullTerminator().data(), fsSuffix.length()));
+    return { WTFMove(fileHandle), WTFMove(fsTemplatePath) };
 }
 
 #ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES

@@ -334,7 +334,7 @@ void LegacyLineLayout::removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootI
     }
 }
 
-static inline void notifyResolverToResumeInIsolate(InlineBidiResolver& resolver, RenderObject* root, RenderObject* startObject)
+static inline void notifyResolverToResumeInIsolate(InlineBidiResolver& resolver, const RenderInline* root, RenderObject* startObject)
 {
     if (root != startObject) {
         RenderObject* parent = startObject->parent();
@@ -343,7 +343,7 @@ static inline void notifyResolverToResumeInIsolate(InlineBidiResolver& resolver,
     }
 }
 
-static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, InlineBidiResolver& topResolver, BidiRun& isolatedRun, RenderObject* root, RenderObject* startObject)
+static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, InlineBidiResolver& topResolver, BidiRun& isolatedRun, const RenderInline* root, RenderObject* startObject)
 {
     // Set up m_whitespaceCollapsingState
     resolver.whitespaceCollapsingState() = topResolver.whitespaceCollapsingState();

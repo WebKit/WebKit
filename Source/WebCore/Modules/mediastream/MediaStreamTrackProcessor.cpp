@@ -174,11 +174,13 @@ RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeV
         videoFrame = m_videoFrames.takeFirst();
     }
 
-    WebCodecsVideoFrame::BufferInit init;
-    init.codedWidth = videoFrame->presentationSize().width();
-    init.codedHeight = videoFrame->presentationSize().height();
-    init.colorSpace = videoFrame->colorSpace();
-    init.timestamp = Seconds(videoFrame->presentationTime().toDouble()).microseconds();
+    WebCodecsVideoFrame::BufferInit init {
+        .format = convertVideoFramePixelFormat(videoFrame->pixelFormat()),
+        .codedWidth = static_cast<size_t>(videoFrame->presentationSize().width()),
+        .codedHeight = static_cast<size_t>(videoFrame->presentationSize().height()),
+        .timestamp = Seconds(videoFrame->presentationTime().toDouble()).microsecondsAs<int64_t>(),
+        .colorSpace = videoFrame->colorSpace()
+    };
 
     return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTFMove(init));
 }

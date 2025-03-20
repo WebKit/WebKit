@@ -35,7 +35,7 @@ namespace WTF {
 
 #if __has_feature(objc_arc)
 #define WTF_CF_TO_NS_BRIDGE_TRANSFER(type, value) ((__bridge_transfer type)value)
-#define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((type)reinterpret_cast<uintptr_t>(value))
+#define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((__bridge_retained type)value)
 #else
 #define WTF_CF_TO_NS_BRIDGE_TRANSFER(type, value) ((__bridge type)value)
 #define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((__bridge type)value)
@@ -121,12 +121,13 @@ template<typename T> inline T *checked_objc_cast(id object)
 
 template<typename T, typename U> inline T *checked_objc_cast(U *object)
 {
+    static_assert(std::is_base_of_v<U, T>);
     if (!object)
         return nullptr;
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is_objc<T>(object));
 
-    return reinterpret_cast<T*>(object);
+    return static_cast<T*>(object);
 }
 
 // Use dynamic_objc_cast<> instead of checked_objc_cast<> when actively checking NS types,
@@ -134,14 +135,32 @@ template<typename T, typename U> inline T *checked_objc_cast(U *object)
 
 // See RetainPtr.h for: template<typename T> T* dynamic_objc_cast(id object).
 
-template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(RetainPtr<U>&& object)
+template<typename T, typename U, typename = std::enable_if_t<std::is_base_of_v<U, T>>> RetainPtr<T> dynamic_objc_cast(RetainPtr<U>&& object)
+{
+    static_assert(std::is_base_of_v<U, T>);
+    static_assert(!std::is_same_v<U, T>);
+    if (!is_objc<T>(object.get()))
+        return nullptr;
+    return adoptNS(static_cast<T*>(object.leakRef()));
+}
+
+template<typename T> RetainPtr<T> dynamic_objc_cast(RetainPtr<id>&& object)
 {
     if (!is_objc<T>(object.get()))
         return nullptr;
-    return WTFMove(object);
+    return adoptNS(reinterpret_cast<T*>(object.leakRef()));
 }
 
-template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(const RetainPtr<U>& object)
+template<typename T, typename U, typename = std::enable_if_t<std::is_base_of_v<U, T>>> RetainPtr<T> dynamic_objc_cast(const RetainPtr<U>& object)
+{
+    static_assert(std::is_base_of_v<U, T>);
+    static_assert(!std::is_same_v<U, T>);
+    if (!is_objc<T>(object.get()))
+        return nullptr;
+    return static_cast<T*>(object.get());
+}
+
+template<typename T> RetainPtr<T> dynamic_objc_cast(const RetainPtr<id>& object)
 {
     if (!is_objc<T>(object.get()))
         return nullptr;
@@ -152,7 +171,7 @@ template<typename T> T *dynamic_objc_cast(NSObject *object)
 {
     if (!is_objc<T>(object))
         return nullptr;
-    return reinterpret_cast<T*>(object);
+    return static_cast<T*>(object);
 }
 
 template<typename T> T *dynamic_objc_cast(id object)

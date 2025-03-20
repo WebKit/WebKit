@@ -24,7 +24,7 @@
 #if ENABLE_SWIFTUI && canImport(Testing) && compiler(>=6.0)
 
 import Testing
-@_spi(Private) import WebKit
+import WebKit
 
 fileprivate struct TestURLSchemeHandler: URLSchemeHandler, Sendable {
     struct Failure: Error {

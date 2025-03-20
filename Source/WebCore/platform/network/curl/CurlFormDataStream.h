@@ -58,7 +58,7 @@ private:
 
     size_t m_elementPosition { 0 };
 
-    FileSystem::PlatformFileHandle m_fileHandle { FileSystem::invalidPlatformFileHandle };
+    FileSystem::FileHandle m_fileHandle;
     size_t m_dataOffset { 0 };
 };
 

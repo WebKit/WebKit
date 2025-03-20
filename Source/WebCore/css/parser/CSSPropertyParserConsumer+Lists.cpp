@@ -84,17 +84,5 @@ RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range, const CSSParserCo
     return consumeCounter(range, context, 0);
 }
 
-RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <'list-style-type'> = <counter-style> | <string> | none
-    // https://drafts.csswg.org/css-lists/#propdef-list-style-type
-
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    if (range.peek().type() == StringToken)
-        return consumeString(range);
-    return consumeCounterStyle(range, context);
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

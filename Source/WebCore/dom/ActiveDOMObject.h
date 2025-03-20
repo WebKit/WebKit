@@ -91,6 +91,8 @@ public:
             --(m_thisObject->m_pendingActivityInstanceCount);
         }
 
+        T& object() { return m_thisObject.get(); }
+
     private:
         Ref<T> m_thisObject;
     };
@@ -104,23 +106,25 @@ public:
     bool isContextStopped() const;
     bool isAllowedToRunScript() const;
 
-    template<typename T>
-    static void queueTaskKeepingObjectAlive(T& object, TaskSource source, Function<void ()>&& task)
+    template<typename T, typename Task>
+    static void queueTaskKeepingObjectAlive(T& object, TaskSource source, Task&& task)
     {
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
         auto activity = object.ActiveDOMObject::makePendingActivity(object);
-        object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTFMove(activity), task = WTFMove(task)] () {
-            task();
+        object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTFMove(activity), task = WTFMove(task)]() mutable {
+            task(protectedObject.get());
         });
     }
 
-    template<typename T>
-    static void queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, TaskCancellationGroup& cancellationGroup, Function<void()>&& task)
+    template<typename T, typename Task>
+    static void queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, TaskCancellationGroup& cancellationGroup, Task&& task)
     {
-        CancellableTask cancellableTask(cancellationGroup, WTFMove(task));
+        CancellableTask cancellableTask(cancellationGroup, [task = WTFMove(task), protectedObject = Ref { object }]() mutable {
+            task(protectedObject.get());
+        });
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
         auto activity = object.ActiveDOMObject::makePendingActivity(object);
-        object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTFMove(activity), cancellableTask = WTFMove(cancellableTask)]() mutable {
+        object.queueTaskInEventLoop(source, [activity = WTFMove(activity), cancellableTask = WTFMove(cancellableTask)]() mutable {
             cancellableTask();
         });
     }
@@ -158,7 +162,7 @@ private:
     uint64_t m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
-    Ref<Thread> m_creationThread { Thread::current() };
+    Ref<Thread> m_creationThread { Thread::currentSingleton() };
 #endif
 
     friend class ActiveDOMObjectEventDispatchTask;

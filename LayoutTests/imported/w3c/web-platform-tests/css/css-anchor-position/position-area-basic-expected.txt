@@ -1,49 +1,49 @@
 
 PASS Offsets for: none
-FAIL Offsets for: span-all assert_equals: Check expected offsetWidth expected 400 but got 0
-FAIL Offsets for: span-all span-all assert_equals: Check expected offsetWidth expected 400 but got 0
-FAIL Offsets for: top left assert_equals: Check expected offsetWidth expected 100 but got 0
-FAIL Offsets for: top center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: top right assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: center left assert_equals: Check expected offsetTop expected 150 but got 0
-FAIL Offsets for: center center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: center right assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: bottom left assert_equals: Check expected offsetTop expected 225 but got 0
-FAIL Offsets for: bottom center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: bottom right assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: start start assert_equals: Check expected offsetWidth expected 100 but got 0
-FAIL Offsets for: start center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: start end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: center start assert_equals: Check expected offsetTop expected 150 but got 0
-FAIL Offsets for: center end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: end start assert_equals: Check expected offsetTop expected 225 but got 0
-FAIL Offsets for: end center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: end end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: self-start self-start assert_equals: Check expected offsetWidth expected 100 but got 0
-FAIL Offsets for: self-start center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: self-start self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: center self-start assert_equals: Check expected offsetTop expected 150 but got 0
-FAIL Offsets for: center self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: self-end self-start assert_equals: Check expected offsetTop expected 225 but got 0
-FAIL Offsets for: self-end center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: self-end self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: y-start x-start assert_equals: Check expected offsetWidth expected 100 but got 0
-FAIL Offsets for: y-start center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: y-start x-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: center x-start assert_equals: Check expected offsetTop expected 150 but got 0
-FAIL Offsets for: center x-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: y-end x-start assert_equals: Check expected offsetTop expected 225 but got 0
-FAIL Offsets for: y-end center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: y-end x-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: y-self-start x-self-start assert_equals: Check expected offsetWidth expected 100 but got 0
-FAIL Offsets for: y-self-start center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: y-self-start x-self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: center x-self-start assert_equals: Check expected offsetTop expected 150 but got 0
-FAIL Offsets for: center x-self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: y-self-end x-self-start assert_equals: Check expected offsetTop expected 225 but got 0
-FAIL Offsets for: y-self-end center assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: y-self-end x-self-end assert_equals: Check expected offsetLeft expected 250 but got 0
-FAIL Offsets for: span-y-self-start span-x-self-end assert_equals: Check expected offsetLeft expected 100 but got 0
-FAIL Offsets for: span-bottom span-all assert_equals: Check expected offsetTop expected 150 but got 0
+PASS Offsets for: span-all
+PASS Offsets for: span-all span-all
+PASS Offsets for: top left
+PASS Offsets for: top center
+PASS Offsets for: top right
+PASS Offsets for: center left
+PASS Offsets for: center center
+PASS Offsets for: center right
+PASS Offsets for: bottom left
+PASS Offsets for: bottom center
+PASS Offsets for: bottom right
+PASS Offsets for: start start
+PASS Offsets for: start center
+PASS Offsets for: start end
+PASS Offsets for: center start
+PASS Offsets for: center end
+PASS Offsets for: end start
+PASS Offsets for: end center
+PASS Offsets for: end end
+PASS Offsets for: self-start self-start
+PASS Offsets for: self-start center
+PASS Offsets for: self-start self-end
+PASS Offsets for: center self-start
+PASS Offsets for: center self-end
+PASS Offsets for: self-end self-start
+PASS Offsets for: self-end center
+PASS Offsets for: self-end self-end
+PASS Offsets for: y-start x-start
+PASS Offsets for: y-start center
+PASS Offsets for: y-start x-end
+PASS Offsets for: center x-start
+PASS Offsets for: center x-end
+PASS Offsets for: y-end x-start
+PASS Offsets for: y-end center
+PASS Offsets for: y-end x-end
+PASS Offsets for: y-self-start x-self-start
+PASS Offsets for: y-self-start center
+PASS Offsets for: y-self-start x-self-end
+PASS Offsets for: center x-self-start
+PASS Offsets for: center x-self-end
+PASS Offsets for: y-self-end x-self-start
+PASS Offsets for: y-self-end center
+PASS Offsets for: y-self-end x-self-end
+PASS Offsets for: span-y-self-start span-x-self-end
+PASS Offsets for: span-bottom span-all
 PASS Offsets for: span-all top
 

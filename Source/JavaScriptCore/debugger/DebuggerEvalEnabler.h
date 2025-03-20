@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CallFrame.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
@@ -46,11 +47,10 @@ public:
         UNUSED_PARAM(mode);
         if (globalObject) {
             m_evalWasDisabled = !globalObject->evalEnabled();
-            m_trustedTypesWereRequired = globalObject->requiresTrustedTypes();
+            m_trustedTypesEnforcement = globalObject->trustedTypesEnforcement();
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(true, globalObject->evalDisabledErrorMessage());
-            if (m_trustedTypesWereRequired)
-                globalObject->setRequiresTrustedTypes(false);
+            globalObject->setTrustedTypesEnforcement(TrustedTypesEnforcement::None);
 #if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(globalObject);
@@ -64,8 +64,7 @@ public:
             JSGlobalObject* globalObject = m_globalObject;
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(false, globalObject->evalDisabledErrorMessage());
-            if (m_trustedTypesWereRequired)
-                globalObject->setRequiresTrustedTypes(true);
+            globalObject->setTrustedTypesEnforcement(m_trustedTypesEnforcement);
 #if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(nullptr);
@@ -76,7 +75,7 @@ public:
 private:
     JSGlobalObject* const m_globalObject;
     bool m_evalWasDisabled { false };
-    bool m_trustedTypesWereRequired { false };
+    TrustedTypesEnforcement m_trustedTypesEnforcement;
 #if ASSERT_ENABLED
     DebuggerEvalEnabler::Mode m_mode;
 #endif

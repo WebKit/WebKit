@@ -159,19 +159,18 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
     if (isAspectRatioBlockSizeDependentGridItem(gridItem))
         return true;
 
+    // Stretch alignment allows the grid item content to resolve against the stretched size.
+    if (gridItemAlignSelf != ItemPosition::Stretch)
+        return false;
 
-    auto hasAspectRatioAndInlineSizeDependsOnBlockSize = [](const RenderObject& renderer) {
+    auto hasAspectRatioAndInlineSizeDependsOnBlockSize = [](auto& renderer) {
         auto& rendererStyle = renderer.style();
         bool rendererHasAspectRatio = renderer.hasIntrinsicAspectRatio() || rendererStyle.hasAspectRatio();
 
         return rendererHasAspectRatio && rendererStyle.logicalWidth().isAuto() && !rendererStyle.logicalHeight().isIntrinsicOrAuto();
     };
 
-    // Stretch alignment allows the grid item content to resolve against the stretched size.
-    if (gridItemAlignSelf != ItemPosition::Stretch)
-        return false;
-
-    for (auto& gridItemChild : childrenOfType<RenderObject>(gridItem)) {
+    for (auto& gridItemChild : childrenOfType<RenderBox>(gridItem)) {
         if (hasAspectRatioAndInlineSizeDependsOnBlockSize(gridItemChild))
             return true;
     }

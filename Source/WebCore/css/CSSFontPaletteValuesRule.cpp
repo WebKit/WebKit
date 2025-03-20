@@ -29,7 +29,6 @@
 #include "CSSMarkup.h"
 #include "ColorSerialization.h"
 #include "JSDOMMapLike.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/MakeString.h>

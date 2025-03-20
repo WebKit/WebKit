@@ -264,7 +264,7 @@ void WebExtensionAPICookies::getAll(NSDictionary *details, Ref<WebExtensionCallb
         filterParameters.domain = normalizeDomain(details[domainKey]);
 
     if (details[pathKey])
-        filterParameters.path = details[pathKey];
+        filterParameters.path = dynamic_objc_cast<NSString>(details[pathKey]);
 
     if (details[secureKey])
         filterParameters.secure = objectForKey<NSNumber>(details, secureKey).boolValue;
@@ -311,8 +311,10 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
     cookie.name = details[nameKey] ?: @"";
     cookie.value = details[valueKey] ?: @"";
     cookie.secure = details[secureKey] ? objectForKey<NSNumber>(details, secureKey).boolValue : false;
-    cookie.domain = details[domainKey] ? String(details[domainKey]) : normalizeDomain(url.host().toString());
-    cookie.path = details[pathKey] ? String(details[pathKey]) : url.path().toString();
+    auto *domain = dynamic_objc_cast<NSString>(details[domainKey]);
+    cookie.domain = domain ? String(domain) : normalizeDomain(url.host().toString());
+    auto *path = dynamic_objc_cast<NSString>(details[pathKey]);
+    cookie.path = path ? String(path) : url.path().toString();
     cookie.httpOnly = objectForKey<NSNumber>(details, httpOnlyKey).boolValue;
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
 

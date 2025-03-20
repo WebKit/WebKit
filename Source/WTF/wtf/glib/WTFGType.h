@@ -74,7 +74,9 @@ static GType type_name##_get_type_once(void); \
 static gpointer type_name##_parent_class = 0; \
 static void type_name##_finalize(GObject* object) \
 { \
+IGNORE_WARNINGS_BEGIN("cast-align") \
     TypeName* self = (TypeName*)object; \
+IGNORE_WARNINGS_END \
     self->priv->~TypeName##Private(); \
     G_OBJECT_CLASS(type_name##_parent_class)->finalize(object); \
 } \

@@ -36,6 +36,7 @@
 #include "PushPullFIFO.h"
 #include "SharedAudioDestination.h"
 #include "SpanCoreAudio.h"
+#include "SpatialAudioExperienceHelper.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -44,22 +45,22 @@ constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
-Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+Ref<AudioDestination> AudioDestination::create(const CreationOptions& options)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
     // FIXME: Add support for local/live audio input.
-    if (numberOfInputChannels)
-        WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    if (options.numberOfInputChannels)
+        RELEASE_LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled input channels", options.numberOfInputChannels, options.numberOfOutputChannels, options.sampleRate);
 
-    if (numberOfOutputChannels > AudioSession::sharedSession().maximumNumberOfOutputChannels())
-        WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    if (options.numberOfOutputChannels > AudioSession::sharedSession().maximumNumberOfOutputChannels())
+        RELEASE_LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", options.numberOfInputChannels, options.numberOfOutputChannels, options.sampleRate);
 
     if (AudioDestinationCocoa::createOverride)
-        return AudioDestinationCocoa::createOverride(callback, sampleRate);
+        return AudioDestinationCocoa::createOverride(options);
 
-    return SharedAudioDestination::create(callback, numberOfOutputChannels, sampleRate, [numberOfOutputChannels, sampleRate] (AudioIOCallback& callback) {
-        return adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
+    return SharedAudioDestination::create(options, [] (const CreationOptions& options) {
+        return adoptRef(*new AudioDestinationCocoa(options));
     });
 }
 
@@ -73,11 +74,15 @@ unsigned long AudioDestination::maxChannelCount()
     return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
-AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate)
-    : AudioDestinationResampler(callback, numberOfOutputChannels, sampleRate, hardwareSampleRate())
+AudioDestinationCocoa::AudioDestinationCocoa(const CreationOptions& options)
+    : AudioDestinationResampler(options, hardwareSampleRate())
     , m_audioOutputUnitAdaptor(*this)
 {
-    m_audioOutputUnitAdaptor.configure(hardwareSampleRate(), numberOfOutputChannels);
+    m_audioOutputUnitAdaptor.configure(hardwareSampleRate(), options.numberOfOutputChannels);
+
+#if PLATFORM(IOS_FAMILY)
+    setSceneIdentifier(options.sceneIdentifier);
+#endif
 }
 
 AudioDestinationCocoa::~AudioDestinationCocoa() = default;
@@ -130,6 +135,20 @@ MediaTime AudioDestinationCocoa::outputLatency() const
 {
     return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::protectedSharedSession()->outputLatency()), static_cast<uint32_t>(AudioSession::protectedSharedSession()->sampleRate()) };
 }
+
+#if PLATFORM(IOS_FAMILY)
+void AudioDestinationCocoa::setSceneIdentifier(const String& identifier)
+{
+    if (m_sceneIdentifier == identifier)
+        return;
+
+    m_sceneIdentifier = identifier;
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    RetainPtr experience = createSpatialAudioExperienceWithOptions({ .sceneIdentifier = m_sceneIdentifier });
+    m_audioOutputUnitAdaptor.setSpatialAudioExperience(experience.get());
+#endif
+}
+#endif
 
 } // namespace WebCore
 

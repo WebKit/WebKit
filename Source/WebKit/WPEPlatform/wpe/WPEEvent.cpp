@@ -77,10 +77,21 @@ struct WPEEventTouch {
 struct _WPEEvent {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
+    ~_WPEEvent()
+    {
+        if (userData.destroyFunction)
+            userData.destroyFunction(userData.data);
+    }
+
     GRefPtr<WPEView> view;
     WPEEventType type { WPE_EVENT_NONE };
     WPEInputSource source { WPE_INPUT_SOURCE_MOUSE };
     guint32 time { 0 };
+
+    struct {
+        gpointer data { nullptr };
+        GDestroyNotify destroyFunction { nullptr };
+    } userData;
 
     std::variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch> variant;
 
@@ -148,6 +159,44 @@ WPEView* wpe_event_get_view(WPEEvent* event)
     g_return_val_if_fail(event, nullptr);
 
     return event->view.get();
+}
+
+/**
+ * wpe_event_set_user_data:
+ * @event: a #WPEEvent
+ * @user_data: data to associate with @event
+ * @destroy_func: (nullable): the function to call to release @user_data
+ *
+ * Set @user_data to @event
+ * When @event is destroyed @destroy_func is called with @user_data.
+ */
+void wpe_event_set_user_data(WPEEvent* event, gpointer userData, GDestroyNotify destroyFunction)
+{
+    g_return_if_fail(event);
+
+    if (event->userData.data == userData && event->userData.destroyFunction == destroyFunction)
+        return;
+
+    if (event->userData.destroyFunction)
+        event->userData.destroyFunction(event->userData.data);
+
+    event->userData.data = userData;
+    event->userData.destroyFunction = destroyFunction;
+}
+
+/**
+ * wpe_event_get_user_data:
+ * @event: a #WPEEvent
+ *
+ * Get user data previously set with wpe_event_set_user_data().
+ *
+ * Returns: (nullable): the @event user data, or %NULL
+ */
+gpointer wpe_event_get_user_data(WPEEvent* event)
+{
+    g_return_val_if_fail(event, nullptr);
+
+    return event->userData.data;
 }
 
 /**
@@ -274,7 +323,7 @@ WPEEvent* wpe_event_pointer_button_new(WPEEventType type, WPEView* view, WPEInpu
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
     g_return_val_if_fail(!pressCount || type == WPE_EVENT_POINTER_DOWN, nullptr);
 
-    return new _WPEEvent { view, type, source, time, WPEEventPointerButton { modifiers, button, pressCount, x, y }, 1 };
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventPointerButton { modifiers, button, pressCount, x, y }, 1 };
 }
 
 /**
@@ -332,7 +381,7 @@ WPEEvent* wpe_event_pointer_move_new(WPEEventType type, WPEView* view, WPEInputS
     g_return_val_if_fail(type == WPE_EVENT_POINTER_MOVE || type == WPE_EVENT_POINTER_ENTER || type == WPE_EVENT_POINTER_LEAVE, nullptr);
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
-    return new _WPEEvent { view, type, source, time, WPEEventPointerMove { modifiers, x, y, deltaX, deltaY }, 1 };
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventPointerMove { modifiers, x, y, deltaX, deltaY }, 1 };
 }
 
 /**
@@ -377,7 +426,7 @@ WPEEvent* wpe_event_scroll_new(WPEView* view, WPEInputSource source, guint32 tim
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
-    return new _WPEEvent { view, WPE_EVENT_SCROLL, source, time, WPEEventScroll { modifiers, deltaX, deltaY, x, y, !!preciseDeltas, !!isStop }, 1 };
+    return new _WPEEvent { view, WPE_EVENT_SCROLL, source, time, { nullptr, nullptr }, WPEEventScroll { modifiers, deltaX, deltaY, x, y, !!preciseDeltas, !!isStop }, 1 };
 }
 
 /**
@@ -453,7 +502,7 @@ WPEEvent* wpe_event_keyboard_new(WPEEventType type, WPEView* view, WPEInputSourc
     g_return_val_if_fail(type == WPE_EVENT_KEYBOARD_KEY_DOWN || type == WPE_EVENT_KEYBOARD_KEY_UP, nullptr);
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
-    return new _WPEEvent { view, type, source, time, WPEEventKeyboard { modifiers, keycode, keyval }, 1 };
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventKeyboard { modifiers, keycode, keyval }, 1 };
 }
 
 /**
@@ -510,7 +559,7 @@ WPEEvent* wpe_event_touch_new(WPEEventType type, WPEView* view, WPEInputSource s
     g_return_val_if_fail(type == WPE_EVENT_TOUCH_DOWN || type == WPE_EVENT_TOUCH_UP || type == WPE_EVENT_TOUCH_MOVE || type == WPE_EVENT_TOUCH_CANCEL, nullptr);
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
-    return new _WPEEvent { view, type, source, time, WPEEventTouch { modifiers, sequenceID, x, y }, 1 };
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventTouch { modifiers, sequenceID, x, y }, 1 };
 }
 
 /**

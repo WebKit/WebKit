@@ -132,8 +132,8 @@ std::span<const ASCIILiteral> Database::sortedTables()
 void Database::interruptAllDatabases()
 {
     ASSERT(!RunLoop::isMain());
-    for (auto& database : allDatabases())
-        database.interrupt();
+    for (Ref database : allDatabases())
+        database->interrupt();
 }
 
 bool Database::createUniqueIndices()

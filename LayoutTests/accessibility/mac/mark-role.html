@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC>
+<!DOCTYPE HTML>
 <html>
 <head>
 <script src="../../resources/js-test.js"></script>
@@ -10,22 +10,30 @@
 <div>This is some <mark id="highlight2">highlighted</mark> text.</div>
 
 <script>
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    let output = "This test makes sure that the mark role exposes the right attributes in the attributed string.\n";
 
-    if (window.accessibilityController) {
-        let output = "This test makes sure that the mark role exposes the right attributes in the attriubuted string.\n";
+    var highlight1 = accessibilityController.accessibleElementById("highlight1").childAtIndex(0);
+    var markerRange = highlight1.textMarkerRangeForElement(highlight1);
+    output += expect("highlight1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
 
-        var highlight1 = accessibilityController.accessibleElementById("highlight1").childAtIndex(0);
-        var markerRange = highlight1.textMarkerRangeForElement(highlight1);
-        output += expect("highlight1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
+    var highlight2 = accessibilityController.accessibleElementById("highlight2").childAtIndex(0);
+    var markerRange = highlight2.textMarkerRangeForElement(highlight2);
+    output += expect("highlight2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
 
-        var highlight2 = accessibilityController.accessibleElementById("highlight2").childAtIndex(0);
-        var markerRange = highlight2.textMarkerRangeForElement(highlight2);
-        output += expect("highlight2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
+    document.getElementById("highlight1").setAttribute("role", "group");
+    setTimeout(async function() {
+        await waitFor(() => {
+            markerRange = highlight1.textMarkerRangeForElement(highlight1);
+            return !highlight1.attributedStringForTextMarkerRangeContainsAttribute("AXHighlight", markerRange);
+        });
+        output += "PASS: AXHighlight is no longer present when role='mark' is removed.\n";
 
         debug(output);
-    }
-
+        finishJSTest();
+    }, 0);
+}
 </script>
-
 </body>
 </html>

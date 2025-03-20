@@ -7,8 +7,12 @@ async function run() {
     renderBundleEncoder.draw(67, 297, 432_754_598, 4_294_967_295);
     renderBundleEncoder.finish();
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
-testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

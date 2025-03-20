@@ -29,6 +29,7 @@
 
 #import "ControlFactoryCocoa.h"
 #import "WebControlView.h"
+#import <wtf/CheckedRef.h>
 #import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSServicesRolloverButtonCell;
@@ -38,8 +39,9 @@ namespace WebCore {
 class FloatRect;
 struct ControlStyle;
 
-class ControlFactoryMac final : public ControlFactoryCocoa {
+class ControlFactoryMac final : public ControlFactoryCocoa, public CanMakeCheckedPtr<ControlFactoryMac> {
     WTF_MAKE_TZONE_ALLOCATED(ControlFactoryMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ControlFactoryMac);
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
 

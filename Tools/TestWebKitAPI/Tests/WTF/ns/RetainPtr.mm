@@ -27,7 +27,9 @@
  */
 
 #import "config.h"
+#import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URL.h>
 
 #if __has_feature(objc_arc)
 #ifndef RETAIN_PTR_TEST_NAME
@@ -79,6 +81,8 @@ TEST(RETAIN_PTR_TEST_NAME, AdoptNS)
 
 TEST(RETAIN_PTR_TEST_NAME, ConstructionFromMutableNSType)
 {
+    static_assert(std::is_convertible_v<NSMutableString*, NSString*>, "NSMutableString must convert to NSString");
+
     NSMutableString *string = [NSMutableString stringWithUTF8String:"foo"];
 
     // This should invoke RetainPtr's move constructor.
@@ -124,11 +128,11 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSType)
     // This should invoke RetainPtr's move constructor.
     // FIXME: This doesn't actually test that we moved the value. We should use a mock
     // NSObject that logs -retain and -release calls.
-    RetainPtr<NSString> ptr = RetainPtr<NSString *>(string);
+    RetainPtr<NSString> ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
 
-    RetainPtr<NSString *> temp = string;
+    RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
     RetainPtr<NSString> ptr2(WTFMove(temp));
@@ -144,14 +148,14 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSTypeReversed)
     // This should invoke RetainPtr's move constructor.
     // FIXME: This doesn't actually test that we moved the value. We should use a mock
     // NSObject that logs -retain and -release calls.
-    RetainPtr<NSString *> ptr = RetainPtr<NSString>(string);
+    RetainPtr<NSString> ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
 
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString *> ptr2(WTFMove(temp));
+    RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -209,12 +213,12 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSType)
     // This should invoke RetainPtr's move assignment operator.
     // FIXME: This doesn't actually test that we moved the value. We should use a mock
     // NSObject that logs -retain and -release calls.
-    ptr = RetainPtr<NSString *>(string);
+    ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
 
     ptr = nil;
-    RetainPtr<NSString *> temp = string;
+    RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
     ptr = WTFMove(temp);
@@ -226,7 +230,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSType)
 TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSTypeReversed)
 {
     NSString *string = @"foo";
-    RetainPtr<NSString *> ptr;
+    RetainPtr<NSString> ptr;
 
     // This should invoke RetainPtr's move assignment operator.
     // FIXME: This doesn't actually test that we moved the value. We should use a mock
@@ -248,42 +252,63 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSTypeReversed)
 TEST(RETAIN_PTR_TEST_NAME, OptionalRetainPtrNS)
 {
     // Test assignment from adoptNS().
-    std::optional<RetainPtr<NSObject>> optionalObject1 = adoptNS([NSObject new]);
-    auto optionalObjectPtr1 = reinterpret_cast<uintptr_t>(optionalObject1.value().get());
+    std::optional<RetainPtr<NSObject>> optionalObject1;
+
+    uintptr_t optionalObjectPtr1 = 0;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        optionalObject1 = adoptNS([NSObject new]);
+        optionalObjectPtr1 = reinterpret_cast<uintptr_t>(optionalObject1.value().get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)optionalObjectPtr1));
-    RetainPtr<NSObject> object1 = optionalObject1.value();
-    EXPECT_EQ(optionalObject1.value(), object1);
+
+    RetainPtr<NSObject> object1;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        object1 = optionalObject1.value();
+        EXPECT_EQ(optionalObject1.value(), object1);
+    }
 
     // Test assignment from retainPtr().
     std::optional<RetainPtr<NSObject>> optionalObject2;
     @autoreleasepool {
         optionalObject2 = retainPtr([[NSObject new] autorelease]);
     }
-    auto optionalObjectPtr2 = reinterpret_cast<uintptr_t>(optionalObject2.value().get());
+
+    uintptr_t optionalObjectPtr2 = 0;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        optionalObjectPtr2 = reinterpret_cast<uintptr_t>(optionalObject2.value().get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)optionalObjectPtr2));
-    RetainPtr<NSObject> object2 = optionalObject2.value();
-    auto objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
-    EXPECT_EQ(optionalObject2.value(), object2);
 
-    EXPECT_NE(object1, object2);
+    RetainPtr<NSObject> object2;
+    uintptr_t objectPtr2 = 0;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        object2 = optionalObject2.value();
+        objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
 
-    // Test assignment from std::optional<RetainPtr<NSObject>>.
-    optionalObject1 = optionalObject2;
-    EXPECT_TRUE(optionalObject1.value());
-    EXPECT_TRUE(optionalObject1.value().get());
-    EXPECT_EQ(optionalObject1.value(), object2);
-    EXPECT_TRUE(optionalObject2.value());
-    EXPECT_TRUE(optionalObject2.value().get());
-    EXPECT_EQ(optionalObject2.value(), object2);
+        EXPECT_EQ(optionalObject2.value(), object2);
 
-    // Reset after assignment test.
-    optionalObject1 = object1;
-    EXPECT_EQ(optionalObject1.value(), object1);
-    EXPECT_EQ(optionalObject2.value(), object2);
+        EXPECT_NE(object1, object2);
+
+        // Test assignment from std::optional<RetainPtr<NSObject>>.
+        optionalObject1 = optionalObject2;
+        EXPECT_TRUE(optionalObject1.value());
+        EXPECT_TRUE(optionalObject1.value().get());
+        EXPECT_EQ(optionalObject1.value(), object2);
+        EXPECT_TRUE(optionalObject2.value());
+        EXPECT_TRUE(optionalObject2.value().get());
+        EXPECT_EQ(optionalObject2.value(), object2);
+
+        // Reset after assignment test.
+        optionalObject1 = object1;
+        EXPECT_EQ(optionalObject1.value(), object1);
+        EXPECT_EQ(optionalObject2.value(), object2);
+    }
 
     // Test move from std::optional<RetainPtr<NSObject>>.
     EXPECT_EQ(2L, CFGetRetainCount((CFTypeRef)objectPtr2));
-    optionalObject1 = WTFMove(optionalObject2);
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        optionalObject1 = WTFMove(optionalObject2);
+    }
     EXPECT_EQ(2L, CFGetRetainCount((CFTypeRef)objectPtr2));
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());
@@ -321,6 +346,65 @@ TEST(RETAIN_PTR_TEST_NAME, RetainPtrNS)
         objectPtr3 = reinterpret_cast<uintptr_t>(object3.get());
     }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr3));
+}
+
+TEST(RETAIN_PTR_TEST_NAME, LeakRef)
+{
+    RetainPtr<NSObject> foo;
+    uintptr_t fooPtr;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        foo = adoptNS([[NSObject alloc] init]);
+        fooPtr = reinterpret_cast<uintptr_t>(foo.get());
+    }
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
+
+    NSObject *object;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        object = foo.leakRef();
+    }
+    EXPECT_EQ(nullptr, foo.get());
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)object));
+
+    (void)adoptNS(object);
+}
+
+TEST(RETAIN_PTR_TEST_NAME, BridgingAutorelease)
+{
+    NSString *nsString;
+    uintptr_t nsStringPtr;
+
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCString(nullptr, "hello world", kCFStringEncodingASCII));
+        nsString = string.bridgingAutorelease();
+        nsStringPtr = reinterpret_cast<uintptr_t>(nsString);
+    }
+
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)nsStringPtr));
+}
+
+TEST(RETAIN_PTR_TEST_NAME, URLBridgeCast)
+{
+    RetainPtr<NSURL> nsURL;
+    uintptr_t nsURLPtr;
+    @autoreleasepool {
+        URL url(""_str);
+        nsURL = static_cast<NSURL *>(url);
+        nsURLPtr = reinterpret_cast<uintptr_t>(nsURL.get());
+    }
+
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)nsURLPtr));
+}
+
+TEST(RETAIN_PTR_TEST_NAME, HashMapCFTypeDeletedValue)
+{
+    HashMap<RetainPtr<CFStringRef>, int> map;
+
+    auto key = adoptCF(CFStringCreateWithCString(nullptr, "hello world", kCFStringEncodingASCII));
+    map.add(key, 1);
+    EXPECT_EQ(true, map.contains(key));
+    map.remove(key);
+
+    EXPECT_EQ(1, CFGetRetainCount(key.get()));
 }
 
 } // namespace TestWebKitAPI

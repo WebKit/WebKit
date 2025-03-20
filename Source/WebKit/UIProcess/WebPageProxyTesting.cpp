@@ -76,7 +76,7 @@ uint64_t WebPageProxyTesting::messageSenderDestinationID() const
 
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
-    RunLoop::protectedCurrent()->dispatch([protectedPage = protectedPage()] {
+    RunLoop::currentSingleton().dispatch([protectedPage = protectedPage()] {
         protectedPage->updateActivityState();
         protectedPage->dispatchActivityStateChange();
     });

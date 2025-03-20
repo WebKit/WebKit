@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "Test.h"
@@ -35,6 +36,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -271,6 +273,63 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItems)
     [webView synchronouslyGoBack];
     [webView synchronouslyGoBack];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:secondURL]]];
+
+    RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    shouldCancelNavigation = true;
+    decidedPolicy = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    [webView waitForNextPresentationUpdate];
+    [[webView backForwardList] currentItem];
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWithPSON)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/a"_s, { ""_s } },
+        { "/b"_s, { ""_s } },
+    });
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadRequest:server.request("/a"_s)];
+    [webView synchronouslyLoadRequest:server.requestWithLocalhost("/b"_s)];
+    [webView synchronouslyLoadRequest:server.request("/a"_s)];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyLoadRequest:server.request("/b"_s)];
+
+    RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    shouldCancelNavigation = true;
+    decidedPolicy = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    [webView waitForNextPresentationUpdate];
+    [[webView backForwardList] currentItem];
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWithPSONAndSessionRestore)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/a"_s, { ""_s } },
+        { "/b"_s, { ""_s } },
+    });
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadRequest:server.request("/a"_s)];
+    [webView synchronouslyLoadRequest:server.requestWithLocalhost("/b"_s)];
+    [webView synchronouslyLoadRequest:server.request("/a"_s)];
+    [webView _restoreSessionState:[webView _sessionState] andNavigate:NO];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyLoadRequest:server.request("/b"_s)];
 
     RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
     [webView setNavigationDelegate:controller.get()];

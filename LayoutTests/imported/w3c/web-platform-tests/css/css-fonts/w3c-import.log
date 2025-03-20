@@ -724,6 +724,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/infinite-size-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/lang-attribute-affects-rendering-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/lang-attribute-affects-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/lang-attribute-affects-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/language-specific-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/line-gap-override-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/line-gap-override-ref.html

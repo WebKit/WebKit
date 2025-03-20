@@ -69,15 +69,15 @@ void GStreamerAudioCapturer::setSinkAudioCallback(SinkAudioDataCallback&& callba
 GstElement* GStreamerAudioCapturer::createConverter()
 {
     auto* bin = gst_bin_new(nullptr);
-    auto* audioconvert = makeGStreamerElement("audioconvert", nullptr);
-    auto* audioresample = makeGStreamerElement("audioresample", nullptr);
+    auto* audioconvert = makeGStreamerElement("audioconvert"_s);
+    auto* audioresample = makeGStreamerElement("audioresample"_s);
     gst_bin_add_many(GST_BIN_CAST(bin), audioconvert, audioresample, nullptr);
     gst_element_link(audioconvert, audioresample);
 
 #if USE(GSTREAMER_WEBRTC)
-    if (auto audioFilter = makeGStreamerElement("audiornnoise", nullptr)) {
-        auto audioconvert2 = makeGStreamerElement("audioconvert", nullptr);
-        auto audioresample2 = makeGStreamerElement("audioresample", nullptr);
+    if (auto audioFilter = makeGStreamerElement("audiornnoise"_s)) {
+        auto audioconvert2 = makeGStreamerElement("audioconvert"_s);
+        auto audioresample2 = makeGStreamerElement("audioresample"_s);
         gst_bin_add_many(GST_BIN_CAST(bin), audioconvert2, audioresample2, audioFilter, nullptr);
         gst_element_link_many(audioconvert2, audioresample2, audioFilter, audioconvert, nullptr);
     }

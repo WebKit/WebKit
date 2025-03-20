@@ -382,11 +382,6 @@ bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
     return WebKit::WebPage::canHandleRequest(WebKit::toImpl(requestRef)->resourceRequest());
 }
 
-bool WKBundlePageFindString(WKBundlePageRef pageRef, WKStringRef target, WKFindOptions findOptions)
-{
-    return WebKit::toImpl(pageRef)->findStringFromInjectedBundle(WebKit::toWTFString(target), WebKit::toFindOptions(findOptions));
-}
-
 void WKBundlePageReplaceStringMatches(WKBundlePageRef pageRef, WKArrayRef matchIndicesRef, WKStringRef replacementText, bool selectionOnly)
 {
     auto* matchIndices = WebKit::toImpl(matchIndicesRef);

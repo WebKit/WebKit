@@ -36,8 +36,8 @@ void postTaskToCodec(ScriptExecutionContextIdentifier identifier, ThreadSafeWeak
         RefPtr protectedCodec = codec.get();
         if (!protectedCodec)
             return;
-        Codec::queueTaskKeepingObjectAlive(*protectedCodec, TaskSource::MediaElement, [codec = protectedCodec.get(), task = WTFMove(task)] () mutable {
-            task(*codec);
+        Codec::queueTaskKeepingObjectAlive(*protectedCodec, TaskSource::MediaElement, [task = WTFMove(task)](auto& codec) mutable {
+            task(codec);
         });
     });
 }

@@ -31,13 +31,14 @@
 #include "CompilerTimingScope.h"
 #include "SuperSampler.h"
 #include <wtf/Liveness.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
 template<typename Adapter>
 class Liveness : public WTF::Liveness<Adapter> {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Liveness);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(Liveness);
 public:
     Liveness(Code& code)
         : WTF::Liveness<Adapter>(code.cfg(), code)
@@ -48,7 +49,7 @@ public:
     }
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename Adapter>, Liveness<Adapter>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename Adapter>, Liveness<Adapter>);
 
 template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>
 using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;

@@ -80,14 +80,14 @@ public:
 
     RemoteMediaSourceIdentifier identifier() const { return m_identifier; }
 
-    static WorkQueue& queue();
+    static WorkQueue& queueSingleton();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
 
-    class MessageReceiver : public IPC::WorkQueueMessageReceiver {
+    class MessageReceiver : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     public:
         static Ref<MessageReceiver> create(MediaSourcePrivateRemote& parent)
         {

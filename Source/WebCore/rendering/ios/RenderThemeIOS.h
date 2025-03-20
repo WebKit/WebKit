@@ -101,9 +101,6 @@ private:
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
 
-    void adjustSwitchStyle(RenderStyle&, const Element*) const final;
-    bool paintSwitchThumb(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     Seconds switchAnimationVisuallyOnDuration() const final { return 0.4880138408543766_s; }
     Seconds switchAnimationHeldDuration() const final { return 0.5073965509413827_s; }
 #if HAVE(UI_IMPACT_FEEDBACK_GENERATOR)
@@ -116,7 +113,6 @@ private:
     int sliderTickOffsetFromTrackCenter() const override;
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
-    bool paintSearchField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
     Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);

@@ -306,6 +306,8 @@ public:
     virtual std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const;
 #endif
 
+    virtual void configurationChanged();
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, std::optional<PageIdentifier> = std::nullopt);
 

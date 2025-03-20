@@ -29,6 +29,7 @@
 
 #import "APIInspectorExtension.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 class InspectorExtensionDelegate;
@@ -44,7 +45,7 @@ template<> struct WrapperTraits<API::InspectorExtension> {
 
 @interface _WKInspectorExtension () <WKObject> {
 @package
-    API::ObjectStorage<API::InspectorExtension> _extension;
+    AlignedStorage<API::InspectorExtension> _extension;
     std::unique_ptr<WebKit::InspectorExtensionDelegate> _delegate;
 }
 

@@ -245,7 +245,7 @@ void RemoteScrollingTree::removeWheelEventTestCompletionDeferralForReason(Scroll
     scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
 }
 
-void RemoteScrollingTree::propagateSynchronousScrollingReasons(const UncheckedKeyHashSet<ScrollingNodeID>& synchronousScrollingNodes)
+void RemoteScrollingTree::propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>& synchronousScrollingNodes)
 {
     m_hasNodesWithSynchronousScrollingReasons = !synchronousScrollingNodes.isEmpty();
 }

@@ -29,5 +29,5 @@
     DispatchedTo=UI
 ]
 messages -> WebUserContentControllerProxy {
-DidPostMessage(WebKit::WebPageProxyIdentifier pageID, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> message) -> (std::span<const uint8_t> resultValue, String errorMessage)
+    DidPostMessage(WebKit::WebPageProxyIdentifier pageID, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (Expected<WebKit::JavaScriptEvaluationResult, String> reply)
 }

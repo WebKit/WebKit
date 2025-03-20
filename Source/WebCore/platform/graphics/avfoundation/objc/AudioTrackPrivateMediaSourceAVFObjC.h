@@ -50,7 +50,6 @@ public:
 
     void setEnabled(bool) final;
 
-    void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();
 
 private:

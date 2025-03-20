@@ -181,6 +181,7 @@ PASS Origin parsing: <wss:example.com/> without base
 PASS Origin parsing: <data:example.com/> without base
 PASS Origin parsing: <javascript:example.com/> without base
 PASS Origin parsing: <mailto:example.com/> without base
+PASS Origin parsing: <https://example.com/aaa/bbb/%2e%2e?query> without base
 PASS Origin parsing: <http:@www.example.com> without base
 PASS Origin parsing: <http:/@www.example.com> without base
 PASS Origin parsing: <http://@www.example.com> without base
@@ -211,6 +212,14 @@ PASS Origin parsing: <//www.example2.com> against <http://www.example.com/test>
 PASS Origin parsing: <http://ExAmPlE.CoM> against <http://other.com/>
 PASS Origin parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Origin parsing: <\0 http://example.com/ \r > without base
+PASS Origin parsing: <non-special:opaque  > without base
+PASS Origin parsing: <non-special:opaque  ?hi> without base
+PASS Origin parsing: <non-special:opaque  #hi> without base
+PASS Origin parsing: <non-special:opaque  x?hi> without base
+PASS Origin parsing: <non-special:opaque  x#hi> without base
+PASS Origin parsing: <non-special:opaque 		  	#hi> without base
+PASS Origin parsing: <non-special:opaque 		  #hi> without base
+PASS Origin parsing: <non-special:opaque		  \r #hi> without base
 PASS Origin parsing: <http://www.foo。bar.com> against <http://other.com/>
 PASS Origin parsing: <https://x/�?�#�> without base
 PASS Origin parsing: <http://Ｇｏ.com> against <http://other.com/>
@@ -334,6 +343,7 @@ PASS Origin parsing: <blob:ws://example.org/> without base
 PASS Origin parsing: <blob:wss://example.org/> without base
 PASS Origin parsing: <blob:http%3a//example.org/> without base
 PASS Origin parsing: <non-special:cannot-be-a-base-url-\0~> without base
+PASS Origin parsing: <non-special:cannot-be-a-base-url-!"$%&'()*+,-.;<=>@[\]^_`{|}~@/> without base
 PASS Origin parsing: <https://www.example.com/path{path.html?query'=query#fragment<fragment> without base
 PASS Origin parsing: <https://user:pass[@foo/bar> against <http://example.org>
 PASS Origin parsing: <foo:// !"$%&'()*+,-.;<=>@[\]^_`{|}~@host/> without base

@@ -35,6 +35,7 @@ Press up arrow to increment the year field.
 PASS: subfields[4].intValue === 2013
 
 Set the date via JavaScript.
+PASS: axDateInput.childAtIndex(0).childAtIndex(0).children[4].intValue === 2023
 AXDescription: month AXRole: AXIncrementor AXValue: 12
 AXDescription:  AXRole: AXStaticText AXValue: /
 AXDescription: day AXRole: AXIncrementor AXValue: 31

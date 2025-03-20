@@ -65,6 +65,8 @@ static const guint16 g_sessionStateVersion = 2;
 #define SESSION_STATE_TYPE_STRING_V1 "(qa" BACK_FORWARD_LIST_ITEM_TYPE_STRING_V1 "mu)"
 #define SESSION_STATE_TYPE_STRING_V2 "(qa" BACK_FORWARD_LIST_ITEM_TYPE_STRING_V2 "mu)"
 
+static constexpr uint32_t maximumFrameStateTargetLength = 16 * 1024;
+
 // Use our own enum types to ensure the serialized format even if the core enums change.
 enum ExternalURLsPolicy {
     Allow,
@@ -171,7 +173,8 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
     g_variant_builder_add(sessionBuilder, "s", frameState.urlString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.originalURLString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.referrer.utf8().data());
-    g_variant_builder_add(sessionBuilder, "s", frameState.target.string().utf8().data());
+    const auto frameStateTarget = frameState.target.string();
+    g_variant_builder_add(sessionBuilder, "s", (frameStateTarget.length() < maximumFrameStateTargetLength) ? frameStateTarget.utf8().data() : "");
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("as"));
     for (const auto& state : frameState.documentState())
         g_variant_builder_add(sessionBuilder, "s", state.string().utf8().data());
@@ -324,7 +327,8 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     // send an empty Referer header. Bug #159606.
     if (strlen(referrer))
         frameState.referrer = String::fromUTF8(referrer);
-    frameState.target = AtomString::fromUTF8(target);
+    if (strlen(target))
+        frameState.target = AtomString::fromUTF8(target);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);

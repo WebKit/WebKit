@@ -94,6 +94,7 @@ namespace WebCore {
     M(CompositingOverlap) \
     M(ContentFiltering) \
     M(ContentObservation) \
+    M(ContentVisibility) \
     M(Crypto) \
     M(DatabaseTracker) \
     M(DigitalCredentials) \
@@ -157,6 +158,7 @@ namespace WebCore {
     M(ResourceLoading) \
     M(ResourceLoadObserver) \
     M(ResourceLoadStatistics) \
+    M(ResourceMonitoring) \
     M(ScrollAnimations) \
     M(ScrollAnchoring) \
     M(ScrollSnap) \

@@ -131,9 +131,10 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     [inspectorSchemeHandler setAllowedURLSchemesForCSP:allowedURLSchemes.get()];
     [configuration setURLSchemeHandler:inspectorSchemeHandler.get() forURLScheme:WKInspectorResourceScheme];
 
+    RefPtr inspectedPage = _inspectedPage.get();
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
-    if (RefPtr page = _inspectedPage.get()) {
-        if (RefPtr webExtensionController = page->webExtensionController())
+    if (inspectedPage) {
+        if (RefPtr webExtensionController = inspectedPage->webExtensionController())
             configuration.get().webExtensionController = webExtensionController->wrapper();
     }
 #endif
@@ -167,17 +168,17 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     // If not specified or the inspection level is >1, use the default strategy.
     // This ensures that Inspector^2 cannot be affected by client (mis)configuration.
     auto* customProcessPool = configuration.get().processPool;
-    auto inspectorLevel = WebKit::inspectorLevelForPage(_inspectedPage.get());
+    auto inspectorLevel = WebKit::inspectorLevelForPage(inspectedPage.get());
     auto useDefaultProcessPool = inspectorLevel > 1 || !customProcessPool;
     if (customProcessPool && !useDefaultProcessPool)
-        WebKit::prepareProcessPoolForInspector(*customProcessPool->_processPool.get());
+        WebKit::prepareProcessPoolForInspector(Ref { *customProcessPool->_processPool.get() });
 
     if (useDefaultProcessPool)
-        [configuration setProcessPool:wrapper(WebKit::defaultInspectorProcessPool(inspectorLevel))];
+        [configuration setProcessPool:wrapper(Ref { WebKit::defaultInspectorProcessPool(inspectorLevel) }.get())];
 
     // Ensure that a page group identifier is set. This is for computing inspection levels.
     if (!configuration.get()._groupIdentifier)
-        [configuration _setGroupIdentifier:WebKit::defaultInspectorPageGroupIdentifierForPage(_inspectedPage.get())];
+        [configuration _setGroupIdentifier:WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage.get())];
 
     // Prefer using a custom persistent data store if one exists.
     RetainPtr<WKWebsiteDataStore> targetDataStore;

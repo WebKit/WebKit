@@ -65,7 +65,7 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     } else {
         auto gstSample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
         auto metadata = std::make_optional(metadataFromVideoFrame(frame));
-        videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(gstSample), { }, presentationTime, static_cast<VideoFrame::Rotation>(frame.rotation()), false, WTFMove(metadata)), { });
+        videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(gstSample), std::nullopt, { }, presentationTime, static_cast<VideoFrame::Rotation>(frame.rotation()), false, WTFMove(metadata)), { });
     }
 }
 

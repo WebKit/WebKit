@@ -50,7 +50,7 @@ CocoaImage *webCoreTextAttachmentMissingPlatformImage()
 #else
         RetainPtr image = [webCoreBundle imageForResource:@"missingImage"];
 #endif
-        ASSERT_WITH_MESSAGE(image != nil, "Unable to find missingImage.");
+        ASSERT_WITH_MESSAGE(!!image, "Unable to find missingImage.");
         webCoreTextAttachmentMissingPlatformImageIfExists() = WTFMove(image);
     });
 

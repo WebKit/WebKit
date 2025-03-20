@@ -2764,6 +2764,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case StringReplace:
+    case StringReplaceAll:
     case StringReplaceRegExp: {
         compileStringReplace(node);
         break;
@@ -2932,8 +2933,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArrayIncludes:
     case ArrayIndexOf: {
-        compileArrayIndexOf(node);
+        compileArrayIndexOfOrArrayIncludes(node);
         break;
     }
 
@@ -3146,6 +3148,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewRegExpUntyped: {
+        compileNewRegExpUntyped(node);
+        break;
+    }
+
     case NewSymbol: {
         compileNewSymbol(node);
         break;
@@ -3195,9 +3202,14 @@ void SpeculativeJIT::compile(Node* node)
         compileNewTypedArray(node);
         break;
     }
-        
-    case NewRegexp: {
-        compileNewRegexp(node);
+
+    case NewTypedArrayBuffer: {
+        compileNewTypedArrayBuffer(node);
+        break;
+    }
+
+    case NewRegExp: {
+        compileNewRegExp(node);
         break;
     }
 
@@ -3424,6 +3436,11 @@ void SpeculativeJIT::compile(Node* node)
         compileGetArrayLength(node);
         break;
 
+    case DataViewGetByteLength:
+        compileDataViewGetByteLength(node);
+        break;
+
+    case DataViewGetByteLengthAsInt52:
     case GetTypedArrayLengthAsInt52:
         // We do not support typed arrays larger than 2GB on 32-bit platforms.
         RELEASE_ASSERT_NOT_REACHED();
@@ -4360,7 +4377,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewAsyncGeneratorFunction:
     case PhantomCreateActivation:
     case PhantomNewInternalFieldObject:
-    case PhantomNewRegexp:
+    case PhantomNewRegExp:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeCreateActivation:

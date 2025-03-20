@@ -95,10 +95,8 @@ void WebDateTimePickerMac::showDateTimePicker(WebCore::DateTimeChooserParameters
 
 void WebDateTimePickerMac::didChooseDate(StringView date)
 {
-    if (!m_page)
-        return;
-
-    m_page->didChooseDate(date);
+    if (RefPtr page = m_page.get())
+        page->didChooseDate(date);
 }
 
 } // namespace WebKit
@@ -282,7 +280,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
         return;
 
     String dateString = [_dateFormatter stringFromDate:[_datePicker dateValue]];
-    _picker->didChooseDate(StringView(dateString));
+    Ref { *_picker }->didChooseDate(StringView(dateString));
 }
 
 - (NSString *)dateFormatStringForType:(NSString *)type

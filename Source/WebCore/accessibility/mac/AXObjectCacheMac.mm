@@ -29,15 +29,18 @@
 #if PLATFORM(MAC)
 
 #import "AXIsolatedObject.h"
+#import "AXSearchManager.h"
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
+#import "RenderView.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -385,6 +388,16 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
     }
 }
 
+void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
+{
+    if (m_sortedIDListsInitialized) {
+        // We only need to do this work if the sorted ID list has already been initialized.
+        m_deferredDocumentAddedList.add(document);
+        if (!m_performCacheUpdateTimer.isActive())
+            m_performCacheUpdateTimer.startOneShot(0_s);
+    }
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
 {
@@ -653,6 +666,11 @@ void AXObjectCache::handleScrolledToAnchor(const Node&)
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
+    m_deferredDocumentAddedList.forEach([this] (const auto& document) {
+        if (RefPtr object = getOrCreate(document.renderView()); object && object->isWebArea())
+            addSortedObject(*object, PreSortedObjectType::WebArea);
+    });
+    m_deferredDocumentAddedList.clear();
 }
 
 static bool isTestAXClientType(AXClientType client)
@@ -727,6 +745,154 @@ bool AXObjectCache::shouldSpellCheck()
 #else
     return true;
 #endif
+}
+
+AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedLiveRegions()
+{
+    if (!m_sortedIDListsInitialized)
+        initializeSortedIDLists();
+    return objectsForIDs(m_sortedLiveRegionIDs);
+}
+
+AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedNonRootWebAreas()
+{
+    if (!m_sortedIDListsInitialized)
+        initializeSortedIDLists();
+    return objectsForIDs(m_sortedNonRootWebAreaIDs);
+}
+
+void AXObjectCache::addSortedObject(AccessibilityObject& object, PreSortedObjectType type)
+{
+    ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
+
+    if (!m_sortedIDListsInitialized) {
+        // Once the sorted ID lists have been initialized for the first time, we rely
+        // on handling these dynamic updates to keep them up-to-date. But if that hasn't
+        // happened yet, don't bother doing any work.
+        return;
+    }
+
+    auto axID = object.objectID();
+    Vector<AXID>& sortedList = type == PreSortedObjectType::LiveRegion ? m_sortedLiveRegionIDs : m_sortedNonRootWebAreaIDs;
+    if (sortedList.contains(axID))
+        return;
+
+    auto updateIsolatedTree = [&] () {
+        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+            if (type == PreSortedObjectType::LiveRegion)
+                tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+            else
+                tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
+        }
+    };
+
+    size_t initialSize = sortedList.size();
+    if (!initialSize) {
+        sortedList.append(axID);
+        updateIsolatedTree();
+        return;
+    }
+
+    RefPtr webArea = rootWebArea();
+    if (!webArea)
+        return;
+
+    // Any remaining path must update the isolated tree.
+    auto onExit = makeScopeExit([&] () {
+        updateIsolatedTree();
+    });
+
+    auto searchManager = AXSearchManager();
+    auto key = type == PreSortedObjectType::LiveRegion
+        ? AccessibilitySearchKey::LiveRegion
+        : AccessibilitySearchKey::Frame;
+    // We have to find where this object is relative to the others to put it in the right spot.
+    RefPtr<AXCoreObject> start = nullptr;
+    for (size_t i = 0; i < sortedList.size(); i++) {
+        if (RefPtr result = searchManager.findNextStartingFrom(key, start.get(), *webArea)) {
+            if (result->objectID() == sortedList[i]) {
+                if (i == sortedList.size() - 1) {
+                    // We got all the way to the last existing element in the list without inserting
+                    // the new object, so the new object must be at the very end. Append it.
+                    sortedList.append(object.objectID());
+                    return;
+                }
+                start = result.get();
+            } else if (result->objectID() == object.objectID()) {
+                // We found the right place for this object, so we're done.
+                sortedList.insert(i, result->objectID());
+                return;
+            } else {
+                // The object we found doesn't match up with what we expected at sortedList[i].
+                // Otherwise, we can repair sortedList outside the loop. Start by removing the element
+                // at [i] and all remaining ones.
+                sortedList.remove(i, sortedList.size() - 1 - i);
+                sortedList.appendIfNotContains(result->objectID());
+                start = result;
+                break;
+            }
+        } else {
+            // There are no remaining objects of the expected type, so anything remaining in sortedList
+            // must be outdated.
+            sortedList.remove(i, sortedList.size() - 1 - i);
+            // If we didn't end up with the passed in object in our list, something probably went wrong,
+            // or the tree is in an incorrect state.
+            ASSERT(sortedList.contains(object.objectID()));
+            return;
+        }
+    }
+
+    while (start) {
+        if (RefPtr result = searchManager.findNextStartingFrom(key, start.get(), *webArea)) {
+            if (result == start) {
+                // The search returned the same thing it started with, which probably shouldn't happen.
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            sortedList.appendIfNotContains(result->objectID());
+            start = result;
+            continue;
+        }
+        break;
+    }
+    ASSERT(sortedList.contains(object.objectID()));
+}
+
+void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
+{
+    if (!m_sortedIDListsInitialized)
+        return;
+
+    if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
+        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+            tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+    }
+}
+
+void AXObjectCache::initializeSortedIDLists()
+{
+    if (m_sortedIDListsInitialized)
+        return;
+    m_sortedIDListsInitialized = true;
+
+    RefPtr root = rootWebArea();
+    if (root) {
+        auto allLiveRegionsAndWebAreas = AXSearchManager().findAllMatchingObjectsIgnoringCache({ AccessibilitySearchKey::LiveRegion, AccessibilitySearchKey::Frame }, *root);
+
+        for (const auto& resultObject : allLiveRegionsAndWebAreas) {
+            if (resultObject->isWebArea())
+                m_sortedNonRootWebAreaIDs.appendIfNotContains(resultObject->objectID());
+            else {
+                ASSERT(resultObject->supportsLiveRegion());
+                m_sortedLiveRegionIDs.appendIfNotContains(resultObject->objectID());
+            }
+        }
+    }
+
+    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+        tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
+    }
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

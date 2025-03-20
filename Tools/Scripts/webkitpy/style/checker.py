@@ -354,6 +354,10 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'JavaScriptCore', 'jit', 'GDBInterface.cpp')],
      ["-readability/naming"]),
 
+    ([  # Some test cases intentionally use invalid JSON input files.
+        os.path.join('Source', 'JavaScriptCore', 'inspector', 'scripts', 'tests')],
+        ["-json/syntax"]),
+
     ([  # On some systems the trailing CR is causing parser failure.
       os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table')],
      ["+whitespace/carriage_return"]),

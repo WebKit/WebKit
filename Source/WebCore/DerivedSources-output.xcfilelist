@@ -12,7 +12,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSSelectorEnums.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSSelectorInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSStyleDeclaration+PropertyNames.idl
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSStyleProperties+PropertyNames.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ColorData.cpp
@@ -42,6 +42,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventTargetFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventTargetHeaders.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventTargetInterfaces.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/FrameTreeSyncData.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/FrameTreeSyncData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTMLElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTMLElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTMLElementTypeHelpers.h
@@ -84,6 +86,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesGcmParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesGcmParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesKeyParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesKeyParams.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAllAcceptedCredentialsOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAllAcceptedCredentialsOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserOptions.cpp
@@ -386,6 +390,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSContainerRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSContainerRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceDescriptors.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceDescriptors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFeatureValuesRule.cpp
@@ -492,12 +498,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleImageValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleImageValue.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleProperties.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleProperties.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleProperties+PropertyNames.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleProperties+PropertyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleSheet.cpp
@@ -708,6 +716,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCryptoRsaHashedKeyAlgorithm.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCryptoRsaHashedKeyAlgorithm.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCryptoRsaKeyAlgorithm.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCryptoRsaKeyAlgorithm.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCurrentUserDetailsOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCurrentUserDetailsOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomAnimationOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomAnimationOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomEffect.cpp
@@ -3082,6 +3092,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUnknownCredentialOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUnknownCredentialOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.cpp
@@ -3639,6 +3651,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ShadowRealmGlobalScopeConstructors.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.dep

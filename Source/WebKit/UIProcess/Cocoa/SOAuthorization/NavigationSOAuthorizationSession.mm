@@ -47,8 +47,10 @@ NavigationSOAuthorizationSession::~NavigationSOAuthorizationSession()
 {
     if (m_callback)
         m_callback(true);
-    if (state() == State::Waiting && page())
-        page()->removeDidMoveToWindowObserver(*this);
+    if (state() == State::Waiting) {
+        if (RefPtr page = this->page())
+            page->removeDidMoveToWindowObserver(*this);
+    }
 }
 
 void NavigationSOAuthorizationSession::shouldStartInternal()
@@ -63,7 +65,7 @@ void NavigationSOAuthorizationSession::shouldStartInternal()
         setState(State::Waiting);
         page->addDidMoveToWindowObserver(*this);
         ASSERT(page->mainFrame());
-        m_waitingPageActiveURL = page->pageLoadState().activeURL();
+        m_waitingPageActiveURL = page->protectedPageLoadState()->activeURL();
         return;
     }
     start();
@@ -88,7 +90,7 @@ bool NavigationSOAuthorizationSession::pageActiveURLDidChangeDuringWaiting() con
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("pageActiveURLDidChangeDuringWaiting");
     RefPtr page = this->page();
-    return !page || page->pageLoadState().activeURL() != m_waitingPageActiveURL;
+    return !page || page->protectedPageLoadState()->activeURL() != m_waitingPageActiveURL;
 }
 
 } // namespace WebKit

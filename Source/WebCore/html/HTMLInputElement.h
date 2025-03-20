@@ -185,7 +185,9 @@ public:
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
     HTMLElement* sliderThumbElement() const;
+    RefPtr<HTMLElement> protectedSliderThumbElement() const { return sliderThumbElement(); }
     HTMLElement* sliderTrackElement() const;
+    RefPtr<HTMLElement> protectedSliderTrackElement() const { return sliderTrackElement(); }
     HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
     WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;

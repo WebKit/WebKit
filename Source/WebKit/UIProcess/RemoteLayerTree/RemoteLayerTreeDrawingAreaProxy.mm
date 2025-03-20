@@ -37,6 +37,7 @@
 #import "RemotePageProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
+#import "RemoteScrollingTreeCocoa.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -292,6 +293,16 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 
     scheduleDisplayRefreshCallbacks();
 }
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+WebCore::TrackingType RemoteLayerTreeDrawingAreaProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType eventType, IntPoint location)
+{
+    FloatPoint localLocation = location;
+    if (auto* eventRegion = eventRegionForPoint(remoteLayerTreeHost().rootLayer(), localLocation))
+        return eventRegion->eventTrackingTypeForPoint(eventType, roundedIntPoint(localLocation));
+    return WebCore::TrackingType::NotTracking;
+}
+#endif
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {

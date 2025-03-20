@@ -171,8 +171,8 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
 void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     for (Node* childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
-        RenderObject* renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !renderer)
+        CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
+        if (!renderer || !childNode->isSVGElement())
             continue;
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)

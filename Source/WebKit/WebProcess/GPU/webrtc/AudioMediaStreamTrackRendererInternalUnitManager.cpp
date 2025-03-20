@@ -149,7 +149,7 @@ AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRend
 AudioMediaStreamTrackRendererInternalUnitManagerProxy::~AudioMediaStreamTrackRendererInternalUnitManagerProxy()
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().remove(*this);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().protectedConnection()->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
 
     while (!m_descriptionCallbacks.isEmpty())
         m_descriptionCallbacks.takeFirst()(std::nullopt);
@@ -157,7 +157,7 @@ AudioMediaStreamTrackRendererInternalUnitManagerProxy::~AudioMediaStreamTrackRen
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::createRemoteUnit()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier(), m_deviceID }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
+    WebProcess::singleton().ensureGPUProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier(), m_deviceID }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && description && frameChunkSize)
             protectedThis->initialize(*description, frameChunkSize);
     }, 0);
@@ -202,7 +202,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
     RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
     auto [ringBuffer, handle] = WTFMove(*result);
     m_ringBuffer = WTFMove(ringBuffer);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTFMove(handle), *m_semaphore }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().protectedConnection()->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTFMove(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
@@ -213,7 +213,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stop()
 {
     m_isPlaying = false;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().protectedConnection()->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)
@@ -227,17 +227,18 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescri
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(const String& deviceID)
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().protectedConnection()->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stopThread()
 {
-    if (!m_thread)
+    RefPtr thread = m_thread;
+    if (!thread)
         return;
 
     m_shouldStopThread = true;
     m_semaphore->signal();
-    m_thread->waitForCompletion();
+    thread->waitForCompletion();
     m_thread = nullptr;
 }
 

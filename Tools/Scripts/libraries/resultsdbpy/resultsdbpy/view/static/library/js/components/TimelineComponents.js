@@ -801,7 +801,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                     element.addEventListener('mouseleave', (e) => onDotLeave(e, element.getBoundingClientRect()));
 
                 createInsertionObservers(element, (entries) => {
-                    canvasRef.setState({onScreen: entries[0].isIntersecting});
+                    canvasRef.setState({onScreen: entries[entries.length - 1].isIntersecting});
                 }, 0, 0.01, 0.01);
             },
             onElementUnmount: (element) => {

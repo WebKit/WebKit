@@ -104,10 +104,11 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
     }
 
     auto request = MediaKeySystemRequest::create(document, keySystem, WTFMove(promise));
-    request->setAllowCallback([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTFMove(logger), identifier = WTFMove(identifier)](String&& mediaKeysHashSalt, Ref<DeferredPromise>&& promise) mutable {
+    request->setAllowCallback([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTFMove(logger), identifier = WTFMove(identifier)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
         RefPtr document = weakDocument.get();
         if (!document) {
-            promise->reject(ExceptionCode::InvalidStateError);
+            if (promise)
+                promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
 
@@ -120,7 +121,8 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
             //      String comparison is case-sensitive.
             if (!CDM::supportsKeySystem(keySystem)) {
                 infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
-                promise->reject(ExceptionCode::NotSupportedError);
+                if (promise)
+                    promise->reject(ExceptionCode::NotSupportedError);
                 return;
             }
 
@@ -157,7 +159,8 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
 
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
                 infoLog(logger, identifier, "Resolved: keySystem(", keySystem, "), supportedConfiguration(", supportedConfiguration, ")");
-                promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTFMove(access));
+                if (promise)
+                    promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTFMove(access));
                 return;
             }
 
@@ -169,7 +172,8 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
 
     // 6.4. Reject promise with a NotSupportedError.
     infoLog(logger, identifier, "Rejected: empty supportedConfigurations");
-    promise->reject(ExceptionCode::NotSupportedError);
+    if (promise)
+        promise->reject(ExceptionCode::NotSupportedError);
 }
 
 } // namespace WebCore

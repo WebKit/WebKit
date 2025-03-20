@@ -1180,6 +1180,7 @@ BASE_MODES = [
             "--validateBCE=true",
             "--useSamplingProfiler=true",
             "--airForceIRCAllocator=true",
+            "--airUseGreedyRegAlloc=false", # FIXME: remove with rdar://144792585
             "--useDataICInFTL=true",
             "--forceUnlinkedDFG=true",
             "--allowNonSPTagging=false",
@@ -1256,7 +1257,8 @@ BASE_MODES = [
         [
             "--validateGraph=true",
             "--validateBCE=true",
-            "--airForceIRCAllocator=true",
+            "--airForceBriggsAllocator=true",
+            "--airUseGreedyRegAlloc=false", # FIXME: remove with rdar://144792585
             "--libpasForcePGMWithRate=#{10 + rand(10)}",
         ] +
         FTL_OPTIONS +
@@ -1830,6 +1832,8 @@ def runWebAssembly
         if $isFTLPlatform
             run("wasm-simd", "-m", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-aggressive-inline", "-m", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            run("wasm-graph-reg-alloc", "-m", "--airUseGreedyRegAlloc=false", *FTL_OPTIONS)
         end
     end
 end
@@ -1861,6 +1865,8 @@ def runWebAssemblyJetStream2
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-aggressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            run("wasm-graph-reg-alloc", "--airUseGreedyRegAlloc=false", *FTL_OPTIONS)
         end
     end
 end
@@ -1898,6 +1904,8 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
             run("wasm-aggressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            run("wasm-graph-reg-alloc", "--airUseGreedyRegAlloc=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -1928,6 +1936,8 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
             run("wasm-aggressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            run("wasm-graph-reg-alloc", "--airUseGreedyRegAlloc=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -1975,6 +1985,8 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
         if $isFTLPlatform
             runWasmHarnessTest("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             runWasmHarnessTest("wasm-aggressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            runWasmHarnessTest("wasm-graph-reg-alloc", "--airUseGreedyRegAlloc=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -2003,6 +2015,8 @@ def runWebAssemblyEmscripten(mode)
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-aggressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_aggressive_inline)
+            # FIXME: remove with rdar://144792585
+            run("wasm-graph-reg-alloc", "--airUseGreedyRegAlloc=false", *FTL_OPTIONS)
         end
     end
 end
@@ -2117,6 +2131,9 @@ def runLayoutTest(kind, *options)
         kind = "layout-" + kind
     else
         kind = "layout"
+    end
+    if $skipModes.include?(kind.to_sym)
+        return
     end
 
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)

@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
     Exposed=(Window,Worker),
     SecureContext
 ]
-interface GPUTextureUsage {
+namespace GPUTextureUsage {
     const GPUFlagsConstant COPY_SRC          = 0x01;
     const GPUFlagsConstant COPY_DST          = 0x02;
     const GPUFlagsConstant TEXTURE_BINDING   = 0x04;

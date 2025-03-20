@@ -72,7 +72,7 @@ void NfcService::didConnectTag()
 
 void NfcService::didDetectMultipleTags() const
 {
-    if (auto* observer = this->observer())
+    if (RefPtr observer = this->observer())
         observer->serviceStatusUpdated(WebAuthenticationStatus::MultipleNFCTagsPresent);
 }
 
@@ -91,8 +91,8 @@ void NfcService::startDiscoveryInternal()
 void NfcService::restartDiscoveryInternal()
 {
 #if HAVE(NEAR_FIELD)
-    if (m_connection)
-        m_connection->stop();
+    if (RefPtr connection = m_connection)
+        connection->stop();
 #endif
     m_restartTimer.startOneShot(1_s); // Magic number to give users enough time for reactions.
 }
@@ -104,21 +104,22 @@ void NfcService::platformStartDiscovery()
         return;
 
     // Will be executed in a different thread.
-    auto callback = makeBlockPtr([weakThis = WeakPtr { *this }, this] (NFReaderSession *session, NSError *error) mutable {
+    auto callback = makeBlockPtr([weakThis = WeakPtr { *this }] (NFReaderSession *session, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
         if (error) {
             LOG_ERROR("Couldn't start a NFC reader session: %@", error);
             return;
         }
 
-        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), this, session = retainPtr(session)] () mutable {
-            if (!weakThis) {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
                 [session endSession];
                 return;
             }
 
             // NfcConnection will take care of polling tags and connecting to them.
-            m_connection = NfcConnection::create(WTFMove(session), *this);
+            protectedThis->m_connection = NfcConnection::create(WTFMove(session), *protectedThis);
         });
     });
     [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSession:callback.get()];

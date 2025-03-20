@@ -3759,12 +3759,29 @@ private:
             if (tryAppendUBFIZ())
                 return;
 
-            // SBFIZ Pattern: d = ((src << amount) >> amount) << lsb
-            // where: amount = datasize - width
             auto tryAppendSBFIZ = [&] () -> bool {
                 Air::Opcode opcode = opcodeForType(InsertSignedBitfieldInZero32, InsertSignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
+
+                // SBFIZ Pattern: d = SExt32(src) << lsb
+                if (left->opcode() == SExt32) {
+                    Value* srcValue = left->child(0);
+                    Value* lsbValue = right;
+                    if (!canBeInternal(left))
+                        return false;
+                    if (!imm(lsbValue))
+                        return false;
+                    int64_t lsb = lsbValue->asInt();
+                    if (lsb < 0 || lsb > 32)
+                        return false;
+                    append(opcode, tmp(srcValue), imm(lsbValue), imm(32), tmp(m_value));
+                    commitInternal(left);
+                    return true;
+                }
+
+                // SBFIZ Pattern: d = ((src << amount) >> amount) << lsb
+                // where: amount = datasize - width
                 if (left->opcode() != SShr || left->child(0)->opcode() != Shl)
                     return false;
 

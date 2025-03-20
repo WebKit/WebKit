@@ -104,7 +104,7 @@ static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualM
         ASSERT(!priv->vm);
         priv->vm = WTFMove(vm);
         ASSERT(!priv->jsContext);
-        GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::current()));
+        GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::currentSingleton()));
         if (auto* data = g_object_get_data(G_OBJECT(priv->vm.get()), name.get())) {
             priv->jsContext = static_cast<JSGlobalContextRef>(data);
             g_object_set_data(G_OBJECT(priv->vm.get()), name.get(), nullptr);
@@ -198,7 +198,7 @@ GRefPtr<JSCContext> jscContextGetOrCreate(JSGlobalContextRef jsContext)
     if (GRefPtr<JSCContext> context = jscVirtualMachineGetContext(vm.get(), jsContext))
         return context;
 
-    GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::current()));
+    GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::currentSingleton()));
     g_object_set_data(G_OBJECT(vm.get()), name.get(), jsContext);
     return adoptGRef(jsc_context_new_with_virtual_machine(vm.get()));
 }
@@ -258,18 +258,18 @@ JSCClass* jscContextGetRegisteredClass(JSCContext* context, JSClassRef jsClass)
 
 CallbackData jscContextPushCallback(JSCContext* context, JSValueRef calleeValue, JSValueRef thisValue, size_t argumentCount, const JSValueRef* arguments)
 {
-    Ref thread = Thread::current();
-    auto* previousStack = static_cast<CallbackData*>(thread->m_apiData);
+    auto& thread = Thread::currentSingleton();
+    auto* previousStack = static_cast<CallbackData*>(thread.m_apiData);
     CallbackData data = { context, WTFMove(context->priv->exception), calleeValue, thisValue, argumentCount, arguments, previousStack };
-    thread->m_apiData = &data;
+    thread.m_apiData = &data;
     return data;
 }
 
 void jscContextPopCallback(JSCContext* context, CallbackData&& data)
 {
-    Ref thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     context->priv->exception = WTFMove(data.preservedException);
-    thread->m_apiData = data.next;
+    thread.m_apiData = data.next;
 }
 
 JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSValueRef* exception)
@@ -834,7 +834,7 @@ bool jscContextHandleExceptionIfNeeded(JSCContext* context, JSValueRef jsExcepti
  */
 JSCContext* jsc_context_get_current()
 {
-    auto* data = static_cast<CallbackData*>(Thread::current().m_apiData);
+    auto* data = static_cast<CallbackData*>(Thread::currentSingleton().m_apiData);
     return data ? data->context.get() : nullptr;
 }
 

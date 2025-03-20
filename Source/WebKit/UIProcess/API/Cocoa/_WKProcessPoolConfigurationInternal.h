@@ -27,6 +27,7 @@
 
 #import "APIProcessPoolConfiguration.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::ProcessPoolConfiguration> {
 
 @interface _WKProcessPoolConfiguration () <WKObject> {
 @package
-    API::ObjectStorage<API::ProcessPoolConfiguration> _processPoolConfiguration;
+    AlignedStorage<API::ProcessPoolConfiguration> _processPoolConfiguration;
 }
 @end

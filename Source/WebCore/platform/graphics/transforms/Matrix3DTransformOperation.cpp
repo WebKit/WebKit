@@ -80,7 +80,7 @@ bool Matrix3DTransformOperation::isRepresentableIn2D() const
 
 void Matrix3DTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(" << m_matrix << ")";
+    ts << type() << '(' << m_matrix << ')';
 }
 
 } // namespace WebCore

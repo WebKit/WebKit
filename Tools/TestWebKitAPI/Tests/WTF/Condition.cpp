@@ -109,7 +109,7 @@ void runTest(
                             emptyCondition,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(Thread::current(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::currentSingleton(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return !shouldContinue || !queue.isEmpty();
                             },
                             timeout);
@@ -142,7 +142,7 @@ void runTest(
                             fullCondition,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(Thread::current(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::currentSingleton(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return queue.size() < maxQueueSize;
                             },
                             timeout);

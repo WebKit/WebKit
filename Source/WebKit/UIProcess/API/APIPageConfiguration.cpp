@@ -181,6 +181,11 @@ WebUserContentControllerProxy& PageConfiguration::userContentController() const
     return m_data.userContentController.get();
 }
 
+Ref<WebUserContentControllerProxy> PageConfiguration::protectedUserContentController() const
+{
+    return userContentController();
+}
+
 void PageConfiguration::setUserContentController(RefPtr<WebUserContentControllerProxy>&& userContentController)
 {
     m_data.userContentController = WTFMove(userContentController);
@@ -202,6 +207,11 @@ WebExtensionController* PageConfiguration::webExtensionController() const
     return m_data.webExtensionController.get();
 }
 
+RefPtr<WebExtensionController> PageConfiguration::protectedWebExtensionController() const
+{
+    return webExtensionController();
+}
+
 void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>&& webExtensionController)
 {
     m_data.webExtensionController = WTFMove(webExtensionController);
@@ -210,6 +220,11 @@ void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>
 WebExtensionController* PageConfiguration::weakWebExtensionController() const
 {
     return m_data.weakWebExtensionController.get();
+}
+
+RefPtr<WebExtensionController> PageConfiguration::protectedWeakWebExtensionController() const
+{
+    return weakWebExtensionController();
 }
 
 void PageConfiguration::setWeakWebExtensionController(WebExtensionController* webExtensionController)
@@ -243,6 +258,11 @@ void PageConfiguration::setPageGroup(RefPtr<WebPageGroup>&& pageGroup)
 WebPreferences& PageConfiguration::preferences() const
 {
     return m_data.preferences.get();
+}
+
+Ref<WebPreferences> PageConfiguration::protectedPreferences() const
+{
+    return preferences();
 }
 
 void PageConfiguration::setPreferences(RefPtr<WebPreferences>&& preferences)
@@ -280,6 +300,11 @@ WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const
     return m_data.visitedLinkStore.get();
 }
 
+Ref<WebKit::VisitedLinkStore> PageConfiguration::protectedVisitedLinkStore() const
+{
+    return visitedLinkStore();
+}
+
 void PageConfiguration::setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&& visitedLinkStore)
 {
     m_data.visitedLinkStore = WTFMove(visitedLinkStore);
@@ -295,6 +320,11 @@ WebsiteDataStore& PageConfiguration::websiteDataStore() const
 WebKit::WebsiteDataStore* PageConfiguration::websiteDataStoreIfExists() const
 {
     return m_data.websiteDataStore.get();
+}
+
+RefPtr<WebKit::WebsiteDataStore> PageConfiguration::protectedWebsiteDataStoreIfExists() const
+{
+    return websiteDataStoreIfExists();
 }
 
 Ref<WebsiteDataStore> PageConfiguration::protectedWebsiteDataStore() const
@@ -347,7 +377,7 @@ void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebPr
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
-    if (preferences().siteIsolationEnabled())
+    if (protectedPreferences()->siteIsolationEnabled())
         return true;
     if (RefPtr processPool = m_data.processPool.getIfExists(); processPool && isInspectorProcessPool(*processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
@@ -380,6 +410,11 @@ ApplicationManifest* PageConfiguration::applicationManifest() const
     return m_data.applicationManifest.get();
 }
 
+RefPtr<ApplicationManifest> PageConfiguration::protectedApplicationManifest() const
+{
+    return applicationManifest();
+}
+
 void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& applicationManifest)
 {
     m_data.applicationManifest = WTFMove(applicationManifest);
@@ -393,7 +428,7 @@ bool PageConfiguration::applePayEnabled() const
     if (auto applePayEnabledOverride = m_data.applePayEnabledOverride)
         return *applePayEnabledOverride;
 
-    return preferences().applePayEnabled();
+    return protectedPreferences()->applePayEnabled();
 }
 
 void PageConfiguration::setApplePayEnabled(bool enabled)

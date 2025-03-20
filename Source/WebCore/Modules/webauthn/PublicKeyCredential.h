@@ -31,7 +31,6 @@
 #include "BasicCredential.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
-#include "JSPublicKeyCredentialRequestOptions.h"
 #include "RegistrationResponseJSON.h"
 #include <wtf/Forward.h>
 
@@ -48,6 +47,9 @@ struct PublicKeyCredentialCreationOptionsJSON;
 struct PublicKeyCredentialRequestOptions;
 struct PublicKeyCredentialRequestOptionsJSON;
 struct AuthenticationExtensionsClientOutputs;
+struct UnknownCredentialOptions;
+struct AllAcceptedCredentialsOptions;
+struct CurrentUserDetailsOptions;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -68,6 +70,10 @@ public:
     static ExceptionOr<PublicKeyCredentialCreationOptions> parseCreationOptionsFromJSON(PublicKeyCredentialCreationOptionsJSON&&);
 
     static ExceptionOr<PublicKeyCredentialRequestOptions> parseRequestOptionsFromJSON(PublicKeyCredentialRequestOptionsJSON&&);
+
+    static void signalUnknownCredential(Document&, UnknownCredentialOptions&&, DOMPromiseDeferred<void>&&);
+    static void signalAllAcceptedCredentials(Document&, AllAcceptedCredentialsOptions&&, DOMPromiseDeferred<void>&&);
+    static void signalCurrentUserDetails(Document&, CurrentUserDetailsOptions&&, DOMPromiseDeferred<void>&&);
 
 private:
     PublicKeyCredential(Ref<AuthenticatorResponse>&&);

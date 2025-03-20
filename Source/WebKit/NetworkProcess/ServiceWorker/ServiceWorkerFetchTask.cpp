@@ -135,13 +135,13 @@ ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
     cancelPreloadIfNecessary();
 }
 
-template<typename Message> bool ServiceWorkerFetchTask::sendToServiceWorker(Message&& message)
+RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
 {
     RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get();
     if (!serviceWorkerConnection)
-        return false;
+        return { };
 
-    return serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
+    return serviceWorkerConnection->protectedIPCConnection();
 }
 
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
@@ -201,8 +201,10 @@ void ServiceWorkerFetchTask::startFetch()
     if (auto& identifier = loader->parameters().options.resultingClientIdentifier)
         resultingClientIdentifier = identifier->toString();
 
-    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier });
-    ASSERT_UNUSED(isSent, isSent);
+    RefPtr connection = serviceWorkerConnection();
+    ASSERT(connection);
+    if (connection)
+        connection->send(Messages::WebSWContextManagerConnection::StartFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier }, 0);
 
     if (m_preloader && m_preloader->didReceiveResponseOrError())
         sendNavigationPreloadUpdate();
@@ -415,7 +417,8 @@ void ServiceWorkerFetchTask::cancelFromClient()
         return;
     }
 
-    sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
+    if (RefPtr connection = serviceWorkerConnection())
+        connection->send(Messages::WebSWContextManagerConnection::CancelFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier }, 0);
 }
 
 void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
@@ -425,7 +428,9 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
         loadBodyFromPreloader();
         return;
     }
-    sendToServiceWorker(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
+
+    if (RefPtr connection = serviceWorkerConnection())
+        connection->send(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier }, 0);
 }
 
 void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
@@ -513,11 +518,16 @@ void ServiceWorkerFetchTask::preloadResponseIsReady()
 void ServiceWorkerFetchTask::sendNavigationPreloadUpdate()
 {
     ASSERT(!!m_serviceWorkerConnection);
+    RefPtr connection = serviceWorkerConnection();
+    if (!connection)
+        return;
 
-    if (!m_preloader->error().isNull())
-        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() });
-    else
-        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() });
+    if (!m_preloader->error().isNull()) {
+        connection->send(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() }, 0);
+        return;
+    }
+
+    connection->send(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() }, 0);
 }
 
 void ServiceWorkerFetchTask::loadBodyFromPreloader()

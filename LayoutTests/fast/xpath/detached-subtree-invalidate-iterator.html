@@ -1,12 +1,11 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="xpath-test-pre.js"></script>
 </head>
 <body>
-<p>Test that iterators are invalidated even if the original context is detached.</p>
-<div id="console"></div>
 <script>
+description("Test that iterators are invalidated even if the original context is detached.");
 var doc = document.implementation.createDocument(null, "doc", null);
 var root = doc.createElement("div");
 root.appendChild(doc.createElement("span"));
@@ -23,6 +22,5 @@ shouldBe("result.invalidIteratorState", "true");
 shouldThrow("result.iterateNext()");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

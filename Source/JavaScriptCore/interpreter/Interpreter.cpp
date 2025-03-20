@@ -147,7 +147,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     if (programSource.isNull())
         return program;
 
-    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !isTrusted) {
+    if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None && !isTrusted) {
         bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
         if (!canCompileStrings) {
@@ -157,7 +157,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     }
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
-    if (!globalObject->evalEnabled()) {
+    if (!globalObject->evalEnabled() && globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::EnforcedWithEvalEnabled) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programSource);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };
@@ -185,18 +185,18 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().tryGet(programSource, bytecodeIndex);
     if (!eval) {
         if (!(lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)) {
+            JSValue parsedValue;
             if (programSource.is8Bit()) {
                 LiteralParser<LChar, JSONReviverMode::Disabled> preparser(globalObject, programSource.span8(), SloppyJSON, callerBaselineCodeBlock);
-                if (JSValue parsedObject = preparser.tryLiteralParse())
-                    RELEASE_AND_RETURN(scope, parsedObject);
-
+                parsedValue = preparser.tryEval();
             } else {
                 LiteralParser<UChar, JSONReviverMode::Disabled> preparser(globalObject, programSource.span16(), SloppyJSON, callerBaselineCodeBlock);
-                if (JSValue parsedObject = preparser.tryLiteralParse())
-                    RELEASE_AND_RETURN(scope, parsedObject);
+                parsedValue = preparser.tryEval();
 
             }
-            RETURN_IF_EXCEPTION(scope, JSValue());
+            RETURN_IF_EXCEPTION(scope, { });
+            if (parsedValue)
+                RELEASE_AND_RETURN(scope, parsedValue);
         }
         
         TDZEnvironment variablesUnderTDZ;

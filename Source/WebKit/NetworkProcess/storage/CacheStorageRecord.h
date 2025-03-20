@@ -48,12 +48,12 @@ public:
     bool hasVaryStar() const { return m_hasVaryStar; }
     const HashMap<String, String>& varyHeaders() const { return m_varyHeaders; }
 
-    void setKey(NetworkCache::Key&& key) { m_key = WTFMove(key); }
+    void setKey(const NetworkCache::Key& key) { m_key = key; }
     void setSize(uint64_t size) { m_size = size; }
     void setIdentifier(uint64_t identifier) { m_identifier = identifier; }
     void setUpdateResponseCounter(double updateResponseCounter) { m_updateResponseCounter = updateResponseCounter; }
     void setInsertionTime(double insertionTime) { m_insertionTime = insertionTime; }
-    void setURL(URL&&);
+    void setURL(const URL& url) { m_url = url; }
 
 private:
     NetworkCache::Key m_key;

@@ -84,6 +84,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/XPCConnectionTerminationWatchdog.mm
 
     UIProcess/PDF/WKPDFHUDView.mm
+    UIProcess/PDF/WKPDFPageNumberIndicator.mm
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 

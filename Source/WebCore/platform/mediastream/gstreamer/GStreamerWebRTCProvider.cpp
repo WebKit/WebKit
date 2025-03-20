@@ -36,12 +36,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerWebRTCProvider);
 
-void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
-{
-    // TODO: Hook this into GStreamerRegistryScanner.
-    notImplemented();
-}
-
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<GStreamerWebRTCProvider>();

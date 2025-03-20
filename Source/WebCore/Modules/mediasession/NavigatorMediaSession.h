@@ -44,7 +44,7 @@ public:
     ~NavigatorMediaSession();
 
     WEBCORE_EXPORT static MediaSession& mediaSession(Navigator&);
-    static RefPtr<MediaSession> mediaSessionIfExists(Navigator&);
+    WEBCORE_EXPORT static RefPtr<MediaSession> mediaSessionIfExists(Navigator&);
     MediaSession& mediaSession();
     RefPtr<MediaSession> mediaSessionIfExists();
 

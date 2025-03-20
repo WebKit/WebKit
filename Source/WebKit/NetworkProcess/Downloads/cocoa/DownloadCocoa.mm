@@ -42,15 +42,15 @@ namespace WebKit {
 void Download::resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, std::span<const uint8_t> activityAccessToken)
 {
     m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
-    if (m_sandboxExtension)
-        m_sandboxExtension->consume();
+    if (RefPtr extension = m_sandboxExtension)
+        extension->consume();
 
-    auto* networkSession = m_downloadManager->client().networkSession(m_sessionID);
+    auto* networkSession = m_downloadManager->protectedClient()->networkSession(m_sessionID);
     if (!networkSession) {
         WTFLogAlways("Could not find network session with given session ID");
         return;
     }
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*networkSession);
+    auto& cocoaSession = downcast<NetworkSessionCocoa>(*networkSession);
     RetainPtr nsData = toNSData(resumeData);
 
     NSMutableDictionary *dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
@@ -60,7 +60,15 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     // FIXME: Use nsData instead of updatedData once we've migrated from _WKDownload to WKDownload
     // because there's no reason to set the local path we got from the data back into the data.
     m_downloadTask = [cocoaSession.sessionWrapperForDownloadResume().session downloadTaskWithResumeData:updatedData];
+    if (!m_downloadTask) {
+        RELEASE_LOG_ERROR(Network, "Could not create download task from resume data");
+        return;
+    }
     auto taskIdentifier = [m_downloadTask taskIdentifier];
+    if (!taskIdentifier) {
+        RELEASE_LOG_ERROR(Network, "Could not resume download, since task identifier is 0");
+        return;
+    }
     ASSERT(!cocoaSession.sessionWrapperForDownloadResume().downloadMap.contains(taskIdentifier));
     cocoaSession.sessionWrapperForDownloadResume().downloadMap.add(taskIdentifier, m_downloadID);
     m_downloadTask.get()._pathToDownloadTaskFile = path;
@@ -152,7 +160,7 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
             return;
         }
 
-        bool isUsingPlaceholder = useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes;
+        bool isUsingPlaceholder = useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes && m_downloadTask;
 
         m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:publishURL.get() useDownloadPlaceholder:isUsingPlaceholder resumePlaceholderURL:nil liveActivityAccessToken:accessToken.get()]);
 

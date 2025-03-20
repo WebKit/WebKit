@@ -49,7 +49,7 @@ static void wpe_input_method_context_none_class_init(WPEInputMethodContextNoneCl
     imContextClass->get_preedit_string = wpeInputMethodContextNoneGetPreeditString;
 }
 
-WPEInputMethodContext* wpeInputMethodContextNoneNew()
+WPEInputMethodContext* wpeInputMethodContextNoneNew(WPEView* view)
 {
-    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_INPUT_METHOD_CONTEXT_NONE, nullptr));
+    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_INPUT_METHOD_CONTEXT_NONE, "view", view, nullptr));
 }

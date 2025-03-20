@@ -1733,7 +1733,7 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
     result.append('    return [archiver accumulatedDictionary];')
     result.append('}')
     result.append('')
-    result.append('static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)')
+    result.append('[[maybe_unused]] static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)')
     result.append('{')
     result.append('    if (WebKit::conformsToWebKitSecureCoding(object))')
     result.append('        return [object _webKitPropertyListData];')

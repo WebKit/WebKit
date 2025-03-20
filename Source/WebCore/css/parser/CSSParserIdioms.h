@@ -82,4 +82,18 @@ inline bool isValidCustomIdentifier(CSSValueID valueID)
     return !isCSSWideKeyword(valueID) && valueID != CSSValueDefault;
 }
 
+// https://drafts.csswg.org/css-conditional-5/#propdef-container-name
+inline bool isValidContainerNameIdentifier(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueNone:
+    case CSSValueAnd:
+    case CSSValueOr:
+    case CSSValueNot:
+        return false;
+    default:
+        return isValidCustomIdentifier(valueID);
+    }
+}
+
 } // namespace WebCore

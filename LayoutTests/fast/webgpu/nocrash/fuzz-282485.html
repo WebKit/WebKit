@@ -74,9 +74,13 @@ fn unconst_u32(v: u32) -> u32 { return v; }
     commandBuffer3 = commandEncoder29.finish();
     device0.queue.submit([ commandBuffer3 ])
     await device0.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
 
+testRunner?.dumpAsText();
 testRunner?.waitUntilDone();
+
 run();
 </script>
+

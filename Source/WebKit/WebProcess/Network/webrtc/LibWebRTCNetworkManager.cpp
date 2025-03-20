@@ -51,7 +51,7 @@ RefPtr<LibWebRTCNetworkManager> LibWebRTCNetworkManager::getOrCreate(WebCore::Sc
     if (!document)
         return nullptr;
 
-    auto* networkManager = static_cast<LibWebRTCNetworkManager*>(document->rtcNetworkManager());
+    auto* networkManager = downcast<LibWebRTCNetworkManager>(document->rtcNetworkManager());
     if (!networkManager) {
         auto newNetworkManager = adoptRef(*new LibWebRTCNetworkManager(identifier));
         networkManager = newNetworkManager.ptr();
@@ -105,17 +105,18 @@ void LibWebRTCNetworkManager::setEnumeratingVisibleNetworkInterfacesEnabled(bool
 
 void LibWebRTCNetworkManager::StartUpdating()
 {
-    callOnMainRunLoop([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    callOnMainRunLoop([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto& monitor = WebProcess::singleton().libWebRTCNetwork().monitor();
-        if (m_receivedNetworkList) {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }] {
-                SignalNetworksChanged();
+        if (protectedThis->m_receivedNetworkList) {
+            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([protectedThis] {
+                protectedThis->SignalNetworksChanged();
             });
         } else if (monitor.didReceiveNetworkList())
-            networksChanged(monitor.networkList() , monitor.ipv4(), monitor.ipv6());
+            protectedThis->networksChanged(monitor.networkList() , monitor.ipv4(), monitor.ipv6());
         monitor.startUpdating();
     });
 }

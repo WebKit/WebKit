@@ -370,6 +370,7 @@ void ScrollerMac::updateValues()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_scrollerImp setEnabled:m_isEnabled];
+    [m_scrollerImp setUserInterfaceLayoutDirection: m_scrollbarLayoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
     [m_scrollerImp setBoundsSize:NSSizeFromCGSize([m_hostLayer bounds].size)];
     [m_scrollerImp setDoubleValue:values.value];
     [m_scrollerImp setPresentationValue:values.value];
@@ -465,6 +466,11 @@ void ScrollerMac::setScrollerImp(NSScrollerImp *imp)
 
 void ScrollerMac::setScrollbarLayoutDirection(UserInterfaceLayoutDirection scrollbarLayoutDirection)
 {
+    if (m_scrollbarLayoutDirection == scrollbarLayoutDirection)
+        return;
+
+    m_scrollbarLayoutDirection = scrollbarLayoutDirection;
+    updateScrollbarStyle();
     [m_scrollerImp setUserInterfaceLayoutDirection: scrollbarLayoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
 }
 

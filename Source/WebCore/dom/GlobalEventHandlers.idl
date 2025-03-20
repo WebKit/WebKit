@@ -41,7 +41,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onchange;
     attribute EventHandler onclick;
     attribute EventHandler onclose;
-    [EnabledBySetting=InvokerAttributesEnabled] attribute EventHandler oncommand;
+    [EnabledBySetting=CommandAttributesEnabled] attribute EventHandler oncommand;
     attribute EventHandler oncontentvisibilityautostatechange;
     // attribute EventHandler oncontextlost;
     attribute EventHandler oncontextmenu;

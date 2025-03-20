@@ -58,9 +58,11 @@ typedef NS_ENUM(NSInteger, NSUserAccentColor) {
     NSUserAccentColorPink,
 
     NSUserAccentColorNoColor = -1,
+    NSUserAccentColorMulticolor = -2,
 };
 
 extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
+extern "C" void NSColorSetUserAccentColor(NSUserAccentColor key, BOOL sendNotification);
 
 #endif
 

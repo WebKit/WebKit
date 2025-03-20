@@ -1,0 +1,91 @@
+.toast {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    display: none;
+    width: 100%;
+    min-height: 100px;
+    color: var(--theme-text-light);
+    background-color: var(--theme-toast-background);
+    font-family: var(--font-family-default);
+    z-index: var(--index-important);
+    padding: var(--content-spacing-xlarge);
+    border-top: var(--theme-medium-border);
+}
+
+.toast:target,
+.toast.open {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.toast-close-button {
+    position: absolute;
+    top: var(--content-spacing-medium);
+    inset-inline-end: var(--content-spacing-medium);
+    width: var(--icon-size-medium);
+    height: var(--icon-size-medium);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toast-close-button-icon {
+    --animated-icon-width: 24px;
+    --animated-icon-background: transparent;
+    --animated-icon-color: var(--theme-icon-fill-light);
+    --animated-icon-hover: var(--theme-icon-fill-lighter);
+}
+
+.toast-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    font-size: var(--font-size-medium);
+    text-transform: uppercase;
+    margin-bottom: var(--content-spacing-large);
+    width: 100%;
+}
+
+.toast-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.toast-description {
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* stylelint-disable */
+.toast-description a {
+    color: var(--theme-navigation-text);
+    transition: var(--transition-default);
+}
+
+.toast-description a:hover {
+    color: var(--theme-navigation-text-hover);
+}
+/* stylelint-enable */
+
+.toast-actions {
+    display: flex;
+    margin: var(--content-spacing-large) 0;
+}
+
+.toast-actions .toast-actions-button {
+    padding: 0 var(--content-spacing-large);
+}
+
+.toast-actions .toast-actions-button:not(:last-child) {
+    margin-inline-end: var(--content-spacing-large);
+}

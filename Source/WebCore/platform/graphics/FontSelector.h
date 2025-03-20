@@ -69,6 +69,11 @@ public:
 
     virtual unsigned uniqueId() const = 0;
     virtual unsigned version() const = 0;
+
+    virtual bool isSimpleFontSelectorForDescription() const = 0;
+
+    virtual bool isCSSFontSelector() const { return false; }
+
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontSelector&);

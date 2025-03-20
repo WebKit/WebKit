@@ -55,6 +55,7 @@ enum class WebCore::LockBackForwardList : bool;
 #endif
     bool isRequestFromClientOrUserInput;
     bool isPerformingHTTPFallback;
+    bool isHandledByAboutSchemeHandler;
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };

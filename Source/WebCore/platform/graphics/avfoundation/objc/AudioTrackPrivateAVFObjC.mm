@@ -79,32 +79,14 @@ void AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged()
     setConfiguration(m_impl->audioTrackConfiguration());
 }
 
-void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
-{
-    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
-    resetPropertiesFromTrack();
-}
-
 AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
 }
 
-void AudioTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)
-{
-    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
-    resetPropertiesFromTrack();
-}
-
 AVAssetTrack* AudioTrackPrivateAVFObjC::assetTrack()
 {
     return m_impl->assetTrack();
-}
-
-void AudioTrackPrivateAVFObjC::setMediaSelectionOption(MediaSelectionOptionAVFObjC& option)
-{
-    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(option);
-    resetPropertiesFromTrack();
 }
 
 MediaSelectionOptionAVFObjC* AudioTrackPrivateAVFObjC::mediaSelectionOption()

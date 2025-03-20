@@ -44,7 +44,7 @@ public:
     static Ref<RemoteAudioSourceProvider> create(WebCore::MediaPlayerIdentifier, WTF::LoggerHelper&);
     ~RemoteAudioSourceProvider();
 
-    void audioSamplesAvailable(const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
+    void audioSamplesAvailable(const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t, bool);
     void close();
 
     WebCore::MediaPlayerIdentifier identifier() const { return m_identifier; }

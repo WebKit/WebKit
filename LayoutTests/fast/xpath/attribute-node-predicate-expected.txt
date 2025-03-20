@@ -1,3 +1,8 @@
+XPath Attribute node predicate test.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS //@id[false]
 PASS //@id[1]/parent::*
 PASS //@id[2]/parent::*

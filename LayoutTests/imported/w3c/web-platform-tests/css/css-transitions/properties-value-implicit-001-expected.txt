@@ -1,6 +1,6 @@
 
-PASS background-position length-em(em) / values
-FAIL background-position length-em(em) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "background-position:2s" but got "background-position-x:2s"
+PASS background-position-x length-em(em) / values
+PASS background-position-x length-em(em) / events
 PASS border-top-width length-em(em) / values
 PASS border-top-width length-em(em) / events
 PASS border-right-width length-em(em) / values

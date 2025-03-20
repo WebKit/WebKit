@@ -54,7 +54,6 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange&, const CSSParserConte
 RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

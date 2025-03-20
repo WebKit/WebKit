@@ -42,6 +42,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
+#import "WebPreferencesKeys.h"
 #import "WebProcess.h"
 #import "WebRemoteObjectRegistry.h"
 #import <WebCore/Chrome.h>
@@ -118,7 +119,8 @@ using namespace WebCore;
 
 void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 {
-    platformInitializeAccessibility();
+    bool shouldInitializeNSAccessibility = parameters.hasReceivedAXRequestInUIProcess || !parameters.store.getBoolValueForKey(WebPreferencesKey::enableAccessibilityOnDemandKey());
+    platformInitializeAccessibility(shouldInitializeNSAccessibility ? ShouldInitializeNSAccessibility::Yes : ShouldInitializeNSAccessibility::No);
 
 #if ENABLE(MEDIA_STREAM)
     if (RefPtr captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>()) {

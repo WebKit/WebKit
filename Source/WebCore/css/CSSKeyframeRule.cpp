@@ -29,8 +29,8 @@
 #include "CSSKeyframesRule.h"
 #include "CSSParser.h"
 #include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
 #include "MutableStyleProperties.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/text/MakeString.h>
@@ -136,10 +136,10 @@ CSSKeyframeRule::~CSSKeyframeRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration& CSSKeyframeRule::style()
+CSSStyleProperties& CSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(m_keyframe->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 

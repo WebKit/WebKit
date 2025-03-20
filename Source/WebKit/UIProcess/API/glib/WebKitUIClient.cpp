@@ -164,14 +164,14 @@ private:
         if (geometry.width != targetGeometry->width || geometry.height != targetGeometry->height)
             return FALSE;
 
-        RunLoop::current().stop();
+        RunLoop::currentSingleton().stop();
         return FALSE;
     }
 #endif // PLATFORM(GTK) && !USE(GTK4)
 
     void setWindowFrameTimerFired()
     {
-        RunLoop::current().stop();
+        RunLoop::currentSingleton().stop();
     }
 
     void setWindowFrame(WebPageProxy&, const WebCore::FloatRect& frame) final
@@ -207,7 +207,7 @@ private:
             auto* surface = gtk_native_get_surface(GTK_NATIVE(window));
             auto signalID = g_signal_connect(surface, "layout", G_CALLBACK(+[](GdkSurface*, int width, int height, GdkRectangle* targetGeometry) {
                 if (width == targetGeometry->width && height == targetGeometry->height)
-                    RunLoop::current().stop();
+                    RunLoop::currentSingleton().stop();
             }), &geometry);
 #else
             auto signalID = g_signal_connect(window, "configure-event", G_CALLBACK(windowConfigureEventCallback), &geometry);

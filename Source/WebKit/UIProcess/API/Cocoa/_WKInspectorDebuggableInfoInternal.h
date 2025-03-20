@@ -27,6 +27,7 @@
 
 #import "APIDebuggableInfo.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<API::DebuggableInfo> {
 
 @interface _WKInspectorDebuggableInfo () <WKObject> {
 @package
-    API::ObjectStorage<API::DebuggableInfo> _debuggableInfo;
+    AlignedStorage<API::DebuggableInfo> _debuggableInfo;
 }
 @end
 

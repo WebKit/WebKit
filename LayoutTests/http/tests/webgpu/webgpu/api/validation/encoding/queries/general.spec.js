@@ -4,11 +4,11 @@
 Validation for encoding queries.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { kQueryTypes } from '../../../../capability_info.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
 import { createQuerySetWithType } from './common.js';
 
-export const g = makeTestGroup(ValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
 
 g.test('occlusion_query,query_type').
 desc(
@@ -19,14 +19,11 @@ Tests that set occlusion query set with all types in render pass descriptor:
   `
 ).
 params((u) => u.combine('type', [undefined, ...kQueryTypes])).
-beforeAllSubcases((t) => {
-  const { type } = t.params;
-  if (type) {
-    t.selectDeviceForQueryTypeOrSkipTestCase(type);
-  }
-}).
 fn((t) => {
   const type = t.params.type;
+  if (type) {
+    t.skipIfDeviceDoesNotSupportQueryType(type);
+  }
   const querySet = type === undefined ? undefined : createQuerySetWithType(t, type, 1);
 
   const encoder = t.createEncoder('render pass', { occlusionQuerySet: querySet });
@@ -85,19 +82,10 @@ combine('type', kQueryTypes).
 beginSubcases().
 expand('queryIndex', (p) => p.type === 'timestamp' ? [0, 2] : [0])
 ).
-beforeAllSubcases((t) => {
-  const { type } = t.params;
-
-  // writeTimestamp is only available for devices that enable the 'timestamp-query' feature.
-  const queryTypes = ['timestamp'];
-  if (type !== 'timestamp') {
-    queryTypes.push(type);
-  }
-
-  t.selectDeviceForQueryTypeOrSkipTestCase(queryTypes);
-}).
 fn((t) => {
   const { type, queryIndex } = t.params;
+  t.skipIfDeviceDoesNotSupportQueryType('timestamp');
+  t.skipIfDeviceDoesNotSupportQueryType(type);
 
   const count = 2;
   const querySet = createQuerySetWithType(t, type, count);
@@ -122,10 +110,8 @@ TODO: writeTimestamp is removed from the spec so it's skipped if it TypeErrors.
 `
 ).
 paramsSubcasesOnly((u) => u.combine('querySetState', ['valid', 'invalid'])).
-beforeAllSubcases((t) => {
-  t.selectDeviceForQueryTypeOrSkipTestCase('timestamp');
-}).
 fn((t) => {
+  t.skipIfDeviceDoesNotSupportQueryType('timestamp');
   const { querySetState } = t.params;
 
   const querySet = t.createQuerySetWithState(querySetState, {
@@ -151,19 +137,18 @@ desc(
   `
 ).
 paramsSubcasesOnly((u) => u.combine('mismatched', [true, false])).
-beforeAllSubcases((t) => {
-  t.selectDeviceForQueryTypeOrSkipTestCase('timestamp');
-  t.selectMismatchedDeviceOrSkipTestCase('timestamp-query');
-}).
+beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
+  t.skipIfDeviceDoesNotSupportQueryType('timestamp');
   const { mismatched } = t.params;
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-  const querySet = sourceDevice.createQuerySet({
-    type: 'timestamp',
-    count: 2
-  });
-  t.trackForCleanup(querySet);
+  const querySet = t.trackForCleanup(
+    sourceDevice.createQuerySet({
+      type: 'timestamp',
+      count: 2
+    })
+  );
 
   const encoder = t.createEncoder('non-pass');
   try {

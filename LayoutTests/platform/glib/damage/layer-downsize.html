@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .layer {
+          position: fixed;
+          left: 7px;
+          top: 3px;
+          width: 50px;
+          height: 50px;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layer"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var layer = document.getElementsByClassName("layer")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              layer.style.width = "40px";
+              layer.style.height = "40px";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[7, 3, 50, 50]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

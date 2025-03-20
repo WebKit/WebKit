@@ -57,7 +57,7 @@ struct WebAuthenticationRequestData {
     WebAuthenticationPanelResult panelResult { WebAuthenticationPanelResult::Unavailable };
     RefPtr<API::WebAuthenticationPanel> panel;
     std::optional<WebCore::GlobalFrameIdentifier> globalFrameID;
-    WebKit::FrameInfoData frameInfo;
+    std::optional<WebKit::FrameInfoData> frameInfo;
 
     String cachedPin; // Only used to improve NFC Client PIN experience.
     WeakPtr<API::WebAuthenticationPanel> weakPanel;

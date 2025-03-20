@@ -1,0 +1,7 @@
+
+FAIL Creating a Worker from a string should throw (shared worker scope) assert_throws_js: Creating a Worker threw function "() => { new Worker("w"); }" threw object "ReferenceError: Can't find variable: Worker" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Creating a Worker from a TrustedScriptURL should not throw (shared worker scope) Can't find variable: Worker
+FAIL Creating a Worker from a string with a default policy should not throw (shared worker scope) Can't find variable: Worker
+

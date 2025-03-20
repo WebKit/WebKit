@@ -82,9 +82,9 @@ public:
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
 
-private:
     static bool isWheelEventType(WebEventType);
 
+private:
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;
     WebCore::FloatSize m_delta;
@@ -107,3 +107,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebWheelEvent)
+static bool isType(const WebKit::WebEvent& event) { return WebKit::WebWheelEvent::isWheelEventType(event.type()); }
+SPECIALIZE_TYPE_TRAITS_END()

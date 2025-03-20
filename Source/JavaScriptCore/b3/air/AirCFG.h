@@ -31,13 +31,14 @@
 #include "AirCode.h"
 #include <wtf/IndexMap.h>
 #include <wtf/IndexSet.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
 class CFG {
     WTF_MAKE_NONCOPYABLE(CFG);
-    WTF_MAKE_TZONE_ALLOCATED(CFG);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CFG);
 public:
     typedef BasicBlock* Node;
     typedef IndexSet<BasicBlock*> Set;

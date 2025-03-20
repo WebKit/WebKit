@@ -29,5 +29,7 @@
 
 #import "WKMaterialHostingSupport.h"
 #import "WKPreferencesInternal.h"
+#import "WKScrollGeometry.h"
+#import "WKUIDelegateInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"

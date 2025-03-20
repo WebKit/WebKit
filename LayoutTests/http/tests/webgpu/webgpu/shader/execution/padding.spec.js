@@ -4,9 +4,9 @@
 Execution Tests for preservation of padding bytes in structures and arrays.
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { iterRange } from '../../../common/util/util.js';
-import { GPUTest } from '../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../gpu_test.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 /**
  * Run a shader and check that the buffer output matches expectations.
@@ -259,6 +259,83 @@ fn((t) => {
     0x98765432, 0x98765432, 0x98765432, 0xdeadbeef,
     // buffer[2]
     0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0xdeadbeef]
+    )
+  );
+});
+
+g.test('array_of_vec3h').
+desc(
+  `Test that padding bytes in between array elements are preserved when f16 elements are used.
+
+     This test defines creates a read-write storage buffer with type array<vec3h, 4>. The shader
+     assigns the whole variable at once, and we then test that data in the padding bytes was
+     preserved.
+    `
+).
+fn((t) => {
+  t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  const wgsl = `
+      enable f16;
+      @group(0) @binding(0) var<storage, read_write> buffer : array<vec3<f16>, 4>;
+
+      @compute @workgroup_size(1)
+      fn main() {
+        buffer = array<vec3<f16>, 4>(
+          vec3(1h),
+          vec3(2h),
+          vec3(3h),
+          vec3(4h),
+        );
+      }
+    `;
+  runShaderTest(
+    t,
+    wgsl,
+    new Uint32Array([
+    // buffer[0]
+    0x3c003c00, 0xdead3c00,
+    // buffer[1]
+    0x40004000, 0xdead4000,
+    // buffer[2]
+    0x42004200, 0xdead4200,
+    // buffer[2]
+    0x44004400, 0xdead4400]
+    )
+  );
+});
+
+g.test('array_of_vec3h,elementwise').
+desc(
+  `Test that padding bytes in between array elements are preserved when f16 elements are used.
+
+     This test defines creates a read-write storage buffer with type array<vec3h, 4>. The shader
+     assigns one element per thread, and we then test that data in the padding bytes was
+     preserved.
+    `
+).
+fn((t) => {
+  t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  const wgsl = `
+      enable f16;
+      @group(0) @binding(0) var<storage, read_write> buffer : array<vec3<f16>>;
+
+      @compute @workgroup_size(4)
+      fn main(@builtin(local_invocation_index) lid : u32) {
+        buffer[lid] = vec3h(f16(lid + 1));
+      }
+    `;
+  runShaderTest(
+    t,
+    wgsl,
+    new Uint32Array([
+    // buffer[0]
+    0x3c003c00, 0xdead3c00,
+    // buffer[1]
+    0x40004000, 0xdead4000,
+    // buffer[2]
+    0x42004200, 0xdead4200,
+    // buffer[2]
+    0x44004400, 0xdead4400]
     )
   );
 });

@@ -210,7 +210,7 @@ WK_EXPORT void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef p
 WK_EXPORT void WKPageSetMockCameraOrientationForTesting(WKPageRef page, uint64_t rotation, WKStringRef persistentId);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
 WK_EXPORT void WKPageSetMockCaptureDevicesInterrupted(WKPageRef page, bool isCameraInterrupted, bool isMicrophoneInterrupted);
-WK_EXPORT void WKPageTriggerMockCaptureConfigurationChange(WKPageRef page, bool forMicrophone, bool forDisplay);
+WK_EXPORT void WKPageTriggerMockCaptureConfigurationChange(WKPageRef page, bool forCamera, bool forMicrophone, bool forDisplay);
 
 typedef void (*WKPageLoadedSubresourceDomainsFunction)(WKArrayRef domains, void* functionContext);
 WK_EXPORT void WKPageLoadedSubresourceDomains(WKPageRef page, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext);
@@ -237,6 +237,9 @@ typedef void (*WKPageSetTracksRepaintsForTestingFunction)(void* functionContext)
 WK_EXPORT void WKPageSetTracksRepaintsForTesting(WKPageRef page, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler);
 typedef void (*WKPageDisplayAndTrackRepaintsForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageDisplayAndTrackRepaintsForTesting(WKPageRef page, void* context, WKPageDisplayAndTrackRepaintsForTestingFunction completionHandler);
+typedef void (*WKPageFindStringForTestingFunction)(bool found, void* functionContext);
+WK_EXPORT void WKPageFindStringForTesting(WKPageRef page, void* context, WKStringRef string, WKFindOptions options, unsigned maxMatchCount, WKPageFindStringForTestingFunction completionHandler);
+
 #ifdef __cplusplus
 }
 #endif

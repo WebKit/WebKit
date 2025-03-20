@@ -33,6 +33,7 @@
 
 #include "AudioBus.h"
 #include "AudioProcessor.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -46,8 +47,9 @@ class AudioProcessor;
 // It uses one AudioDSPKernel object per channel to do the processing, thus there is no cross-channel processing.
 // Despite this limitation it turns out to be a very common and useful type of processor.
 
-class AudioDSPKernelProcessor : public AudioProcessor {
+class AudioDSPKernelProcessor : public AudioProcessor, public CanMakeThreadSafeCheckedPtr<AudioDSPKernelProcessor> {
     WTF_MAKE_TZONE_ALLOCATED(AudioDSPKernelProcessor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioDSPKernelProcessor);
 public:
     // numberOfChannels may be later changed if object is not yet in an "initialized" state
     AudioDSPKernelProcessor(float sampleRate, unsigned numberOfChannels);

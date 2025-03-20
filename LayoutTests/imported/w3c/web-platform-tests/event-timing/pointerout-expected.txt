@@ -1,0 +1,5 @@
+Outside target!
+Target
+
+FAIL Event Timing pointerout. assert_implements: Event Counts isn't supported undefined
+

@@ -80,7 +80,7 @@ private:
 
     RefPtr<ProcessThrottlerActivity> m_isVisibleActivity;
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
-    Ref<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
+    const Ref<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
     RefPtr<ProcessThrottlerActivity> m_accessibilityActivity;
     bool m_takeAccessibilityActivityWhenInWindow { false };
 #endif

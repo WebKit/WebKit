@@ -37,6 +37,7 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebPage.h"
+#include <WebCore/CSSStyleProperties.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/MutableStyleProperties.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -49,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedBundlePageEditorClient);
 
 static RefPtr<InjectedBundleCSSStyleDeclarationHandle> createHandle(const StyleProperties& style)
 {
-    return InjectedBundleCSSStyleDeclarationHandle::getOrCreate(&style.mutableCopy()->ensureCSSStyleDeclaration());
+    return InjectedBundleCSSStyleDeclarationHandle::getOrCreate(Ref { style.mutableCopy()->ensureCSSStyleProperties() }.ptr());
 }
 
 InjectedBundlePageEditorClient::InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase& client)

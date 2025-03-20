@@ -29,6 +29,7 @@
 
 #import "WKObject.h"
 #import "WebExtensionMessagePort.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 template<> struct WrapperTraits<WebExtensionMessagePort> {
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<WebExtensionMessagePort> {
 
 @interface WKWebExtensionMessagePort () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebExtensionMessagePort> _webExtensionMessagePort;
+    AlignedStorage<WebKit::WebExtensionMessagePort> _webExtensionMessagePort;
 }
 
 @property (nonatomic, readonly) WebKit::WebExtensionMessagePort& _webExtensionMessagePort;

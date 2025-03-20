@@ -1,0 +1,5 @@
+Click me
+Click me
+
+FAIL EventTiming: verify interactionCount for click interaction assert_implements: Event Timing is not supported undefined
+

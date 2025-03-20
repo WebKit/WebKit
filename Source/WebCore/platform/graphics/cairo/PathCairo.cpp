@@ -323,6 +323,12 @@ void PathCairo::add(PathRoundedRect roundedRect)
     addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
+void PathCairo::add(PathContinuousRoundedRect continuousRoundedRect)
+{
+    // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
+    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+}
+
 void PathCairo::add(PathCloseSubpath)
 {
     cairo_close_path(platformPath());

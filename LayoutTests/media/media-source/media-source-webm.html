@@ -58,6 +58,10 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
             await waitFor(sourceBuffer, 'update');
 
+            testExpected('video.videoTracks.length', 1);
+            testExpected('video.audioTracks.length', 0);
+            testExpected('video.textTracks.length', 0);
+
             endTest();
         } catch (e) {
             failTest(`Caught exception: "${e}"`);

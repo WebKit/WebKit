@@ -58,6 +58,7 @@ public:
     virtual void unfocus() = 0;
     virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
     virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
+    virtual bool isWebRemoteFrameClient() const { return false; }
     virtual ~RemoteFrameClient() { }
 };
 

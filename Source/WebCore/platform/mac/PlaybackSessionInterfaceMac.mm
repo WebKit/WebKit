@@ -147,7 +147,13 @@ void PlaybackSessionInterfaceMac::endScrubbing()
     if (auto* model = playbackSessionModel())
         model->endScrubbing();
 }
-
+#if HAVE(PIP_SKIP_PREROLL)
+void PlaybackSessionInterfaceMac::skipAd()
+{
+    if (auto* model = playbackSessionModel())
+        model->skipAd();
+}
+#endif
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 {

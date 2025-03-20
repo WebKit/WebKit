@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              spawnNewElement("canvas", (canvas) => {
+                  canvas.width = 50;
+                  canvas.height = 50;
+              });
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              // Height is 54 as in case of block, the RenderBox adds extra 2+2.
+              assertRectsEq(damage.rects, [[0, 0, window.innerWidth, 54]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

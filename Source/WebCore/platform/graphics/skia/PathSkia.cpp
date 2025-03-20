@@ -194,6 +194,13 @@ void PathSkia::add(PathRoundedRect roundedRect)
         addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
+void PathSkia::add(PathContinuousRoundedRect continuousRoundedRect)
+{
+    // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
+    // FIXME: Determine if PreferNative is the optimal strategy here.
+    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+}
+
 void PathSkia::add(PathCloseSubpath)
 {
     m_platformPath.close();

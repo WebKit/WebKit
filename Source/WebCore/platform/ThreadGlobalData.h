@@ -151,7 +151,7 @@ inline PURE_FUNCTION ThreadGlobalData& threadGlobalData()
             return *static_cast<ThreadGlobalData*>(clientData);
     }
 #else
-    auto& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     auto* clientData = thread.m_clientData.get();
     if (LIKELY(clientData))
         return *static_cast<ThreadGlobalData*>(clientData);

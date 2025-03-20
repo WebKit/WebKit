@@ -45,7 +45,7 @@ async function beginfullscreen(wasTriggeredFromFullscreenChangeEvent)
     if (!wasTriggeredFromFullscreenChangeEvent)
         run("mediaElement.webkitExitFullScreen()");
     else {
-        // Call asynchronously to give time to the WebCore FullscreenManager to notify the video
+        // Call asynchronously to give time to the WebCore DocumentFullscreen to notify the video
         // element that it entered full-screen, and thus allowing the exitFullScreen() call to go
         // through.
         setTimeout('run("mediaElement.webkitExitFullScreen()")', 0);

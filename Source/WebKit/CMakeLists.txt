@@ -476,6 +476,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ImageOptions.serialization.in
     Shared/InspectorExtensionTypes.serialization.in
     Shared/JavaScriptCore.serialization.in
+    Shared/JavaScriptEvaluationResult.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/LoadParameters.serialization.in
     Shared/MediaPlaybackState.serialization.in
@@ -551,7 +552,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/API/APINumber.serialization.in
     Shared/API/APIObject.serialization.in
     Shared/API/APIPageHandle.serialization.in
-    Shared/API/APISerializedScriptValue.serialization.in
     Shared/API/APIString.serialization.in
     Shared/API/APIURL.serialization.in
     Shared/API/APIURLRequest.serialization.in

@@ -276,6 +276,32 @@ class TestBugzilla(unittest.TestCase):
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
 
+    def test_set_state(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), OutputCapture() as captured:
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertFalse(issue.set_state(state='Analyze'))
+            self.assertEqual(issue.state, None)
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Bugzilla does not support state at this time\n',
+        )
+
+    def test_set_substate(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), OutputCapture() as captured:
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertFalse(issue.set_state(state='Analyze', substate='Fix'))
+            self.assertEqual(issue.state, None)
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Bugzilla does not support state at this time\n',
+        )
+
     def test_duplicate(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
             BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',

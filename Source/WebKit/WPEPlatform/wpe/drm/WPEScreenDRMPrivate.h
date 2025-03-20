@@ -31,3 +31,4 @@
 WPEScreen* wpeScreenDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&&, const WPE::DRM::Connector&);
 drmModeModeInfo* wpeScreenDRMGetMode(WPEScreenDRM*);
 const WPE::DRM::Crtc wpeScreenDRMGetCrtc(WPEScreenDRM*);
+double wpeScreenDRMGuessScale(WPEScreenDRM*);

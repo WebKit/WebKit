@@ -37,6 +37,7 @@ import urllib3
 from random import randint
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+from time import sleep
 
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -72,6 +73,7 @@ def parse_args(argument_list):
     platform.add_argument('--wpe', action='store_const', dest='platform', const='wpe', help='Use the WPE port')
     parser.add_argument("--mvt-instance-address", default="https://mvt.rdkcentral.com", help="MVT instance address to use")
     parser.add_argument("--suite", default=None, choices=TEST_SUITES, help="Suite to run. Default: run all")
+    parser.add_argument("--retry-unexpected-failures", type=int, help="Number of times to retry each unexpected failure.", default=3)
     parser.add_argument('--update-expectations', action='store_true', help='Reset the test expectations with the new results')
     parser.add_argument("--headless", action='store_true', help="Enable headless mode if available")
     parser.add_argument("--browser-name", choices=['MiniBrowser', 'cog'], default='MiniBrowser', help="Select the browser to use (via run-minibrowser). Default: MiniBrowser")
@@ -89,6 +91,28 @@ def parse_args(argument_list):
     args.extra_browser_args = extra_browser_args
 
     return args
+
+
+class ProgressLogInfo():
+
+    def __init__(self):
+        self.last_msg_printed = ""
+
+    def log(self, msg):
+        if msg == self.last_msg_printed:
+            return
+        if len(msg) < len(self.last_msg_printed):
+            self.maybe_clean()
+        sys.stdout.write(f"\r{msg}")
+        sys.stdout.flush()
+        self.last_msg_printed = msg
+
+    def maybe_clean(self):
+        len_last_msg_printed = len(self.last_msg_printed)
+        if len_last_msg_printed > 0:
+            clean_str = " " * len_last_msg_printed
+            sys.stdout.write(f"\r{clean_str}\r")
+            sys.stdout.flush()
 
 
 class MVTWebDriverRunner():
@@ -122,19 +146,78 @@ class MVTWebDriverRunner():
         self.driver.maximize_window()
         self.started = True
 
-    def _suite_has_started(self, driver):
-        return driver.execute_script('return !(typeof globalRunner === "undefined" || globalRunner === null);')
+    def _suite_has_loaded(self, driver):
+        return driver.execute_script('return typeof globalRunner !== "undefined" && globalRunner !== null && document.readyState == "complete";')
 
-    def _suite_has_finished(self, driver):
-        return driver.execute_script("return globalRunner.currentTestIdx == globalRunner.testList.length;")
+    def _suite_has_started(self, driver):
+        return driver.execute_script('return globalRunner.hasOwnProperty("testToRun") && globalRunner.hasOwnProperty("currentTestIdx") && globalRunner.hasOwnProperty("testList");')
+
+    def _have_all_tests_finished(self, driver):
+        return driver.execute_script('return globalRunner.testToRun == 0;')
+
+    def _wait_until_suite_has_finished(self, maxwait_secs, suite_name):
+        poll_interval_secs = 5
+        max_loops = maxwait_secs / poll_interval_secs
+        i=0
+        try:
+            progress_log_info = ProgressLogInfo()
+            while True:
+                sleep(poll_interval_secs)
+                i+=1
+                running_test_id = self.driver.execute_script("return globalRunner.currentTestIdx;")
+                total_tests_to_run = self.driver.execute_script("return globalRunner.testList.length;")
+                if total_tests_to_run > 0 and running_test_id==total_tests_to_run and self._have_all_tests_finished(self.driver):
+                    break
+                if i >= max_loops:
+                    raise TimeoutException(f'Timed out waiting for the suite "{suite_name}" to finish after waiting {maxwait_secs} seconds')
+                if _log.getEffectiveLevel() in [logging.DEBUG, logging.INFO]:
+                    percent_completed = float(100) * float(running_test_id) / float(total_tests_to_run)
+                    progress_log_msg = f'Completed {percent_completed:.0f}% of suite "{suite_name}": running test {running_test_id} of {total_tests_to_run}.'
+                    if _log.getEffectiveLevel() == logging.INFO:
+                        progress_log_info.log(progress_log_msg)
+                    else:
+                        _log.debug(progress_log_msg)
+        finally:
+            progress_log_info.maybe_clean()
 
     def run_suite(self, suite):
         test_url = f"{self.mvt_instance_address}/?test_type={suite}&command=run"
         _log.info(f'Running MVT suite "{suite}" at {test_url}')
         self.driver.get(test_url)
+        WebDriverWait(self.driver, 20).until(self._suite_has_loaded)
         WebDriverWait(self.driver, 20).until(self._suite_has_started)
-        WebDriverWait(self.driver, 3600).until(self._suite_has_finished)
-        return self.driver.execute_script("return getMvtTestResults()")
+        self._wait_until_suite_has_finished(3600, suite)
+        _log.info(f'MVT suite "{suite}" has finished. Results below:')
+        return self.driver.execute_script("return getMvtTestResults();")
+
+    def run_test_from_suite(self, test_name, suite, number_repeats):
+        test_results = set()
+        test_url = f"{self.mvt_instance_address}/?test_type={suite}"
+        self.driver.get(test_url)
+        WebDriverWait(self.driver, 20).until(self._suite_has_loaded)
+        test_id = self.driver.execute_script(
+                'for (let s_test_id = 0; s_test_id < window.globalRunner.testList.length; s_test_id++)'
+                    f'if (window.globalRunner.testList[s_test_id].prototype.name == "{test_name}")'
+                        'return s_test_id+1;'
+                'return -1;')
+        if test_id == -1:
+            _log.error(f'Unable to find test_id for test "{test_name}" on suite "{suite}"')
+            return test_results
+        test_url = f"{self.mvt_instance_address}/?test_type={suite}&tests={test_id}&command=run"
+        for test_run in range(1, number_repeats+1):
+            _log.info(f'[Repeat {test_run}/{number_repeats}] Running test "{test_name}" from suite "{suite}" at {test_url}')
+            self.driver.get(test_url)
+            WebDriverWait(self.driver, 20).until(self._suite_has_loaded)
+            WebDriverWait(self.driver, 20).until(self._suite_has_started)
+            WebDriverWait(self.driver, 1000).until(self._have_all_tests_finished)
+            results = self.driver.execute_script("return getMvtTestResults();")
+            assert(results['name'] == suite)
+            assert(len(results['tests']) == 1)
+            assert(results['tests'][0]['name'] == test_name)
+            test_result = results['tests'][0]['status']
+            _log.info(f'Test result: {test_result}')
+            test_results.add(test_result)
+        return test_results
 
     def __del__(self):
         if self.started:
@@ -203,26 +286,26 @@ class MVTResultsExpectationsParser():
             return json.dumps(obj)
 
     def analyze_results(self, data):
-        unexpected_failed = 0
-        expected_failed = 0
-        total_tests = 0
+        unexpected_failed_list = []
+        expected_failed_list = []
+        total_tests_list = []
         for test_entry in data['tests']:
-            total_tests += 1
             test_suite = test_entry['suites_chain']
             test_name = test_entry['name']
             test_result = test_entry['status']
+            total_tests_list.append(test_name)
             if self.should_update_expectations:
                 self._store_test_result_this_run(test_suite, test_name, test_result)
             if self._is_unexpected_failure(test_suite, test_name, test_result):
-                unexpected_failed += 1
+                unexpected_failed_list.append(test_name)
                 _log.warning(f'[UNEXPECTED_FAIL] Test "{test_name}" from "{test_suite}" has unexpected result: {test_result}')
                 _log.info(test_entry['log'])
             elif test_result != 'passed':
                 _log.info(f'[FAIL][EXPECTED] {test_name}')
-                expected_failed += 1
+                expected_failed_list.append(test_name)
             else:
                 _log.info(f'[PASS] {test_name}')
-        return total_tests, unexpected_failed, expected_failed
+        return total_tests_list, unexpected_failed_list, expected_failed_list
 
     def maybe_update_expectations(self):
         if self.should_update_expectations and self._results_this_run:
@@ -243,18 +326,46 @@ def run_mvt_test_suite(args):
     num_suites = len(suites)
     for suite in suites:
         json_results = mvtwebdriver_runner.run_suite(suite)
-        tests_run, unexpected_failures, expected_failures = mvtresultsexpectations_parser.analyze_results(json_results)
-        test_results[suite] = [tests_run, unexpected_failures, expected_failures]
+        tests_run_list, unexpected_failures_list, expected_failures_list = mvtresultsexpectations_parser.analyze_results(json_results)
+        unexpected_failures = len(unexpected_failures_list)
+        tests_run = len(tests_run_list)
+        # Maybe retry unexpected failures
+        if args.retry_unexpected_failures > 0 and unexpected_failures > 0:
+            unexpected_failures_str = "', '".join(unexpected_failures_list)
+            _log.info(f"Retrying {unexpected_failures} unexpected failures: '{unexpected_failures_str}'")
+            # iterate over a copy since we are modifying unexpected_failures_list inside the loop
+            for test_name in list(unexpected_failures_list):
+                repeat_test_results = mvtwebdriver_runner.run_test_from_suite(test_name, suite, args.retry_unexpected_failures)
+                _log.debug(f"Got extra results for {suite}/{test_name}: {repeat_test_results}")
+                for extra_result in repeat_test_results:
+                    if extra_result == 'passed':
+                        _log.info(f'[FLAKY][PASS] {test_name}.')
+                        unexpected_failures_list.remove(test_name)
+                        break
+                    elif not mvtresultsexpectations_parser._is_unexpected_failure(suite, test_name, extra_result):
+                        _log.info(f'[FLAKY][FAIL][EXPECTED] {test_name}')
+                        unexpected_failures_list.remove(test_name)
+                        expected_failures_list.append(test_name)
+                        break
+        # Calculate results of the suite run
+        unexpected_failures = len(unexpected_failures_list)
+        expected_failures = len(expected_failures_list)
+        test_results[suite] = [tests_run_list, unexpected_failures_list, expected_failures_list]
         exit_code = unexpected_failures
         tests_pass = tests_run - unexpected_failures - expected_failures
         suite_summary_header_str = f"[Suite {suite}] Ran {tests_run} tests of which:"
         _log.info('-' * len(suite_summary_header_str))
         _log.info(suite_summary_header_str)
-        _log.info(f"    - {tests_pass} tests passed.")
+        _log.info(f"{'-':>4} {tests_pass} tests passed.")
         if expected_failures > 0:
-            _log.info(f"    - {expected_failures} tests were expected failures.")
+            _log.info(f"{'-':>4} {expected_failures} tests were expected failures:")
+            for test_name in expected_failures_list:
+                _log.info(f"{'':>8}{test_name}")
+
         if unexpected_failures > 0:
-            _log.info(f"    - {unexpected_failures} tests were unexpected failures.")
+            _log.info(f"{'-':>4} {unexpected_failures} tests were unexpected failures:")
+            for test_name in unexpected_failures_list:
+                _log.info(f"{'':>8}{test_name}")
         _log.info('-' * len(suite_summary_header_str) + '\n')
 
     # Print global summary if more than one suite was run
@@ -266,18 +377,18 @@ def run_mvt_test_suite(args):
         total_unexpected_failures = 0
         total_expected_failures = 0
         for suite in test_results:
-            total_tests_run += test_results[suite][0]
-            total_unexpected_failures += test_results[suite][1]
-            total_expected_failures += test_results[suite][2]
+            total_tests_run += len(test_results[suite][0])
+            total_unexpected_failures += len(test_results[suite][1])
+            total_expected_failures += len(test_results[suite][2])
         total_tests_pass = total_tests_run - total_unexpected_failures - total_expected_failures
         suites_str = ", ".join(suites)
         _log.info(f"Executed {num_suites} MVT test suites: {suites_str}")
         _log.info(f"Ran {total_tests_run} tests in total of which:")
-        _log.info(f"    - {total_tests_pass} tests passed.")
+        _log.info(f"{'-':>4} {total_tests_pass} tests passed.")
         if total_expected_failures > 0:
-            _log.info(f"    - {total_expected_failures} tests were expected failures.")
+            _log.info(f"{'-':>4} {total_expected_failures} tests were expected failures.")
         if total_unexpected_failures > 0:
-            _log.info(f"    - {total_unexpected_failures} tests were unexpected failures.")
+            _log.info(f"{'-':>4} {total_unexpected_failures} tests were unexpected failures.")
         exit_code = total_unexpected_failures
 
     mvtresultsexpectations_parser.maybe_update_expectations()

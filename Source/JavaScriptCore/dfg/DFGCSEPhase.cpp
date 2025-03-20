@@ -55,7 +55,7 @@ static constexpr bool verbose = false;
 
 class ImpureDataSlot {
     WTF_MAKE_NONCOPYABLE(ImpureDataSlot);
-    WTF_MAKE_TZONE_ALLOCATED(ImpureDataSlot);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(ImpureDataSlot);
 public:
     ImpureDataSlot(HeapLocation key, LazyNode value, unsigned hash)
         : key(key), value(value), hash(hash)
@@ -66,7 +66,7 @@ public:
     unsigned hash;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ImpureDataSlot);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(ImpureDataSlot);
 
 struct ImpureDataSlotHash : public DefaultHash<std::unique_ptr<ImpureDataSlot>> {
     static unsigned hash(const std::unique_ptr<ImpureDataSlot>& key)

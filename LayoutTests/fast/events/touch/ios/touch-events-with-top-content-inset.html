@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true contentInset.top=200 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+.target {
+    width: 100%;
+    height: 100px;
+    background: tomato;
+    color: white;
+    text-align: center;
+    line-height: 100px;
+}
+</style>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+observedTouchStart = false;
+observedTouchEnd = false;
+
+addEventListener("load", async () => {
+    description("This test requires WebKitTestRunner. Verifies that adding a top content inset to the web view's scroll view does not offset touches.");
+    const target = document.querySelector(".target");
+    target.addEventListener("touchstart", () => observedTouchStart = true);
+    target.addEventListener("touchend", () => observedTouchEnd = true);
+
+    await UIHelper.activateElement(target);
+    await shouldBecomeEqual("observedTouchStart", "true");
+    await shouldBecomeEqual("observedTouchEnd", "true");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="target">Tap here</div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

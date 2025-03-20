@@ -36,6 +36,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewLayoutContext.h"
+#include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
@@ -88,6 +89,15 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
     CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer);
     if (!container)
         return;
+
+    if (isRemoval == IsRemoval::Yes && !renderer.everHadLayout()) {
+        // Certain mutations can make renderer to be removed before running layout. In such cases we don't have to try to
+        // run invalidation only remove it from layout tree.
+        if (auto* inlineLayout = container->inlineLayout())
+            inlineLayout->removedFromTree(*renderer.parent(), renderer);
+        return;
+    }
+
     auto shouldInvalidateLineLayoutPath = [&](auto& inlineLayout) {
         if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, inlineLayout, isRemoval == IsRemoval::Yes))
             return true;
@@ -809,7 +819,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
         if (auto* newParent = child.parent(); newParent != parent) {
             if (CheckedPtr gridRenderer = dynamicDowncast<RenderGrid>(newParent)) {
                 // We need to re-run the grid items placement if it had gained a new item.
-                gridRenderer->dirtyGrid();
+                gridRenderer->setNeedsItemPlacement();
             }
         }
         return;
@@ -981,7 +991,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
         return takenChild;
 
     // The grid needs to be recomputed as it might contain auto-placed items that will change their position.
-    parent.dirtyGrid();
+    parent.setNeedsItemPlacement();
     return takenChild;
 }
 
@@ -1057,7 +1067,7 @@ void RenderTreeBuilder::attachToRenderGrid(RenderGrid& parent, RenderPtr<RenderO
 
     // The grid needs to be recomputed as it might contain auto-placed items that
     // will change their position.
-    parent.dirtyGrid();
+    parent.setNeedsItemPlacement();
 }
 
 void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child)

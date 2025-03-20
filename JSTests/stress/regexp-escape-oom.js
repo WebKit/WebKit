@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ runDefault
 
 var exception;

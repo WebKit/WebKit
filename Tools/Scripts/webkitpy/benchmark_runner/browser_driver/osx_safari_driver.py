@@ -110,3 +110,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             subprocess.check_call(['/usr/bin/defaults', 'write', 'com.apple.Safari', 'NSWindow Frame BrowserWindowFrame', ' '.join(['0', '0', str(cls._screen_size().width), str(cls._screen_size().height)] * 2)])
         except Exception as error:
             _log.error('Reset safari window size failed - Error: {}'.format(error))
+
+    @property
+    def pgo_profile_output_directory(self):
+        return '/private/tmp/WebKitPGO'

@@ -76,21 +76,30 @@ static void assertUserAgentForURLHasEmptyQuirk(const char* url)
     EXPECT_FALSE(uaString.isNull());
 }
 
-TEST(UserAgentTest, Quirks)
+static void assertUserAgentForURLHasNoQuirk(const char* url)
 {
     // A site with no quirks should return a null String.
-    String uaString = standardUserAgentForURL(URL("http://www.webkit.org/"_s));
+    String uaString = standardUserAgentForURL(URL(String::fromLatin1(url)));
     EXPECT_TRUE(uaString.isNull());
+}
+
+TEST(UserAgentTest, Quirks)
+{
+    assertUserAgentForURLHasNoQuirk("http://www.webkit.org/");
+
+    // We used to have a Chrome quirk for YouTube, added in: https://bugs.webkit.org/show_bug.cgi?id=253877
+    // Removed in: https://bugs.webkit.org/show_bug.cgi?id=289194
+    assertUserAgentForURLHasNoQuirk("http://youtube.com/");
 
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://bankofamerica.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://soundcloud.com/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://youtube.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.apple.com/");
 
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.bilibili.com/");
 
 #if ENABLE(THUNDER)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.netflix.com/");

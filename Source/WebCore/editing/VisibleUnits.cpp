@@ -27,6 +27,7 @@
 #include "config.h"
 #include "VisibleUnits.h"
 
+#include "BoundaryPointInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
@@ -39,6 +40,7 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineRunAndOffset.h"
 #include "NodeTraversal.h"
+#include "PositionInlines.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyleInlines.h"

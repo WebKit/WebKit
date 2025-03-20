@@ -85,6 +85,8 @@ std::optional<OptionSet<ResourceType>> readResourceType(StringView);
 std::optional<OptionSet<LoadType>> readLoadType(StringView);
 std::optional<OptionSet<LoadContext>> readLoadContext(StringView);
 
+ASCIILiteral resourceTypeToString(OptionSet<ResourceType>);
+
 struct ResourceLoadInfo {
     URL resourceURL;
     URL mainDocumentURL;

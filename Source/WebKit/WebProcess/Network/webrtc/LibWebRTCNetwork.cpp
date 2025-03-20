@@ -102,16 +102,16 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
 void LibWebRTCNetwork::setSocketFactoryConnection()
 {
     if (!m_connection) {
-        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this]() mutable {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }]() mutable {
             m_socketFactory.setConnection(nullptr);
         });
         return;
     }
-    m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CreateRTCProvider(), [this, connection = m_connection]() mutable {
+    m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CreateRTCProvider(), [this, protectedThis = Ref { *this }, connection = m_connection]() mutable {
         if (!connection->isValid())
             return;
 
-        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection = WTFMove(connection)]() mutable {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, connection = WTFMove(connection)]() mutable {
             m_socketFactory.setConnection(WTFMove(connection));
         });
     }, 0);

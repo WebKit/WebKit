@@ -66,6 +66,7 @@ public:
     virtual bool userPrefersContrast() const { return false; }
     virtual bool userPrefersReducedMotion() const { return false; }
     virtual bool userPrefersOnOffLabels() const { return false; }
+    virtual bool userPrefersDifferentiationWithoutColor() const { return false; }
 
 protected:
     Theme() = default;

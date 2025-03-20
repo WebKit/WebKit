@@ -50,6 +50,7 @@ public:
     void clearPermissions() { m_deviceOrientationPermissionDecisions.clear(); }
 
     WebCore::DeviceOrientationOrMotionPermissionState cachedDeviceOrientationPermission(const WebCore::SecurityOriginData&) const;
+    void setCachedDeviceOrientationPermission(const WebCore::SecurityOriginData&, WebCore::DeviceOrientationOrMotionPermissionState);
 
 private:
     HashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;

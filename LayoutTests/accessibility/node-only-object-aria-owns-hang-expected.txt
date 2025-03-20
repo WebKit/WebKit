@@ -1,0 +1,8 @@
+This test ensures we don't hang when getting the unignored children for a node-only object.
+
+PASS: accessibilityController.accessibleElementById('div1').childrenCount === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Book One Two

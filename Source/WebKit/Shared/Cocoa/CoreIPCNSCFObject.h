@@ -39,6 +39,7 @@ class CoreIPCColor;
 #if USE(PASSKIT)
 class CoreIPCPKPaymentMethod;
 class CoreIPCPKPaymentMerchantSession;
+class CoreIPCPKPaymentSetupFeature;
 class CoreIPCPKContact;
 class CoreIPCPKSecureElementPass;
 class CoreIPCPKPayment;
@@ -90,6 +91,7 @@ using ObjectValue = std::variant<
 #if USE(PASSKIT)
     CoreIPCPKPaymentMethod,
     CoreIPCPKPaymentMerchantSession,
+    CoreIPCPKPaymentSetupFeature,
     CoreIPCPKContact,
     CoreIPCPKSecureElementPass,
     CoreIPCPKPayment,

@@ -298,3 +298,9 @@
 ;;; Allow interfacing with UNUserNotificationCenter
 (allow mach-lookup
     (global-name "com.apple.usernotifications.listener"))
+
+;;; Allow looking up container paths
+(allow file-read* file-write*
+    (extension "com.apple.sandbox.application-group"))
+
+(allow mach-lookup (global-name "com.apple.containermanagerd"))

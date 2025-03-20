@@ -29,6 +29,8 @@
 #include "AXObjectCache.h"
 #include "AnchorPositionEvaluator.h"
 #include "CSSFontSelector.h"
+#include "CSSPositionTryRule.h"
+#include "CSSSerializationContext.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
@@ -45,6 +47,9 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include "PositionTryFallback.h"
+#include "PositionTryOrder.h"
+#include "PositionedLayoutConstraints.h"
 #include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderStyleSetters.h"
@@ -75,8 +80,6 @@ TreeResolver::TreeResolver(Document& document, std::unique_ptr<Update> update)
     : m_document(document)
     , m_update(WTFMove(update))
 {
-    // FIXME: Move transient state to TreeResolver similar to QueryContainerState.
-    m_document->styleScope().resetAnchorPositioningStateBeforeStyleResolution();
 }
 
 TreeResolver::~TreeResolver()
@@ -149,6 +152,9 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
         return { RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
 
     auto& element = styleable.element;
+
+    if (auto optionStyle = tryChoosePositionOption(styleable, existingStyle))
+        return WTFMove(*optionStyle);
 
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
@@ -279,6 +285,9 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
     Styleable styleable { element, { } };
     auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext, existingStyle);
+
+    generatePositionOptionsIfNeeded(resolvedStyle, styleable, resolutionContext);
+
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext, parent().isInDisplayNoneTree);
 
     if (!affectsRenderedSubtree(element, *update.style)) {
@@ -574,7 +583,8 @@ ResolutionContext TreeResolver::makeResolutionContext()
         &parent().style,
         parentBoxStyle(),
         m_documentElementStyle.get(),
-        &scope().selectorMatchingState
+        &scope().selectorMatchingState,
+        &m_treeResolutionState
     };
 }
 
@@ -592,7 +602,8 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
         parentStyle(),
         parentBoxStyleForPseudoElement(elementUpdate),
         m_documentElementStyle.get(),
-        &scope().selectorMatchingState
+        &scope().selectorMatchingState,
+        &m_treeResolutionState
     };
 }
 
@@ -607,7 +618,8 @@ std::optional<ResolutionContext> TreeResolver::makeResolutionContextForInherited
         parentFirstLineStyle,
         parentBoxStyleForPseudoElement(elementUpdate),
         m_documentElementStyle.get(),
-        &scope().selectorMatchingState
+        &scope().selectorMatchingState,
+        &m_treeResolutionState
     };
 }
 
@@ -651,8 +663,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     std::unique_ptr<RenderStyle> startingStyle;
 
     auto* oldStyle = [&]() -> const RenderStyle* {
-        if (currentStyle)
-            return currentStyle;
+        if (auto* styleBefore = beforeResolutionStyle(element, styleable.pseudoElementIdentifier))
+            return styleBefore;
 
         if (resolvedStyle.style->hasTransitions()) {
             // https://drafts.csswg.org/css-transitions-2/#at-ruledef-starting-style
@@ -664,11 +676,15 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     }();
 
     auto unanimatedDisplay = resolvedStyle.style->display();
+    auto hasUnresolvedAnchorPosition = this->hasUnresolvedAnchorPosition(element);
 
     WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
 
     auto updateAnimations = [&] {
         if (document.backForwardCacheState() != Document::NotInBackForwardCache || document.printing())
+            return;
+
+        if (hasUnresolvedAnchorPosition)
             return;
 
         if (oldStyle && (oldStyle->hasTransitions() || resolvedStyle.style->hasTransitions()))
@@ -697,6 +713,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     };
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
+        if (hasUnresolvedAnchorPosition)
+            return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { } };
+
         if (!styleable.hasKeyframeEffects()) {
             // FIXME: Push after-change style into parent stack instead.
             styleable.setLastStyleChangeEventStyle(resolveAfterChangeStyleForNonAnimated(resolvedStyle, styleable, resolutionContext));
@@ -796,7 +815,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     return { WTFMove(newStyle), change, shouldRecompositeLayer, mayNeedRebuildRoot };
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const
+std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
     if (!resolvedStyle.matchResult || !resolvedStyle.matchResult->hasStartingStyle)
         return nullptr;
@@ -807,10 +826,10 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedSt
     // We now resolve the starting style by applying all rules (including @starting-style ones) again.
     // We could compute it along with the primary style and include it in MatchedPropertiesCache but it is not
     // clear this would be benefitial as it is typically only used once.
-    return resolveAgainWithParentStyle(resolvedStyle, styleable, parentStyle, PropertyCascade::startingStyleProperties(), resolutionContext);
+    return resolveAgainInDifferentContext(resolvedStyle, styleable, parentStyle, PropertyCascade::startingStyleProperties(), { }, resolutionContext);
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::resolveAfterChangeStyleForNonAnimated(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const
+std::unique_ptr<RenderStyle> TreeResolver::resolveAfterChangeStyleForNonAnimated(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
     // Element may have after-change style differing from the current style in case they are inheriting from a transitioning element.
     // We need after-change style for non-animating elements only in case there @starting-style rules in the subtree.
@@ -828,10 +847,10 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAfterChangeStyleForNonAnimated
 
     // "Likewise, define the after-change style as.. and inheriting from the after-change style of the parent."
     auto& parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
-    return resolveAgainWithParentStyle(resolvedStyle, styleable, parentStyle, PropertyCascade::normalProperties(), resolutionContext);
+    return resolveAgainInDifferentContext(resolvedStyle, styleable, parentStyle, PropertyCascade::normalProperties(), { }, resolutionContext);
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::resolveAgainWithParentStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const RenderStyle& parentStyle, OptionSet<PropertyCascade::PropertyType> properties, const ResolutionContext& resolutionContext) const
+std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const RenderStyle& parentStyle, OptionSet<PropertyCascade::PropertyType> properties, std::optional<BuilderPositionTryFallback>&& positionTryFallback, const ResolutionContext& resolutionContext)
 {
     ASSERT(resolvedStyle.matchResult);
 
@@ -845,7 +864,9 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainWithParentStyle(const Res
         m_document.get(),
         parentStyle,
         resolutionContext.documentElementStyle,
-        &styleable.element
+        &styleable.element,
+        &m_treeResolutionState,
+        WTFMove(positionTryFallback)
     };
 
     auto styleBuilder = Builder {
@@ -882,7 +903,8 @@ UncheckedKeyHashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimat
         m_document.get(),
         *resolutionContext.parentStyle,
         resolutionContext.documentElementStyle,
-        &element
+        &element,
+        &m_treeResolutionState
     };
 
     auto styleBuilder = Builder {
@@ -1148,18 +1170,17 @@ void TreeResolver::resolveComposedTree()
             resetStyleForNonRenderedDescendants(element);
 
         auto queryContainerAction = updateStateForQueryContainer(element, style, change, descendantsToResolve);
-
-        auto anchorPositionedElementAction = updateAnchorPositioningState(element, style);
+        auto anchorPositionedElementAction = updateAnchorPositioningState(element, style, change);
 
         bool shouldIterateChildren = [&] {
             // display::none, no need to resolve descendants.
             if (!style)
                 return false;
             // Style resolution will be resumed after the container has been resolved.
-            if (queryContainerAction == QueryContainerAction::Resolve)
+            if (queryContainerAction == LayoutInterleavingAction::SkipDescendants)
                 return false;
             // Style resolution will be resumed after the anchor-positioned element has been resolved.
-            if (anchorPositionedElementAction == AnchorPositionedElementAction::SkipDescendants)
+            if (anchorPositionedElementAction == LayoutInterleavingAction::SkipDescendants)
                 return false;
             return element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None;
         }();
@@ -1175,7 +1196,7 @@ void TreeResolver::resolveComposedTree()
             it.traverseNextSkippingChildren();
             continue;
         }
-        
+
         resetDescendantStyleRelations(element, descendantsToResolve);
 
         auto isInDisplayNoneTree = parent.isInDisplayNoneTree == IsInDisplayNoneTree::Yes || !style || style->display() == DisplayType::None;
@@ -1201,10 +1222,10 @@ const RenderStyle* TreeResolver::existingStyle(const Element& element)
     return style;
 }
 
-auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, Change& change, DescendantsToResolve& descendantsToResolve) -> QueryContainerAction
+auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, Change& change, DescendantsToResolve& descendantsToResolve) -> LayoutInterleavingAction
 {
     if (!style)
-        return QueryContainerAction::None;
+        return LayoutInterleavingAction::None;
 
     auto tryRestoreState = [&](auto& state) {
         if (!state)
@@ -1216,7 +1237,7 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
 
     if (auto it = m_queryContainerStates.find(element); it != m_queryContainerStates.end()) {
         tryRestoreState(it->value);
-        return QueryContainerAction::Continue;
+        return LayoutInterleavingAction::None;
     }
 
     auto* existingStyle = element.renderOrDisplayContentsStyle();
@@ -1225,17 +1246,15 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
         if (styleChangeAffectsRelativeUnits(*style, existingStyle))
             descendantsToResolve = DescendantsToResolve::All;
         m_queryContainerStates.add(element, QueryContainerState { change, descendantsToResolve });
-        m_hasUnresolvedQueryContainers = true;
-        return QueryContainerAction::Resolve;
+        return LayoutInterleavingAction::SkipDescendants;
     }
 
-    return QueryContainerAction::None;
+    return LayoutInterleavingAction::None;
 }
 
 std::unique_ptr<Update> TreeResolver::resolve()
 {
-    m_hasUnresolvedQueryContainers = false;
-    auto hadUnresolvedAnchorPositionedElements = std::exchange(m_hasUnresolvedAnchorPositionedElements, false);
+    auto didInterleavedLayout = std::exchange(m_needsInterleavedLayout, false);
 
     Element* documentElement = m_document->documentElement();
     if (!documentElement) {
@@ -1243,11 +1262,11 @@ std::unique_ptr<Update> TreeResolver::resolve()
         return nullptr;
     }
 
+    if (didInterleavedLayout)
+        AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayout(m_document, m_treeResolutionState.anchorPositionedStates);
+
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return WTFMove(m_update);
-
-    if (hadUnresolvedAnchorPositionedElements)
-        AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayout(m_document);
 
     m_didSeePendingStylesheet = m_document->styleScope().hasPendingSheetsBeforeBody();
 
@@ -1263,19 +1282,29 @@ std::unique_ptr<Update> TreeResolver::resolve()
     m_parentStack.clear();
     popScope();
 
-    if (m_hasUnresolvedQueryContainers) {
-        for (auto& containerAndState : m_queryContainerStates) {
-            // Ensure that resumed resolution reaches the container.
-            if (containerAndState.value)
-                containerAndState.key->invalidateForResumingQueryContainerResolution();
+    for (auto& containerAndState : m_queryContainerStates) {
+        // Ensure that resumed resolution reaches the container.
+        if (containerAndState.value && !containerAndState.value->invalidated) {
+            containerAndState.key->invalidateForResumingQueryContainerResolution();
+            containerAndState.value->invalidated = true;
+            m_needsInterleavedLayout = true;
         }
     }
 
-    if (m_hasUnresolvedAnchorPositionedElements) {
-        // We need to ensure that style resolution visits any unresolved anchor-positioned elements.
-        for (auto elementAndState : m_document->styleScope().anchorPositionedStates()) {
-            if (elementAndState.value->stage < AnchorPositionResolutionStage::Resolved)
-                elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
+    for (auto elementAndState : m_treeResolutionState.anchorPositionedStates) {
+        // Ensure that style resolution visits any unresolved anchor-positioned elements.
+        if (elementAndState.value->stage < AnchorPositionResolutionStage::Resolved) {
+            elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
+            m_needsInterleavedLayout = true;
+            saveBeforeResolutionStyleForInterleaving(elementAndState.key);
+        }
+    }
+
+    for (auto& elementAndOptions : m_positionOptions) {
+        if (!elementAndOptions.value.chosen) {
+            elementAndOptions.key->invalidateForResumingAnchorPositionedElementResolution();
+            m_needsInterleavedLayout = true;
+            saveBeforeResolutionStyleForInterleaving(elementAndOptions.key);
         }
     }
 
@@ -1287,23 +1316,219 @@ std::unique_ptr<Update> TreeResolver::resolve()
     return WTFMove(m_update);
 }
 
-auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderStyle* style) -> AnchorPositionedElementAction
+auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderStyle* style, Change change) -> LayoutInterleavingAction
 {
     if (!style)
-        return AnchorPositionedElementAction::None;
+        return LayoutInterleavingAction::None;
 
-    AnchorPositionEvaluator::updateAnchorPositionedStateForLayoutTimePositioned(element, *style);
+    AnchorPositionEvaluator::updateAnchorPositionedStateForLayoutTimePositioned(element, *style, m_treeResolutionState.anchorPositionedStates);
 
-    auto* anchorPositionedState = m_document->styleScope().anchorPositionedStates().get(element);
+    if (change != Change::None && !style->anchorNames().isEmpty()) {
+        // Existing anchor positions may change due to a style change. We need a round of interleaving.
+        m_needsInterleavedLayout = true;
+    }
 
-    auto needsInterleavedLayout = anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Resolved;
-    if (!needsInterleavedLayout)
-        return AnchorPositionedElementAction::None;
+    auto needsInterleavedLayout = hasUnresolvedAnchorPosition(element);
+    if (needsInterleavedLayout)
+        return LayoutInterleavingAction::SkipDescendants;
 
-    m_hasUnresolvedAnchorPositionedElements = true;
-
-    return AnchorPositionedElementAction::SkipDescendants;
+    return LayoutInterleavingAction::None;
 }
+
+void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
+{
+    // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
+
+    if (!resolvedStyle.style || resolvedStyle.style->positionTryFallbacks().isEmpty())
+        return;
+    if (!resolvedStyle.style->hasOutOfFlowPosition())
+        return;
+
+    if (m_positionOptions.contains(styleable.element))
+        return;
+
+    auto generatePositionOptions = [&] {
+        auto options = PositionOptions { .originalStyle = RenderStyle::clonePtr(*resolvedStyle.style) };
+        options.optionStyles.reserveInitialCapacity(resolvedStyle.style->positionTryFallbacks().size());
+        for (auto& fallback : resolvedStyle.style->positionTryFallbacks()) {
+            auto optionStyle = generatePositionOption(fallback, resolvedStyle, styleable, resolutionContext);
+            if (!optionStyle)
+                continue;
+            options.optionStyles.append(WTFMove(optionStyle));
+        }
+        return options;
+    };
+
+    auto options = generatePositionOptions();
+
+
+    // If the fallbacks contain anchor references we need to resolve the anchors first and regenerate the options.
+    if (hasUnresolvedAnchorPosition(styleable.element))
+        return;
+
+    m_positionOptions.add(styleable.element, WTFMove(options));
+}
+
+std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const PositionTryFallback& fallback, const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
+{
+    // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
+
+    if (!resolvedStyle.matchResult)
+        return { };
+
+    auto resolveFallbackProperties = [&]() -> RefPtr<const StyleProperties> {
+        if (fallback.positionAreaProperties) {
+            ASSERT(!fallback.positionTryRuleName);
+            ASSERT(fallback.tactics.isEmpty());
+            return fallback.positionAreaProperties;
+        }
+        if (!fallback.positionTryRuleName)
+            return nullptr;
+        auto* styleScope = Style::Scope::forOrdinal(styleable.element, fallback.positionTryRuleName->scopeOrdinal);
+        if (!styleScope)
+            return nullptr;
+        auto& ruleSet = styleScope->resolver().ruleSets().authorStyle();
+        auto rule = ruleSet.positionTryRuleForName(fallback.positionTryRuleName->name);
+        if (!rule)
+            return nullptr;
+        return rule->protectedProperties();
+    };
+
+    auto builderFallback = BuilderPositionTryFallback {
+        .properties = resolveFallbackProperties(),
+        .tactics = fallback.tactics
+    };
+
+    return resolveAgainInDifferentContext(resolvedStyle, styleable, *resolutionContext.parentStyle, PropertyCascade::normalProperties(), WTFMove(builderFallback), resolutionContext);
+}
+
+void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const Styleable& styleable)
+{
+    if (options.sorted)
+        return;
+    options.sorted = true;
+
+    auto order = options.originalStyle->positionTryOrder();
+    if (order == PositionTryOrder::Normal || options.optionStyles.size() < 2)
+        return;
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(styleable.renderer());
+    if (!box || !box->isOutOfFlowPositioned())
+        return;
+
+    // "For each entry in the position options list, apply that position option to the box, and find
+    // the specified inset-modified containing block size that results from those styles."
+    // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
+    auto boxAxis = boxAxisForPositionTryOrder(order, options.originalStyle->writingMode());
+
+    struct SortingOption {
+        std::unique_ptr<RenderStyle> style;
+        LayoutUnit containingBlockSize;
+    };
+    Vector<SortingOption> optionsForSorting;
+    optionsForSorting.reserveInitialCapacity(options.optionStyles.size());
+
+    for (auto& optionStyle : options.optionStyles) {
+        auto constraints = PositionedLayoutConstraints { *box, *optionStyle, boxAxis };
+        optionsForSorting.append({ WTFMove(optionStyle), constraints.insetModifiedContainingSize() });
+    }
+
+    // "Stably sort the position options list according to this size, with the largest coming first."
+    std::ranges::stable_sort(optionsForSorting, [](auto& a, auto& b) {
+        return a.containingBlockSize > b.containingBlockSize;
+    });
+
+    for (size_t i = 0; i < optionsForSorting.size(); ++i)
+        options.optionStyles[i] = WTFMove(optionsForSorting[i].style);
+}
+
+std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleable& styleable, const RenderStyle* existingStyle)
+{
+    // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
+
+    auto optionIt = m_positionOptions.find(styleable.element);
+    if (optionIt == m_positionOptions.end())
+        return { };
+
+    auto& options = optionIt->value;
+
+    sortPositionOptionsIfNeeded(options, styleable);
+
+    if (!existingStyle) {
+        options.chosen = true;
+        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
+    }
+
+    auto renderer = dynamicDowncast<RenderBox>(styleable.renderer());
+    if (!renderer) {
+        options.chosen = true;
+        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
+    }
+
+    // We can't test for overflow before the box has been positioned.
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(styleable.element);
+    if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Positioned)
+        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+
+    if (!AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(*renderer)) {
+        // We don't overflow anymore so this is a good style.
+        options.chosen = true;
+        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+    }
+
+    if (options.chosen) {
+        // We have already chosen.
+        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+    }
+
+    if (options.index >= options.optionStyles.size()) {
+        // None of the options worked, return back to the original.
+        options.chosen = true;
+        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
+    }
+
+    auto& optionStyle = options.optionStyles[options.index];
+
+    // Next option to try if this doesn't work.
+    ++options.index;
+
+    return ResolvedStyle { RenderStyle::clonePtr(*optionStyle) };
+}
+
+const RenderStyle* TreeResolver::beforeResolutionStyle(const Element& element, std::optional<PseudoElementIdentifier> pseudo)
+{
+    auto resolvePseudoStyle = [&](auto* style) -> const RenderStyle* {
+        if (!pseudo)
+            return style;
+        if (!style)
+            return nullptr;
+        return style->getCachedPseudoStyle(*pseudo);
+    };
+
+    auto it = m_savedBeforeResolutionStylesForInterleaving.find(element);
+    if (it != m_savedBeforeResolutionStylesForInterleaving.end())
+        return resolvePseudoStyle(it->value.get());
+
+    return resolvePseudoStyle(element.renderOrDisplayContentsStyle());
+}
+
+void TreeResolver::saveBeforeResolutionStyleForInterleaving(const Element& element)
+{
+    m_savedBeforeResolutionStylesForInterleaving.ensure(element, [&]() -> std::unique_ptr<RenderStyle> {
+        if (auto* style = element.renderOrDisplayContentsStyle())
+            return makeUnique<RenderStyle>(RenderStyle::cloneIncludingPseudoElements(*style));
+        return { };
+    });
+}
+
+bool TreeResolver::hasUnresolvedAnchorPosition(const Element& element) const
+{
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(element);
+    if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Resolved)
+        return true;
+
+    return false;
+};
 
 static Vector<Function<void ()>>& postResolutionCallbackQueue()
 {

@@ -29,6 +29,10 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+namespace WebKit {
+class JavaScriptEvaluationResult;
+}
+
 namespace API {
 class SerializedScriptValue;
 }
@@ -43,7 +47,7 @@ enum class ExtensionError : uint8_t;
 using ExtensionTabID = WTF::String;
 using ExtensionID = WTF::String;
 using ExtensionVoidResult = Expected<void, ExtensionError>;
-using ExtensionEvaluationResult = Expected<Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails>, ExtensionError>;
+using ExtensionEvaluationResult = Expected<Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, ExtensionError>;
 
 enum class ExtensionAppearance : bool {
     Light,

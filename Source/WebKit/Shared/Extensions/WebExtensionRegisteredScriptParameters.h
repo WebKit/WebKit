@@ -44,6 +44,8 @@ struct WebExtensionRegisteredScriptParameters {
     std::optional<Vector<String>> matchPatterns;
 
     std::optional<bool> allFrames;
+    std::optional<WebCore::UserContentMatchParentFrame> matchParentFrame;
+
     std::optional<bool> persistent;
 
     std::optional<WebExtensionContentWorldType> world;

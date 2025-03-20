@@ -61,6 +61,7 @@ extern NSString *WebViewportFitCoverValue;
 - (NSArray *)_redirectURLs;
 
 - (NSString *)target;
+- (BOOL)isTargetItem;
 - (NSArray *)children;
 - (NSDictionary *)dictionaryRepresentation;
 #if TARGET_OS_IPHONE

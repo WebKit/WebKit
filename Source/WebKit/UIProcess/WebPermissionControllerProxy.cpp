@@ -120,4 +120,9 @@ RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(co
     return webPageProxy;
 }
 
+std::optional<SharedPreferencesForWebProcess> WebPermissionControllerProxy::sharedPreferencesForWebProcess() const
+{
+    return m_process ? m_process->sharedPreferencesForWebProcess() : std::nullopt;
+}
+
 } // namespace WebKit

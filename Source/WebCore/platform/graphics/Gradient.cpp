@@ -49,6 +49,12 @@ Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMetho
 {
 }
 
+Gradient::~Gradient()
+{
+    for (auto& observer : m_observers)
+        observer.willDestroyGradient(renderingResourceIdentifier());
+}
+
 void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
 {
     if (srcRect.isEmpty())
@@ -127,24 +133,24 @@ TextStream& operator<<(TextStream& ts, const Gradient& gradient)
 {
     WTF::switchOn(gradient.data(),
         [&] (const Gradient::LinearData& data) {
-            ts.dumpProperty("p0", data.point0);
-            ts.dumpProperty("p1", data.point1);
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("p1"_s, data.point1);
         },
         [&] (const Gradient::RadialData& data) {
-            ts.dumpProperty("p0", data.point0);
-            ts.dumpProperty("p1", data.point1);
-            ts.dumpProperty("start-radius", data.startRadius);
-            ts.dumpProperty("end-radius", data.endRadius);
-            ts.dumpProperty("aspect-ratio", data.aspectRatio);
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("p1"_s, data.point1);
+            ts.dumpProperty("start-radius"_s, data.startRadius);
+            ts.dumpProperty("end-radius"_s, data.endRadius);
+            ts.dumpProperty("aspect-ratio"_s, data.aspectRatio);
         },
         [&] (const Gradient::ConicData& data) {
-            ts.dumpProperty("p0", data.point0);
-            ts.dumpProperty("angle-radians", data.angleRadians);
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("angle-radians"_s, data.angleRadians);
         }
     );
-    ts.dumpProperty("color-interpolation-method", gradient.colorInterpolationMethod());
-    ts.dumpProperty("spread-method", gradient.spreadMethod());
-    ts.dumpProperty("stops", gradient.stops());
+    ts.dumpProperty("color-interpolation-method"_s, gradient.colorInterpolationMethod());
+    ts.dumpProperty("spread-method"_s, gradient.spreadMethod());
+    ts.dumpProperty("stops"_s, gradient.stops());
     return ts;
 }
 

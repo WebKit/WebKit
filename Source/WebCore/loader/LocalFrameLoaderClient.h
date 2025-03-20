@@ -103,6 +103,7 @@ enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 enum class FromDownloadAttribute : bool { No , Yes };
 enum class IsSameDocumentNavigation : bool { No, Yes };
+enum class ShouldGoToHistoryItem : uint8_t { No, Yes, ItemUnknown };
 
 struct BackForwardItemIdentifierType;
 struct StringWithDirection;
@@ -116,6 +117,8 @@ public:
 
     void ref() const;
     void deref() const;
+
+    virtual bool isWebLocalFrameLoaderClient() const { return false; }
 
     // An inline function cannot be the first non-abstract virtual function declared
     // in the class as it results in the vtable being generated as a weak symbol.
@@ -218,9 +221,9 @@ public:
     virtual void updateGlobalHistory() = 0;
     virtual void updateGlobalHistoryRedirectLinks() = 0;
 
-    virtual bool shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
+    virtual ShouldGoToHistoryItem shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
     virtual bool supportsAsyncShouldGoToHistoryItem() const = 0;
-    virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(bool)>&&) const = 0;
+    virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const = 0;
 
     // This frame has displayed inactive content (such as an image) from an
     // insecure source.  Inactive content cannot spread to other frames.

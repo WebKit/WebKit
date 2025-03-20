@@ -28,98 +28,136 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ArgumentCoders.h"
-#include "RemoteImageBuffer.h"
+#include <WebCore/DecomposedGlyphs.h>
+#include <WebCore/Filter.h>
+#include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/NativeImage.h>
 
 namespace WebKit {
 using namespace WebCore;
 
+RemoteResourceCache::RemoteResourceCache() = default;
+
+RemoteResourceCache::~RemoteResourceCache() = default;
+
 void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
 {
-    m_resourceHeap.add(WTFMove(image));
+    auto identifier = image->renderingResourceIdentifier();
+    m_nativeImages.add(identifier, WTFMove(image));
+}
+
+bool RemoteResourceCache::releaseNativeImage(RenderingResourceIdentifier identifier)
+{
+    return m_nativeImages.remove(identifier);
+}
+
+RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier identifier) const
+{
+    return m_nativeImages.get(identifier);
 }
 
 void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
-    m_resourceHeap.add(WTFMove(decomposedGlyphs));
+    auto identifier = decomposedGlyphs->renderingResourceIdentifier();
+    m_decomposedGlyphs.add(identifier, WTFMove(decomposedGlyphs));
+}
+
+bool RemoteResourceCache::releaseDecomposedGlyphs(RenderingResourceIdentifier identifier)
+{
+    return m_decomposedGlyphs.remove(identifier);
+}
+
+RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier identifier) const
+{
+    return m_decomposedGlyphs.get(identifier);
 }
 
 void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient)
 {
-    m_resourceHeap.add(WTFMove(gradient));
+    auto identifier = gradient->renderingResourceIdentifier();
+    m_gradients.add(identifier, WTFMove(gradient));
+}
+
+bool RemoteResourceCache::releaseGradient(RenderingResourceIdentifier identifier)
+{
+    return m_gradients.remove(identifier);
+}
+
+RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier identifier) const
+{
+    return m_gradients.get(identifier);
 }
 
 void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
 {
-    m_resourceHeap.add(WTFMove(filter));
+    auto identifier = filter->renderingResourceIdentifier();
+    m_filters.add(identifier, WTFMove(filter));
 }
 
-RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+bool RemoteResourceCache::releaseFilter(RenderingResourceIdentifier identifier)
 {
-    return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
+    return m_filters.remove(identifier);
+}
+
+RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier identifier) const
+{
+    return m_filters.get(identifier);
 }
 
 void RemoteResourceCache::cacheFont(Ref<Font>&& font)
 {
-    m_resourceHeap.add(WTFMove(font));
+    auto identifier = font->renderingResourceIdentifier();
+    m_fonts.add(identifier, WTFMove(font));
 }
 
-RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+bool RemoteResourceCache::releaseFont(RenderingResourceIdentifier identifier)
 {
-    return m_resourceHeap.getFont(renderingResourceIdentifier);
+    return m_fonts.remove(identifier);
+}
+
+RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identifier) const
+{
+    return m_fonts.get(identifier);
 }
 
 void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
 {
-    m_resourceHeap.add(WTFMove(customPlatformData));
+    auto identifier = customPlatformData->m_renderingResourceIdentifier;
+    m_fontCustomPlatformDatas.add(identifier, WTFMove(customPlatformData));
 }
 
-RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
+bool RemoteResourceCache::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
 {
-    return m_resourceHeap.getFontCustomPlatformData(renderingResourceIdentifier);
+    return m_fontCustomPlatformDatas.remove(identifier);
 }
 
-RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier identifier) const
 {
-    return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
-}
-
-RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
-{
-    return m_resourceHeap.getGradient(renderingResourceIdentifier);
-}
-
-RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
-{
-    return m_resourceHeap.getFilter(renderingResourceIdentifier);
+    return m_fontCustomPlatformDatas.get(identifier);
 }
 
 void RemoteResourceCache::releaseAllResources()
 {
-    m_resourceHeap.clearAllResources();
+    m_imageBuffers.clear();
+    releaseAllDrawingResources();
 }
 
 void RemoteResourceCache::releaseAllDrawingResources()
 {
-    m_resourceHeap.clearAllDrawingResources();
+    m_nativeImages.clear();
+    m_gradients.clear();
+    m_decomposedGlyphs.clear();
+    m_filters.clear();
+    m_fonts.clear();
+    m_fontCustomPlatformDatas.clear();
 }
 
 void RemoteResourceCache::releaseAllImageResources()
 {
-    m_resourceHeap.clearAllImageResources();
-}
-
-bool RemoteResourceCache::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
-        || m_resourceHeap.removeRenderingResource(renderingResourceIdentifier)
-        || m_resourceHeap.removeFont(renderingResourceIdentifier)
-        || m_resourceHeap.removeFontCustomPlatformData(renderingResourceIdentifier))
-        return true;
-
-    // Caching the remote resource should have happened before releasing it.
-    return false;
+    m_nativeImages.clear();
 }
 
 } // namespace WebKit

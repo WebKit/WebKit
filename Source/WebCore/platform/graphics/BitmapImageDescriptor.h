@@ -30,6 +30,7 @@
 #include "ImageOrientation.h"
 #include "ImageTypes.h"
 #include "IntPoint.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -123,7 +124,7 @@ private:
     mutable std::optional<IntPoint> m_hotSpot;
     mutable SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
 
-    BitmapImageSource& m_source;
+    const CheckedRef<BitmapImageSource> m_source;
 };
 
 } // namespace WebCore

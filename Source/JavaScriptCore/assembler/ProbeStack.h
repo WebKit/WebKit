@@ -151,7 +151,7 @@ class Stack {
     WTF_MAKE_TZONE_ALLOCATED(Stack);
 public:
     Stack()
-        : m_stackBounds(Thread::current().stack())
+        : m_stackBounds(Thread::currentSingleton().stack())
     { }
     Stack(Stack&& other);
 

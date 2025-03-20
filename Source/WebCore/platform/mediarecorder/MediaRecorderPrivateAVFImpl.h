@@ -32,7 +32,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
-using CVPixelBufferRef = struct __CVBuffer*;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {

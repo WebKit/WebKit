@@ -263,63 +263,63 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerType::LayerTypeLayer:
     case PlatformCALayer::LayerType::LayerTypeWebLayer:
     case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
-        ts << "layer";
+        ts << "layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeTransformLayer:
-        ts << "transform-layer";
+        ts << "transform-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
-        ts << "tiled-backing-layer";
+        ts << "tiled-backing-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
-        ts << "page-tiled-backing-layer";
+        ts << "page-tiled-backing-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
-        ts << "tiled-backing-tile";
+        ts << "tiled-backing-tile"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeRootLayer:
-        ts << "root-layer";
+        ts << "root-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
-        ts << "backdrop-layer";
+        ts << "backdrop-layer"_s;
         break;
 #if HAVE(CORE_MATERIAL)
     case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
-        ts << "material-layer";
+        ts << "material-layer"_s;
         break;
 #endif
 #if HAVE(MATERIAL_HOSTING)
     case PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer:
-        ts << "material-hosting-layer";
+        ts << "material-hosting-layer"_s;
         break;
 #endif
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
-        ts << "av-player-layer";
+        ts << "av-player-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
-        ts << "contents-provided-layer";
+        ts << "contents-provided-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeShapeLayer:
-        ts << "shape-layer";
+        ts << "shape-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
-        ts << "scroll-container-layer";
+        ts << "scroll-container-layer"_s;
         break;
     case PlatformCALayer::LayerType::LayerTypeCustom:
-        ts << "custom-layer";
+        ts << "custom-layer"_s;
         break;
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerType::LayerTypeModelLayer:
-        ts << "model-layer";
+        ts << "model-layer"_s;
         break;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
-        ts << "separated-image-layer";
+        ts << "separated-image-layer"_s;
         break;
 #endif
     case PlatformCALayer::LayerType::LayerTypeHost:
-        ts << "host";
+        ts << "host"_s;
         break;
     }
     return ts;
@@ -329,13 +329,13 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::FilterType filterType)
 {
     switch (filterType) {
     case PlatformCALayer::FilterType::Linear:
-        ts << "linear";
+        ts << "linear"_s;
         break;
     case PlatformCALayer::FilterType::Nearest:
-        ts << "nearest";
+        ts << "nearest"_s;
         break;
     case PlatformCALayer::FilterType::Trilinear:
-        ts << "trilinear";
+        ts << "trilinear"_s;
         break;
     default:
         ASSERT_NOT_REACHED();

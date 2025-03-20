@@ -27,6 +27,7 @@
 
 #import "APIUserInitiatedAction.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::UserInitiatedAction> {
 
 @interface _WKUserInitiatedAction () <WKObject> {
 @package
-    API::ObjectStorage<API::UserInitiatedAction> _userInitiatedAction;
+    AlignedStorage<API::UserInitiatedAction> _userInitiatedAction;
 }
 @end

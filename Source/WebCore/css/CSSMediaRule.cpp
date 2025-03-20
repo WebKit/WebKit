@@ -38,8 +38,8 @@ CSSMediaRule::CSSMediaRule(StyleRuleMedia& mediaRule, CSSStyleSheet* parent)
 
 CSSMediaRule::~CSSMediaRule()
 {
-    if (m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper->detachFromParent();
+    if (RefPtr mediaCSSOMWrapper = m_mediaCSSOMWrapper)
+        mediaCSSOMWrapper->detachFromParent();
 }
 
 const MQ::MediaQueryList& CSSMediaRule::mediaQueries() const
@@ -49,7 +49,7 @@ const MQ::MediaQueryList& CSSMediaRule::mediaQueries() const
 
 void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
 {
-    downcast<StyleRuleMedia>(groupRule()).setMediaQueries(WTFMove(queries));
+    downcast<StyleRuleMedia>(protectedGroupRule())->setMediaQueries(WTFMove(queries));
 }
 
 String CSSMediaRule::cssText() const

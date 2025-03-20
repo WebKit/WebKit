@@ -23,6 +23,8 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIContentWorld.h"
+#include "APISerializedScriptValue.h"
+#include "JavaScriptEvaluationResult.h"
 #include "PageLoadState.h"
 #include "WebKitError.h"
 #include "WebKitNavigationPolicyDecision.h"
@@ -46,9 +48,10 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
     {
-        String message = serializedScriptValue.toString();
+        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
+        String message = serializedScriptValue->internalRepresentation().toString();
         Vector<String> tokens = message.split(':');
         if (tokens.size() != 3)
             return;
@@ -62,7 +65,7 @@ public:
         return false;
     }
     
-    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&) override
+    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) override
     {
     }
 

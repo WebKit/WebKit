@@ -945,6 +945,28 @@ OptionSet<AdvancedPrivacyProtections> SWServer::advancedPrivacyProtectionsFromCl
     return result;
 }
 
+void SWServer::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, ExceptionData>&&)>&& callback)
+{
+    RefPtr registration = getRegistration(identifier);
+    if (!registration) {
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
+        return;
+    }
+
+    RefPtr installingWorker = registration->installingWorker();
+    if (!installingWorker) {
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Service worker is not installing"_s }));
+        return;
+    }
+
+    if (auto exception = installingWorker->addRoutes(WTFMove(routes))) {
+        callback(makeUnexpected(WTFMove(*exception)));
+        return;
+    }
+
+    callback({ });
+}
+
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
     ASSERT_WITH_MESSAGE(!data.loadedFromDisk, "Workers we just read from disk should only be launched as needed");
@@ -1941,5 +1963,20 @@ void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdent
     else
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "No server found"_s }));
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void SWServer::reportNetworkUsageToAllWorkerClients(ServiceWorkerIdentifier identifier, size_t bytesTransferredOverNetworkDelta)
+{
+    if (RefPtr worker = workerByID(identifier)) {
+        if (RefPtr connection = contextConnectionForRegistrableDomain(worker->topRegistrableDomain())) {
+            ServiceWorkerClientQueryOptions options = { true, ServiceWorkerClientType::Window };
+            matchAll(*worker, options, [connection = connection.releaseNonNull(), bytesTransferredOverNetworkDelta](auto&& clientDataList) {
+                for (auto& data : clientDataList)
+                    connection->reportNetworkUsageToWorkerClient(data.identifier, bytesTransferredOverNetworkDelta);
+            });
+        }
+    }
+}
+#endif
 
 } // namespace WebCore

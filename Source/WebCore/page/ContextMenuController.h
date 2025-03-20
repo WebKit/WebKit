@@ -65,6 +65,7 @@ public:
 
     WEBCORE_EXPORT void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
+    void setContextMenuContext(const ContextMenuContext& context) { m_context = context; }
     const ContextMenuContext& context() const { return m_context; }
     const HitTestResult& hitTestResult() const { return m_context.hitTestResult(); }
 

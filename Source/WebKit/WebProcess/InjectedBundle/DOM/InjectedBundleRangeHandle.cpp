@@ -98,6 +98,11 @@ WebCore::Range& InjectedBundleRangeHandle::coreRange() const
     return m_range.get();
 }
 
+Ref<WebCore::Range> InjectedBundleRangeHandle::protectedCoreRange() const
+{
+    return coreRange();
+}
+
 Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
 {
     return InjectedBundleNodeHandle::getOrCreate(m_range->startContainer().document());

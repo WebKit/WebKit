@@ -38,17 +38,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileStream);
 
-FileStream::FileStream()
-    : m_handle(FileSystem::invalidPlatformFileHandle)
-    , m_bytesProcessed(0)
-    , m_totalBytesToRead(0)
-{
-}
+FileStream::FileStream() = default;
 
-FileStream::~FileStream()
-{
-    close();
-}
+FileStream::~FileStream() = default;
 
 long long FileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
 {
@@ -71,17 +63,17 @@ long long FileStream::getSize(const String& path, std::optional<WallTime> expect
 
 bool FileStream::openForRead(const String& path, long long offset, long long length)
 {
-    if (FileSystem::isHandleValid(m_handle))
+    if (m_handle)
         return true;
 
     // Open the file.
     m_handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(m_handle))
+    if (!m_handle)
         return false;
 
     // Jump to the beginning position if the file has been sliced.
     if (offset > 0) {
-        if (FileSystem::seekFile(m_handle, offset, FileSystem::FileSeekOrigin::Beginning) < 0)
+        if (!m_handle.seek(offset, FileSystem::FileSeekOrigin::Beginning))
             return false;
     }
 
@@ -93,28 +85,25 @@ bool FileStream::openForRead(const String& path, long long offset, long long len
 
 void FileStream::close()
 {
-    if (FileSystem::isHandleValid(m_handle)) {
-        FileSystem::closeFile(m_handle);
-        m_handle = FileSystem::invalidPlatformFileHandle;
-    }
+    m_handle = { };
 }
 
 int FileStream::read(std::span<uint8_t> buffer)
 {
-    if (!FileSystem::isHandleValid(m_handle))
+    if (!m_handle)
         return -1;
 
     long long remaining = m_totalBytesToRead - m_bytesProcessed;
     int bytesToRead = remaining < static_cast<int>(buffer.size()) ? static_cast<int>(remaining) : static_cast<int>(buffer.size());
-    int bytesRead = 0;
+    std::optional<uint64_t> bytesRead = 0;
     if (bytesToRead > 0)
-        bytesRead = FileSystem::readFromFile(m_handle, buffer.first(bytesToRead));
-    if (bytesRead < 0)
+        bytesRead = m_handle.read(buffer.first(bytesToRead));
+    if (!bytesRead)
         return -1;
-    if (bytesRead > 0)
-        m_bytesProcessed += bytesRead;
+    if (*bytesRead > 0)
+        m_bytesProcessed += *bytesRead;
 
-    return bytesRead;
+    return *bytesRead;
 }
 
 } // namespace WebCore

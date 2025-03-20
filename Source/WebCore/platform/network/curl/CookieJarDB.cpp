@@ -237,8 +237,6 @@ void CookieJarDB::flagDatabaseCorruption()
         return;
 
     auto handle = FileSystem::openFile(getCorruptionMarkerPath(), FileSystem::FileOpenMode::Truncate);
-    if (FileSystem::isHandleValid(handle))
-        FileSystem::closeFile(handle);
 }
 
 bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()

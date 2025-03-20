@@ -35,11 +35,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "DFGSpeculativeJIT.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/FunctionTraits.h>
+#include <wtf/SequesteredMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class SlowPathGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_FALLBACK_FAST_ALLOCATED(SlowPathGenerator);
 public:
     SlowPathGenerator(SpeculativeJIT* jit)
         : m_currentNode(jit->m_currentNode)
@@ -139,7 +140,7 @@ template<typename JumpType, typename DestinationType, typename SourceType, unsig
 inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source[numberOfAssignments], DestinationType destination[numberOfAssignments])
 {
-    return makeUnique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, numberOfAssignments>>(
+    return makeUniqueWithoutFastMallocCheck<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, numberOfAssignments>>(
         from, jit, destination, source);
 }
 
@@ -149,7 +150,7 @@ inline std::unique_ptr<SlowPathGenerator> slowPathMove(
 {
     SourceType sourceArray[1] = { source };
     DestinationType destinationArray[1] = { destination };
-    return makeUnique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 1>>(
+    return makeUniqueWithoutFastMallocCheck<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 1>>(
         from, jit, destinationArray, sourceArray);
 }
 
@@ -159,7 +160,7 @@ inline std::unique_ptr<SlowPathGenerator> slowPathMove(
 {
     SourceType sourceArray[2] = { source1, source2 };
     DestinationType destinationArray[2] = { destination1, destination2 };
-    return makeUnique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 2>>(
+    return makeUniqueWithoutFastMallocCheck<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 2>>(
         from, jit, destinationArray, sourceArray);
 }
 
@@ -266,7 +267,7 @@ inline std::unique_ptr<SlowPathGenerator> slowPathCall(
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
     jit->checkRegisterAllocationAgainstSlowPathCall(from);
 #endif
-    return makeUnique<CallResultAndArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, Arguments...>>(
+    return makeUniqueWithoutFastMallocCheck<CallResultAndArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, Arguments...>>(
         from, jit, function, spillMode, requirement, result, arguments...);
 }
 
@@ -323,7 +324,7 @@ inline std::unique_ptr<SlowPathGenerator> slowPathICCall(
     SpillRegistersMode spillMode, ExceptionCheckRequirement requirement,
     ResultType result, Arguments... arguments)
 {
-    return makeUnique<CallResultAndArgumentsSlowPathICGenerator<JumpType, FunctionType, ResultType, Arguments...>>(from, jit, stubInfoConstant, stubInfoGPR, slowPathOperationAddress, function, spillMode, requirement, result, arguments...);
+    return makeUniqueWithoutFastMallocCheck<CallResultAndArgumentsSlowPathICGenerator<JumpType, FunctionType, ResultType, Arguments...>>(from, jit, stubInfoConstant, stubInfoGPR, slowPathOperationAddress, function, spillMode, requirement, result, arguments...);
 }
 
 template<typename JumpType, typename FunctionType, typename ResultType, typename... Arguments>

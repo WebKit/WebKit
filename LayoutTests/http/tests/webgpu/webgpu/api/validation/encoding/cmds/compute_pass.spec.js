@@ -9,9 +9,9 @@ import { makeValueTestVariant } from '../../../../../common/util/util.js';
 import { kBufferUsages } from '../../../../capability_info.js';
 import { GPUConst } from '../../../../constants.js';
 import { kResourceStates } from '../../../../gpu_test.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsValidationTest {
   createComputePipeline(state) {
     if (state === 'valid') {
       return this.createNoOpComputePipeline();
@@ -31,7 +31,7 @@ class F extends ValidationTest {
     }
 
     this.device.pushErrorScope('validation');
-    const buffer = this.device.createBuffer(descriptor);
+    const buffer = this.createBufferTracked(descriptor);
     void this.device.popErrorScope();
 
     if (state === 'valid') {
@@ -67,9 +67,7 @@ fn((t) => {
 g.test('pipeline,device_mismatch').
 desc('Tests setPipeline cannot be called with a compute pipeline created from another device').
 paramsSubcasesOnly((u) => u.combine('mismatched', [true, false])).
-beforeAllSubcases((t) => {
-  t.selectMismatchedDeviceOrSkipTestCase(undefined);
-}).
+beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
   const { mismatched } = t.params;
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
@@ -193,9 +191,7 @@ desc(
   `Tests dispatchWorkgroupsIndirect cannot be called with an indirect buffer created from another device`
 ).
 paramsSubcasesOnly((u) => u.combine('mismatched', [true, false])).
-beforeAllSubcases((t) => {
-  t.selectMismatchedDeviceOrSkipTestCase(undefined);
-}).
+beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
   const { mismatched } = t.params;
 
@@ -203,11 +199,12 @@ fn((t) => {
 
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-  const buffer = sourceDevice.createBuffer({
-    size: 16,
-    usage: GPUBufferUsage.INDIRECT
-  });
-  t.trackForCleanup(buffer);
+  const buffer = t.trackForCleanup(
+    sourceDevice.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.INDIRECT
+    })
+  );
 
   const { encoder, validateFinish } = t.createEncoder('compute pass');
   encoder.setPipeline(pipeline);
@@ -243,11 +240,10 @@ fn((t) => {
   const layout = t.device.createPipelineLayout({ bindGroupLayouts: [] });
   const pipeline = t.createNoOpComputePipeline(layout);
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: bufferUsage
   });
-  t.trackForCleanup(buffer);
 
   const success = (GPUBufferUsage.INDIRECT & bufferUsage) !== 0;
 

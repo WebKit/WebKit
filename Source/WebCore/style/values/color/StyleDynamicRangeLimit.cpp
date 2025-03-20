@@ -29,8 +29,8 @@
 #include "AnimationUtilities.h"
 #include "CSSDynamicRangeLimit.h"
 #include "CSSDynamicRangeLimitMix.h"
+#include "PlatformDynamicRangeLimit.h"
 #include "StyleDynamicRangeLimitMix.h"
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
@@ -100,12 +100,20 @@ auto Blending<DynamicRangeLimit>::blend(const DynamicRangeLimit& from, const Dyn
     return resolve(WTFMove(function));
 }
 
-// MARK: - Logging
+// MARK: - Conversion to platform object
 
-TextStream& operator<<(TextStream& ts, const DynamicRangeLimit& limit)
+PlatformDynamicRangeLimit DynamicRangeLimit::toPlatformDynamicRangeLimit() const
 {
-    WTF::switchOn(limit, [&](const auto& value) { ts << value; });
-    return ts;
+    return WTF::switchOn(*this, [&]<typename Kind>(const Kind& kind) -> PlatformDynamicRangeLimit {
+        if constexpr (std::is_same_v<Kind, CSS::Keyword::Standard>)
+            return PlatformDynamicRangeLimit::standard();
+        else if constexpr (std::is_same_v<Kind, CSS::Keyword::ConstrainedHigh>)
+            return PlatformDynamicRangeLimit::constrainedHigh();
+        else if constexpr (std::is_same_v<Kind, CSS::Keyword::NoLimit>)
+            return PlatformDynamicRangeLimit::noLimit();
+        else if constexpr (std::is_same_v<Kind, Style::DynamicRangeLimitMixFunction>)
+            return PlatformDynamicRangeLimit(float(kind->standard.value), float(kind->constrainedHigh.value), float(kind->noLimit.value));
+    });
 }
 
 } // namespace Style

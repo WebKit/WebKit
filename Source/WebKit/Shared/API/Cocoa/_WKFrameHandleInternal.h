@@ -27,6 +27,7 @@
 
 #import "APIFrameHandle.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::FrameHandle> {
 
 @interface _WKFrameHandle () <WKObject> {
 @package
-    API::ObjectStorage<API::FrameHandle> _frameHandle;
+    AlignedStorage<API::FrameHandle> _frameHandle;
 }
 @end

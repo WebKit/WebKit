@@ -128,7 +128,7 @@ public:
 
     void invalidate()
     {
-        if (&RunLoop::current() == m_runLoop) {
+        if (&RunLoop::currentSingleton() == m_runLoop) {
             invalidateOnCurrentThread();
             return;
         }
@@ -160,7 +160,7 @@ public:
 
 private:
     explicit SkiaGLContext(PlatformDisplay& display)
-        : m_runLoop(&RunLoop::current())
+        : m_runLoop(&RunLoop::currentSingleton())
     {
         auto glContext = GLContext::createOffscreen(display);
         if (!glContext || !glContext->makeContextCurrent())

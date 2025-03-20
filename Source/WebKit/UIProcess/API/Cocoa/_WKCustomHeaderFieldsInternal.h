@@ -26,6 +26,7 @@
 #import "APICustomHeaderFields.h"
 #import "WKObject.h"
 #import "_WKCustomHeaderFields.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::CustomHeaderFields> {
 
 @interface _WKCustomHeaderFields () <WKObject> {
 @package
-    API::ObjectStorage<API::CustomHeaderFields> _fields;
+    AlignedStorage<API::CustomHeaderFields> _fields;
 }
 @end

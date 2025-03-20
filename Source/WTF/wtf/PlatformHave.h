@@ -44,7 +44,9 @@
 /* ==== Platform additions: additions to PlatformHave.h from outside the main repository ==== */
 
 // This can't use USE(APPLE_INTERNAL_SDK) because this comes before PlatformUse.h.
-#if PLATFORM(COCOA) && __has_include(<WebKitAdditions/AdditionalPlatformHave.h>)
+/* rdar://147082710: Temporarily work around unavailability of WebKitAdditions
+   when generating platform-enabled-swift-args.resp in installhdrs actions. */
+#if PLATFORM(COCOA) && !defined(__WK_GENERATING_PLATFORM_ARGS__) && __has_include(<WebKitAdditions/AdditionalPlatformHave.h>)
 #include <WebKitAdditions/AdditionalPlatformHave.h>
 #endif
 
@@ -804,10 +806,6 @@
 #define HAVE_CONTACTS 1
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MAC)
-#define HAVE_DIGITAL_CREDENTIALS_UI 1
-#endif
-
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define HAVE_CNCONTACTPICKERVIEWCONTROLLER 1
 #endif
@@ -1131,10 +1129,6 @@
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define HAVE_SHARE_SHEET_UI 1
-#endif
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(VISION)
-#define HAVE_SAFE_BROWSING_RESULT_DETAILS 1
 #endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) \
@@ -1896,4 +1890,19 @@
     && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
     || (PLATFORM(COCOA) && !PLATFORM(MAC))
 #define HAVE_X25519_ZERO_CHECKS 1
+#endif
+
+#if !defined(HAVE_CG_PATH_CONTINUOUS_ROUNDED_RECT) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 180000) \
+    || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 20000)) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 110000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 180000)
+#define HAVE_CG_PATH_CONTINUOUS_ROUNDED_RECT 1
+#endif
+
+#if PLATFORM(VISION) && __has_include(<CoreRE/CoreRE_SPI_WebKit.h>)
+#define HAVE_RE_STEREO_CONTENT_SUPPORT RE_FEATURE_EMBEDDED_STEREO_CONTENT_COMPONENT
+#else
+#define HAVE_RE_STEREO_CONTENT_SUPPORT 0
 #endif

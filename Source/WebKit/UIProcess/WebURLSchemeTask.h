@@ -63,7 +63,7 @@ public:
     WebCore::ResourceLoaderIdentifier resourceLoaderID() const { ASSERT(RunLoop::isMain()); return m_resourceLoaderID; }
     std::optional<WebPageProxyIdentifier> pageProxyID() const { ASSERT(RunLoop::isMain()); return m_pageProxyID; }
     std::optional<WebCore::PageIdentifier> webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID.asOptional(); }
-    WebProcessProxy* process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
+    WebProcessProxy& process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
     WebCore::ResourceRequest request() const;
     API::FrameInfo& frameInfo() const { return m_frameInfo.get(); }
 
@@ -97,8 +97,8 @@ private:
 
     bool isSync() const { return !!m_syncCompletionHandler; }
 
-    Ref<WebURLSchemeHandler> m_urlSchemeHandler;
-    RefPtr<WebProcessProxy> m_process;
+    const Ref<WebURLSchemeHandler> m_urlSchemeHandler;
+    const Ref<WebProcessProxy> m_process;
     WebCore::ResourceLoaderIdentifier m_resourceLoaderID;
     Markable<WebPageProxyIdentifier> m_pageProxyID;
     Markable<WebCore::PageIdentifier> m_webPageID;

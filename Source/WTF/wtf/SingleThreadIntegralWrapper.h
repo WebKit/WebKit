@@ -51,7 +51,7 @@ public:
 
 private:
 #if ASSERT_ENABLED && !USE(WEB_THREAD)
-    void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current()); }
+    void assertThread() const { ASSERT(m_thread.ptr() == &Thread::currentSingleton()); }
 #else
     constexpr void assertThread() const { }
 #endif
@@ -66,7 +66,7 @@ template <typename IntegralType>
 inline SingleThreadIntegralWrapper<IntegralType>::SingleThreadIntegralWrapper(IntegralType value)
     : m_value { value }
 #if ASSERT_ENABLED && !USE(WEB_THREAD)
-    , m_thread { Thread::current() }
+    , m_thread { Thread::currentSingleton() }
 #endif
 { }
 

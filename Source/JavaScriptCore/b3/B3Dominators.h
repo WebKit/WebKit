@@ -31,13 +31,14 @@
 #include "B3Procedure.h"
 #include <wtf/Dominators.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
 class Dominators : public WTF::Dominators<CFG> {
     WTF_MAKE_NONCOPYABLE(Dominators);
-    WTF_MAKE_TZONE_ALLOCATED(Dominators);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Dominators);
 public:
     Dominators(Procedure& proc)
         : WTF::Dominators<CFG>(proc.cfg())

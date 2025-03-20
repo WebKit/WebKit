@@ -45,14 +45,13 @@ void SimpleCaretAnimator::updateAnimationProperties()
 
     setBlinkingSuspended(!caretBlinkInterval);
 
-    // Ensure the caret is always visible when blinking is suspended.
-    if (isBlinkingSuspended() && m_presentationProperties.blinkState == PresentationProperties::BlinkState::On) {
-        m_blinkTimer.startOneShot(caretBlinkInterval.value_or(0_ms));
+    if (isBlinkingSuspended()) {
+        // Ensure the caret is always visible when blinking is suspended.
+        if (m_presentationProperties.blinkState == PresentationProperties::BlinkState::On)
+            m_blinkTimer.startOneShot(caretBlinkInterval.value_or(0_ms));
         return;
     }
 
-    // If blinking is disabled, set isBlinkingSuspended() would have made the
-    // previous check return early and at this point there must be an interval.
     ASSERT(caretBlinkInterval.has_value());
 
     if (currentTime - m_lastTimeCaretPaintWasToggled >= caretBlinkInterval) {

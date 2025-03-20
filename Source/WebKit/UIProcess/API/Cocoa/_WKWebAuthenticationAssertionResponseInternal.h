@@ -29,6 +29,7 @@
 
 #import "APIWebAuthenticationAssertionResponse.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -40,7 +41,7 @@ template<> struct WrapperTraits<API::WebAuthenticationAssertionResponse> {
 
 @interface _WKWebAuthenticationAssertionResponse () <WKObject> {
 @package
-    API::ObjectStorage<API::WebAuthenticationAssertionResponse> _response;
+    AlignedStorage<API::WebAuthenticationAssertionResponse> _response;
 }
 @end
 

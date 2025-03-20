@@ -74,8 +74,9 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;
     parameters.advancedPrivacyProtections = advancedPrivacyProtections;
-    m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
-    m_networkLoad->startWithScheduling();
+    Ref networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
+    m_networkLoad = networkLoad.copyRef();
+    networkLoad->startWithScheduling();
 }
 
 SpeculativeLoad::~SpeculativeLoad()
@@ -85,11 +86,10 @@ SpeculativeLoad::~SpeculativeLoad()
 
 void SpeculativeLoad::cancel()
 {
-    if (!m_networkLoad)
-        return;
-    m_networkLoad->cancel();
-    m_networkLoad = nullptr;
-    m_completionHandler(nullptr);
+    if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr)) {
+        networkLoad->cancel();
+        m_completionHandler(nullptr);
+    }
 }
 
 void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)

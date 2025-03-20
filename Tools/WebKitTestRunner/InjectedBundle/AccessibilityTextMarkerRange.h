@@ -62,9 +62,23 @@ private:
     PlatformTextMarkerRange m_textMarkerRange;
 #endif
 };
-    
+
 #if !PLATFORM(COCOA)
 inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*) { return false; }
+#endif
+
+#if PLATFORM(COCOA)
+#ifdef __OBJC__
+inline PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
+{
+    return m_textMarkerRange.get();
+}
+#endif
+#else
+inline PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
+{
+    return m_textMarkerRange;
+}
 #endif
     
 #ifdef __OBJC__

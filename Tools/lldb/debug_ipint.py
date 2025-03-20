@@ -122,6 +122,8 @@ def print_stack(proc, frame, result, num_entries=None):
     ptr = frame.sp
     i = 0
 
+    print(f'stack height: {(pl - ptr) // 16}', file=result)
+
     if ptr == pl:
         print('no stack entries', file=result)
     else:

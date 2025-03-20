@@ -34,7 +34,7 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest *urlRequest)
     if ([urlRequest HTTPBodyStream])
         return nullptr;
     RetainPtr<NSURLRequest> copiedURLRequest = adoptNS([urlRequest copy]);
-    return WebKit::toAPI(&API::URLRequest::create(copiedURLRequest.get()).leakRef());
+    return WebKit::toAPILeakingRef(API::URLRequest::create(copiedURLRequest.get()));
 }
 
 NSURLRequest *WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)

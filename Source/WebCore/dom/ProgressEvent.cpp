@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomS
 {
 }
 
-ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
+ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, bool lengthComputable, double loaded, double total)
     : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
     , m_lengthComputable(lengthComputable)
     , m_loaded(loaded)

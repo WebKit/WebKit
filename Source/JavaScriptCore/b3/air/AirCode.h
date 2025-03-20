@@ -40,6 +40,7 @@
 #include "StackAlignment.h"
 #include <wtf/HashSet.h>
 #include <wtf/IndexMap.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/SmallSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRandom.h>
@@ -80,7 +81,7 @@ extern const char* const tierName;
 
 class Code {
     WTF_MAKE_NONCOPYABLE(Code);
-    WTF_MAKE_TZONE_ALLOCATED(Code);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Code);
 public:
     ~Code();
 

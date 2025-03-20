@@ -103,12 +103,23 @@ private:
         std::optional<WebCore::SharedMemoryHandle>&&,
         CompletionHandler<void(bool)>&&);
 
+    void writeBufferWithCopy(
+        WebGPUIdentifier,
+        WebCore::WebGPU::Size64 bufferOffset,
+        Vector<uint8_t>&&);
+
     void writeTexture(
         const WebGPU::ImageCopyTexture& destination,
         std::optional<WebCore::SharedMemoryHandle>&&,
         const WebGPU::ImageDataLayout&,
         const WebGPU::Extent3D& size,
         CompletionHandler<void(bool)>&&);
+
+    void writeTextureWithCopy(
+        const WebGPU::ImageCopyTexture& destination,
+        Vector<uint8_t>&&,
+        const WebGPU::ImageDataLayout&,
+        const WebGPU::Extent3D& size);
 
     void copyExternalImageToTexture(
         const WebGPU::ImageCopyExternalImage& source,

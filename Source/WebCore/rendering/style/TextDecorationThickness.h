@@ -125,9 +125,9 @@ private:
 inline TextStream& operator<<(TextStream& ts, const TextDecorationThickness& thickness)
 {
     if (thickness.isAuto())
-        ts << "auto";
+        ts << "auto"_s;
     else if (thickness.isFromFont())
-        ts << "from-font";
+        ts << "from-font"_s;
     else
         ts << thickness.length();
     return ts;

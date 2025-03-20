@@ -191,8 +191,8 @@ RefPtr<ImageBuffer> ImageBufferBackend::copyAcceleratedImageBufferBorrowingBacke
 TextStream& operator<<(TextStream& ts, VolatilityState state)
 {
     switch (state) {
-    case VolatilityState::NonVolatile: ts << "non-volatile"; break;
-    case VolatilityState::Volatile: ts << "volatile"; break;
+    case VolatilityState::NonVolatile: ts << "non-volatile"_s; break;
+    case VolatilityState::Volatile: ts << "volatile"_s; break;
     }
     return ts;
 }

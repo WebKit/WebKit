@@ -176,13 +176,11 @@ String toErrorString(const String& callingAPIName, const String& sourceKey, Stri
 {
     ASSERT(!underlyingErrorString.isEmpty());
 
-    const char* rawUnderlyingString = underlyingErrorString.utf8().data();
-
     va_list arguments;
     va_start(arguments, underlyingErrorString);
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    String formattedUnderlyingErrorString = formatString(rawUnderlyingString, arguments).trim([](UChar character) -> bool {
+    String formattedUnderlyingErrorString = formatString(underlyingErrorString.utf8().data(), arguments).trim([](UChar character) -> bool {
         return character == '.';
     });
 ALLOW_NONLITERAL_FORMAT_END

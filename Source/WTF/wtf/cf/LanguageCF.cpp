@@ -90,12 +90,12 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
 {
     auto platformLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
 
-    LOG_WITH_STREAM(Language, stream << "CFLocaleCopyPreferredLanguages() returned: " << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
+    LOG_WITH_STREAM(Language, stream << "CFLocaleCopyPreferredLanguages() returned: "_s << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
 
     if (shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes)
         platformLanguages = minimizedLanguagesFromLanguages(platformLanguages.get());
 
-    LOG_WITH_STREAM(Language, stream << "Minimized languages: " << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
+    LOG_WITH_STREAM(Language, stream << "Minimized languages: "_s << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
 
     CFIndex platformLanguagesCount = CFArrayGetCount(platformLanguages.get());
     if (!platformLanguagesCount)
@@ -106,7 +106,7 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
         return httpStyleLanguageCode(platformLanguage, shouldMinimizeLanguages);
     });
 
-    LOG_WITH_STREAM(Language, stream << "After passing through httpStyleLanguageCode: " << languages);
+    LOG_WITH_STREAM(Language, stream << "After passing through httpStyleLanguageCode: "_s << languages);
 
     return languages;
 }

@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
+#include <thread>
 #include <wtf/DataLog.h>
 #include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
@@ -46,6 +47,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 extern "C" void configureJSCForTesting();
+extern "C" int testLaunchJSCFromNonMainThread(const char* filter);
 extern "C" int testCAPIViaCpp(const char* filter);
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
@@ -1182,6 +1184,9 @@ void TestAPI::testBigInt()
     }
 }
 
+
+
+
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
@@ -1260,6 +1265,20 @@ int testCAPIViaCpp(const char* filter)
 
     dataLogLn("C-API tests in C++ had ", failed.load(), " failures");
     return failed.load();
+}
+
+int testLaunchJSCFromNonMainThread(const char* filter)
+{
+    // FIXME: Support filtering for this test without triggering WTF::initializeThread.
+    if (filter)
+        return 0;
+
+    std::thread other([] {
+        TestAPI tester;
+    });
+
+    other.join();
+    return 0;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

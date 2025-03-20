@@ -321,6 +321,9 @@ DecodeOrderSampleMap::iterator_range DecodeOrderSampleMap::findSamplesBetweenDec
     auto upper_bound = m_samples.lower_bound(endKey);
     if (lower_bound == upper_bound)
         return { end(), end() };
+    ASSERT(lower_bound != end());
+    if (lower_bound == end())
+        return { begin(), upper_bound };
     return { lower_bound, upper_bound };
 }
 

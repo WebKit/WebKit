@@ -95,18 +95,18 @@ void ScrollingStatePositionedNode::updateConstraints(const AbsolutePositionConst
 
 void ScrollingStatePositionedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Positioned node";
+    ts << "Positioned node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
-    ts.dumpProperty("layout constraints", m_constraints);
-    ts.dumpProperty("related overflow nodes", m_relatedOverflowScrollingNodes.size());
+    ts.dumpProperty("layout constraints"_s, m_constraints);
+    ts.dumpProperty("related overflow nodes"_s, m_relatedOverflowScrollingNodes.size());
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
         if (!m_relatedOverflowScrollingNodes.isEmpty()) {
             TextStream::GroupScope scope(ts);
-            ts << "overflow nodes";
+            ts << "overflow nodes"_s;
             for (auto nodeID : m_relatedOverflowScrollingNodes)
-                ts << "\n" << indent << "nodeID " << nodeID;
+                ts << '\n' << indent << "nodeID "_s << nodeID;
         }
     }
 }

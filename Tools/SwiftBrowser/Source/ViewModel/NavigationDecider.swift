@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-@_spi(Private) import WebKit
+import WebKit
 @_spi(Private) import _WebKit_SwiftUI
 
 @MainActor

@@ -50,7 +50,7 @@ using namespace WebCore;
 static uint64_t pageIDFromWebFrame(const RefPtr<WebFrame>& frame)
 {
     if (frame) {
-        if (auto* page = frame->page())
+        if (RefPtr page = frame->page())
             return page->identifier().toUInt64();
     }
     return 0;
@@ -76,10 +76,11 @@ WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, 
 void WebURLSchemeTaskProxy::startLoading()
 {
     ASSERT(m_coreLoader);
-    ASSERT(m_frame);
     WEBURLSCHEMETASKPROXY_RELEASE_LOG("startLoading");
     Ref urlSchemeHandler = m_urlSchemeHandler.get();
-    urlSchemeHandler->page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { urlSchemeHandler->identifier(), *m_coreLoader->identifier(), m_request, m_frame->info() }));
+    RefPtr frame = m_frame;
+    ASSERT(frame);
+    urlSchemeHandler->page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { urlSchemeHandler->identifier(), *m_coreLoader->identifier(), m_request, frame->info() }));
 }
 
 void WebURLSchemeTaskProxy::stopLoading()
@@ -97,7 +98,8 @@ void WebURLSchemeTaskProxy::stopLoading()
     
 void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    if (!hasLoader()) {
+    RefPtr loader = coreLoader();
+    if (!loader) {
         completionHandler({ });
         return;
     }
@@ -119,7 +121,7 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
         processNextPendingTask();
     };
 
-    m_coreLoader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(innerCompletionHandler));
+    loader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(innerCompletionHandler));
 }
 
 void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
@@ -132,11 +134,12 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
         return;
     }
     
-    if (!hasLoader())
+    RefPtr loader = coreLoader();
+    if (!loader)
         return;
 
     m_waitingForCompletionHandler = true;
-    m_coreLoader->didReceiveResponse(response, [this, protectedThis = Ref { *this }] {
+    loader->didReceiveResponse(response, [this, protectedThis = Ref { *this }] {
         m_waitingForCompletionHandler = false;
         processNextPendingTask();
     });
@@ -144,7 +147,8 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 
 void WebURLSchemeTaskProxy::didReceiveData(const WebCore::SharedBuffer& data)
 {
-    if (!hasLoader())
+    RefPtr loader = coreLoader();
+    if (!loader)
         return;
 
     if (m_waitingForCompletionHandler) {
@@ -156,14 +160,15 @@ void WebURLSchemeTaskProxy::didReceiveData(const WebCore::SharedBuffer& data)
     }
 
     Ref protectedThis { *this };
-    m_coreLoader->didReceiveData(data, 0, DataPayloadType::DataPayloadBytes);
+    loader->didReceiveData(data, 0, DataPayloadType::DataPayloadBytes);
     processNextPendingTask();
 }
 
 void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
 {
     WEBURLSCHEMETASKPROXY_RELEASE_LOG("didComplete");
-    if (!hasLoader())
+    RefPtr loader = coreLoader();
+    if (!loader)
         return;
 
     if (m_waitingForCompletionHandler) {
@@ -174,22 +179,22 @@ void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
     }
 
     if (error.isNull())
-        m_coreLoader->didFinishLoading(NetworkLoadMetrics());
+        loader->didFinishLoading(NetworkLoadMetrics());
     else
-        m_coreLoader->didFail(error);
+        loader->didFail(error);
 
     m_coreLoader = nullptr;
     m_frame = nullptr;
 }
 
-bool WebURLSchemeTaskProxy::hasLoader()
+WebCore::ResourceLoader* WebURLSchemeTaskProxy::coreLoader()
 {
     if (m_coreLoader && m_coreLoader->reachedTerminalState()) {
         m_coreLoader = nullptr;
         m_frame = nullptr;
     }
 
-    return m_coreLoader;
+    return m_coreLoader.get();
 }
 
 void WebURLSchemeTaskProxy::processNextPendingTask()

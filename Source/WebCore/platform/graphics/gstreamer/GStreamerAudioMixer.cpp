@@ -32,7 +32,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_audio_mixer_debug);
 
 bool GStreamerAudioMixer::isAvailable()
 {
-    return isGStreamerPluginAvailable("inter") && isGStreamerPluginAvailable("audiomixer");
+    return isGStreamerPluginAvailable("inter"_s) && isGStreamerPluginAvailable("audiomixer"_s);
 }
 
 GStreamerAudioMixer& GStreamerAudioMixer::singleton()
@@ -48,7 +48,7 @@ GStreamerAudioMixer::GStreamerAudioMixer()
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get());
 
-    m_mixer = makeGStreamerElement("audiomixer", nullptr);
+    m_mixer = makeGStreamerElement("audiomixer"_s);
     auto* audioSink = createAutoAudioSink({ });
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_mixer.get(), audioSink, nullptr);
@@ -88,13 +88,13 @@ void GStreamerAudioMixer::ensureState(GstStateChange stateChange)
 
 GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink)
 {
-    GstElement* src = makeGStreamerElement("interaudiosrc", nullptr);
+    GstElement* src = makeGStreamerElement("interaudiosrc"_s);
     g_object_set(src, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
     g_object_set(interaudioSink, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
 
     auto bin = gst_bin_new(nullptr);
-    auto audioResample = makeGStreamerElement("audioresample", nullptr);
-    auto audioConvert = makeGStreamerElement("audioconvert", nullptr);
+    auto audioResample = makeGStreamerElement("audioresample"_s);
+    auto audioConvert = makeGStreamerElement("audioconvert"_s);
     gst_bin_add_many(GST_BIN_CAST(bin), audioResample, audioConvert, nullptr);
     gst_element_link(audioConvert, audioResample);
 

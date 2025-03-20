@@ -328,19 +328,19 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const Region::Shape& value)
     TextStream::IndentScope indentScope(ts);
     ts << indent;
     for (auto spans = value.spans(); !spans.empty(); skip(spans, 1)) {
-        ts << "y: " << spans[0].y << " spans: (";
+        ts << "y: "_s << spans[0].y << " spans: ("_s;
         int comma = 0;
         for (auto& segment : value.segments(spans))
             ts << (comma++ > 0 ? ", "_s : ""_s) << segment;
-        ts << ")\n";
+        ts << ")\n"_s;
     }
-    ts << "spans: (";
+    ts << "spans: ("_s;
     for (size_t i = 0; i < value.m_spans.size(); ++i)
-        ts << (i > 0 ? ", "_s : ""_s) << "y: " << value.m_spans[i].y << " si: " << value.m_spans[i].segmentIndex;
-    ts << ")\n" << "segments: (";
+        ts << (i > 0 ? ", "_s : ""_s) << "y: "_s << value.m_spans[i].y << " si: "_s << value.m_spans[i].segmentIndex;
+    ts << ")\n"_s << "segments: ("_s;
     for (size_t i = 0; i < value.m_segments.size(); ++i)
         ts << (i > 0 ? ", "_s : ""_s) << value.m_segments[i];
-    ts << ")\n";
+    ts << ")\n"_s;
     return ts;
 }
 
@@ -660,11 +660,11 @@ bool Region::Shape::isValidShape(std::span<const int> segments, std::span<const 
 
 TextStream& operator<<(TextStream& ts, const Region& region)
 {
-    ts << "\n";
+    ts << '\n';
     {
         TextStream::IndentScope indentScope(ts);
         for (auto& rect : region.rects())
-            ts << indent << "(rect " << rect << ")\n";
+            ts << indent << "(rect "_s << rect << ")\n"_s;
     }
 
     return ts;

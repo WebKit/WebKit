@@ -52,6 +52,8 @@ public:
     // Note: Assumes the PaintInfo context has had all local transforms applied.
     void paintForeground(PaintInfo&);
 
+    bool isObjectBoundingBoxValid() const { return !m_objectBoundingBox.isEmpty(); }
+
 private:
     void willBeDestroyed() override;
 
@@ -61,6 +63,8 @@ private:
     bool canHaveChildren() const override { return false; }
 
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
+
+    void notifyFinished(CachedResource& newImage, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
     FloatRect calculateObjectBoundingBox() const;
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }

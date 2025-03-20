@@ -29,51 +29,57 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKBackForwardList {
-    API::ObjectStorage<WebKit::WebBackForwardList> _list;
+    AlignedStorage<WebKit::WebBackForwardList> _list;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
+- (Ref<WebKit::WebBackForwardList>)_protectedList
+{
+    return *_list;
+}
 
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardList.class, self))
         return;
 
-    _list->~WebBackForwardList();
+    self._protectedList->~WebBackForwardList();
 
     [super dealloc];
 }
 
 - (WKBackForwardListItem *)currentItem
 {
-    return WebKit::wrapper(_list->currentItem());
+    return WebKit::wrapper(self._protectedList->protectedCurrentItem().get());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return WebKit::wrapper(_list->backItem());
+    return WebKit::wrapper(self._protectedList->protectedBackItem().get());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return WebKit::wrapper(_list->forwardItem());
+    return WebKit::wrapper(self._protectedList->protectedForwardItem().get());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return WebKit::wrapper(_list->itemAtIndex(index));
+    return WebKit::wrapper(self._protectedList->protectedItemAtIndex(index).get());
 }
 
 - (NSArray *)backList
 {
-    return WebKit::wrapper(_list->backList()).autorelease();
+    return WebKit::wrapper(self._protectedList->backList()).autorelease();
 }
 
 - (NSArray *)forwardList
 {
-    return WebKit::wrapper(_list->forwardList()).autorelease();
+    return WebKit::wrapper(self._protectedList->forwardList()).autorelease();
 }
 
 #pragma mark WKObject protocol implementation
@@ -89,12 +95,12 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)_removeAllItems
 {
-    _list->removeAllItems();
+    self._protectedList->removeAllItems();
 }
 
 - (void)_clear
 {
-    _list->clear();
+    self._protectedList->clear();
 }
 
 @end

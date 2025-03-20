@@ -69,6 +69,7 @@ static NSString * const excludeMatchesKey = @"excludeMatches";
 static NSString * const idKey = @"id";
 static NSString * const idsKey = @"ids";
 static NSString * const jsKey = @"js";
+static NSString * const matchOriginAsFallbackKey = @"matchOriginAsFallback";
 static NSString * const matchesKey = @"matches";
 static NSString * const persistAcrossSessionsKey = @"persistAcrossSessions";
 static NSString * const runAtKey = @"runAt";
@@ -149,6 +150,9 @@ NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
 
     if (parameters.allFrames)
         result[allFramesKey] = parameters.allFrames.value() ? @YES : @NO;
+
+    if (parameters.matchParentFrame)
+        result[matchOriginAsFallbackKey] = parameters.matchParentFrame.value() == WebCore::UserContentMatchParentFrame::ForOpaqueOrigins ? @YES : @NO;
 
     if (parameters.injectionTime)
         result[runAtKey] = toWebAPI(parameters.injectionTime.value());
@@ -557,6 +561,7 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
         excludeMatchesKey: @[ NSString.class ],
         idKey: NSString.class,
         jsKey: @[ NSString.class ],
+        matchOriginAsFallbackKey: @YES.class,
         matchesKey: @[ NSString.class ],
         persistAcrossSessionsKey: @YES.class,
         runAtKey: NSString.class,
@@ -642,6 +647,9 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
 
         if (script[allFramesKey])
             parameters.allFrames = boolForKey(script, allFramesKey, false);
+
+        if (script[matchOriginAsFallbackKey])
+            parameters.matchParentFrame = boolForKey(script, matchOriginAsFallbackKey, false) ? WebCore::UserContentMatchParentFrame::ForOpaqueOrigins : WebCore::UserContentMatchParentFrame::Never;
 
         if (firstTimeRegistration == FirstTimeRegistration::Yes || script[persistAcrossSessionsKey])
             parameters.persistent = boolForKey(script, persistAcrossSessionsKey, true);

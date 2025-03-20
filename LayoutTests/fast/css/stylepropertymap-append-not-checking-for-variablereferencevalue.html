@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../resources/js-test.js"></script>
+    <script>
+      description("This test passes if there is not crash and there is a TypeError exception. This verifies that attributeStyleMap.append throws an exception when appending a CSSVariableReferenceValue property");
+// see: https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-append
+      window.jsTestIsAsync = true;
+
+      function runTest() {
+          p = document.getElementById('element');
+          body = document.getElementById('body');
+          shouldThrowErrorName("p.attributeStyleMap.append('background-size', body.computedStyleMap().get('-webkit-mask-position'))", "TypeError");
+
+          finishJSTest();
+      }
+    </script>
+  </head>
+  <body id="body" onload="setTimeout(runTest, 20)">
+    <p id="element"></p>
+  </body>
+</html>

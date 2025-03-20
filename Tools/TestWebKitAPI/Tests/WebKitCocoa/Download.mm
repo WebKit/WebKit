@@ -3180,8 +3180,10 @@ TEST(WKDownload, OriginatingFrameAndUserGesture)
     auto emptyWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     checkedDownload = false;
     [emptyWebView startDownloadUsingRequest:request completionHandler:^(WKDownload *download) {
+        EXPECT_NOT_NULL(download.originatingFrame.securityOrigin);
         EXPECT_WK_STREQ(download.originatingFrame.securityOrigin.host, "");
-        EXPECT_WK_STREQ(download.originatingFrame.request.URL.absoluteString, "");
+        EXPECT_NOT_NULL(download.originatingFrame.request);
+        EXPECT_WK_STREQ(download.originatingFrame.request.URL.absoluteString, "about:blank");
         EXPECT_TRUE(download.isUserInitiated);
         checkedDownload = true;
     }];

@@ -36,66 +36,51 @@
 #include "RenderingResourceIdentifier.h"
 #include "SourceImage.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 namespace DisplayList {
 
 class ResourceHeap {
 public:
-    using Resource = std::variant<
-        std::monostate,
-        Ref<ImageBuffer>,
-        Ref<RenderingResource>,
-        Ref<Font>,
-        Ref<FontCustomPlatformData>
-    >;
-
     void add(Ref<ImageBuffer>&& imageBuffer)
     {
-        auto renderingResourceIdentifier = imageBuffer->renderingResourceIdentifier();
-        add<ImageBuffer>(renderingResourceIdentifier, WTFMove(imageBuffer), m_imageBufferCount);
+        auto identifier = imageBuffer->renderingResourceIdentifier();
+        m_imageBuffers.add(identifier, WTFMove(imageBuffer));
     }
 
     void add(Ref<NativeImage>&& image)
     {
-        auto renderingResourceIdentifier = image->renderingResourceIdentifier();
-        add<RenderingResource>(renderingResourceIdentifier, WTFMove(image), m_renderingResourceCount);
+        auto identifier = image->renderingResourceIdentifier();
+        m_nativeImages.add(identifier, WTFMove(image));
     }
 
     void add(Ref<DecomposedGlyphs>&& decomposedGlyphs)
     {
-        auto renderingResourceIdentifier = decomposedGlyphs->renderingResourceIdentifier();
-        add<RenderingResource>(renderingResourceIdentifier, WTFMove(decomposedGlyphs), m_renderingResourceCount);
+        auto identifier = decomposedGlyphs->renderingResourceIdentifier();
+        m_decomposedGlyphs.add(identifier, WTFMove(decomposedGlyphs));
     }
 
     void add(Ref<Gradient>&& gradient)
     {
-        auto renderingResourceIdentifier = gradient->renderingResourceIdentifier();
-        add<RenderingResource>(renderingResourceIdentifier, WTFMove(gradient), m_renderingResourceCount);
+        auto identifier = gradient->renderingResourceIdentifier();
+        m_gradients.add(identifier, WTFMove(gradient));
     }
 
     void add(Ref<Filter>&& filter)
     {
-        auto renderingResourceIdentifier = filter->renderingResourceIdentifier();
-        add<RenderingResource>(renderingResourceIdentifier, WTFMove(filter), m_renderingResourceCount);
+        auto identifier = filter->renderingResourceIdentifier();
+        m_filters.add(identifier, WTFMove(filter));
     }
 
     void add(Ref<Font>&& font)
     {
-        auto renderingResourceIdentifier = font->renderingResourceIdentifier();
-        add<Font>(renderingResourceIdentifier, WTFMove(font), m_fontCount);
+        auto identifier = font->renderingResourceIdentifier();
+        m_fonts.add(identifier, WTFMove(font));
     }
 
-    void add(Ref<FontCustomPlatformData>&& customPlatformData)
+    RefPtr<ImageBuffer> getImageBuffer(RenderingResourceIdentifier identifier, OptionSet<ReplayOption> options = { }) const
     {
-        auto renderingResourceIdentifier = customPlatformData->m_renderingResourceIdentifier;
-        add<FontCustomPlatformData>(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
-    }
-
-    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
-    {
-        auto* imageBuffer = get<ImageBuffer>(renderingResourceIdentifier);
+        RefPtr imageBuffer = m_imageBuffers.get(identifier);
 
 #if USE(SKIA)
         if (imageBuffer && options.contains(ReplayOption::FlushAcceleratedImagesAndWaitForCompletion))
@@ -107,10 +92,9 @@ public:
         return imageBuffer;
     }
 
-    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
+    RefPtr<NativeImage> getNativeImage(RenderingResourceIdentifier identifier, OptionSet<ReplayOption> options = { }) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        auto* nativeImage = dynamicDowncast<NativeImage>(renderingResource);
+        RefPtr nativeImage = m_nativeImages.get(identifier);
 
 #if USE(SKIA)
         if (nativeImage && options.contains(ReplayOption::FlushAcceleratedImagesAndWaitForCompletion))
@@ -122,193 +106,54 @@ public:
         return nativeImage;
     }
 
-    std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
+    std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier identifier, OptionSet<ReplayOption> options = { }) const
     {
-        if (auto nativeImage = getNativeImage(renderingResourceIdentifier, options))
+        if (RefPtr nativeImage = getNativeImage(identifier, options))
             return { { *nativeImage } };
 
-        if (auto imageBuffer = getImageBuffer(renderingResourceIdentifier, options))
+        if (RefPtr imageBuffer = getImageBuffer(identifier, options))
             return { { *imageBuffer } };
 
         return std::nullopt;
     }
 
-    DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<DecomposedGlyphs> getDecomposedGlyphs(RenderingResourceIdentifier identifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<DecomposedGlyphs>(renderingResource);
+        return m_decomposedGlyphs.get(identifier);
     }
 
-    Gradient* getGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<Gradient> getGradient(RenderingResourceIdentifier identifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<Gradient>(renderingResource);
+        return m_gradients.get(identifier);
     }
 
-    Filter* getFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<Filter> getFilter(RenderingResourceIdentifier identifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<Filter>(renderingResource);
+        return m_filters.get(identifier);
     }
 
-    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+    Font* getFont(RenderingResourceIdentifier identifier) const
     {
-        return get<Font>(renderingResourceIdentifier);
-    }
-
-    FontCustomPlatformData* getFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
-    {
-        return get<FontCustomPlatformData>(renderingResourceIdentifier);
-    }
-
-    const UncheckedKeyHashMap<RenderingResourceIdentifier, Resource>& resources() const
-    {
-        return m_resources;
-    }
-
-    bool removeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
-    }
-
-    bool removeRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<RenderingResource>(renderingResourceIdentifier, m_renderingResourceCount);
-    }
-
-    bool removeFont(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<Font>(renderingResourceIdentifier, m_fontCount);
-    }
-
-    bool removeFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<FontCustomPlatformData>(renderingResourceIdentifier, m_customPlatformDataCount);
+        return m_fonts.get(identifier);
     }
 
     void clearAllResources()
     {
-        m_resources.clear();
-
-        m_imageBufferCount = 0;
-        m_renderingResourceCount = 0;
-        m_fontCount = 0;
-        m_customPlatformDataCount = 0;
-    }
-
-    void clearAllImageResources()
-    {
-        checkInvariants();
-
-        m_resources.removeIf([&] (auto& resource) {
-            auto value = std::get_if<Ref<RenderingResource>>(&resource.value);
-            if (!value || !is<NativeImage>(value->get()))
-                return false;
-            --m_renderingResourceCount;
-            return true;
-        });
-
-        checkInvariants();
-    }
-
-    void clearAllDrawingResources()
-    {
-        checkInvariants();
-
-        if (!m_renderingResourceCount && !m_fontCount && !m_customPlatformDataCount)
-            return;
-
-        m_resources.removeIf([] (const auto& resource) {
-            return std::holds_alternative<Ref<RenderingResource>>(resource.value)
-                || std::holds_alternative<Ref<Font>>(resource.value)
-                || std::holds_alternative<Ref<FontCustomPlatformData>>(resource.value);
-        });
-
-        m_renderingResourceCount = 0;
-        m_fontCount = 0;
-        m_customPlatformDataCount = 0;
-
-        checkInvariants();
+        m_imageBuffers.clear();
+        m_nativeImages.clear();
+        m_gradients.clear();
+        m_decomposedGlyphs.clear();
+        m_filters.clear();
+        m_fonts.clear();
     }
 
 private:
-    template <typename T>
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<T>&& object, unsigned& counter)
-    {
-        checkInvariants();
-
-        if (m_resources.add(renderingResourceIdentifier, WTFMove(object)).isNewEntry)
-            ++counter;
-
-        checkInvariants();
-    }
-
-    template <typename T>
-    T* get(RenderingResourceIdentifier renderingResourceIdentifier) const
-    {
-        checkInvariants();
-
-        auto iterator = m_resources.find(renderingResourceIdentifier);
-        if (iterator == m_resources.end())
-            return nullptr;
-
-        auto value = std::get_if<Ref<T>>(&iterator->value);
-        return value ? value->ptr() : nullptr;
-    }
-
-    template <typename T>
-    bool remove(RenderingResourceIdentifier renderingResourceIdentifier, unsigned& counter)
-    {
-        checkInvariants();
-
-        if (!counter)
-            return false;
-
-        auto iterator = m_resources.find(renderingResourceIdentifier);
-        if (iterator == m_resources.end())
-            return false;
-        if (!std::holds_alternative<Ref<T>>(iterator->value))
-            return false;
-
-        auto result = m_resources.remove(iterator);
-        ASSERT(result);
-        --counter;
-
-        checkInvariants();
-
-        return result;
-    }
-
-    void checkInvariants() const
-    {
-#if ASSERT_ENABLED
-        unsigned imageBufferCount = 0;
-        unsigned renderingResourceCount = 0;
-        unsigned fontCount = 0;
-        unsigned customPlatformDataCount = 0;
-        for (const auto& resource : m_resources) {
-            if (std::holds_alternative<Ref<ImageBuffer>>(resource.value))
-                ++imageBufferCount;
-            else if (std::holds_alternative<Ref<RenderingResource>>(resource.value))
-                ++renderingResourceCount;
-            else if (std::holds_alternative<Ref<Font>>(resource.value))
-                ++fontCount;
-            else if (std::holds_alternative<Ref<FontCustomPlatformData>>(resource.value))
-                ++customPlatformDataCount;
-        }
-        ASSERT(imageBufferCount == m_imageBufferCount);
-        ASSERT(renderingResourceCount == m_renderingResourceCount);
-        ASSERT(fontCount == m_fontCount);
-        ASSERT(customPlatformDataCount == m_customPlatformDataCount);
-        ASSERT(m_resources.size() == m_imageBufferCount + m_renderingResourceCount + m_fontCount + m_customPlatformDataCount);
-#endif
-    }
-
-    UncheckedKeyHashMap<RenderingResourceIdentifier, Resource> m_resources;
-    unsigned m_imageBufferCount { 0 };
-    unsigned m_renderingResourceCount { 0 };
-    unsigned m_fontCount { 0 };
-    unsigned m_customPlatformDataCount { 0 };
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::Gradient>> m_gradients;
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>> m_decomposedGlyphs;
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
+    UncheckedKeyHashMap<RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
 };
 
 } // namespace DisplayList

@@ -47,7 +47,7 @@ public:
     static Ref<RemoteAudioSourceProviderProxy> create(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::AudioSourceProviderAVFObjC&);
     ~RemoteAudioSourceProviderProxy();
 
-    void newAudioSamples(uint64_t startFrame, uint64_t endFrame);
+    void newAudioSamples(uint64_t startFrame, uint64_t endFrame, bool);
 
 private:
     RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&);

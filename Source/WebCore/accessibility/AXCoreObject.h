@@ -107,6 +107,8 @@ enum class ClickHandlerFilter : bool {
     IncludeBody,
 };
 
+enum class PreSortedObjectType : bool { LiveRegion, WebArea };
+
 enum class DateComponentsType : uint8_t;
 
 enum class AXIDType { };
@@ -816,6 +818,7 @@ public:
     virtual bool isSecureField() const = 0;
     virtual bool isNativeTextControl() const = 0;
     bool isWebArea() const { return roleValue() == AccessibilityRole::WebArea; }
+    bool isRootWebArea() const;
     bool isCheckbox() const { return roleValue() == AccessibilityRole::Checkbox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
@@ -895,6 +898,9 @@ public:
 
     virtual bool isFieldset() const = 0;
     bool isGroup() const;
+#if PLATFORM(MAC)
+    bool isEmptyGroup();
+#endif
 
     // Native spin buttons.
     bool isSpinButton() const { return roleValue() == AccessibilityRole::SpinButton; }
@@ -1127,10 +1133,11 @@ public:
     virtual String textContentPrefixFromListMarker() const = 0;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     virtual bool hasTextRuns() = 0;
-    virtual TextEmissionBehavior emitTextAfterBehavior() const = 0;
-    bool emitsNewlineAfter() const;
+    virtual TextEmissionBehavior textEmissionBehavior() const = 0;
+    bool emitsNewline() const;
     virtual AXTextRunLineID listMarkerLineID() const = 0;
     virtual String listMarkerText() const = 0;
+    virtual FontOrientation fontOrientation() const = 0;
 #endif
 
     // Methods for determining accessibility text.
@@ -1263,9 +1270,15 @@ public:
     };
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool onlyAddsUnignoredChildren() const { return isTableColumn() || roleValue() == AccessibilityRole::TableHeaderContainer; }
-    virtual AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
+    AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
+    AXCoreObject* firstUnignoredChild();
 #else
     const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) { return children(updateChildrenIfNeeded); }
+    AXCoreObject* firstUnignoredChild()
+    {
+        const auto& children = this->children();
+        return children.size() ? children[0].ptr() : nullptr;
+    }
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns IDs of ignored children.
@@ -1273,7 +1286,6 @@ public:
     // is the default, we should rename this function to childrenIDsIncludingIgnored, as that is what all
     // callers will expect at the time this comment was written.
     Vector<AXID> childrenIDs(bool updateChildrenIfNeeded = true);
-    virtual void updateChildrenIfNecessary() = 0;
     AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const;
     AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
@@ -1357,6 +1369,11 @@ public:
     // ARIA live-region features.
     static bool liveRegionStatusIsEnabled(const AtomString&);
     bool supportsLiveRegion(bool excludeIfOff = true) const;
+#if PLATFORM(MAC)
+    virtual AccessibilityChildrenVector allSortedLiveRegions() const = 0;
+    virtual AccessibilityChildrenVector allSortedNonRootWebAreas() const = 0;
+    AccessibilityChildrenVector sortedDescendants(size_t limit, PreSortedObjectType) const;
+#endif // PLATFORM(MAC)
     virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
     virtual const String liveRegionStatus() const = 0;
     virtual const String liveRegionRelevant() const = 0;
@@ -1578,9 +1595,9 @@ inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNeeded)
 }
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-inline bool AXCoreObject::emitsNewlineAfter() const
+inline bool AXCoreObject::emitsNewline() const
 {
-    auto behavior = emitTextAfterBehavior();
+    auto behavior = textEmissionBehavior();
     return behavior == TextEmissionBehavior::Newline || behavior == TextEmissionBehavior::DoubleNewline;
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
@@ -1756,7 +1773,10 @@ void enumerateUnignoredDescendants(T& object, bool includeSelf, const F& lambda)
     if (includeSelf)
         lambda(object);
 
-    for (const auto& child : object.unignoredChildren())
+    // We have a reference to unignored children here, so it's possible that it will change when enumerating the unignored
+    // descendants, so copying here ensures they don't change.
+    auto children = object.unignoredChildren();
+    for (const auto& child : children)
         enumerateUnignoredDescendants(child.get(), true, lambda);
 }
 

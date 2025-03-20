@@ -78,6 +78,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewGenerator:
     case NewAsyncGenerator:
     case NewStringObject:
+    case NewRegExpUntyped:
     case NewSymbol:
     case NewArray:
     case NewArrayWithSpread:
@@ -85,6 +86,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Spread:
     case NewArrayBuffer:
     case NewTypedArray:
+    case NewTypedArrayBuffer:
     case GetByOffset:
     case GetGetterSetterByOffset:
     case GetGetter:
@@ -343,7 +345,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomNewAsyncFunction:
     case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
-    case PhantomNewRegexp:
+    case PhantomNewRegExp:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
@@ -382,10 +384,11 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpTestInline:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
-    case NewRegexp:
+    case NewRegExp:
     case NewMap:
     case NewSet:
     case StringReplace:
+    case StringReplaceAll:
     case StringReplaceRegExp:
     case StringReplaceString:
     case GetRegExpObjectLastIndex:
@@ -422,6 +425,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOMGetter:
     case ArraySlice:
     case ArraySplice:
+    case ArrayIncludes:
     case ArrayIndexOf:
     case ArrayPop:
     case ArrayPush:
@@ -471,6 +475,8 @@ inline CapabilityLevel canCompile(Node* node)
     case CreatePromise:
     case CreateGenerator:
     case CreateAsyncGenerator:
+    case DataViewGetByteLength:
+    case DataViewGetByteLengthAsInt52:
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:

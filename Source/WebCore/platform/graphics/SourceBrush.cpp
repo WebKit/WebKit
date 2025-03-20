@@ -87,15 +87,15 @@ void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)
 {
-    ts.dumpProperty("color", brush.color());
+    ts.dumpProperty("color"_s, brush.color());
 
     if (auto gradient = brush.gradient()) {
-        ts.dumpProperty("gradient", *gradient);
-        ts.dumpProperty("gradient-space-transform", brush.gradientSpaceTransform());
+        ts.dumpProperty("gradient"_s, *gradient);
+        ts.dumpProperty("gradient-space-transform"_s, brush.gradientSpaceTransform());
     }
 
     if (auto pattern = brush.pattern())
-        ts.dumpProperty("pattern", pattern);
+        ts.dumpProperty("pattern"_s, pattern);
 
     return ts;
 }

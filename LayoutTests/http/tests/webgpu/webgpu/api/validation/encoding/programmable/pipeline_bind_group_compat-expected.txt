@@ -91,18 +91,162 @@ PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndirec
 PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndirect";callWithZero=false
 PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndexedIndirect";callWithZero=true
 PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndexedIndirect";callWithZero=false
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,compute_pass:bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,compute_pass:bindGroupLayoutEntryCount=3;computeCommand="dispatch"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,compute_pass:bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,compute_pass:bindGroupLayoutEntryCount=4;computeCommand="dispatch"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=3;renderCommand="draw"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=3;renderCommand="drawIndexed"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=3;renderCommand="drawIndirect"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=4;renderCommand="draw"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=4;renderCommand="drawIndexed"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=4;renderCommand="drawIndirect"
-PASS :empty_bind_group_layouts_requires_empty_bind_groups,render_pass:bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect"
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:865:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect"
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;computeCommand="dispatch"
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="draw" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="draw" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:939:55
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="draw"
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed"
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="drawIndirect"
+PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=false;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=false;computeCommand="dispatch"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=true;computeCommand="dispatchIndirect"
@@ -113,20 +257,44 @@ PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";b
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto0";swap=true;empty=true;computeCommand="dispatch"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=false;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=false;computeCommand="dispatch"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;computeCommand="dispatchIndirect"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;computeCommand="dispatch"
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;computeCommand="dispatch"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;computeCommand="dispatchIndirect"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;computeCommand="dispatch"
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=false;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=false;computeCommand="dispatch"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=true;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=true;computeCommand="dispatch"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=false;computeCommand="dispatchIndirect"
 PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=false;computeCommand="dispatch"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;computeCommand="dispatchIndirect"
-PASS :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;computeCommand="dispatch"
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;computeCommand="dispatchIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,compute_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;computeCommand="dispatch" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=false;renderCommand="draw"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=false;renderCommand="drawIndexed"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto0";swap=false;empty=false;renderCommand="drawIndirect"
@@ -147,18 +315,50 @@ PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bi
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=false;renderCommand="drawIndexed"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=false;renderCommand="drawIndirect"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=false;renderCommand="drawIndexedIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="draw"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndexed"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndexedIndirect"
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="draw" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="explicit";swap=false;empty=true;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;renderCommand="draw"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;renderCommand="drawIndexed"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;renderCommand="drawIndirect"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=false;renderCommand="drawIndexedIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="draw"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndexed"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndexedIndirect"
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="draw" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="auto0";bindingType="auto1";swap=false;empty=true;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=false;renderCommand="draw"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=false;renderCommand="drawIndexed"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="explicit";swap=false;empty=false;renderCommand="drawIndirect"
@@ -171,8 +371,24 @@ PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=false;renderCommand="drawIndexed"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=false;renderCommand="drawIndirect"
 PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=false;renderCommand="drawIndexedIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="draw"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndexed"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndirect"
-PASS :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndexedIndirect"
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="draw" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndexed" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :default_bind_group_layouts_never_match,render_pass:pipelineType="explicit";bindingType="auto0";swap=false;empty=true;renderCommand="drawIndexedIndirect" assert_unreached:
+  - EXCEPTION: Error: Unexpected validation error occurred: Auto-generated layouts mismatch
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 

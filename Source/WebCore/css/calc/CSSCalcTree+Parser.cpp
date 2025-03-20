@@ -33,7 +33,6 @@
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserConsumer+Conditional.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParsing.h"
@@ -1004,7 +1003,7 @@ static std::optional<TypedChild> consumeContainerProgress(CSSParserTokenRange& t
 
     AtomString container;
     if (CSSPropertyParserHelpers::consumeIdentRaw<CSSValueOf>(tokens)) {
-        if (tokens.peek().type() != IdentToken || !isValidCustomIdentifier(tokens.peek().id()) || !CSSPropertyParserHelpers::isValidContainerNameIdentifier(tokens.peek().id())) {
+        if (tokens.peek().type() != IdentToken || !isValidContainerNameIdentifier(tokens.peek().id())) {
             LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1");
             return std::nullopt;
         }

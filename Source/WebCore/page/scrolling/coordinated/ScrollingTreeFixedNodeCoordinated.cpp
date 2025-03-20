@@ -81,7 +81,7 @@ void ScrollingTreeFixedNodeCoordinated::dumpProperties(TextStream& ts, OptionSet
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatPoint layerTopLeft = m_layer->topLeftPositionForScrolling() + m_constraints.alignmentOffset();
-        ts.dumpProperty("layer top left", layerTopLeft);
+        ts.dumpProperty("layer top left"_s, layerTopLeft);
     }
 }
 

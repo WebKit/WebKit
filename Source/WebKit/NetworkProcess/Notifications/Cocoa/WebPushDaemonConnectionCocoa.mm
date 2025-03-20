@@ -34,7 +34,7 @@
 #import "MessageSenderInlines.h"
 #import "PushClientConnectionMessages.h"
 #import "WebPushDaemonConstants.h"
-#import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/darwin/XPCExtras.h>
 
 namespace WebKit::WebPushD { 
 
@@ -72,7 +72,7 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
         if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue)
             return completionHandler(nullptr);
 
-        auto data = xpc_dictionary_get_data_span(reply, WebPushD::protocolEncodedMessageKey);
+        auto data = xpcDictionaryGetData(reply, WebPushD::protocolEncodedMessageKey);
         auto decoder = IPC::Decoder::create(data, { });
 
         completionHandler(decoder.get());

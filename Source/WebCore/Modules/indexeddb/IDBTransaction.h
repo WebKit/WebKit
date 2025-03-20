@@ -96,6 +96,7 @@ public:
     const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
+    Ref<IDBDatabase> protectedDatabase() const;
     IDBDatabaseInfo* originalDatabaseInfo() const { return m_info.originalDatabaseInfo().get(); }
 
     void didStart(const IDBError&);
@@ -146,8 +147,8 @@ public:
     bool didDispatchAbortOrCommit() const { return m_didDispatchAbortOrCommit; }
 
     IDBClient::IDBConnectionProxy& connectionProxy();
-
     void connectionClosedFromServer(const IDBError&);
+    void generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo&, const std::optional<IDBKeyPath>&, const IDBKeyData&, const IDBValue&, std::optional<int64_t> recordID);
 
     template<typename Visitor> void visitReferencedObjectStores(Visitor&) const;
 

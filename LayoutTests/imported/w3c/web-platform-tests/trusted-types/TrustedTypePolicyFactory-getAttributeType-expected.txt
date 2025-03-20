@@ -1,0 +1,117 @@
+
+PASS getAttributeType(
+          "DIV",
+          "onclick",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "TrustedScript"
+PASS getAttributeType(
+          "g",
+          "ondblclick",
+          "http://www.w3.org/2000/svg",
+          "null") == "TrustedScript"
+PASS getAttributeType(
+          "mrow",
+          "onmousedown",
+          "http://www.w3.org/1998/Math/MathML",
+          "null") == "TrustedScript"
+PASS getAttributeType(
+          "IFRAME",
+          "srcdoc",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "TrustedHTML"
+PASS getAttributeType(
+          "SCRIPT",
+          "src",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "TrustedScriptURL"
+PASS getAttributeType(
+          "script",
+          "href",
+          "http://www.w3.org/2000/svg",
+          "null") == "TrustedScriptURL"
+PASS getAttributeType(
+          "script",
+          "href",
+          "http://www.w3.org/2000/svg",
+          "http://www.w3.org/1999/xlink") == "TrustedScriptURL"
+FAIL getAttributeType(
+          "foo",
+          "onmouseup",
+          "https://example.com/namespace",
+          "null") == "null" assert_equals: expected (object) null but got (string) "TrustedScript"
+PASS getAttributeType(
+          "DIV",
+          "onclick",
+          "http://www.w3.org/1999/xhtml",
+          "https://example.com/namespace") == "null"
+PASS getAttributeType(
+          "DIV",
+          "ondoesnotexist",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "DIV",
+          "data-onclick",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "DIV",
+          "srcdoc",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "iframe",
+          "srcdoc",
+          "https://example.com/namespace",
+          "null") == "null"
+PASS getAttributeType(
+          "IFRAME",
+          "srcdoc",
+          "http://www.w3.org/1999/xhtml",
+          "https://example.com/namespace") == "null"
+PASS getAttributeType(
+          "IFRAME",
+          "data-srcdoc",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "DIV",
+          "src",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "script",
+          "src",
+          "https://example.com/namespace",
+          "null") == "null"
+PASS getAttributeType(
+          "SCRIPT",
+          "src",
+          "http://www.w3.org/1999/xhtml",
+          "https://example.com/namespace") == "null"
+PASS getAttributeType(
+          "SCRIPT",
+          "data-src",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "g",
+          "href",
+          "http://www.w3.org/2000/svg",
+          "null") == "null"
+PASS getAttributeType(
+          "SCRIPT",
+          "href",
+          "http://www.w3.org/1999/xhtml",
+          "null") == "null"
+PASS getAttributeType(
+          "script",
+          "href",
+          "http://www.w3.org/2000/svg",
+          "https://example.com/namespace") == "null"
+PASS getAttributeType(
+          "script",
+          "src",
+          "http://www.w3.org/2000/svg",
+          "null") == "null"
+

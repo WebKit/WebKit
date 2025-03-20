@@ -36,6 +36,7 @@
 #include "HTMLUListElement.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertListCommand.h"
+#include "PositionInlines.h"
 #include "RenderElement.h"
 #include "SplitElementCommand.h"
 #include "Text.h"

@@ -20,8 +20,12 @@ window.onmessage = function(evt)
 	}
 }
 
+var hasPassed = false;
 function responded()
 {
+        if (hasPassed)
+                return;
+
 	if (!window.thisTimestamp) {
 		window.thisTimestamp = new Date();
 	
@@ -36,9 +40,11 @@ function responded()
 		
 	if (window.popupTimestamp < window.thisTimestamp)
 		alert("Popup should not have popped up before this main window");
-	else
+	else {
+                hasPassed = true;
 		alert("PASS");
-	
+	}
+
 	finishSWTest();
 }
 

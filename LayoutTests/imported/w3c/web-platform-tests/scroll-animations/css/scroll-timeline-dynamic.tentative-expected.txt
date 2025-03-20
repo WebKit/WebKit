@@ -11,6 +11,6 @@ PASS Reverse animation direction [immediate]
 PASS Reverse animation direction [scroll]
 PASS Change to timeline attachment while paused [immediate]
 PASS Change to timeline attachment while paused [scroll]
-FAIL Switching timelines and pausing at the same time [immediate] assert_equals: expected "100px" but got "120px"
-FAIL Switching timelines and pausing at the same time [scroll] assert_equals: expected "100px" but got "120px"
+PASS Switching timelines and pausing at the same time [immediate]
+PASS Switching timelines and pausing at the same time [scroll]
 

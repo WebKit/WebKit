@@ -606,9 +606,9 @@ void ScriptElement::deref() const
     element().deref();
 }
 
-bool isScriptElement(Element& element)
+bool isScriptElement(Node& node)
 {
-    return is<HTMLScriptElement>(element) || is<SVGScriptElement>(element);
+    return is<HTMLScriptElement>(node) || is<SVGScriptElement>(node);
 }
 
 ScriptElement* dynamicDowncastScriptElement(Element& element)

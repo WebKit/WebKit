@@ -35,12 +35,12 @@ public:
     explicit CoordinatedBackingStoreTile(float scale = 1);
     ~CoordinatedBackingStoreTile();
 
-    BitmapTexture& texture() { ASSERT(canBePainted()); return *m_texture; }
+    BitmapTexture& texture() const { ASSERT(canBePainted()); return *m_texture; }
     float scale() const { return m_scale; }
-    const FloatRect& rect() { return m_rect; }
+    const FloatRect& rect() const { return m_rect; }
 
     struct Update {
-        RefPtr<CoordinatedTileBuffer> buffer;
+        Ref<CoordinatedTileBuffer> buffer;
         IntRect sourceRect;
         IntRect tileRect;
         IntPoint bufferOffset;

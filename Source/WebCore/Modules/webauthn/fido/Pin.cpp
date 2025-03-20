@@ -282,23 +282,12 @@ TokenRequest::TokenRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORVal
 {
 }
 
-const CryptoKeyAES& TokenRequest::sharedKey() const
-{
-    return m_sharedKey;
-}
-
-
 SetPinRequest::SetPinRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORValue::MapValue&& coseKey, Vector<uint8_t>&& newPinEnc, Vector<uint8_t>&& pinUvAuthParam)
     : m_sharedKey(WTFMove(sharedKey))
     , m_coseKey(WTFMove(coseKey))
     , m_newPinEnc(WTFMove(newPinEnc))
     , m_pinUvAuthParam(WTFMove(pinUvAuthParam))
 {
-}
-
-const WebCore::CryptoKeyAES& SetPinRequest::sharedKey() const
-{
-    return m_sharedKey;
 }
 
 const Vector<uint8_t>& SetPinRequest::pinAuth() const

@@ -142,7 +142,7 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
     if (!observer || !object || !object->isRenderInline())
         return;
 
-    const RenderStyle& style = object->style();
+    auto& style = downcast<RenderInline>(*object).style();
     auto unicodeBidi = style.unicodeBidi();
     if (unicodeBidi == UnicodeBidi::Normal) {
         // http://dev.w3.org/csswg/css3-writing-modes/#unicode-bidi
@@ -169,7 +169,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
     if (!observer || !object || !object->isRenderInline())
         return;
 
-    auto unicodeBidi = object->style().unicodeBidi();
+    auto unicodeBidi = downcast<RenderInline>(*object).style().unicodeBidi();
     if (unicodeBidi == UnicodeBidi::Normal)
         return; // Nothing to do for unicode-bidi: normal
     if (isIsolated(unicodeBidi)) {
@@ -374,7 +374,9 @@ inline void InlineBidiResolver::incrementInternal()
 
 static inline bool isIsolatedInline(RenderObject& object)
 {
-    return object.isRenderInline() && isIsolated(object.style().unicodeBidi());
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(object))
+        return isIsolated(inlineBox->style().unicodeBidi());
+    return false;
 }
 
 static inline RenderObject* highestContainingIsolateWithinRoot(RenderObject& initialObject, RenderObject* root)

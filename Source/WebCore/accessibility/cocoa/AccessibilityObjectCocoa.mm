@@ -203,6 +203,15 @@ RetainPtr<CTFontRef> AccessibilityObject::font() const
     return style ? fontFrom(*style) : nil;
 }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+FontOrientation AccessibilityObject::fontOrientation() const
+{
+    if (CheckedPtr style = this->style())
+        return const_cast<RenderStyle*>(style.get())->fontAndGlyphOrientation().first;
+    return FontOrientation::Horizontal;
+}
+#endif
+
 Color AccessibilityObject::textColor() const
 {
     const auto* style = this->style();

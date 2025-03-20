@@ -37,11 +37,18 @@ class MutableStyleProperties;
 class StyleProperties;
 class StyledElement;
 
+enum class StyleDeclarationType : uint8_t {
+    Style,
+    FontFace,
+};
+
 class CSSStyleDeclaration : public ScriptWrappable, public AbstractRefCountedAndCanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration() = default;
+
+    virtual StyleDeclarationType styleDeclarationType() const = 0;
 
     virtual StyledElement* parentElement() const { return nullptr; }
     virtual CSSRule* parentRule() const = 0;
@@ -59,45 +66,17 @@ public:
     virtual ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) = 0;
     virtual ExceptionOr<String> removeProperty(const String& propertyName) = 0;
 
-    String cssFloat();
-    ExceptionOr<void> setCssFloat(const String&);
-
-    // CSSPropertyID versions of the CSSOM functions to support bindings and editing.
-    // Use the non-virtual methods in the concrete subclasses when possible.
-    virtual String getPropertyValueInternal(CSSPropertyID) = 0;
-    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) = 0;
-
-    virtual Ref<MutableStyleProperties> copyProperties() const = 0;
-
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
     virtual const Settings* settings() const;
-
-    // FIXME: It would be more efficient, by virtue of avoiding the text transformation and hash lookup currently
-    // required in the implementation, if we could could smuggle the CSSPropertyID through the bindings, perhaps
-    // by encoding it into the HashTableValue and then passing it together with the PropertyName.
-
-    // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-camel_cased_attribute.
-    String propertyValueForCamelCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForCamelCasedIDLAttribute(const AtomString&, const String&);
-
-    // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit_cased_attribute.
-    String propertyValueForWebKitCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForWebKitCasedIDLAttribute(const AtomString&, const String&);
-
-    // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-dashed_attribute.
-    String propertyValueForDashedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForDashedIDLAttribute(const AtomString&, const String&);
-
-    // Shared implementation for all properties that match non-standard Epub-cased.
-    String propertyValueForEpubCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForEpubCasedIDLAttribute(const AtomString&, const String&);
-
-    // FIXME: This needs to pass in a Settings& to work correctly.
-    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomString&);
 
 protected:
     CSSStyleDeclaration() = default;
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CSS_STYLE_DECLARATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::CSSStyleDeclaration& declaration) { return declaration.styleDeclarationType() == WebCore::predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

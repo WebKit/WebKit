@@ -167,12 +167,12 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         mediaDevices->willStartMediaCapture(!!audioDevice, !!videoDevice);
 
     m_allowCompletionHandler = WTFMove(completionHandler);
-    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)]() mutable {
-        auto callback = [this, protector = makePendingActivity(*this)](auto privateStreamOrError) mutable {
-            auto scopeExit = makeScopeExit([completionHandler = WTFMove(m_allowCompletionHandler)]() mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)](auto& request) mutable {
+        auto callback = [protectedThis = Ref { request }, protector = request.makePendingActivity(request)](auto privateStreamOrError) mutable {
+            auto scopeExit = makeScopeExit([completionHandler = WTFMove(protectedThis->m_allowCompletionHandler)]() mutable {
                 completionHandler();
             });
-            if (isContextStopped()) {
+            if (protectedThis->isContextStopped()) {
                 if (!!privateStreamOrError) {
                     RELEASE_LOG(MediaStream, "UserMediaRequest::allow, context is stopped");
                     privateStreamOrError.value()->forEachTrack([](auto& track) {
@@ -185,20 +185,20 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             if (!privateStreamOrError) {
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
                 auto error = privateStreamOrError.error();
-                scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
-                deny(error.denialReason, error.errorMessage, error.invalidConstraint);
+                protectedThis->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
+                protectedThis->deny(error.denialReason, error.errorMessage, error.invalidConstraint);
                 return;
             }
             auto privateStream = WTFMove(privateStreamOrError).value();
 
-            auto& document = downcast<Document>(*scriptExecutionContext());
+            auto& document = downcast<Document>(*protectedThis->scriptExecutionContext());
             privateStream->monitorOrientation(document.orientationNotifier());
 
-            auto stream = MediaStream::create(document, WTFMove(privateStream));
+            Ref stream = MediaStream::create(document, WTFMove(privateStream));
             stream->startProducingData();
 
             if (!isMediaStreamCorrectlyStarted(stream)) {
-                deny(MediaAccessDenialReason::HardwareError);
+                protectedThis->deny(MediaAccessDenialReason::HardwareError);
                 return;
             }
 
@@ -206,27 +206,27 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 #if USE(AUDIO_SESSION)
                 AudioSession::sharedSession().tryToSetActive(true);
 #endif
-                if (std::holds_alternative<MediaTrackConstraints>(m_audioConstraints))
-                    audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_audioConstraints)));
+                if (std::holds_alternative<MediaTrackConstraints>(protectedThis->m_audioConstraints))
+                    audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(protectedThis->m_audioConstraints)));
             }
             if (RefPtr videoTrack = stream->getFirstVideoTrack()) {
-                if (std::holds_alternative<MediaTrackConstraints>(m_videoConstraints))
-                    videoTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_videoConstraints)));
+                if (std::holds_alternative<MediaTrackConstraints>(protectedThis->m_videoConstraints))
+                    videoTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(protectedThis->m_videoConstraints)));
             }
 
             ASSERT(document.isCapturing());
             document.setHasCaptureMediaStreamTrack();
-            m_promise->resolve(WTFMove(stream));
+            protectedThis->m_promise->resolve(WTFMove(stream));
         };
 
-        auto& document = downcast<Document>(*scriptExecutionContext());
-        RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
+        auto& document = downcast<Document>(*request.scriptExecutionContext());
+        RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), request.m_request);
 
-        if (!scriptExecutionContext())
+        if (!request.scriptExecutionContext())
             return;
 
 #if ENABLE(WEB_RTC)
-        if (auto* page = document.page())
+        if (RefPtr page = document.page())
             page->rtcController().disableICECandidateFilteringForDocument(document);
 #endif
     });

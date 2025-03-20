@@ -104,7 +104,7 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
                 }
             }
         }
-        queue->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] {
             completionHandler(Data { }, -1);
         });
     }, ThreadType::Unknown, m_qos)->detach();
@@ -127,7 +127,7 @@ void IOChannel::write(size_t offset, const Data& data, Ref<WTF::WorkQueueBase>&&
         gsize buffersize;
         const auto* bufferData = g_bytes_get_data(buffer.get(), &buffersize);
         auto success = g_output_stream_write_all(m_outputStream.get(), bufferData, buffersize, nullptr, nullptr, nullptr);
-        queue->dispatch([protectedThis = WTFMove(protectedThis), success, completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, success, completionHandler = WTFMove(completionHandler)] {
             completionHandler(success ? 0 : -1);
         });
     }, ThreadType::Unknown, m_qos)->detach();

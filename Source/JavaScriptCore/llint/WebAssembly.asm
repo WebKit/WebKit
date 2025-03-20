@@ -1010,7 +1010,9 @@ elsif JSVALUE64
     storeq ws1, CalleeScratch[cfr]
     storeq wasmInstance, WasmInstanceScratch[cfr]
 else
-    storep ws1, CalleeScratch[cfr]
+    storep ws1, CalleeScratch+PayloadOffset[cfr]
+    move constexpr JSValue::NativeCalleeTag, ws1
+    storep ws1, CalleeScratch+TagOffset[cfr]
     storep wasmInstance, WasmInstanceScratch[cfr]
 end
     storep ws0, WasmCallableFunctionScratch[cfr]

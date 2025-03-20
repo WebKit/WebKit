@@ -1209,6 +1209,15 @@ bool Node::containsIncludingShadowDOM(const Node* node) const
     return false;
 }
 
+bool Node::isComposedTreeDescendantOf(const Node& node) const
+{
+    for (CheckedPtr currentAncestor = parentElementInComposedTree(); currentAncestor; currentAncestor = currentAncestor->parentElementInComposedTree()) {
+        if (currentAncestor.get() == &node)
+            return true;
+    }
+    return false;
+}
+
 Node* Node::pseudoAwarePreviousSibling() const
 {
     auto* pseudoElement = dynamicDowncast<PseudoElement>(*this);
@@ -1297,6 +1306,11 @@ Element* Node::shadowHost() const
     if (ShadowRoot* root = containingShadowRoot())
         return root->host();
     return nullptr;
+}
+
+RefPtr<Element> Node::protectedShadowHost() const
+{
+    return shadowHost();
 }
 
 ShadowRoot* Node::containingShadowRoot() const
@@ -2991,6 +3005,11 @@ void Node::notifyInspectorOfRendererChange()
     InspectorInstrumentation::didChangeRendererForDOMNode(*this);
 }
 
+ScriptExecutionContext* Node::scriptExecutionContext() const
+{
+    return &document().contextDocument();
+}
+
 template<> ContainerNode* parent<Tree>(const Node& node)
 {
     return node.parentNode();
@@ -3116,7 +3135,7 @@ std::partial_ordering treeOrderForTesting(TreeType type, const Node& a, const No
 
 TextStream& operator<<(TextStream& ts, const Node& node)
 {
-    ts << "node " << &node << " " << node.debugDescription();
+    ts << node.debugDescription();
     return ts;
 }
 

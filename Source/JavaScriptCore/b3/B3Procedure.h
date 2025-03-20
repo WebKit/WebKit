@@ -41,6 +41,7 @@
 #include <wtf/IndexedContainerIterator.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/SharedTask.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
@@ -80,7 +81,7 @@ typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 
 class Procedure {
     WTF_MAKE_NONCOPYABLE(Procedure);
-    WTF_MAKE_TZONE_ALLOCATED(Procedure);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Procedure);
 public:
 
     JS_EXPORT_PRIVATE Procedure(bool usesSIMD = false);

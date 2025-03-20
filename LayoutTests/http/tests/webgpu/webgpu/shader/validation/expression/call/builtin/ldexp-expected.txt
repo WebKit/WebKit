@@ -122,7 +122,7 @@ FAIL :values:stage="constant";typeA="abstract-int";typeB="i32" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:11: e2 must be less than or equal to 128
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="abstract-float";typeB="abstract-int"
 FAIL :values:stage="constant";typeA="abstract-float";typeB="i32" assert_unreached:
@@ -569,7 +569,7 @@ FAIL :values:stage="constant";typeA="abstract-float";typeB="i32" assert_unreache
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:17: value -1.7976931348623157e+308 cannot be represented as 'f32'
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="f32";typeB="abstract-int"
 PASS :values:stage="constant";typeA="f32";typeB="i32"
@@ -698,7 +698,7 @@ FAIL :values:stage="constant";typeA="vec2%3Cabstract-int%3E";typeB="vec2%3Ci32%3
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:11: e2 must be less than or equal to 128
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec3%3Cabstract-int%3E";typeB="vec3%3Cabstract-int%3E"
 FAIL :values:stage="constant";typeA="vec3%3Cabstract-int%3E";typeB="vec3%3Ci32%3E" assert_unreached:
@@ -823,7 +823,7 @@ FAIL :values:stage="constant";typeA="vec3%3Cabstract-int%3E";typeB="vec3%3Ci32%3
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:11: e2 must be less than or equal to 128
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec4%3Cabstract-int%3E";typeB="vec4%3Cabstract-int%3E"
 FAIL :values:stage="constant";typeA="vec4%3Cabstract-int%3E";typeB="vec4%3Ci32%3E" assert_unreached:
@@ -948,7 +948,7 @@ FAIL :values:stage="constant";typeA="vec4%3Cabstract-int%3E";typeB="vec4%3Ci32%3
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:11: e2 must be less than or equal to 128
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec2%3Cabstract-float%3E";typeB="vec2%3Cabstract-int%3E"
 FAIL :values:stage="constant";typeA="vec2%3Cabstract-float%3E";typeB="vec2%3Ci32%3E" assert_unreached:
@@ -1395,7 +1395,7 @@ FAIL :values:stage="constant";typeA="vec2%3Cabstract-float%3E";typeB="vec2%3Ci32
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:17: value vec2(-1.7976931348623157e+308, -1.7976931348623157e+308) cannot be represented as 'vec2<f32>'
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec2%3Cf32%3E";typeB="vec2%3Cabstract-int%3E"
 PASS :values:stage="constant";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E"
@@ -1717,30 +1717,6 @@ FAIL :values:stage="constant";typeA="vec3%3Cabstract-float%3E";typeB="vec3%3Ci32
       at (elided: only 2 shown)
   - INFO: subcase: a=4.464794497196387e-103;b=1023
     OK
-  - INFO: subcase: a=-1.7976931348623157e+308;b=511
-    OK
-  - INFO: subcase: a=-1.7976931348623157e+308;b=1023
-    OK
-  - INFO: subcase: a=-1.7976931348623157e+308;b=1025
-    OK
-  - INFO: subcase: a=-8.958978968711217e+102;b=1023
-    OK
-  - INFO: subcase: a=-8.958978968711217e+102;b=1025
-    OK
-  - INFO: subcase: a=-4.464794497196387e-103;b=1025
-    OK
-  - INFO: subcase: a=-2.2250738585072014e-308;b=1025
-    OK
-  - INFO: subcase: a=-2.225073858507201e-308;b=1025
-    OK
-  - INFO: subcase: a="_negzero_";b=1025
-    OK
-  - INFO: subcase: a=0;b=1025
-    OK
-  - INFO: subcase: a=5e-324;b=1025
-    OK
-  - INFO: subcase: a=2.2250738585072014e-308;b=1025
-    OK
   - VALIDATION FAILED: subcase: a=8.958978968711217e+102;b=-1025
     Unexpected compilationInfo 'error' message.
     2:18: error: value vec3(8.958978968711217e+102, 8.958978968711217e+102, 8.958978968711217e+102) cannot be represented as 'vec3<f32>'
@@ -1831,6 +1807,30 @@ FAIL :values:stage="constant";typeA="vec3%3Cabstract-float%3E";typeB="vec3%3Ci32
       at (elided: only 2 shown)
   - INFO: subcase: a=1.7976931348623157e+308;b=0
     OK
+  - INFO: subcase: a=-1.7976931348623157e+308;b=511
+    OK
+  - INFO: subcase: a=-1.7976931348623157e+308;b=1023
+    OK
+  - INFO: subcase: a=-1.7976931348623157e+308;b=1025
+    OK
+  - INFO: subcase: a=-8.958978968711217e+102;b=1023
+    OK
+  - INFO: subcase: a=-8.958978968711217e+102;b=1025
+    OK
+  - INFO: subcase: a=-4.464794497196387e-103;b=1025
+    OK
+  - INFO: subcase: a=-2.2250738585072014e-308;b=1025
+    OK
+  - INFO: subcase: a=-2.225073858507201e-308;b=1025
+    OK
+  - INFO: subcase: a="_negzero_";b=1025
+    OK
+  - INFO: subcase: a=0;b=1025
+    OK
+  - INFO: subcase: a=5e-324;b=1025
+    OK
+  - INFO: subcase: a=2.2250738585072014e-308;b=1025
+    OK
   - INFO: subcase: a=4.464794497196387e-103;b=1025
     OK
   - INFO: subcase: a=8.958978968711217e+102;b=1023
@@ -1846,7 +1846,7 @@ FAIL :values:stage="constant";typeA="vec3%3Cabstract-float%3E";typeB="vec3%3Ci32
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:17: value vec3(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308) cannot be represented as 'vec3<f32>'
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec3%3Cf32%3E";typeB="vec3%3Cabstract-int%3E"
 PASS :values:stage="constant";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E"
@@ -2297,7 +2297,7 @@ FAIL :values:stage="constant";typeA="vec4%3Cabstract-float%3E";typeB="vec4%3Ci32
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:17: value vec4(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308) cannot be represented as 'vec4<f32>'
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :values:stage="constant";typeA="vec4%3Cf32%3E";typeB="vec4%3Cabstract-int%3E"
 PASS :values:stage="constant";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E"
@@ -2406,27 +2406,25 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-129
+  - INFO: subcase: a=2147483520;b=-129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-127
+  - INFO: subcase: a=2147483520;b=-127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-64
+  - INFO: subcase: a=2147483520;b=-64
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=63
+  - INFO: subcase: a=2147483520;b=63
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=127
+  - INFO: subcase: a=4294967040;b=-129
     OK
-  - INFO: subcase: a=11728123330560;b=-129
+  - INFO: subcase: a=4294967040;b=-127
     OK
-  - INFO: subcase: a=11728123330560;b=-127
+  - INFO: subcase: a=4294967040;b=-64
     OK
-  - INFO: subcase: a=11728123330560;b=-64
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b=0
-    OK
-  - INFO: subcase: a=11728123330560;b=63
+  - INFO: subcase: a=4294967040;b=63
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-129
     OK
@@ -2438,18 +2436,18 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=63
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=127
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=129
     Expected validation error
       at (elided: only 2 shown)
@@ -2462,6 +2460,18 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
   - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=129
     Expected validation error
       at (elided: only 2 shown)
+  - INFO: subcase: a=-3.4028234663852886e+38;b=63
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=127
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=129
+    OK
+  - INFO: subcase: a=-11728123330560;b=127
+    OK
+  - INFO: subcase: a=-11728123330560;b=129
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=129
+    OK
   - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=129
     Expected validation error
       at (elided: only 2 shown)
@@ -2480,13 +2490,16 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
   - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=129
+  - EXPECTATION FAILED: subcase: a=2147483520;b=127
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=127
+  - EXPECTATION FAILED: subcase: a=2147483520;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=129
+  - EXPECTATION FAILED: subcase: a=4294967040;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=129
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
@@ -2498,18 +2511,6 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=-3.4028234663852886e+38;b=63
-    OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=127
-    OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=129
-    OK
-  - INFO: subcase: a=-11728123330560;b=127
-    OK
-  - INFO: subcase: a=-11728123330560;b=129
-    OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=129
-    OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=129
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=129
@@ -2522,11 +2523,13 @@ FAIL :values:stage="override";typeA="f32";typeB="i32" assert_unreached:
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=129
+  - INFO: subcase: a=2147483520;b=127
     OK
-  - INFO: subcase: a=11728123330560;b=127
+  - INFO: subcase: a=2147483520;b=129
     OK
-  - INFO: subcase: a=11728123330560;b=129
+  - INFO: subcase: a=4294967040;b=127
+    OK
+  - INFO: subcase: a=4294967040;b=129
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=63
     OK
@@ -2670,18 +2673,18 @@ FAIL :values:stage="override";typeA="f16";typeB="i32" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=7
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=15
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -2870,27 +2873,25 @@ FAIL :values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-129
+  - INFO: subcase: a=2147483520;b=-129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-127
+  - INFO: subcase: a=2147483520;b=-127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-64
+  - INFO: subcase: a=2147483520;b=-64
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=63
+  - INFO: subcase: a=2147483520;b=63
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=127
+  - INFO: subcase: a=4294967040;b=-129
     OK
-  - INFO: subcase: a=11728123330560;b=-129
+  - INFO: subcase: a=4294967040;b=-127
     OK
-  - INFO: subcase: a=11728123330560;b=-127
+  - INFO: subcase: a=4294967040;b=-64
     OK
-  - INFO: subcase: a=11728123330560;b=-64
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b=0
-    OK
-  - INFO: subcase: a=11728123330560;b=63
+  - INFO: subcase: a=4294967040;b=63
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-129
     OK
@@ -2902,18 +2903,18 @@ FAIL :values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=63
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=127
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=129
     Expected validation error
       at (elided: only 2 shown)
@@ -2932,36 +2933,6 @@ FAIL :values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a="_negzero_";b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=0;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=1.401298464324817e-45;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=127
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=127
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=129
-    Expected validation error
-      at (elided: only 2 shown)
   - INFO: subcase: a=-3.4028234663852886e+38;b=63
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=127
@@ -2978,6 +2949,39 @@ FAIL :values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=129
     OK
+  - EXPECTATION FAILED: subcase: a="_negzero_";b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.401298464324817e-45;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=129
+    Expected validation error
+      at (elided: only 2 shown)
   - INFO: subcase: a="_negzero_";b=129
     OK
   - INFO: subcase: a=0;b=129
@@ -2986,11 +2990,13 @@ FAIL :values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=129
+  - INFO: subcase: a=2147483520;b=127
     OK
-  - INFO: subcase: a=11728123330560;b=127
+  - INFO: subcase: a=2147483520;b=129
     OK
-  - INFO: subcase: a=11728123330560;b=129
+  - INFO: subcase: a=4294967040;b=127
+    OK
+  - INFO: subcase: a=4294967040;b=129
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=63
     OK
@@ -3134,18 +3140,18 @@ FAIL :values:stage="override";typeA="vec2%3Cf16%3E";typeB="vec2%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=7
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=15
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -3334,27 +3340,25 @@ FAIL :values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-129
+  - INFO: subcase: a=2147483520;b=-129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-127
+  - INFO: subcase: a=2147483520;b=-127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-64
+  - INFO: subcase: a=2147483520;b=-64
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=63
+  - INFO: subcase: a=2147483520;b=63
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=127
+  - INFO: subcase: a=4294967040;b=-129
     OK
-  - INFO: subcase: a=11728123330560;b=-129
+  - INFO: subcase: a=4294967040;b=-127
     OK
-  - INFO: subcase: a=11728123330560;b=-127
+  - INFO: subcase: a=4294967040;b=-64
     OK
-  - INFO: subcase: a=11728123330560;b=-64
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b=0
-    OK
-  - INFO: subcase: a=11728123330560;b=63
+  - INFO: subcase: a=4294967040;b=63
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-129
     OK
@@ -3366,18 +3370,18 @@ FAIL :values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=63
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=127
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=129
     Expected validation error
       at (elided: only 2 shown)
@@ -3396,36 +3400,6 @@ FAIL :values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a="_negzero_";b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=0;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=1.401298464324817e-45;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=127
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=129
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=127
-    Expected validation error
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=129
-    Expected validation error
-      at (elided: only 2 shown)
   - INFO: subcase: a=-3.4028234663852886e+38;b=63
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=127
@@ -3442,6 +3416,39 @@ FAIL :values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=129
     OK
+  - EXPECTATION FAILED: subcase: a="_negzero_";b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.401298464324817e-45;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=129
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=129
+    Expected validation error
+      at (elided: only 2 shown)
   - INFO: subcase: a="_negzero_";b=129
     OK
   - INFO: subcase: a=0;b=129
@@ -3450,11 +3457,13 @@ FAIL :values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=129
+  - INFO: subcase: a=2147483520;b=127
     OK
-  - INFO: subcase: a=11728123330560;b=127
+  - INFO: subcase: a=2147483520;b=129
     OK
-  - INFO: subcase: a=11728123330560;b=129
+  - INFO: subcase: a=4294967040;b=127
+    OK
+  - INFO: subcase: a=4294967040;b=129
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=63
     OK
@@ -3598,18 +3607,20 @@ FAIL :values:stage="override";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=7
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
+  - INFO: subcase: a=-65504;b=7
+    OK
   - EXPECTATION FAILED: subcase: a=-65504;b=15
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -3622,6 +3633,16 @@ FAIL :values:stage="override";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=17
     Expected validation error
       at (elided: only 2 shown)
+  - INFO: subcase: a=-65504;b=15
+    OK
+  - INFO: subcase: a=-65504;b=17
+    OK
+  - INFO: subcase: a=-63.96875;b=15
+    OK
+  - INFO: subcase: a=-63.96875;b=17
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=17
+    OK
   - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -3658,18 +3679,6 @@ FAIL :values:stage="override";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=65504;b=17
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=-65504;b=7
-    OK
-  - INFO: subcase: a=-65504;b=15
-    OK
-  - INFO: subcase: a=-65504;b=17
-    OK
-  - INFO: subcase: a=-63.96875;b=15
-    OK
-  - INFO: subcase: a=-63.96875;b=17
-    OK
-  - INFO: subcase: a=-0.062469482421875;b=17
-    OK
   - INFO: subcase: a=-0.00006103515625;b=17
     OK
   - INFO: subcase: a=-0.00006097555160522461;b=17
@@ -3798,27 +3807,25 @@ FAIL :values:stage="override";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-129
+  - INFO: subcase: a=2147483520;b=-129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-127
+  - INFO: subcase: a=2147483520;b=-127
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-64
+  - INFO: subcase: a=2147483520;b=-64
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=63
+  - INFO: subcase: a=2147483520;b=63
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=127
+  - INFO: subcase: a=4294967040;b=-129
     OK
-  - INFO: subcase: a=11728123330560;b=-129
+  - INFO: subcase: a=4294967040;b=-127
     OK
-  - INFO: subcase: a=11728123330560;b=-127
+  - INFO: subcase: a=4294967040;b=-64
     OK
-  - INFO: subcase: a=11728123330560;b=-64
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b=0
-    OK
-  - INFO: subcase: a=11728123330560;b=63
+  - INFO: subcase: a=4294967040;b=63
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-129
     OK
@@ -3830,18 +3837,18 @@ FAIL :values:stage="override";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=63
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=127
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=129
     Expected validation error
       at (elided: only 2 shown)
@@ -3872,13 +3879,16 @@ FAIL :values:stage="override";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=129
+  - EXPECTATION FAILED: subcase: a=2147483520;b=127
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=127
+  - EXPECTATION FAILED: subcase: a=2147483520;b=129
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=129
+  - EXPECTATION FAILED: subcase: a=4294967040;b=127
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=129
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=63
@@ -3914,11 +3924,13 @@ FAIL :values:stage="override";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=129
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=129
+  - INFO: subcase: a=2147483520;b=127
     OK
-  - INFO: subcase: a=11728123330560;b=127
+  - INFO: subcase: a=2147483520;b=129
     OK
-  - INFO: subcase: a=11728123330560;b=129
+  - INFO: subcase: a=4294967040;b=127
+    OK
+  - INFO: subcase: a=4294967040;b=129
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=63
     OK
@@ -4062,18 +4074,18 @@ FAIL :values:stage="override";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=7
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=15
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:109:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:104:37
   - EXPECTATION FAILED: subcase: a=-65504;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -4083,6 +4095,16 @@ FAIL :values:stage="override";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=-63.96875;b=17
     Expected validation error
       at (elided: only 2 shown)
+  - INFO: subcase: a=-65504;b=7
+    OK
+  - INFO: subcase: a=-65504;b=15
+    OK
+  - INFO: subcase: a=-65504;b=17
+    OK
+  - INFO: subcase: a=-63.96875;b=15
+    OK
+  - INFO: subcase: a=-63.96875;b=17
+    OK
   - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=17
     Expected validation error
       at (elided: only 2 shown)
@@ -4122,16 +4144,6 @@ FAIL :values:stage="override";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert
   - EXPECTATION FAILED: subcase: a=65504;b=17
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=-65504;b=7
-    OK
-  - INFO: subcase: a=-65504;b=15
-    OK
-  - INFO: subcase: a=-65504;b=17
-    OK
-  - INFO: subcase: a=-63.96875;b=15
-    OK
-  - INFO: subcase: a=-63.96875;b=17
-    OK
   - INFO: subcase: a=-0.062469482421875;b=17
     OK
   - INFO: subcase: a=-0.00006103515625;b=17
@@ -4159,6 +4171,574 @@ FAIL :values:stage="override";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert
   - INFO: subcase: a=65504;b=17
     OK
  Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="f32";typeB="i32" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=129;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : i32;
+      var v : f32;
+      let tmp = ldexp(v, i32(129));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=129;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : i32;
+      var v : f32;
+      let tmp = ldexp(v, i32(129));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=129;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="f16";typeB="i32" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=17;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : i32;
+      var v : f16;
+      let tmp = ldexp(v, i32(17));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=17;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : i32;
+      var v : f16;
+      let tmp = ldexp(v, i32(17));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=17;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=129;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec2<i32>;
+      var v : vec2<f32>;
+      let tmp = ldexp(v, vec2(i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=129;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec2<i32>;
+      var v : vec2<f32>;
+      let tmp = ldexp(v, vec2(i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=129;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec2%3Cf16%3E";typeB="vec2%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=17;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec2<i32>;
+      var v : vec2<f16>;
+      let tmp = ldexp(v, vec2(i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=17;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec2<i32>;
+      var v : vec2<f16>;
+      let tmp = ldexp(v, vec2(i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=17;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=129;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec3<i32>;
+      var v : vec3<f32>;
+      let tmp = ldexp(v, vec3(i32(129), i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=129;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec3<i32>;
+      var v : vec3<f32>;
+      let tmp = ldexp(v, vec3(i32(129), i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=129;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=17;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec3<i32>;
+      var v : vec3<f16>;
+      let tmp = ldexp(v, vec3(i32(17), i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=17;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec3<i32>;
+      var v : vec3<f16>;
+      let tmp = ldexp(v, vec3(i32(17), i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=17;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=129;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec4<i32>;
+      var v : vec4<f32>;
+      let tmp = ldexp(v, vec4(i32(129), i32(129), i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=129;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec4<i32>;
+      var v : vec4<f32>;
+      let tmp = ldexp(v, vec4(i32(129), i32(129), i32(129), i32(129)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=129;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="constant";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - VALIDATION FAILED: subcase: value=17;in_shader=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec4<i32>;
+      var v : vec4<f16>;
+      let tmp = ldexp(v, vec4(i32(17), i32(17), i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - VALIDATION FAILED: subcase: value=17;in_shader=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    override o_b : i32;
+    fn foo() {
+      var v_b : vec4<i32>;
+      var v : vec4<f16>;
+      let tmp = ldexp(v, vec4(i32(17), i32(17), i32(17), i32(17)));
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:174:24
+  - EXPECTATION FAILED: subcase: value=17;in_shader=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="f32";typeB="i32" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="f16";typeB="i32" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec2%3Cf16%3E";typeB="vec2%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=127;in_shader=false
+    OK
+  - INFO: subcase: value=127;in_shader=true
+    OK
+  - INFO: subcase: value=128;in_shader=false
+    OK
+  - INFO: subcase: value=128;in_shader=true
+    OK
+  - INFO: subcase: value=129;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=129;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=129;in_shader=true
+    OK
+ Reached unreachable code
+FAIL :partial_values:stage="override";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E" assert_unreached:
+  - INFO: subcase: value=15;in_shader=false
+    OK
+  - INFO: subcase: value=15;in_shader=true
+    OK
+  - INFO: subcase: value=16;in_shader=false
+    OK
+  - INFO: subcase: value=16;in_shader=true
+    OK
+  - INFO: subcase: value=17;in_shader=false
+    OK
+  - EXPECTATION FAILED: subcase: value=17;in_shader=true
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.spec.js:178:27
+  - INFO: subcase: value=17;in_shader=true
+    OK
+ Reached unreachable code
+PASS :partial_values:stage="runtime";typeA="f32";typeB="i32"
+PASS :partial_values:stage="runtime";typeA="f16";typeB="i32"
+PASS :partial_values:stage="runtime";typeA="vec2%3Cf32%3E";typeB="vec2%3Ci32%3E"
+PASS :partial_values:stage="runtime";typeA="vec2%3Cf16%3E";typeB="vec2%3Ci32%3E"
+PASS :partial_values:stage="runtime";typeA="vec3%3Cf32%3E";typeB="vec3%3Ci32%3E"
+PASS :partial_values:stage="runtime";typeA="vec3%3Cf16%3E";typeB="vec3%3Ci32%3E"
+PASS :partial_values:stage="runtime";typeA="vec4%3Cf32%3E";typeB="vec4%3Ci32%3E"
+PASS :partial_values:stage="runtime";typeA="vec4%3Cf16%3E";typeB="vec4%3Ci32%3E"
 PASS :args:arg="good"
 PASS :args:arg="bad_no_parens"
 PASS :args:arg="bad_0args"

@@ -201,7 +201,7 @@
     ASSERT(!_didAuthorizePaymentCompletion);
     _didAuthorizePaymentCompletion = completion;
 
-    auto presenter = _presenter.get();
+    RefPtr presenter = _presenter.get();
     if (!presenter)
         return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 
@@ -237,7 +237,7 @@
         RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
             ASSERT(_didRequestMerchantSessionCompletion);
 
-            auto presenter = _presenter.get();
+            RefPtr presenter = _presenter.get();
             if (!presenter) {
                 _didRequestMerchantSessionCompletion(nil, nil);
                 return;

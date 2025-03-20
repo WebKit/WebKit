@@ -28,6 +28,7 @@
 #import "APITextRun.h"
 #import "WKObject.h"
 #import "_WKTextRun.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -39,6 +40,6 @@ template<> struct WrapperTraits<API::TextRun> {
 
 @interface _WKTextRun () <WKObject> {
 @package
-    API::ObjectStorage<API::TextRun> _textRun;
+    AlignedStorage<API::TextRun> _textRun;
 }
 @end

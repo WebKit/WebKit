@@ -44,10 +44,10 @@ class ResourceRequest;
 class ResourceResponse;
 class SubstituteData;
 
-class ContentFilter {
+class ContentFilter : public CanMakeWeakPtr<ContentFilter>, public CanMakeCheckedPtr<ContentFilter> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(ContentFilter);
-
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentFilter);
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
 
@@ -80,6 +80,11 @@ public:
 
 #if HAVE(AUDIT_TOKEN)
     WEBCORE_EXPORT void setHostProcessAuditToken(const std::optional<audit_token_t>&);
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    WEBCORE_EXPORT void setUsesWebContentRestrictions(bool);
+    static bool isWebContentRestrictionsUnblockURL(const URL&);
 #endif
 
 private:

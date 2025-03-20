@@ -277,6 +277,7 @@ private:
         bool webViewBackForwardListItemAddedRemoved : 1;
         bool webViewWillGoToBackForwardListItemInBackForwardCache : 1;
         bool webViewShouldGoToBackForwardListItemInBackForwardCacheCompletionHandler : 1;
+        bool webViewShouldGoToBackForwardListItemWillUseInstantBackCompletionHandler : 1;
 
 #if HAVE(APP_SSO)
         bool webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler : 1;

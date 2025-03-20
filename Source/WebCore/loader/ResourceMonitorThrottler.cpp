@@ -34,6 +34,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceMonitoring, "ResourceMonitorThrottler::" fmt, ##__VA_ARGS__)
+
 namespace WebCore {
 
 ResourceMonitorThrottler::ResourceMonitorThrottler(String&& path, size_t count, Seconds duration, size_t maxHosts)
@@ -42,13 +44,18 @@ ResourceMonitorThrottler::ResourceMonitorThrottler(String&& path, size_t count, 
     ASSERT(!isMainThread());
 
     ASSERT(maxHosts >= 1);
+    RESOURCEMONITOR_RELEASE_LOG("Throttler is launching, count=%zu, duration=%f, maxHosts=%zu", count, duration.value(), maxHosts);
 
+    RESOURCEMONITOR_RELEASE_LOG("Opening persistence for throttler.");
     auto persistence = makeUnique<ResourceMonitorPersistence>();
 
-    if (!persistence->openDatabase(WTFMove(path)))
+    if (!persistence->openDatabase(WTFMove(path))) {
+        RESOURCEMONITOR_RELEASE_LOG("Failed to setup persistence for throttler.");
         return;
+    }
 
     m_persistence = WTFMove(persistence);
+    RESOURCEMONITOR_RELEASE_LOG("Success to setup persistence for throttler.");
 
     auto now = ContinuousApproximateTime::now();
     m_persistence->deleteExpiredRecords(now, m_config.duration);
@@ -67,6 +74,7 @@ ResourceMonitorThrottler::~ResourceMonitorThrottler()
     ASSERT(!isMainThread());
 
     if (m_persistence) {
+        RESOURCEMONITOR_RELEASE_LOG("Closing persistence for throttler.");
         m_persistence->deleteExpiredRecords(ContinuousApproximateTime::now(), m_config.duration);
         m_persistence = nullptr;
     }
@@ -108,10 +116,13 @@ bool ResourceMonitorThrottler::tryAccess(const String& host, ContinuousApproxima
     bool wasGranted = throttler.tryAccessAndUpdateHistory(time, m_config);
 
     if (wasGranted) {
+        RESOURCEMONITOR_RELEASE_LOG("Throttler granted for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8().data());
+
         maintainHosts(time);
         if (m_persistence)
             m_persistence->recordAccess(host, time);
-    }
+    } else
+        RESOURCEMONITOR_RELEASE_LOG("Throttler denied for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8().data());
 
     return wasGranted;
 }
@@ -190,5 +201,7 @@ bool ResourceMonitorThrottler::AccessThrottler::tryExpire(ContinuousApproximateT
 }
 
 } // namespace WebCore
+
+#undef RESOURCEMONITOR_RELEASE_LOG
 
 #endif

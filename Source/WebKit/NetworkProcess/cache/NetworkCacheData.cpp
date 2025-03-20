@@ -41,43 +41,40 @@ namespace NetworkCache {
 
 Data Data::mapToFile(const String& path) const
 {
-    FileSystem::PlatformFileHandle handle;
+    FileSystem::FileHandle handle;
     auto applyData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier) {
         apply(applier);
     };
     auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);
     if (!mappedFile)
         return { };
-    return Data::adoptMap(WTFMove(mappedFile), handle);
+    return Data::adoptMap(WTFMove(mappedFile), WTFMove(handle));
 }
 
 Data mapFile(const String& path)
 {
-    auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(file))
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+    if (!handle)
         return { };
-    auto size = FileSystem::fileSize(file);
-    if (!size) {
-        FileSystem::closeFile(file);
+
+    auto size = handle.size();
+    if (!size)
         return { };
-    }
-    return adoptAndMapFile(file, 0, *size);
+
+    return adoptAndMapFile(WTFMove(handle), 0, *size);
 }
 
-Data adoptAndMapFile(FileSystem::PlatformFileHandle handle, size_t offset, size_t size)
+Data adoptAndMapFile(FileSystem::FileHandle&& handle, size_t offset, size_t size)
 {
-    if (!size) {
-        FileSystem::closeFile(handle);
+    if (!size)
         return Data::empty();
-    }
+
     bool success;
     FileSystem::MappedFileData mappedFile(handle, FileSystem::FileOpenMode::Read, FileSystem::MappedFileMode::Private, success);
-    if (!success) {
-        FileSystem::closeFile(handle);
+    if (!success)
         return { };
-    }
 
-    return Data::adoptMap(WTFMove(mappedFile), handle);
+    return Data::adoptMap(WTFMove(mappedFile), WTFMove(handle));
 }
 
 SHA1::Digest computeSHA1(const Data& data, const Salt& salt)

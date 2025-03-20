@@ -51,11 +51,6 @@ bool WebRTCProvider::webRTCAvailable()
 {
     return false;
 }
-
-void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
-{
-}
-
 #endif
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WebRTCProvider::createRTCDataChannelRemoteHandlerConnection()

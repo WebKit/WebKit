@@ -282,7 +282,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
         return axObject.isCode();
     };
 
-    if (const auto* parent = Accessibility::findAncestor<AccessibilityObject>(*object, true, WTFMove(matchFunc)))
+    if (Accessibility::findAncestor<AccessibilityObject>(*object, true, WTFMove(matchFunc)))
         [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
 }
 

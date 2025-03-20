@@ -76,7 +76,7 @@ public:
         return m_parseStatus;
     }
 
-    void atomPatternCharacter(UChar character)
+    void atomPatternCharacter(UChar character, bool)
     {
         if (hasError())
             return;
@@ -184,7 +184,10 @@ public:
         if (hasError())
             return;
 
-        ASSERT(isASCII(character));
+        if (!isASCII(character)) {
+            fail(URLFilterParser::NonASCII);
+            return;
+        }
 
         m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
     }
@@ -356,7 +359,7 @@ private:
             m_sunkTerms.removeLast();
     }
 
-    bool m_patternIsCaseSensitive;
+    const bool m_patternIsCaseSensitive;
 
     Deque<Term> m_openGroups;
     Vector<Term> m_sunkTerms;

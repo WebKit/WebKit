@@ -66,7 +66,7 @@ private:
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \
     CurrentThreadState stateName; \
     stateName.stackTop = &stateName; \
-    stateName.stackOrigin = Thread::current().stack().origin(); \
+    stateName.stackOrigin = Thread::currentSingleton().stack().origin(); \
     ALLOCATE_AND_GET_REGISTER_STATE(stateName ## _registerState); \
     stateName.registerState = &stateName ## _registerState
 

@@ -32,9 +32,10 @@
 #include "FragmentDirectiveUtilities.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
-#include "Position.h"
+#include "PositionInlines.h"
 #include "Range.h"
 #include "SimpleRange.h"
+#include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
@@ -80,6 +81,22 @@ static VisiblePosition afterEndOfCurrentBlock(const VisiblePosition& visiblePosi
     if (lastPositionInBlock == visiblePosition)
         return visiblePosition.next();
     return visiblePosition;
+}
+
+static VisiblePosition startVisiblePositionForRangeRemovingLeadingWhitespace(const SimpleRange& range)
+{
+    CharacterIterator characterIterator(range);
+    while (!characterIterator.atEnd() && !characterIterator.text().isEmpty() && isASCIIWhitespace(characterIterator.text()[0]))
+        characterIterator.advance(1);
+    return { makeContainerOffsetPosition(characterIterator.range().start) };
+}
+
+static VisiblePosition endVisiblePositionForRangeRemovingTrailingWhitespace(const SimpleRange& range)
+{
+    BackwardsCharacterIterator characterIterator(range);
+    while (!characterIterator.atEnd() && !characterIterator.text().isEmpty() && isASCIIWhitespace(characterIterator.text()[characterIterator.text().length() - 1]))
+        characterIterator.advance(1);
+    return { makeContainerOffsetPosition(characterIterator.range().end) };
 }
 
 static String previousWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
@@ -138,23 +155,18 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
 
     auto url = document->url();
     auto textFromRange = createLiveRange(textFragmentRange)->toString().simplifyWhiteSpace(isASCIIWhitespace);
-
-    VisiblePosition visibleStartPosition = VisiblePosition(Position(textFragmentRange.protectedStartContainer(), textFragmentRange.startOffset(), Position::PositionIsOffsetInAnchor));
-    VisiblePosition visibleEndPosition = VisiblePosition(Position(textFragmentRange.protectedEndContainer(), textFragmentRange.endOffset(), Position::PositionIsOffsetInAnchor));
-
+    VisiblePosition visibleStartPosition = startVisiblePositionForRangeRemovingLeadingWhitespace(textFragmentRange);
+    VisiblePosition visibleEndPosition = endVisiblePositionForRangeRemovingTrailingWhitespace(textFragmentRange);
 
     VisiblePosition visiblePrefixEndPosition = beforeStartOfCurrentBlock(visibleStartPosition);
     VisiblePosition visibleSuffixStartPosition = afterEndOfCurrentBlock(visibleEndPosition);
-
     auto generateDirective = [&] (unsigned wordsOfContext, unsigned wordsOfStartAndEndText) {
         ParsedTextDirective directive;
-
         if (textFromRange.length() >= maximumInlineStringLength || !positionsHaveSameBlockAncestor(visibleStartPosition, visibleEndPosition)) {
             directive.startText = nextWordsFromPositionInSameBlock(wordsOfStartAndEndText, visibleStartPosition);
             directive.endText = previousWordsFromPositionInSameBlock(wordsOfStartAndEndText, visibleEndPosition);
         } else
             directive.startText = textFromRange;
-
         if (wordsOfContext) {
             directive.prefix = previousWordsFromPositionInSameBlock(wordsOfContext, visiblePrefixEndPosition);
             directive.suffix = nextWordsFromPositionInSameBlock(wordsOfContext, visibleSuffixStartPosition);
@@ -162,21 +174,19 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
 
         return directive;
     };
-
     auto testDirective = [&] (ParsedTextDirective directive) {
         auto foundRange = FragmentDirectiveRangeFinder::findRangeFromTextDirective(directive, document.get());
         if (!foundRange)
             return false;
 
-        return VisiblePosition(makeContainerOffsetPosition(foundRange->start)) == VisiblePosition(makeContainerOffsetPosition(textFragmentRange.start)) && VisiblePosition(makeContainerOffsetPosition(foundRange->end)) == VisiblePosition(makeContainerOffsetPosition(textFragmentRange.end));
+        return VisiblePosition(makeContainerOffsetPosition(foundRange->start)) == visibleStartPosition && VisiblePosition(makeContainerOffsetPosition(foundRange->end)) == visibleEndPosition;
     };
-
     auto wordsOfContext = textFromRange.length() < minimumContextlessStringLength ? defaultWordsOfContext : 0;
     auto wordsOfStartAndEndText = defaultWordsOfContext;
-
     auto directive = [&] -> std::optional<ParsedTextDirective> {
         for (unsigned extraWordsOfContext = 0; extraWordsOfContext <= maximumExtraWordsOfContext; extraWordsOfContext++) {
             auto directive = generateDirective(wordsOfContext + extraWordsOfContext, wordsOfStartAndEndText + extraWordsOfContext);
+
             if (testDirective(directive))
                 return directive;
         }
@@ -185,7 +195,6 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     }();
 
     m_urlWithFragment = url;
-
     if (directive) {
         Vector<String> components;
         if (!directive->prefix.isEmpty())

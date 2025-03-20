@@ -49,7 +49,7 @@ AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRan
 
 AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange& markerRange)
     : JSWrappable()
-    , m_textMarkerRange(markerRange.platformTextMarkerRange())
+    , m_textMarkerRange(markerRange.m_textMarkerRange)
 {
 }
 
@@ -57,15 +57,6 @@ AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange()
 {
 }
 
-PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
-{
-#if PLATFORM(COCOA)
-    return m_textMarkerRange.get();
-#else
-    return m_textMarkerRange;
-#endif
-}
-    
 JSClassRef AccessibilityTextMarkerRange::wrapperClass()
 {
     return JSAccessibilityTextMarkerRange::accessibilityTextMarkerRangeClass();

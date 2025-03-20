@@ -1,0 +1,134 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = globalThis.$vm?.print ?? console.log;
+
+  const format = 'bgra8unorm';
+
+  /*
+  Shader Validation report on iOS is:
+
+  Invalid device load at offset 18446638520593285128, executing vertex function: "vsUintIndexClamp"
+  buffer: , length:8, resident:Read Write
+  pipeline: "(null)", UID: "..." encoder: "", draw: 1
+    * frame #0: vsUintIndexClamp() - /program_source:17:33
+
+
+  On CrystalE 22E219a it says:
+
+  Invalid device load at offset 4, executing vertex function: "vsUintIndexClamp" encoder: "", draw: 1
+    * frame #0: vsUintIndexClamp() - /program_source:17:33
+
+  buffer: <nil>
+  */
+
+  async function doStuff() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+@vertex
+fn vertex0(@location(0) a0: f32) -> @builtin(position) vec4f {
+  return vec4();
+}
+
+@fragment
+fn fragment0() -> @location(0) vec4f {
+  return vec4();
+}
+`,
+    });
+    let renderPipeline0 = device.createRenderPipeline({
+      layout: 'auto',
+      // not necessary
+      // primitive: {topology: 'point-list'},
+      fragment: {module, targets: [{format}]},
+      vertex: {
+        module,
+        buffers: [
+          {
+            arrayStride: 4,
+            // this would also work:
+            // stepMode: 'instance',
+            attributes: [{format: 'float32', offset: 0, shaderLocation: 0}],
+          },
+        ],
+      },
+    });
+    let vertexBuffer0 = device.createBuffer({size: 16, usage: GPUBufferUsage.VERTEX});
+    let indexBuffer0 = device.createBuffer({size: 8, usage: GPUBufferUsage.INDEX});
+    let indirectBuffer0 = device.createBuffer({size: 20, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDIRECT});
+    /*
+    for the draw indirect from offset 0 the values are:
+      vertex count: 3  <-- this fits in vertex buffer
+      instance count: 1
+      first vertex: 0
+      first instance: 0
+
+    for the draw indexed indirect at offset 0 the values are:
+      index count: 3  <-- the index buffer can only fit two indices
+      instance count: 1
+      first index: 0
+      base vertex: 0
+      first instance: 0
+     */
+    device.queue.writeBuffer(indirectBuffer0, 0, new Uint32Array([30, 1, 0, 0, 0]), 0, 5);
+    await device.queue.onSubmittedWorkDone();
+
+    let texture0 = device.createTexture({size: [1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let textureView0 = texture0.createView({});
+
+    let commandEncoder0 = device.createCommandEncoder({});
+    let renderPassEncoder0 = commandEncoder0.beginRenderPass({
+      colorAttachments: [{
+        view: textureView0,
+        loadOp: 'load',
+        storeOp: 'discard',
+      }],
+    });
+    renderPassEncoder0.setPipeline(renderPipeline0);
+    renderPassEncoder0.setVertexBuffer(0, vertexBuffer0);
+    renderPassEncoder0.drawIndirect(indirectBuffer0, 0);
+    renderPassEncoder0.end();
+    let commandBuffer0 = commandEncoder0.finish();
+
+    let commandEncoder1 = device.createCommandEncoder({});
+    let renderPassEncoder1 = commandEncoder1.beginRenderPass({
+      colorAttachments: [{
+        view: textureView0,
+        loadOp: 'load',
+        storeOp: 'store',
+      }],
+    });
+    renderPassEncoder1.setPipeline(renderPipeline0);
+    renderPassEncoder1.setVertexBuffer(0, vertexBuffer0);
+    // uint16 also works, if you make the index buffer size four, i.e. two indices.
+    renderPassEncoder1.setIndexBuffer(indexBuffer0, 'uint32');
+    renderPassEncoder1.drawIndexedIndirect(indirectBuffer0, 0);
+    renderPassEncoder1.end();
+    let commandBuffer1 = commandEncoder1.finish();
+
+    // this works the same the commented lines below:
+    device.queue.submit([commandBuffer0, commandBuffer1]);
+    /*
+    await device.queue.onSubmittedWorkDone();
+    device.queue.submit([commandBuffer0]);
+    await device.queue.onSubmittedWorkDone();
+    device.queue.submit([commandBuffer1]);
+    */
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.notifyDone();
+  }
+
+  onload = async () => {
+    await doStuff();
+  };
+</script>
+Pass

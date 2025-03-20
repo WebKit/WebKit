@@ -1,0 +1,5 @@
+
+
+PASS Observer with the implicit root; target in a same-origin iframe.
+FAIL Test scroll margin intersection assert_true: isIntersecting expected true got false
+

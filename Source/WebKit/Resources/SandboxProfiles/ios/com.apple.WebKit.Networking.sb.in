@@ -710,6 +710,8 @@
     (when (defined? 'SYS_crossarch_trap)
         (deny syscall-unix (with no-report) (syscall-number
             SYS_crossarch_trap)))
+    (deny syscall-unix (with no-report) (syscall-number
+        SYS___nexus_set_opt))
     (allow syscall-unix (syscall-number
         SYS___channel_get_info
         SYS___channel_open

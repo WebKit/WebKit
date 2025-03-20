@@ -245,13 +245,13 @@ protected:
         previous->fireStructureTransitionWatchpoint(deferred);
     }
 
-private:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
         ASSERT(m_prototype.get().isEmpty() || isValidPrototype(m_prototype.get()));
     }
 
+private:
     void finishCreation(VM& vm, CreatingEarlyCellTag)
     {
         Base::finishCreation(vm, this, CreatingEarlyCell);
@@ -348,6 +348,7 @@ public:
         
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
     bool isUncacheableDictionary() const { return dictionaryKind() == UncachedDictionaryKind; }
+    bool isCacheableDictionary() const { return dictionaryKind() == CachedDictionaryKind; }
   
     bool prototypeQueriesAreCacheable()
     {
@@ -910,14 +911,22 @@ public:
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
     DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
-    DEFINE_BITFIELD(bool, isBrandedStructure, IsBrandedStructure, 1, 24);
-    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
-    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
-    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
-    DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 28);
-    DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
-    DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 30);
-    DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 31);
+    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 24);
+    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 25);
+    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 26);
+    DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 27);
+    DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 28);
+    DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 29);
+    DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 30);
+
+    enum class StructureVariant : uint8_t {
+        Normal,
+        Branded,
+        WebAssemblyGC,
+    };
+
+    StructureVariant variant() const { return m_structureVariant; }
+    bool isBrandedStructure() { return variant() == StructureVariant::Branded; }
 
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
 
@@ -948,7 +957,8 @@ public:
     void finalizeUnconditionally(VM&, CollectionScope);
 
 protected:
-    Structure(VM&, Structure*);
+    Structure(VM&, StructureVariant, Structure* previous); // Branded/Normal only
+    Structure(VM&, StructureVariant, JSGlobalObject*, const TypeInfo&, const ClassInfo*); // WebAssemblyGC only
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -1069,6 +1079,9 @@ private:
 
     uint32_t m_bitField;
     TransitionPropertyAttributes m_transitionPropertyAttributes { 0 };
+
+    // FIXME: We should probably have a brandedStructureStructure/webAssemblyGCStructureStructure instead of this.
+    StructureVariant m_structureVariant { StructureVariant::Normal };
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;

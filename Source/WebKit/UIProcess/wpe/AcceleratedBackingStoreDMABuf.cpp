@@ -79,7 +79,7 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
         if (m_pendingBuffer) {
             frameDone();
             m_pendingBuffer = nullptr;
-            m_pendingDamageRegion = { };
+            m_pendingDamageRects = { };
         }
         m_buffers.clear();
         m_bufferIDs.clear();
@@ -130,7 +130,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
         m_bufferIDs.remove(buffer.get());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& damageRegion, WTF::UnixFileDescriptor&& renderingFenceFD)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, Rects&& damageRects, WTF::UnixFileDescriptor&& renderingFenceFD)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -140,7 +140,7 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& d
     }
 
     m_pendingBuffer = buffer;
-    m_pendingDamageRegion = WTFMove(damageRegion);
+    m_pendingDamageRects = WTFMove(damageRects);
     if (wpe_display_use_explicit_sync(wpe_view_get_display(m_wpeView.get()))) {
         if (WPE_IS_BUFFER_DMA_BUF(m_pendingBuffer.get()))
             wpe_buffer_dma_buf_set_rendering_fence(WPE_BUFFER_DMA_BUF(m_pendingBuffer.get()), renderingFenceFD.release());
@@ -155,17 +155,16 @@ void AcceleratedBackingStoreDMABuf::renderPendingBuffer()
     // to pass directly a pointer below instead of using copies.
     static_assert(sizeof(WebCore::IntRect) == sizeof(WPERectangle));
 
-    auto damageRects = m_pendingDamageRegion.rects();
-    ASSERT(damageRects.size() <= std::numeric_limits<guint>::max());
-    const auto* rects = !damageRects.isEmpty() ? reinterpret_cast<const WPERectangle*>(damageRects.data()) : nullptr;
+    ASSERT(m_pendingDamageRects.size() <= std::numeric_limits<guint>::max());
+    const auto* rects = !m_pendingDamageRects.isEmpty() ? reinterpret_cast<const WPERectangle*>(m_pendingDamageRects.data()) : nullptr;
 
     GUniqueOutPtr<GError> error;
-    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), rects, damageRects.size(), &error.outPtr())) {
+    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), rects, m_pendingDamageRects.size(), &error.outPtr())) {
         g_warning("Failed to render frame: %s", error->message);
         frameDone();
         m_pendingBuffer = nullptr;
     }
-    m_pendingDamageRegion = { };
+    m_pendingDamageRects = { };
 }
 
 void AcceleratedBackingStoreDMABuf::frameDone()

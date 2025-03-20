@@ -78,6 +78,7 @@ private:
     VideoPresentationModelContext(VideoPresentationManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
 
     void setVideoDimensions(const WebCore::FloatSize&);
+    void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
 
     // VideoPresentationModel
     void addClient(WebCore::VideoPresentationModelClient&) override;
@@ -88,6 +89,8 @@ private:
     void setVideoFullscreenFrame(WebCore::FloatRect) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool hasVideo() const override { return m_hasVideo; }
+    bool isChildOfElementFullscreen() const final { return m_isChildOfElementFullscreen; }
+
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 #if PLATFORM(IOS_FAMILY)
     UIViewController *presentingViewController() final;
@@ -130,6 +133,7 @@ private:
     WeakHashSet<WebCore::VideoPresentationModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
+    bool m_isChildOfElementFullscreen { false };
 
 #if !RELEASE_LOG_DISABLED
     mutable uint64_t m_childIdentifierSeed { 0 };
@@ -188,15 +192,18 @@ public:
 
     void swapFullscreenModes(PlaybackSessionContextIdentifier, PlaybackSessionContextIdentifier);
 
+    RefPtr<WebCore::PlatformVideoPresentationInterface> bestVideoForElementFullscreen();
+
 private:
     friend class VideoPresentationModelContext;
 
     explicit VideoPresentationManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    typedef std::tuple<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    typedef std::pair<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfacePair;
+    ModelInterfacePair createModelAndInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfacePair& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfacePair* findModelAndInterface(PlaybackSessionContextIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);
     RefPtr<WebCore::PlatformVideoPresentationInterface> findInterface(PlaybackSessionContextIdentifier) const;
@@ -215,6 +222,9 @@ private:
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
     void setDocumentVisibility(PlaybackSessionContextIdentifier, bool);
+    void setIsChildOfElementFullscreen(PlaybackSessionContextIdentifier, bool);
+    void audioSessionCategoryChanged(PlaybackSessionContextIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
+    void hasBeenInteractedWith(PlaybackSessionContextIdentifier);
     void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void enterFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);
@@ -252,6 +262,8 @@ private:
     void requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier, bool finishedWithMedia, CompletionHandler<void()>&&);
     void callCloseCompletionHandlers();
 
+    void videosInElementFullscreenChanged();
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
     uint64_t logIdentifier() const;
@@ -266,11 +278,11 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
-    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    HashMap<PlaybackSessionContextIdentifier, ModelInterfacePair> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
-    Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
+    Markable<PlaybackSessionContextIdentifier> m_lastInteractedWithVideo;
 };
 
 } // namespace WebKit

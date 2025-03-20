@@ -34,11 +34,44 @@ namespace WTF {
 template<typename T, typename Type>
 class CompactRefPtrTuple final {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(CompactRefPtrTuple);
 
     static_assert(::allowCompactPointers<T>());
 public:
     CompactRefPtrTuple() = default;
+    CompactRefPtrTuple(T* pointer, Type type)
+    {
+        setPointer(pointer);
+        setType(type);
+    }
+
+    CompactRefPtrTuple(const CompactRefPtrTuple& other)
+    {
+        setPointer(other.pointer());
+        setType(other.type());
+    }
+
+    CompactRefPtrTuple(CompactRefPtrTuple&& other)
+    {
+        m_data.setPointer(other.pointer());
+        m_data.setType(other.type());
+        other.m_data.setPointer(nullptr);
+        other.m_data.setType({ });
+    }
+
+    CompactRefPtrTuple& operator=(const CompactRefPtrTuple& other)
+    {
+        CompactRefPtrTuple copied(other);
+        swap(copied);
+        return *this;
+    }
+
+    CompactRefPtrTuple& operator=(CompactRefPtrTuple&& other)
+    {
+        CompactRefPtrTuple moved(WTFMove(other));
+        swap(moved);
+        return *this;
+    }
+
     ~CompactRefPtrTuple()
     {
         WTF::DefaultRefDerefTraits<T>::derefIfNotNull(m_data.pointer());
@@ -76,6 +109,11 @@ public:
     void setType(Type type)
     {
         m_data.setType(type);
+    }
+
+    void swap(CompactRefPtrTuple<T, Type>& other)
+    {
+        m_data.swap(other.m_data);
     }
 
 private:

@@ -31,6 +31,9 @@
 #include <WebCore/MotionManagerClient.h>
 #include <wtf/TZoneMalloc.h>
 
+namespace WebCore {
+class SecurityOriginData;
+}
 namespace WebKit {
 
 class WebPageProxy;
@@ -45,10 +48,10 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void startUpdatingDeviceOrientation();
+    void startUpdatingDeviceOrientation(const WebCore::SecurityOriginData&);
     void stopUpdatingDeviceOrientation();
 
-    void startUpdatingDeviceMotion();
+    void startUpdatingDeviceMotion(const WebCore::SecurityOriginData&);
     void stopUpdatingDeviceMotion();
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

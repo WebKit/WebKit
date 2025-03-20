@@ -29,6 +29,7 @@
 #include "XPathPath.h"
 
 #include "Document.h"
+#include "NodeInlines.h"
 #include "XPathPredicate.h"
 #include "XPathStep.h"
 #include <wtf/TZoneMallocInlines.h>

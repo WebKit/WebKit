@@ -73,6 +73,7 @@
 #include "FrameTree.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -84,6 +85,7 @@
 #include "ImageDocument.h"
 #include "InspectorInstrumentation.h"
 #include "LegacyRenderSVGForeignObject.h"
+#include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -290,10 +292,10 @@ void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
 {
     TextStream::GroupScope scope(ts);
-    ts << indent << "ClipRects\n";
-    ts << indent << "  overflow  : " << clipRects.overflowClipRect() << "\n";
-    ts << indent << "  fixed     : " << clipRects.fixedClipRect() << "\n";
-    ts << indent << "  positioned: " << clipRects.posClipRect() << "\n";
+    ts << indent << "ClipRects\n"_s;
+    ts << indent << "  overflow  : "_s << clipRects.overflowClipRect() << '\n';
+    ts << indent << "  fixed     : "_s << clipRects.fixedClipRect() << '\n';
+    ts << indent << "  positioned: "_s << clipRects.posClipRect() << '\n';
 
     return ts;
 }
@@ -406,8 +408,8 @@ RenderLayer::~RenderLayer()
 RenderLayer::PaintedContentRequest::PaintedContentRequest(const RenderLayer& owningLayer)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (owningLayer.page().canDrawHDRContents())
-        makePaintedHDRContentUnknown();
+    if (owningLayer.renderer().document().drawsHDRContent())
+        makeHDRContentUnknown();
 #else
     UNUSED_PARAM(owningLayer);
 #endif
@@ -3580,7 +3582,30 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
     };
 
-    bool shouldPaintContent = hasVisibleContent() && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
+    auto shouldSkipNonFixedTopDocumentContent = [&] {
+        if (!paintingInfo.paintBehavior.contains(PaintBehavior::FixedAndStickyLayersOnly))
+            return false;
+
+        // FIXME: This should also account for stickily-positioned ancestors.
+        if (hasFixedAncestor())
+            return false;
+
+        CheckedRef renderer = this->renderer();
+        if (renderer->isFixedPositioned() || renderer->isStickilyPositioned())
+            return false;
+
+        if (!renderer->document().isTopDocument())
+            return false;
+
+        return true;
+    };
+
+    bool shouldPaintContent = hasVisibleContent()
+        && isSelfPaintingLayer
+        && !isPaintingOverlayScrollbars
+        && !isCollectingEventRegion
+        && !isCollectingAccessibilityRegion
+        && !shouldSkipNonFixedTopDocumentContent();
 
     bool shouldPaintOutline = [&]() {
         if (!isSelfPaintingLayer)
@@ -3666,7 +3691,14 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     RenderObject* subtreePaintRootForRenderer = nullptr;
 
     auto paintBehavior = [&]() {
-        constexpr OptionSet<PaintBehavior> flagsToCopy = { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::ExcludeSelection, PaintBehavior::ExcludeReplacedContent };
+        static constexpr OptionSet flagsToCopy {
+            PaintBehavior::FlattenCompositingLayers,
+            PaintBehavior::Snapshotting,
+            PaintBehavior::ExcludeSelection,
+            PaintBehavior::ExcludeReplacedContentExceptForIFrames,
+            PaintBehavior::ExcludeText,
+            PaintBehavior::FixedAndStickyLayersOnly,
+        };
         OptionSet<PaintBehavior> paintBehavior = paintingInfo.paintBehavior & flagsToCopy;
 
         if (localPaintFlags.contains(PaintLayerFlag::PaintingSkipRootBackground))
@@ -4151,7 +4183,16 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     // FIXME: It's unclear if this flag copying is necessary.
-    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode, PaintBehavior::ExcludeReplacedContent };
+    static constexpr OptionSet flagsToCopy {
+        PaintBehavior::ExcludeSelection,
+        PaintBehavior::Snapshotting,
+        PaintBehavior::DefaultAsynchronousImageDecode,
+        PaintBehavior::CompositedOverflowScrollContent,
+        PaintBehavior::ForceSynchronousImageDecode,
+        PaintBehavior::ExcludeReplacedContentExceptForIFrames,
+        PaintBehavior::ExcludeText,
+        PaintBehavior::FixedAndStickyLayersOnly,
+    };
     localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
 
     if (localPaintingInfo.paintBehavior & PaintBehavior::DontShowVisitedLinks)
@@ -4458,8 +4499,7 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     }
     offset += translationOffset;
 
-    RenderObject* containerRenderer = containerLayer ? &containerLayer->renderer() : nullptr;
-    if (renderer().shouldUseTransformFromContainer(containerRenderer)) {
+    if (renderer().shouldUseTransformFromContainer(containerLayer ? &containerLayer->renderer() : nullptr)) {
         TransformationMatrix containerTransform;
         renderer().getTransformFromContainer(offset, containerTransform);
         transformState->applyTransform(containerTransform, HitTestingTransformState::AccumulateTransform);
@@ -4508,6 +4548,9 @@ void RenderLayer::setSnapshottedScrollOffsetForAnchorPositioning(LayoutSize offs
     // FIXME: Scroll offset should be adjusted in the scrolling tree so layers stay exactly in sync.
     m_snapshottedScrollOffsetForAnchorPositioning = offset;
     updateTransform();
+
+    if (isComposited())
+        setNeedsCompositingGeometryUpdate();
 }
 
 void RenderLayer::clearSnapshottedScrollOffsetForAnchorPositioning()
@@ -4517,6 +4560,9 @@ void RenderLayer::clearSnapshottedScrollOffsetForAnchorPositioning()
 
     m_snapshottedScrollOffsetForAnchorPositioning = { };
     updateTransform();
+
+    if (isComposited())
+        setNeedsCompositingGeometryUpdate();
 }
 
 // hitTestLocation and hitTestRect are relative to rootLayer.
@@ -5775,27 +5821,55 @@ static bool hasVisibleBoxDecorationsOrBackground(const RenderElement& renderer)
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-static bool isReplacedElementWithHDR(const RenderElement& renderer)
+static bool rendererHasHDRContent(const RenderElement& renderer)
 {
     if (CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(renderer)) {
         if (auto* cachedImage = imageRenderer->cachedImage()) {
-            if (cachedImage->isHDR())
+            if (cachedImage->hasHDRContent())
                 return true;
         }
-        return false;
-    }
-
+    } else if (CheckedPtr imageRenderer = dynamicDowncast<LegacyRenderSVGImage>(renderer)) {
+        if (auto* cachedImage = imageRenderer->imageResource().cachedImage()) {
+            if (cachedImage->hasHDRContent())
+                return true;
+        }
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (CheckedPtr canavsRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer)) {
+    } else if (CheckedPtr canavsRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer)) {
         if (auto* renderingContext = canavsRenderer->canvasElement().renderingContext()) {
             if (renderingContext->isHDR())
                 return true;
         }
-        return false;
-    }
 #endif
+    }
 
-    return false;
+    auto styleHasHDRContent = [](const auto* style) {
+        if (!style)
+            return false;
+
+        if (style->hasBackgroundImage()) {
+            if (style->backgroundLayers().hasHDRContent())
+                return true;
+        }
+
+        if (style->hasBorderImage()) {
+            auto image = style->borderImage().image();
+            if (auto* cachedImage = image ? image->cachedImage() : nullptr) {
+                if (cachedImage->hasHDRContent())
+                    return true;
+            }
+        }
+
+        if (auto image = style->listStyleImage()) {
+            if (auto* cachedImage = image->cachedImage()) {
+                if (cachedImage->hasHDRContent())
+                    return true;
+            }
+        }
+
+        return false;
+    };
+
+    return styleHasHDRContent(&renderer.style());
 }
 #endif
 
@@ -5847,8 +5921,8 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
         }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        if (!request.isPaintedHDRContentSatisfied() && isReplacedElementWithHDR(*childElement)) {
-            request.setHasPaintedHDRContent();
+        if (!request.isHDRContentSatisfied() && rendererHasHDRContent(*childElement)) {
+            request.setHasHDRContent();
 
             if (request.isSatisfied())
                 return;
@@ -5868,16 +5942,11 @@ void RenderLayer::determineNonLayerDescendantsPaintedContent(PaintedContentReque
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-bool RenderLayer::isReplacedElementWithHDR() const
+bool RenderLayer::rendererHasHDRContent() const
 {
-    if (auto* imageDocument = dynamicDowncast<ImageDocument>(renderer().document())) {
-        if (RefPtr imageElement = imageDocument->imageElement()) {
-            if (auto* cachedImage = imageElement->cachedImage())
-                return cachedImage->isHDR();
-        }
-        return false;
-    }
-    return WebCore::isReplacedElementWithHDR(renderer());
+    if (auto* imageDocument = dynamicDowncast<ImageDocument>(renderer().document()))
+        return imageDocument->hasHDRContent();
+    return WebCore::rendererHasHDRContent(renderer());
 }
 #endif
 
@@ -6291,14 +6360,19 @@ RenderLayerScrollableArea* RenderLayer::scrollableArea() const
     return m_scrollableArea.get();
 }
 
+CheckedPtr<RenderLayerScrollableArea> RenderLayer::checkedScrollableArea() const
+{
+    return scrollableArea();
+}
+
 #if ENABLE(ASYNC_SCROLLING) && !LOG_DISABLED
 static TextStream& operator<<(TextStream& ts, RenderLayer::EventRegionInvalidationReason reason)
 {
     switch (reason) {
-    case RenderLayer::EventRegionInvalidationReason::Paint: ts << "Paint"; break;
-    case RenderLayer::EventRegionInvalidationReason::SettingDidChange: ts << "SettingDidChange"; break;
-    case RenderLayer::EventRegionInvalidationReason::Style: ts << "Style"; break;
-    case RenderLayer::EventRegionInvalidationReason::NonCompositedFrame: ts << "NonCompositedFrame"; break;
+    case RenderLayer::EventRegionInvalidationReason::Paint: ts << "Paint"_s; break;
+    case RenderLayer::EventRegionInvalidationReason::SettingDidChange: ts << "SettingDidChange"_s; break;
+    case RenderLayer::EventRegionInvalidationReason::Style: ts << "Style"_s; break;
+    case RenderLayer::EventRegionInvalidationReason::NonCompositedFrame: ts << "NonCompositedFrame"_s; break;
     }
     return ts;
 }
@@ -6356,13 +6430,13 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
 TextStream& operator<<(WTF::TextStream& ts, ClipRectsType clipRectsType)
 {
     switch (clipRectsType) {
-    case PaintingClipRects: ts << "painting"; break;
-    case RootRelativeClipRects: ts << "root-relative"; break;
-    case AbsoluteClipRects: ts << "absolute"; break;
-    case TemporaryClipRects: ts << "temporary"; break;
+    case PaintingClipRects: ts << "painting"_s; break;
+    case RootRelativeClipRects: ts << "root-relative"_s; break;
+    case AbsoluteClipRects: ts << "absolute"_s; break;
+    case TemporaryClipRects: ts << "temporary"_s; break;
     case NumCachedClipRectsTypes:
     case AllClipRectTypes:
-        ts << "?";
+        ts << '?';
         break;
     }
     return ts;
@@ -6376,9 +6450,9 @@ TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
 
 TextStream& operator<<(TextStream& ts, const RenderLayer::ClipRectsContext& context)
 {
-    ts.dumpProperty("root layer:", context.rootLayer);
-    ts.dumpProperty("type:", context.clipRectsType);
-    ts.dumpProperty("overflow-clip:", context.respectOverflowClip() ? "respect" : "ignore");
+    ts.dumpProperty("root layer:"_s, context.rootLayer);
+    ts.dumpProperty("type:"_s, context.clipRectsType);
+    ts.dumpProperty("overflow-clip:"_s, context.respectOverflowClip() ? "respect"_s : "ignore"_s);
     
     return ts;
 }
@@ -6386,15 +6460,15 @@ TextStream& operator<<(TextStream& ts, const RenderLayer::ClipRectsContext& cont
 TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
 {
     switch (reason) {
-    case IndirectCompositingReason::None: ts << "none"; break;
-    case IndirectCompositingReason::Clipping: ts << "clipping"; break;
-    case IndirectCompositingReason::Stacking: ts << "stacking"; break;
-    case IndirectCompositingReason::OverflowScrollPositioning: ts << "overflow positioning"; break;
-    case IndirectCompositingReason::Overlap: ts << "overlap"; break;
-    case IndirectCompositingReason::BackgroundLayer: ts << "background layer"; break;
-    case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"; break;
-    case IndirectCompositingReason::Perspective: ts << "perspective"; break;
-    case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"; break;
+    case IndirectCompositingReason::None: ts << "none"_s; break;
+    case IndirectCompositingReason::Clipping: ts << "clipping"_s; break;
+    case IndirectCompositingReason::Stacking: ts << "stacking"_s; break;
+    case IndirectCompositingReason::OverflowScrollPositioning: ts << "overflow positioning"_s; break;
+    case IndirectCompositingReason::Overlap: ts << "overlap"_s; break;
+    case IndirectCompositingReason::BackgroundLayer: ts << "background layer"_s; break;
+    case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"_s; break;
+    case IndirectCompositingReason::Perspective: ts << "perspective"_s; break;
+    case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"_s; break;
     }
 
     return ts;
@@ -6403,27 +6477,29 @@ TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
 TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
 {
     switch (behavior) {
-    case PaintBehavior::Normal: ts << "Normal"; break;
-    case PaintBehavior::SelectionOnly: ts << "SelectionOnly"; break;
-    case PaintBehavior::SkipSelectionHighlight: ts << "SkipSelectionHighlight"; break;
-    case PaintBehavior::ForceBlackText: ts << "ForceBlackText"; break;
-    case PaintBehavior::ForceWhiteText: ts << "ForceWhiteText"; break;
-    case PaintBehavior::ForceBlackBorder: ts << "ForceBlackBorder"; break;
-    case PaintBehavior::RenderingSVGClipOrMask: ts << "RenderingSVGClipOrMask"; break;
-    case PaintBehavior::SkipRootBackground: ts << "SkipRootBackground"; break;
-    case PaintBehavior::RootBackgroundOnly: ts << "RootBackgroundOnly"; break;
-    case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;
-    case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"; break;
-    case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"; break;
-    case PaintBehavior::ForceSynchronousImageDecode: ts << "ForceSynchronousImageDecode"; break;
-    case PaintBehavior::DefaultAsynchronousImageDecode: ts << "DefaultAsynchronousImageDecode"; break;
-    case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
-    case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
-    case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
-    case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
-    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
-    case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"; break;
-    case PaintBehavior::ExcludeReplacedContent: ts << "ExcludeReplacedContent"; break;
+    case PaintBehavior::Normal: ts << "Normal"_s; break;
+    case PaintBehavior::SelectionOnly: ts << "SelectionOnly"_s; break;
+    case PaintBehavior::SkipSelectionHighlight: ts << "SkipSelectionHighlight"_s; break;
+    case PaintBehavior::ForceBlackText: ts << "ForceBlackText"_s; break;
+    case PaintBehavior::ForceWhiteText: ts << "ForceWhiteText"_s; break;
+    case PaintBehavior::ForceBlackBorder: ts << "ForceBlackBorder"_s; break;
+    case PaintBehavior::RenderingSVGClipOrMask: ts << "RenderingSVGClipOrMask"_s; break;
+    case PaintBehavior::SkipRootBackground: ts << "SkipRootBackground"_s; break;
+    case PaintBehavior::RootBackgroundOnly: ts << "RootBackgroundOnly"_s; break;
+    case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"_s; break;
+    case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"_s; break;
+    case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"_s; break;
+    case PaintBehavior::ForceSynchronousImageDecode: ts << "ForceSynchronousImageDecode"_s; break;
+    case PaintBehavior::DefaultAsynchronousImageDecode: ts << "DefaultAsynchronousImageDecode"_s; break;
+    case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"_s; break;
+    case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"_s; break;
+    case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"_s; break;
+    case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"_s; break;
+    case PaintBehavior::Snapshotting: ts << "Snapshotting"_s; break;
+    case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"_s; break;
+    case PaintBehavior::ExcludeReplacedContentExceptForIFrames: ts << "ExcludeReplacedContentExceptForIFrames"_s; break;
+    case PaintBehavior::ExcludeText: ts << "ExcludeText"_s; break;
+    case PaintBehavior::FixedAndStickyLayersOnly: ts << "FixedAndStickyLayersOnly"_s; break;
     }
 
     return ts;
@@ -6432,24 +6508,24 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
 TextStream& operator<<(TextStream& ts, RenderLayer::PaintLayerFlag flag)
 {
     switch (flag) {
-    case RenderLayer::PaintLayerFlag::HaveTransparency: ts << "HaveTransparency"; break;
-    case RenderLayer::PaintLayerFlag::AppliedTransform: ts << "AppliedTransform"; break;
-    case RenderLayer::PaintLayerFlag::TemporaryClipRects: ts << "TemporaryClipRects"; break;
-    case RenderLayer::PaintLayerFlag::PaintingReflection: ts << "PaintingReflection"; break;
-    case RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars: ts << "PaintingOverlayScrollbars"; break;
-    case RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase: ts << "PaintingCompositingBackgroundPhase"; break;
-    case RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase: ts << "PaintingCompositingForegroundPhase"; break;
-    case RenderLayer::PaintLayerFlag::PaintingCompositingMaskPhase: ts << "PaintingCompositingMaskPhase"; break;
-    case RenderLayer::PaintLayerFlag::PaintingCompositingClipPathPhase: ts << "PaintingCompositingClipPathPhase"; break;
-    case RenderLayer::PaintLayerFlag::PaintingOverflowContainer: ts << "PaintingOverflowContainer"; break;
-    case RenderLayer::PaintLayerFlag::PaintingOverflowContents: ts << "PaintingOverflowContents"; break;
-    case RenderLayer::PaintLayerFlag::PaintingOverflowContentsRoot: ts << "PaintingOverflowContentsRoot"; break;
-    case RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly: ts << "PaintingRootBackgroundOnly"; break;
-    case RenderLayer::PaintLayerFlag::PaintingSkipRootBackground: ts << "PaintingSkipRootBackground"; break;
-    case RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase: ts << "PaintingChildClippingMaskPhase"; break;
-    case RenderLayer::PaintLayerFlag::PaintingSVGClippingMask: ts << "PaintingSVGClippingMask"; break;
-    case RenderLayer::PaintLayerFlag::CollectingEventRegion: ts << "CollectingEventRegion"; break;
-    case RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition: ts << "PaintingSkipDescendantViewTransition"; break;
+    case RenderLayer::PaintLayerFlag::HaveTransparency: ts << "HaveTransparency"_s; break;
+    case RenderLayer::PaintLayerFlag::AppliedTransform: ts << "AppliedTransform"_s; break;
+    case RenderLayer::PaintLayerFlag::TemporaryClipRects: ts << "TemporaryClipRects"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingReflection: ts << "PaintingReflection"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars: ts << "PaintingOverlayScrollbars"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase: ts << "PaintingCompositingBackgroundPhase"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase: ts << "PaintingCompositingForegroundPhase"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingMaskPhase: ts << "PaintingCompositingMaskPhase"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingClipPathPhase: ts << "PaintingCompositingClipPathPhase"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContainer: ts << "PaintingOverflowContainer"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContents: ts << "PaintingOverflowContents"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContentsRoot: ts << "PaintingOverflowContentsRoot"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly: ts << "PaintingRootBackgroundOnly"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingSkipRootBackground: ts << "PaintingSkipRootBackground"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase: ts << "PaintingChildClippingMaskPhase"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingSVGClippingMask: ts << "PaintingSVGClippingMask"_s; break;
+    case RenderLayer::PaintLayerFlag::CollectingEventRegion: ts << "CollectingEventRegion"_s; break;
+    case RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition: ts << "PaintingSkipDescendantViewTransition"_s; break;
     }
 
     return ts;

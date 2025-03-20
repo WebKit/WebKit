@@ -186,7 +186,7 @@
 			filePatterns = "*.appex";
 			fileType = pattern.proxy;
 			inputFiles = (
-				"$(SRCROOT)/Scripts/install-extensions-rule.sh",
+				"$(SRCROOT)/../TestRunnerShared/Scripts/install-extensions-rule.sh",
 			);
 			isEditable = 1;
 			outputFiles = (

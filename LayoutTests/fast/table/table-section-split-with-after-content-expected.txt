@@ -10,5 +10,3 @@ layer at (0,0) size 800x16
         RenderTable at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow (anonymous) at (0,0) size 0x0
-              RenderTableCell (anonymous) at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,0) size 0x0

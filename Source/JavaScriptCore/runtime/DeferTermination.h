@@ -26,6 +26,7 @@
 #pragma once
 
 #include "VM.h"
+#include "VMTrapsInlines.h"
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 

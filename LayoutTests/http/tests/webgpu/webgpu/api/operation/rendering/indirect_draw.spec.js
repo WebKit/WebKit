@@ -7,14 +7,14 @@ import {
   kDrawIndirectParametersSize,
   kDrawIndexedIndirectParametersSize } from
 '../../../capability_info.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 
 const filled = new Uint8Array([0, 255, 0, 255]);
 const notFilled = new Uint8Array([0, 0, 0, 0]);
 
 const kRenderTargetFormat = 'rgba8unorm';
 
-class F extends GPUTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   MakeIndexBuffer() {
     return this.makeBufferWithContents(
       new Uint32Array([
@@ -204,7 +204,7 @@ fn((t) => {
     }
   });
 
-  const renderTarget = t.device.createTexture({
+  const renderTarget = t.createTextureTracked({
     size: [4, 4],
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     format: kRenderTargetFormat

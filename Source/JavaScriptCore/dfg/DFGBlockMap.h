@@ -35,7 +35,7 @@ class Graph;
 
 template<typename T>
 class BlockMap {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(BlockMap);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(BlockMap);
 public:
     BlockMap()
     {
@@ -102,7 +102,7 @@ private:
     Vector<T> m_vector;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, BlockMap<T>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename T>, BlockMap<T>);
 
 } } // namespace JSC::DFG
 

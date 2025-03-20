@@ -176,10 +176,14 @@ PASS CSSRule interface: constant MARGIN_RULE on interface object
 PASS CSSRule interface: constant MARGIN_RULE on interface prototype object
 PASS CSSRule interface: constant NAMESPACE_RULE on interface object
 PASS CSSRule interface: constant NAMESPACE_RULE on interface prototype object
-PASS CSSStyleRule interface: existence and properties of interface object
+FAIL CSSStyleRule interface: existence and properties of interface object assert_equals: prototype of CSSStyleRule is not CSSGroupingRule expected function "function CSSGroupingRule() {
+    [native code]
+}" but got function "function CSSRule() {
+    [native code]
+}"
 PASS CSSStyleRule interface object length
 PASS CSSStyleRule interface object name
-PASS CSSStyleRule interface: existence and properties of interface prototype object
+FAIL CSSStyleRule interface: existence and properties of interface prototype object assert_equals: prototype of CSSStyleRule.prototype is not CSSGroupingRule.prototype expected object "[object CSSGroupingRule]" but got object "[object CSSRule]"
 PASS CSSStyleRule interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSStyleRule interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSStyleRule interface: attribute selectorText
@@ -188,6 +192,11 @@ PASS CSSStyleRule must be primary interface of sheet.cssRules[4]
 PASS Stringification of sheet.cssRules[4]
 PASS CSSStyleRule interface: sheet.cssRules[4] must inherit property "selectorText" with the proper type
 PASS CSSStyleRule interface: sheet.cssRules[4] must inherit property "style" with the proper type
+PASS CSSGroupingRule interface: sheet.cssRules[4] must inherit property "cssRules" with the proper type
+PASS CSSGroupingRule interface: sheet.cssRules[4] must inherit property "insertRule(CSSOMString, optional unsigned long)" with the proper type
+PASS CSSGroupingRule interface: calling insertRule(CSSOMString, optional unsigned long) on sheet.cssRules[4] with too few arguments must throw TypeError
+PASS CSSGroupingRule interface: sheet.cssRules[4] must inherit property "deleteRule(unsigned long)" with the proper type
+PASS CSSGroupingRule interface: calling deleteRule(unsigned long) on sheet.cssRules[4] with too few arguments must throw TypeError
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "cssText" with the proper type
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "parentRule" with the proper type
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "parentStyleSheet" with the proper type
@@ -209,11 +218,15 @@ PASS CSSImportRule interface: existence and properties of interface prototype ob
 PASS CSSImportRule interface: attribute href
 PASS CSSImportRule interface: attribute media
 PASS CSSImportRule interface: attribute styleSheet
+PASS CSSImportRule interface: attribute layerName
+PASS CSSImportRule interface: attribute supportsText
 PASS CSSImportRule must be primary interface of sheet.cssRules[0]
 PASS Stringification of sheet.cssRules[0]
 PASS CSSImportRule interface: sheet.cssRules[0] must inherit property "href" with the proper type
 PASS CSSImportRule interface: sheet.cssRules[0] must inherit property "media" with the proper type
 PASS CSSImportRule interface: sheet.cssRules[0] must inherit property "styleSheet" with the proper type
+FAIL CSSImportRule interface: sheet.cssRules[0] must inherit property "layerName" with the proper type assert_equals: expected "string" but got "object"
+FAIL CSSImportRule interface: sheet.cssRules[0] must inherit property "supportsText" with the proper type assert_equals: expected "string" but got "object"
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "cssText" with the proper type
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "parentRule" with the proper type
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "parentStyleSheet" with the proper type
@@ -235,10 +248,34 @@ PASS CSSGroupingRule interface: existence and properties of interface prototype 
 PASS CSSGroupingRule interface: attribute cssRules
 PASS CSSGroupingRule interface: operation insertRule(CSSOMString, optional unsigned long)
 PASS CSSGroupingRule interface: operation deleteRule(unsigned long)
-PASS CSSPageRule interface: existence and properties of interface object
+FAIL CSSPageDescriptors interface: existence and properties of interface object assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface object length assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface object name assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute margin assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute marginTop assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute marginRight assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute marginBottom assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute marginLeft assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute margin-top assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute margin-right assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute margin-bottom assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute margin-left assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute size assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute pageOrientation assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute page-orientation assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute marks assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageDescriptors interface: attribute bleed assert_own_property: self does not have own property "CSSPageDescriptors" expected property "CSSPageDescriptors" missing
+FAIL CSSPageRule interface: existence and properties of interface object assert_equals: prototype of CSSPageRule is not CSSGroupingRule expected function "function CSSGroupingRule() {
+    [native code]
+}" but got function "function CSSRule() {
+    [native code]
+}"
 PASS CSSPageRule interface object length
 PASS CSSPageRule interface object name
-PASS CSSPageRule interface: existence and properties of interface prototype object
+FAIL CSSPageRule interface: existence and properties of interface prototype object assert_equals: prototype of CSSPageRule.prototype is not CSSGroupingRule.prototype expected object "[object CSSGroupingRule]" but got object "[object CSSRule]"
 PASS CSSPageRule interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSPageRule interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSPageRule interface: attribute selectorText
@@ -247,11 +284,11 @@ PASS CSSPageRule must be primary interface of sheet.cssRules[2]
 PASS Stringification of sheet.cssRules[2]
 PASS CSSPageRule interface: sheet.cssRules[2] must inherit property "selectorText" with the proper type
 PASS CSSPageRule interface: sheet.cssRules[2] must inherit property "style" with the proper type
-PASS CSSGroupingRule interface: sheet.cssRules[2] must inherit property "cssRules" with the proper type
-PASS CSSGroupingRule interface: sheet.cssRules[2] must inherit property "insertRule(CSSOMString, optional unsigned long)" with the proper type
-PASS CSSGroupingRule interface: calling insertRule(CSSOMString, optional unsigned long) on sheet.cssRules[2] with too few arguments must throw TypeError
-PASS CSSGroupingRule interface: sheet.cssRules[2] must inherit property "deleteRule(unsigned long)" with the proper type
-PASS CSSGroupingRule interface: calling deleteRule(unsigned long) on sheet.cssRules[2] with too few arguments must throw TypeError
+FAIL CSSGroupingRule interface: sheet.cssRules[2] must inherit property "cssRules" with the proper type assert_inherits: property "cssRules" not found in prototype chain
+FAIL CSSGroupingRule interface: sheet.cssRules[2] must inherit property "insertRule(CSSOMString, optional unsigned long)" with the proper type assert_inherits: property "insertRule" not found in prototype chain
+FAIL CSSGroupingRule interface: calling insertRule(CSSOMString, optional unsigned long) on sheet.cssRules[2] with too few arguments must throw TypeError assert_inherits: property "insertRule" not found in prototype chain
+FAIL CSSGroupingRule interface: sheet.cssRules[2] must inherit property "deleteRule(unsigned long)" with the proper type assert_inherits: property "deleteRule" not found in prototype chain
+FAIL CSSGroupingRule interface: calling deleteRule(unsigned long) on sheet.cssRules[2] with too few arguments must throw TypeError assert_inherits: property "deleteRule" not found in prototype chain
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "cssText" with the proper type
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "parentRule" with the proper type
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "parentStyleSheet" with the proper type
@@ -272,22 +309,22 @@ FAIL CSSMarginRule interface: existence and properties of interface prototype ob
 FAIL CSSMarginRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
 FAIL CSSMarginRule interface: attribute name assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
 FAIL CSSMarginRule interface: attribute style assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
-FAIL CSSMarginRule must be primary interface of sheet.cssRules[2].cssRules[0] assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of sheet.cssRules[2].cssRules[0] assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSMarginRule interface: sheet.cssRules[2].cssRules[0] must inherit property "name" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSMarginRule interface: sheet.cssRules[2].cssRules[0] must inherit property "style" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "cssText" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "parentRule" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "parentStyleSheet" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "type" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "STYLE_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "CHARSET_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "IMPORT_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "MEDIA_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "FONT_FACE_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "PAGE_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "MARGIN_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "NAMESPACE_RULE" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSMarginRule must be primary interface of sheet.cssRules[2].cssRules[0] assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL Stringification of sheet.cssRules[2].cssRules[0] assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSMarginRule interface: sheet.cssRules[2].cssRules[0] must inherit property "name" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSMarginRule interface: sheet.cssRules[2].cssRules[0] must inherit property "style" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "cssText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "parentRule" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "parentStyleSheet" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "STYLE_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "CHARSET_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "IMPORT_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "MEDIA_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "FONT_FACE_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "PAGE_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "MARGIN_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSRule interface: sheet.cssRules[2].cssRules[0] must inherit property "NAMESPACE_RULE" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
 PASS CSSNamespaceRule interface: existence and properties of interface object
 PASS CSSNamespaceRule interface object length
 PASS CSSNamespaceRule interface object name
@@ -326,9 +363,16 @@ PASS CSSStyleDeclaration interface: operation getPropertyPriority(CSSOMString)
 PASS CSSStyleDeclaration interface: operation setProperty(CSSOMString, CSSOMString, optional CSSOMString)
 PASS CSSStyleDeclaration interface: operation removeProperty(CSSOMString)
 PASS CSSStyleDeclaration interface: attribute parentRule
-PASS CSSStyleDeclaration interface: attribute cssFloat
-PASS CSSStyleDeclaration must be primary interface of sheet.cssRules[4].style
+PASS CSSStyleProperties interface: existence and properties of interface object
+PASS CSSStyleProperties interface object length
+PASS CSSStyleProperties interface object name
+PASS CSSStyleProperties interface: existence and properties of interface prototype object
+PASS CSSStyleProperties interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSStyleProperties interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSStyleProperties interface: attribute cssFloat
+PASS CSSStyleProperties must be primary interface of sheet.cssRules[4].style
 PASS Stringification of sheet.cssRules[4].style
+PASS CSSStyleProperties interface: sheet.cssRules[4].style must inherit property "cssFloat" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "cssText" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "length" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "item(unsigned long)" with the proper type
@@ -342,9 +386,9 @@ PASS CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString
 PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "removeProperty(CSSOMString)" with the proper type
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on sheet.cssRules[4].style with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "parentRule" with the proper type
-PASS CSSStyleDeclaration interface: sheet.cssRules[4].style must inherit property "cssFloat" with the proper type
-PASS CSSStyleDeclaration must be primary interface of sheet.cssRules[2].style
+PASS CSSStyleProperties must be primary interface of sheet.cssRules[2].style
 PASS Stringification of sheet.cssRules[2].style
+PASS CSSStyleProperties interface: sheet.cssRules[2].style must inherit property "cssFloat" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "cssText" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "length" with the proper type
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "item(unsigned long)" with the proper type
@@ -358,25 +402,25 @@ PASS CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "removeProperty(CSSOMString)" with the proper type
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on sheet.cssRules[2].style with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "parentRule" with the proper type
-PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "cssFloat" with the proper type
-FAIL CSSStyleDeclaration must be primary interface of sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL Stringification of sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "cssText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "item(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: calling item(unsigned long) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "getPropertyValue(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: calling getPropertyValue(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "getPropertyPriority(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: calling getPropertyPriority(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "setProperty(CSSOMString, CSSOMString, optional CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString, optional CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "removeProperty(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "parentRule" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "cssFloat" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0].style')"
-PASS CSSStyleDeclaration must be primary interface of style_element.style
+FAIL CSSStyleProperties must be primary interface of sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL Stringification of sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleProperties interface: sheet.cssRules[2].cssRules[0].style must inherit property "cssFloat" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "cssText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "item(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: calling item(unsigned long) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "getPropertyValue(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: calling getPropertyValue(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "getPropertyPriority(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: calling getPropertyPriority(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "setProperty(CSSOMString, CSSOMString, optional CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString, optional CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "removeProperty(CSSOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on sheet.cssRules[2].cssRules[0].style with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+FAIL CSSStyleDeclaration interface: sheet.cssRules[2].cssRules[0].style must inherit property "parentRule" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'sheet.cssRules[2].cssRules[0]')"
+PASS CSSStyleProperties must be primary interface of style_element.style
 PASS Stringification of style_element.style
+PASS CSSStyleProperties interface: style_element.style must inherit property "cssFloat" with the proper type
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "cssText" with the proper type
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "length" with the proper type
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "item(unsigned long)" with the proper type
@@ -390,9 +434,9 @@ PASS CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "removeProperty(CSSOMString)" with the proper type
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on style_element.style with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "parentRule" with the proper type
-PASS CSSStyleDeclaration interface: style_element.style must inherit property "cssFloat" with the proper type
-PASS CSSStyleDeclaration must be primary interface of svg_element.style
+PASS CSSStyleProperties must be primary interface of svg_element.style
 PASS Stringification of svg_element.style
+PASS CSSStyleProperties interface: svg_element.style must inherit property "cssFloat" with the proper type
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "cssText" with the proper type
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "length" with the proper type
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "item(unsigned long)" with the proper type
@@ -406,9 +450,9 @@ PASS CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "removeProperty(CSSOMString)" with the proper type
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on svg_element.style with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "parentRule" with the proper type
-PASS CSSStyleDeclaration interface: svg_element.style must inherit property "cssFloat" with the proper type
-PASS CSSStyleDeclaration must be primary interface of getComputedStyle(svg_element)
+PASS CSSStyleProperties must be primary interface of getComputedStyle(svg_element)
 PASS Stringification of getComputedStyle(svg_element)
+PASS CSSStyleProperties interface: getComputedStyle(svg_element) must inherit property "cssFloat" with the proper type
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssText" with the proper type
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "length" with the proper type
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "item(unsigned long)" with the proper type
@@ -422,7 +466,6 @@ PASS CSSStyleDeclaration interface: calling setProperty(CSSOMString, CSSOMString
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "removeProperty(CSSOMString)" with the proper type
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on getComputedStyle(svg_element) with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "parentRule" with the proper type
-PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssFloat" with the proper type
 PASS CSS namespace: extended attributes
 PASS CSS namespace: property descriptor
 PASS CSS namespace: [[Extensible]] is true

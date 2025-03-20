@@ -163,6 +163,7 @@ typedef void (*WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5)(WKPageRe
 typedef bool (*WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef bool (*WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageAddMessageToConsoleCallback)(WKPageRef page, WKStringRef message, const void* clientInfo);
 
 typedef struct WKPageUIClientBase {
     int                                                                 version;
@@ -1939,6 +1940,8 @@ typedef struct WKPageUIClientV19 {
     // Version 18.
     WKLockScreenOrientationCallback                                     lockScreenOrientation;
     WKUnlockScreenOrientationCallback                                   unlockScreenOrientation;
+
+    WKPageAddMessageToConsoleCallback addMessageToConsole;
 } WKPageUIClientV19;
 
 #ifdef __cplusplus

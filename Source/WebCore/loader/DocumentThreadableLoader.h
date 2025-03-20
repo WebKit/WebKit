@@ -95,7 +95,7 @@ class CachedRawResource;
         void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
-        void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer&);
+        void didReceiveData(const SharedBuffer&);
         void didFinishLoading(std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&);
         void didFail(std::optional<ResourceLoaderIdentifier>, const ResourceError&);
         void makeCrossOriginAccessRequest(ResourceRequest&&);

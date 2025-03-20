@@ -71,9 +71,9 @@ CGFloat UnrealizedCoreTextFont::getSize() const
 UnrealizedCoreTextFont::operator bool() const
 {
     return WTF::switchOn(m_baseFont, [](const RetainPtr<CTFontRef>& font) -> bool {
-        return font;
+        return !!font;
     }, [](const RetainPtr<CTFontDescriptorRef>& fontDescriptor) -> bool {
-        return fontDescriptor;
+        return !!fontDescriptor;
     });
 }
 

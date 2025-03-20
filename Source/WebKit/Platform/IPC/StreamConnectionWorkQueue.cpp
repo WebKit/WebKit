@@ -99,7 +99,7 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(NOESCAPE WTF::Function<
     }
     if (!processingThread)
         return;
-    ASSERT(Thread::current().uid() != processingThread->uid());
+    ASSERT(Thread::currentSingleton().uid() != processingThread->uid());
     wakeUp();
     processingThread->waitForCompletion();
     {
@@ -163,7 +163,7 @@ void StreamConnectionWorkQueue::processStreams()
 bool StreamConnectionWorkQueue::isCurrent() const
 {
     Locker locker { m_lock };
-    return m_processingThread ? m_processingThread->uid() == Thread::current().uid() : false;
+    return m_processingThread ? m_processingThread->uid() == Thread::currentSingleton().uid() : false;
 }
 
 }

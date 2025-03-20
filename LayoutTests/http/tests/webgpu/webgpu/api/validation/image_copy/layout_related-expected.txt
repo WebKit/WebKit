@@ -24,7 +24,91 @@ PASS :required_bytes_in_copy:method="WriteTexture";format="r8uint";dimension="1d
 PASS :required_bytes_in_copy:method="WriteTexture";format="r8uint";dimension="2d"
 PASS :required_bytes_in_copy:method="WriteTexture";format="r8uint";dimension="3d"
 PASS :required_bytes_in_copy:method="WriteTexture";format="r8sint";dimension="1d"
-PASS :required_bytes_in_copy:method="WriteTexture";format="r8sint";dimension="2d"
+FAIL :required_bytes_in_copy:method="WriteTexture";format="r8sint";dimension="2d" assert_unreached:
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=0;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=0;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=0;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=0;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=3;offset=11
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=256;copyHeightInBlocks=3;copyDepth=2;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=0;offset=13
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=1;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=1;copyDepth=5;offset=15
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=7;copyHeightInBlocks=1;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=3;offset=11
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=256;copyHeightInBlocks=3;copyDepth=2;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=3;copyHeightInBlocks=0;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=0;offset=13
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=1;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=3;copyHeightInBlocks=1;copyDepth=5;offset=15
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=0;rowsPerImagePaddingInBlocks=6;copyWidthInBlocks=7;copyHeightInBlocks=1;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=3;offset=11
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=256;copyHeightInBlocks=3;copyDepth=2;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=0;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=0;offset=13
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=1;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=3;copyHeightInBlocks=1;copyDepth=5;offset=15
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=6;rowsPerImagePaddingInBlocks=0;copyWidthInBlocks=7;copyHeightInBlocks=1;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=3;offset=11
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=256;copyHeightInBlocks=3;copyDepth=2;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=0;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=3;copyHeightInBlocks=0;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=3;copyHeightInBlocks=4;copyDepth=0;offset=13
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=1;copyHeightInBlocks=4;copyDepth=5;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=3;copyHeightInBlocks=1;copyDepth=5;offset=15
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=5;copyHeightInBlocks=4;copyDepth=1;offset=0
+    OK
+  - INFO: subcase: bytesPerRowPadding=15;rowsPerImagePaddingInBlocks=17;copyWidthInBlocks=7;copyHeightInBlocks=1;copyDepth=1;offset=0
+    OK
+  - EXCEPTION: Error: Device was unexpectedly lost. Reason: unknown, Message:
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:106:13
+ Reached unreachable code
 PASS :required_bytes_in_copy:method="WriteTexture";format="r8sint";dimension="3d"
 PASS :required_bytes_in_copy:method="WriteTexture";format="rg8unorm";dimension="1d"
 PASS :required_bytes_in_copy:method="WriteTexture";format="rg8unorm";dimension="2d"

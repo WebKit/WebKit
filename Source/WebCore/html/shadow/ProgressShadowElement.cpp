@@ -59,8 +59,9 @@ HTMLProgressElement* ProgressShadowElement::progressElement() const
 
 bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
-    RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style().hasUsedAppearance() && HTMLDivElement::rendererIsNeeded(style);
+    if (CheckedPtr progressRenderer = progressElement()->renderer())
+        return !progressRenderer->style().hasUsedAppearance() && HTMLDivElement::rendererIsNeeded(style);
+    return false;
 }
 
 ProgressInnerElement::ProgressInnerElement(Document& document)

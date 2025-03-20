@@ -76,7 +76,8 @@ MediaDevices::~MediaDevices() = default;
 void MediaDevices::stop()
 {
     if (m_deviceChangeToken) {
-        auto* controller = UserMediaController::from(document()->page());
+        RefPtr document = this->document();
+        auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
         if (controller)
             controller->removeDeviceChangeObserver(*m_deviceChangeToken);
     }
@@ -111,7 +112,7 @@ static MediaConstraints createMediaConstraints(const std::variant<bool, MediaTra
 
 bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestType)
 {
-    auto* currentGestureToken = UserGestureIndicator::currentUserGesture().get();
+    RefPtr currentGestureToken = UserGestureIndicator::currentUserGesture().get();
     if (m_currentGestureToken.get() != currentGestureToken) {
         m_currentGestureToken = currentGestureToken;
         m_requestTypesForCurrentGesture = { };
@@ -140,7 +141,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
 
 #if USE(AUDIO_SESSION)
     if (audioConstraints.isValid) {
-        auto categoryOverride = AudioSession::sharedSession().categoryOverride();
+        auto categoryOverride = AudioSession::protectedSharedSession()->categoryOverride();
         if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
             promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
             return;
@@ -380,7 +381,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
     if (!document)
         return;
 
-    auto* controller = UserMediaController::from(document->page());
+    auto* controller = UserMediaController::from(document->protectedPage().get());
     if (!controller) {
         promise.resolve({ });
         return;
@@ -392,10 +393,12 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         return;
     }
 
-    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
-        if (!weakThis)
+    controller->enumerateMediaDevices(*document, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)](Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        exposeDevices(WTFMove(newDevices), WTFMove(deviceIDHashSalts), WTFMove(promise));
+
+        protectedThis->exposeDevices(WTFMove(newDevices), WTFMove(deviceIDHashSalts), WTFMove(promise));
     });
 }
 
@@ -410,7 +413,7 @@ void MediaDevices::scheduledEventTimerFired()
     if (!document)
         return;
 
-    document->whenVisible([protectedThis = makePendingActivity(*this), this] {
+    document->whenVisible([activity = makePendingActivity(*this), this, protectedThis = Ref { *this }] {
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
@@ -423,7 +426,7 @@ bool MediaDevices::virtualHasPendingActivity() const
 void MediaDevices::listenForDeviceChanges()
 {
     RefPtr document = this->document();
-    auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
+    auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
     if (!controller)
         return;
 
@@ -435,11 +438,12 @@ void MediaDevices::listenForDeviceChanges()
 
     m_listeningForDeviceChanges = true;
 
-    m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = WeakPtr { *this }, this]() {
-        if (!weakThis || isContextStopped() || m_scheduledEventTimer.isActive())
+    m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = WeakPtr { *this }]() {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->isContextStopped() || protectedThis->m_scheduledEventTimer.isActive())
             return;
 
-        m_scheduledEventTimer.startOneShot(Seconds(cryptographicallyRandomUnitInterval() / 2));
+        protectedThis->m_scheduledEventTimer.startOneShot(Seconds(cryptographicallyRandomUnitInterval() / 2));
     });
 }
 

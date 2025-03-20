@@ -40,6 +40,18 @@ class BackendDispatcher;
 
 typedef String ErrorString;
 
+template<typename T>
+using CommandResult = Inspector::Protocol::ErrorStringOr<T>;
+
+template <typename T>
+using CommandCallback = Function<void(CommandResult<T>)>;
+
+template <typename... ArgTypes>
+using CommandResultOf = Inspector::Protocol::ErrorStringOr<std::tuple<ArgTypes...>>;
+
+template <typename... ArgTypes>
+using CommandCallbackOf = Function<void(CommandResultOf<ArgTypes...>)>;
+
 class SupplementalBackendDispatcher : public RefCounted<SupplementalBackendDispatcher> {
 public:
     JS_EXPORT_PRIVATE SupplementalBackendDispatcher(BackendDispatcher&);

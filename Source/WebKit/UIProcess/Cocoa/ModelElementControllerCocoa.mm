@@ -65,7 +65,7 @@ namespace WebKit {
 WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->preferences().modelElementEnabled())
+    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled())
         return nil;
 
     auto* proxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy->drawingArea());
@@ -155,7 +155,7 @@ void ModelElementController::setInteractionEnabledForModelElement(ModelIdentifie
 ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->preferences().modelElementEnabled())
+    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled())
         return nullptr;
 
     return m_inlinePreviews.get(modelIdentifier.uuid).get();
@@ -164,7 +164,7 @@ ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdenti
 void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&& completionHandler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->preferences().modelElementEnabled()) {
+    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled()) {
         completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Model element disabled"_s }));
         return;
     }
@@ -213,7 +213,7 @@ void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCor
 void ModelElementController::modelElementLoadRemotePreview(String uuid, URL fileURL, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&& completionHandler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->preferences().modelElementEnabled()) {
+    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled()) {
         completionHandler(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Model element disabled"_s });
         return;
     }

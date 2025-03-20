@@ -31,7 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +45,7 @@ namespace WebCore {
 
 class MediaSelectionGroupAVFObjC;
 
-class MediaSelectionOptionAVFObjC : public RefCounted<MediaSelectionOptionAVFObjC> {
+class MediaSelectionOptionAVFObjC : public RefCountedAndCanMakeWeakPtr<MediaSelectionOptionAVFObjC> {
 public:
     static Ref<MediaSelectionOptionAVFObjC> create(MediaSelectionGroupAVFObjC&, AVMediaSelectionOption *);
 
@@ -56,6 +56,7 @@ public:
 
     AVMediaSelectionOption *avMediaSelectionOption() const { return m_mediaSelectionOption.get(); }
     AVAssetTrack *assetTrack() const;
+    AVPlayerItem *playerItem() const;
 
 private:
     friend class MediaSelectionGroupAVFObjC;
@@ -63,17 +64,17 @@ private:
 
     void clearGroup() { m_group = nullptr; }
 
-    MediaSelectionGroupAVFObjC* m_group;
+    WeakPtr<MediaSelectionGroupAVFObjC> m_group;
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };
 
-class MediaSelectionGroupAVFObjC : public RefCounted<MediaSelectionGroupAVFObjC> {
+class MediaSelectionGroupAVFObjC : public RefCountedAndCanMakeWeakPtr<MediaSelectionGroupAVFObjC> {
 public:
     static Ref<MediaSelectionGroupAVFObjC> create(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
     ~MediaSelectionGroupAVFObjC();
 
     void setSelectedOption(MediaSelectionOptionAVFObjC*);
-    MediaSelectionOptionAVFObjC* selectedOption() const { return m_selectedOption; }
+    MediaSelectionOptionAVFObjC* selectedOption() const { return m_selectedOption.get(); }
 
     void updateOptions(const Vector<String>& characteristics);
 
@@ -81,6 +82,7 @@ public:
     typename OptionContainer::ValuesIteratorRange options() { return m_options.values(); }
 
     AVMediaSelectionGroup *avMediaSelectionGroup() const { return m_mediaSelectionGroup.get(); }
+    AVPlayerItem *playerItem() const { return m_playerItem.get(); }
 
 private:
     MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
@@ -90,7 +92,7 @@ private:
     RetainPtr<AVPlayerItem> m_playerItem;
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     OptionContainer m_options;
-    MediaSelectionOptionAVFObjC* m_selectedOption { nullptr };
+    WeakPtr<MediaSelectionOptionAVFObjC> m_selectedOption;
     Timer m_selectionTimer;
     bool m_shouldSelectOptionAutomatically { true };
 };

@@ -1,10 +1,12 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { assert, memcpy } from '../../../common/util/util.js';import { kTextureFormatInfo,
-resolvePerAspectFormat } from
+**/import { assert, memcpy } from '../../../common/util/util.js';import { resolvePerAspectFormat,
 
 
+getBlockInfoForTextureFormat,
+getBlockInfoForEncodableTextureFormat } from
 '../../format_info.js';
+
 import { align } from '../math.js';
 import { reifyExtent3D } from '../unions.js';
 
@@ -97,7 +99,7 @@ copySize,
 } = {})
 {
   format = resolvePerAspectFormat(format, aspect);
-  const { blockWidth, blockHeight, bytesPerBlock } = kTextureFormatInfo[format];
+  const { blockWidth, blockHeight, bytesPerBlock } = getBlockInfoForTextureFormat(format);
   assert(bytesPerBlock !== undefined);
 
   const copySize_ = reifyExtent3D(copySize);
@@ -160,7 +162,7 @@ outputBuffer,
 size,
 options = kDefaultLayoutOptions)
 {
-  const { blockWidth, blockHeight, bytesPerBlock } = kTextureFormatInfo[format];
+  const { blockWidth, blockHeight, bytesPerBlock } = getBlockInfoForEncodableTextureFormat(format);
   // Block formats are not handled correctly below.
   assert(blockWidth === 1);
   assert(blockHeight === 1);
@@ -195,8 +197,8 @@ options = kDefaultLayoutOptions)
  * texture where every texel has the byte value `texelValue`.
  */
 export function createTextureUploadBuffer(
+t,
 texelValue,
-device,
 format,
 dimension,
 size,
@@ -213,7 +215,7 @@ options = kDefaultLayoutOptions)
     options
   );
 
-  const buffer = device.createBuffer({
+  const buffer = t.createBufferTracked({
     mappedAtCreation: true,
     size: byteLength,
     usage: GPUBufferUsage.COPY_SRC
@@ -242,7 +244,8 @@ export const kImageCopyTypes = [
  * Computes `bytesInACompleteRow` (as defined by the WebGPU spec) for image copies (B2T/T2B/writeTexture).
  */
 export function bytesInACompleteRow(copyWidth, format) {
-  const info = kTextureFormatInfo[format];
+  const info = getBlockInfoForTextureFormat(format);
+  assert(!!info.bytesPerBlock);
   assert(copyWidth % info.blockWidth === 0);
   return info.bytesPerBlock * copyWidth / info.blockWidth;
 }
@@ -319,7 +322,8 @@ export function dataBytesForCopyOrOverestimate({
 }) {
   const copyExtent = reifyExtent3D(copySize_);
 
-  const info = kTextureFormatInfo[format];
+  const info = getBlockInfoForTextureFormat(format);
+  assert(!!info.bytesPerBlock);
   assert(copyExtent.width % info.blockWidth === 0);
   assert(copyExtent.height % info.blockHeight === 0);
   const sizeInBlocks = {

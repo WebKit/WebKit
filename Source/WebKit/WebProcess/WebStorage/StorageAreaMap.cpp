@@ -255,7 +255,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageArea
         return;
 
     StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, *page, m_securityOrigin, urlString, [storageAreaImplID](auto& storage) {
-        return static_cast<StorageAreaImpl&>(storage.area()).identifier() == storageAreaImplID;
+        return downcast<StorageAreaImpl>(storage.area()).identifier() == storageAreaImplID;
     });
 }
 
@@ -264,7 +264,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaIm
     ASSERT(isLocalStorage(type()));
 
     StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, nullptr, m_securityOrigin, urlString, [storageAreaImplID](auto& storage) {
-        return static_cast<StorageAreaImpl&>(storage.area()).identifier() == storageAreaImplID;
+        return downcast<StorageAreaImpl>(storage.area()).identifier() == storageAreaImplID;
     });
 }
 
@@ -303,9 +303,9 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
         return;
     }
 
-    auto completionHandler = [this, weakThis = WeakPtr { *this }](auto remoteAreaIdentifier, auto items, auto messageIdentifier) mutable {
-        if (weakThis)
-            return didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
+    auto completionHandler = [weakThis = WeakPtr { *this }](auto remoteAreaIdentifier, auto items, auto messageIdentifier) mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
     };
 
     ipcConnection->sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToStorageArea(type, identifier(), namespaceIdentifier, origin), WTFMove(completionHandler));

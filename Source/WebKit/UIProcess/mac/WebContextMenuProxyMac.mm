@@ -150,7 +150,8 @@
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    if (!_menuProxy)
+    RefPtr menuProxy = _menuProxy.get();
+    if (!menuProxy)
         return;
 
     id representedObject = [sender representedObject];
@@ -166,10 +167,10 @@
     WebKit::WebContextMenuItemData item(WebCore::ContextMenuItemType::Action, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
     if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
-        item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
+        item.setUserData(RefPtr { [static_cast<WKUserDataWrapper *>(representedObject) userData] }.get());
     }
 
-    _menuProxy->contextMenuItemSelected(item);
+    menuProxy->contextMenuItemSelected(item);
 }
 
 #if ENABLE(WRITING_TOOLS)
@@ -186,10 +187,8 @@
 
 - (void)performShare:(id)sender
 {
-    if (!_menuProxy)
-        return;
-
-    _menuProxy->handleShareMenuItem();
+    if (RefPtr menuProxy = _menuProxy.get())
+        menuProxy->handleShareMenuItem();
 }
 
 @end
@@ -216,12 +215,12 @@
 
 - (void)menuWillOpen:(NSMenu *)menu
 {
-    _menuProxy->page()->didShowContextMenu();
+    Ref { *_menuProxy }->protectedPage()->didShowContextMenu();
 }
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    _menuProxy->page()->didDismissContextMenu();
+    Ref { *_menuProxy }->protectedPage()->didDismissContextMenu();
 }
 
 @end
@@ -247,7 +246,7 @@ void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemDat
     clearServicesMenu();
 #endif
 
-    page()->contextMenuItemSelected(item, m_frameInfo);
+    protectedPage()->contextMenuItemSelected(item, m_frameInfo);
 }
 
 #if ENABLE(WRITING_TOOLS)
@@ -270,7 +269,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     bool includeEditorServices = m_context.controlledDataIsEditable();
     bool hasControlledImage = m_context.controlledImage();
     bool isPDFAttachment = false;
-    auto attachment = page()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
+    auto attachment = protectedPage()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
     if (attachment) {
 #if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
         isPDFAttachment = attachment->utiType() == String(UTTypePDF.identifier);
@@ -359,7 +358,7 @@ void WebContextMenuProxyMac::appendRemoveBackgroundItemToControlledImageMenuIfNe
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     RefPtr page = this->page();
-    if (!page || !page->preferences().removeBackgroundEnabled())
+    if (!page || !page->protectedPreferences()->removeBackgroundEnabled())
         return;
 
     auto context = m_context.controlledImageElementContext();
@@ -417,7 +416,8 @@ void WebContextMenuProxyMac::clearServicesMenu()
 void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (!page())
+    RefPtr page = this->page();
+    if (!page)
         return;
 
     auto elementContext = m_context.controlledImageElementContext();
@@ -428,7 +428,7 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
     if (!data)
         return;
 
-    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, span(data.get()));
+    page->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, span(data.get()));
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
@@ -494,7 +494,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
     if (hitTestData.imageSharedMemory) {
         if (usePlaceholder)
             [items addObject:adoptNS([[NSImage alloc] init]).get()];
-        else if (auto image = adoptNS([[NSImage alloc] initWithData:hitTestData.imageSharedMemory->toNSData().get()])) {
+        else if (auto image = adoptNS([[NSImage alloc] initWithData:Ref { *hitTestData.imageSharedMemory }->toNSData().get()])) {
             NSString *title = hitTestData.imageText;
             if (!title.length)
                 title = WEB_UI_NSSTRING(@"Image", "Fallback title for images in the share sheet");
@@ -513,9 +513,12 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
     RetainPtr sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
     RetainPtr shareMenuItem = [sharingServicePicker standardShareMenuItem];
 
+    if (!shareMenuItem)
+        return nil;
+
 #if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
     RetainPtr<NSImage> actionImage;
-    bool shouldSetMenuItemImage = page()->preferences().contextMenuImagesForInternalClientsEnabled() && [shareMenuItem respondsToSelector:@selector(_setActionImage:)];
+    bool shouldSetMenuItemImage = page()->protectedPreferences()->contextMenuImagesForInternalClientsEnabled() && [shareMenuItem respondsToSelector:@selector(_setActionImage:)];
     if (shouldSetMenuItemImage)
         actionImage = [shareMenuItem _actionImage];
 #endif
@@ -551,7 +554,7 @@ void WebContextMenuProxyMac::show()
 bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
 {
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    if (!page()->preferences().contextMenuQRCodeDetectionEnabled())
+    if (!protectedPage()->protectedPreferences()->contextMenuQRCodeDetectionEnabled())
         return false;
 
     ASSERT(m_context.webHitTestResultData());
@@ -570,7 +573,7 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
         return true;
     }
 
-    if (auto potentialQRCodeNodeSnapshotImage = m_context.potentialQRCodeNodeSnapshotImage()) {
+    if (RefPtr potentialQRCodeNodeSnapshotImage = m_context.potentialQRCodeNodeSnapshotImage()) {
         auto image = potentialQRCodeNodeSnapshotImage->makeCGImage();
         requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
             RefPtr potentialQRCodeViewportSnapshotImage = m_context.potentialQRCodeViewportSnapshotImage();
@@ -581,7 +584,7 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
             }
 
             auto fallbackImage = potentialQRCodeViewportSnapshotImage->makeCGImage();
-            requestPayloadForQRCode(fallbackImage.get(), [this, protectedThis = WTFMove(protectedThis)](NSString *result) mutable {
+            requestPayloadForQRCode(fallbackImage.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
                 m_context.setQRCodePayloadString(result);
                 WebContextMenuProxy::show();
             });
@@ -799,7 +802,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    if (!page()->canHandleContextMenuTranslation() || isPopover) {
+    if (!protectedPage()->canHandleContextMenuTranslation() || isPopover) {
         filteredItems.removeAllMatching([] (auto& item) {
             return item.action() == ContextMenuItemTagTranslate;
         });
@@ -807,7 +810,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    if (!page()->canHandleContextMenuWritingTools() || isPopover) {
+    if (!protectedPage()->canHandleContextMenuWritingTools() || isPopover) {
         filteredItems.removeAllMatching([] (auto& item) {
             return item.action() == ContextMenuItemTagWritingTools;
         });
@@ -959,8 +962,9 @@ void WebContextMenuProxyMac::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     }
 #endif
 
-    if (page()->contextMenuClient().canShowContextMenu()) {
-        page()->contextMenuClient().showContextMenu(Ref { *page() }, m_context.menuLocation(), items);
+    RefPtr page = this->page();
+    if (page->contextMenuClient().canShowContextMenu()) {
+        page->contextMenuClient().showContextMenu(*page, m_context.menuLocation(), items);
         return;
     }
 
@@ -970,7 +974,7 @@ void WebContextMenuProxyMac::showContextMenuWithItems(Vector<Ref<WebContextMenuI
 
     auto webView = m_webView.get();
     NSPoint menuLocation = [webView convertPoint:m_context.menuLocation() toView:nil];
-    auto event = page()->createSyntheticEventForContextMenu(menuLocation);
+    auto event = page->createSyntheticEventForContextMenu(menuLocation);
     [NSMenu popUpContextMenu:m_menu.get() withEvent:event.get() forView:webView.get()];
 }
 
@@ -993,7 +997,7 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
 
         [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 
-        auto menuFromProposedMenu = [this, protectedThis = WTFMove(protectedThis)] (RetainPtr<NSMenu>&& menu) {
+        auto menuFromProposedMenu = [this, protectedThis = Ref { *this }] (RetainPtr<NSMenu>&& menu) {
             m_menuDelegate = adoptNS([[WKMenuDelegate alloc] initWithMenuProxy:*this]);
 
             m_menu = WTFMove(menu);

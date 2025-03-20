@@ -108,6 +108,11 @@ void PlaybackSessionInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerI
     m_playerIdentifier = WTFMove(identifier);
 }
 
+void PlaybackSessionInterfaceIOS::setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS> videoPresentationInterface)
+{
+    m_videoPresentationInterface = WTFMove(videoPresentationInterface);
+}
+
 void PlaybackSessionInterfaceIOS::startObservingNowPlayingMetadata()
 {
 }

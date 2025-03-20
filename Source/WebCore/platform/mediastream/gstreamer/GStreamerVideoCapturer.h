@@ -35,7 +35,7 @@ class GStreamerVideoCapturer final : public GStreamerCapturer {
     friend class MockRealtimeVideoSourceGStreamer;
 public:
     GStreamerVideoCapturer(GStreamerCaptureDevice&&);
-    GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType);
+    GStreamerVideoCapturer(ASCIILiteral sourceFactory, CaptureDevice::DeviceType);
     ~GStreamerVideoCapturer() = default;
 
     GstElement* createSource() final;

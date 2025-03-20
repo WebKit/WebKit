@@ -54,7 +54,7 @@ public:
         void timerDidFire();
 
     public:
-        static Manager& shared();
+        static Manager& singleton();
         void registerVM(VM&);
         void unregisterVM(VM&);
         void scheduleTimer(JSRunLoopTimer&, Seconds nextFireTime);

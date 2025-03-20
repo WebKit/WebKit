@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <rect> element with changing 'transform'
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.left expected 108 +/- 0 but got 8
+FAIL translated down by 150 units (out of SVG viewport) assert_approx_equals: entries[1].boundingClientRect.left expected 108 +/- 0 but got 8
+FAIL translated down by 50 units assert_equals: entries.length expected 3 but got 2
+

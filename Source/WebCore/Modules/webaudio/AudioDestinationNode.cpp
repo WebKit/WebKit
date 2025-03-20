@@ -65,7 +65,7 @@ void AudioDestinationNode::renderQuantum(AudioBus* destinationBus, size_t number
     // This will take care of all AudioNodes because they all process within this scope.
     DenormalDisabler denormalDisabler;
     
-    context().setAudioThread(Thread::current());
+    context().setAudioThread(Thread::currentSingleton());
 
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
     // Heap allocations that cannot be avoided or have not been fixed yet can be allowed using
@@ -88,7 +88,7 @@ void AudioDestinationNode::renderQuantum(AudioBus* destinationBus, size_t number
 
     RefPtr<AudioWorkletGlobalScope> workletGlobalScope;
     if (RefPtr audioWorkletProxy = context().audioWorklet().proxy()) {
-        if (Ref workletThread = audioWorkletProxy->workletThread(); workletThread->thread() == &Thread::current())
+        if (Ref workletThread = audioWorkletProxy->workletThread(); workletThread->thread() == &Thread::currentSingleton())
             workletGlobalScope = workletThread->globalScope();
     }
     if (workletGlobalScope)

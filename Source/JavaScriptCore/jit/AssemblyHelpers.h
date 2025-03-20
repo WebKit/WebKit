@@ -1210,10 +1210,12 @@ public:
 #if USE(JSVALUE64)
     JumpList branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>);
     void loadTypedArrayByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
+    std::tuple<Jump, JumpList> loadDataViewByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
     void loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>);
 #else
     JumpList branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg, GPRReg, GPRReg, std::optional<TypedArrayType>) { return { }; }
     void loadTypedArrayByteLength(GPRReg, GPRReg, GPRReg, GPRReg, TypedArrayType) { }
+    std::tuple<Jump, JumpList> loadDataViewByteLength(GPRReg, GPRReg, GPRReg, GPRReg, TypedArrayType) { return { }; };
     void loadTypedArrayLength(GPRReg, GPRReg, GPRReg, GPRReg, std::optional<TypedArrayType>) { }
 #endif
 
@@ -1450,7 +1452,7 @@ public:
     void incrementSuperSamplerCount();
     void decrementSuperSamplerCount();
     
-    void purifyNaN(FPRReg);
+    void purifyNaN(FPRReg, FPRReg);
 
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
@@ -1516,14 +1518,28 @@ public:
         done.link(this);
     }
 
-    void branchConvertDoubleToInt52(FPRegisterID srcFPR, RegisterID destGPR, JumpList& failureCases, RegisterID scratch1GPR, FPRegisterID scratch2FPR)
+    void branchConvertDoubleToInt52(FPRegisterID srcFPR, RegisterID destGPR, JumpList& failureCases, RegisterID scratch1GPR, FPRegisterID scratch2FPR, bool canIgnoreNegativeZero)
     {
         JumpList doneCases;
 
         truncateDoubleToInt64(srcFPR, destGPR);
-        convertInt64ToDouble(destGPR, scratch2FPR);
+
+        bool convertedBack = false;
+#if CPU(ARM64)
+        if (supportsRoundFloatToIntegerFloat()) {
+            convertedBack = true;
+            roundTowardZeroInt64Double(srcFPR, scratch2FPR);
+        }
+#endif
+        if (!convertedBack)
+            convertInt64ToDouble(destGPR, scratch2FPR);
+
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, srcFPR, scratch2FPR));
-        auto isZero = branchTest64(Zero, destGPR);
+
+        Jump isZero;
+        if (!canIgnoreNegativeZero)
+            isZero = branchTest64(Zero, destGPR);
+
         // This moves the checking range (fail if N >= (1 << (52 - 1)) or N < -(1 << (52 - 1))) by subtracting a value.
         // So, valid value region starts with -1 and lower. In unsigned form, which means,
         // 0xffffffffffffffff to 0xfff0000000000000. So, by shifting 52, we can extract 0xfff part, and we can check whether it is below than that (<= 4094).
@@ -1531,11 +1547,13 @@ public:
         add64(destGPR, scratch1GPR);
         urshift64(TrustedImm32(52), scratch1GPR);
         failureCases.append(branch64(BelowOrEqual, scratch1GPR, TrustedImm32(4094)));
-        doneCases.append(jump());
 
-        isZero.link(this);
-        moveDoubleTo64(srcFPR, scratch1GPR);
-        failureCases.append(branchTest64(NonZero, scratch1GPR, TrustedImm64(1ULL << 63)));
+        if (isZero.isSet()) {
+            doneCases.append(jump());
+            isZero.link(this);
+            moveDoubleTo64(srcFPR, scratch1GPR);
+            failureCases.append(branchTest64(NonZero, scratch1GPR, TrustedImm64(1ULL << 63)));
+        }
 
         doneCases.link(this);
     }
@@ -2137,7 +2155,8 @@ protected:
     void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
 
     enum class TypedArrayField { Length, ByteLength };
-    void loadTypedArrayByteLengthImpl(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>, TypedArrayField);
+    std::tuple<Jump, JumpList> loadTypedArrayByteLengthImpl(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>, TypedArrayField);
+    void loadTypedArrayByteLengthCommonImpl(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>, TypedArrayField);
 
     CodeBlock* const m_codeBlock;
     CodeBlock* const m_baselineCodeBlock;

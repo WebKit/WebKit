@@ -281,7 +281,7 @@ void ControlMac::drawCellInternal(GraphicsContext& context, const FloatRect& rec
         return;
     }
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory->drawingView(rect, style);
     drawCellInView(context, rect, cell, view);
 }
 
@@ -311,7 +311,7 @@ void ControlMac::drawCellFocusRingInternal(GraphicsContext& context, const Float
         return;
     }
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory->drawingView(rect, style);
     drawCellFocusRingInView(context, rect, cell, view);
 }
 

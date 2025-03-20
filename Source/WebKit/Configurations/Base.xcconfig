@@ -122,11 +122,10 @@ SWIFT_VERSION_XCODE_SINCE_16 = 6.0;
 
 OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) $(OTHER_SWIFT_FLAGS_AVAILABILITY_$(USE_INTERNAL_SDK));
 OTHER_SWIFT_FLAGS_AVAILABILITY_YES = @$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/Scripts/availability-definitions.txt;
+OTHER_SWIFT_FLAGS_AVAILABILITY_ = -Xfrontend -define-availability -Xfrontend "WK_IOS_TBA:iOS $(IPHONEOS_DEPLOYMENT_TARGET:default=1.0)" -Xfrontend -define-availability -Xfrontend "WK_MAC_TBA:macOS $(MACOSX_DEPLOYMENT_TARGET:default=10.0)" -Xfrontend -define-availability -Xfrontend "WK_XROS_TBA:visionOS $(XROS_DEPLOYMENT_TARGET:default=1.0)";
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;
 
-// Disable SwiftUI overlay on downlevel builds until rdar://145000611 is resolved.
-//WK_ENABLE_SWIFTUI = YES;
-WK_ENABLE_SWIFTUI = $(WK_NOT_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
+WK_ENABLE_SWIFTUI = YES;
 WK_ENABLE_SWIFTUI[sdk=macosx13*] = NO;
 WK_ENABLE_SWIFTUI[sdk=macosx14*] = NO;
 WK_ENABLE_SWIFTUI[sdk=macosx15*] = NO;
@@ -139,8 +138,8 @@ WK_ENABLE_SWIFTUI[sdk=xros2*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xrsimulator1*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xrsimulator2*] = NO;
 
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(SWIFT_ACTIVE_COMPILATION_CONDITIONS_$(WK_ENABLE_SWIFTUI));
-SWIFT_ACTIVE_COMPILATION_CONDITIONS_YES = ENABLE_SWIFTUI;
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(SWIFT_ACTIVE_COMPILATION_CONDITIONS_SWIFTUI_$(WK_ENABLE_SWIFTUI))
+SWIFT_ACTIVE_COMPILATION_CONDITIONS_SWIFTUI_YES = ENABLE_SWIFTUI
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 

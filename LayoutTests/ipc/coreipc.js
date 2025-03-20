@@ -18,18 +18,10 @@ function deepCopy(object) {
     return JSON.parse(JSON.stringify(object));
 }
 
-const FUZZ_MARKER = [
-    {type: 'uint64_t', value: 0x0},
-    {type: 'uint8_t', value: 0x46},
-    {type: 'uint8_t', value: 0x55},
-    {type: 'uint8_t', value: 0x5a},
-    {type: 'uint8_t', value: 0x5a},
-    {type: 'uint8_t', value: 0x46},
-    {type: 'uint8_t', value: 0x55},
-    {type: 'uint8_t', value: 0x5a},
-    {type: 'uint8_t', value: 0x5a},
-    {type: 'uint64_t', value: 0x41},
-];
+function splitClassAndFunction(name) {
+    const [clz, ...rest] = name.split("_");
+    return [clz, rest.join("_")];
+}
 
 class CoreIPCClass {
     messages;
@@ -62,7 +54,7 @@ class CoreIPCClass {
 
     initializeMessageByName() {
         for(const [key, value] of Object.entries(this.messages)) {
-            let [className, functionName] = key.split("_");
+            let [className, functionName] = splitClassAndFunction(key);
             value.className = className;
             value.functionName = functionName;
             this.messageByName[value.name] = value;
@@ -72,7 +64,7 @@ class CoreIPCClass {
     initializeMessages(process) {
         const messages = {};
         for(const [key, value] of Object.entries(this.messages)) {
-            let [className, functionName] = key.split("_");
+            let [className, functionName] = splitClassAndFunction(key);
             if(!(className in messages)) {
                 messages[className] = {};
             }
@@ -87,13 +79,11 @@ class CoreIPCClass {
             if(definition.isSync) {
                 return (connectionIdentifier, messageArguments) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    serializedArguments.push(FUZZ_MARKER);
                     IPC.sendSyncMessage(process, connectionIdentifier, name, this.default_timeout, serializedArguments);
                 }
             } else {
                 return (connectionIdentifier, messageArguments) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    serializedArguments.push(FUZZ_MARKER);
                     IPC.sendMessage(process, connectionIdentifier, name, serializedArguments);
                 }
             }
@@ -102,7 +92,6 @@ class CoreIPCClass {
             if(definition.isSync) {
                 return (connectionIdentifier, messageArguments, replyHandler) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    serializedArguments.push(FUZZ_MARKER);
                     const reply = IPC.sendSyncMessage(process, connectionIdentifier, name, this.default_timeout, serializedArguments);
                     if(reply && replyHandler) {
                         const [parsedReply, typedReply] = ArgumentParser.parseReply(reply, replyArguments);
@@ -113,7 +102,6 @@ class CoreIPCClass {
                 return (connectionIdentifier, messageArguments, replyHandler) => {
                     const connection = IPC.connectionForProcessTarget(process);
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    serializedArguments.push(FUZZ_MARKER);
                     connection.sendWithAsyncReply(connectionIdentifier, name, serializedArguments, (reply)=> {
                         if(replyHandler) {
                             const [parsedReply, typedReply] = ArgumentParser.parseReply(reply, replyArguments);
@@ -147,21 +135,25 @@ export class StreamConnection {
 }
 
 export class StreamConnectionInterface {
-    #connection;
-    #interfaceName;
     #connectionIdentifier;
     constructor(interfaceName, connectionIdentifier, connection) {
-        this.#interfaceName = interfaceName;
-        this.#connection = connection;
+        this.interfaceName = interfaceName;
+        this.connection = connection;
         this.#connectionIdentifier = connectionIdentifier;
-        this.initializeMessages(interfaceName);
+        this.generatedFunctions = [];
+        this.initializeMessages();
     }
 
-    initializeMessages(interfaceName) {
+    getIdentifier() {
+        return this.#connectionIdentifier;
+    }
+
+    initializeMessages() {
         for(const [key, value] of Object.entries(CoreIPC.messages)) {
-            let [className, functionName] = key.split("_");
-            if(className == interfaceName) {
+            let [className, functionName] = splitClassAndFunction(key);
+            if(className == this.interfaceName) {
                 this[functionName] = this.generateStreamSendingFunction(value);
+                this.generatedFunctions.push(functionName);
             }
         }
     }
@@ -172,12 +164,12 @@ export class StreamConnectionInterface {
             if(definition.isSync) {
                 return (messageArguments) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    this.#connection.sendSyncMessage(this.#connectionIdentifier, name, serializedArguments);
+                    this.connection.sendSyncMessage(this.#connectionIdentifier, name, serializedArguments);
                 }
             } else {
                 return (messageArguments) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    this.#connection.sendMessage(this.#connectionIdentifier, name, serializedArguments);
+                    this.connection.sendMessage(this.#connectionIdentifier, name, serializedArguments);
                 }
             }
         } else {
@@ -185,7 +177,7 @@ export class StreamConnectionInterface {
             if(definition.isSync) {
                 return (messageArguments, replyHandler) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    const reply = this.#connection.sendSyncMessage(this.#connectionIdentifier, name, serializedArguments);
+                    const reply = this.connection.sendSyncMessage(this.#connectionIdentifier, name, serializedArguments);
                     if(reply && replyHandler) {
                         const [parsedReply, typedReply] = ArgumentParser.parseReply(reply, replyArguments);
                         replyHandler(parsedReply, reply.buffer, typedReply);
@@ -194,7 +186,7 @@ export class StreamConnectionInterface {
             } else {
                 return (messageArguments, replyHandler) => {
                     const serializedArguments = ArgumentSerializer.serializeArguments(definition.arguments, messageArguments);
-                    this.#connection.sendWithAsyncReply(this.#connectionIdentifier, name, serializedArguments, (reply)=> {
+                    this.connection.sendWithAsyncReply(this.#connectionIdentifier, name, serializedArguments, (reply)=> {
                         if(replyHandler) {
                             const [parsedReply, typedReply] = ArgumentParser.parseReply(reply, replyArguments);
                             replyHandler(parsedReply, reply.buffer, typedReply);
@@ -220,6 +212,7 @@ const aliases = {
     'size_t': 'uint64_t',
     'pid_t': 'uint32_t',
     'unsigned short': 'uint16_t',
+    'const bool': 'bool',
     'const uint8_t': 'uint8_t',
     'const char': 'uint8_t',
     'unsigned long': 'uint64_t',
@@ -229,13 +222,41 @@ const aliases = {
     'long long': 'int64_t',
     'unsigned long long': 'uint64_t',
     'short': 'int16_t',
-    'GCGLenum': 'uint32_t',
     'const float': 'float',
     'const int32_t': 'int32_t',
     'const uint32_t': 'uint32_t',
     'NSInteger': 'int64_t',
     'NSUInteger': 'uint64_t',
-    'WebCore::ContextMenuAction': 'uint32_t'
+    'WebCore::ContextMenuAction': 'uint32_t',
+    'CGBitmapInfo': 'uint32_t',
+    'UInt32': 'uint32_t',
+    'CTFontDescriptorOptions': 'uint32_t',
+    'SystemMemoryPressureStatus': 'WTF::SystemMemoryPressureStatus',
+    // WebGL types
+    'GCGLenum': 'uint32_t',
+    'GCGLint': 'int32_t',
+    'GCGLErrorCodeSet': 'OptionSet<GCGLErrorCode>',
+    // these RetainPtr<T> should not be treated as optionnal because
+    // of the 'Ref wrapped by' in Source/WebKit/Shared/cf/CFTypes.serialization.in
+    // see generated code in WebKitBuild/Debug/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
+    'RetainPtr<CFTypeRef>': 'WebKit::CoreIPCCFType',
+    'RetainPtr<CFDataRef>': 'WebKit::CoreIPCData',
+    'RetainPtr<CFStringRef>': 'String',
+    'RetainPtr<CFArrayRef>': 'WebKit::CoreIPCCFArray',
+    'RetainPtr<CFDictionaryRef>': 'WebKit::CoreIPCCFDictionary',
+    'RetainPtr<CFBooleanRef>': 'WebKit::CoreIPCBoolean',
+    'RetainPtr<CFNumberRef>': 'WebKit::CoreIPCNumber',
+    'RetainPtr<CFDateRef>': 'WebKit::CoreIPCDate',
+    'RetainPtr<CFURLRef>': 'WebKit::CoreIPCCFURL',
+    'RetainPtr<CFNullRef>': 'WebKit::CoreIPCNull',
+    'RetainPtr<SecAccessControlRef>': 'WebKit::CoreIPCSecAccessControl',
+    'RetainPtr<SecCertificateRef>': 'WebKit::CoreIPCSecCertificate',
+    'RetainPtr<SecKeychainItemRef>': 'WebKit::CoreIPCSecKeychainItem',
+    'RetainPtr<CVPixelBufferRef>': 'WebKit::CoreIPCCVPixelBufferRef',
+    'RetainPtr<SecTrustRef>': 'WebKit::CoreIPCSecTrust',
+    'RetainPtr<CFCharacterSetRef>': 'WebKit::CoreIPCCFCharacterSet',
+    'RetainPtr<CGColorRef>': 'WebCore::Color',
+    'RetainPtr<CGColorSpaceRef>': 'WebKit::CoreIPCCGColorSpace'
 }
 
 export function resolveAlias(argumentType) {
@@ -292,6 +313,7 @@ export class ArgumentSerializer {
     }
 
     static parseTemplate(name) {
+        name = name.trim();
         if(!name.endsWith(">")) {
             throw new SerializationError(`Cannot parse template '${ name }'. Does not end with '>'`);
         }
@@ -344,7 +366,7 @@ export class ArgumentSerializer {
         }
     }
 
-    static serializeVector(innerType, argument) {
+    static serializeVector(innerType, argument, isStdSpan) {
         const splitType = ArgumentSerializer.splitTemplateType(innerType);
         innerType = splitType[0];
         if(Array.isArray(argument)) {
@@ -358,9 +380,42 @@ export class ArgumentSerializer {
                 count += 1;
                 result.push([ ArgumentSerializer.serializeArgument(argumentDefinition, element) ]);
             }
+            if(isStdSpan && splitType.length > 1) {
+                const size = Number.parseInt(splitType[1]);
+                if(argument.length != size) {
+                    throw new SerializationError('argument array of std::span with non-dynamic extent has unexpected length');
+                }
+                return result;
+            }
             return [{value: result, type: 'Vector'}];
         }
         throw new SerializationError('argument of vector-type is not an array');
+    }
+
+    static serializeArrayReferenceTuple(innerType, argument) {
+        const innerTypes = ArgumentSerializer.splitTemplateType(innerType);
+        if(Array.isArray(argument)) {
+            if(argument.length != innerTypes.length) {
+                throw new SerializationError(`expected ${ innerTypes.length } arguments but ${ argument.length } given`);
+            }
+            let allOfSameSize = argument.every((element) => argument[0].length == element.length);
+            if(!allOfSameSize) {
+                let sizes = argument.map(element => element.length);
+                throw new SerializationError(`ArrayReferenceTuple array elements must be have the same size: ${ sizes }`);
+            }
+            const result = [];
+            for(let i=0; i<innerTypes.length; i++) {
+                const argumentDefinition = {
+                    type: innerTypes[i],
+                }
+                for(let j=0; j<argument[i].length; j++) {
+                    argumentDefinition.name = `element#${ i }#${ j }`
+                    result.push(ArgumentSerializer.serializeArgument(argumentDefinition, argument[i][j]));
+                }
+            }
+            return [{value: argument[0].length, type: 'uint64_t'}, result]
+        }
+        throw new SerializationError('argument of ArrayReferenceTuple is not an array');
     }
 
     static serializeHashSet(innerType, argument) {
@@ -385,14 +440,10 @@ export class ArgumentSerializer {
     static serializeHashMap(innerType, argument) {
         if(Array.isArray(argument)) {
             const result = [];
-            const argumentDefinition = {
-                type: innerType,
-            };
             let count = 0;
             for(const element of argument) {
-                argumentDefinition.name = `key#${ count }`;
                 count += 1;
-                result.push([ ArgumentSerializer.serializeKeyValuePair(argumentDefinition, element) ]);
+                result.push([ ArgumentSerializer.serializeKeyValuePair(innerType, element) ]);
             }
             return [{value: count, type: 'uint32_t'}, result];
         }
@@ -461,7 +512,7 @@ export class ArgumentSerializer {
         const variantType = argument.variantType;
         const variantIndex = variantTypes.indexOf(variantType);
         if(variantIndex == -1) {
-            throw new SerializationError(`type '${ variantType }' is not valid for variant`);
+            throw new SerializationError(`type '${ variantType }' is not valid for variant (${ variantTypes })`);
         }
         if(!Object.hasOwn(argument, 'variant')) {
             throw new SerializationError('missing field \'variant\' when serializing variant');
@@ -486,10 +537,13 @@ export class ArgumentSerializer {
                     return ArgumentSerializer.serializeOptional(innerType, argument);
                 case 'Vector':
                 case 'std::vector':
-                case 'std::span':
                 case 'ArrayReference':
                 case 'Span':
-                    return ArgumentSerializer.serializeVector(innerType, argument);
+                    return ArgumentSerializer.serializeVector(innerType, argument, false);
+                case 'std::span':
+                    return ArgumentSerializer.serializeVector(innerType, argument, true);
+                case 'IPC::ArrayReferenceTuple':
+                    return ArgumentSerializer.serializeArrayReferenceTuple(innerType, argument);
                 case 'std::array':
                     return ArgumentSerializer.serializeStdArray(innerType, argument);
                 case 'HashSet':
@@ -500,6 +554,7 @@ export class ArgumentSerializer {
                     return ArgumentSerializer.serializePair(innerType, argument);
                 case 'OptionSet':
                     return ArgumentSerializer.serializeOptionSet(innerType, argumentDefinition.name, argument);
+                case 'WTF::Markable':
                 case 'Markable':
                     return ArgumentSerializer.serializeMarkable(innerType, argument);
                 case 'KeyValuePair':
@@ -525,7 +580,9 @@ export class ArgumentSerializer {
             if(argument < MIN_INT64 || argument > MAX_INT64) {
                 throw new SerializationError(`Identifier value (${ argumentDefinition.name }) of type ${ argumentDefinition.type } is out-of-bounds.`);
             }
-            return {value: argument, type: 'uint64_t'};
+            // magic object identifier for WebGL hotpatches
+            let type = argumentDefinition.type.endsWith("::uint32_t") ? "uint32_t" : "uint64_t";
+            return {value: argument, type: type};
         }
         return undefined;
     }
@@ -621,15 +678,15 @@ export class ArgumentSerializer {
                 }
                 return {value: argument, type: argumentDefinition.type};
             case 'uint64_t':
-                if(typeof argument != "number") {
-                    throw new SerializationError(`Primitive value of type ${ argumentDefinition.type } is not a number`);
+                if(typeof argument != "number" && typeof argument != "bigint") {
+                    throw new SerializationError(`Primitive value of type ${ argumentDefinition.type } is not a number. it is ${ typeof(argument) }. ${ argument }`);
                 }
                 if(argument < MIN_UINT || argument > MAX_UINT64) {
                     throw new SerializationError(`Primitive value (${ argumentDefinition.name }) of type ${ argumentDefinition.type } is out-of-bounds.`);
                 }
                 return {value: argument, type: argumentDefinition.type};
             case 'int64_t':
-                if(typeof argument != "number") {
+                if(typeof argument != "number" && typeof argument != "bigint") {
                     throw new SerializationError(`Primitive value of type ${ argumentDefinition.type } is not a number`);
                 }
                 if(argument < MIN_INT64 || argument > MAX_INT64) {
@@ -672,6 +729,30 @@ export class ArgumentSerializer {
                 if(argument === null) {
                     return [];
                 } else throw new SerializationError(`std::nullptr_t is not null`);
+            case 'WebCore::SharedMemory::Handle':
+            case 'WebCore::SharedMemoryHandle':
+            case 'MachSendRight':
+                if(typeof argument != 'object') {
+                    throw new SerializationError('SharedMemory argument is not an object');
+                }
+                if(!argument.protection) {
+                    throw new SerializationError('SharedMemory argument is missing \'protection\' attribute');
+                }
+                if(argument.protection != 'ReadOnly' && argument.protection != 'ReadWrite') {
+                    throw new SerializationError("SharedMemory protection should be either 'ReadWrite' or 'ReadOnly'");
+                }
+                if(!argument.handle) {
+                    throw new SerializationError('SharedMemory argument is missing \'handle\' attribute');
+                }
+                if(!argument.handle.writeBytes) {
+                    throw new SerializationError('SharedMemory handle argument is not an Object created with IPC.createSharedMemory');
+                }
+                return {value: argument.handle, type: 'SharedMemory', protection: argument.protection};
+            case 'IPC::Semaphore':
+                if(typeof(argument) != 'object' || !argument.signal) {
+                    throw new SerializationError('IPC::Semaphore argument is not an Object created with IPC.createSemaphore');
+                }
+                return {value: argument, type: 'Semaphore'};
         }
         return undefined;
     }
@@ -759,9 +840,16 @@ export class ArgumentParser {
 
     static parseIdentifier(buffer, position, argumentDefinition) {
         if(CoreIPC.objectIdentifiers.includes(argumentDefinition.type)) {
-            position = ArgumentParser.align(position, 8);
-            ArgumentParser.checkOutOfBounds(buffer, position, 8);
-            return [position + 8, {parsedValue: buffer.getBigUint64(position, true), parsedType: argumentDefinition.type}];
+            // magic object identifier for WebGL hotpatches
+            if(argumentDefinition.type.endsWith("::uint32_t")) {
+                position = ArgumentParser.align(position, 4);
+                ArgumentParser.checkOutOfBounds(buffer, position, 4);
+                return [position + 8, {parsedValue: buffer.getUint32(position, true), parsedType: argumentDefinition.type}];
+            } else {
+                position = ArgumentParser.align(position, 8);
+                ArgumentParser.checkOutOfBounds(buffer, position, 8);
+                return [position + 8, {parsedValue: buffer.getBigUint64(position, true), parsedType: argumentDefinition.type}];
+            }
         }
         return undefined;
     }
@@ -776,11 +864,18 @@ export class ArgumentParser {
         return undefined;
     }
 
-    static parseVector(buffer, position, innerType) {
+    static parseVector(buffer, position, innerType, isStdSpan) {
         position = ArgumentParser.align(position, 8);
         ArgumentParser.checkOutOfBounds(buffer, position, 8);
-        const elementCount = buffer.getBigUint64(position, true);
-        position += 8;
+        const innerTypes = ArgumentSerializer.splitTemplateType(innerType);
+        let elementCount = 0;
+        innerType = innerTypes[0];
+        if(isStdSpan && innerTypes.length > 1) {
+            elementCount = Number.parseInt(innerTypes[1]);
+        } else {
+            elementCount = buffer.getBigUint64(position, true);
+            position += 8;
+        }
         const values = [];
         let element;
         const argumentDefinition = {type: innerType};
@@ -808,6 +903,24 @@ export class ArgumentParser {
         argumentDefinition.type = innerTypes[1];
         [position, element] = ArgumentParser.parseArgument(buffer, position, argumentDefinition);
         values.push(element);
+        return [position, values];
+    }
+
+    static parseHashMap(buffer, position, innerType) {
+        position = ArgumentParser.align(position, 4);
+        ArgumentParser.checkOutOfBounds(buffer, position, 4);
+        const elementCount = buffer.getUint32(position, true);
+        position += 4;
+        const values = [];
+        let element;
+        for(let index = 0; index < elementCount; index++) {
+            try {
+                [position, element] = ArgumentParser.parsePair(buffer, position, innerType);
+            } catch (error) {
+                throw new ParserError(`when parsing element #${ index } of HashMap: ${ error.message }`);
+            }
+            values.push(element);
+        }
         return [position, values];
     }
 
@@ -864,9 +977,14 @@ export class ArgumentParser {
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}]
                 }
                 case 'std::span':
+                    const [newPosition, values] = ArgumentParser.parseVector(buffer, position, innerType, true);
+                    return [newPosition, {parsedType: argumentDefinition.type, parsedValue: values}];
+                case 'std::vector':
+                case 'ArrayReference':
+                case 'Span':
                 case 'Vector': {
-                    const [newPosition, values] = ArgumentParser.parseVector(buffer, position, innerType);
-                    return [newPosition, {parsedType: argumentDefinition.type, value: values}];
+                    const [newPosition, values] = ArgumentParser.parseVector(buffer, position, innerType, false);
+                    return [newPosition, {parsedType: argumentDefinition.type, parsedValue: values}];
                 }
                 // TODO: HashSet and std::array and KeyValuePair and HashMap
                 case 'std::variant': {
@@ -881,6 +999,7 @@ export class ArgumentParser {
                     let [newPosition, optionSet] = ArgumentParser.parseEnum(buffer, position, {type: innerType, name: argumentDefinition.name});
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: optionSet}];
                 }
+                case 'WTF::Markable':
                 case 'Markable': {
                     const [newPosition, value] = ArgumentParser.parseMarkable(buffer, position, innerType);
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}]
@@ -888,6 +1007,10 @@ export class ArgumentParser {
                 case 'Ref':
                 case 'UniqueRef': {
                     return ArgumentParser.parseArgument(buffer, position, {type: innerType, name: argumentDefinition.name});
+                }
+                case 'HashMap':
+                case 'MemoryCompactRobinHoodHashMap': {
+                    return ArgumentParser.parseHashMap(buffer, position, innerType);
                 }
                 default:
                     throw new ParserError(`Don't know how to parse template type '${ templateType }'`)

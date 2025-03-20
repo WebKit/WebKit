@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 class BackwardsCFG : public BackwardsGraph<SSACFG> {
     WTF_MAKE_NONCOPYABLE(BackwardsCFG);
-    WTF_MAKE_TZONE_ALLOCATED(BackwardsCFG);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BackwardsCFG);
 public:
     BackwardsCFG(Graph& graph)
         : BackwardsGraph<SSACFG>(selectCFG<SSACFG>(graph))

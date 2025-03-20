@@ -33,7 +33,7 @@
 #include "AccessibilityTreeItem.h"
 #include "Element.h"
 #include "HTMLNames.h"
-
+#include "NodeInlines.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {

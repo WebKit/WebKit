@@ -118,9 +118,9 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatR
 void CrossfadeGeneratedImage::dump(TextStream& ts) const
 {
     GeneratedImage::dump(ts);
-    ts.dumpProperty("from-image", m_fromImage.get());
-    ts.dumpProperty("to-image", m_toImage.get());
-    ts.dumpProperty("percentage", m_percentage);
+    ts.dumpProperty("from-image"_s, m_fromImage.get());
+    ts.dumpProperty("to-image"_s, m_toImage.get());
+    ts.dumpProperty("percentage"_s, m_percentage);
 }
 
 }

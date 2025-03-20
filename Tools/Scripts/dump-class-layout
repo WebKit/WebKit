@@ -84,7 +84,8 @@ def main():
     
     lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
     class_layout = lldb_instance.layout_for_classname(args.classname, args.skip_nested)
-    class_layout.dump()
+    if class_layout is not None:
+        class_layout.dump()
 
 
 if __name__ == "__main__":

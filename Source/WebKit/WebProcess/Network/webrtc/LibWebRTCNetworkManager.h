@@ -75,6 +75,8 @@ private:
     void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&, bool forceSignaling);
     void signalUsedInterface(String&&);
 
+    bool isLibWebRTCNetworkManager() const final { return true; }
+
     WebCore::ScriptExecutionContextIdentifier m_documentIdentifier;
     bool m_useMDNSCandidates { true };
     bool m_receivedNetworkList { false };
@@ -88,5 +90,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::LibWebRTCNetworkManager)
+static bool isType(const WebCore::RTCNetworkManager& manager) { return manager.isLibWebRTCNetworkManager(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

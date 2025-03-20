@@ -13,9 +13,10 @@ import {
   kRegularTextureFormats,
   kFeaturesForFormats,
   filterFormatsByFeature,
-  viewCompatible,
+  viewCompatibleDeprecated,
   textureDimensionAndFormatCompatible,
-  isTextureFormatUsableAsStorageFormat } from
+  isTextureFormatUsableAsStorageFormatDeprecated,
+  isMultisampledTextureFormatDeprecated } from
 '../../format_info.js';
 import { maxMipLevelCount } from '../../util/texture/base.js';
 
@@ -95,7 +96,7 @@ fn((t) => {
   const success = zeroArgument === 'none';
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -111,7 +112,7 @@ combine('format', kAllTextureFormats)
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -126,7 +127,7 @@ fn((t) => {
   };
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !textureDimensionAndFormatCompatible(dimension, format));
 });
 
@@ -149,7 +150,7 @@ unless(({ dimension, largestDimension }) => dimension === '1d' && largestDimensi
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -185,7 +186,7 @@ fn((t) => {
   const success = mipLevelCount <= maxMipLevelCount(descriptor);
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -243,11 +244,11 @@ fn((t) => {
 
   const mipLevelCount = maxMipLevelCount(descriptor);
   descriptor.mipLevelCount = mipLevelCount;
-  t.device.createTexture(descriptor);
+  t.createTextureTracked(descriptor);
 
   descriptor.mipLevelCount = mipLevelCount + 1;
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   });
 });
 
@@ -262,7 +263,7 @@ fn((t) => {
   };
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   });
 });
 
@@ -280,7 +281,7 @@ combine('sampleCount', [0, 1, 2, 4, 8, 16, 32, 256])
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -299,10 +300,12 @@ fn((t) => {
     usage
   };
 
-  const success = sampleCount === 1 || sampleCount === 4 && info.multisample;
+  const success =
+  sampleCount === 1 ||
+  sampleCount === 4 && isMultisampledTextureFormatDeprecated(format, t.isCompatibility);
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -353,7 +356,7 @@ unless(({ usage, format, mipLevelCount, dimension }) => {
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -377,11 +380,12 @@ fn((t) => {
 
   const satisfyWithStorageUsageRequirement =
   (usage & GPUConst.TextureUsage.STORAGE_BINDING) === 0 ||
-  isTextureFormatUsableAsStorageFormat(format, t.isCompatibility);
+  isTextureFormatUsableAsStorageFormatDeprecated(format, t.isCompatibility);
 
   const success =
   sampleCount === 1 && satisfyWithStorageUsageRequirement ||
-  sampleCount === 4 && (
+  sampleCount === 4 &&
+  isMultisampledTextureFormatDeprecated(format, t.isCompatibility) && (
   dimension === '2d' || dimension === undefined) &&
   kTextureFormatInfo[format].multisample &&
   mipLevelCount === 1 &&
@@ -390,7 +394,7 @@ fn((t) => {
   (usage & GPUConst.TextureUsage.STORAGE_BINDING) === 0;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -409,7 +413,7 @@ fn((t) => {
   const { dimension, size, shouldError } = t.params;
 
   t.expectValidationError(() => {
-    t.device.createTexture({
+    t.createTextureTracked({
       size,
       dimension,
       sampleCount: 4,
@@ -436,7 +440,7 @@ combine('size', [[1], [1, 1], [1, 1, 1]])
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -449,7 +453,7 @@ fn((t) => {
     usage: GPUTextureUsage.TEXTURE_BINDING
   };
 
-  t.device.createTexture(descriptor);
+  t.createTextureTracked(descriptor);
 });
 
 g.test('texture_size,default_value_and_smallest_size,compressed_format').
@@ -491,7 +495,7 @@ fn((t) => {
   };
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !_success);
 });
 
@@ -513,7 +517,7 @@ combine('depthOrArrayLayers', [1, 2])
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -531,7 +535,7 @@ fn((t) => {
   width <= t.device.limits.maxTextureDimension1D && height === 1 && depthOrArrayLayers === 1;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -562,7 +566,7 @@ combine(
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -586,7 +590,7 @@ fn((t) => {
   size[2] <= t.device.limits.maxTextureArrayLayers;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -775,7 +779,7 @@ fn((t) => {
   size[2] <= t.device.limits.maxTextureArrayLayers;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -808,7 +812,7 @@ combine(
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -829,7 +833,7 @@ fn((t) => {
   size[2] <= maxTextureDimension3D;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -1023,7 +1027,7 @@ fn((t) => {
   size[2] <= maxTextureDimension3D;
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -1045,7 +1049,7 @@ combine('usage1', kTextureUsages)
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
-  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotSupportedDeprecated(format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
@@ -1067,7 +1071,8 @@ fn((t) => {
   // if (!info.copySrc && (usage & GPUTextureUsage.COPY_SRC) !== 0) success = false;
   // if (!info.copyDst && (usage & GPUTextureUsage.COPY_DST) !== 0) success = false;
   if (usage & GPUTextureUsage.STORAGE_BINDING) {
-    if (!isTextureFormatUsableAsStorageFormat(format, t.isCompatibility)) success = false;
+    if (!isTextureFormatUsableAsStorageFormatDeprecated(format, t.isCompatibility))
+    success = false;
   }
   if (usage & GPUTextureUsage.RENDER_ATTACHMENT) {
     if (appliedDimension === '1d') success = false;
@@ -1075,7 +1080,7 @@ fn((t) => {
   }
 
   t.expectValidationError(() => {
-    t.device.createTexture(descriptor);
+    t.createTextureTracked(descriptor);
   }, !success);
 });
 
@@ -1103,13 +1108,13 @@ fn((t) => {
   const { format, viewFormat } = t.params;
   const { blockWidth, blockHeight } = kTextureFormatInfo[format];
 
-  t.skipIfTextureFormatNotSupported(format, viewFormat);
+  t.skipIfTextureFormatNotSupportedDeprecated(format, viewFormat);
 
-  const compatible = viewCompatible(t.isCompatibility, format, viewFormat);
+  const compatible = viewCompatibleDeprecated(t.isCompatibility, format, viewFormat);
 
   // Test the viewFormat in the list.
   t.expectValidationError(() => {
-    t.device.createTexture({
+    t.createTextureTracked({
       format,
       size: [blockWidth, blockHeight],
       usage: GPUTextureUsage.TEXTURE_BINDING,
@@ -1119,7 +1124,7 @@ fn((t) => {
 
   // Test the viewFormat and the texture format in the list.
   t.expectValidationError(() => {
-    t.device.createTexture({
+    t.createTextureTracked({
       format,
       size: [blockWidth, blockHeight],
       usage: GPUTextureUsage.TEXTURE_BINDING,
@@ -1129,7 +1134,7 @@ fn((t) => {
 
   // Test the viewFormat multiple times in the list.
   t.expectValidationError(() => {
-    t.device.createTexture({
+    t.createTextureTracked({
       format,
       size: [blockWidth, blockHeight],
       usage: GPUTextureUsage.TEXTURE_BINDING,

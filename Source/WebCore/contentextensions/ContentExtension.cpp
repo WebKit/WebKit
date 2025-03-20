@@ -79,7 +79,8 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
     auto serializedActions = m_compiledExtension->serializedActions();
 
     auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location) {
-        RELEASE_ASSERT(location < serializedActions.size());
+        auto serializedActionSize = serializedActions.size();
+        RELEASE_ASSERT(location < serializedActionSize, location, serializedActionSize);
         return location < firstIgnorePreviousRules && serializedActions[location] == WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>;
     };
     

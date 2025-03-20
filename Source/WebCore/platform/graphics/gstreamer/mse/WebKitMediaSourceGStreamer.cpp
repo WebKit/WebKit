@@ -309,7 +309,9 @@ static void webKitMediaSrcConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_media_src_parent_class)->constructed(object);
 
     ASSERT(isMainThread());
+IGNORE_WARNINGS_BEGIN("cast-align")
     GST_OBJECT_FLAG_SET(object, GST_ELEMENT_FLAG_SOURCE);
+IGNORE_WARNINGS_END
 }
 
 void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)
@@ -615,9 +617,11 @@ static void webKitMediaSrcLoop(void* userData)
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
             dumpPipeline("first-frame-after"_s, stream);
         }
+IGNORE_WARNINGS_BEGIN("cast-align")
     } else if (GST_IS_EVENT(object.get())) {
         // EOS events and other enqueued events are also sent unlocked so they can react to flushes if necessary.
         GRefPtr<GstEvent> event = GRefPtr<GstEvent>(GST_EVENT(object.leakRef()));
+IGNORE_WARNINGS_END
 
         streamingMembers.unlockEarly();
         GST_DEBUG_OBJECT(pad, "Pushing event downstream: %" GST_PTR_FORMAT, event.get());

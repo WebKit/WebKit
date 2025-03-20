@@ -556,7 +556,7 @@ class GitHub(Scm):
         is_json_response = response.headers.get('Content-Type', '').split(';')[0] in ['application/json', 'text/json']
         if authenticated is None and not auth and response.status_code // 100 == 4:
             return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate, json=json, method=method, endpoint_url=endpoint_url, files=files, data=data, stream=stream)
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 204]:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message') if is_json_response else ''
             message_header = message.split(':')[0]
@@ -1004,3 +1004,16 @@ class GitHub(Scm):
                 with open(os.path.join(destination_directory, asset_info['name']), 'wb') as file_object:
                     for chunk in response.iter_content(chunk_size=10240):
                         file_object.write(chunk)
+
+    def get_releases(self):
+        return self.request('releases', authenticated=True, paginate=True)
+
+    def delete_release_assets(self, release_assets):
+        for asset_info in release_assets:
+            response = self.request(
+                'releases/assets/{id}'.format(id=asset_info['id']),
+                paginate=False,
+                authenticated=True,
+                method='DELETE'
+            )
+            assert response.status_code == 204, 'Unexpected error code from API.'

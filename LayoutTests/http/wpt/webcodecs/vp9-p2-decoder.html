@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async (test) => {
+    let encodedFrame;
+    let resolve, reject;
+    const encoderPromise = new Promise((res,rej) => {
+        resolve = res;
+        reject = rej;
+     });
+
+    const encoder = new VideoEncoder({
+        output: chunk => {
+           resolve(chunk);
+        },
+        error: e => reject(e),
+    });
+    setTimeout(() => {
+        reject("timed out waiting for encoded chunks");
+    }, 5000);
+    encoder.configure({
+        codec: 'vp09.02.10.10',
+        width: 1024,
+        height: 1024,
+        bitrate: 10e6,
+        framerate: 1,
+    });
+
+    const frame = new VideoFrame(new ArrayBuffer(1024 * 1024 * 4), {format: 'RGBA', codedWidth: 1024, codedHeight: 1024, timestamp: 0});
+    encoder.encode(frame, {keyFrame: true});
+    frame.close();
+    const chunk = await encoderPromise;
+
+    const decoderPromise = new Promise((res,rej) => {
+        resolve = res;
+        reject = rej;
+     });
+
+    const decoder = new VideoDecoder({
+        output: frame => {
+           test.add_cleanup(() => frame.close());
+           resolve(frame);
+        },
+        error: e => reject(e),
+    });
+    setTimeout(() => {
+        reject("timed out waiting for decoded frames");
+    }, 5000);
+
+    decoder.configure({
+        codec: 'vp09.02.10.10',
+        codedWidth: 1024,
+        codedHeight: 1024,
+        hardwareAcceleration: 'prefer-software'
+    });
+
+    decoder.decode(chunk);
+
+    const decodedFrame = await decoderPromise;
+    assert_equals(decodedFrame.format, null);
+    return promise_rejects_dom(test, 'NotSupportedError', decodedFrame.copyTo(new Uint8Array(1)));
+}, "Test copyTo on different contexts");
+</script>
+</body>
+</html>

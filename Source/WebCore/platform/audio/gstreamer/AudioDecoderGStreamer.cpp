@@ -148,7 +148,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
 {
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
 
-    const char* parser = nullptr;
+    ASCIILiteral parser;
     if (codecName.startsWith("mp4a"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 4, "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
         auto codecData = wrapSpanData(config.description);
@@ -163,7 +163,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
         m_header = wrapSpanData(config.description);
         if (m_header)
-            parser = "opusparse";
+            parser = "opusparse"_s;
     } else if (codecName == "alaw"_s)
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-alaw", "rate", G_TYPE_INT, config.sampleRate, "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
     else if (codecName == "ulaw"_s)
@@ -174,7 +174,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
             GST_WARNING("Decoder config description for flac codec is mandatory");
             return;
         }
-        parser = "flacparse";
+        parser = "flacparse"_s;
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-flac"));
     } else if (codecName == "vorbis"_s) {
         m_header = wrapSpanData(config.description);
@@ -182,7 +182,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
             GST_WARNING("Decoder config description for vorbis codec is mandatory");
             return;
         }
-        parser = "oggparse";
+        parser = "oggparse"_s;
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("application/ogg"));
     } else if (codecName.startsWith("pcm-"_s)) {
         auto components = codecName.split('-');
@@ -224,11 +224,11 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     gst_bin_add_many(GST_BIN_CAST(harnessedElement.get()), audioconvert, outputCapsFilter, element.get(), nullptr);
 
     GRefPtr<GstElement> head = element;
-    if (parser && isParserRequired) {
+    if (!parser.isEmpty() && isParserRequired) {
         // The decoder won't accept the input caps, so put a parser in front.
-        auto* parserElement = makeGStreamerElement(parser, nullptr);
+        auto* parserElement = makeGStreamerElement(parser);
         if (!parserElement) {
-            GST_WARNING_OBJECT(element.get(), "Required parser %s not found, decoding will fail", parser);
+            GST_WARNING_OBJECT(element.get(), "Required parser %s not found, decoding will fail", parser.characters());
             m_inputCaps.clear();
             return;
         }

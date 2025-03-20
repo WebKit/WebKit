@@ -35,26 +35,6 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // <'scroll-snap-align'> = [ none | start | end | center ]{1,2}
-    // https://drafts.csswg.org/css-scroll-snap-1/#scroll-snap-align
-
-    auto firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
-    if (!firstValue)
-        return nullptr;
-
-    auto secondValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
-    bool shouldAddSecondValue = secondValue && !secondValue->equals(*firstValue);
-
-    // Only add the second value if it differs from the first so that we produce the canonical
-    // serialization of this CSSValueList.
-    if (shouldAddSecondValue)
-        return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull(), secondValue.releaseNonNull());
-
-    return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
-}
-
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'scroll-snap-type'> = none | [ x | y | block | inline | both ] [ mandatory | proximity ]?

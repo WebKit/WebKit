@@ -45,7 +45,7 @@ using namespace WebCore;
 Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
 {
     auto provider = adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
-    provider->m_gpuProcessConnection.get()->audioSourceProviderManager().addProvider(provider.copyRef());
+    provider->m_gpuProcessConnection.get()->protectedAudioSourceProviderManager()->addProvider(provider.copyRef());
     return provider;
 }
 
@@ -62,7 +62,7 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
 
 #if ENABLE(WEB_AUDIO)
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
+    gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
 #endif
 }
 
@@ -73,19 +73,19 @@ RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
 void RemoteAudioSourceProvider::close()
 {
     ASSERT(isMainRunLoop());
-    if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->audioSourceProviderManager().removeProvider(m_identifier);
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->protectedAudioSourceProviderManager()->removeProvider(m_identifier);
 }
 
 void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)
 {
-    if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
 }
 
-void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
+void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size, bool needsFlush)
 {
-    receivedNewAudioSamples(data, description, size);
+    receivedNewAudioSamples(data, description, size, needsFlush ? NeedsFlush::Yes : NeedsFlush::No);
 }
 
 #if !RELEASE_LOG_DISABLED

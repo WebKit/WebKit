@@ -2016,7 +2016,7 @@ bool AccessibilityUIElement::isIgnored() const
     BOOL result = NO;
     BEGIN_AX_OBJC_EXCEPTIONS
     s_controller->executeOnAXThreadAndWait([&result, this] {
-        result = [m_element accessibilityIsIgnored];
+        result = m_element ? [m_element accessibilityIsIgnored] : YES;
     });
     END_AX_OBJC_EXCEPTIONS
     return result;

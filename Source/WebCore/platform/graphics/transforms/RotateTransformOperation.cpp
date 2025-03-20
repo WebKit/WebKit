@@ -136,7 +136,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
 
 void RotateTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(" << TextStream::FormatNumberRespectingIntegers(m_x) << ", " << TextStream::FormatNumberRespectingIntegers(m_y) << ", " << TextStream::FormatNumberRespectingIntegers(m_z) << ", " << TextStream::FormatNumberRespectingIntegers(m_angle) << "deg)";
+    ts << type() << '(' << TextStream::FormatNumberRespectingIntegers(m_x) << ", "_s << TextStream::FormatNumberRespectingIntegers(m_y) << ", "_s << TextStream::FormatNumberRespectingIntegers(m_z) << ", "_s << TextStream::FormatNumberRespectingIntegers(m_angle) << "deg)"_s;
 }
 
 } // namespace WebCore

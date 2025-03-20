@@ -3,9 +3,6 @@ API/JSCallbackConstructor.cpp
 API/JSCallbackObject.h
 API/JSCallbackObjectFunctions.h
 API/JSClassRef.cpp
-API/JSContext.mm
-API/JSContextRef.cpp
-API/JSLockRef.cpp
 API/JSObjectRef.cpp
 API/JSRetainPtr.h
 API/JSScript.mm
@@ -75,7 +72,6 @@ heap/GCIncomingRefCountedSetInlines.h
 heap/Heap.cpp
 heap/IsoCellSetInlines.h
 heap/JITStubRoutineSet.cpp
-heap/MarkedSpace.cpp
 heap/MarkingConstraintSolver.cpp
 heap/ParallelSourceAdapter.h
 heap/SlotVisitor.cpp
@@ -105,6 +101,7 @@ inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 inspector/remote/cocoa/RemoteInspectorCocoa.mm
 interpreter/Interpreter.cpp
 jit/BaselineJITPlan.cpp
+jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/ICStats.cpp
 jit/ICStats.h
@@ -120,6 +117,7 @@ parser/Lexer.cpp
 parser/Parser.cpp
 parser/Parser.h
 parser/SourceCode.h
+parser/SourceProvider.h
 parser/UnlinkedSourceCode.cpp
 parser/UnlinkedSourceCode.h
 profiler/ProfilerDatabase.cpp
@@ -131,8 +129,8 @@ runtime/CacheableIdentifier.h
 runtime/CacheableIdentifierInlines.h
 runtime/CachedTypes.cpp
 runtime/CodeCache.cpp
+runtime/CodeCache.h
 runtime/Completion.cpp
-runtime/DeferredWorkTimer.cpp
 runtime/DirectEvalExecutable.cpp
 runtime/ErrorInstance.cpp
 runtime/FunctionExecutable.cpp
@@ -145,11 +143,9 @@ runtime/JSArrayBuffer.cpp
 runtime/JSArrayBufferView.cpp
 runtime/JSCustomGetterFunction.cpp
 runtime/JSCustomSetterFunction.cpp
-runtime/JSFinalizationRegistry.cpp
 runtime/JSGenericTypedArrayViewInlines.h
 runtime/JSGenericTypedArrayViewPrototypeFunctions.h
 runtime/JSGlobalObject.cpp
-runtime/JSLock.cpp
 runtime/JSModuleEnvironment.cpp
 runtime/JSObject.cpp
 runtime/JSObjectInlines.h
@@ -171,13 +167,9 @@ runtime/TemporalObject.cpp
 runtime/TypeProfiler.cpp
 runtime/TypeProfilerLog.cpp
 runtime/TypeSet.cpp
-runtime/VM.cpp
-runtime/VM.h
 runtime/VMTraps.cpp
-runtime/WaiterListManager.cpp
 runtime/Watchdog.cpp
 tools/FunctionOverrides.cpp
-tools/HeapVerifier.cpp
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
 wasm/WasmBBQJIT64.cpp
@@ -219,7 +211,6 @@ wasm/js/JSWebAssemblyInstance.h
 wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyMemory.h
 wasm/js/JSWebAssemblyModule.cpp
-wasm/js/JSWebAssemblyStruct.cpp
 wasm/js/JSWebAssemblyTable.cpp
 wasm/js/WasmToJS.cpp
 wasm/js/WebAssemblyFunction.h

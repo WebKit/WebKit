@@ -68,12 +68,12 @@ std::unique_ptr<FilterEffectApplier> FEBlend::createSoftwareApplier() const
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feBlend";
+    ts << indent << "[feBlend"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
     ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal"_s : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
 
-    ts << "\"]\n";
+    ts << "\"]\n"_s;
     return ts;
 }
 

@@ -72,7 +72,9 @@
 
 /* ==== Platform additions: additions to PlatformEnable.h from outside the main repository ==== */
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
+/* rdar://147082710: Temporarily work around unavailability of WebKitAdditions
+   when generating platform-enabled-swift-args.resp in installhdrs actions. */
+#if USE(APPLE_INTERNAL_SDK) && !defined(__WK_GENERATING_PLATFORM_ARGS__) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
 #include <WebKitAdditions/AdditionalFeatureDefines.h>
 #endif
 
@@ -901,7 +903,7 @@
 #define ENABLE_GC_VALIDATION 1
 #endif
 
-#if OS(DARWIN) && ENABLE(JIT) && USE(APPLE_INTERNAL_SDK) && CPU(ARM64E) && HAVE(JIT_CAGE) && !PLATFORM(MAC)
+#if OS(DARWIN) && ENABLE(JIT) && USE(APPLE_INTERNAL_SDK) && CPU(ARM64E) && HAVE(JIT_CAGE) && !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
 #define ENABLE_JIT_CAGE 1
 #endif
 

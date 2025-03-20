@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeBuilderBlock.h"
 
+#include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderMultiColumnFlow.h"

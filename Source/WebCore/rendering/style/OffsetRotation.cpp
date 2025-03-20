@@ -49,8 +49,8 @@ OffsetRotation OffsetRotation::blend(const OffsetRotation& to, const BlendingCon
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const OffsetRotation& rotation)
 {
-    ts.dumpProperty("angle", rotation.angle());
-    ts.dumpProperty("hasAuto", rotation.hasAuto());
+    ts.dumpProperty("angle"_s, rotation.angle());
+    ts.dumpProperty("hasAuto"_s, rotation.hasAuto());
 
     return ts;
 }

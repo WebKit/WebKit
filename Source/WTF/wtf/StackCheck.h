@@ -55,7 +55,7 @@ public:
             : m_checker(checker)
         {
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
-            RELEASE_ASSERT(checker.m_ownerThread == &Thread::current());
+            RELEASE_ASSERT(checker.m_ownerThread == &Thread::currentSingleton());
 
             // Make sure that the stack interval between checks never exceed the
             // reservedZone size. If the interval exceeds the reservedZone size,
@@ -101,10 +101,10 @@ public:
 #endif
     };
 
-    StackCheck(const StackBounds& bounds = Thread::current().stack(), size_t minReservedZone = StackBounds::DefaultReservedZone)
+    StackCheck(const StackBounds& bounds = Thread::currentSingleton().stack(), size_t minReservedZone = StackBounds::DefaultReservedZone)
         : m_stackLimit(bounds.recursionLimit(minReservedZone))
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
-        , m_ownerThread(&Thread::current())
+        , m_ownerThread(&Thread::currentSingleton())
         , m_lastStackCheckpoint(static_cast<uint8_t*>(currentStackPointer()))
         , m_reservedZone(minReservedZone)
 #endif

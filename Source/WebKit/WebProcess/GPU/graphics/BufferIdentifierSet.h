@@ -42,11 +42,11 @@ inline TextStream& operator<<(TextStream& ts, const BufferIdentifierSet& set)
 {
     auto dumpBuffer = [&](const char* name, const std::optional<WebCore::RenderingResourceIdentifier>& bufferInfo) {
         ts.startGroup();
-        ts << name << " ";
+        ts << name << ' ';
         if (bufferInfo)
             ts << *bufferInfo;
         else
-            ts << "none";
+            ts << "none"_s;
         ts.endGroup();
     };
     dumpBuffer("front buffer", set.front);
@@ -65,11 +65,11 @@ enum class BufferInSetType : uint8_t {
 inline TextStream& operator<<(TextStream& ts, BufferInSetType bufferType)
 {
     if (bufferType == BufferInSetType::Front)
-        ts << "Front";
+        ts << "Front"_s;
     else if (bufferType == BufferInSetType::Back)
-        ts << "Back";
+        ts << "Back"_s;
     else
-        ts << "SecondaryBack";
+        ts << "SecondaryBack"_s;
 
     return ts;
 }

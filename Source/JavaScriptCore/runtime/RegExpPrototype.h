@@ -56,6 +56,5 @@ private:
 JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncMatchFast);
 JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSearchFast);
 JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSplitFast);
-JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncTestFast);
 
 } // namespace JSC

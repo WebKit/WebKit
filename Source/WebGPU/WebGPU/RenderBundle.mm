@@ -60,8 +60,7 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Re
     , m_commandCount(commandCount)
     , m_makeSubmitInvalid(makeSubmitInvalid)
 {
-    if (m_descriptorColorFormats.size())
-        m_descriptor.colorFormats = &m_descriptorColorFormats[0];
+    m_descriptor.colorFormats = m_descriptorColorFormats.size() ? &m_descriptorColorFormats[0] : nullptr;
 
     ASSERT(m_renderBundleEncoder || m_renderBundlesResources.count);
 }

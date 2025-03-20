@@ -27,13 +27,13 @@
 namespace WebCore {
 
 class CSSRuleList;
-class CSSStyleDeclaration;
+class CSSStyleProperties;
 class DeclaredStylePropertyMap;
 class StylePropertyMap;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 class StyleRule;
 class StyleRuleWithNesting;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 
 class CSSStyleRule final : public CSSRule, public CanMakeWeakPtr<CSSStyleRule> {
 public:
@@ -45,7 +45,7 @@ public:
     WEBCORE_EXPORT String selectorText() const;
     WEBCORE_EXPORT void setSelectorText(const String&);
 
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleProperties& style();
 
     // FIXME: Not CSSOM. Remove.
     StyleRule& styleRule() const { return m_styleRule.get(); }
@@ -76,7 +76,7 @@ private:
 
     Ref<StyleRule> m_styleRule;
     Ref<DeclaredStylePropertyMap> m_styleMap;
-    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;

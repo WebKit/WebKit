@@ -48,7 +48,7 @@ ThreadGroupAddResult ThreadGroup::add(Thread& thread)
 
 ThreadGroupAddResult ThreadGroup::addCurrentThread()
 {
-    auto result = add(Thread::current());
+    auto result = add(Thread::currentSingleton());
     ASSERT(result != ThreadGroupAddResult::NotAdded);
     return result;
 }

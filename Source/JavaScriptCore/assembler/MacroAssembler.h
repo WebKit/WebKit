@@ -2337,7 +2337,7 @@ public:
 
     void lshift32(Imm32 amount, RegisterID shiftAmount, RegisterID dest)
     {
-        lshift32(trustedImm32ForShift(amount), shiftAmount, dest);
+        lshift32(amount.asTrustedImm32(), shiftAmount, dest);
     }
     
     void rshift32(Imm32 imm, RegisterID dest)
@@ -2349,7 +2349,12 @@ public:
     {
         rshift32(src, trustedImm32ForShift(amount), dest);
     }
-    
+
+    void rshift32(Imm32 amount, RegisterID shiftAmount, RegisterID dest)
+    {
+        rshift32(amount.asTrustedImm32(), shiftAmount, dest);
+    }
+
     void urshift32(Imm32 imm, RegisterID dest)
     {
         urshift32(trustedImm32ForShift(imm), dest);
@@ -2358,6 +2363,11 @@ public:
     void urshift32(RegisterID src, Imm32 amount, RegisterID dest)
     {
         urshift32(src, trustedImm32ForShift(amount), dest);
+    }
+
+    void urshift32(Imm32 amount, RegisterID shiftAmount, RegisterID dest)
+    {
+        urshift32(amount.asTrustedImm32(), shiftAmount, dest);
     }
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)

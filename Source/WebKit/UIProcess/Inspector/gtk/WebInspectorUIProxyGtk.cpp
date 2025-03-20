@@ -425,6 +425,23 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return data;
 }
 
+// Set a default sizes based on InspectorFrontendClientLocal.
+static constexpr unsigned s_defaultAttachedSize = 300;
+static constexpr unsigned s_minimumAttachedWidth = 750;
+static constexpr unsigned s_minimumAttachedHeight = 250;
+
+bool WebInspectorUIProxy::platformCanAttach(bool)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return false;
+
+    unsigned inspectedPageHeight = gtk_widget_get_allocated_height(inspectedPage->viewWidget());
+    unsigned inspectedPageWidth = gtk_widget_get_allocated_width(inspectedPage->viewWidget());
+    unsigned maximumAttachedHeight = inspectedPageHeight * 3 / 4;
+    return s_minimumAttachedHeight <= maximumAttachedHeight && s_minimumAttachedWidth <= inspectedPageWidth;
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
     GRefPtr<GtkWidget> inspectorView = m_inspectorView.get();
@@ -438,19 +455,14 @@ void WebInspectorUIProxy::platformAttach()
         m_inspectorWindow = nullptr;
     }
 
-    // Set a default sizes based on InspectorFrontendClientLocal.
-    static const unsigned defaultAttachedSize = 300;
-    static const unsigned minimumAttachedWidth = 750;
-    static const unsigned minimumAttachedHeight = 250;
-
     if (m_attachmentSide == AttachmentSide::Bottom) {
         unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protectedInspectedPage()->viewWidget());
         unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
-        platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
+        platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
     } else {
         unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protectedInspectedPage()->viewWidget());
         unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
-        platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
+        platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
     }
 
     if (m_client && m_client->attach(*this))

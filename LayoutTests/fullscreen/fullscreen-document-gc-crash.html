@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<body>
+<script>
+(async () => {
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.waitUntilDone();
+
+    if (sessionStorage.getItem('count') > 20) {
+        document.body.innerHTML = '<p>This tests requesting a fullscreen then removing the element. WebKit should not crash.<br>PASS</p>';
+        globalThis.testRunner?.dumpAsText();
+        globalThis.testRunner?.notifyDone();
+        return;
+    }
+
+    internals.withUserGesture(() => { });
+
+    let div = document.createElement('div');
+    document.body.appendChild(div);
+
+    div.webkitRequestFullscreen();
+
+    const count = sessionStorage.getItem('count') || 0;
+    sessionStorage.setItem('count', count + 1);
+    await navigation.reload({ info: {} });
+
+    await navigator.locks.query();
+    div.remove();
+    globalThis.GCController?.collect();
+
+})();
+</script>

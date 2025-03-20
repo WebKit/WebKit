@@ -110,7 +110,7 @@ constexpr OptionSet<AcceleratedEffectProperty> transformRelatedAcceleratedProper
 };
 
 struct CSSPropertiesBitSet {
-    WTF::BitSet<numCSSProperties> m_properties { };
+    WTF::BitSet<cssPropertyIDEnumValueCount> m_properties { };
 };
 
 using TimelineRangeValue = std::variant<TimelineRangeOffset, RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>, String>;

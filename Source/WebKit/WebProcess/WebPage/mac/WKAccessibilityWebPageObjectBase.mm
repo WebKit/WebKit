@@ -109,8 +109,17 @@ namespace ax = WebCore::Accessibility;
         if (!WebCore::AXObjectCache::accessibilityEnabled())
             [protectedSelf enableAccessibilityForAllProcesses];
 
-        if (protectedSelf.get()->m_hasMainFramePlugin)
+        if (protectedSelf.get()->m_hasMainFramePlugin) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            // Even though we want to serve the PDF plugin tree for main-frame plugins, we still need to make sure the isolated tree
+            // is built, so that when text annotations are created on-the-fly as users focus on text fields,
+            // isolated objects are able to be attached to those text annotation object wrappers.
+            // If they aren't, we never have a backing object to serve any requests from.
+            if (auto cache = protectedSelf.get().axObjectCache)
+                cache->buildAccessibilityTreeIfNeeded();
+#endif
             return protectedSelf.get().accessibilityPluginObject;
+        }
 
         if (auto cache = protectedSelf.get().axObjectCache) {
             if (auto* root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
@@ -159,6 +168,12 @@ namespace ax = WebCore::Accessibility;
 - (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root
 {
     ASSERT(isMainRunLoop());
+
+    if (m_hasMainFramePlugin) {
+        // Do not set the isolated tree root for main-frame plugins, as that would prevent serving the root
+        // of the plugin accessiblity tree.
+        return;
+    }
     m_isolatedTreeRoot = root.get();
 }
 
@@ -221,8 +236,9 @@ namespace ax = WebCore::Accessibility;
     if (!m_frameID)
         return dynamicDowncast<WebCore::LocalFrame>(m_page->mainFrame());
 
-    auto* page = m_page->corePage();
-    ASSERT(page);
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return nullptr;
     ASSERT(page->settings().siteIsolationEnabled());
 
     // FIXME: This needs to be made thread safe when the isolated accessibility tree is on.

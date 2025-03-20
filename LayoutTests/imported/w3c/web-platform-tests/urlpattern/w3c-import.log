@@ -15,8 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.any.js
-/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-hasregexpgroups.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern.https.any.js

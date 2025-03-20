@@ -23,11 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.script > .timeline-record-bar {
-    margin-top: 8px;
-    height: 20px;
+.timeline-overview-graph.script > .graph-row {
+    /* (--graph-row-height * rows) + (--graph-row-margin * (rows + 1)) = --timeline-overview-graph-height - --timeline-overview-graph-border-top-height */
+    height: var(--graph-row-height);
+    margin-bottom: var(--graph-row-margin);
+    padding-top: var(--graph-row-margin);
 }
 
-.timeline-overview-graph.script > .timeline-record-bar > .segment {
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(1) {
+    --graph-row-height: 21px;
+    --graph-row-margin: 7px;
+}
+
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(2),
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(2) ~ .graph-row {
+    --graph-row-height: 12px;
+    --graph-row-margin: 4px;
+}
+
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(3),
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(3) ~ .graph-row {
+    --graph-row-height: 8px;
+    --graph-row-margin: 3px;
+}
+
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(4),
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(4) ~ .graph-row {
+    --graph-row-height: 6.5px;
+    --graph-row-margin: 2px;
+}
+
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(5),
+.timeline-overview-graph.script > .graph-row:first-child:nth-last-child(5) ~ .graph-row {
+    --graph-row-height: 6px;
+    --graph-row-margin: 1px;
+}
+
+.timeline-overview-graph.script > .graph-row > .timeline-record-bar {
+    height: var(--graph-row-height);
+}
+
+.timeline-overview-graph.script > .graph-row > .timeline-record-bar > .segment {
     border-radius: 2px;
 }

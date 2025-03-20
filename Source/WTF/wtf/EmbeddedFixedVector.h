@@ -29,6 +29,7 @@
 #include <wtf/MallocCommon.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TrailingArray.h>
 #include <wtf/UniqueRef.h>
 

@@ -102,8 +102,11 @@ Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& 
     ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
         m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:resourceType() callback:^{
-            updateList([this] {
-                m_observers.forEach([](auto& observer) {
+            updateList([weakThis = WeakPtr { *this }] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+                protectedThis->m_observers.forEach([](auto& observer) {
                     observer.invokeCallback();
                 });
             });
@@ -122,8 +125,11 @@ void ListDataControllerBase::initializeIfNeeded()
     if (std::exchange(m_wasInitialized, true))
         return;
 
-    updateList([this] {
-        m_observers.forEach([](auto& observer) {
+    updateList([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_observers.forEach([](auto& observer) {
             observer.invokeCallback();
         });
     });
@@ -422,10 +428,32 @@ void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRule
 
     [[PAL::getWPResourcesClass() sharedInstance] prepareResouceMonitorRulesForStore:store completionHandler:^(WKContentRuleList *list, bool updated, NSError *error) {
         if (error)
-            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request resource monitor urls from WebPrivacy");
+            RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls from WebPrivacy: %@", error);
 
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
             completionHandler(list, updated);
+    }];
+}
+
+void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestResouceMonitorRulesSource:completionHandler:)]) {
+        completionHandler({ });
+        return;
+    }
+
+    static MainThreadNeverDestroyed<Vector<CompletionHandler<void(NSString *)>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTFMove(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    [[PAL::getWPResourcesClass() sharedInstance] requestResouceMonitorRulesSource:nil completionHandler:^(NSString *source, NSError *error) {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls source from WebPrivacy");
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler(String { source });
     }];
 }
 

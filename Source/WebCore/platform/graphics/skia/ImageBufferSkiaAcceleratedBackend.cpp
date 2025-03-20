@@ -121,15 +121,15 @@ void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 #endif
 }
 
-void ImageBufferSkiaAcceleratedBackend::finishAcceleratedRenderingAndCreateFence()
+bool ImageBufferSkiaAcceleratedBackend::finishAcceleratedRenderingAndCreateFence()
 {
     Locker locker { m_fenceLock };
     if (m_fence)
-        return;
+        return true;
 
     auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
     if (!glContext || !glContext->makeContextCurrent())
-        return;
+        return false;
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     RELEASE_ASSERT(grContext);
@@ -141,6 +141,8 @@ void ImageBufferSkiaAcceleratedBackend::finishAcceleratedRenderingAndCreateFence
             grContext->submit(GrSyncCpu::kYes);
     } else
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kYes);
+
+    return true;
 }
 
 void ImageBufferSkiaAcceleratedBackend::waitForAcceleratedRenderingFenceCompletion()

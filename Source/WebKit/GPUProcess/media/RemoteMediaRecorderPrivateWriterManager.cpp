@@ -74,7 +74,11 @@ public:
         return m_writer->close();
     }
 
-    Ref<SharedBuffer> takeData() { return m_data.takeAsContiguous(); }
+    Ref<SharedBuffer> takeData()
+    {
+        Locker locker { m_lock };
+        return m_data.takeAsContiguous();
+    }
 
 private:
     RemoteMediaRecorderPrivateWriterProxy(const String& mimeType)
@@ -84,11 +88,13 @@ private:
 
     void appendData(std::span<const uint8_t> data) final
     {
+        Locker locker { m_lock };
         m_data.append(data);
     }
 
     const UniqueRef<MediaRecorderPrivateWriter> m_writer;
-    SharedBufferBuilder m_data;
+    Lock m_lock;
+    SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaRecorderPrivateWriterProxy);

@@ -28,11 +28,13 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AllAcceptedCredentialsOptions.h"
 #include "AuthenticatorAssertionResponse.h"
 #include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorResponse.h"
 #include "BufferSource.h"
+#include "CurrentUserDetailsOptions.h"
 #include "Document.h"
 #include "JSAuthenticatorAttachment.h"
 #include "JSDOMPromiseDeferred.h"
@@ -44,6 +46,7 @@
 #include "PublicKeyCredentialDescriptorJSON.h"
 #include "PublicKeyCredentialRequestOptionsJSON.h"
 #include "Settings.h"
+#include "UnknownCredentialOptions.h"
 #include "WebAuthenticationUtils.h"
 #include <wtf/text/Base64.h>
 
@@ -292,6 +295,24 @@ ExceptionOr<PublicKeyCredentialRequestOptions> PublicKeyCredential::parseRequest
         options.extensions = extensions.releaseReturnValue();
     }
     return options;
+}
+
+void PublicKeyCredential::signalUnknownCredential(Document& document, UnknownCredentialOptions&& options, DOMPromiseDeferred<void>&& promise)
+{
+    if (auto* page = document.page())
+        page->authenticatorCoordinator().signalUnknownCredential(document, WTFMove(options), WTFMove(promise));
+}
+
+void PublicKeyCredential::signalAllAcceptedCredentials(Document& document, AllAcceptedCredentialsOptions&& options, DOMPromiseDeferred<void>&& promise)
+{
+    if (auto* page = document.page())
+        page->authenticatorCoordinator().signalAllAcceptedCredentials(document, WTFMove(options), WTFMove(promise));
+}
+
+void PublicKeyCredential::signalCurrentUserDetails(Document& document, CurrentUserDetailsOptions&& options, DOMPromiseDeferred<void>&& promise)
+{
+    if (auto* page = document.page())
+        page->authenticatorCoordinator().signalCurrentUserDetails(document, WTFMove(options), WTFMove(promise));
 }
 
 } // namespace WebCore

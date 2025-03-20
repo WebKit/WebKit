@@ -112,30 +112,30 @@ void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const Layout
 
 void ScrollingStateFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Fixed node";
+    ts << "Fixed node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
     if (m_constraints.anchorEdges()) {
         TextStream::GroupScope scope(ts);
-        ts << "anchor edges: ";
+        ts << "anchor edges: "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
-            ts << "AnchorEdgeLeft ";
+            ts << "AnchorEdgeLeft "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
-            ts << "AnchorEdgeRight ";
+            ts << "AnchorEdgeRight "_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
-            ts << "AnchorEdgeTop";
+            ts << "AnchorEdgeTop"_s;
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
-            ts << "AnchorEdgeBottom";
+            ts << "AnchorEdgeBottom"_s;
     }
 
     if (!m_constraints.alignmentOffset().isEmpty())
-        ts.dumpProperty("alignment offset", m_constraints.alignmentOffset());
+        ts.dumpProperty("alignment offset"_s, m_constraints.alignmentOffset());
 
     if (!m_constraints.viewportRectAtLastLayout().isEmpty())
-        ts.dumpProperty("viewport rect at last layout", m_constraints.viewportRectAtLastLayout());
+        ts.dumpProperty("viewport rect at last layout"_s, m_constraints.viewportRectAtLastLayout());
 
     if (m_constraints.layerPositionAtLastLayout() != FloatPoint())
-        ts.dumpProperty("layer position at last layout", m_constraints.layerPositionAtLastLayout());
+        ts.dumpProperty("layer position at last layout"_s, m_constraints.layerPositionAtLastLayout());
 }
 
 } // namespace WebCore

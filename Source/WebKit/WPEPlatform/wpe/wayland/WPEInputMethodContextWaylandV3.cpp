@@ -348,8 +348,7 @@ static void textInputV3Enable(WPEIMContextWaylandV3* context, TextInputV3Global*
     textInputV3UpdateState(context, ZWP_TEXT_INPUT_V3_CHANGE_CAUSE_OTHER);
 
     // Mutter only pops up the OSK on >1 consecutive zwp_text_input_v3_enable() calls
-    WPEInputHints hints;
-    g_object_get(context, "input-hints", &hints, nullptr);
+    WPEInputHints hints = wpe_input_method_context_get_input_hints(WPE_INPUT_METHOD_CONTEXT(context));
     if (!(hints & WPE_INPUT_HINT_INHIBIT_OSK)) {
         zwp_text_input_v3_enable(global->textInput);
         textInputV3CommitState(context);
@@ -602,10 +601,11 @@ static void wpe_im_context_wayland_v3_class_init(WPEIMContextWaylandV3Class* kla
     imContextClass->reset = wpeIMContextWaylandV3Reset;
 }
 
-WPEInputMethodContext* wpe_im_context_wayland_v3_new(WPEDisplayWayland* display)
+WPEInputMethodContext* wpe_im_context_wayland_v3_new(WPEDisplayWayland* display, WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY_WAYLAND(display), nullptr);
+    g_return_val_if_fail(WPE_IS_VIEW_WAYLAND(view), nullptr);
 
     textInputV3GetGlobalByDisplay(display); // ensure creation of listener
-    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V3, nullptr));
+    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V3, "view", view, nullptr));
 }

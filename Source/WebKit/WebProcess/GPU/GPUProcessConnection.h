@@ -99,10 +99,12 @@ public:
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
     Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy();
     RemoteMediaPlayerManager& mediaPlayerManager();
+    Ref<RemoteMediaPlayerManager> protectedMediaPlayerManager();
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
+    Ref<RemoteAudioSourceProviderManager> protectedAudioSourceProviderManager();
 #endif
 
     void updateMediaConfiguration(bool forceUpdate);

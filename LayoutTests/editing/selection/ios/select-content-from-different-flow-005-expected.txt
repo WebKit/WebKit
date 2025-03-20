@@ -1,0 +1,13 @@
+The highlight rects should be combined if the content is from same out of flow. Distinguish flows properly, positioned container + inline and block descendants.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 2
+PASS firstLineBottom is secondLineTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Line 1
+Line 2
+

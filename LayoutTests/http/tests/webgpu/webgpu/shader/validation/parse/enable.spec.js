@@ -65,20 +65,39 @@ enable f16;`,
   unknown: {
     code: `enable unknown;`,
     pass: false
+  },
+  subgroups: {
+    code: `enable subgroups;`,
+    pass: true
+  },
+  subgroups_f16_pass1: {
+    code: `
+    enable f16;
+    enable subgroups;`,
+    pass: true
+  },
+  subgroups_f16_pass2: {
+    code: `
+    enable subgroups;
+    enable f16;`,
+    pass: true
+  },
+  in_comment_f16: {
+    code: `
+    /* enable f16; */
+    var<private> v: f16;
+    `,
+    pass: false
   }
 };
 
 g.test('enable').
 desc(`Tests that enables are validated correctly`).
-beforeAllSubcases((t) => {
-  t.selectDeviceOrSkipTestCase('shader-f16');
-}).
 params((u) => u.combine('case', keysOf(kCases))).
 fn((t) => {
   if (t.params.case === 'requires_before') {
     t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures');
   }
-
   const c = kCases[t.params.case];
   t.expectCompileResult(c.pass, c.code);
 });

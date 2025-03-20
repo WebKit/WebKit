@@ -182,6 +182,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
                           'webdriver': {'binary': webdriver_binary},
                           'wptserve': server_config,
                           'timeout_multiplier': 10,
+                          'target_platform': sys.platform,
                           }
                 with open(config_path, 'w') as f:
                     json.dump(config, f)

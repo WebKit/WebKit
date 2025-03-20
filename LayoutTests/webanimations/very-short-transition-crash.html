@@ -1,0 +1,33 @@
+<style>
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    transition-duration: 0.001ms;
+}
+
+div.transition {
+    width: 200px;
+}
+
+</style>
+
+<div>This test passes if it does not crash.</div>
+
+<script>
+
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+(async function() {
+    await new Promise(requestAnimationFrame);
+    document.querySelector("div").classList.add("transition");
+    await new Promise(requestAnimationFrame);
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+})();
+
+</script>

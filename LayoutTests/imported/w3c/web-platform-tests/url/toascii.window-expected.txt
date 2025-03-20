@@ -675,15 +675,15 @@ PASS Ӏ.com (using <a>.hostname)
 PASS Ӏ.com (using <area>)
 PASS Ӏ.com (using <area>.host)
 PASS Ӏ.com (using <area>.hostname)
-FAIL 㛼.com (using URL) "https://㛼.com/x" cannot be parsed as a URL.
-FAIL 㛼.com (using URL.host) assert_equals: expected "xn--snl.com" but got "x"
-FAIL 㛼.com (using URL.hostname) assert_equals: expected "xn--snl.com" but got "x"
-FAIL 㛼.com (using <a>) "https://㛼.com/x" cannot be parsed as a URL.
-FAIL 㛼.com (using <a>.host) assert_equals: expected "xn--snl.com" but got "x"
-FAIL 㛼.com (using <a>.hostname) assert_equals: expected "xn--snl.com" but got "x"
-FAIL 㛼.com (using <area>) "https://㛼.com/x" cannot be parsed as a URL.
-FAIL 㛼.com (using <area>.host) assert_equals: expected "xn--snl.com" but got "x"
-FAIL 㛼.com (using <area>.hostname) assert_equals: expected "xn--snl.com" but got "x"
+PASS 㛼.com (using URL)
+PASS 㛼.com (using URL.host)
+PASS 㛼.com (using URL.hostname)
+PASS 㛼.com (using <a>)
+PASS 㛼.com (using <a>.host)
+PASS 㛼.com (using <a>.hostname)
+PASS 㛼.com (using <area>)
+PASS 㛼.com (using <area>.host)
+PASS 㛼.com (using <area>.hostname)
 PASS Ↄ.com (using URL)
 PASS Ↄ.com (using URL.host)
 PASS Ↄ.com (using URL.hostname)

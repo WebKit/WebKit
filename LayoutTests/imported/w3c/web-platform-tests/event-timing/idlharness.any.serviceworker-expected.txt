@@ -1,0 +1,14 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Performance: original interface defined
+PASS Partial interface Performance: valid exposure set
+PASS Partial interface Performance: member names are unique
+PASS Partial dictionary PerformanceObserverInit: original dictionary defined
+PASS Partial dictionary PerformanceObserverInit: member names are unique
+PASS Partial interface Performance[2]: member names are unique
+PASS PerformanceEventTiming interface: existence and properties of interface object
+PASS EventCounts interface: existence and properties of interface object
+PASS Performance interface: member eventCounts
+PASS Performance interface: performance must not have property "eventCounts"
+

@@ -37,6 +37,10 @@
 
 #include <wtf/TZoneMallocInlines.h>
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(AVPlayerItemVideoOutput)
+static bool isType(const AVPlayerItemOutput& output) { return [&output isKindOfClass:PAL::getAVPlayerItemVideoOutputClass()]; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 @interface WebQueuedVideoOutputDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     WeakPtr<WebCore::QueuedVideoOutput> _parent;
 }
@@ -59,8 +63,7 @@
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)output
 {
-    ASSERT([output isKindOfClass:PAL::getAVPlayerItemVideoOutputClass()]);
-    auto* videoOutput = (AVPlayerItemVideoOutput*)output;
+    auto* videoOutput = downcast<AVPlayerItemVideoOutput>(output);
 
     Vector<WebCore::QueuedVideoOutput::VideoFrameEntry> videoFrameEntries;
     do {
@@ -86,8 +89,7 @@
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output
 {
-    ASSERT([output isKindOfClass:PAL::getAVPlayerItemVideoOutputClass()]);
-    auto* videoOutput = (AVPlayerItemVideoOutput*)output;
+    auto* videoOutput = downcast<AVPlayerItemVideoOutput>(output);
     [videoOutput requestNotificationOfMediaDataChangeAsSoonAsPossible];
 
     callOnMainRunLoop([parent = _parent] {

@@ -34,9 +34,9 @@ namespace WebCore {
 
 PushPullFIFO::PushPullFIFO(unsigned numberOfChannels, size_t fifoLength)
     : m_fifoLength(fifoLength)
+    , m_fifoBus(AudioBus::create(numberOfChannels, m_fifoLength))
 {
     ASSERT(m_fifoLength <= maxFIFOLength);
-    m_fifoBus = AudioBus::create(numberOfChannels, m_fifoLength);
 }
 
 PushPullFIFO::~PushPullFIFO() = default;

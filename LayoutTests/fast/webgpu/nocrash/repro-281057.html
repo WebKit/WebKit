@@ -35,6 +35,10 @@ canvas {
     </p>
 </div>
 <script>
+    globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.waitUntilDone();
+
+
     async function helloTriangle() {
         if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
             document.body.className = 'error';
@@ -195,6 +199,9 @@ canvas {
 
     window.addEventListener("DOMContentLoaded", helloTriangle);
 
+    console.log('Pass')
+    globalThis.testRunner?.notifyDone();
 </script>
+
 </body>
 </html>

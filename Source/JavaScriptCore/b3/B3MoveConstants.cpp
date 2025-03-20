@@ -340,6 +340,12 @@ private:
                     if (child->type().isVector())
                         continue;
 
+                    // BigImms don't work reliably for 32-bit, so this is the most reliable.
+                    if constexpr (is32Bit()) {
+                        if (child->hasDouble() && !WTF::isIdentical(child->asDouble(), 0.0))
+                            continue;
+                    }
+
                     ValueKey key = child->key();
                     child = m_insertionSet.insertValue(
                         valueIndex, key.materialize(m_proc, value->origin()));

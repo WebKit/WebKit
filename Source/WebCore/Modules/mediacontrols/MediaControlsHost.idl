@@ -80,7 +80,7 @@ enum DeviceType {
 
     readonly attribute SourceType? sourceType;
 
-    readonly attribute DOMString shadowRootCSSText;
+    readonly attribute sequence<DOMString> shadowRootStyleSheets;
     DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     DOMString formattedStringForDuration(unrestricted double durationInSeconds);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);

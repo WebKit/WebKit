@@ -26,6 +26,7 @@
 #import "WebDeviceOrientationProviderMockInternal.h"
 
 #import "WebDeviceOrientationInternal.h"
+#import <WebCore/SecurityOriginData.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -53,7 +54,8 @@ using namespace WebCore;
 
 - (void)startUpdating
 {
-    m_core->startUpdating();
+    auto placeholderOrigin = WebCore::SecurityOriginData { };
+    m_core->startUpdating(placeholderOrigin);
 }
 
 - (void)stopUpdating

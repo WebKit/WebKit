@@ -50,9 +50,8 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
 - (void)performCancel
 {
-    if (m_download)
-        m_download->cancel([](auto) { }, WebKit::Download::IgnoreDidFailCallback::No);
-    m_download = nullptr;
+    if (RefPtr download = std::exchange(m_download, nullptr).get())
+        download->cancel([](auto) { }, WebKit::Download::IgnoreDidFailCallback::No);
 }
 
 - (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download&)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension
@@ -87,8 +86,8 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 - (void)publish
 #endif
 {
-    if (m_sandboxExtension) {
-        BOOL consumedExtension = m_sandboxExtension->consume();
+    if (RefPtr extension = m_sandboxExtension) {
+        BOOL consumedExtension = extension->consume();
         ASSERT_UNUSED(consumedExtension, consumedExtension);
     }
 
@@ -113,10 +112,8 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     [super unpublish];
 #endif
 
-    if (m_sandboxExtension) {
-        m_sandboxExtension->revoke();
-        m_sandboxExtension = nullptr;
-    }
+    if (RefPtr extension = std::exchange(m_sandboxExtension, nullptr))
+        extension->revoke();
 }
 
 - (void)_updateProgressExtendedAttributeOnProgressFile

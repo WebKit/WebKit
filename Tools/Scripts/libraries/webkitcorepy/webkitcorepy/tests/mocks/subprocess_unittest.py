@@ -23,6 +23,7 @@
 import subprocess
 import unittest
 
+from pathlib import Path
 from webkitcorepy import BytesIO, OutputCapture, mocks, run
 
 
@@ -72,6 +73,15 @@ class MockSubprocess(unittest.TestCase):
 
             with self.assertRaises(OSError):
                 run(['invalid-file'])
+
+    def test_path_args(self):
+        with OutputCapture():
+            with mocks.Subprocess(
+                    'ls', '.*', completion=mocks.ProcessCompletion(returncode=0, stdout='file1.txt\nfile2.txt\n'),
+            ):
+                result = run(['ls', Path('directory')], capture_output=True, encoding='utf-8')
+                assert result.returncode == 0
+                assert result.stdout == 'file1.txt\nfile2.txt\n'
 
     def test_popen(self):
         with mocks.Time:

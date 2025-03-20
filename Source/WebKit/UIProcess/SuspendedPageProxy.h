@@ -75,6 +75,7 @@ public:
     BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
 
     WebBackForwardCache& backForwardCache() const;
+    Ref<WebBackForwardCache> protectedBackForwardCache() const;
 
     bool pageIsClosedOrClosing() const;
 

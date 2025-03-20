@@ -478,37 +478,37 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingTreeNode::dumpProperties(ts, behavior);
-    ts.dumpProperty("scrollable area size", m_scrollableAreaSize);
-    ts.dumpProperty("total content size", m_totalContentsSize);
+    ts.dumpProperty("scrollable area size"_s, m_scrollableAreaSize);
+    ts.dumpProperty("total content size"_s, m_totalContentsSize);
     if (m_totalContentsSizeForRubberBand != m_totalContentsSize)
-        ts.dumpProperty("total content size for rubber band", m_totalContentsSizeForRubberBand);
+        ts.dumpProperty("total content size for rubber band"_s, m_totalContentsSizeForRubberBand);
     if (m_reachableContentsSize != m_totalContentsSize)
-        ts.dumpProperty("reachable content size", m_reachableContentsSize);
-    ts.dumpProperty("last committed scroll position", m_lastCommittedScrollPosition);
+        ts.dumpProperty("reachable content size"_s, m_reachableContentsSize);
+    ts.dumpProperty("last committed scroll position"_s, m_lastCommittedScrollPosition);
 
     if (!m_currentScrollPosition.isZero())
-        ts.dumpProperty("scroll position", m_currentScrollPosition);
+        ts.dumpProperty("scroll position"_s, m_currentScrollPosition);
 
     if (!m_scrollOrigin.isZero())
-        ts.dumpProperty("scroll origin", m_scrollOrigin);
+        ts.dumpProperty("scroll origin"_s, m_scrollOrigin);
 
     if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
-        ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.horizontalSnapOffsets);
+        ts.dumpProperty("horizontal snap offsets"_s, m_snapOffsetsInfo.horizontalSnapOffsets);
 
     if (m_snapOffsetsInfo.verticalSnapOffsets.size())
-        ts.dumpProperty("vertical snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
+        ts.dumpProperty("vertical snap offsets"_s, m_snapOffsetsInfo.verticalSnapOffsets);
 
     if (m_currentHorizontalSnapPointIndex)
-        ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);
+        ts.dumpProperty("current horizontal snap point index"_s, m_currentHorizontalSnapPointIndex);
 
     if (m_currentVerticalSnapPointIndex)
-        ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
+        ts.dumpProperty("current vertical snap point index"_s, m_currentVerticalSnapPointIndex);
 
-    ts.dumpProperty("scrollable area parameters", m_scrollableAreaParameters);
+    ts.dumpProperty("scrollable area parameters"_s, m_scrollableAreaParameters);
 
 #if ENABLE(SCROLLING_THREAD)
     if (!m_synchronousScrollingReasons.isEmpty())
-        ts.dumpProperty("synchronous scrolling reasons", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
+        ts.dumpProperty("synchronous scrolling reasons"_s, ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
 #endif
 }
 

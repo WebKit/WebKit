@@ -29,9 +29,8 @@
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSSerializationContext.h"
-#include "CSSStyleDeclaration.h"
+#include "CSSStyleProperties.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "Chrome.h"
@@ -338,8 +337,15 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     }
 
     // 10. If the start time of animation is resolved, make animation’s hold time unresolved.
-    if (m_startTime)
+    if (m_startTime) {
+        // FIXME: we may now be in a state where the hold time and start times have
+        // incompatible time units per https://github.com/w3c/csswg-drafts/issues/11761.
+        // Until the spec knows how to handle this case, we ensure the start time matches
+        // the value type of the currently resolved hold time before we make it unresolved.
+        if (m_holdTime && m_holdTime->time().has_value() != m_startTime->time().has_value())
+            m_startTime = m_holdTime;
         m_holdTime = std::nullopt;
+    }
 
     // 11. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.

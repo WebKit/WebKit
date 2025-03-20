@@ -64,32 +64,14 @@ ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
     return { };
 }
 
-class FunctionMicrotask final : public JSC::Microtask {
-public:
-    static Ref<FunctionMicrotask> create(Function<void()>&& function)
-    {
-        return adoptRef(*new FunctionMicrotask(WTFMove(function)));
-    }
-
-private:
-    explicit FunctionMicrotask(Function<void()>&& function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-    void run(JSC::JSGlobalObject*) final
-    {
-        m_function();
-    }
-
-    Function<void()> m_function;
-};
-
 void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
     promise->whenSettled([this, protectedThis = Ref { *this }, settledPromise = promise.ptr()] () mutable {
         auto& globalObject = *settledPromise->globalObject();
-        globalObject.queueMicrotask(FunctionMicrotask::create([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)] () mutable {
+        auto* context = globalObject.scriptExecutionContext();
+        if (!context)
+            return;
+        context->eventLoop().queueMicrotask([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)]() mutable {
             --m_pendingPromiseCount;
 
             // FIXME: Let registration be the context object's relevant global object's associated service worker's containing service worker registration.
@@ -103,11 +85,12 @@ void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
                 if (m_pendingPromiseCount)
                     return;
 
+                m_isWaiting = false;
                 auto settledPromises = WTFMove(m_extendLifetimePromises);
                 if (auto handler = WTFMove(m_whenAllExtendLifetimePromisesAreSettledHandler))
                     handler(WTFMove(settledPromises));
             });
-        }));
+        });
     });
 
     m_extendLifetimePromises.add(WTFMove(promise));
@@ -120,6 +103,7 @@ void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(Function<void(Hash
     ASSERT(!m_whenAllExtendLifetimePromisesAreSettledHandler);
 
     if (!m_pendingPromiseCount) {
+        m_isWaiting = false;
         handler(WTFMove(m_extendLifetimePromises));
         return;
     }

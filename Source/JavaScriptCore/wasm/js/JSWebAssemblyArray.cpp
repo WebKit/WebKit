@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L. All rights reserved.
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSWebAssemblyArrayInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "TypeError.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
@@ -41,155 +43,53 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyArray::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyArray) };
 
-Structure* JSWebAssemblyArray::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-{
-    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info());
-}
-
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, RefPtr<const Wasm::RTT>&& rtt)
-    : Base(vm, structure, WTFMove(rtt))
-    , m_elementType(elementType)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, WebAssemblyGCStructure* structure, unsigned size)
+    : Base(vm, structure)
     , m_size(size)
 {
-    if (m_elementType.type.is<Wasm::PackedType>()) {
-        switch (m_elementType.type.as<Wasm::PackedType>()) {
-        case Wasm::PackedType::I8:
-            new (&m_payload8) FixedVector<uint8_t>(m_size);
-            m_payload8.fill(0);
-            return;
-        case Wasm::PackedType::I16:
-            new (&m_payload16) FixedVector<uint16_t>(m_size);
-            m_payload16.fill(0);
-            return;
-        }
-        return;
-    }
-
-    switch (m_elementType.type.as<Wasm::Type>().kind) {
-    case Wasm::TypeKind::I32:
-    case Wasm::TypeKind::F32:
-        new (&m_payload32) FixedVector<uint32_t>(m_size);
-        m_payload32.fill(0);
-        return;
-    case Wasm::TypeKind::V128:
-        new (&m_payload128) FixedVector<v128_t>(m_size);
-        m_payload128.fill(v128_t { });
-        return;
-    default:
-        new (&m_payload64) FixedVector<uint64_t>(m_size);
-        if (elementsAreRefTypes())
-            m_payload64.fill(JSValue::encode(jsNull()));
-        else
-            m_payload64.fill(0);
-        return;
-    }
+    if (elementsAreRefTypes())
+        std::fill(span<uint64_t>().begin(), span<uint64_t>().end(), JSValue::encode(jsNull()));
+    else
+        zeroSpan(bytes());
 }
 
-JSWebAssemblyArray::~JSWebAssemblyArray()
-{
-    if (m_elementType.type.is<Wasm::PackedType>()) {
-        switch (m_elementType.type.as<Wasm::PackedType>()) {
-        case Wasm::PackedType::I8:
-            m_payload8.~FixedVector<uint8_t>();
-            break;
-        case Wasm::PackedType::I16:
-            m_payload16.~FixedVector<uint16_t>();
-            break;
-        }
-        return;
-    }
-
-    switch (m_elementType.type.as<Wasm::Type>().kind) {
-    case Wasm::TypeKind::I32:
-    case Wasm::TypeKind::F32:
-        m_payload32.~FixedVector<uint32_t>();
-        break;
-    case Wasm::TypeKind::V128:
-        m_payload128.~FixedVector<v128_t>();
-        break;
-    default:
-        m_payload64.~FixedVector<uint64_t>();
-        break;
-    }
-}
-
-void JSWebAssemblyArray::fill(uint32_t offset, uint64_t value, uint32_t size)
+void JSWebAssemblyArray::fill(VM& vm, uint32_t offset, uint64_t value, uint32_t size)
 {
     // Handle ref types separately to ensure write barriers are in effect.
     if (elementsAreRefTypes()) {
+        // FIXME: We should have a GCSafeMemfill.
         for (size_t i = 0; i < size; i++)
-            set(offset + i, value);
+            set(vm, offset + i, value);
         return;
     }
 
-    if (m_elementType.type.is<Wasm::PackedType>()) {
-        switch (m_elementType.type.as<Wasm::PackedType>()) {
-        case Wasm::PackedType::I8:
-            memsetSpan(m_payload8.mutableSpan().subspan(offset, size), static_cast<uint8_t>(value));
-            return;
-        case Wasm::PackedType::I16:
-            std::fill(m_payload16.begin() + offset, m_payload16.begin() + offset + size, static_cast<uint16_t>(value));
-            return;
-        }
-    }
-
-    switch (m_elementType.type.as<Wasm::Type>().kind) {
-    case Wasm::TypeKind::I32:
-    case Wasm::TypeKind::F32:
-        std::fill(m_payload32.begin() + offset, m_payload32.begin() + offset + size, static_cast<uint32_t>(value));
-        return;
-    case Wasm::TypeKind::V128:
-        RELEASE_ASSERT_NOT_REACHED();
-        return;
-    default:
-        std::fill(m_payload64.begin() + offset, m_payload64.begin() + offset + size, value);
-        return;
-    }
+    visitSpanNonVector([&](auto span) ALWAYS_INLINE_LAMBDA {
+        span = span.subspan(offset, size);
+        std::fill(span.begin(), span.end(), value);
+    });
 }
 
-void JSWebAssemblyArray::fill(uint32_t offset, v128_t value, uint32_t size)
+void JSWebAssemblyArray::fill(VM&, uint32_t offset, v128_t value, uint32_t size)
 {
-    ASSERT(m_elementType.type.unpacked().isV128());
-    std::fill(m_payload128.begin() + offset, m_payload128.begin() + offset + size, value);
+    ASSERT(elementType().type.unpacked().isV128());
+    auto payload = span<v128_t>().subspan(offset, size);
+    std::fill(payload.begin(), payload.end(), value);
 }
 
-void JSWebAssemblyArray::copy(JSWebAssemblyArray& dst, uint32_t dstOffset, uint32_t srcOffset, uint32_t size)
+void JSWebAssemblyArray::copy(VM& vm, JSWebAssemblyArray& dst, uint32_t dstOffset, uint32_t srcOffset, uint32_t size)
 {
     // Handle ref types separately to ensure write barriers are in effect.
     if (elementsAreRefTypes()) {
-        gcSafeMemmove(dst.m_payload64.mutableSpan().subspan(dstOffset).data(), m_payload64.span().subspan(srcOffset).data(), size * sizeof(JSValue));
-        vm().writeBarrier(this);
+        gcSafeMemmove(dst.span<uint64_t>().subspan(dstOffset).data(), span<uint64_t>().subspan(srcOffset).data(), size * sizeof(JSValue));
+        vm.writeBarrier(&dst);
         return;
     }
 
-    if (m_elementType.type.is<Wasm::PackedType>()) {
-        switch (m_elementType.type.as<Wasm::PackedType>()) {
-        case Wasm::PackedType::I8:
-            memmove(dst.m_payload8.mutableSpan().subspan(dstOffset).data(), m_payload8.span().subspan(srcOffset).data(), size * sizeof(uint8_t));
-            return;
-        case Wasm::PackedType::I16:
-            memmove(dst.m_payload16.mutableSpan().subspan(dstOffset).data(), m_payload16.span().subspan(srcOffset).data(), size * sizeof(uint16_t));
-            return;
-        }
-    }
-
-    switch (m_elementType.type.as<Wasm::Type>().kind) {
-    case Wasm::TypeKind::I32:
-    case Wasm::TypeKind::F32:
-        memmove(dst.m_payload32.mutableSpan().subspan(dstOffset).data(), m_payload32.span().subspan(srcOffset).data(), size * sizeof(uint32_t));
-        return;
-    case Wasm::TypeKind::V128:
-        memmove(dst.m_payload128.mutableSpan().subspan(dstOffset).data(), m_payload128.span().subspan(srcOffset).data(), size * sizeof(v128_t));
-        return;
-    default:
-        memmove(dst.m_payload64.mutableSpan().subspan(dstOffset).data(), m_payload64.span().subspan(srcOffset).data(), size * sizeof(uint64_t));
-        return;
-    }
-}
-
-void JSWebAssemblyArray::destroy(JSCell* cell)
-{
-    static_cast<JSWebAssemblyArray*>(cell)->JSWebAssemblyArray::~JSWebAssemblyArray();
+    visitSpan([&]<typename T>(std::span<T> srcSpan) ALWAYS_INLINE_LAMBDA {
+        srcSpan = srcSpan.subspan(srcOffset, size);
+        auto dstSpan = dst.span<T>().subspan(dstOffset, size);
+        memmoveSpan(dstSpan, srcSpan);
+    });
 }
 
 template<typename Visitor>
@@ -201,7 +101,7 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     if (thisObject->elementsAreRefTypes())
-        visitor.appendValues(std::bit_cast<WriteBarrier<Unknown>*>(thisObject->reftypeData()), thisObject->size());
+        visitor.appendValues(std::bit_cast<WriteBarrier<Unknown>*>(thisObject->refTypeSpan().data()), thisObject->size());
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyArray);

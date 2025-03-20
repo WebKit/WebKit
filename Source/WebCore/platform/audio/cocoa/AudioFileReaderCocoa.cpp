@@ -132,12 +132,12 @@ class AudioFileReaderWebMData {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioFileReaderWebMData);
 
 public:
-    Ref<SharedBuffer> m_buffer;
+    const Ref<SharedBuffer> m_buffer;
 #if ENABLE(MEDIA_SOURCE)
-    Ref<AudioTrackPrivateWebM> m_track;
+    const Ref<AudioTrackPrivateWebM> m_track;
 #endif
     MediaTime m_duration;
-    Vector<Ref<MediaSampleAVFObjC>> m_samples;
+    const Vector<Ref<MediaSampleAVFObjC>> m_samples;
 };
 
 AudioFileReader::AudioFileReader(std::span<const uint8_t> data)

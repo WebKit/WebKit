@@ -185,6 +185,7 @@ private:
         FullscreenVideo = 1 << 1
     };
     OptionSet<ButtonState> _buttonState;
+    BOOL _viewDidAppear;
 #endif
 }
 
@@ -223,6 +224,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if PLATFORM(VISION)
     _isInteractingWithSystemChrome = NO;
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    _viewDidAppear = NO;
 #endif
 
     return self;
@@ -421,8 +425,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (auto page = [self._webView _page]; page && !page->preferences().videoFullsceenPrefersMostVisibleHeuristic())
+        [self configureEnvironmentPickerOrFullscreenVideoButtonView];
+#endif
+}
+
+- (void)videosInElementFullscreenChanged
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (!_viewDidAppear)
+        return;
     [self configureEnvironmentPickerOrFullscreenVideoButtonView];
 #endif
+}
+
+- (RefPtr<WebCore::PlatformVideoPresentationInterface>) _bestVideoPresentationInterface
+{
+    ASSERT(_valid);
+    RefPtr page = [self._webView _page].get();
+    if (!page)
+        return nullptr;
+
+    RefPtr videoPresentationManager = page->videoPresentationManager();
+    if (!videoPresentationManager)
+        return nullptr;
+
+    if (page->preferences().videoFullsceenPrefersMostVisibleHeuristic())
+        return videoPresentationManager->bestVideoForElementFullscreen();
+    return videoPresentationManager->controlsManagerInterface();
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -460,7 +490,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
+    RefPtr videoPresentationInterface = [self _bestVideoPresentationInterface];
+    RefPtr playbackSessionInterface = videoPresentationInterface ? &videoPresentationInterface->playbackSessionInterface() : nullptr;
     auto* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     if (!playbackSessionModel || !playbackSessionModel->supportsLinearMediaPlayer()) {
         [self _removeEnvironmentPickerButtonView];
@@ -469,16 +500,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (RetainPtr mediaPlayer = playbackSessionInterface->linearMediaPlayer(); [mediaPlayer spatialVideoMetadata] || [mediaPlayer isImmersiveVideo]) {
+        [self _setTopButtonLabel:[mediaPlayer isImmersiveVideo] ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
         if (!_buttonState.contains(FullscreenVideo)) {
-            [self _setTopButtonLabel:[mediaPlayer isImmersiveVideo] ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
             [_centeredStackView addArrangedSubview:_enterVideoFullscreenButton.get()];
             _buttonState.add(FullscreenVideo);
         }
+        [self _removeEnvironmentPickerButtonView];
+        return;
     } else
         [self _removeEnvironmentFullscreenVideoButtonView];
-
-    RefPtr videoPresentationManager = page->videoPresentationManager();
-    RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
 
     LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
@@ -878,6 +908,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [super viewWillAppear:animated];
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+- (void)viewDidAppear:(BOOL) animated
+{
+    RefPtr page = [self._webView _page].get();
+    if (!page)
+        return;
+
+    page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKFullScreenViewController>(self)] {
+        if (RetainPtr strongSelf = weakSelf.get()) {
+            strongSelf->_viewDidAppear = YES;
+            [strongSelf configureEnvironmentPickerOrFullscreenVideoButtonView];
+        }
+    });
+}
+#endif
+
 #if PLATFORM(VISION)
 - (void)viewIsAppearing:(BOOL)animated
 {
@@ -905,7 +951,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self._webView _setInterfaceOrientationOverride:UIApplication.sharedApplication.statusBarOrientation];
         ALLOW_DEPRECATED_DECLARATIONS_END
-    } completion:nil];
+    } completion:
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        [weakSelf = WeakObjCPtr<WKFullScreenViewController>(self)](id<UIViewControllerTransitionCoordinatorContext>) {
+            auto strongSelf = weakSelf.get();
+            [strongSelf configureEnvironmentPickerOrFullscreenVideoButtonView];
+        }
+#else
+        nil
+#endif
+    ];
 }
 
 #if !PLATFORM(VISION)
@@ -1015,14 +1070,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_enterVideoFullscreenAction:(id)sender
 {
-    ASSERT(_valid);
-    RefPtr page = [self._webView _page].get();
-    if (!page)
+    RefPtr presentationInterface = [self _bestVideoPresentationInterface];
+    if (!presentationInterface)
         return;
 
     [self hideUI];
 
-    page->enterFullscreen();
+    CheckedPtr playbackSessionModel = presentationInterface->playbackSessionModel();
+    if (!playbackSessionModel)
+        return;
+
+    playbackSessionModel->enterFullscreen();
 }
 
 - (void)_touchDetected:(id)sender

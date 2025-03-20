@@ -33,6 +33,7 @@
 #include "text/TextFlags.h"
 #include <hb-icu.h>
 #include <hb-ot.h>
+#include <hb.h>
 
 namespace WebCore {
 
@@ -154,7 +155,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -182,7 +183,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     const hb_feature_t* featuresData = features.isEmpty() ? nullptr : features.data();
     unsigned featuresSize = features.size();
     Vector<hb_feature_t> featuresWithKerning;
-    if (!m_font.enableKerning()) {
+    if (!m_fontCascade.enableKerning()) {
         featuresWithKerning.reserveInitialCapacity(featuresSize + 1);
         featuresWithKerning.append({ HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) });
         featuresWithKerning.appendVector(features);
@@ -191,7 +192,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     }
 
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
+
+    // The computed "locale" equals the "lang" attribute. The latter must be a valid BCP 47 language tag,
+    // according to <https://html.spec.whatwg.org/multipage/dom.html#attr-lang>.
+    // According to <https://datatracker.ietf.org/doc/html/rfc5646#section-2.1>
+    // "the language tags described in this document are sequences of characters
+    // from the US-ASCII [ISO646] repertoire.".
+    auto language = hb_language_from_string(m_fontCascade.fontDescription().computedLocale().string().ascii().data(), -1);
+
     for (unsigned i = 0; i < runCount; ++i) {
+        hb_buffer_set_language(buffer.get(), language);
+
         auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];
 
         hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));

@@ -198,11 +198,11 @@ bool SpotLightSource::setLimitingConeAngle(float limitingConeAngle)
 
 TextStream& SpotLightSource::externalRepresentation(TextStream& ts) const
 {
-    ts << "[type=SPOT-LIGHT] ";
-    ts << "[position=\"" << position() << "\"]";
-    ts << "[direction=\"" << direction() << "\"]";
-    ts << "[specularExponent=\"" << specularExponent() << "\"]";
-    ts << "[limitingConeAngle=\"" << limitingConeAngle() << "\"]";
+    ts << "[type=SPOT-LIGHT] "_s;
+    ts << "[position=\"" << position() << "\"]"_s;
+    ts << "[direction=\"" << direction() << "\"]"_s;
+    ts << "[specularExponent=\"" << specularExponent() << "\"]"_s;
+    ts << "[limitingConeAngle=\"" << limitingConeAngle() << "\"]"_s;
     return ts;
 }
 

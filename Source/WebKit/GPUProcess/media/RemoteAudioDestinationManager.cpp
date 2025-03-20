@@ -44,6 +44,10 @@
 #include <WebCore/WebAudioBufferList.h>
 #endif
 
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+#include <WebCore/SpatialAudioExperienceHelper.h>
+#endif
+
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection->connection(), completion)
 
@@ -106,6 +110,29 @@ public:
             ASSERT(m_isPlaying);
         }
     }
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    void setSceneIdentifier(const String& sceneIdentifier)
+    {
+        if (m_sceneIdentifier == sceneIdentifier)
+            return;
+        m_sceneIdentifier = sceneIdentifier;
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+        if (!m_prefersSpatialAudioExperience) {
+            ALWAYS_LOG(LOGIDENTIFIER, sceneIdentifier, ", but !prefersSpatialAudioExperience, so bailing");
+            return;
+        }
+
+        ALWAYS_LOG(LOGIDENTIFIER, sceneIdentifier);
+        RetainPtr experience = WebCore::createSpatialAudioExperienceWithOptions({ .sceneIdentifier = m_sceneIdentifier });
+        m_audioOutputUnitAdaptor.setSpatialAudioExperience(experience.get());
+#endif
+    }
+#endif
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    void setPrefersSpatialAudioExperience(bool value) { m_prefersSpatialAudioExperience = value; }
 #endif
 
     void start()
@@ -191,6 +218,14 @@ private:
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    bool m_prefersSpatialAudioExperience;
+#endif
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationManager);
@@ -227,6 +262,12 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
 #else
     UNUSED_PARAM(handle);
 #endif
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    auto sharedPreferences = connection->sharedPreferencesForWebProcess();
+    destination->setPrefersSpatialAudioExperience(sharedPreferences && sharedPreferences->preferSpatialAudioExperience);
+#endif
+
     size_t latency = destination->audioUnitLatency();
     m_audioDestinations.add(identifier, WTFMove(destination));
     completionHandler(latency);
@@ -301,6 +342,15 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sha
 
     return std::nullopt;
 }
+
+#if PLATFORM(IOS_FAMILY)
+void RemoteAudioDestinationManager::setSceneIdentifier(RemoteAudioDestinationIdentifier identifier, String&& sceneIdentifier)
+{
+    if (auto* item = m_audioDestinations.get(identifier))
+        item->setSceneIdentifier(sceneIdentifier);
+}
+#endif
+
 
 } // namespace WebKit
 

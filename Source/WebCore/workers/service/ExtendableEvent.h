@@ -53,10 +53,12 @@ protected:
     ExtendableEvent(enum EventInterfaceType, const AtomString&, CanBubble, IsCancelable);
 
     void addExtendLifetimePromise(Ref<DOMPromise>&&);
+    bool isWaiting() const { return m_isWaiting; }
 
 private:
     unsigned m_pendingPromiseCount { 0 };
     HashSet<Ref<DOMPromise>> m_extendLifetimePromises;
+    bool m_isWaiting { true };
     Function<void(HashSet<Ref<DOMPromise>>&&)> m_whenAllExtendLifetimePromisesAreSettledHandler;
 };
 

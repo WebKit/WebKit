@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AuthenticationClient_h
-#define AuthenticationClient_h
+#pragma once
+
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AuthenticationChallenge;
 class Credential;
 
-class AuthenticationClient {
+class AuthenticationClient : public CanMakeWeakPtr<AuthenticationClient> {
 public:
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) = 0;
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) = 0;
@@ -50,6 +51,4 @@ private:
     virtual void derefAuthenticationClient() = 0;
 };
 
-}
-
-#endif
+} // namespace WebCore

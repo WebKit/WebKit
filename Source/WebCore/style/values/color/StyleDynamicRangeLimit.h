@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class PlatformDynamicRangeLimit;
+
 namespace CSS {
 struct DynamicRangeLimit;
 }
@@ -51,6 +53,8 @@ struct DynamicRangeLimit {
     DynamicRangeLimit& operator=(const DynamicRangeLimit&);
 
     template<typename... F> decltype(auto) switchOn(F&&...) const;
+
+    WEBCORE_EXPORT PlatformDynamicRangeLimit toPlatformDynamicRangeLimit() const;
 
     bool operator==(const DynamicRangeLimit&) const = default;
 
@@ -138,10 +142,6 @@ template<> struct Blending<DynamicRangeLimit> {
     constexpr auto canBlend(const DynamicRangeLimit&, const DynamicRangeLimit&) -> bool { return true; }
     auto blend(const DynamicRangeLimit&, const DynamicRangeLimit&, const BlendingContext&) -> DynamicRangeLimit;
 };
-
-// MARK: Logging
-
-TextStream& operator<<(TextStream&, const DynamicRangeLimit&);
 
 } // namespace Style
 } // namespace WebCore

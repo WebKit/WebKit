@@ -51,7 +51,6 @@ public:
 
     virtual ~VideoTrackPrivateMediaSourceAVFObjC();
 
-    void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack() const;
 
     FloatSize naturalSize() const;

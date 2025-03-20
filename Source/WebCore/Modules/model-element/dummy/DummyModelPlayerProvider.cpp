@@ -33,6 +33,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DummyModelPlayerProvider);
 
+Ref<DummyModelPlayerProvider> DummyModelPlayerProvider::create() { return adoptRef(*new DummyModelPlayerProvider); }
+
 DummyModelPlayerProvider::DummyModelPlayerProvider() = default;
 DummyModelPlayerProvider::~DummyModelPlayerProvider() = default;
 

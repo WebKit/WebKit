@@ -1,0 +1,16 @@
+API/JSAPIGlobalObject.mm
+API/JSContext.mm
+API/JSManagedValue.mm
+API/JSScript.mm
+API/JSValue.mm
+API/JSVirtualMachine.mm
+API/JSWrapperMap.mm
+API/ObjCCallbackFunction.mm
+API/ObjcRuntimeExtras.h
+API/tests/Regress141275.mm
+inspector/JSGlobalObjectDebugger.cpp
+inspector/remote/RemoteInspectionTarget.cpp
+inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
+inspector/remote/cocoa/RemoteInspectorCocoa.mm
+inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
+runtime/JSDateMath.cpp

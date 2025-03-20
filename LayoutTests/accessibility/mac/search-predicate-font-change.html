@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<span id="span-1" style="font-family:sans-serif;">One</span>
+<span style="font-family:serif;">Two</span>
+<span style="font-family:sans-serif;">Three</span>
+<span id="span-4" style="font-family:serif;">Four</span>
+
+<script>
+var output = "This test ensures that the AXFontChangeSearchKey works correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var firstText = webArea.childAtIndex(0);
+    output += expect("firstText.stringValue", "'AXValue: One'");
+    var resultText = webArea.uiElementForSearchPredicate(firstText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Two'");
+    var resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Three'");
+    var resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Four'");
+
+    // Move the last span to be right after the first.
+    document.getElementById("span-1").after(document.getElementById("span-4"));
+    setTimeout(async function() {
+        await waitFor(() => {
+            resultText = webArea.uiElementForSearchPredicate(firstText, true, "AXFontChangeSearchKey", "", false);
+            return resultText && resultText.stringValue === "AXValue: Four";
+        });
+        output += "PASS: Found #span-4 text after #span-1 after dynamic change.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

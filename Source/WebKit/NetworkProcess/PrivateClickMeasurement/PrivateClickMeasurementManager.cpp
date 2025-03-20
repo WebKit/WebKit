@@ -77,8 +77,8 @@ PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Cl
 
 PrivateClickMeasurementManager::~PrivateClickMeasurementManager()
 {
-    if (m_store)
-        m_store->close([] { });
+    if (RefPtr store = m_store)
+        store->close([] { });
 }
 
 void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& measurement, CompletionHandler<void()>&& completionHandler)
@@ -352,12 +352,12 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
 
 void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type, CompletionHandler<void()>&& completionHandler)
 {
-    store().insertPrivateClickMeasurement(WTFMove(measurement), type, WTFMove(completionHandler));
+    protectedStore()->insertPrivateClickMeasurement(WTFMove(measurement), type, WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
 {
-    store().insertPrivateClickMeasurement(WTFMove(measurement), type, [] { });
+    protectedStore()->insertPrivateClickMeasurement(WTFMove(measurement), type, [] { });
 }
 
 void PrivateClickMeasurementManager::setDebugModeIsEnabled(bool enabled)
@@ -457,7 +457,7 @@ void PrivateClickMeasurementManager::attribute(SourceSite&& sourceSite, Attribut
     if (!featureEnabled())
         return;
 
-    store().attributePrivateClickMeasurement(WTFMove(sourceSite), WTFMove(destinationSite), applicationBundleIdentifier, WTFMove(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    protectedStore()->attributePrivateClickMeasurement(WTFMove(sourceSite), WTFMove(destinationSite), applicationBundleIdentifier, WTFMove(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -604,7 +604,7 @@ void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasuremen
     if (!featureEnabled())
         return;
 
-    store().clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
+    protectedStore()->clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
 }
 
 Seconds PrivateClickMeasurementManager::randomlyBetweenFifteenAndThirtyMinutes() const
@@ -620,7 +620,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
     if (!featureEnabled())
         return;
 
-    store().allAttributedPrivateClickMeasurement([weakThis = WeakPtr { *this }] (auto&& attributions) {
+    protectedStore()->allAttributedPrivateClickMeasurement([weakThis = WeakPtr { *this }] (auto&& attributions) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -683,7 +683,7 @@ void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completio
     if (!featureEnabled())
         return completionHandler();
 
-    store().clearPrivateClickMeasurement(WTFMove(completionHandler));
+    protectedStore()->clearPrivateClickMeasurement(WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::clearForRegistrableDomain(RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
@@ -691,7 +691,7 @@ void PrivateClickMeasurementManager::clearForRegistrableDomain(RegistrableDomain
     if (!featureEnabled())
         return completionHandler();
 
-    store().clearPrivateClickMeasurementForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
+    protectedStore()->clearPrivateClickMeasurementForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::clearExpired()
@@ -699,7 +699,7 @@ void PrivateClickMeasurementManager::clearExpired()
     if (!featureEnabled())
         return;
 
-    store().clearExpiredPrivateClickMeasurement();
+    protectedStore()->clearExpiredPrivateClickMeasurement();
 }
 
 void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
@@ -707,7 +707,7 @@ void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(S
     if (!featureEnabled())
         return completionHandler("\nNo stored Private Click Measurement data.\n"_s);
 
-    store().privateClickMeasurementToStringForTesting(WTFMove(completionHandler));
+    protectedStore()->privateClickMeasurementToStringForTesting(WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::setTokenPublicKeyURLForTesting(URL&& testURL)
@@ -738,7 +738,7 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
     if (!featureEnabled())
         return;
 
-    store().markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+    protectedStore()->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 }
 
 void PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
@@ -763,7 +763,7 @@ void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExp
     if (!featureEnabled())
         return completionHandler();
 
-    store().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+    protectedStore()->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::initializeStore() const
@@ -790,11 +790,22 @@ const PCM::Store& PrivateClickMeasurementManager::store() const
     return *m_store;
 }
 
+Ref<PCM::Store> PrivateClickMeasurementManager::protectedStore()
+{
+    return store();
+}
+
+Ref<const PCM::Store> PrivateClickMeasurementManager::protectedStore() const
+{
+    return store();
+}
+
 void PrivateClickMeasurementManager::destroyStoreForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_store)
+    RefPtr store = m_store;
+    if (!store)
         return completionHandler();
-    m_store->close([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+    store->close([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (weakThis)
             weakThis->m_store = nullptr;
         return completionHandler();

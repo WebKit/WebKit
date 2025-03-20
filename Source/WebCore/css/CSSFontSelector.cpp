@@ -27,7 +27,7 @@
 #include "config.h"
 #include "CSSFontSelector.h"
 
-#include "CachedFont.h"
+#include "CSSCounterStyleRegistry.h"
 #include "CSSFontFace.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFeatureValuesRule.h"
@@ -36,6 +36,7 @@
 #include "CSSSegmentedFontFace.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "CachedFont.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -183,7 +184,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr fontWidth = style.getPropertyCSSValue(CSSPropertyFontWidth);
     RefPtr srcList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertySrc));
     RefPtr unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
-    CSSValueList* rangeList = downcast<CSSValueList>(unicodeRange.get());
+    RefPtr rangeList = downcast<CSSValueList>(unicodeRange.get());
     RefPtr featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
     RefPtr display = style.getPropertyCSSValue(CSSPropertyFontDisplay);
     RefPtr sizeAdjust = style.getPropertyCSSValue(CSSPropertySizeAdjust);
@@ -443,6 +444,21 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
         ResourceLoadObserver::shared().logFontLoad(*document, pictographFontFamily, !!font);
 
     return font;
+}
+
+bool CSSFontSelector::isSimpleFontSelectorForDescription() const
+{
+    // font face rules still pending
+    if (m_stagingArea.size())
+        return false;
+
+    // FIXME: remove this when we fix counter style rules mutation.
+    if (auto* document = dynamicDowncast<Document>(m_context.get())) {
+        if (document->counterStyleRegistry().hasAuthorCounterStyles())
+            return false;
+    }
+
+    return !m_cssFontFaceSet->faceCount() && m_featureValues.isEmpty() && m_paletteMap.isEmpty();
 }
 
 }

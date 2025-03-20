@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          animation-name: animate;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      @keyframes animate {
+          from {
+              filter: blur(0px);
+          }
+          to {
+              filter: blur(10px);
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      setTimeout(() => {
+          var damage = latestFrameDamage();
+          if (!assertValid(damage)
+              || !assertEq(damage.rects.length, 1, "wrong number of damage rects")
+              || !assertContains([22, 22, 120, 120], damage.rects[0])) {
+              failTest(failure);
+              return;
+          }
+          passTest();
+      }, 2000);
+    </script>
+  </body>
+</html>

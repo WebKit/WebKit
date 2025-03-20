@@ -1,0 +1,3 @@
+
+FAIL Event Timing: test first input on shadow DOM. assert_implements: Event Timing is not supported. undefined
+

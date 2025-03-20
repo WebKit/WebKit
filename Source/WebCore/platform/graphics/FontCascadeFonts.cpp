@@ -103,21 +103,18 @@ void FontCascadeFonts::GlyphPageCacheEntry::setSingleFontPage(RefPtr<GlyphPage>&
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 
-FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
+FontCascadeFonts::FontCascadeFonts()
     : m_cachedPrimaryFont(nullptr)
-    , m_fontSelector(fontSelector)
-    , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
     , m_generation(FontCache::forCurrentThread().generation())
 {
 #if ASSERT_ENABLED
     if (!isMainThread())
-        m_thread = Thread::current();
+        m_thread = Thread::currentSingleton();
 #endif
 }
 
 FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     : m_cachedPrimaryFont(nullptr)
-    , m_fontSelectorVersion(0)
     , m_generation(FontCache::forCurrentThread().generation())
     , m_isForPlatformFont(true)
 {
@@ -126,9 +123,9 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
 
 FontCascadeFonts::~FontCascadeFonts() = default;
 
-void FontCascadeFonts::determinePitch(const FontCascadeDescription& description)
+void FontCascadeFonts::determinePitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
-    auto& primaryRanges = realizeFallbackRangesAt(description, 0);
+    auto& primaryRanges = realizeFallbackRangesAt(description, fontSelector, 0);
     unsigned numRanges = primaryRanges.size();
     if (numRanges == 1)
         m_pitch = primaryRanges.fontForFirstRange().pitch();
@@ -136,10 +133,10 @@ void FontCascadeFonts::determinePitch(const FontCascadeDescription& description)
         m_pitch = VariablePitch;
 }
 
-void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description)
+void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
 #if PLATFORM(COCOA)
-    auto& primaryRanges = realizeFallbackRangesAt(description, 0);
+    auto& primaryRanges = realizeFallbackRangesAt(description, fontSelector, 0);
     unsigned numRanges = primaryRanges.size();
     if (numRanges == 1)
         m_canTakeFixedPitchFastContentMeasuring = triState(primaryRanges.fontForFirstRange().canTakeFixedPitchFastContentMeasuring());
@@ -147,6 +144,7 @@ void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const Font
         m_canTakeFixedPitchFastContentMeasuring = TriState::False;
 #else
     UNUSED_PARAM(description);
+    UNUSED_PARAM(fontSelector);
     m_canTakeFixedPitchFastContentMeasuring = TriState::False;
 #endif
 }
@@ -195,7 +193,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
     return { };
 }
 
-const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDescription& description, unsigned index)
+const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDescription& description, FontSelector* fontSelector, unsigned index)
 {
     if (index < m_realizedFallbackRanges.size())
         return m_realizedFallbackRanges[index];
@@ -207,25 +205,25 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     auto& fontRanges = m_realizedFallbackRanges.last();
 
     if (!index) {
-        fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, m_fontSelector.get());
-        if (fontRanges.isNull() && m_fontSelector)
-            fontRanges = m_fontSelector->fontRangesForFamily(description, familyNamesData->at(FamilyNamesIndex::StandardFamily));
+        fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, fontSelector);
+        if (fontRanges.isNull() && fontSelector)
+            fontRanges = fontSelector->fontRangesForFamily(description, familyNamesData->at(FamilyNamesIndex::StandardFamily));
         if (fontRanges.isNull())
             fontRanges = FontRanges(FontCache::forCurrentThread().lastResortFallbackFont(description));
         return fontRanges;
     }
 
     if (m_lastRealizedFallbackIndex < description.effectiveFamilyCount())
-        fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, m_fontSelector.get());
+        fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, fontSelector);
 
-    if (fontRanges.isNull() && m_fontSelector) {
+    if (fontRanges.isNull() && fontSelector) {
         ASSERT(m_lastRealizedFallbackIndex >= description.effectiveFamilyCount());
 
         unsigned fontSelectorFallbackIndex = m_lastRealizedFallbackIndex - description.effectiveFamilyCount();
-        if (fontSelectorFallbackIndex == m_fontSelector->fallbackFontCount())
+        if (fontSelectorFallbackIndex == fontSelector->fallbackFontCount())
             return fontRanges;
         ++m_lastRealizedFallbackIndex;
-        fontRanges = FontRanges(m_fontSelector->fallbackFontAt(description, fontSelectorFallbackIndex));
+        fontRanges = FontRanges(fontSelector->fallbackFontAt(description, fontSelectorFallbackIndex));
     }
 
     return fontRanges;
@@ -347,10 +345,10 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
     return data;
 }
 
-static RefPtr<const Font> findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, const FontCascadeDescription& description, char32_t character)
+static RefPtr<const Font> findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, const FontCascadeDescription& description, FontSelector* fontSelector, char32_t character)
 {
     for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
-        auto& fontRanges = fontCascadeFonts.realizeFallbackRangesAt(description, fallbackIndex);
+        auto& fontRanges = fontCascadeFonts.realizeFallbackRangesAt(description, fontSelector, fallbackIndex);
         if (fontRanges.isNull())
             break;
         RefPtr currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font.get();
@@ -364,12 +362,12 @@ static RefPtr<const Font> findBestFallbackFont(FontCascadeFonts& fontCascadeFont
     return nullptr;
 }
 
-GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, bool systemFallbackShouldBeInvisible)
+GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const FontCascadeDescription& description, FontSelector* fontSelector, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, bool systemFallbackShouldBeInvisible)
 {
-    RefPtr font = findBestFallbackFont(*this, description, character);
+    RefPtr font = findBestFallbackFont(*this, description, fontSelector, character);
 
     if (!font)
-        font = &realizeFallbackRangesAt(description, 0).fontForFirstRange();
+        font = &realizeFallbackRangesAt(description, fontSelector, 0).fontForFirstRange();
 
     StringBuilder stringBuilder;
     stringBuilder.append(character);
@@ -421,14 +419,14 @@ static void opportunisticallyStartFontDataURLLoading(const FontCascadeDescriptio
         fontSelector->opportunisticallyStartFontDataURLLoading(description, description.familyAt(i));
 }
 
-GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, unsigned fallbackIndex)
+GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCascadeDescription& description, FontSelector* fontSelector, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, unsigned fallbackIndex)
 {
     FallbackVisibility fallbackVisibility = FallbackVisibility::Immaterial;
     ExternalResourceDownloadPolicy policy = ExternalResourceDownloadPolicy::Allow;
     GlyphData loadingResult;
-    opportunisticallyStartFontDataURLLoading(description, m_fontSelector.get());
+    opportunisticallyStartFontDataURLLoading(description, fontSelector);
     for (; ; ++fallbackIndex) {
-        auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex);
+        auto& fontRanges = realizeFallbackRangesAt(description, fontSelector, fallbackIndex);
         if (fontRanges.isNull())
             break;
 
@@ -465,7 +463,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
                 if (!data.font->hasVerticalGlyphs()) {
                     // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
                     // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
-                    return glyphDataForVariant(character, description, BrokenIdeographVariant, resolvedEmojiPolicy, fallbackIndex);
+                    return glyphDataForVariant(character, description, fontSelector, BrokenIdeographVariant, resolvedEmojiPolicy, fallbackIndex);
                 }
             }
         } else {
@@ -489,9 +487,9 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
     shouldCheckForPrivateUseAreaCharacters = character != 0xF8FF;
 #endif
     if (shouldCheckForPrivateUseAreaCharacters && isPrivateUseAreaCharacter(character))
-        return { 0, &primaryFont(description) }; // 0 is the font's reserved .notdef glyph
+        return { 0, &primaryFont(description, fontSelector) }; // 0 is the font's reserved .notdef glyph
 
-    return glyphDataForSystemFallback(character, description, variant, resolvedEmojiPolicy, fallbackVisibility == FallbackVisibility::Invisible);
+    return glyphDataForSystemFallback(character, description, fontSelector, variant, resolvedEmojiPolicy, fallbackVisibility == FallbackVisibility::Invisible);
 }
 
 static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const FontRanges& fontRanges)
@@ -532,26 +530,26 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
     return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 
-GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy)
+GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeDescription& description, FontSelector* fontSelector, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy)
 {
-    ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
+    ASSERT(m_thread ? m_thread->ptr() == &Thread::currentSingleton() : isMainThread());
     ASSERT(variant != AutoVariant);
 
     if (variant != NormalVariant)
-        return glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
+        return glyphDataForVariant(c, description, fontSelector, variant, resolvedEmojiPolicy);
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
     auto& cacheEntry = m_cachedPages[resolvedEmojiPolicy].ensure(pageNumber, [&] {
         // Initialize cache with a full page of glyph mappings from a single font.
-        return GlyphPageCacheEntry { glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, 0)) };
+        return GlyphPageCacheEntry { glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, fontSelector, 0)) };
     }).iterator->value;
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
     if (!glyphData.isValid()) {
         // No glyph, resolve per-character.
         ASSERT(variant == NormalVariant);
-        glyphData = glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
+        glyphData = glyphDataForVariant(c, description, fontSelector, variant, resolvedEmojiPolicy);
         // Cache the results.
         cacheEntry.setGlyphDataForCharacter(c, glyphData);
     }
@@ -574,7 +572,7 @@ void FontCascadeFonts::pruneSystemFallbacks()
 
 TextStream& operator<<(TextStream& ts, const FontCascadeFonts& fontCascadeFonts)
 {
-    ts << "FontCascadeFonts " << &fontCascadeFonts << " " << ValueOrNull(fontCascadeFonts.fontSelector()) << " generation " << fontCascadeFonts.generation();
+    ts << "FontCascadeFonts "_s << &fontCascadeFonts << ' ' << " generation "_s << fontCascadeFonts.generation();
     return ts;
 }
 

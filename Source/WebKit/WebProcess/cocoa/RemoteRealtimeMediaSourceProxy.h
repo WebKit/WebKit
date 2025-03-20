@@ -94,6 +94,7 @@ public:
 
 private:
     struct PromiseConverter;
+    Ref<IPC::Connection> protectedConnection() const;
 
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;

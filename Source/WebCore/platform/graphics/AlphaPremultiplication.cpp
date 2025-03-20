@@ -34,10 +34,10 @@ TextStream& operator<<(TextStream& ts, AlphaPremultiplication premultiplication)
 {
     switch (premultiplication) {
     case AlphaPremultiplication::Premultiplied:
-        ts << "premultiplied";
+        ts << "premultiplied"_s;
         break;
     case AlphaPremultiplication::Unpremultiplied:
-        ts << "unpremultiplied";
+        ts << "unpremultiplied"_s;
         break;
     }
     return ts;

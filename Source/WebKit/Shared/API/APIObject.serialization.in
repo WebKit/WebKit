@@ -34,7 +34,6 @@ header: "APIObject.h"
     API::PageHandle
     API::Point
     API::Rect
-    API::SerializedScriptValue
     API::Size
     API::String
     API::URL

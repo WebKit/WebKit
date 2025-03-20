@@ -73,9 +73,7 @@ EffectiveRateChangedListener::EffectiveRateChangedListener(Function<void()>&& ca
     , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
     , m_timebase(timebase)
 {
-    assertIsMainThread();
     ASSERT(timebase);
-    // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
 }
 
@@ -91,11 +89,9 @@ void EffectiveRateChangedListener::effectiveRateChanged()
 
 void EffectiveRateChangedListener::stop()
 {
-    assertIsMainThread();
-    if (!m_timebase)
+    if (m_stopped.exchange(true))
         return;
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, m_timebase.get());
-    m_timebase = nullptr;
 }
 
 } // namespace WebCore

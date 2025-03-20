@@ -57,12 +57,16 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
+#ifdef __OBJC__
     id platformUIElement() const { return m_element.get(); }
+#endif
 #endif
 
 #if !PLATFORM(COCOA)
     PlatformUIElement platformUIElement() const { return m_element; }
 #endif
+
+    bool hasPlatformUIElement() const { return !!m_element; }
 
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 

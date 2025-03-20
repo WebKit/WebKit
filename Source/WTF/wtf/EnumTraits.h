@@ -152,6 +152,16 @@ constexpr bool isZeroBasedContiguousEnum()
 #pragma clang diagnostic ignored "-Wenum-constexpr-conversion"
 #endif
 
+#if COMPILER(CLANG) && __clang_major__ >= 16
+template <typename E, auto V, typename = void>
+inline constexpr bool isEnumConstexprStaticCastValid = false;
+template <typename E, auto V>
+inline constexpr bool isEnumConstexprStaticCastValid<E, V, std::void_t<std::integral_constant<E, static_cast<E>(V)>>> = true;
+#else
+template <typename, auto>
+inline constexpr bool isEnumConstexprStaticCastValid = true;
+#endif
+
 template<typename E>
 constexpr std::span<const char> enumTypeNameImpl()
 {
@@ -215,6 +225,15 @@ constexpr std::span<const char> enumName()
     return result;
 }
 
+template<typename E, auto V>
+constexpr std::span<const char> enumName()
+{
+    if constexpr (isEnumConstexprStaticCastValid<E, V>)
+        return enumName<static_cast<E>(V)>();
+    else
+        return { };
+}
+
 template<typename E>
 constexpr std::underlying_type_t<E> enumNamesMin()
 {
@@ -264,7 +283,7 @@ constexpr auto makeEnumNames(std::index_sequence<Is...>)
 {
     constexpr auto min = enumNamesMin<E>();
     return std::array<std::span<const char>, sizeof...(Is)> {
-        enumName<static_cast<E>(static_cast<std::underlying_type_t<E>>(Is) + min)>()...
+        enumName<E, static_cast<std::underlying_type_t<E>>(Is) + min>()...
     };
 }
 

@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that history.back() works correctly after the main frame is redirected into a new process.");
+jsTestIsAsync = true;
+
+onload = () => {
+    if (sessionStorage.didNavigate) {
+        delete sessionStorage.didNavigate;
+        finishJSTest();
+    } else {
+        sessionStorage.didNavigate = true;
+        setTimeout(() => {
+            location.href = 'http://localhost:8000/site-isolation/history/resources/navigate-to-url.html?url=https://localhost:8443/site-isolation/history/resources/go-back.html';
+        }, 0);
+    }
+}
+</script>

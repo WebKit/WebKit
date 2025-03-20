@@ -103,7 +103,7 @@ private:
 };
 #endif
 
-Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
+Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&& frameTreeSyncData)
     : m_page(page)
     , m_frameID(frameID)
     , m_treeNode(*this, parent)
@@ -114,6 +114,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_frameType(frameType)
     , m_navigationScheduler(makeUniqueRefWithoutRefCountedCheck<NavigationScheduler>(*this))
     , m_opener(opener)
+    , m_frameTreeSyncData(WTFMove(frameTreeSyncData))
 {
     if (parent)
         parent->tree().appendChild(*this);
@@ -137,13 +138,6 @@ Frame::~Frame()
 #if ASSERT_ENABLED
     FrameLifetimeVerifier::singleton().frameDestroyed(*this);
 #endif
-}
-
-std::optional<PageIdentifier> Frame::pageID() const
-{
-    if (auto* page = this->page())
-        return page->identifier();
-    return std::nullopt;
 }
 
 void Frame::resetWindowProxy()
@@ -313,6 +307,18 @@ void Frame::stopForBackForwardCache()
         for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling())
             child->stopForBackForwardCache();
     }
+}
+
+void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
+{
+    m_frameTreeSyncData = WTFMove(data);
+}
+
+bool Frame::frameCanCreatePaymentSession() const
+{
+    // Prefer the LocalFrame code path when site isolation is disabled.
+    ASSERT(m_settings->siteIsolationEnabled());
+    return m_frameTreeSyncData->frameCanCreatePaymentSession;
 }
 
 } // namespace WebCore

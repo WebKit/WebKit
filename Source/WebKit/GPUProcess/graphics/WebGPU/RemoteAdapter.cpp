@@ -123,6 +123,8 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
             limits->maxComputeWorkgroupsPerDimension(),
             limits->maxStorageBuffersInFragmentStage(),
             limits->maxStorageTexturesInFragmentStage(),
+            limits->maxStorageBuffersInVertexStage(),
+            limits->maxStorageTexturesInVertexStage(),
         });
     });
 }

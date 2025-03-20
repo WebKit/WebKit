@@ -154,21 +154,21 @@ template<typename T> inline void add(Hasher& hasher, ObjectIdentifierReference<T
 template<typename T>
 TextStream& operator<<(TextStream& ts, const IPC::ObjectIdentifierReference<T>& reference)
 {
-    ts << "ObjectIdentifierReference(" << reference.identifier() << ", " << reference.version() << ")";
+    ts << "ObjectIdentifierReference("_s << reference.identifier() << ", "_s << reference.version() << ')';
     return ts;
 }
 
 template<typename T>
 TextStream& operator<<(TextStream& ts, const IPC::ObjectIdentifierReadReference<T>& reference)
 {
-    ts << "ObjectIdentifierReadReference(" << reference.identifier() << ", " << reference.version() << ")";
+    ts << "ObjectIdentifierReadReference("_s << reference.identifier() << ", "_s << reference.version() << ')';
     return ts;
 }
 
 template<typename T>
 TextStream& operator<<(TextStream& ts, const IPC::ObjectIdentifierWriteReference<T>& reference)
 {
-    ts << "ObjectIdentifierWriteReference(" << reference.identifier() << ", " << reference.version() << ", " << reference.pendingReads() << ")";
+    ts << "ObjectIdentifierWriteReference("_s << reference.identifier() << ", "_s << reference.version() << ", "_s << reference.pendingReads() << ')';
     return ts;
 }
 

@@ -197,6 +197,21 @@ static bool devolvableWidgetsEnabledAndSupported(const Element* element)
 #endif
 }
 
+static bool shouldCheckLegacyStylesForNativeAppearance(const Element* element)
+{
+#if PLATFORM(MAC)
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    return element && !element->document().settings().vectorBasedControlsOnMacEnabled();
+#else
+    UNUSED_PARAM(element);
+    return true;
+#endif
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
+}
+
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
     auto autoAppearance = autoAppearanceForElement(style, element);
@@ -216,7 +231,10 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     bool widgetMayDevolve = devolvableWidgetsEnabledAndSupported(element);
     bool widgetHasNativeAppearanceDisabled = widgetMayDevolve && element->isDevolvableWidget() && style.nativeAppearanceDisabled() && !isAppearanceAllowedForAllElements(appearance);
 
-    if (widgetHasNativeAppearanceDisabled || (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle))) {
+    if (!widgetMayDevolve || shouldCheckLegacyStylesForNativeAppearance(element))
+        widgetHasNativeAppearanceDisabled |= userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle);
+
+    if (widgetHasNativeAppearanceDisabled) {
         switch (appearance) {
         case StyleAppearance::Menulist:
             appearance = StyleAppearance::MenulistButton;
@@ -819,6 +837,8 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
         return paintButton(box, paintInfo, integralSnappedRect);
     case StyleAppearance::Menulist:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
+    case StyleAppearance::MenulistButton:
+        return paintMenuListButton(box, paintInfo, integralSnappedRect);
     case StyleAppearance::Meter:
         return paintMeter(box, paintInfo, integralSnappedRect);
     case StyleAppearance::ProgressBar:
@@ -829,11 +849,12 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
         return paintSliderThumb(box, paintInfo, integralSnappedRect);
-    case StyleAppearance::MenulistButton:
     case StyleAppearance::TextField:
     case StyleAppearance::TextArea:
     case StyleAppearance::Listbox:
         return true;
+    case StyleAppearance::InnerSpinButton:
+        return paintInnerSpinButton(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::SearchField:
         return paintSearchField(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::SearchFieldCancelButton:
@@ -1386,9 +1407,8 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
     bool isHorizontal = appearance == StyleAppearance::SliderHorizontal;
 
     IntSize thumbSize;
-    const RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
-    if (thumbRenderer) {
-        const RenderStyle& thumbStyle = thumbRenderer->style();
+    if (CheckedPtr thumbRenderer = input->sliderThumbElement()->renderer()) {
+        auto& thumbStyle = thumbRenderer->style();
         int thumbWidth = thumbStyle.width().intValue();
         int thumbHeight = thumbStyle.height().intValue();
         thumbSize.setWidth(isHorizontal ? thumbWidth : thumbHeight);
@@ -1439,6 +1459,50 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
             paintInfo.context().fillRect(tickRect);
         }
     }
+}
+
+void RenderTheme::paintPlatformResizer(const RenderLayerModelObject& renderer, GraphicsContext& context, const LayoutRect& resizerCornerRect)
+{
+    RefPtr<Image> resizeCornerImage;
+    FloatSize cornerResizerSize;
+    Ref document = renderer.document();
+    if (document->deviceScaleFactor() >= 2) {
+        static NeverDestroyed<Image*> resizeCornerImageHiRes(&ImageAdapter::loadPlatformResource("textAreaResizeCorner@2x").leakRef());
+        resizeCornerImage = resizeCornerImageHiRes;
+        cornerResizerSize = resizeCornerImage->size();
+        cornerResizerSize.scale(0.5f);
+    } else {
+        static NeverDestroyed<Image*> resizeCornerImageLoRes(&ImageAdapter::loadPlatformResource("textAreaResizeCorner").leakRef());
+        resizeCornerImage = resizeCornerImageLoRes;
+        cornerResizerSize = resizeCornerImage->size();
+    }
+
+    if (renderer.shouldPlaceVerticalScrollbarOnLeft()) {
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(resizerCornerRect.x() + cornerResizerSize.width(), resizerCornerRect.y() + resizerCornerRect.height() - cornerResizerSize.height());
+        context.scale(FloatSize(-1.0, 1.0));
+        if (resizeCornerImage)
+            context.drawImage(*resizeCornerImage, FloatRect(FloatPoint(), cornerResizerSize));
+        return;
+    }
+
+    if (!resizeCornerImage)
+        return;
+    FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), document->deviceScaleFactor());
+    context.drawImage(*resizeCornerImage, imageRect);
+}
+
+void RenderTheme::paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext& context, const LayoutRect& resizerAbsRect)
+{
+    // Clipping will exclude the right and bottom edges of this frame.
+    GraphicsContextStateSaver stateSaver(context);
+    context.clip(resizerAbsRect);
+    LayoutRect largerCorner = resizerAbsRect;
+    largerCorner.setSize(LayoutSize(largerCorner.width() + 1_lu, largerCorner.height() + 1_lu));
+    context.setStrokeColor(SRGBA<uint8_t> { 217, 217, 217 });
+    context.setStrokeThickness(1.0f);
+    context.setFillColor(Color::transparentBlack);
+    context.drawRect(snappedIntRect(largerCorner));
 }
 
 bool RenderTheme::shouldHaveSpinButton(const HTMLInputElement& inputElement) const

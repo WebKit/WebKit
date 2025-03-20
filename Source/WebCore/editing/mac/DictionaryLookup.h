@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "CocoaView.h"
 #include "DictionaryPopupInfo.h"
 #include <wtf/Function.h>
 
@@ -40,10 +41,8 @@
 
 #if PLATFORM(MAC)
 using WKRevealController = id <NSImmediateActionAnimationController>;
-using CocoaView = NSView;
 #else
 using WKRevealController = id;
-using CocoaView = UIView;
 #endif
 
 namespace WebCore {

@@ -14,7 +14,7 @@ Tests a render pass with a resolveTarget resolves correctly for many combination
   - TODO?: resolveTarget {2d array layer, TODO: 3d slice} {0, >0} with {2d, TODO: 3d} resolveTarget
     (different z from colorAttachment)
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 
 const kSlotsToResolve = [
 [0, 2],
@@ -25,7 +25,7 @@ const kSlotsToResolve = [
 const kSize = 4;
 const kFormat = 'rgba8unorm';
 
-export const g = makeTestGroup(TextureTestMixin(GPUTest));
+export const g = makeTestGroup(TextureTestMixin(AllFeaturesMaxLimitsGPUTest));
 
 g.test('render_pass_resolve').
 params((u) =>
@@ -99,7 +99,7 @@ fn((t) => {
   const kResolveTargetSize = kSize << t.params.resolveTargetBaseMipLevel;
 
   for (let i = 0; i < t.params.numColorAttachments; i++) {
-    const colorAttachment = t.device.createTexture({
+    const colorAttachment = t.createTextureTracked({
       format: kFormat,
       size: { width: kSize, height: kSize, depthOrArrayLayers: 1 },
       sampleCount: 4,
@@ -109,7 +109,7 @@ fn((t) => {
     });
 
     if (t.params.slotsToResolve.includes(i)) {
-      const colorAttachment = t.device.createTexture({
+      const colorAttachment = t.createTextureTracked({
         format: kFormat,
         size: { width: kSize, height: kSize, depthOrArrayLayers: 1 },
         sampleCount: 4,
@@ -118,7 +118,7 @@ fn((t) => {
         GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
       });
 
-      const resolveTarget = t.device.createTexture({
+      const resolveTarget = t.createTextureTracked({
         format: kFormat,
         size: {
           width: kResolveTargetSize,

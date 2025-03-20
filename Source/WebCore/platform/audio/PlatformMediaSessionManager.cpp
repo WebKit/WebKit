@@ -229,7 +229,7 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 #endif
 
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
-    m_logger->addLogger(session.logger());
+    m_logger->addLogger(session.protectedLogger());
 #endif
 
     scheduleUpdateSessionState();
@@ -256,7 +256,7 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
         maybeDeactivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
-    m_logger->removeLogger(session.logger());
+    m_logger->removeLogger(session.protectedLogger());
 #endif
 
     scheduleUpdateSessionState();
@@ -532,7 +532,7 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
         return;
 
     m_alreadyScheduledSessionStatedUpdate = true;
-    enqueueTaskOnMainThread([this] {
+    enqueueTaskOnMainThread([this, protectedThis = Ref { *this }] {
         m_alreadyScheduledSessionStatedUpdate = false;
         maybeActivateAudioSession();
         updateSessionState();
@@ -726,7 +726,7 @@ void PlatformMediaSessionManager::scheduleUpdateSessionState()
         return;
 
     m_hasScheduledSessionStateUpdate = true;
-    enqueueTaskOnMainThread([this] {
+    enqueueTaskOnMainThread([this, protectedThis = Ref { * this }] {
         updateSessionState();
         m_hasScheduledSessionStateUpdate = false;
     });
@@ -739,7 +739,7 @@ void PlatformMediaSessionManager::maybeDeactivateAudioSession()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "tried to set inactive AudioSession");
-    AudioSession::sharedSession().tryToSetActive(false);
+    AudioSession::protectedSharedSession()->tryToSetActive(false);
     m_becameActive = false;
 #endif
 }
@@ -752,7 +752,7 @@ bool PlatformMediaSessionManager::maybeActivateAudioSession()
         return true;
     }
 
-    m_becameActive = AudioSession::sharedSession().tryToSetActive(true);
+    m_becameActive = AudioSession::protectedSharedSession()->tryToSetActive(true);
     ALWAYS_LOG(LOGIDENTIFIER, m_becameActive ? "successfully activated" : "failed to activate", " AudioSession");
     return m_becameActive;
 #else

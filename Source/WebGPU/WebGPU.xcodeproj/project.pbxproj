@@ -1083,7 +1083,7 @@
 				1CEBD7DF2716AFBA00A5254D /* Sources */,
 				1CEBD7E02716AFBA00A5254D /* Frameworks */,
 				1CEBD7E12716AFBA00A5254D /* Resources */,
-				6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */,
+				6577FFC8276ACA060011AEC8 /* Create Symlink to Cryptex Path */,
 			);
 			buildRules = (
 			);
@@ -1187,7 +1187,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */ = {
+		6577FFC8276ACA060011AEC8 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -1196,14 +1196,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Create Symlink to Alt Root Path";
+			name = "Create Symlink to Cryptex Path";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-cryptex.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

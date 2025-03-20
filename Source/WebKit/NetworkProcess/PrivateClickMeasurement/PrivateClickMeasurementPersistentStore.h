@@ -72,7 +72,7 @@ private:
     void postTaskReply(Function<void()>&&) const;
 
     RefPtr<Database> m_database;
-    Ref<SuspendableWorkQueue> m_queue;
+    const Ref<SuspendableWorkQueue> m_queue;
 };
 
 } // namespace PCM

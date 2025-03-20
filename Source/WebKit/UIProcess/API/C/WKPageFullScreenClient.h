@@ -33,7 +33,7 @@ extern "C" {
 
 typedef struct WKRect WKRect;
 
-typedef bool (*WKPageWillEnterFullScreenCallback)(WKPageRef page, const void* clientInfo);
+typedef void (*WKPageWillEnterFullScreenCallback)(WKPageRef page, WKCompletionListenerRef listener, const void* clientInfo);
 typedef void (*WKPageBeganEnterFullScreenCallback)(WKPageRef page, WKRect initialFrame, WKRect finalFrame, const void* clientInfo);
 typedef void (*WKPageExitFullScreenCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageBeganExitFullScreenCallback)(WKPageRef page, WKRect initialFrame, WKRect finalFrame, WKCompletionListenerRef listener, const void* clientInfo);

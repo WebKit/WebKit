@@ -53,7 +53,7 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
-template<typename T> void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, T callback)
+static void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, NOESCAPE const Function<void(CSSFontFaceClient&)>& callback)
 {
     for (auto& client : copyToVectorOf<Ref<CSSFontFaceClient>>(clients))
         callback(client);
@@ -249,7 +249,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
     ASSERT(keyword == CSSValueOblique);
     auto length = rangeValue->obliqueValues->length();
     ASSERT(length == 1 || length == 2);
-    auto angleAtIndex = [&] (size_t index) {
+    auto angleAtIndex = [rangeValue = Ref { *rangeValue }] (size_t index) {
         return Style::fontStyleAngleFromCSSValueDeprecated(*rangeValue->obliqueValues->itemWithoutBoundsCheck(index));
     };
     if (length == 1)

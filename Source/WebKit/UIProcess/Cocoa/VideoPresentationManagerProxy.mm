@@ -261,8 +261,34 @@ void VideoPresentationManagerProxy::setDocumentVisibility(PlaybackSessionContext
     if (m_mockVideoPresentationModeEnabled)
         return;
 
-    if (RefPtr interface = findInterface(contextId))
+    if (RefPtr interface = findInterface(contextId)) {
         interface->documentVisibilityChanged(isDocumentVisible);
+        Ref model = ensureModel(contextId);
+        if (model->isChildOfElementFullscreen())
+            videosInElementFullscreenChanged();
+    }
+}
+
+void VideoPresentationManagerProxy::setIsChildOfElementFullscreen(PlaybackSessionContextIdentifier contextId, bool isChildOfElementFullscreen)
+{
+    Ref model = ensureModel(contextId);
+
+    if (std::exchange(model->m_isChildOfElementFullscreen, isChildOfElementFullscreen) != isChildOfElementFullscreen)
+        videosInElementFullscreenChanged();
+}
+
+void VideoPresentationManagerProxy::hasBeenInteractedWith(PlaybackSessionContextIdentifier contextId)
+{
+    Ref model = ensureModel(contextId);
+
+    if (std::exchange(m_lastInteractedWithVideo, contextId) != contextId && model->isChildOfElementFullscreen())
+        videosInElementFullscreenChanged();
+}
+
+void VideoPresentationManagerProxy::videosInElementFullscreenChanged()
+{
+    if (RefPtr page = m_page.get())
+        page->videosInElementFullscreenChanged();
 }
 
 void VideoPresentationModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
@@ -274,6 +300,13 @@ void VideoPresentationModelContext::setVideoDimensions(const WebCore::FloatSize&
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions, ", clients=", m_clients.computeSize());
     m_clients.forEach([&](auto& client) {
         client.videoDimensionsChanged(videoDimensions);
+    });
+}
+
+void VideoPresentationModelContext::audioSessionCategoryChanged(WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy)
+{
+    m_clients.forEach([&](auto& client) {
+        client.audioSessionCategoryChanged(category, mode, policy);
     });
 }
 
@@ -643,7 +676,7 @@ static Ref<PlatformVideoPresentationInterface> videoPresentationInterface(WebPag
 #endif
 }
 
-VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
+VideoPresentationManagerProxy::ModelInterfacePair VideoPresentationManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     Ref page = *m_page;
     Ref playbackSessionManagerProxy = m_playbackSessionManagerProxy;
@@ -652,14 +685,18 @@ VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy
     Ref playbackSessionInterface = playbackSessionManagerProxy->ensureInterface(contextId);
     Ref interface = videoPresentationInterface(page.get(), playbackSessionInterface.get());
 
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    interface->setPrefersSpatialAudioExperience(page->preferences().preferSpatialAudioExperience());
+#endif
+
     playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setVideoPresentationModel(model.ptr());
 
-    return std::make_tuple(WTFMove(model), WTFMove(interface));
+    return std::make_pair(WTFMove(model), WTFMove(interface));
 }
 
-const VideoPresentationManagerProxy::ModelInterfaceTuple& VideoPresentationManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
+const VideoPresentationManagerProxy::ModelInterfacePair& VideoPresentationManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId);
@@ -669,21 +706,27 @@ const VideoPresentationManagerProxy::ModelInterfaceTuple& VideoPresentationManag
 
 Ref<VideoPresentationModelContext> VideoPresentationManagerProxy::ensureModel(PlaybackSessionContextIdentifier contextId)
 {
-    return std::get<0>(ensureModelAndInterface(contextId));
+    return ensureModelAndInterface(contextId).first;
 }
 
 Ref<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
-    return std::get<1>(ensureModelAndInterface(contextId));
+    return ensureModelAndInterface(contextId).second;
 }
 
-RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
+const VideoPresentationManagerProxy::ModelInterfacePair* VideoPresentationManagerProxy::findModelAndInterface(PlaybackSessionContextIdentifier contextId) const
 {
     auto it = m_contextMap.find(contextId);
     if (it == m_contextMap.end())
         return nullptr;
+    return &(it->value);
+}
 
-    return std::get<1>(it->value).ptr();
+RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
+{
+    if (auto* modelAndInterface = findModelAndInterface(contextId))
+        return modelAndInterface->second.ptr();
+    return nullptr;
 }
 
 void VideoPresentationManagerProxy::ensureClientForContext(PlaybackSessionContextIdentifier contextId)
@@ -867,7 +910,7 @@ RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::return
         return nullptr;
 
     for (auto& value : copyToVector(m_contextMap.values())) {
-        Ref interface = std::get<1>(value);
+        Ref interface = WTFMove(value.second);
         if (interface->returningToStandby())
             return interface;
     }
@@ -1035,18 +1078,26 @@ void VideoPresentationManagerProxy::setPlayerIdentifier(PlaybackSessionContextId
         interface->setPlayerIdentifier(playerIdentifier);
 }
 
+void VideoPresentationManagerProxy::audioSessionCategoryChanged(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy)
+{
+    Ref { ensureModel(contextId) }->audioSessionCategoryChanged(category, mode, policy);
+}
+
 void VideoPresentationManagerProxy::setHasVideo(PlaybackSessionContextIdentifier contextId, bool hasVideo)
 {
     if (m_mockVideoPresentationModeEnabled)
         return;
 
-    if (auto interface = findInterface(contextId))
-        interface->hasVideoChanged(hasVideo);
+    if (auto* modelAndInterface = findModelAndInterface(contextId)) {
+        modelAndInterface->first->m_hasVideo = hasVideo;
+        modelAndInterface->second->hasVideoChanged(hasVideo);
+    }
 }
 
 void VideoPresentationManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
     auto [model, interface] = ensureModelAndInterface(contextId);
+    bool videosInElementFullscrenChanged = model->videoDimensions() != videoDimensions && model->isChildOfElementFullscreen();
     Ref { model }->setVideoDimensions(videoDimensions);
 
     if (m_mockVideoPresentationModeEnabled) {
@@ -1056,6 +1107,8 @@ void VideoPresentationManagerProxy::setVideoDimensions(PlaybackSessionContextIde
         m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth / videoDimensions.aspectRatio());
         return;
     }
+    if (videosInElementFullscrenChanged)
+        this->videosInElementFullscreenChanged();
 }
 
 void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -1074,7 +1127,7 @@ void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdenti
         if (contextId == otherContextId)
             continue;
 
-        auto& otherInterface = std::get<1>(contextPair.value);
+        auto& otherInterface = contextPair.value.second;
         if (otherInterface->hasMode(interface->mode()))
             otherInterface->requestHideAndExitFullscreen();
     }
@@ -1520,6 +1573,66 @@ WTFLogChannel& VideoPresentationManagerProxy::logChannel() const
 Ref<PlaybackSessionManagerProxy> VideoPresentationManagerProxy::protectedPlaybackSessionManagerProxy() const
 {
     return m_playbackSessionManagerProxy;
+}
+
+RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::bestVideoForElementFullscreen()
+{
+    if (m_lastInteractedWithVideo) {
+        if (auto* modelAndInterface = findModelAndInterface(*m_lastInteractedWithVideo); modelAndInterface && modelAndInterface->first->isChildOfElementFullscreen())
+            return Ref { modelAndInterface->second };
+    }
+#if PLATFORM(IOS_FAMILY)
+    if (!m_page)
+        return nullptr;
+
+    RefPtr pageClient = m_page->pageClient();
+    if (!pageClient)
+        return nullptr;
+
+    RetainPtr window = pageClient->platformWindow();
+    if (!window)
+        return nullptr;
+
+    CGRect windowBounds = [window bounds];
+    Vector<Ref<PlatformVideoPresentationInterface>> candidates;
+    for (auto& modelInterface : m_contextMap.values()) {
+        auto [model, interface] = modelInterface;
+        if (!model->isChildOfElementFullscreen())
+            continue;
+
+        candidates.append(interface);
+    }
+
+    float largestArea = 0;
+    auto unobscuredArea = FloatRect { windowBounds }.area();
+
+    RefPtr<WebCore::PlatformVideoPresentationInterface> largestVisibleVideo;
+    constexpr auto minimumViewportRatioForLargestMediaElement = 0.25;
+    float minimumAreaForLargestElement = minimumViewportRatioForLargestMediaElement * unobscuredArea;
+    for (auto& candidate : candidates) {
+        RetainPtr candidateLayer = candidate->playerLayer();
+        if (!candidateLayer)
+            continue;
+        auto candidateRect = [candidateLayer convertRect:[candidateLayer bounds] toLayer:nil];
+        auto intersectionRect = intersection(windowBounds, candidateRect);
+        if (intersectionRect.isEmpty())
+            continue;
+
+        auto area = intersectionRect.area();
+        if (area <= largestArea)
+            continue;
+
+        if (area < minimumAreaForLargestElement)
+            continue;
+
+        largestArea = area;
+        largestVisibleVideo = candidate.ptr();
+    }
+
+    return largestVisibleVideo;
+#else
+    return nullptr;
+#endif
 }
 
 } // namespace WebKit

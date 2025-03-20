@@ -1,0 +1,3 @@
+
+FAIL Test scroll margin intersection assert_true: isIntersecting expected true got false
+

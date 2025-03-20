@@ -111,7 +111,7 @@ std::optional<ScrollingNodeID> LayerAncestorClippingStack::lastOverflowScrollPro
 void LayerAncestorClippingStack::updateScrollingNodeLayers(ScrollingCoordinator& scrollingCoordinator)
 {
     for (const auto& entry : m_stack) {
-        if (!entry.clipData.isOverflowScroll)
+        if (!entry.clipData.isOverflowScroll || !entry.overflowScrollProxyNodeID)
             continue;
 
         scrollingCoordinator.setNodeLayers(*entry.overflowScrollProxyNodeID, { entry.scrollingLayer.get() });
@@ -174,15 +174,15 @@ Vector<CompositedClipData> LayerAncestorClippingStack::compositedClipData() cons
 
 static TextStream& operator<<(TextStream& ts, const LayerAncestorClippingStack::ClippingStackEntry& entry)
 {
-    ts.dumpProperty("clippingLayer", entry.clipData.clippingLayer.get());
-    ts.dumpProperty("clip", entry.clipData.clipRect);
-    ts.dumpProperty("isOverflowScroll", entry.clipData.isOverflowScroll);
+    ts.dumpProperty("clippingLayer"_s, entry.clipData.clippingLayer.get());
+    ts.dumpProperty("clip"_s, entry.clipData.clipRect);
+    ts.dumpProperty("isOverflowScroll"_s, entry.clipData.isOverflowScroll);
     if (entry.overflowScrollProxyNodeID)
-        ts.dumpProperty("overflowScrollProxyNodeID", entry.overflowScrollProxyNodeID);
+        ts.dumpProperty("overflowScrollProxyNodeID"_s, entry.overflowScrollProxyNodeID);
     if (entry.clippingLayer)
-        ts.dumpProperty("clippingLayer", entry.clippingLayer->primaryLayerID());
+        ts.dumpProperty("clippingLayer"_s, entry.clippingLayer->primaryLayerID());
     if (entry.scrollingLayer)
-        ts.dumpProperty("scrollingLayer", entry.scrollingLayer->primaryLayerID());
+        ts.dumpProperty("scrollingLayer"_s, entry.scrollingLayer->primaryLayerID());
     return ts;
 }
 

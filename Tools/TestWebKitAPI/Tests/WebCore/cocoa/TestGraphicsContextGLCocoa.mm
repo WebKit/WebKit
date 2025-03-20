@@ -607,12 +607,12 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     std::atomic<uint32_t> signalThreadUID = 0;
     context->prepareForDisplayWithFinishedSignal([&signalled, &signalThreadUID] {
         signalled = true;
-        signalThreadUID = Thread::current().uid();
+        signalThreadUID = Thread::currentSingleton().uid();
     });
     while (!signalled)
         sleep(.1_s);
     EXPECT_TRUE(signalled);
-    EXPECT_NE(Thread::current().uid(), signalThreadUID);
+    EXPECT_NE(Thread::currentSingleton().uid(), signalThreadUID);
 }
 
 INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
@@ -621,6 +621,65 @@ INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
         testing::Values(true, false),
         testing::Values(true, false)),
     TestParametersToStringFormatter());
+
+class GraphicsContextGLCocoaReadPixelsTest : public ::testing::Test {
+protected:
+    void SetUp() override // NOLINT
+    {
+        GraphicsContextGLAttributes attributes;
+        m_context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+        m_expectedColor = Color::gray;
+        auto [r, g, b, a] = m_expectedColor.toColorTypeLossy<SRGBA<float>>().resolved();
+        m_context->reshape(20, 20);
+        m_context->clearColor(r, g, b, a);
+        m_context->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
+    }
+
+    RefPtr<TestedGraphicsContextGLCocoa> m_context { nullptr };
+    Color m_expectedColor { };
+};
+
+TEST_F(GraphicsContextGLCocoaReadPixelsTest, readPixelsSuccess)
+{
+    EXPECT_TRUE(m_context->getErrors().isEmpty());
+    uint8_t gotValues[4] = { 0, 0, 0, 0 };
+    IntRect rect(1, 1, 1, 1);
+    m_context->readPixels(rect, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
+    Color actualColor { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
+    EXPECT_EQ(m_expectedColor, actualColor);
+    EXPECT_TRUE(m_context->getErrors().isEmpty());
+}
+
+TEST_F(GraphicsContextGLCocoaReadPixelsTest, readPixelsTooLargeRect)
+{
+    EXPECT_TRUE(m_context->getErrors().isEmpty());
+    uint8_t gotValues[4] = { 0, 0, 0, 0 };
+    IntRect rect(1, 1, 0x7fffffff, 0x7fffffff);
+    m_context->readPixels(rect, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
+    Color actualColor { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
+    EXPECT_NE(m_expectedColor, actualColor);
+    EXPECT_EQ(GCGLErrorCode::InvalidOperation, m_context->getErrors());
+}
+
+TEST_F(GraphicsContextGLCocoaReadPixelsTest, readPixelsWithStatusSuccess)
+{
+    uint8_t gotValues[4] = { 0, 0, 0, 0 };
+    IntRect rect(1, 1, 1, 1);
+    m_context->readPixelsWithStatus(rect, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, false, gotValues);
+    Color actualColor { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
+    EXPECT_EQ(m_expectedColor, actualColor);
+    EXPECT_TRUE(m_context->getErrors().isEmpty());
+}
+
+TEST_F(GraphicsContextGLCocoaReadPixelsTest, readPixelsWithStatusTooLargeRect)
+{
+    uint8_t gotValues[4] = { 0, 0, 0, 0 };
+    IntRect rect(1, 1, 0x7fffffff, 0x7fffffff);
+    m_context->readPixelsWithStatus(rect, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, false, gotValues);
+    Color actualColor { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
+    EXPECT_NE(m_expectedColor, actualColor);
+    EXPECT_EQ(GCGLErrorCode::InvalidOperation, m_context->getErrors());
+}
 
 }
 

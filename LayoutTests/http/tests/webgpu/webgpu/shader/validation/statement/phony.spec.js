@@ -52,12 +52,6 @@ const kConstructibleCases = {
 g.test('rhs_constructible').
 desc(`Test that the rhs of 'phony assignment' can be a constructible.`).
 params((u) => u.combine('type', keysOf(kConstructibleCases))).
-beforeAllSubcases((t) => {
-  const c = kConstructibleCases[t.params.type];
-  if (c.usesF16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   const { value, pass, usesF16, gdecl } = kConstructibleCases[t.params.type];
   const code = `
@@ -169,4 +163,11 @@ fn f() {
   ${kTests[t.params.test].wgsl}
 }`;
   t.expectCompileResult(kTests[t.params.test].pass, code);
+});
+
+g.test('module_scope').
+desc(`Phony assignment is not valid at module scope`).
+fn((t) => {
+  const code = `_ = 1; `;
+  t.expectCompileResult(false, code);
 });

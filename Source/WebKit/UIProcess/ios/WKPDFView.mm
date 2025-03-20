@@ -196,8 +196,9 @@ static void* kvoContext = &kvoContext;
 {
     auto webEvent = adoptNS([[WKWebEvent alloc] initWithEvent:event]);
 
-    if ([_keyboardScrollingAnimator beginWithEvent:webEvent.get()])
+    if ([_keyboardScrollingAnimator beginWithEvent:webEvent.get() scrollView:[_webView _scrollViewInternal]])
         return YES;
+
     [_keyboardScrollingAnimator handleKeyEvent:webEvent.get()];
     return NO;
 }
@@ -223,7 +224,7 @@ static void* kvoContext = &kvoContext;
     if (!(self = [super initWithFrame:frame webView:webView]))
         return nil;
 
-    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView._scrollViewInternal]);
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] init]);
     _webView = webView;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

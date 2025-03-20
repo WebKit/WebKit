@@ -40,8 +40,7 @@ WKTypeID WKGrammarDetailGetTypeID()
 
 WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef guesses, WKStringRef userDescription)
 {
-    auto detail = WebGrammarDetail::create(location, length, toImpl(guesses), toWTFString(userDescription));
-    return toAPI(&detail.leakRef());
+    return toAPILeakingRef(WebGrammarDetail::create(location, length, toImpl(guesses), toWTFString(userDescription)));
 }
 
 int WKGrammarDetailGetLocation(WKGrammarDetailRef grammarDetailRef)
@@ -56,7 +55,7 @@ int WKGrammarDetailGetLength(WKGrammarDetailRef grammarDetailRef)
 
 WKArrayRef WKGrammarDetailCopyGuesses(WKGrammarDetailRef grammarDetailRef)
 {
-    return toAPI(&toImpl(grammarDetailRef)->guesses().leakRef());
+    return toAPILeakingRef(toImpl(grammarDetailRef)->guesses());
 }
 
 WKStringRef WKGrammarDetailCopyUserDescription(WKGrammarDetailRef grammarDetailRef)

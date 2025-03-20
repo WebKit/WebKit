@@ -28,7 +28,6 @@
 
 #include "AnimationTimeline.h"
 #include "CSSAnimation.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
@@ -36,6 +35,7 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "Settings.h"
+#include "StyleInterpolation.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 #include "WebAnimation.h"
@@ -280,7 +280,7 @@ void KeyframeEffectStack::cascadeDidOverrideProperties(const UncheckedKeyHashSet
 {
     UncheckedKeyHashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
     for (auto animatedProperty : overriddenProperties) {
-        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
+        if (Style::Interpolation::isAccelerated(animatedProperty, document.settings()))
             acceleratedPropertiesOverriddenByCascade.add(animatedProperty);
     }
 

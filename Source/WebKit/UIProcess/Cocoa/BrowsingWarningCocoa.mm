@@ -33,52 +33,46 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 
+NSString * const SSBProviderGoogle = @"SSBProviderGoogle";
+NSString * const SSBProviderTencent = @"SSBProviderTencent";
+NSString * const SSBProviderApple = @"SSBProviderApple";
+
 namespace WebKit {
 
 #if HAVE(SAFE_BROWSING)
 
 static String malwareDetailsBase(SSBServiceLookupResult *result)
 {
-#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
     return result.malwareDetailsBaseURLString;
-#else
-    if ([result.provider isEqualToString:SSBProviderTencent])
-        return "https://www.urlsec.qq.com/check.html?tpl=safari"_s;
-    return "https://google.com/safebrowsing/diagnostic?tpl=safari"_s;
-#endif
 }
 
 static NSURL *learnMoreURL(SSBServiceLookupResult *result)
 {
-#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
     return result.learnMoreURL;
-#else
-    if ([result.provider isEqualToString:SSBProviderTencent])
-        return [NSURL URLWithString:@"https://www.urlsec.qq.com/standard/s1.html?tpl=safari"];
-    return [NSURL URLWithString:@"https://www.google.com/support/bin/answer.py?answer=106318"];
-#endif
 }
 
 static String reportAnErrorBase(SSBServiceLookupResult *result)
 {
-#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
     return result.reportAnErrorBaseURLString;
-#else
-    if ([result.provider isEqualToString:SSBProviderTencent])
-        return "https://www.urlsec.qq.com/complain.html?tpl=safari"_s;
-    return "https://www.google.com/safebrowsing/report_error/?tpl=safari"_s;
-#endif
 }
 
-static String localizedProvider(SSBServiceLookupResult *result)
+static String localizedProviderDisplayName(SSBServiceLookupResult *result)
 {
-#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
     return result.localizedProviderDisplayName;
-#else
-    if ([result.provider isEqualToString:SSBProviderTencent])
-        return WEB_UI_NSSTRING(@"Tencent Safe Browsing", "Tencent Safe Browsing");
-    return WEB_UI_NSSTRING(@"Google Safe Browsing", "Google Safe Browsing");
-#endif
+}
+
+static String localizedProviderShortName(SSBServiceLookupResult *result)
+{
+    if ([result respondsToSelector:@selector(localizedProviderShortName)])
+        return result.localizedProviderShortName;
+    if ([result.provider isEqual:SSBProviderGoogle])
+        return "Google"_s;
+    if ([result.provider isEqual:SSBProviderTencent])
+        return "Tencent"_s;
+    if ([result.provider isEqual:SSBProviderApple])
+        return "Apple"_s;
+    ASSERT_NOT_REACHED();
+    return ""_s;
 }
 
 
@@ -151,12 +145,14 @@ static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBService
     if (result.isPhishing) {
         NSString *phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");
         NSString *learnMore = WEB_UI_NSSTRING(@"Learn more…", "Action from safe browsing warning");
-        NSString *phishingActions = WEB_UI_NSSTRING(@"If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.", "Phishing warning description");
+        NSString *phishingActions = WEB_UI_NSSTRING(@"This website was reported as deceptive by %provider-display-name%. If you believe this website is safe, you can %report-an-error% to %provider%. Or, if you understand the risks involved, you can %bypass-link%.", "Phishing warning description");
         NSString *reportAnError = WEB_UI_NSSTRING(@"report an error", "Action from safe browsing warning");
         NSString *visitUnsafeWebsite = WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning");
 
         auto attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@\n\n%@", phishingDescription, learnMore, phishingActions]]);
         addLinkAndReplace(attributedString.get(), learnMore, learnMore, learnMoreURL(result));
+        replace(attributedString.get(), @"%provider-display-name%", localizedProviderDisplayName(result));
+        replace(attributedString.get(), @"%provider%", localizedProviderShortName(result));
         addLinkAndReplace(attributedString.get(), @"%report-an-error%", reportAnError, reportAnErrorURL(url, result));
         addLinkAndReplace(attributedString.get(), @"%bypass-link%", visitUnsafeWebsite, BrowsingWarning::visitUnsafeWebsiteSentinel());
         return attributedString.autorelease();
@@ -164,7 +160,7 @@ static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBService
 
     auto malwareOrUnwantedSoftwareDetails = [&] (NSString *description, NSString *statusStringToReplace, bool confirmMalware) {
         auto malwareDescription = adoptNS([[NSMutableAttributedString alloc] initWithString:description]);
-        replace(malwareDescription.get(), @"%safeBrowsingProvider%", localizedProvider(result));
+        replace(malwareDescription.get(), @"%safeBrowsingProvider%", localizedProviderDisplayName(result));
         auto statusLink = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")]);
         replace(statusLink.get(), @"%site%", url.host().toString());
         addLinkAndReplace(malwareDescription.get(), statusStringToReplace, [statusLink string], malwareDetailsURL(url, result));

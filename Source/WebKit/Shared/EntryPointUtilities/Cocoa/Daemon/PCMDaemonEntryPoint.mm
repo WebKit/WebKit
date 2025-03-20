@@ -41,7 +41,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/darwin/XPCExtras.h>
 
 // FIXME: Add daemon plist to repository.
 
@@ -68,7 +68,7 @@ static void connectionEventHandler(xpc_object_t request)
     }
 
     auto messageType { static_cast<PCM::MessageType>(xpc_dictionary_get_uint64(request, PCM::protocolMessageTypeKey)) };
-    auto encodedMessage = xpc_dictionary_get_data_span(request, PCM::protocolEncodedMessageKey);
+    auto encodedMessage = xpcDictionaryGetData(request, PCM::protocolEncodedMessageKey);
     decodeMessageAndSendToManager(Daemon::Connection::create(xpc_dictionary_get_remote_connection(request)), messageType, encodedMessage, replySender(messageType, request));
 }
 

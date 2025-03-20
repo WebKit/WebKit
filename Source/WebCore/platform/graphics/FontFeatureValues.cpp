@@ -97,10 +97,10 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const FontFeatureValues& fontFe
         if (tags.isEmpty())
             return;
 
-        ts << "{" << name << ": ";
+        ts << '{' << name << ": "_s;
         for (const auto& tag : tags)
-            ts << "{" << tag.key << ":" << tag.value << "} ";
-        ts << "}";
+            ts << '{' << tag.key << ':' << tag.value << "} "_s;
+        ts << '}';
     };
     printTags("styleset", fontFeatureValues.m_styleset);
     printTags("stylistic", fontFeatureValues.m_stylistic);

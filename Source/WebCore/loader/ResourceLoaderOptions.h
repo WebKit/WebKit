@@ -35,8 +35,10 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "FetchIdentifier.h"
 #include "FetchOptions.h"
+#include "FetchingWorkerIdentifier.h"
 #include "HTTPHeaderNames.h"
 #include "RequestPriority.h"
+#include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
 #include "SharedWorkerIdentifier.h"
 #include "StoredCredentialsPolicy.h"
@@ -257,7 +259,7 @@ struct ResourceLoaderOptions : public FetchOptions {
 
     Markable<FetchIdentifier> navigationPreloadIdentifier;
     String nonce;
-    std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier;
+    FetchingWorkerIdentifier workerIdentifier;
 };
 
 } // namespace WebCore

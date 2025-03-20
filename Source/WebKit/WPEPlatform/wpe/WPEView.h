@@ -46,31 +46,33 @@ typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEEvent WPEEvent;
 typedef struct _WPEScreen WPEScreen;
 typedef struct _WPERectangle WPERectangle;
+typedef struct _WPEViewAccessible WPEViewAccessible;
 
 struct _WPEViewClass
 {
     GObjectClass parent_class;
 
-    gboolean (* render_buffer)         (WPEView            *view,
-                                        WPEBuffer          *buffer,
-                                        const WPERectangle *damage_rects,
-                                        guint               n_damage_rects,
-                                        GError            **error);
-    gboolean (* lock_pointer)          (WPEView            *view);
-    gboolean (* unlock_pointer)        (WPEView            *view);
-    void     (* set_cursor_from_name)  (WPEView            *view,
-                                        const char         *name);
-    void     (* set_cursor_from_bytes) (WPEView            *view,
-                                        GBytes             *bytes,
-                                        guint               width,
-                                        guint               height,
-                                        guint               stride,
-                                        guint               hotspot_x,
-                                        guint               hotspot_y);
-    void     (* set_opaque_rectangles) (WPEView            *view,
-                                        WPERectangle       *rects,
-                                        guint               n_rects);
-    gboolean (* can_be_mapped)         (WPEView            *view);
+    gboolean           (* render_buffer)         (WPEView            *view,
+                                                  WPEBuffer          *buffer,
+                                                  const WPERectangle *damage_rects,
+                                                  guint               n_damage_rects,
+                                                  GError            **error);
+    gboolean           (* lock_pointer)          (WPEView            *view);
+    gboolean           (* unlock_pointer)        (WPEView            *view);
+    void               (* set_cursor_from_name)  (WPEView            *view,
+                                                  const char         *name);
+    void               (* set_cursor_from_bytes) (WPEView            *view,
+                                                  GBytes             *bytes,
+                                                  guint               width,
+                                                  guint               height,
+                                                  guint               stride,
+                                                  guint               hotspot_x,
+                                                  guint               hotspot_y);
+    void               (* set_opaque_rectangles) (WPEView            *view,
+                                                  WPERectangle       *rects,
+                                                  guint               n_rects);
+    gboolean           (* can_be_mapped)         (WPEView            *view);
+    WPEViewAccessible *(* get_accessible)        (WPEView            *view);
 
     gpointer padding[32];
 };
@@ -146,6 +148,7 @@ WPE_API void                    wpe_view_set_opaque_rectangles         (WPEView 
 WPE_API void                    wpe_view_set_gesture_controller        (WPEView            *view,
                                                                         WPEGestureController *controller);
 WPE_API WPEGestureController   *wpe_view_get_gesture_controller        (WPEView            *view);
+WPE_API WPEViewAccessible      *wpe_view_get_accessible                (WPEView            *view);
 
 G_END_DECLS
 

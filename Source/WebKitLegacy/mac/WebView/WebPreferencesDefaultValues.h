@@ -71,6 +71,14 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+bool defaultMacStyleControlsOnCatalyst();
+#endif
+
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+bool defaultVectorBasedControlsOnMacEnabled();
+#endif
+
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
 bool defaultMediaSourceEnabled();
 #endif

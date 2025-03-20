@@ -30,7 +30,6 @@
 
 #import "AudioBus.h"
 #import "AudioChannel.h"
-#import "AudioSampleDataSource.h"
 #import "AudioSourceProviderClient.h"
 #import "Logging.h"
 #import "WebAudioBufferList.h"
@@ -137,7 +136,7 @@ void WebAudioSourceProviderCocoa::prepare(const AudioStreamBasicDescription& for
 }
 
 // May get called on a background thread.
-void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
+void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount, NeedsFlush needsFlush)
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     auto& basicDescription = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
@@ -147,7 +146,7 @@ void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioDat
     if (!m_dataSource)
         return;
 
-    m_dataSource->pushSamples(MediaTime(m_writeCount, m_inputDescription->sampleRate()), data, frameCount);
+    m_dataSource->pushSamples(MediaTime(m_writeCount, m_inputDescription->sampleRate()), data, frameCount, needsFlush);
 
     m_writeCount += frameCount;
 }

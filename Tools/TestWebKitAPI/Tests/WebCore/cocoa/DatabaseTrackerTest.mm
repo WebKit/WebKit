@@ -83,9 +83,9 @@ static void removeDirectoryAndAllContents(const String& directoryPath)
 
 static void createFileAtPath(const String& path)
 {
-    FileSystem::PlatformFileHandle fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate);
-    EXPECT_NE(-1, fileHandle);
-    FileSystem::closeFile(fileHandle);
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate);
+    EXPECT_FALSE(!fileHandle);
+    fileHandle = { };
     EXPECT_TRUE(FileSystem::fileExists(path));
 }
 

@@ -39,6 +39,7 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"
+#include "ServiceWorkerRoute.h"
 #include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -607,6 +608,17 @@ void WorkerSWClientConnection::cookieChangeSubscriptions(ServiceWorkerRegistrati
             }, WorkerRunLoop::defaultMode());
         });
     });
+}
+
+Ref<SWClientConnection::AddRoutePromise> WorkerSWClientConnection::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes)
+{
+    AddRoutePromise::Producer producer;
+    Ref promise = producer.promise();
+    callOnMainThread([producer = WTFMove(producer), identifier, routes = crossThreadCopy(WTFMove(routes))]() mutable {
+        Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        connection->addRoutes(identifier, WTFMove(routes))->chainTo(WTFMove(producer));
+    });
+    return promise;
 }
 
 } // namespace WebCore

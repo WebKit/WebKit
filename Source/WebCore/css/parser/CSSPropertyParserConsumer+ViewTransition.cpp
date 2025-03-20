@@ -36,32 +36,6 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // <'view-transition-class'> = none | <custom-ident>+
-    // https://drafts.csswg.org/css-view-transitions-2/#view-transition-class-prop
-
-    if (auto noneValue = consumeIdent<CSSValueNone>(range))
-        return noneValue;
-
-    CSSValueListBuilder list;
-    do {
-        if (range.peek().id() == CSSValueNone)
-            return nullptr;
-
-        auto ident = consumeCustomIdent(range);
-        if (!ident)
-            return nullptr;
-
-        list.append(ident.releaseNonNull());
-    } while (!range.atEnd());
-
-    if (list.isEmpty())
-        return nullptr;
-
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
 RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'types'> = none | <custom-ident>+

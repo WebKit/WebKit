@@ -88,14 +88,14 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 TextStream& operator<<(TextStream& ts, PlatformWheelEventPhase phase)
 {
     switch (phase) {
-    case PlatformWheelEventPhase::None: ts << "none"; break;
+    case PlatformWheelEventPhase::None: ts << "none"_s; break;
 #if ENABLE(KINETIC_SCROLLING)
-    case PlatformWheelEventPhase::Began: ts << "began"; break;
-    case PlatformWheelEventPhase::Stationary: ts << "stationary"; break;
-    case PlatformWheelEventPhase::Changed: ts << "changed"; break;
-    case PlatformWheelEventPhase::Ended: ts << "ended"; break;
-    case PlatformWheelEventPhase::Cancelled: ts << "cancelled"; break;
-    case PlatformWheelEventPhase::MayBegin: ts << "mayBegin"; break;
+    case PlatformWheelEventPhase::Began: ts << "began"_s; break;
+    case PlatformWheelEventPhase::Stationary: ts << "stationary"_s; break;
+    case PlatformWheelEventPhase::Changed: ts << "changed"_s; break;
+    case PlatformWheelEventPhase::Ended: ts << "ended"_s; break;
+    case PlatformWheelEventPhase::Cancelled: ts << "cancelled"_s; break;
+    case PlatformWheelEventPhase::MayBegin: ts << "mayBegin"_s; break;
 #endif
     }
     return ts;
@@ -103,9 +103,9 @@ TextStream& operator<<(TextStream& ts, PlatformWheelEventPhase phase)
 
 TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
 {
-    ts << "PlatformWheelEvent " << &event << " at " << event.position() << " deltaX " << event.deltaX() << " deltaY " << event.deltaY();
-    ts << " phase \"" << event.phase() << "\" momentum phase \"" << event.momentumPhase() << "\"";
-    ts << " velocity " << event.scrollingVelocity();
+    ts << "PlatformWheelEvent "_s << &event << " at "_s << event.position() << " deltaX "_s << event.deltaX() << " deltaY "_s << event.deltaY();
+    ts << " phase \""_s << event.phase() << "\" momentum phase \""_s << event.momentumPhase() << '"';
+    ts << " velocity "_s << event.scrollingVelocity();
 
     return ts;
 }
@@ -113,9 +113,9 @@ TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
 TextStream& operator<<(TextStream& ts, EventHandling steps)
 {
     switch (steps) {
-    case EventHandling::DispatchedToDOM: ts << "dispatched to DOM"; break;
-    case EventHandling::DefaultPrevented: ts << "default prevented"; break;
-    case EventHandling::DefaultHandled: ts << "default handled"; break;
+    case EventHandling::DispatchedToDOM: ts << "dispatched to DOM"_s; break;
+    case EventHandling::DefaultPrevented: ts << "default prevented"_s; break;
+    case EventHandling::DefaultHandled: ts << "default handled"_s; break;
     }
     return ts;
 }
@@ -123,8 +123,8 @@ TextStream& operator<<(TextStream& ts, EventHandling steps)
 TextStream& operator<<(TextStream& ts, WheelScrollGestureState state)
 {
     switch (state) {
-    case WheelScrollGestureState::Blocking: ts << "blocking"; break;
-    case WheelScrollGestureState::NonBlocking: ts << "non-blocking"; break;
+    case WheelScrollGestureState::Blocking: ts << "blocking"_s; break;
+    case WheelScrollGestureState::NonBlocking: ts << "non-blocking"_s; break;
     }
     return ts;
 }

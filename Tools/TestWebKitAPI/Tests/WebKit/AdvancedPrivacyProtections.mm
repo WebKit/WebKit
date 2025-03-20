@@ -1254,25 +1254,25 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
     [webViewWithPrivacyProtections2 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
     [webViewWithPrivacyProtections2 _test_waitForDidFinishNavigation];
 
-    auto checkCanvasPixels = [&](NSString *functionName, size_t length, Function<void(NSDictionary *, NSDictionary *, int, int)> expect) {
+    auto checkCanvasPixels = [&](NSString *functionName, size_t length, Function<void(NSArray *, NSArray *, int, int)> expect) {
         // This is a larger tolerance than we'd like, but the lossy nature of the premultiplied conversion doesn't give us many options.
         constexpr auto maxPixelDifferenceTolerance = 8;
         auto scriptToRun = [NSString stringWithFormat:@"return %@(%zu)", functionName, length];
 
-        NSDictionary *arr1 = [webView1 callAsyncJavaScriptAndWait:scriptToRun];
-        NSDictionary *arr2 = [webView2 callAsyncJavaScriptAndWait:scriptToRun];
+        NSArray *arr1 = [webView1 callAsyncJavaScriptAndWait:scriptToRun];
+        NSArray *arr2 = [webView2 callAsyncJavaScriptAndWait:scriptToRun];
 
-        EXPECT_TRUE([arr1 isEqualToDictionary:arr2]);
+        EXPECT_TRUE([arr1 isEqualToArray:arr2]);
         EXPECT_NE(arr1.count, 0u);
         EXPECT_NE(arr2.count, 0u);
         EXPECT_EQ(arr1.count, arr2.count);
 
-        NSDictionary *arrWithPrivacyProtections1 = [webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun];
+        NSArray *arrWithPrivacyProtections1 = [webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun];
 
         expect(arr1, arrWithPrivacyProtections1, maxPixelDifferenceTolerance, __LINE__);
         EXPECT_NE(arrWithPrivacyProtections1.count, 0u);
 
-        NSDictionary *arrWithPrivacyProtections2 = [webViewWithPrivacyProtections2 callAsyncJavaScriptAndWait:scriptToRun];
+        NSArray *arrWithPrivacyProtections2 = [webViewWithPrivacyProtections2 callAsyncJavaScriptAndWait:scriptToRun];
 
         expect(arr1, arrWithPrivacyProtections2, maxPixelDifferenceTolerance, __LINE__);
         EXPECT_NE(arrWithPrivacyProtections2.count, 0u);
@@ -1281,43 +1281,39 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
     };
 
     auto checkCanvasPixelsEqual = [&](NSString *functionName, int length, int primaryLine) {
-        checkCanvasPixels(functionName, length, [primaryLine](NSDictionary *arr1, NSDictionary *arr2, int, int secondaryLine) {
-            EXPECT_TRUE([arr1 isEqualToDictionary:arr2]) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\narr1: " << arr1.description << "\narr2: " << arr2.description;
+        checkCanvasPixels(functionName, length, [primaryLine](NSArray *arr1, NSArray *arr2, int, int secondaryLine) {
+            EXPECT_TRUE([arr1 isEqualToArray:arr2]) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\narr1: " << arr1.description << "\narr2: " << arr2.description;
         });
     };
 
     auto checkCanvasPixelsNotEqual = [&](NSString *functionName, int length, int primaryLine) {
-        checkCanvasPixels(functionName, length, [primaryLine](NSDictionary *arr1, NSDictionary *arr2, int tolerance, int secondaryLine) {
-            EXPECT_FALSE([arr1 isEqualToDictionary:arr2]) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\narr1: " << arr1.description << "\narr2: " << arr2.description;
+        checkCanvasPixels(functionName, length, [primaryLine](NSArray *arr1, NSArray *arr2, int tolerance, int secondaryLine) {
+            EXPECT_FALSE([arr1 isEqualToArray:arr2]) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\narr1: " << arr1.description << "\narr2: " << arr2.description;
             for (auto i = 0u; i < arr1.count; i += 4) {
-                auto* idx = [NSString stringWithFormat:@"%d", i];
-                auto* idxPlus1 = [NSString stringWithFormat:@"%d", i + 1];
-                auto* idxPlus2 = [NSString stringWithFormat:@"%d", i + 2];
-                auto* idxPlus3 = [NSString stringWithFormat:@"%d", i + 3];
-                int alpha1 = [[arr1 valueForKey:idxPlus3] intValue];
-                int alpha2 = [[arr2 valueForKey:idxPlus3] intValue];
+                int alpha1 = [arr1[i + 3] intValue];
+                int alpha2 = [arr2[i + 3] intValue];
                 EXPECT_LE(std::abs(alpha1 - alpha2), (tolerance / 2)) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\nAlpha at index (+3): " << i << " is not within tolerance: " << (tolerance / 2) << ". arr1 value: " << alpha1 << ", arr2 value: " << alpha2;
 
-                auto red1 = [[arr1 valueForKey:idx] intValue];
-                auto red2 = [[arr2 valueForKey:idx] intValue];
+                auto red1 = [arr1[i] intValue];
+                auto red2 = [arr2[i] intValue];
                 EXPECT_LE(std::abs(std::round(static_cast<float>(red1 * alpha1) / 255) - std::round(static_cast<float>(red2 * alpha2) / 255)), tolerance) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\nindex: " << i << " is not within tolerance: " << tolerance << ". arr1 value: " << red1 << " (alpha: " << alpha1 << "), arr2 value: " << red2 << " (alpha: " << alpha2 << ")";
 
-                auto green1 = [[arr1 valueForKey:idxPlus1] intValue];
-                auto green2 = [[arr2 valueForKey:idxPlus1] intValue];
+                auto green1 = [arr1[i + 1] intValue];
+                auto green2 = [arr2[i + 1] intValue];
                 EXPECT_LE(std::abs(std::round(static_cast<float>(green1 * alpha1) / 255) - std::round(static_cast<float>(green2 * alpha2) / 255)), tolerance) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\nindex (+1): " << i << " is not within tolerance: " << tolerance << ". arr1 value: " << green1 << " (alpha: " << alpha1 << "), arr2 value: " << green2 << " (alpha: " << alpha2 << ")";
 
-                auto blue1 = [[arr1 valueForKey:idxPlus2] intValue];
-                auto blue2 = [[arr2 valueForKey:idxPlus2] intValue];
+                auto blue1 = [arr1[i + 2] intValue];
+                auto blue2 = [arr2[i + 2] intValue];
                 EXPECT_LE(std::abs(std::round(static_cast<float>(blue1 * alpha1) / 255) - std::round(static_cast<float>(blue2 * alpha2) / 255)), tolerance) << "Test at line " << primaryLine << " failed at line " << secondaryLine << "\nindex (+2): " << i << " is not within tolerance: " << tolerance << ". arr1 value: " << blue1 << " (alpha: " << alpha1 << "), arr2 value: " << blue2 << " (alpha: " << alpha2 << ")";
             }
         });
     };
 
-    checkCanvasPixelsEqual(@"initialTextCanvasImageDataAsObject", zeroPrefix * channelsPerPixel, __LINE__);
-    checkCanvasPixelsNotEqual(@"initialTextCanvasImageDataAsObject", 300 * 200 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsEqual(@"initialTextCanvasImageDataAsArray", zeroPrefix * channelsPerPixel, __LINE__);
+    checkCanvasPixelsNotEqual(@"initialTextCanvasImageDataAsArray", 300 * 200 * channelsPerPixel, __LINE__);
 
-    checkCanvasPixelsEqual(@"initialHorizontalLinearGradientCanvasImageDataAsObject", 1 * channelsPerPixel, __LINE__);
-    checkCanvasPixelsNotEqual(@"initialHorizontalLinearGradientCanvasImageDataAsObject", 30 * 2 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsEqual(@"initialHorizontalLinearGradientCanvasImageDataAsArray", 1 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsNotEqual(@"initialHorizontalLinearGradientCanvasImageDataAsArray", 30 * 2 * channelsPerPixel, __LINE__);
 
     auto scriptToRun = @"return isHorizontalLinearGradientCanvasGradient()";
     EXPECT_TRUE([webView1 callAsyncJavaScriptAndWait:scriptToRun]);
@@ -1325,8 +1321,8 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
     EXPECT_TRUE([webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun]);
     EXPECT_TRUE([webViewWithPrivacyProtections2 callAsyncJavaScriptAndWait:scriptToRun]);
 
-    checkCanvasPixelsEqual(@"initialVerticalLinearGradientCanvasImageDataAsObject", 2, __LINE__);
-    checkCanvasPixelsNotEqual(@"initialVerticalLinearGradientCanvasImageDataAsObject", 2 * 30 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsEqual(@"initialVerticalLinearGradientCanvasImageDataAsArray", 2, __LINE__);
+    checkCanvasPixelsNotEqual(@"initialVerticalLinearGradientCanvasImageDataAsArray", 2 * 30 * channelsPerPixel, __LINE__);
 
     scriptToRun = @"return isVerticalLinearGradientCanvasGradient()";
     EXPECT_TRUE([webView1 callAsyncJavaScriptAndWait:scriptToRun]);
@@ -1334,8 +1330,8 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
     EXPECT_TRUE([webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun]);
     EXPECT_TRUE([webViewWithPrivacyProtections2 callAsyncJavaScriptAndWait:scriptToRun]);
 
-    checkCanvasPixelsEqual(@"initialRadialGradientCanvasImageDataAsObject", 1 * channelsPerPixel, __LINE__);
-    checkCanvasPixelsNotEqual(@"initialRadialGradientCanvasImageDataAsObject", 300 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsEqual(@"initialRadialGradientCanvasImageDataAsArray", 1 * channelsPerPixel, __LINE__);
+    checkCanvasPixelsNotEqual(@"initialRadialGradientCanvasImageDataAsArray", 300 * channelsPerPixel, __LINE__);
 }
 
 TEST(AdvancedPrivacyProtections, VerifyDataURLFromNoisyWebGLAPI)

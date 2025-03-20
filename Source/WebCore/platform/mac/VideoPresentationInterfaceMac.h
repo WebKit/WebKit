@@ -108,9 +108,11 @@ public:
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
 
     WEBCORE_EXPORT void documentVisibilityChanged(bool) final;
-
     void swapFullscreenModesWith(VideoPresentationInterfaceMac&) { }
-
+#if HAVE(PIP_SKIP_PREROLL)
+    WEBCORE_EXPORT void canSkipAdChanged(bool) override;
+    void skipAd();
+#endif
 #if !RELEASE_LOG_DISABLED
     uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;

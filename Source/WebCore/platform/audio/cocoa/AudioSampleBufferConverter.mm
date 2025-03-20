@@ -103,21 +103,21 @@ bool AudioSampleBufferConverter::initialize(CMBufferQueueTriggerCallback callbac
 
 Ref<GenericPromise> AudioSampleBufferConverter::drain()
 {
-    return invokeAsync(queue(), [weakThis = ThreadSafeWeakPtr { *this }, this] {
-        assertIsCurrent(queue().get());
-
+    return invokeAsync(queue(), [weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndReject();
 
-        m_isDraining = true;
-        processSampleBuffers();
-        m_isDraining = false;
+        assertIsCurrent(protectedThis->queue().get());
 
-        if (!m_converter)
+        protectedThis->m_isDraining = true;
+        protectedThis->processSampleBuffers();
+        protectedThis->m_isDraining = false;
+
+        if (!protectedThis->m_converter)
             return GenericPromise::createAndReject();
 
-        if (auto error = PAL::AudioConverterReset(m_converter)) {
+        if (auto error = PAL::AudioConverterReset(protectedThis->m_converter)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter AudioConverterReset failed %d", static_cast<int>(error));
             return GenericPromise::createAndReject();
         }
@@ -204,7 +204,7 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
     }
     m_converter = converter;
 
-    auto cleanupInCaseOfError = makeScopeExit([&] {
+    auto cleanupInCaseOfError = makeScopeExit([this, protectedThis = Ref { *this }] {
         assertIsCurrent(queue().get());
 
         PAL::AudioConverterDispose(m_converter);

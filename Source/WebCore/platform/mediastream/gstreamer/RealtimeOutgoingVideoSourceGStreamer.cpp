@@ -66,12 +66,12 @@ void RealtimeOutgoingVideoSourceGStreamer::initializePreProcessor()
 
     m_preProcessor = gst_bin_new(nullptr);
 
-    auto videoConvert = makeGStreamerElement("videoconvert", nullptr);
+    auto videoConvert = makeGStreamerElement("videoconvert"_s);
 
-    auto videoFlip = makeGStreamerElement("autovideoflip", nullptr);
+    auto videoFlip = makeGStreamerElement("autovideoflip"_s);
     if (!videoFlip) {
         GST_DEBUG("autovideoflip element not available, falling back to videoflip");
-        videoFlip = makeGStreamerElement("videoflip", nullptr);
+        videoFlip = makeGStreamerElement("videoflip"_s);
     }
     gst_util_set_object_arg(G_OBJECT(videoFlip), "video-direction", "auto");
 

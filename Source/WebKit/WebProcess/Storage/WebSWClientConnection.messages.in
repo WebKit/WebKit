@@ -49,4 +49,8 @@ messages -> WebSWClientConnection {
 
     NotifyRecordResponseBodyChunk(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, IPC::SharedBufferReference data);
     NotifyRecordResponseBodyEnd(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError error);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    ReportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, size_t bytesTransferredOverNetworkDelta);
+#endif
 }

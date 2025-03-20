@@ -49,7 +49,7 @@ AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)
 
 AccessibilityTextMarker::AccessibilityTextMarker(const AccessibilityTextMarker& marker)
     : JSWrappable()
-    , m_textMarker(marker.platformTextMarker())
+    , m_textMarker(marker.m_textMarker)
 {
 }
 
@@ -57,15 +57,6 @@ AccessibilityTextMarker::~AccessibilityTextMarker()
 {
 }
 
-PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const
-{
-#if PLATFORM(COCOA)
-    return m_textMarker.get();
-#else
-    return m_textMarker;
-#endif
-}
-    
 JSClassRef AccessibilityTextMarker::wrapperClass()
 {
     return JSAccessibilityTextMarker::accessibilityTextMarkerClass();

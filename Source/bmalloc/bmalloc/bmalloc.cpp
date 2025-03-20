@@ -196,10 +196,10 @@ void decommitAlignedPhysical(void* object, size_t size, HeapKind kind)
 #endif
 }
 
-void enableMiniMode()
+void enableMiniMode(bool forceMiniMode)
 {
 #if BENABLE(LIBPAS)
-    if (!shouldAllowMiniMode())
+    if (!forceMiniMode && !shouldAllowMiniMode())
         return;
 
     // Speed up the scavenger.
@@ -217,6 +217,7 @@ void enableMiniMode()
     bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
 #endif
 #if !BUSE(LIBPAS)
+    BUNUSED(forceMiniMode);
     if (!DebugHeap::tryGet())
         Scavenger::get()->enableMiniMode();
 #endif

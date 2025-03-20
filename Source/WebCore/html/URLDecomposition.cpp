@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,9 +91,6 @@ void URLDecomposition::setHost(StringView value)
     if (value.isEmpty() && !fullURL.protocolIsFile() && fullURL.hasSpecialScheme())
         return;
 
-    if (fullURL.hasOpaquePath())
-        return;
-
     fullURL.setHostAndPort(value);
 
     if (fullURL.isValid())
@@ -110,8 +107,6 @@ void URLDecomposition::setHostname(StringView host)
     auto fullURL = this->fullURL();
     if (host.isEmpty() && !fullURL.protocolIsFile() && fullURL.hasSpecialScheme())
         return;
-    if (fullURL.hasOpaquePath())
-        return;
     fullURL.setHost(host);
     if (fullURL.isValid())
         setFullURL(fullURL);
@@ -126,7 +121,7 @@ String URLDecomposition::port() const
 }
 
 // Outer optional is whether we could parse at all. Inner optional is "no port specified".
-static std::optional<std::optional<uint16_t>> parsePort(StringView string, StringView protocol)
+std::optional<std::optional<uint16_t>> URLDecomposition::parsePort(StringView string, StringView protocol)
 {
     // https://url.spec.whatwg.org/#port-state with state override given.
     uint32_t port { 0 };
@@ -157,7 +152,7 @@ void URLDecomposition::setPort(StringView value)
     auto fullURL = this->fullURL();
     if (fullURL.host().isEmpty() || fullURL.protocolIsFile())
         return;
-    auto port = parsePort(value, fullURL.protocol());
+    auto port = URLDecomposition::parsePort(value, fullURL.protocol());
     if (!port)
         return;
     fullURL.setPort(*port);

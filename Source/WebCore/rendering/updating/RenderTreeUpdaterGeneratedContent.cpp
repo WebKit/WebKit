@@ -119,8 +119,7 @@ static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& ps
 {
     if (auto* contentData = style.contentData()) {
         for (const ContentData* content = contentData; content; content = content->next()) {
-            auto child = content->createContentRenderer(pseudoRenderer.document(), style);
-            if (pseudoRenderer.isChildAllowed(*child, style))
+            if (auto child = content->createContentRenderer(pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
                 builder.attach(pseudoRenderer, WTFMove(child));
         }
     } else {

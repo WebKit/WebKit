@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBKeyPath.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
@@ -33,6 +34,9 @@
 namespace WebCore {
 
 class IDBError;
+class IDBIndexInfo;
+class IDBKeyData;
+class IDBValue;
 class IDBResultData;
 
 struct IDBDatabaseNameAndVersion;
@@ -69,6 +73,7 @@ public:
     virtual void didIterateCursor(const IDBResultData&) = 0;
 
     virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) = 0;
+    virtual void generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo&, const std::optional<IDBKeyPath>&, const IDBKeyData&, const IDBValue&, std::optional<int64_t> recordID) = 0;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;
     virtual void didCloseFromServer(UniqueIDBDatabaseConnection&, const IDBError&) = 0;
     virtual void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) = 0;

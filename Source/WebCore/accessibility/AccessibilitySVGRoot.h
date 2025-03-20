@@ -38,12 +38,12 @@ public:
     static Ref<AccessibilitySVGRoot> create(AXID, RenderObject&, AXObjectCache*);
     virtual ~AccessibilitySVGRoot();
 
+    AccessibilityObject* parentObject() const final;
     void setParent(AccessibilityRenderObject*);
     bool hasAccessibleContent() const;
 private:
     explicit AccessibilitySVGRoot(AXID, RenderObject&, AXObjectCache*);
 
-    AccessibilityObject* parentObject() const final;
     bool isAccessibilitySVGRoot() const final { return true; }
 
     AccessibilityRole determineAccessibilityRole() final;

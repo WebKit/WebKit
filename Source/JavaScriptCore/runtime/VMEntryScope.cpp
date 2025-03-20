@@ -41,7 +41,7 @@ void VMEntryScope::setUpSlow()
 {
     m_vm.entryScope = this;
 
-    auto& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     if (UNLIKELY(!thread.isJSThread())) {
         Thread::registerJSThread(thread);
 

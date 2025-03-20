@@ -14,8 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/animated-occlusion.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/blur-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/box-reflect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/box-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html
@@ -23,6 +25,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/drop-shadow-filter-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/iframe-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/inline-occlusion.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/nested-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/position-absolute-overflow-visible-and-not-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/position-relative.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/scaled-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/simple-effects.html

@@ -89,6 +89,7 @@ public:
 
     const RenderBox* sourceScrollerRenderer() const;
     const RenderElement* stickyContainer() const;
+    Element* bindingsSource() const override;
     Element* source() const override;
     TimelineRange defaultRange() const final;
 

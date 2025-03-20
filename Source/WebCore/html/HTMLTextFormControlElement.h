@@ -51,7 +51,7 @@ public:
 
     virtual ~HTMLTextFormControlElement();
 
-    void didEditInnerTextValue();
+    void didEditInnerTextValue(bool wasUserEdit);
     void forwardEvent(Event&);
 
     int maxLength() const { return m_maxLength; }

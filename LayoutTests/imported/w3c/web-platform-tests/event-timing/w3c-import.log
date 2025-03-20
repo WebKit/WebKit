@@ -1,0 +1,81 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/TapToStopFling.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/auxclick.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/buffered-flag.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/click-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/click.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/contextmenu.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/crossiframe.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/dblclick.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/disconnect-target.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/duration-with-target-low.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/event-click-counts.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/event-click-visibilitychange.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/event-counts-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/event-retarget.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/first-input-interactionid-click.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/first-input-interactionid-key.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/first-input-interactionid-tap.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/first-input-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interaction-count-click.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown-and-pointerdown.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-auxclick.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-click.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-button-space.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-checkbox-space.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-link-enter.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-keypress.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-press-key-as-input.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-press-key-no-effect.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/interactionid-tap.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/keydown.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/keyup.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/large-duration-threshold.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/medium-duration-threshold.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/min-duration-threshold.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/modal-dialog-interrupt-paint.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mousedown.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseenter.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseleave.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseout.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseover.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseup.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/only-observe-firstInput.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerdown.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerenter.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerleave.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerout.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerover.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerup.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/programmatic-click-not-observed.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/retrievability.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/retrieve-firstInput.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/selection-autoscroll.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/shadow-dom-null-target.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/supported-types-consistent-with-self.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/supported-types.window.js
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/timingconditions.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/toJSON.html

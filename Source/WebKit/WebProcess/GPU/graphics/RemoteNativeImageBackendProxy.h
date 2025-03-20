@@ -49,7 +49,7 @@ public:
 private:
     RemoteNativeImageBackendProxy(Ref<WebCore::ShareableBitmap>, WebCore::PlatformImagePtr);
 
-    Ref<WebCore::ShareableBitmap> m_bitmap;
+    const Ref<WebCore::ShareableBitmap> m_bitmap;
     WebCore::PlatformImageNativeImageBackend m_platformBackend;
 };
 

@@ -1,0 +1,3 @@
+
+FAIL Property animation-trigger-type value 'once, repeat, alternate, state' assert_true: animation-trigger-type doesn't seem to be supported in the computed style expected true got false
+

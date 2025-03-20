@@ -122,9 +122,9 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     // Start up background thread
     // FIXME: would be better to up the thread priority here.  It doesn't need to be real-time, but higher than the default...
     if (this->useBackgroundThreads() && m_backgroundStages.size() > 0) {
-        m_backgroundThread = Thread::create("convolution background thread"_s, [this] {
+        lazyInitialize(m_backgroundThread, Thread::create("convolution background thread"_s, [this] {
             backgroundThreadEntry();
-        }, ThreadType::Audio);
+        }, ThreadType::Audio));
     }
 }
 

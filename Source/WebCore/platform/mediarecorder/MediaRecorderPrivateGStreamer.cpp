@@ -215,7 +215,7 @@ void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallb
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler), mimeType = this->mimeType()]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler(nullptr, mimeType, 0);
+            completionHandler(FragmentedSharedBuffer::create(), mimeType, 0);
             return;
         }
         double timeCode = 0;
@@ -226,7 +226,7 @@ void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallb
             buffer = m_data.take();
             timeCode = m_timeCode;
         }
-        completionHandler(WTFMove(buffer), mimeType, timeCode);
+        completionHandler(buffer.releaseNonNull(), mimeType, timeCode);
         {
             Locker locker { m_dataLock };
             if (m_position.isValid())
@@ -275,7 +275,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
     if (scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }) == MediaPlayerEnums::SupportsType::IsNotSupported)
         return nullptr;
 
-    auto mp4Variant = isGStreamerPluginAvailable("fmp4") ? "iso-fragmented"_s : "iso"_s;
+    auto mp4Variant = isGStreamerPluginAvailable("fmp4"_s) ? "iso-fragmented"_s : "iso"_s;
     StringBuilder containerCapsDescriptionBuilder;
     auto containerType = contentType.containerType();
     if (containerType.endsWith("mp4"_s))
@@ -409,7 +409,7 @@ void MediaRecorderPrivateBackend::setSink(GstElement* element)
 
 void MediaRecorderPrivateBackend::configureAudioEncoder(GstElement* element)
 {
-    if (!gstObjectHasProperty(element, "bitrate")) {
+    if (!gstObjectHasProperty(element, "bitrate"_s)) {
         GST_WARNING_OBJECT(m_pipeline.get(), "Audio encoder %" GST_PTR_FORMAT " has no bitrate property, skipping configuration", element);
         return;
     }

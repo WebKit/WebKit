@@ -60,9 +60,6 @@ public:
         return test->detach();
     }
 
-    static const unsigned gMinimumAttachedInspectorWidth = 750;
-    static const unsigned gMinimumAttachedInspectorHeight = 250;
-
     InspectorTest()
         : WebViewTest()
         , m_inspector(webkit_web_view_get_inspector(m_webView))
@@ -130,12 +127,20 @@ public:
         g_main_loop_quit(test->m_mainLoop);
     }
 
+    static constexpr unsigned gMinimumAttachedInspectorWidth = 750;
+    static constexpr unsigned gMinimumAttachedInspectorHeight = 250;
+
+    void resizeViewToMinimumSizeToAllowAttachingInspector()
+    {
+        resizeView(gMinimumAttachedInspectorWidth, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
+    }
+
     void resizeViewAndAttach()
     {
         // Resize the view to make room for the inspector.
         if (!webkit_web_inspector_get_can_attach(m_inspector)) {
             unsigned long handler = g_signal_connect_swapped(m_inspector, "notify::can-attach", G_CALLBACK(canAttachChanged), this);
-            resizeView(gMinimumAttachedInspectorWidth, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
+            resizeViewToMinimumSizeToAllowAttachingInspector();
             g_main_loop_run(m_mainLoop);
             g_signal_handler_disconnect(m_inspector, handler);
         }
@@ -319,6 +324,7 @@ public:
         g_assert_true(GTK_IS_PANED(pane));
         gtk_container_remove(GTK_CONTAINER(pane), GTK_WIDGET(inspectorView.get()));
 #endif
+        resizeViewToMinimumSizeToAllowAttachingInspector();
         return InspectorTest::detach();
     }
 

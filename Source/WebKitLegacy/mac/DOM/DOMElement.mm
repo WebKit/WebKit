@@ -33,7 +33,7 @@
 #import "DOMTokenListInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/Attr.h>
-#import <WebCore/CSSStyleDeclaration.h>
+#import <WebCore/CSSStyleProperties.h>
 #import <WebCore/Element.h>
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLNames.h>

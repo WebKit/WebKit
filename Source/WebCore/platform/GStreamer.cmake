@@ -75,14 +75,12 @@ endif ()
 
 if (ENABLE_VIDEO)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${GSTREAMER_GL_INCLUDE_DIRS}
         ${GSTREAMER_TAG_INCLUDE_DIRS}
         ${GSTREAMER_VIDEO_INCLUDE_DIRS}
     )
 
     if (NOT USE_GSTREAMER_FULL)
         list(APPEND WebCore_LIBRARIES
-           ${GSTREAMER_GL_LIBRARIES}
            ${GSTREAMER_TAG_LIBRARIES}
            ${GSTREAMER_VIDEO_LIBRARIES}
         )
@@ -94,6 +92,15 @@ if (ENABLE_VIDEO)
         )
         list(APPEND WebCore_LIBRARIES
             ${GSTREAMER_MPEGTS_LIBRARIES}
+        )
+    endif ()
+
+    if (USE_GSTREAMER_GL AND NOT USE_GSTREAMER_FULL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${GSTREAMER_GL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_GL_LIBRARIES}
         )
     endif ()
 

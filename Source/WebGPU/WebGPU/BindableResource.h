@@ -84,7 +84,7 @@ struct IndexData {
     uint32_t firstIndex { 0 };
     int32_t baseVertex { 0 };
     uint32_t firstInstance { 0 };
-    MTLPrimitiveType primitiveType { MTLPrimitiveTypeTriangle };
+    uint32_t primitiveType { MTLPrimitiveTypeTriangle };
 };
 
 struct IndexBufferAndIndexData {

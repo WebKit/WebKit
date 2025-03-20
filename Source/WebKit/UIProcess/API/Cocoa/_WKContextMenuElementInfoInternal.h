@@ -29,6 +29,7 @@
 
 #import "APIContextMenuElementInfoMac.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -40,7 +41,7 @@ template<> struct WrapperTraits<API::ContextMenuElementInfoMac> {
 
 @interface _WKContextMenuElementInfo () <WKObject> {
 @package
-    API::ObjectStorage<API::ContextMenuElementInfoMac> _contextMenuElementInfoMac;
+    AlignedStorage<API::ContextMenuElementInfoMac> _contextMenuElementInfoMac;
 }
 @end
 

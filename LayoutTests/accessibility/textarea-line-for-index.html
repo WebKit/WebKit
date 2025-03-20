@@ -1,36 +1,33 @@
+<!DOCTYPE HTML>
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
 <body>
-    
-    <div id="result"></div>
-    
-    <textarea name="area1" id="area1" rows="5" cols="40">
+
+<textarea id="textarea" rows="5" cols="40">
 line 1
 line 2
 line 3
-    </textarea>
+</textarea>
 
-    <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
+<!-- Add another textarea so that we can ensure requesting lineForIndex from #textarea with an index outside its
+     bounds doesn't spill into this textarea's lines. -->
+<textarea rows="5" cols="40">
+other text area
+</textarea>
 
-            var area1 = document.getElementById("area1");
-            area1.focus();
+<script>
+let output = "This test ensures basic LineForIndex functionality in textareas works correctly.\n\n";
 
-            for (var k = 0; k < 3; k++) {
-                var index = (k*7);
-                var lineNumber = accessibilityController.focusedElement.lineForIndex(index);
-                if (lineNumber == k) {
-                    result.innerText += "Test:" + k + ") Line For Index: Pass [" + index + "->" + lineNumber + "]\n";       
-                }
-                else {
-                    result.innerText += "Test:" + k + ") Line For Index: Fail [" + index + "->" + lineNumber + "]\n";       
-                }
-            }
-        }
-    </script>
+if (window.accessibilityController) {
+    const textarea = accessibilityController.accessibleElementById("textarea");
+    for (let i = 0; i < 35; i++)
+        output += `${i} -> ${textarea.lineForIndex(i)}\n`;
+
+    debug(output);
+}
+</script>
 </body>
 </html>

@@ -49,7 +49,7 @@ GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice&& device)
     initializeVideoCapturerDebugCategory();
 }
 
-GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType deviceType)
+GStreamerVideoCapturer::GStreamerVideoCapturer(ASCIILiteral sourceFactory, CaptureDevice::DeviceType deviceType)
     : GStreamerCapturer(sourceFactory, adoptGRef(gst_caps_new_empty_simple("video/x-raw")), deviceType)
 {
     initializeVideoCapturerDebugCategory();
@@ -72,7 +72,7 @@ void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& 
             presentationTime = fromGstClockTime(GST_BUFFER_PTS(buffer));
 
         auto& size = capturer->size();
-        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(sample), size, presentationTime, VideoFrameGStreamer::Rotation::None, false, WTFMove(metadata)));
+        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(sample), std::nullopt, size, presentationTime, VideoFrameGStreamer::Rotation::None, false, WTFMove(metadata)));
         return GST_FLOW_OK;
     }), this);
 }
@@ -100,9 +100,9 @@ GstElement* GStreamerVideoCapturer::createConverter()
     }
 
     auto* bin = gst_bin_new(nullptr);
-    auto* videoscale = makeGStreamerElement("videoscale", "videoscale");
-    auto* videoconvert = makeGStreamerElement("videoconvert", nullptr);
-    auto* videorate = makeGStreamerElement("videorate", "videorate");
+    auto* videoscale = makeGStreamerElement("videoscale"_s, "videoscale"_s);
+    auto* videoconvert = makeGStreamerElement("videoconvert"_s);
+    auto* videorate = makeGStreamerElement("videorate"_s, "videorate"_s);
 
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
     g_object_set(videorate, "drop-only", TRUE, "average-period", UINT64_C(1), nullptr);
@@ -114,7 +114,7 @@ GstElement* GStreamerVideoCapturer::createConverter()
     auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
     g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 
-    auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
+    auto* decodebin = makeGStreamerElement("decodebin3"_s);
     gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
     gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
 

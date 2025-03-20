@@ -1,24 +1,24 @@
 
 PASS background-color color(rgba) / values
 PASS background-color color(rgba) / events
-PASS background-position length(pt) / values
-FAIL background-position length(pt) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(pc) / values
-FAIL background-position length(pc) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(px) / values
-FAIL background-position length(px) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(em) / values
-FAIL background-position length(em) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(ex) / values
-FAIL background-position length(ex) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(mm) / values
-FAIL background-position length(mm) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(cm) / values
-FAIL background-position length(cm) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position length(in) / values
-FAIL background-position length(in) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
-PASS background-position percentage(%) / values
-FAIL background-position percentage(%) / events assert_equals: Expected TransitionEnd events triggered on .container expected "background-position:2s" but got "background-position-x:2s"
+PASS background-position-x length(pt) / values
+PASS background-position-x length(pt) / events
+PASS background-position-x length(pc) / values
+PASS background-position-x length(pc) / events
+PASS background-position-x length(px) / values
+PASS background-position-x length(px) / events
+PASS background-position-x length(em) / values
+PASS background-position-x length(em) / events
+PASS background-position-x length(ex) / values
+PASS background-position-x length(ex) / events
+PASS background-position-x length(mm) / values
+PASS background-position-x length(mm) / events
+PASS background-position-x length(cm) / values
+PASS background-position-x length(cm) / events
+PASS background-position-x length(in) / values
+PASS background-position-x length(in) / events
+PASS background-position-x percentage(%) / values
+PASS background-position-x percentage(%) / events
 PASS border-top-width length(pt) / values
 PASS border-top-width length(pt) / events
 PASS border-top-width length(pc) / values

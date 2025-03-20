@@ -169,7 +169,7 @@ public:
 
     void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, const String& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
-    void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+    void getFrameInfo(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
     WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
@@ -183,9 +183,18 @@ public:
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
     WebProcessProxy& provisionalLoadProcess();
-    void remoteProcessDidTerminate(WebProcessProxy&);
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
     void notifyParentOfLoadCompletion(WebProcessProxy&);
+
+    enum class ClearFrameTreeSyncData : bool {
+        No,
+        Yes
+    };
+    void remoteProcessDidTerminate(WebProcessProxy&, ClearFrameTreeSyncData);
+
+    Ref<WebCore::FrameTreeSyncData> calculateFrameTreeSyncData() const;
+    void broadcastFrameTreeSyncData(Ref<WebCore::FrameTreeSyncData>&&);
+
     void removeRemotePagesForSuspension();
     void bindAccessibilityFrameWithData(std::span<const uint8_t>);
 
@@ -199,9 +208,8 @@ public:
     TraversalResult traverseNext(CanWrap) const;
     TraversalResult traversePrevious(CanWrap);
 
-    void setPendingChildBackForwardItem(WebBackForwardListFrameItem*);
-    bool hasPendingChildBackForwardItem() const { return !!m_pendingChildBackForwardItem; };
-    WebBackForwardListFrameItem* takePendingChildBackForwardItem();
+    void setIsPendingInitialHistoryItem(bool isPending) { m_isPendingInitialHistoryItem = isPending; }
+    bool isPendingInitialHistoryItem() const { return m_isPendingInitialHistoryItem; }
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
     void setRemoteFrameSize(WebCore::IntSize size) { m_remoteFrameSize = size; }
@@ -215,6 +223,7 @@ public:
     void updateOpener(WebCore::FrameIdentifier);
     WebFrameProxy* opener() { return m_opener.get(); }
     void disownOpener() { m_opener = nullptr; }
+
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ScrollbarMode, WebFrameProxy*, IsMainFrame);
 
@@ -247,7 +256,7 @@ private:
 #endif
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
-    WeakPtr<WebBackForwardListFrameItem> m_pendingChildBackForwardItem;
+    bool m_isPendingInitialHistoryItem { false };
     std::optional<WebCore::IntSize> m_remoteFrameSize;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     WebCore::ScrollbarMode m_scrollingMode;

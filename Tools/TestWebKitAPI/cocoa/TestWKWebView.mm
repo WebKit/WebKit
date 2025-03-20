@@ -32,6 +32,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
@@ -826,8 +827,7 @@ static void setOverriddenApplicationKeyWindow(UIWindow *window)
 
     if (!UIApplication.sharedApplication) {
         InstanceMethodSwizzler bundleIdentifierSwizzler(NSBundle.class, @selector(bundleIdentifier), reinterpret_cast<IMP>(overrideBundleIdentifier));
-        UIApplicationInitialize();
-        UIApplicationInstantiateSingleton(UIApplication.class);
+        TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     }
 
     static dispatch_once_t onceToken;

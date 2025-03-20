@@ -74,10 +74,7 @@ inline BoundaryPoint makeBoundaryPointBeforeNodeContents(Node& node)
     return { node, 0 };
 }
 
-inline BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
-{
-    return { node, node.length() };
-}
+inline BoundaryPoint makeBoundaryPointAfterNodeContents(Node&);
 
 struct WeakBoundaryPoint {
     WeakPtr<Node, Node::WeakPtrImplType> container;

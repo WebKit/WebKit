@@ -113,36 +113,36 @@ FloatPoint StickyPositionViewportConstraints::layerPositionForConstrainingRect(c
 TextStream& operator<<(TextStream& ts, ScrollPositioningBehavior behavior)
 {
     switch (behavior) {
-    case ScrollPositioningBehavior::None: ts << "none"; break;
-    case ScrollPositioningBehavior::Stationary: ts << "stationary"; break;
-    case ScrollPositioningBehavior::Moves: ts << "moves"; break;
+    case ScrollPositioningBehavior::None: ts << "none"_s; break;
+    case ScrollPositioningBehavior::Stationary: ts << "stationary"_s; break;
+    case ScrollPositioningBehavior::Moves: ts << "moves"_s; break;
     }
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const AbsolutePositionConstraints& constraints)
 {
-    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("layer-position-at-last-layout"_s, constraints.layerPositionAtLastLayout());
 
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const FixedPositionViewportConstraints& constraints)
 {
-    ts.dumpProperty("viewport-rect-at-last-layout", constraints.viewportRectAtLastLayout());
-    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("viewport-rect-at-last-layout"_s, constraints.viewportRectAtLastLayout());
+    ts.dumpProperty("layer-position-at-last-layout"_s, constraints.layerPositionAtLastLayout());
 
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StickyPositionViewportConstraints& constraints)
 {
-    ts.dumpProperty("sticky-position-at-last-layout", constraints.stickyOffsetAtLastLayout());
-    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("sticky-position-at-last-layout"_s, constraints.stickyOffsetAtLastLayout());
+    ts.dumpProperty("layer-position-at-last-layout"_s, constraints.layerPositionAtLastLayout());
 
-    ts.dumpProperty("sticky-box-rect", constraints.stickyBoxRect());
-    ts.dumpProperty("containing-block-rect", constraints.containingBlockRect());
-    ts.dumpProperty("constraining-rect-at-last-layout", constraints.constrainingRectAtLastLayout());
+    ts.dumpProperty("sticky-box-rect"_s, constraints.stickyBoxRect());
+    ts.dumpProperty("containing-block-rect"_s, constraints.containingBlockRect());
+    ts.dumpProperty("constraining-rect-at-last-layout"_s, constraints.constrainingRectAtLastLayout());
 
     return ts;
 }

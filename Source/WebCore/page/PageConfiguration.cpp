@@ -94,7 +94,7 @@ PageConfiguration::PageConfiguration(
     UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
     Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry,
     UniqueRef<StorageProvider>&& storageProvider,
-    UniqueRef<ModelPlayerProvider>&& modelPlayerProvider,
+    Ref<ModelPlayerProvider>&& modelPlayerProvider,
     Ref<BadgeClient>&& badgeClient,
     Ref<HistoryItemClient>&& historyItemClient,
 #if ENABLE(CONTEXT_MENUS)

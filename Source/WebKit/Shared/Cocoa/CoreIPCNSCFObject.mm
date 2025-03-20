@@ -50,6 +50,8 @@ static ObjectValue valueFromID(id object)
         return CoreIPCPKPaymentMethod((PKPaymentMethod *)object);
     case IPC::NSType::PKPaymentMerchantSession:
         return CoreIPCPKPaymentMerchantSession((PKPaymentMerchantSession *)object);
+    case IPC::NSType::PKPaymentSetupFeature:
+        return CoreIPCPKPaymentSetupFeature((PKPaymentSetupFeature *)object);
     case IPC::NSType::PKContact:
         return CoreIPCPKContact((PKContact *)object);
     case IPC::NSType::PKSecureElementPass:

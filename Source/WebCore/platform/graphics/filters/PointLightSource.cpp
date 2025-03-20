@@ -102,8 +102,8 @@ bool PointLightSource::setZ(float z)
 
 TextStream& PointLightSource::externalRepresentation(TextStream& ts) const
 {
-    ts << "[type=POINT-LIGHT] ";
-    ts << "[position=\"" << position() << "\"]";
+    ts << "[type=POINT-LIGHT] "_s;
+    ts << "[position=\"" << position() << "\"]"_s;
     return ts;
 }
 

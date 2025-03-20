@@ -43,10 +43,11 @@
 #import <WebCore/LinkIconType.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKWebProcessPlugInFrame {
-    API::ObjectStorage<WebKit::WebFrame> _frame;
+    AlignedStorage<WebKit::WebFrame> _frame;
 }
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle

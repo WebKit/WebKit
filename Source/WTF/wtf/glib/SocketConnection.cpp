@@ -43,7 +43,7 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
 
     auto* socket = g_socket_connection_get_socket(m_connection.get());
     g_socket_set_blocking(socket, FALSE);
-    m_readMonitor.start(socket, G_IO_IN, RunLoop::current(), [this, protectedThis = Ref { *this }](GIOCondition condition) -> gboolean {
+    m_readMonitor.start(socket, G_IO_IN, RunLoop::currentSingleton(), [this, protectedThis = Ref { *this }](GIOCondition condition) -> gboolean {
         if (isClosed())
             return G_SOURCE_REMOVE;
 
@@ -244,10 +244,10 @@ void SocketConnection::waitForSocketWritability()
     if (m_writeMonitor.isActive())
         return;
 
-    m_writeMonitor.start(g_socket_connection_get_socket(m_connection.get()), G_IO_OUT, RunLoop::current(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
+    m_writeMonitor.start(g_socket_connection_get_socket(m_connection.get()), G_IO_OUT, RunLoop::currentSingleton(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
         if (condition & G_IO_OUT) {
             // We can't stop the monitor from this lambda, because stop destroys the lambda.
-            RunLoop::protectedCurrent()->dispatch([this, protectedThis] {
+            RunLoop::currentSingleton().dispatch([this, protectedThis] {
                 m_writeMonitor.stop();
                 write();
             });

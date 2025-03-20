@@ -59,7 +59,6 @@ PACKAGES=(
 
     # These are dependencies necessary for building with the Flatpak SDK.
     flatpak
-    python-pipenv
 
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa.

@@ -9,7 +9,6 @@ TODO:
 - test compressed texture formats [3]
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../common/util/util.js';
-import { kTextureFormatInfo } from '../../../format_info.js';
 
 import { checkContentsByBufferCopy, checkContentsByTextureCopy } from './check_texture/by_copy.js';
 import {
@@ -41,11 +40,9 @@ export const g = makeTestGroup(TextureZeroInitTest);
 
 g.test('uninitialized_texture_is_zero').
 params(kTestParams).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.format);
-  t.selectDeviceOrSkipTestCase(kTextureFormatInfo[t.params.format].feature);
-}).
 fn((t) => {
+  t.skipIfTextureFormatNotSupportedForTest(t.params);
+
   const usage = getRequiredTextureUsage(
     t.params.format,
     t.params.sampleCount,
@@ -53,7 +50,7 @@ fn((t) => {
     t.params.readMethod
   );
 
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     size: [t.textureWidth, t.textureHeight, t.textureDepthOrArrayLayers],
     format: t.params.format,
     dimension: t.params.dimension,
@@ -61,7 +58,6 @@ fn((t) => {
     mipLevelCount: t.params.mipLevelCount,
     sampleCount: t.params.sampleCount
   });
-  t.trackForCleanup(texture);
 
   if (t.params.canaryOnCreation) {
     // Initialize some subresources with canary values

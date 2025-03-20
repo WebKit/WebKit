@@ -1,0 +1,4 @@
+Orphan Pointerup
+
+FAIL Event Timing: Orphan pointerup should not be measured as an interaction. assert_implements: Event Timing is not supported. undefined
+

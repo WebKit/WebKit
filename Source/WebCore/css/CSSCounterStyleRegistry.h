@@ -51,6 +51,7 @@ public:
     void resolveReferencesIfNeeded();
     bool operator==(const CSSCounterStyleRegistry& other) const;
     void clearAuthorCounterStyles();
+    bool hasAuthorCounterStyles() const { return !m_authorCounterStyles.isEmpty(); }
 
 private:
     static CounterStyleMap& userAgentCounterStyles();

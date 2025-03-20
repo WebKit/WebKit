@@ -33,6 +33,10 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include "DynamicContentScalingDisplayList.h"
+#endif
+
 namespace WebCore {
 class TiledBackingClient;
 }
@@ -85,7 +89,7 @@ public:
 
     // The client will not receive `willRepaintTile()` for tiles needing display as part of a revalidation.
     virtual void willRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType) = 0;
-    virtual void didRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType, const UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay) = 0;
+    virtual void didRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay) = 0;
 
     virtual void didAddGrid(TiledBacking&, TileGridIdentifier) = 0;
     virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
@@ -94,6 +98,10 @@ public:
 
     virtual void willRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier) = 0;
     virtual void didRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier) = 0;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayListForTile(TiledBacking&, TileGridIdentifier, TileIndex) = 0;
+#endif
 };
 
 

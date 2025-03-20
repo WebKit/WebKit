@@ -29,6 +29,7 @@
 
 #import "WKObject.h"
 #import "WebExtensionDataRecord.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -39,7 +40,7 @@ template<> struct WrapperTraits<WebExtensionDataRecord> {
 
 @interface WKWebExtensionDataRecord () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebExtensionDataRecord> _webExtensionDataRecord;
+    AlignedStorage<WebKit::WebExtensionDataRecord> _webExtensionDataRecord;
 }
 
 @property (nonatomic, readonly) WebKit::WebExtensionDataRecord& _webExtensionDataRecord;

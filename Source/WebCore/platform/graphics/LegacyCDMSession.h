@@ -62,6 +62,7 @@ public:
     virtual void sendError(MediaKeyErrorCode, uint32_t systemCode) = 0;
 
     virtual String mediaKeysStorageDirectory() const = 0;
+    virtual String mediaKeysHashSalt() const = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;

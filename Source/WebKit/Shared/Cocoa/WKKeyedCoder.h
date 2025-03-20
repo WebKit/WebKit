@@ -38,6 +38,9 @@
 // actually needed by the target classes.
 // As we add more specific types that rely on it, we'll expand its feature-set.
 
+// This is an implementation detail of IPC that should only be used for the SupportWKKeyedCoder
+// keyword in a *.serialization.in file, and its use should only be declining.
+
 @interface WKKeyedCoder : NSCoder
 - (instancetype)init;
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;

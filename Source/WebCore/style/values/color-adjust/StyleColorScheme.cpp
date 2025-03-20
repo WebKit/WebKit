@@ -49,11 +49,11 @@ OptionSet<WebCore::ColorScheme> ColorScheme::colorScheme() const
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorScheme& value)
 {
     if (value.isNormal())
-        return ts << "normal";
+        return ts << "normal"_s;
 
     ts << value.schemes.value;
     if (value.only)
-        ts << " only";
+        ts << " only"_s;
 
     return ts;
 }

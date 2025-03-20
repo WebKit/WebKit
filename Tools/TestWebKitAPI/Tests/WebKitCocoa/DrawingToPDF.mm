@@ -33,7 +33,9 @@
 #import "TestWKWebView.h"
 #import <WebCore/Color.h>
 #import <WebKit/WKPDFConfiguration.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
@@ -88,6 +90,48 @@ TEST(DrawingToPDF, BackgroundClipText)
         EXPECT_TRUE(page->colorAtPoint(2, 2) == WebCore::Color::white);
         // We can't test for blue because the colors are affected by colorspace conversions.
         EXPECT_TRUE(page->colorAtPoint(25, 25) != WebCore::Color::white);
+
+        didTakeSnapshot = true;
+    }];
+
+    Util::run(&didTakeSnapshot);
+}
+
+static void enableSiteIsolation(WKWebViewConfiguration *configuration)
+{
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
+TEST(DrawingToPDF, SiteIsolationFormControl)
+{
+    static bool didTakeSnapshot;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableSiteIsolation(configuration.get());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body bgcolor=#00ff00><input type='checkbox'><label> Checkbox</label></body>"];
+
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+        EXPECT_NULL(error);
+        auto document = TestPDFDocument::createFromData(pdfSnapshotData);
+        EXPECT_EQ(document->pageCount(), 1u);
+        auto page = document->page(0);
+        EXPECT_NE(page, nullptr);
+        EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 600)));
+
+        EXPECT_EQ(page->characterCount(), 8u);
+        EXPECT_EQ(page->text()[0], 'C');
+        EXPECT_EQ(page->text()[7], 'x');
+
+        // The entire page should be green. Pick a point in the middle to check.
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
 
         didTakeSnapshot = true;
     }];

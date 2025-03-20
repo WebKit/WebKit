@@ -9,18 +9,18 @@ passthrough:
   * Output from fragment shader as uint
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { range } from '../../../../common/util/util.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 function generateInterstagePassthroughCode(type) {
   return `
 ${type === 'f16' ? 'enable f16;' : ''}
 struct IOData {
   @builtin(position) pos : vec4f,
-  @location(0) @interpolate(flat) user0 : ${type},
-  @location(1) @interpolate(flat) user1 : vec2<${type}>,
-  @location(2) @interpolate(flat) user2 : vec4<${type}>,
+  @location(0) @interpolate(flat, either) user0 : ${type},
+  @location(1) @interpolate(flat, either) user1 : vec2<${type}>,
+  @location(2) @interpolate(flat, either) user2 : vec4<${type}>,
 }
 
 struct VertexInput {
@@ -134,29 +134,26 @@ function drawPassthrough(t, code) {
   const width = 256 / bytesPerComponent;
   const height = 2;
   const copyWidth = 4;
-  const outputTextures = range(3, (i) => {
-    const texture = t.device.createTexture({
-      size: [width, height],
-      usage:
-      GPUTextureUsage.COPY_SRC |
-      GPUTextureUsage.RENDER_ATTACHMENT |
-      GPUTextureUsage.TEXTURE_BINDING,
-      format: formats[i]
-    });
-    t.trackForCleanup(texture);
-    return texture;
-  });
+  const outputTextures = range(3, (i) =>
+  t.createTextureTracked({
+    size: [width, height],
+    usage:
+    GPUTextureUsage.COPY_SRC |
+    GPUTextureUsage.RENDER_ATTACHMENT |
+    GPUTextureUsage.TEXTURE_BINDING,
+    format: formats[i]
+  })
+  );
 
   let bufferSize = 1;
   for (const comp of components) {
     bufferSize *= comp;
   }
   bufferSize *= outputTextures.length * bytesPerComponent * copyWidth;
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: bufferSize,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(outputBuffer);
 
   const encoder = t.device.createCommandEncoder();
   const pass = encoder.beginRenderPass({
@@ -202,12 +199,10 @@ function drawPassthrough(t, code) {
 g.test('passthrough').
 desc('Tests passing user-defined data from vertex input through fragment output').
 params((u) => u.combine('type', ['f32', 'f16', 'i32', 'u32'])).
-beforeAllSubcases((t) => {
-  if (t.params.type === 'f16') {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
+  if (t.params.type === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const code = generateInterstagePassthroughCode(t.params.type);
   drawPassthrough(t, code);
 });

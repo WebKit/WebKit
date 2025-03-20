@@ -193,12 +193,12 @@ std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(GraphicsContext
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feGaussianBlur";
+    ts << indent << "[feGaussianBlur"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"";
+    ts << " stdDeviation=\""_s << m_stdX << ", "_s << m_stdY << '"';
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

@@ -34,58 +34,58 @@ TextStream& operator<<(TextStream& ts, ControlStyle::State state)
 {
     switch (state) {
     case ControlStyle::State::Hovered:
-        ts << "hovered";
+        ts << "hovered"_s;
         break;
     case ControlStyle::State::Pressed:
-        ts << "pressed";
+        ts << "pressed"_s;
         break;
     case ControlStyle::State::Focused:
-        ts << "focused";
+        ts << "focused"_s;
         break;
     case ControlStyle::State::Enabled:
-        ts << "enabled";
+        ts << "enabled"_s;
         break;
     case ControlStyle::State::Checked:
-        ts << "checked";
+        ts << "checked"_s;
         break;
     case ControlStyle::State::Default:
-        ts << "default";
+        ts << "default"_s;
         break;
     case ControlStyle::State::WindowActive:
-        ts << "window-active";
+        ts << "window-active"_s;
         break;
     case ControlStyle::State::Indeterminate:
-        ts << "indeterminate";
+        ts << "indeterminate"_s;
         break;
     case ControlStyle::State::SpinUp:
-        ts << "spin-up";
+        ts << "spin-up"_s;
         break;
     case ControlStyle::State::Presenting:
-        ts << "presenting";
+        ts << "presenting"_s;
         break;
     case ControlStyle::State::FormSemanticContext:
-        ts << "form-semantic-context";
+        ts << "form-semantic-context"_s;
         break;
     case ControlStyle::State::DarkAppearance:
-        ts << "dark-appearance";
+        ts << "dark-appearance"_s;
         break;
     case ControlStyle::State::InlineFlippedWritingMode:
-        ts << "inline-flipped-writing-mode";
+        ts << "inline-flipped-writing-mode"_s;
         break;
     case ControlStyle::State::LargeControls:
-        ts << "large-controls";
+        ts << "large-controls"_s;
         break;
     case ControlStyle::State::ReadOnly:
-        ts << "read-only";
+        ts << "read-only"_s;
         break;
     case ControlStyle::State::ListButton:
-        ts << "list-button";
+        ts << "list-button"_s;
         break;
     case ControlStyle::State::ListButtonPressed:
-        ts << "list-button-pressed";
+        ts << "list-button-pressed"_s;
         break;
     case ControlStyle::State::VerticalWritingMode:
-        ts << "vertical-writing-mode";
+        ts << "vertical-writing-mode"_s;
         break;
     }
     return ts;
@@ -93,10 +93,10 @@ TextStream& operator<<(TextStream& ts, ControlStyle::State state)
 
 TextStream& operator<<(TextStream& ts, const ControlStyle& style)
 {
-    ts.dumpProperty("states", style.states);
-    ts.dumpProperty("font-size", style.fontSize);
-    ts.dumpProperty("zoom-factor", style.zoomFactor);
-    ts.dumpProperty("accent-color", style.accentColor);
+    ts.dumpProperty("states"_s, style.states);
+    ts.dumpProperty("font-size"_s, style.fontSize);
+    ts.dumpProperty("zoom-factor"_s, style.zoomFactor);
+    ts.dumpProperty("accent-color"_s, style.accentColor);
     return ts;
 }
 

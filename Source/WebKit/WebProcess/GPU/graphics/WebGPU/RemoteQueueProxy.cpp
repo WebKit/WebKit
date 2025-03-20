@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBufferProxy.h"
 #include "RemoteQueueMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebProcess.h"
@@ -88,14 +89,20 @@ void RemoteQueueProxy::writeBuffer(
 {
     auto convertedBuffer = protectedConvertToBackingContext()->convertToBacking(buffer);
 
-    auto sharedMemory = WebCore::SharedMemory::copySpan(source.subspan(dataOffset, static_cast<size_t>(size.value_or(source.size() - dataOffset))));
-    std::optional<WebCore::SharedMemoryHandle> handle;
-    if (sharedMemory)
-        handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTFMove(handle)), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
-        RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
-    });
-    UNUSED_VARIABLE(sendResult);
+    size_t actualSourceSize = static_cast<size_t>(size.value_or(source.size() - dataOffset));
+    if (actualSourceSize > maxCrossProcessResourceCopySize) {
+        auto sharedMemory = WebCore::SharedMemory::copySpan(source.subspan(dataOffset, actualSourceSize));
+        std::optional<WebCore::SharedMemoryHandle> handle;
+        if (sharedMemory)
+            handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTFMove(handle)), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
+            RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+        });
+        UNUSED_VARIABLE(sendResult);
+    } else {
+        auto sendResult = send(Messages::RemoteQueue::WriteBufferWithCopy(convertedBuffer, bufferOffset, source.subspan(dataOffset, actualSourceSize)));
+        UNUSED_VARIABLE(sendResult);
+    }
 }
 
 void RemoteQueueProxy::writeTexture(
@@ -114,14 +121,19 @@ void RemoteQueueProxy::writeTexture(
     if (!convertedDestination || !convertedDataLayout || !convertedSize)
         return;
 
-    auto sharedMemory = WebCore::SharedMemory::copySpan(source);
-    std::optional<WebCore::SharedMemoryHandle> handle;
-    if (sharedMemory)
-        handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTFMove(handle), *convertedDataLayout, *convertedSize), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
-        RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
-    });
-    UNUSED_VARIABLE(sendResult);
+    if (source.size() > maxCrossProcessResourceCopySize) {
+        auto sharedMemory = WebCore::SharedMemory::copySpan(source);
+        std::optional<WebCore::SharedMemoryHandle> handle;
+        if (sharedMemory)
+            handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTFMove(handle), *convertedDataLayout, *convertedSize), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
+            RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+        });
+        UNUSED_VARIABLE(sendResult);
+    } else {
+        auto sendResult = send(Messages::RemoteQueue::WriteTextureWithCopy(*convertedDestination, Vector(source), *convertedDataLayout, *convertedSize));
+        UNUSED_VARIABLE(sendResult);
+    }
 }
 
 void RemoteQueueProxy::writeBufferNoCopy(

@@ -61,7 +61,7 @@ class MediaSelectionOptionAVFObjC;
 struct PlatformVideoTrackConfiguration;
 struct PlatformAudioTrackConfiguration;
 
-class AVTrackPrivateAVFObjCImpl : public CanMakeWeakPtr<AVTrackPrivateAVFObjCImpl> {
+class AVTrackPrivateAVFObjCImpl final : public CanMakeWeakPtr<AVTrackPrivateAVFObjCImpl> {
     WTF_MAKE_TZONE_ALLOCATED(AVTrackPrivateAVFObjCImpl);
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
@@ -113,10 +113,9 @@ private:
     uint32_t sampleRate() const;
     uint32_t numberOfChannels() const;
 
-    RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
-    RetainPtr<AVPlayerItem> m_playerItem;
-    RefPtr<MediaSelectionOptionAVFObjC> m_mediaSelectionOption;
-    RetainPtr<AVAssetTrack> m_assetTrack;
+    const RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
+    const RefPtr<MediaSelectionOptionAVFObjC> m_mediaSelectionOption;
+    const RetainPtr<AVAssetTrack> m_assetTrack;
     WeakPtr<VideoTrackConfigurationObserver> m_videoTrackConfigurationObserver;
     WeakPtr<AudioTrackConfigurationObserver> m_audioTrackConfigurationObserver;
 };

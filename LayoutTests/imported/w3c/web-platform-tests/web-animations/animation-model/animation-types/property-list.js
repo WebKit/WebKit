@@ -25,6 +25,12 @@ const gCSSProperties1 = {
       { type: 'discrete', options: [ [ 'flex-start', 'flex-end' ] ] }
     ]
   },
+  'anchor-scope': {
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
+    types: [
+      { type: 'discrete', options: [ [ 'none', 'all' ] ] }
+    ]
+  },
   'appearance': {
     // https://drafts.csswg.org/css-ui/#appearance-switching
     types: [
@@ -1259,6 +1265,12 @@ const gCSSProperties2 = {
     // https://drafts.csswg.org/css-position/#propdef-position
     types: [
       { type: 'discrete', options: [ [ 'absolute', 'fixed' ] ] }
+    ]
+  },
+  'position-visibility': {
+    // https://drafts.csswg.org/css-anchor-position-1/#position-visibility
+    types: [
+      { type: 'discrete', options: [ [ 'always', 'anchors-visible' ] ] }
     ]
   },
   'quotes': {

@@ -42,8 +42,7 @@ private:
     bool isWebMediaStrategy() const final { return true; }
 
 #if ENABLE(WEB_AUDIO)
-    Ref<WebCore::AudioDestination> createAudioDestination(WebCore::AudioIOCallback&,
-        const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
+    Ref<WebCore::AudioDestination> createAudioDestination(const WebCore::AudioDestinationCreationOptions&) override;
 #endif
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
     bool hasThreadSafeMediaSourceSupport() const final;

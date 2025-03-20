@@ -130,11 +130,10 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             return treeElement;
         }
 
+        console.assert(!this._treeOutline.children.length, this._treeOutline);
+
         for (let result of this._filteredResults) {
             let resource = result.resource;
-            if (this._treeOutline.findTreeElement(resource))
-                continue;
-
             let treeElement = createTreeElement(resource);
             if (!treeElement)
                 continue;
@@ -217,8 +216,6 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         for (let consoleSnippet of WI.consoleManager.snippets)
             this._addResource(consoleSnippet);
-
-        this._updateFilterThrottler.force();
 
         this._inputElement.focus();
         this._clear();

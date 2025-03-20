@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include <WebCore/ApplePaySessionPaymentRequest.h>
+#include <pal/spi/cocoa/PassKitSPI.h>
 #include <wtf/Forward.h>
 
 OBJC_CLASS PKShippingMethod;

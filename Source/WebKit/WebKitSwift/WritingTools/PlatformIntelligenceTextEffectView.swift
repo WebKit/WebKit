@@ -25,7 +25,7 @@ import Foundation
 
 #if canImport(WritingTools)
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 // WritingToolsUI is not present in the base system, but WebKit is, so it must be weak-linked.
 // WritingToolsUI need not be soft-linked from WebKitSwift because although WTUI links WebKit, WebKit does not directly link WebKitSwift.
@@ -46,7 +46,7 @@ internal import SwiftUI
 
 // MARK: Platform abstraction type aliases
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 typealias PlatformView = NSView
 typealias PlatformBounds = NSRect
 typealias PlatformTextPreview = [_WTTextPreview]
@@ -507,7 +507,7 @@ struct PlatformIntelligenceTextEffectID: Hashable {
         self.chunk = chunk
     }
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
     private func didCompletePartialWrappedEffect<Source>(for source: Source) where Source: PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
         if self.hasCompletedPartialWrappedEffect {
             Task { @MainActor in

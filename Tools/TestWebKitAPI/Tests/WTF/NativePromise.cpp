@@ -168,7 +168,7 @@ static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSite
 static void runInCurrentRunLoop(Function<void(RunLoop&)>&& function)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::current();
+    auto& runLoop = RunLoop::currentSingleton();
 
     function(runLoop);
 
@@ -183,7 +183,7 @@ static void runInCurrentRunLoop(Function<void(RunLoop&)>&& function)
 static void runInCurrentRunLoopUntilDone(Function<void(RunLoop&, bool&)>&& function)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::current();
+    auto& runLoop = RunLoop::currentSingleton();
 
     bool done = false;
 

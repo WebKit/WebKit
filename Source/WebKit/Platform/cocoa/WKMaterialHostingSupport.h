@@ -39,6 +39,12 @@ typedef NS_ENUM(NSInteger, WKHostedMaterialEffectType) {
     WKHostedMaterialEffectTypeNone,
     WKHostedMaterialEffectTypeBlur,
     WKHostedMaterialEffectTypeThinBlur,
+    WKHostedMaterialEffectTypeMediaControls,
+};
+
+typedef NS_ENUM(NSInteger, WKHostedMaterialColorScheme) {
+    WKHostedMaterialColorSchemeLight,
+    WKHostedMaterialColorSchemeDark,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -48,13 +54,13 @@ NS_SWIFT_UI_ACTOR
 
 + (BOOL)isMaterialHostingAvailable;
 
-+ (CALayer *)createHostingLayer;
-+ (void)updateHostingLayer:(CALayer *)hostingLayer materialEffectType:(WKHostedMaterialEffectType)materialEffectType cornerRadius:(CGFloat)cornerRadius;
++ (CALayer *)hostingLayer;
++ (void)updateHostingLayer:(CALayer *)hostingLayer materialEffectType:(WKHostedMaterialEffectType)materialEffectType colorScheme:(WKHostedMaterialColorScheme) colorScheme cornerRadius:(CGFloat)cornerRadius;
 + (nullable CALayer *)contentLayerForMaterialHostingLayer:(CALayer *)hostingLayer;
 
 #if PLATFORM(IOS_FAMILY)
-+ (UIView *)createHostingView:(UIView *)contentView;
-+ (void)updateHostingView:(UIView *)hostingView contentView:(UIView *)contentView materialEffectType:(WKHostedMaterialEffectType)materialEffectType cornerRadius:(CGFloat)cornerRadius;
++ (UIView *)hostingView:(UIView *)contentView;
++ (void)updateHostingView:(UIView *)hostingView contentView:(UIView *)contentView materialEffectType:(WKHostedMaterialEffectType)materialEffectType colorScheme:(WKHostedMaterialColorScheme) colorScheme cornerRadius:(CGFloat)cornerRadius;
 #endif
 
 @end

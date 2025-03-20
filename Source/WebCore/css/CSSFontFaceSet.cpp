@@ -347,11 +347,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         }
     );
 
-    auto widthSelectionValue = WTF::switchOn(font.stretch,
+    auto widthSelectionValue = WTF::switchOn(font.width,
         [&](CSSValueID ident) -> FontSelectionValue {
             return *fontWidthValue(ident);
         },
-        [&](const CSSPropertyParserHelpers::UnresolvedFontStretchPercentage& percent) -> FontSelectionValue  {
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWidthPercentage& percent) -> FontSelectionValue  {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(percent))
                 return normalWidthValue();

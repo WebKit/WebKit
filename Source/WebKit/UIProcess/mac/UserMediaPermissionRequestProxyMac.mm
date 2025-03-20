@@ -92,7 +92,10 @@ bool UserMediaPermissionRequestProxyMac::canRequestDisplayCapturePermission()
 #if ENABLE(MEDIA_STREAM)
     auto overridePreference = DisplayCaptureSessionManager::singleton().overrideCanRequestDisplayCapturePermissionForTesting();
     RefPtr manager = this->manager();
-    if (!manager || !manager->page() || (!overridePreference && manager->page()->preferences().requireUAGetDisplayMediaPrompt()))
+    if (!manager)
+        return false;
+    RefPtr page = manager->page();
+    if (!page || (!overridePreference && page->protectedPreferences()->requireUAGetDisplayMediaPrompt()))
         return false;
 
     return DisplayCaptureSessionManager::singleton().canRequestDisplayCapturePermission();

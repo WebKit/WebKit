@@ -26,6 +26,7 @@
 #import "APIWebPushMessage.h"
 #import "WKObject.h"
 #import "_WKWebPushMessage.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::WebPushMessage> {
 
 @interface _WKWebPushMessage () <WKObject> {
 @package
-    API::ObjectStorage<API::WebPushMessage> _message;
+    AlignedStorage<API::WebPushMessage> _message;
 }
 @end

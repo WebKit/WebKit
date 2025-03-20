@@ -257,7 +257,7 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 
     Vector<uint64_t> pendingRequestsToRemove;
     for (auto& pair : m_pendingAddRequests) {
-        auto* dataStore = pair.value->process().websiteDataStore();
+        RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
             pendingRequestsToRemove.append(pair.key);
@@ -359,7 +359,7 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
     //
     // To avoid this, let the background activity live until the next runloop turn.
     if (m_backgroundActivity)
-        RunLoop::protectedCurrent()->dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
+        RunLoop::currentSingleton().dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
 #endif
     process->setIsInProcessCache(false);
     return m_process.releaseNonNull();

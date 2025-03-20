@@ -209,12 +209,12 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
     }
 
     if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
-        if (!page.preferences().useGPUProcessForDisplayCapture()) {
+        if (!page.protectedPreferences()->useGPUProcessForDisplayCapture()) {
             WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
             return;
         }
 
-        Ref gpuProcess = page.configuration().processPool().ensureGPUProcess();
+        Ref gpuProcess = page.configuration().protectedProcessPool()->ensureGPUProcess();
         gpuProcess->updateSandboxAccess(false, false, true);
         gpuProcess->promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
         return;
@@ -252,12 +252,12 @@ void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& pag
     if (!isAvailable() || !WebCore::ScreenCaptureKitSharingSessionManager::isAvailable())
         return;
 
-    if (!page.preferences().useGPUProcessForDisplayCapture()) {
+    if (!page.protectedPreferences()->useGPUProcessForDisplayCapture()) {
         WebCore::ScreenCaptureKitSharingSessionManager::singleton().cancelGetDisplayMediaPrompt();
         return;
     }
 
-    auto gpuProcess = page.configuration().processPool().gpuProcess();
+    RefPtr gpuProcess = page.configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 

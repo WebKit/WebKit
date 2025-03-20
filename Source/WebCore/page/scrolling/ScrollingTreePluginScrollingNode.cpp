@@ -50,7 +50,7 @@ ScrollingTreePluginScrollingNode::~ScrollingTreePluginScrollingNode() = default;
 
 void ScrollingTreePluginScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "plugin scrolling node";
+    ts << "plugin scrolling node"_s;
     ScrollingTreeScrollingNode::dumpProperties(ts, behavior);
 }
 

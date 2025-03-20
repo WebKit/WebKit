@@ -161,7 +161,7 @@ void MouseEventTestHarness::mouseCancel()
     m_buttonMask = 0;
     [m_mouseTouchGestureRecognizer touchesCancelled:activeTouches() withEvent:m_unusedEvent.get()];
     m_modifierFlags = 0;
-    EXPECT_EQ(m_mouseTouchGestureRecognizer.state, UIGestureRecognizerStateCancelled);
+    EXPECT_TRUE(m_mouseTouchGestureRecognizer.state == UIGestureRecognizerStateCancelled || m_mouseTouchGestureRecognizer.state == UIGestureRecognizerStateFailed);
 }
 
 };

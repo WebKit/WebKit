@@ -42,6 +42,10 @@
 #import "WebCoreThreadRun.h"
 #endif
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+#import <pal/cocoa/WebContentRestrictionsSoftLink.h>
+#endif
+
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
@@ -56,6 +60,13 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", m_unblockURLHost.ascii().data());
 }
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+ContentFilterUnblockHandler::ContentFilterUnblockHandler(const URL& evaluatedURL)
+    : m_evaluatedURL(evaluatedURL)
+{
+}
+#endif
+
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator> evaluator)
     : m_unblockURLHost { WTFMove(unblockURLHost) }
@@ -68,12 +79,18 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
 ContentFilterUnblockHandler::ContentFilterUnblockHandler(
     String&& unblockURLHost,
     URL&& unreachableURL,
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    std::optional<URL>&& evaluatedURL,
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     Vector<uint8_t>&& webFilterEvaluatorData,
 #endif
-    bool unblockedAfterRequest
-    ) : m_unblockURLHost(WTFMove(unblockURLHost))
+    bool unblockedAfterRequest)
+    : m_unblockURLHost(WTFMove(unblockURLHost))
     , m_unreachableURL(WTFMove(unreachableURL))
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    , m_evaluatedURL(WTFMove(evaluatedURL))
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     , m_webFilterEvaluator(unpackWebFilterEvaluatorData(WTFMove(webFilterEvaluatorData)))
 #endif
@@ -107,6 +124,9 @@ void ContentFilterUnblockHandler::wrapWithDecisionHandler(const DecisionHandlerF
             decisionHandler(unblocked);
         });
     }};
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    m_evaluatedURL = { };
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     m_webFilterEvaluator = nullptr;
 #endif
@@ -115,8 +135,12 @@ void ContentFilterUnblockHandler::wrapWithDecisionHandler(const DecisionHandlerF
 
 bool ContentFilterUnblockHandler::needsUIProcess() const
 {
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    if (m_evaluatedURL)
+        return true;
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
-    return m_webFilterEvaluator;
+    return !!m_webFilterEvaluator;
 #else
     return false;
 #endif
@@ -125,13 +149,22 @@ bool ContentFilterUnblockHandler::needsUIProcess() const
 bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& request) const
 {
     if (!m_unblockRequester && !m_unblockedAfterRequest) {
-#if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
-        if (!m_webFilterEvaluator)
-            return false;
-#else
-        return false;
+        bool hasEvaluatedURL = false;
+        bool hasWebFilterEvaluator = false;
+#if HAVE(WEBCONTENTRESTRICTIONS)
+        hasEvaluatedURL = !!m_evaluatedURL;
 #endif
+#if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
+        hasWebFilterEvaluator = !!m_webFilterEvaluator;
+#endif
+        if (!hasEvaluatedURL && !hasWebFilterEvaluator)
+            return false;
     }
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    if (!!m_evaluatedURL)
+        return ContentFilter::isWebContentRestrictionsUnblockURL(request.url());
+#endif
 
     bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringASCIICase(request.url().host(), m_unblockURLHost);
 #if !LOG_DISABLED
@@ -143,6 +176,19 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 
 void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction decisionHandler) const
 {
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    if (m_evaluatedURL) {
+        if (!m_wcrBrowserEngineClient)
+            m_wcrBrowserEngineClient = adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]);
+        [m_wcrBrowserEngineClient allowURL:*m_evaluatedURL withCompletion:[decisionHandler](BOOL didAllow, NSError *) {
+            callOnMainThread([decisionHandler, didAllow] {
+                RELEASE_LOG(ContentFiltering, "WebFilterEvaluator %s the unblock request.\n", didAllow ? "allowed" : "did not allow");
+                decisionHandler(didAllow);
+            });
+        }];
+        return;
+    }
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     if (m_webFilterEvaluator) {
         [m_webFilterEvaluator unblockWithCompletion:[decisionHandler](BOOL unblocked, NSError *) {

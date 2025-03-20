@@ -923,7 +923,7 @@ void MediaRecorderPrivateEncoder::stopRecording()
     });
 }
 
-void MediaRecorderPrivateEncoder::fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&& completionHandler)
+void MediaRecorderPrivateEncoder::fetchData(CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, double)>&& completionHandler)
 {
     assertIsMainThread();
 

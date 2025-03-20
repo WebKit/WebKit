@@ -249,40 +249,41 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
 
 void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bool success)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }, lockIdentifier, success]() mutable {
-        auto request = m_pendingRequests.take(lockIdentifier);
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [lockIdentifier, success](auto& manager) mutable {
+        auto request = manager.m_pendingRequests.take(lockIdentifier);
         if (!request.isValid())
             return;
 
         if (success) {
             if (request.signal && request.signal->aborted()) {
-                m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
+                manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
                 return;
             }
 
-            auto lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
+            Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
             auto result = request.grantedCallback->handleEvent(lock.ptr());
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
-                m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
-                settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
+                manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
 
-            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [this, weakThis = WTFMove(weakThis), lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
-                if (!weakThis)
+            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [weakThis = WeakPtr { manager }, lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                m_mainThreadBridge->releaseLock(lockIdentifier, name);
-                settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
+                protectedThis->m_mainThreadBridge->releaseLock(lockIdentifier, name);
+                protectedThis->settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
             auto result = request.grantedCallback->handleEvent(nullptr);
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
-                settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
-            settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
+            manager.settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
         }
     });
 }
@@ -306,10 +307,11 @@ void WebLockManager::query(Ref<DeferredPromise>&& promise)
     }
 
     m_mainThreadBridge->query([weakThis = WeakPtr { *this }, promise = WTFMove(promise)](Snapshot&& snapshot) mutable {
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::DOMManipulation, [promise = WTFMove(promise), snapshot = WTFMove(snapshot)]() mutable {
+        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::DOMManipulation, [promise = WTFMove(promise), snapshot = WTFMove(snapshot)](auto&) mutable {
             promise->resolve<IDLDictionary<Snapshot>>(WTFMove(snapshot));
         });
     });

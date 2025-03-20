@@ -116,7 +116,7 @@ static StringView functionCallBase(StringView sourceText)
         // and their closing parenthesis, the text range passed into the message appender 
         // will not include the text in between these parentheses, it will just be the desired
         // text that precedes the parentheses.
-        return String();
+        return { };
     }
 
     unsigned parenStack = 1;
@@ -149,7 +149,7 @@ static StringView functionCallBase(StringView sourceText)
         // in the above string processing. This algorithm is mostly best effort
         // and it works for most JS text in practice. However, if we determine
         // that the algorithm failed, we should just return the empty value.
-        return String();
+        return { };
     }
 
     // Don't display the ?. of an optional call.

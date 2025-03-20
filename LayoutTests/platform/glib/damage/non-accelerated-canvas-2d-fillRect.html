@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill the whole canvas.
+              ctx.fillStyle = "green";
+              ctx.fillRect(0, 0, 50, 50);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 50, 50]]);
+          },
+          () => {
+              // Fill the whole canvas and beyond.
+              ctx.fillStyle = "blue";
+              ctx.fillRect(-10, -10, 70, 70);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 50, 50]]);
+          },
+          () => {
+              // Fill some parts of the canvas.
+              ctx.fillStyle = "green";
+              ctx.fillRect(0, 0, 10, 10);
+              ctx.fillRect(20, 20, 10, 10);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 11, 11], [19, 19, 12, 12]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

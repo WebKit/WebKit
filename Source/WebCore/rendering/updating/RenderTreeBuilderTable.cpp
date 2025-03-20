@@ -129,8 +129,8 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     if (is<RenderTableCaption>(child) || is<RenderTableSection>(child))
         return parent;
 
-    if (is<RenderTableCol>(child)) {
-        if (!child.node() || child.style().display() == DisplayType::TableColumnGroup) {
+    if (CheckedPtr tableColumn = dynamicDowncast<RenderTableCol>(child)) {
+        if (!tableColumn->element() || tableColumn->style().display() == DisplayType::TableColumnGroup) {
             // COLGROUPs and anonymous RenderTableCols (generated wrappers for COLs) are direct children of the table renderer.
             return parent;
         }

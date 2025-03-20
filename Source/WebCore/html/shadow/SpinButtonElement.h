@@ -81,7 +81,7 @@ private:
 
     void willDetachRenderers() override;
     bool isSpinButtonElement() const override { return true; }
-    bool isDisabledFormControl() const override { return shadowHost() && shadowHost()->isDisabledFormControl(); }
+    bool isDisabledFormControl() const override { return shadowHost() && protectedShadowHost()->isDisabledFormControl(); }
     bool matchesReadWritePseudoClass() const override;
     void defaultEventHandler(Event&) override;
     void willOpenPopup() override;

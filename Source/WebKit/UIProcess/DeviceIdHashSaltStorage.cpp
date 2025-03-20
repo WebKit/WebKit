@@ -235,8 +235,9 @@ void DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& do
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([this, documentOrigin = documentOrigin.data().isolatedCopy(), parentOrigin = parentOrigin.data().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-            completeDeviceIdHashSaltForOriginCall(WTFMove(documentOrigin), WTFMove(parentOrigin), WTFMove(completionHandler));
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, documentOrigin = documentOrigin.data().isolatedCopy(), parentOrigin = parentOrigin.data().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->completeDeviceIdHashSaltForOriginCall(WTFMove(documentOrigin), WTFMove(parentOrigin), WTFMove(completionHandler));
         });
         return;
     }
@@ -249,8 +250,9 @@ void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([this, completionHandler = WTFMove(completionHandler)]() mutable {
-            completePendingHandler(WTFMove(completionHandler));
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->completePendingHandler(WTFMove(completionHandler));
         });
         return;
     }
@@ -273,11 +275,15 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([this, origins, completionHandler = WTFMove(completionHandler)]() mutable {
-            if (m_isClosed)
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, origins, completionHandler = WTFMove(completionHandler)]() mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            if (protectedThis->m_isClosed)
                 return completionHandler();
 
-            deleteDeviceIdHashSaltForOrigins(origins, WTFMove(completionHandler));
+            protectedThis->deleteDeviceIdHashSaltForOrigins(origins, WTFMove(completionHandler));
         });
         return;
     }
@@ -299,11 +305,15 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTim
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([this, time, completionHandler = WTFMove(completionHandler)]() mutable {
-            if (m_isClosed)
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, time, completionHandler = WTFMove(completionHandler)]() mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            if (protectedThis->m_isClosed)
                 return completionHandler();
 
-            deleteDeviceIdHashSaltOriginsModifiedSince(time, WTFMove(completionHandler));
+            protectedThis->deleteDeviceIdHashSaltOriginsModifiedSince(time, WTFMove(completionHandler));
         });
         return;
     }

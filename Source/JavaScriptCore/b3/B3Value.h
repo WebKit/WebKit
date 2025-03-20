@@ -38,6 +38,7 @@
 #include "B3Width.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
@@ -54,7 +55,7 @@ class PhiChildren;
 class Procedure;
 
 class JS_EXPORT_PRIVATE Value {
-    WTF_MAKE_TZONE_ALLOCATED(Value);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Value);
 public:
     static const char* const dumpPrefix;
 
@@ -582,7 +583,7 @@ private:
         // We must allocate enough space that replaceWithIdentity can work without buffer overflow.
         size_t allocIdentitySize = sizeof(Value) + sizeof(Value*);
         size_t allocSize = std::max(size + adjacencyListSpace, allocIdentitySize);
-        return static_cast<char*>(WTF::fastMalloc(allocSize));
+        return static_cast<char*>(SequesteredArenaMalloc::malloc(allocSize));
     }
 
 protected:

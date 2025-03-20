@@ -314,6 +314,14 @@
 #define USE_ISO_MALLOC 1
 #endif
 
+#if !defined(USE_PROTECTED_JIT)
+#if CPU(ADDRESS64) && OS(DARWIN) && USE(APPLE_INTERNAL_SDK)
+#define USE_PROTECTED_JIT 0
+#else
+#define USE_PROTECTED_JIT 0
+#endif
+#endif
+
 #if !PLATFORM(WATCHOS)
 #define USE_GLYPH_DISPLAY_LIST_CACHE 1
 #endif

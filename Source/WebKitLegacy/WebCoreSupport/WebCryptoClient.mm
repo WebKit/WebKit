@@ -63,8 +63,7 @@ std::optional<Vector<uint8_t>> WebCryptoClient::serializeAndWrapCryptoKey(WebCor
     if (!key)
         return std::nullopt;
 
-    JSContextRef context = [[m_webView mainFrame] globalContext];
-    auto serializedKey = WebCore::SerializedScriptValue::serializeCryptoKey(context, *key);
+    auto serializedKey = WebCore::SerializedScriptValue::serializeCryptoKey(*key);
     return wrapCryptoKey(serializedKey);
 }
 

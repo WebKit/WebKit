@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .parentRect {
+          position: fixed;
+          width: 25px;
+          height: 25px;
+          background-color: black;
+      }
+      .childRect {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background-color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Spawn parent rect with children.
+              var parent = spawnNewElementWithClass("div", "parentRect");
+              parent.appendChild(createNewElementWithClass("div", "childRect"));
+              parent.appendChild(createNewElementWithClass("div", "childRect", (el) => {
+                  el.style.left = "15px";
+                  el.style.top = "15px";
+              }));
+          },
+          () => {
+              // Verify damage contains just a bounds of parent rect.
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 25, 25]]);
+
+              // Mutate children.
+              for (childRect of document.getElementsByClassName("childRect"))
+                  childRect.style.backgroundColor = "green";
+          },
+          () => {
+              // Verify only children produced damage.
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[15, 15, 10, 10], [0, 0, 10, 10]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

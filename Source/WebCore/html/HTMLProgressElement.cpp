@@ -50,7 +50,7 @@ HTMLProgressElement::~HTMLProgressElement() = default;
 
 Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagName, Document& document)
 {
-    Ref<HTMLProgressElement> progress = adoptRef(*new HTMLProgressElement(tagName, document));
+    Ref progress = adoptRef(*new HTMLProgressElement(tagName, document));
     progress->ensureUserAgentShadowRoot();
     return progress;
 }
@@ -75,6 +75,11 @@ RenderProgress* HTMLProgressElement::renderProgress() const
     return downcast<RenderProgress>(descendantsOfType<Element>(*protectedUserAgentShadowRoot()).first()->renderer());
 }
 
+RefPtr<ProgressValueElement> HTMLProgressElement::protectedValueElement()
+{
+    return m_valueElement.get();
+}
+
 void HTMLProgressElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == valueAttr) {
@@ -88,7 +93,7 @@ void HTMLProgressElement::attributeChanged(const QualifiedName& name, const Atom
 
 void HTMLProgressElement::didAttachRenderers()
 {
-    if (RenderProgress* renderer = renderProgress())
+    if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
 }
 
@@ -133,26 +138,27 @@ void HTMLProgressElement::updateDeterminateState()
 
 void HTMLProgressElement::didElementStateChange()
 {
-    m_value->setInlineSizePercentage(position() * 100);
-    if (RenderProgress* renderer = renderProgress())
+    protectedValueElement()->setInlineSizePercentage(position() * 100);
+    if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
 
-    if (CheckedPtr cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
         cache->valueChanged(*this);
 }
 
 void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    ASSERT(!m_value);
+    ASSERT(!m_valueElement);
 
-    auto inner = ProgressInnerElement::create(document());
+    Ref document = this->document();
+    Ref inner = ProgressInnerElement::create(document);
     root.appendChild(inner);
 
-    auto bar = ProgressBarElement::create(document());
-    auto value = ProgressValueElement::create(document());
-    m_value = value.ptr();
-    m_value->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
-    bar->appendChild(value);
+    Ref bar = ProgressBarElement::create(document);
+    Ref valueElement = ProgressValueElement::create(document);
+    valueElement->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
+    bar->appendChild(valueElement);
+    m_valueElement = WTFMove(valueElement);
 
     inner->appendChild(bar);
 }

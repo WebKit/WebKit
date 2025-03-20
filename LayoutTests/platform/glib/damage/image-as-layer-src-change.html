@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      canvas {
+          display: block;
+      }
+      img {
+          position: fixed;
+          left: 0px;
+          top: 50px;
+      }
+    </style>
+    <script src="./common.js"></script>
+    <script>
+      async function main() {
+          setupTestCase({disableConsoleLog: true});
+
+          var image = document.getElementsByTagName("img")[0];
+          var canvas = document.getElementsByTagName("canvas")[0];
+          var ctx = canvas.getContext("2d");
+
+          ctx.fillStyle = "green";
+          ctx.fillRect(0, 0, 50, 50);
+          var greenImage = await takeCanvasSnapshotAsBlobURL(canvas);
+
+          ctx.fillStyle = "red";
+          ctx.fillRect(0, 0, 50, 50);
+          var redImage = await takeCanvasSnapshotAsBlobURL(canvas);
+
+          processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+              () => {
+                  image.src = greenImage;
+              },
+              () => {
+                  var damage = latestFrameDamage();
+                  assertValid(damage);
+                  assertRectsEq(damage.rects, [[0, 50, 50, 50]]);
+              },
+              () => {
+                  image.src = redImage;
+              },
+              () => {
+                  var damage = latestFrameDamage();
+                  assertValid(damage);
+                  assertRectsEq(damage.rects, [[0, 50, 50, 50]]);
+              },
+          ], 0);
+      }
+    </script>
+  </head>
+  <body onload="main()">
+    <canvas width="50" height="50"></canvas>
+    <img width="50" height="50" />
+  </body>
+</html>

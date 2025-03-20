@@ -240,6 +240,8 @@ public:
     Butterfly* resizeArray(VM&, JSObject* intendedOwner, Structure*, size_t newPreCapacity, size_t newIndexingPayloadSizeInBytes); // Assumes that you're not changing whether or not the object has an indexing header.
     Butterfly* unshift(Structure*, size_t numberOfSlots);
     Butterfly* shift(Structure*, size_t numberOfSlots);
+
+    ALWAYS_INLINE static void clearOptimalVectorLengthGap(IndexingType, Butterfly*, unsigned optimalVectorLength, unsigned vectorLength);
 };
 
 } // namespace JSC

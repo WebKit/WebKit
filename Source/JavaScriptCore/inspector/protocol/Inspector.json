@@ -1,7 +1,7 @@
 {
     "domain": "Inspector",
-    "debuggableTypes": ["itml", "javascript", "page", "web-page"],
-    "targetTypes": ["itml", "javascript", "page"],
+    "debuggableTypes": ["itml", "javascript", "page", "service-worker", "web-page"],
+    "targetTypes": ["itml", "javascript", "page", "service-worker"],
     "commands": [
         {
             "name": "enable",

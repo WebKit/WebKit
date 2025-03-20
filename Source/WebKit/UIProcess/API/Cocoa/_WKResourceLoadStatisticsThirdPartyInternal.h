@@ -27,6 +27,7 @@
 #import "WKObject.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
 #import "_WKResourceLoadStatisticsThirdParty.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<API::ResourceLoadStatisticsThirdParty> {
 
 @interface _WKResourceLoadStatisticsThirdParty () <WKObject> {
 @package
-    API::ObjectStorage<API::ResourceLoadStatisticsThirdParty> _thirdParty;
+    AlignedStorage<API::ResourceLoadStatisticsThirdParty> _thirdParty;
 }
 
 @end

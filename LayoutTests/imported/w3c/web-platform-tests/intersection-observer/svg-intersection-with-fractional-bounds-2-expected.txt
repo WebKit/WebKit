@@ -1,0 +1,8 @@
+
+PASS IntersectionObserver observing an SVG <rect> with fractional bounds element
+FAIL Initial Observation assert_approx_equals: entries[0].boundingClientRect.right expected 0.004 +/- 0.0001 but got 0
+FAIL Changing target y position to -2 (-0.002 in root coordinates) assert_equals: entries.length expected 2 but got 1
+FAIL Changing target y position to -1 (-0.001 in root coordinates) assert_equals: entries.length expected 3 but got 1
+FAIL Changing target y position to -4 (-0.004 in root coordinates) assert_equals: entries.length expected 4 but got 1
+FAIL Changing target y position to 0 assert_equals: entries.length expected 5 but got 1
+

@@ -181,6 +181,7 @@ PASS Parsing origin: <wss:example.com/> against <about:blank>
 PASS Parsing origin: <data:example.com/> against <about:blank>
 PASS Parsing origin: <javascript:example.com/> against <about:blank>
 PASS Parsing origin: <mailto:example.com/> against <about:blank>
+PASS Parsing origin: <https://example.com/aaa/bbb/%2e%2e?query> against <about:blank>
 PASS Parsing origin: <http:@www.example.com> against <about:blank>
 PASS Parsing origin: <http:/@www.example.com> against <about:blank>
 PASS Parsing origin: <http://@www.example.com> against <about:blank>
@@ -211,6 +212,14 @@ PASS Parsing origin: <//www.example2.com> against <http://www.example.com/test>
 PASS Parsing origin: <http://ExAmPlE.CoM> against <http://other.com/>
 PASS Parsing origin: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Parsing origin: <\0 http://example.com/ \r > against <about:blank>
+PASS Parsing origin: <non-special:opaque  > against <about:blank>
+PASS Parsing origin: <non-special:opaque  ?hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque  #hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque  x?hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque  x#hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque 		  	#hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque 		  #hi> against <about:blank>
+PASS Parsing origin: <non-special:opaque		  \r #hi> against <about:blank>
 PASS Parsing origin: <http://www.foo。bar.com> against <http://other.com/>
 PASS Parsing origin: <https://x/�?�#�> against <about:blank>
 PASS Parsing origin: <http://Ｇｏ.com> against <http://other.com/>
@@ -333,6 +342,7 @@ PASS Parsing origin: <blob:ws://example.org/> against <about:blank>
 PASS Parsing origin: <blob:wss://example.org/> against <about:blank>
 PASS Parsing origin: <blob:http%3a//example.org/> against <about:blank>
 PASS Parsing origin: <non-special:cannot-be-a-base-url-\0~> against <about:blank>
+PASS Parsing origin: <non-special:cannot-be-a-base-url-!"$%&'()*+,-.;<=>@[\]^_`{|}~@/> against <about:blank>
 PASS Parsing origin: <https://www.example.com/path{path.html?query'=query#fragment<fragment> against <about:blank>
 PASS Parsing origin: <https://user:pass[@foo/bar> against <http://example.org>
 PASS Parsing origin: <foo:// !"$%&'()*+,-.;<=>@[\]^_`{|}~@host/> against <about:blank>

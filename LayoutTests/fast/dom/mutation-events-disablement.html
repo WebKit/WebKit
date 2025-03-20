@@ -23,6 +23,7 @@ const text = document.body.appendChild(document.createTextNode('hello'));
 mutationEvents = [];
 text.replaceData(0, 5, 'world');
 shouldBe('mutationEvents', '[]');
+shouldBeEqualToString('typeof MutationEvent', 'undefined');
 
 </script>
 </body>

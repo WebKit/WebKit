@@ -1,0 +1,10 @@
+
+PASS :outputs,clip_distances:clipDistances=1
+PASS :outputs,clip_distances:clipDistances=2
+PASS :outputs,clip_distances:clipDistances=3
+PASS :outputs,clip_distances:clipDistances=4
+PASS :outputs,clip_distances:clipDistances=5
+PASS :outputs,clip_distances:clipDistances=6
+PASS :outputs,clip_distances:clipDistances=7
+PASS :outputs,clip_distances:clipDistances=8
+

@@ -522,11 +522,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     }
 
-    Object& object = wrapper._apiObject;
-
-    apiObjectsUnderConstruction().add(&object, (__bridge CFTypeRef)wrapper);
-
-    return &object;
+    apiObjectsUnderConstruction().add(&wrapper._apiObject, (__bridge CFTypeRef)wrapper);
+    return &wrapper._apiObject;
 }
 
 void* Object::wrap(API::Object* object)
@@ -552,7 +549,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
         auto& dictionary = downcast<API::Dictionary>(*this);
         auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:dictionary.size()]);
         for (auto& pair : dictionary.map()) {
-            if (auto nsObject = pair.value ? pair.value->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>())
+            if (auto nsObject = pair.value ? Ref { *pair.value }->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>())
                 [result setObject:nsObject.get() forKey:(NSString *)pair.key];
         }
         return result;

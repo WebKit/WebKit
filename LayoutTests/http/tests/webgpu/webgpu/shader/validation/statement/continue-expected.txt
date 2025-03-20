@@ -8,24 +8,7 @@ PASS :placement:stmt="continuing_continue"
 PASS :placement:stmt="continuing_nested_loop_continue"
 PASS :placement:stmt="if_continue"
 PASS :placement:stmt="nested_if_continue"
-FAIL :placement:stmt="switch_case_continue" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @vertex
-    fn vtx() -> @builtin(position) vec4f {
-      switch(1) { default: { continue; } }
-      return vec4f(1);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :placement:stmt="switch_case_continue"
 PASS :placement:stmt="nested_switch_case_continue"
 PASS :placement:stmt="return_continue"
 PASS :placement:stmt="loop_continue_after_decl_used_in_continuing"
@@ -41,8 +24,7 @@ FAIL :placement:stmt="loop_continue_before_decl_used_in_continuing" assert_unrea
       return vec4f(1);
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -60,8 +42,7 @@ FAIL :placement:stmt="loop_nested_continue_before_decl_used_in_continuing" asser
       return vec4f(1);
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

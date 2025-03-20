@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScopedArguments.h"
 
-#include "GenericArgumentsInlines.h"
+#include "GenericArgumentsImplInlines.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -37,7 +37,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ScopedArguments);
 const ClassInfo ScopedArguments::s_info = { "Arguments"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArguments) };
 
 ScopedArguments::ScopedArguments(VM& vm, Structure* structure, WriteBarrier<Unknown>* storage, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)
-    : GenericArguments(vm, structure)
+    : GenericArgumentsImpl(vm, structure)
     , m_totalLength(totalLength)
     , m_callee(callee, WriteBarrierEarlyInit)
     , m_table(table, WriteBarrierEarlyInit)
@@ -99,7 +99,7 @@ void ScopedArguments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     ScopedArguments* thisObject = static_cast<ScopedArguments*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
+    GenericArgumentsImpl::visitChildren(thisObject, visitor); // Including Base::visitChildren.
 
     visitor.append(thisObject->m_callee);
     visitor.append(thisObject->m_table);
@@ -159,7 +159,7 @@ void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
 
 void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
-    GenericArguments::copyToArguments(globalObject, firstElementDest, offset, length);
+    GenericArgumentsImpl::copyToArguments(globalObject, firstElementDest, offset, length);
 }
 
 bool ScopedArguments::isIteratorProtocolFastAndNonObservable()

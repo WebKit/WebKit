@@ -111,10 +111,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactory);
 
 // a null player to make MediaPlayer logic simpler
 
-class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public RefCounted<NullMediaPlayerPrivate> {
+class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public ThreadSafeRefCounted<NullMediaPlayerPrivate, WTF::DestructionThread::Main> {
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
@@ -974,6 +974,14 @@ FloatSize MediaPlayer::videoLayerSize() const
 bool MediaPlayer::canShowWhileLocked() const
 {
     return client().canShowWhileLocked();
+}
+
+void MediaPlayer::setSceneIdentifier(const String& identifier)
+{
+    if (m_sceneIdentifier == identifier)
+        return;
+    m_sceneIdentifier = identifier;
+    m_private->sceneIdentifierDidChange();
 }
 #endif
 
@@ -1897,6 +1905,14 @@ void MediaPlayer::setPreferredDynamicRangeMode(DynamicRangeMode mode)
     m_private->setPreferredDynamicRangeMode(mode);
 }
 
+void MediaPlayer::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    if (m_platformDynamicRangeLimit == platformDynamicRangeLimit)
+        return;
+    m_platformDynamicRangeLimit = platformDynamicRangeLimit;
+    m_private->setPlatformDynamicRangeLimit(platformDynamicRangeLimit);
+}
+
 void MediaPlayer::audioOutputDeviceChanged()
 {
     m_private->audioOutputDeviceChanged();
@@ -2010,6 +2026,26 @@ void MediaPlayer::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 }
 #endif
 
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+void MediaPlayer::setPrefersSpatialAudioExperience(bool value)
+{
+    if (m_prefersSpatialAudioExperience == value)
+        return;
+    m_prefersSpatialAudioExperience = value;
+    m_private->prefersSpatialAudioExperienceChanged();
+}
+#endif
+
+auto MediaPlayer::soundStageSize() const -> SoundStageSize
+{
+    return client().mediaPlayerSoundStageSize();
+}
+
+void MediaPlayer::soundStageSizeDidChange()
+{
+    m_private->soundStageSizeDidChange();
+}
+
 void MediaPlayer::setInFullscreenOrPictureInPicture(bool isInFullscreenOrPictureInPicture)
 {
     if (m_isInFullscreenOrPictureInPicture == isInFullscreenOrPictureInPicture)
@@ -2110,13 +2146,13 @@ WTF::TextStream& operator<<(TextStream& ts, MediaPlayerEnums::VideoGravity gravi
 {
     switch (gravity) {
     case MediaPlayerEnums::VideoGravity::Resize:
-        ts << "resize";
+        ts << "resize"_s;
         break;
     case MediaPlayerEnums::VideoGravity::ResizeAspect:
-        ts << "resize-aspect";
+        ts << "resize-aspect"_s;
         break;
     case MediaPlayerEnums::VideoGravity::ResizeAspectFill:
-        ts << "resize-aspect-fill";
+        ts << "resize-aspect-fill"_s;
         break;
     }
     return ts;

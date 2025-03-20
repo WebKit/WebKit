@@ -55,6 +55,11 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     signedFields: Array<String>?
 }
 
+webkit_platform_headers: "CoreIPCPKPaymentSetupFeature.h"
+[WebKitPlatform] class WebKit::CoreIPCPKPaymentSetupFeature {
+    Vector<uint8_t> ipcData()
+}
+
 [WebKitSecureCodingClass=PAL::getPKPaymentClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
     token: PKPaymentToken
     shippingContact: PKContact

@@ -285,10 +285,10 @@ WK_SWIFT_UI_ACTOR
  @param completionHandler The completion handler to call after open panel has been dismissed. Pass the selected URLs if the user chose OK, otherwise nil.
 
  If you do not implement this method on macOS, the web view will behave as if the user selected the Cancel button.
- If you do not implement this method on iOS, the web view will match the file upload behavior of Safari. If you desire
- the web view to act as if the user selected the Cancel button on iOS, immediately call the completion handler with nil.
+ If you do not implement this method on iOS or visionOS, the web view will match the file upload behavior of Safari. If you desire
+ the web view to act as if the user selected the Cancel button on iOS or visionOS, immediately call the completion handler with nil.
  */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12), ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12), ios(18.4), visionos(2.4));
 
 @end
 

@@ -40,8 +40,7 @@ FAIL :placement:place="compute" assert_unreached:
       subcomp();
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -87,8 +86,7 @@ FAIL :placement:place="vertex" assert_unreached:
       subcomp();
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -137,8 +135,7 @@ FAIL :placement:place="subvert" assert_unreached:
       subcomp();
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -184,8 +181,7 @@ FAIL :placement:place="subcomp" assert_unreached:
       subcomp();
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

@@ -58,7 +58,7 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     wpe_pasteboard_get_types(m_pasteboard, &pasteboardTypes);
     for (auto& typeString : unsafeMakeSpan(pasteboardTypes.strings, pasteboardTypes.length)) {
         const auto length = std::min(static_cast<size_t>(typeString.length), std::numeric_limits<size_t>::max());
-        types.append(String({ typeString.data, length }));
+        types.append(String(unsafeMakeSpan(typeString.data, length)));
     }
 
     wpe_pasteboard_string_vector_free(&pasteboardTypes);
@@ -72,7 +72,7 @@ String PlatformPasteboard::readString(size_t, const String& type) const
         return String();
 
     const auto length = std::min(static_cast<size_t>(string.length), std::numeric_limits<size_t>::max());
-    String returnValue({ string.data, length });
+    String returnValue(unsafeMakeSpan(string.data, length));
 
     wpe_pasteboard_string_free(&string);
     return returnValue;

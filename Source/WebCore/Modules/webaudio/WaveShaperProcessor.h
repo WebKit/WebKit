@@ -39,6 +39,7 @@ namespace WebCore {
 
 class WaveShaperProcessor final : public AudioDSPKernelProcessor {
     WTF_MAKE_TZONE_ALLOCATED(WaveShaperProcessor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WaveShaperProcessor);
 public:
     enum OverSampleType {
         OverSampleNone,

@@ -57,6 +57,16 @@ CSSGroupingRule::~CSSGroupingRule()
     }
 }
 
+Ref<const StyleRuleGroup> CSSGroupingRule::protectedGroupRule() const
+{
+    return m_groupRule;
+}
+
+Ref<StyleRuleGroup> CSSGroupingRule::protectedGroupRule()
+{
+    return m_groupRule;
+}
+
 ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());

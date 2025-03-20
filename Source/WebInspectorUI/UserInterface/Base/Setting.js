@@ -244,6 +244,7 @@ WI.settings = {
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
     experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
     experimentalEnableWorkerTimelineRecording: new WI.Setting("experimental-worker-timeline-recording", false),
+    experimentalVirtualizeSourcesNavigationSidebarTreeOutline: new WI.Setting("experimental-virtualize-sources-navigation-sidebar-tree-outline", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

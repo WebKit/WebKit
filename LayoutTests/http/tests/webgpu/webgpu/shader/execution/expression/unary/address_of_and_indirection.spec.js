@@ -4,7 +4,7 @@
 Execution Tests for unary address-of and indirection (dereference)
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { keysOf } from '../../../../../common/util/data_tables.js';
-import { GPUTest } from '../../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../gpu_test.js';
 import { scalarType } from '../../../../util/conversion.js';
 import { sparseScalarF32Range } from '../../../../util/math.js';
 import {
@@ -13,7 +13,7 @@ import {
   run } from
 '../expression.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 // All the ways to deref an expression
 const kDerefCases = {
@@ -52,12 +52,10 @@ combine('scalarType', ['bool', 'u32', 'i32', 'f32', 'f16']).
 combine('derefType', keysOf(kDerefCases)).
 filter((p) => !kDerefCases[p.derefType].requires_pointer_composite_access)
 ).
-beforeAllSubcases((t) => {
-  if (t.params.scalarType === 'f16') {
-    t.selectDeviceOrSkipTestCase({ requiredFeatures: ['shader-f16'] });
-  }
-}).
 fn(async (t) => {
+  if (t.params.scalarType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const ty = scalarType(t.params.scalarType);
   const cases = sparseScalarF32Range().map((e) => {
     return { input: ty.create(e), expected: ty.create(e) };
@@ -92,18 +90,15 @@ combine('scalarType', ['bool', 'u32', 'i32', 'f32', 'f16']).
 combine('derefType', keysOf(kDerefCases))
 ).
 beforeAllSubcases((t) => {
-  if (t.params.scalarType === 'f16') {
-    t.selectDeviceOrSkipTestCase({ requiredFeatures: ['shader-f16'] });
-  }
+  t.skipIf(
+    kDerefCases[t.params.derefType].requires_pointer_composite_access &&
+    !t.hasLanguageFeature('pointer_composite_access')
+  );
 }).
 fn(async (t) => {
-  if (
-  kDerefCases[t.params.derefType].requires_pointer_composite_access &&
-  !t.hasLanguageFeature('pointer_composite_access'))
-  {
-    return;
+  if (t.params.scalarType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
   }
-
   const ty = scalarType(t.params.scalarType);
   const cases = sparseScalarF32Range().map((e) => {
     return { input: ty.create(e), expected: ty.create(e) };
@@ -138,18 +133,15 @@ combine('scalarType', ['bool', 'u32', 'i32', 'f32', 'f16']).
 combine('derefType', keysOf(kDerefCases))
 ).
 beforeAllSubcases((t) => {
-  if (t.params.scalarType === 'f16') {
-    t.selectDeviceOrSkipTestCase({ requiredFeatures: ['shader-f16'] });
-  }
+  t.skipIf(
+    kDerefCases[t.params.derefType].requires_pointer_composite_access &&
+    !t.hasLanguageFeature('pointer_composite_access')
+  );
 }).
 fn(async (t) => {
-  if (
-  kDerefCases[t.params.derefType].requires_pointer_composite_access &&
-  !t.hasLanguageFeature('pointer_composite_access'))
-  {
-    return;
+  if (t.params.scalarType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
   }
-
   const ty = scalarType(t.params.scalarType);
   const cases = sparseScalarF32Range().map((e) => {
     return { input: ty.create(e), expected: ty.create(e) };
@@ -165,6 +157,50 @@ fn(async (t) => {
         var a = S(value);
         let p = &a;
         return ${kDerefCases[t.params.derefType].wgsl}.m;
+      }`
+  );
+  await run(t, shaderBuilder, [ty], ty, t.params, cases);
+});
+
+g.test('deref_swizzle').
+specURL('https://www.w3.org/TR/WGSL/#logical-expr').
+desc(
+  `
+Expression: (*e).swizzle
+
+Pointer expression dereference as lhs of swizzle expression
+`
+).
+params((u) =>
+u.
+combine('inputSource', allButConstInputSource).
+combine('vectorize', [2, 3, 4]).
+combine('scalarType', ['bool', 'u32', 'i32', 'f32', 'f16']).
+combine('derefType', keysOf(kDerefCases))
+).
+beforeAllSubcases((t) => {
+  t.skipIf(
+    kDerefCases[t.params.derefType].requires_pointer_composite_access &&
+    !t.hasLanguageFeature('pointer_composite_access')
+  );
+}).
+fn(async (t) => {
+  if (t.params.scalarType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
+  const ty = scalarType(t.params.scalarType);
+  const cases = sparseScalarF32Range().map((e) => {
+    return { input: ty.create(e), expected: ty.create(e) };
+  });
+  const elemType = ty.kind;
+  const type = `vec${t.params.vectorize}<${elemType}>`;
+  const swizzle = 'xyzw'.slice(0, t.params.vectorize);
+  const shaderBuilder = basicExpressionWithPredeclarationBuilder(
+    (value) => `get_dereferenced_value(${value})`,
+    `fn get_dereferenced_value(value: ${type}) -> ${type} {
+        var a = value;
+        let p = &a;
+        return ${kDerefCases[t.params.derefType].wgsl}.${swizzle};
       }`
   );
   await run(t, shaderBuilder, [ty], ty, t.params, cases);

@@ -56,7 +56,7 @@ String serializationForCSS(const CSS::SerializationContext&, const ResolvedColor
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ResolvedColor& absoluteColor)
 {
-    return ts << "absoluteColor(" << absoluteColor.color.debugDescription() << ")";
+    return ts << "absoluteColor("_s << absoluteColor.color.debugDescription() << ')';
 }
 
 } // namespace Style

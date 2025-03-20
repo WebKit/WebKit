@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2024 Apple Inc. All rights reserved.
+# Copyright (C) 2024-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@ import re
 import sys
 
 _header_license = """/*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,9 @@ class SyncedData(object):
             for option in option_list:
                 if option == 'DocumentSyncData':
                     self.automatic_location = "DocumentSyncData"
+                    continue
+                elif option == 'FrameTreeSyncData':
+                    self.automatic_location = "FrameTreeSyncData"
                     continue
                 elif option.startswith('Conditional='):
                     self.conditional = option[12:]
@@ -214,7 +217,7 @@ struct ProcessSyncData {
 """
 
 
-def generate_process_sync_data_header(synched_datas, document_synched_datas):
+def generate_process_sync_data_header(synched_datas, document_synched_datas, frame_tree_synched_datas):
     result = []
     result.append(_header_license)
     result.append('#pragma once\n')
@@ -252,6 +255,23 @@ def generate_process_sync_data_header(synched_datas, document_synched_datas):
     result.append("};")
     result.append("")
 
+    result.append("static const ProcessSyncDataType allFrameTreeSyncDataTypes[] = {")
+    data = frame_tree_synched_datas[0]
+    if data.conditional is not None:
+        result.append('#if %s' % data.conditional)
+    result.append('    ProcessSyncDataType::%s' % data.name)
+    if data.conditional is not None:
+        result.append('#endif')
+
+    for data in frame_tree_synched_datas[1:]:
+        if data.conditional is not None:
+            result.append('#if %s' % data.conditional)
+        result.append('    , ProcessSyncDataType::%s' % data.name)
+        if data.conditional is not None:
+            result.append('#endif')
+    result.append("};")
+    result.append("")
+
     for data in synched_datas:
         if data.conditional is not None:
             result.append('#if !%s' % data.conditional)
@@ -271,25 +291,25 @@ def generate_process_sync_data_header(synched_datas, document_synched_datas):
     return '\n'.join(result)
 
 
-_document_synced_data_header_midfix = """
+_synced_data_header_midfix = """
 namespace WebCore {
 
 struct ProcessSyncData;
 
-class DocumentSyncData : public RefCounted<DocumentSyncData> {
-WTF_MAKE_TZONE_ALLOCATED_INLINE(DocumentSyncData);
+class data_type_name : public RefCounted<data_type_name> {
+WTF_MAKE_TZONE_ALLOCATED_INLINE(data_type_name);
 public:
     template<typename... Args>
-    static Ref<DocumentSyncData> create(Args&&... args)
+    static Ref<data_type_name> create(Args&&... args)
     {
-        return adoptRef(*new DocumentSyncData(std::forward<Args>(args)...));
+        return adoptRef(*new data_type_name(std::forward<Args>(args)...));
     }
-    static Ref<DocumentSyncData> create() { return adoptRef(*new DocumentSyncData); }
+    static Ref<data_type_name> create() { return adoptRef(*new data_type_name); }
     void update(const ProcessSyncData&);
 """
 
 
-def generate_document_synched_data_header(synched_datas):
+def generate_synched_data_header(data_type_name, synched_datas):
     result = []
     result.append(_header_license)
     result.append('#pragma once\n')
@@ -306,7 +326,7 @@ def generate_document_synched_data_header(synched_datas):
     for header in headers:
         result.append('#include %s' % header)
 
-    result.append(_document_synced_data_header_midfix)
+    result.append(_synced_data_header_midfix)
 
     for data in synched_datas:
         if data.conditional is not None:
@@ -318,8 +338,8 @@ def generate_document_synched_data_header(synched_datas):
 
     result.append('')
     result.append('private:')
-    result.append('    DocumentSyncData() = default;')
-    result.append('    WEBCORE_EXPORT DocumentSyncData(')
+    result.append('    data_type_name() = default;')
+    result.append('    WEBCORE_EXPORT data_type_name(')
 
     data = synched_datas[0]
     if data.conditional is not None:
@@ -340,33 +360,34 @@ def generate_document_synched_data_header(synched_datas):
     result.append('')
     result.append('} // namespace WebCore')
     result.append('')
-    return '\n'.join(result)
+
+    return '\n'.join(result).replace('data_type_name', data_type_name)
 
 
-_document_synched_data_impl_prefix = """
+_synched_data_impl_prefix = """
 #include "config.h"
-#include "DocumentSyncData.h"
+#include "data_type_name.h"
 
 #include "ProcessSyncData.h"
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
-void DocumentSyncData::update(const ProcessSyncData& data)
+void data_type_name::update(const ProcessSyncData& data)
 {
     switch (data.type) {"""
 
-_document_synched_data_impl_midfix = """    default:
+_synched_data_impl_midfix = """    default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
 """
 
 
-def generate_document_synched_data_impl(synched_datas):
+def generate_synched_data_impl(data_type_name, synched_datas):
     result = []
     result.append(_header_license)
-    result.append(_document_synched_data_impl_prefix)
+    result.append(_synched_data_impl_prefix)
 
     for data in synched_datas:
         if data.conditional is not None:
@@ -380,13 +401,13 @@ def generate_document_synched_data_impl(synched_datas):
         if data.conditional is not None:
             result.append('#endif')
 
-    result.append(_document_synched_data_impl_midfix)
+    result.append(_synched_data_impl_midfix)
 
-    result.append('DocumentSyncData::DocumentSyncData(')
+    result.append('data_type_name::data_type_name(')
 
     data = synched_datas[0]
     if data.conditional is not None:
-        raise Exception("First argument to DocumentSyncData constructor cannot be conditional")
+        raise Exception("First argument to constructor cannot be conditional")
 
     lowercase_name = data.name[0].lower() + data.name[1:]
     result.append('      %s %s' % (data.fully_qualified_type, lowercase_name))
@@ -405,7 +426,7 @@ def generate_document_synched_data_impl(synched_datas):
 
     data = synched_datas[0]
     if data.conditional is not None:
-        raise Exception("First argument to DocumentSyncData constructor cannot be conditional")
+        raise Exception("First argument to constructor cannot be conditional")
 
     lowercase_name = data.name[0].lower() + data.name[1:]
     result.append('    : %s(%s)' % (lowercase_name, lowercase_name))
@@ -425,11 +446,12 @@ def generate_document_synched_data_impl(synched_datas):
     result.append('')
     result.append('} // namespace WebCore')
     result.append('')
-    return '\n'.join(result)
+
+    return '\n'.join(result).replace('data_type_name', data_type_name)
 
 
 _serialization_in_license = """#
-# Copyright (C) 2024 Apple Inc. All rights reserved.
+# Copyright (C) 2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -464,13 +486,25 @@ struct WebCore::ProcessSyncData {
 """
 
 
-def generate_process_sync_data_serialiation_in(synched_datas, document_synched_datas):
+def generate_process_sync_data_serialiation_in(synched_datas, document_synched_datas, frame_tree_synched_datas):
     result = []
     result.append(_serialization_in_license)
     result.append(_process_sync_data_serialization_in_prefix)
 
     result.append('[RefCounted] class WebCore::DocumentSyncData {')
     for data in document_synched_datas:
+        if data.conditional is not None:
+            result.append('#if %s' % data.conditional)
+        name = data.name[0].lower() + data.name[1:]
+        result.append('    %s %s;' % (data.fully_qualified_type, name))
+        if data.conditional is not None:
+            result.append('#endif')
+
+    result.append('};')
+    result.append('')
+
+    result.append('[RefCounted] class WebCore::FrameTreeSyncData {')
+    for data in frame_tree_synched_datas:
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         name = data.name[0].lower() + data.name[1:]
@@ -537,24 +571,21 @@ def sort_datas_for_variant_order(synched_datas):
     return full_list
 
 
-def sort_datas_for_document_sync_data_order(synched_datas):
+def sort_datas_for_sync_data_order(data_type_name, synched_datas):
     full_type_list, full_conditional_type_list = sort_data_lists(synched_datas)
 
     type_list = []
     conditional_type_list = []
 
     for data in full_type_list:
-        if data.automatic_location != 'DocumentSyncData':
+        if data.automatic_location != data_type_name:
             continue
         type_list.append(data)
 
     for data in full_conditional_type_list:
-        if data.automatic_location != 'DocumentSyncData':
+        if data.automatic_location != data_type_name:
             continue
         conditional_type_list.append(data)
-
-    if len(type_list) < 2:
-        raise Exception("Surprisingly, fewer than two unconditional types found (this will make it hard to construct object constructors in a way that will compile)")
 
     # FIXME: We play tricks with our c++ native interface and implementation of DocumentSyncData to put commas at the start of the line and not the end,
     # allowing us to gracefully handle the case where the final member is conditional with proper syntax.
@@ -562,7 +593,10 @@ def sort_datas_for_document_sync_data_order(synched_datas):
     # the platform, the build fails.
     # We should fix the serializer generator to use leading commas instead of trailing commas then remove this weird construct of making sure the conditionals
     # are sandwiched between unconditionals.
-    full_list = type_list[:-1] + conditional_type_list + [type_list[-1]]
+    if len(type_list) > 1:
+        full_list = type_list[:-1] + conditional_type_list + [type_list[-1]]
+    else:
+        full_list = type_list
     return full_list
 
 
@@ -590,19 +624,26 @@ def main(argv):
     with open(output_directory + 'ProcessSyncClient.cpp', "w+") as output:
         output.write(generate_process_sync_client_impl(synched_datas))
 
-    document_synched_datas = sort_datas_for_document_sync_data_order(synched_datas)
+    document_synched_datas = sort_datas_for_sync_data_order('DocumentSyncData', synched_datas)
+    frame_tree_synched_datas = sort_datas_for_sync_data_order('FrameTreeSyncData', synched_datas)
 
     with open(output_directory + 'ProcessSyncData.h', "w+") as output:
-        output.write(generate_process_sync_data_header(synched_datas, document_synched_datas))
+        output.write(generate_process_sync_data_header(synched_datas, document_synched_datas, frame_tree_synched_datas))
 
     with open(output_directory + 'ProcessSyncData.serialization.in', "w+") as output:
-        output.write(generate_process_sync_data_serialiation_in(synched_datas, document_synched_datas))
+        output.write(generate_process_sync_data_serialiation_in(synched_datas, document_synched_datas, frame_tree_synched_datas))
 
     with open(output_directory + 'DocumentSyncData.h', "w+") as output:
-        output.write(generate_document_synched_data_header(document_synched_datas))
+        output.write(generate_synched_data_header('DocumentSyncData', document_synched_datas))
 
     with open(output_directory + 'DocumentSyncData.cpp', "w+") as output:
-        output.write(generate_document_synched_data_impl(document_synched_datas))
+        output.write(generate_synched_data_impl('DocumentSyncData', document_synched_datas))
+
+    with open(output_directory + 'FrameTreeSyncData.h', "w+") as output:
+        output.write(generate_synched_data_header('FrameTreeSyncData', frame_tree_synched_datas))
+
+    with open(output_directory + 'FrameTreeSyncData.cpp', "w+") as output:
+        output.write(generate_synched_data_impl('FrameTreeSyncData', frame_tree_synched_datas))
 
     return 0
 

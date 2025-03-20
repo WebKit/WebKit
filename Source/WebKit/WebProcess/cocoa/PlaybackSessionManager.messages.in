@@ -32,6 +32,9 @@ messages -> PlaybackSessionManager {
     TogglePlayState(WebKit::PlaybackSessionContextIdentifier contextId)
     BeginScrubbing(WebKit::PlaybackSessionContextIdentifier contextId)
     EndScrubbing(WebKit::PlaybackSessionContextIdentifier contextId)
+#if HAVE(PIP_SKIP_PREROLL)
+    SkipAd(WebKit::PlaybackSessionContextIdentifier contextId)
+#endif
     SeekToTime(WebKit::PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
     FastSeek(WebKit::PlaybackSessionContextIdentifier contextId, double time)
     BeginScanningForward(WebKit::PlaybackSessionContextIdentifier contextId)
@@ -44,6 +47,7 @@ messages -> PlaybackSessionManager {
     HandleControlledElementIDRequest(WebKit::PlaybackSessionContextIdentifier contextId)
     TogglePictureInPicture(WebKit::PlaybackSessionContextIdentifier contextId)
     EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
+    SetPlayerIdentifierForVideoElement(WebKit::PlaybackSessionContextIdentifier contextId)
     ExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     EnterInWindow(WebKit::PlaybackSessionContextIdentifier contextId)
     ExitInWindow(WebKit::PlaybackSessionContextIdentifier contextId)

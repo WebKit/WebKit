@@ -31,7 +31,7 @@
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGImage* CGImageRef;
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
-typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 

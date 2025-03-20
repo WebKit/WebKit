@@ -45,6 +45,9 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  */
 - (void)_sendTestMessage:(NSString *)message withArgument:(nullable id)argument;
 
+/*! @abstract Resets the commands back to the state provided by the manifest. */
+- (void)_resetCommands;
+
 /*!
  @abstract Retrieves the extension sidebar for a given tab, or the default sidebar if `nil` is passed.
  @param tab The tab for which to retrieve the extension sidebar, or `nil` to get the default sidebar.

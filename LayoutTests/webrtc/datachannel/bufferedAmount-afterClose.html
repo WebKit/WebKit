@@ -73,11 +73,6 @@ async function doDataChannelTest(writeChannel)
         setTimeout(() => reject('timed out 1'), 5000);
     });
 
-    const promise = new Promise((resolve, reject) => {
-        localChannel.onbufferedamountlow = resolve;
-        setTimeout(() => reject('timed out 2'), 5000);
-    });
-
     writeChannel(localChannel);
 
     const currentBufferedAmount = localChannel.bufferedAmount;

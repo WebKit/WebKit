@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
+class CSSStyleProperties;
 class CSSComputedStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
@@ -92,7 +92,7 @@ public:
         return adoptRef(*new EditingStyle(style));
     }
 
-    static Ref<EditingStyle> create(const CSSStyleDeclaration* style)
+    static Ref<EditingStyle> create(const CSSStyleProperties* style)
     {
         return adoptRef(*new EditingStyle(style));
     }
@@ -176,7 +176,7 @@ private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&, PropertiesToInclude);
-    WEBCORE_EXPORT explicit EditingStyle(const CSSStyleDeclaration*);
+    WEBCORE_EXPORT explicit EditingStyle(const CSSStyleProperties*);
     explicit EditingStyle(const StyleProperties*);
     EditingStyle(CSSPropertyID, const String& value);
     EditingStyle(CSSPropertyID, CSSValueID);

@@ -80,6 +80,11 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
     gst_audio_info_set_format(&info, gstFormat, static_cast<int>(sampleRate), numberOfChannels, nullptr);
     GST_AUDIO_INFO_LAYOUT(&info) = layout;
 
+    if (!GST_AUDIO_INFO_IS_VALID(&info)) {
+        GST_WARNING("Invalid audio info, unable to create AudioData for it");
+        return nullptr;
+    }
+
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     GST_TRACE("Creating raw audio wrapper with caps %" GST_PTR_FORMAT, caps.get());
     GST_MEMDUMP("Source", sourceData.data(), sourceData.size());
@@ -184,9 +189,11 @@ size_t PlatformRawAudioDataGStreamer::memoryCost() const
     return gst_buffer_get_size(gst_sample_get_buffer(m_sample.get()));
 }
 
-std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
+std::optional<std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
 {
     GstMappedAudioBuffer mappedBuffer(m_sample, GST_MAP_READ);
+    if (!mappedBuffer)
+        return std::nullopt;
 
     switch (format()) {
     case AudioSampleFormat::U8:
@@ -203,7 +210,7 @@ std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std:
         return mappedBuffer.samples<float>(samplesOffset);
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return Vector<std::span<uint8_t>> { };
+    return std::nullopt;
 }
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -227,11 +234,11 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     auto sourceFormat = audioData.format();
     const auto& sourceSample = audioData.sample();
     bool isDestinationInterleaved = isAudioSampleFormatInterleaved(format);
+    auto sourceOffset = frameOffset.value_or(0);
 
 #ifndef GST_DISABLE_GST_DEBUG
     [[maybe_unused]] auto [gstSourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(sourceFormat);
     auto [gstDestinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
-    auto sourceOffset = frameOffset.value_or(0);
     const char* destinationFormatDescription = gst_audio_format_to_string(gstDestinationFormat);
     GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu", layoutToString(sourceLayout), gst_audio_format_to_string(gstSourceFormat), planeIndex, layoutToString(destinationLayout), destinationFormatDescription, sourceOffset);
 #endif
@@ -249,11 +256,13 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     }
 
     auto source = audioData.planesOfSamples(sourceOffset * (audioData.isInterleaved() ? numberOfChannels() : 1));
+    if (!source)
+        return;
 
     if (isDestinationInterleaved) {
         // Copy of all channels of the source into the destination buffer and deinterleave.
         ASSERT(!planeIndex);
-        copyToInterleaved(source, destination, format, copyElementCount);
+        copyToInterleaved(*source, destination, format, copyElementCount);
         return;
     }
 
@@ -265,7 +274,9 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     };
 
     WTF::switchOn(audioElementSpan(format, destination), [&](auto dst) {
-        switchOn(source, [&](auto& src) {
+        switchOn(*source, [&](auto& src) {
+            if (src[planeIndex].size() < copyElementCount)
+                return;
             copyElements(dst, src[planeIndex], copyElementCount);
         });
     });

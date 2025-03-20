@@ -2393,6 +2393,10 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter"_s, "invalid parameter name, OES_draw_buffers_indexed not enabled"_s);
             return nullptr;
         }
+        if (index >= static_cast<GCGLuint>(maxDrawBuffers())) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter"_s, "index out of range"_s);
+            return nullptr;
+        }
         if (target == GraphicsContextGL::COLOR_WRITEMASK)
             return getIndexedBooleanArrayParameter(target, index);
         return m_context->getIntegeri(target, index);

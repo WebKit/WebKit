@@ -27,17 +27,31 @@
 #include "AccessibilityObject.h"
 #include <wtf/StdLibExtras.h>
 
-#define TEXT_MARKER_ASSERT(assertion) do { \
+#define TEXT_MARKER_LOG(methodName) do { \
+    RELEASE_LOG(Accessibility, "[AX Thread Text Marker] hit assertion in %" PUBLIC_LOG_STRING, methodName); \
+} while (0)
+
+#define TEXT_MARKER_ASSERT(assertion, methodName) do { \
+    if (!(assertion)) \
+        TEXT_MARKER_LOG(methodName); \
     std::string debugString = "Text marker origin: " + originToString(origin()).utf8().toStdString(); \
-    RELEASE_ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
+    ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
 } while (0)
-#define TEXT_MARKER_ASSERT_SINGLE(assertion, marker) do { \
+#define TEXT_MARKER_ASSERT_SINGLE(assertion, methodName, marker) do { \
+    if (!(assertion)) \
+        TEXT_MARKER_LOG(methodName); \
     std::string debugString = "Text marker origin: " + originToString(marker.origin()).utf8().toStdString(); \
-    RELEASE_ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
+    ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
 } while (0)
-#define TEXT_MARKER_ASSERT_DOBULE(assertion, marker1, marker2) do { \
+#define TEXT_MARKER_ASSERT_DOUBLE(assertion, methodName, marker1, marker2) do { \
+    if (!(assertion)) \
+        TEXT_MARKER_LOG(methodName); \
     std::string debugString = "Text marker origins: " + originToString(marker1.origin()).utf8().toStdString() + ", " + originToString(marker2.origin()).utf8().data(); \
-    RELEASE_ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
+    ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
+} while (0)
+#define TEXT_MARKER_ASSERT_NOT_REACHED(methodName) do { \
+    TEXT_MARKER_LOG(methodName); \
+    ASSERT_NOT_REACHED(); \
 } while (0)
 
 namespace WebCore {
@@ -268,6 +282,7 @@ public:
     // True if this marker points to an object with non-empty text runs.
     bool isInTextRun() const;
     AXTextMarker convertToDomOffset() const;
+    void clampOffsetToLengthIfNeeded(unsigned) const;
 
     // Find the next or previous marker, optionally stopping at the given ID and returning an invalid marker.
     AXTextMarker findMarker(AXDirection, CoalesceObjectBreaks = CoalesceObjectBreaks::Yes, IgnoreBRs = IgnoreBRs::No, std::optional<AXID> = std::nullopt) const;

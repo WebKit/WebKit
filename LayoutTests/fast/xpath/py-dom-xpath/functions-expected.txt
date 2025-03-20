@@ -81,6 +81,7 @@ PASS string(number("..1"))
 PASS string(number("1.."))
 PASS string(number(".-1"))
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

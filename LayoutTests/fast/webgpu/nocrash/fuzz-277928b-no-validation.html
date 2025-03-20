@@ -37,8 +37,12 @@ async function run() {
     let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, loadOp: 'clear', storeOp: 'store' }] });
     renderPassEncoder.executeBundles([renderBundle2, renderBundle]);
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

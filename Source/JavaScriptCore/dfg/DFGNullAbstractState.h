@@ -37,7 +37,7 @@ struct Node;
 // to not pass any abstract state. This works if the templatized code also does a check (using the
 // operator bool) to see if the state is valid.
 class NullAbstractState {
-    WTF_MAKE_TZONE_ALLOCATED(NullAbstractState);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(NullAbstractState);
 public:
     NullAbstractState() { }
     

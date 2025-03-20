@@ -77,6 +77,9 @@
     if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
+    if (RetainPtr baseScrollView = dynamic_objc_cast<WKBaseScrollView>(scrollView))
+        [baseScrollView updateInteractiveScrollVelocity];
+
     scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
 }
 

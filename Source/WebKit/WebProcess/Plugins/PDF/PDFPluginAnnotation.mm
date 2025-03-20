@@ -58,10 +58,8 @@ RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotatio
 {
     if (annotationIsWidgetOfType(annotation, WidgetType::Text))
         return PDFPluginTextAnnotation::create(annotation, plugin);
-#if PLATFORM(MAC)
     if (annotationIsWidgetOfType(annotation, WidgetType::Choice))
         return PDFPluginChoiceAnnotation::create(annotation, plugin);
-#endif
 
     return nullptr;
 }

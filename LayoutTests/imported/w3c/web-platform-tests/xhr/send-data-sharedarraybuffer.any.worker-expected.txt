@@ -29,6 +29,9 @@ FAIL sending a BigInt64Array backed by a SharedArrayBuffer assert_throws_js: fun
 FAIL sending a BigUint64Array backed by a SharedArrayBuffer assert_throws_js: function "function() {
             xhr.send(arr)
         }" did not throw
+FAIL sending a Float16Array backed by a SharedArrayBuffer assert_throws_js: function "function() {
+            xhr.send(arr)
+        }" did not throw
 FAIL sending a Float32Array backed by a SharedArrayBuffer assert_throws_js: function "function() {
             xhr.send(arr)
         }" did not throw

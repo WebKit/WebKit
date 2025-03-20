@@ -28,6 +28,10 @@ function test()
 
             InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
 
+            InspectorTest.expectNull(animation._effect, "Animation should not start with effect.");
+            InspectorTest.log("Updating effect...\n");
+            await animation.ensureEffect();
+
             let oldKeyframes = animation.keyframes;
             InspectorTest.expectNotEmpty(oldKeyframes, "Animation should have an effect.");
 
@@ -36,6 +40,10 @@ function test()
                 animation.awaitEvent(WI.Animation.Event.EffectChanged),
                 InspectorTest.evaluateInPage(`window.animation.effect = new KeyframeEffect(window.animation.effect.target, [{opacity: 1}], {})`),
             ]);
+
+            InspectorTest.expectNull(animation._effect, "Animation should need to update effect.");
+            InspectorTest.log("Updating effect...\n");
+            await animation.ensureEffect();
 
             let newKeyframes = animation.keyframes;
             InspectorTest.expectNotEmpty(newKeyframes, "Animation should have an effect.");
@@ -59,6 +67,8 @@ function test()
 
             InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
 
+            // Effect will carry over from previous test case.
+
             let oldKeyframes = animation.keyframes;
             InspectorTest.expectNotEmpty(oldKeyframes, "Animation should have an effect.");
 
@@ -67,6 +77,10 @@ function test()
                 animation.awaitEvent(WI.Animation.Event.EffectChanged),
                 InspectorTest.evaluateInPage(`window.animation.effect = null`),
             ]);
+
+            InspectorTest.expectNull(animation._effect, "Animation should need to update effect.");
+            InspectorTest.log("Updating effect...\n");
+            await animation.ensureEffect();
 
             let newKeyframes = animation.keyframes;
             InspectorTest.expectEmpty(newKeyframes, "Animation should not have an effect.");

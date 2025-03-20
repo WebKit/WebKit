@@ -31,6 +31,9 @@
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
+#if HAVE(PIP_SKIP_PREROLL)
+#include <WebCore/MediaSession.h>
+#endif
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/PlaybackSessionModelMediaElement.h>
@@ -111,7 +114,14 @@ private:
     PlaybackSessionContextIdentifier m_contextId;
 };
 
-class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, private IPC::MessageReceiver, public CanMakeCheckedPtr<PlaybackSessionManager> {
+class PlaybackSessionManager
+    : public RefCounted<PlaybackSessionManager>
+    , private IPC::MessageReceiver
+    , public CanMakeCheckedPtr<PlaybackSessionManager>
+#if HAVE(PIP_SKIP_PREROLL)
+    , public WebCore::MediaSessionObserver
+#endif
+    {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionManager);
 public:
@@ -133,6 +143,10 @@ public:
     WebCore::HTMLMediaElement* mediaElementWithContextId(PlaybackSessionContextIdentifier) const;
     WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
 
+#if HAVE(PIP_SKIP_PREROLL)
+    void actionHandlersChanged() final;
+#endif
+
 #if !RELEASE_LOG_DISABLED
     void sendLogIdentifierForMediaElement(WebCore::HTMLMediaElement&);
 #endif
@@ -151,6 +165,9 @@ private:
     void removeContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
+#if HAVE(PIP_SKIP_PREROLL)
+    void setMediaSessionAndRegisterAsObserver();
+#endif
 
     // Interface to PlaybackSessionInterfaceContext
     void durationChanged(PlaybackSessionContextIdentifier, double);
@@ -172,6 +189,9 @@ private:
     void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool);
     void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
     void isImmersiveVideoChanged(PlaybackSessionContextIdentifier, bool);
+#if HAVE(PIP_SKIP_PREROLL)
+    void canSkipAdChanged(PlaybackSessionContextIdentifier, bool);
+#endif
 
     // Messages from PlaybackSessionManagerProxy
     void play(PlaybackSessionContextIdentifier);
@@ -191,6 +211,7 @@ private:
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
+    void setPlayerIdentifierForVideoElement(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier);
     void enterInWindow(PlaybackSessionContextIdentifier);
     void exitInWindow(PlaybackSessionContextIdentifier);
@@ -200,6 +221,9 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
     void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
+#if HAVE(PIP_SKIP_PREROLL)
+    void skipAd(PlaybackSessionContextIdentifier);
+#endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
@@ -219,6 +243,10 @@ private:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
+#if HAVE(PIP_SKIP_PREROLL)
+    WeakPtr<WebCore::MediaSession> m_mediaSession;
+    bool m_canSkipAd { false };
+#endif
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

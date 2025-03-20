@@ -55,7 +55,7 @@ private:
     CSSFontVariationValue(FontTag, Ref<CSSPrimitiveValue>&&);
 
     FontTag m_tag;
-    Ref<CSSPrimitiveValue> m_value;
+    const Ref<CSSPrimitiveValue> m_value;
 };
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 
 #import "APIHTTPCookieStore.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::HTTPCookieStore> {
 
 @interface WKHTTPCookieStore () <WKObject> {
 @package
-    API::ObjectStorage<API::HTTPCookieStore> _cookieStore;
+    AlignedStorage<API::HTTPCookieStore> _cookieStore;
 }
 @end

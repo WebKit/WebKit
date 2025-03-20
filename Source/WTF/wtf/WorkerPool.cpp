@@ -125,4 +125,10 @@ void WorkerPool::postTask(Function<void()>&& task)
     m_condition->notifyOne(locker);
 }
 
+unsigned WorkerPool::numberOfTasks() const
+{
+    Locker locker { *m_lock };
+    return m_tasks.size();
+}
+
 }

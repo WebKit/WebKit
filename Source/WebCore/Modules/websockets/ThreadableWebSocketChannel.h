@@ -70,12 +70,10 @@ public:
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
     virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
 
-    enum SendResult { SendSuccess, SendFail };
-    virtual SendResult send(CString&&) = 0;
-    virtual SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
-    virtual SendResult send(Blob&) = 0;
+    virtual void send(CString&&) = 0;
+    virtual void send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
+    virtual void send(Blob&) = 0;
 
-    virtual unsigned bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
     virtual void fail(String&& reason) = 0;

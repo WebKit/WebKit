@@ -94,6 +94,30 @@ function doTest(codec, title)
 doTest('vp8', "VP8");
 doTest('vp09.00.10.08', "VP9");
 doTest('avc1.42001E', "H.264");
+
+promise_test(async t => {
+    const encoder = new VideoEncoder({
+        output(chunk, metadata) { },
+        error(e) { }
+    });
+
+    const config = {
+        codec:'avc1.42001E',
+        width:320,
+        height:240,
+        bitrate:1000000,
+        framerate: 10
+    };
+
+    encoder.configure(config);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    encoder.reset();
+
+    config.bitrate = 100000;
+    config.framerate = 1;
+
+    encoder.configure(config);
+}, "Configure after a reset");
 </script>
 </body>
 </html>

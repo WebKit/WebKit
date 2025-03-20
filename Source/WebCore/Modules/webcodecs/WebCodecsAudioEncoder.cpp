@@ -299,8 +299,8 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
         // FIXME: These checks are not yet spec-compliant. See also https://github.com/w3c/webcodecs/issues/716
         if (m_baseConfiguration.numberOfChannels != audioData->numberOfChannels()
             || m_baseConfiguration.sampleRate != audioData->sampleRate()) {
-            queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this]() mutable {
-                closeEncoder(Exception { ExceptionCode::EncodingError, "Input audio buffer is incompatible with codec parameters"_s });
+            queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& encoder) mutable {
+                encoder.closeEncoder(Exception { ExceptionCode::EncodingError, "Input audio buffer is incompatible with codec parameters"_s });
             });
             return WebCodecsControlMessageOutcome::Processed;
         }

@@ -53,7 +53,7 @@ public:
 private:
     CanvasPattern(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
 
-    Ref<Pattern> m_pattern;
+    const Ref<Pattern> m_pattern;
     bool m_originClean;
 };
 

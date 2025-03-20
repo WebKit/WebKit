@@ -303,7 +303,7 @@ void WebAnimationTime::dump(TextStream& ts) const
         return;
     }
     ASSERT(m_type == Type::Percentage);
-    ts << m_value << "%";
+    ts << m_value << '%';
     return;
 }
 

@@ -46,7 +46,7 @@ private:
     void prepareForFileAccess() override;
     void revokeFileAccess() override;
 
-    RefPtr<SandboxExtension> m_sandboxExtension;
+    const RefPtr<SandboxExtension> m_sandboxExtension;
 };
 
 }

@@ -276,12 +276,12 @@ std::pair<float, std::optional<unsigned>> ScrollSnapAnimatorState::targetOffsetF
 
 TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)
 {
-    ts << "ScrollSnapAnimatorState";
-    ts.dumpProperty("snap offsets x", state.snapOffsetsForAxis(ScrollEventAxis::Horizontal));
-    ts.dumpProperty("snap offsets y", state.snapOffsetsForAxis(ScrollEventAxis::Vertical));
+    ts << "ScrollSnapAnimatorState"_s;
+    ts.dumpProperty("snap offsets x"_s, state.snapOffsetsForAxis(ScrollEventAxis::Horizontal));
+    ts.dumpProperty("snap offsets y"_s, state.snapOffsetsForAxis(ScrollEventAxis::Vertical));
 
-    ts.dumpProperty("active snap index x", state.activeSnapIndexForAxis(ScrollEventAxis::Horizontal));
-    ts.dumpProperty("active snap index y", state.activeSnapIndexForAxis(ScrollEventAxis::Vertical));
+    ts.dumpProperty("active snap index x"_s, state.activeSnapIndexForAxis(ScrollEventAxis::Horizontal));
+    ts.dumpProperty("active snap index y"_s, state.activeSnapIndexForAxis(ScrollEventAxis::Vertical));
 
     return ts;
 }

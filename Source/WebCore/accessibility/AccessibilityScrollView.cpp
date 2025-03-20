@@ -177,7 +177,9 @@ void AccessibilityScrollView::removeChildScrollbar(AccessibilityObject* scrollba
     if (!scrollbar)
         return;
 
-    size_t position = m_children.find(Ref { *scrollbar });
+    size_t position = m_children.findIf([&scrollbar] (const Ref<AXCoreObject>& child) {
+        return child.ptr() == scrollbar;
+    });
     if (position != notFound) {
         m_children[position]->detachFromParent();
         m_children.remove(position);

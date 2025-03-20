@@ -34,22 +34,21 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT StaticNodeList final : public NodeList {
+class StaticNodeList final : public NodeList {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
 public:
+    WEBCORE_EXPORT virtual ~StaticNodeList() = default;
+
     static Ref<StaticNodeList> create(Vector<Ref<Node>>&& nodes = { })
     {
         return adoptRef(*new StaticNodeList(WTFMove(nodes)));
     }
 
-    unsigned length() const override;
-    Node* item(unsigned index) const override;
+    WEBCORE_EXPORT unsigned length() const override;
+    WEBCORE_EXPORT Node* item(unsigned index) const override;
 
 private:
-    StaticNodeList(Vector<Ref<Node>>&& nodes)
-        : m_nodes(WTFMove(nodes))
-    { }
-
+    WEBCORE_EXPORT StaticNodeList(Vector<Ref<Node>>&& nodes);
     Vector<Ref<Node>> m_nodes;
 };
 

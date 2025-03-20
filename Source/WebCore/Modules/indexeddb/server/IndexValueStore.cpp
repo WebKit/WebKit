@@ -85,6 +85,24 @@ bool IndexValueStore::contains(const IDBKeyData& key) const
     return true;
 }
 
+std::optional<Vector<IDBKeyData>> IndexValueStore::valueKeys(const IDBKeyData& key) const
+{
+    auto* entry = m_records.get(key);
+    if (!entry)
+        return std::nullopt;
+
+    return entry->keys();
+}
+
+Vector<IDBKeyData> IndexValueStore::allKeys() const
+{
+    Vector<IDBKeyData> result;
+    for (auto& key : m_records.keys())
+        result.append(key);
+
+    return result;
+}
+
 IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey)
 {
     auto result = m_records.add(indexKey, nullptr);
@@ -104,6 +122,9 @@ IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData
 void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey)
 {
     auto iterator = m_records.find(indexKey);
+    if (iterator == m_records.end())
+        return;
+
     if (!iterator->value)
         return;
 
@@ -111,6 +132,12 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
         m_records.remove(iterator);
         m_orderedKeys.erase(indexKey);
     }
+}
+
+void IndexValueStore::removeRecord(const IDBKeyData& indexKey)
+{
+    m_records.remove(indexKey);
+    m_orderedKeys.erase(indexKey);
 }
 
 void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)
@@ -129,6 +156,17 @@ void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKey
         m_orderedKeys.erase(entry);
         m_records.remove(entry);
     }
+}
+
+Vector<IDBKeyData> IndexValueStore::findKeysWithValueKey(const IDBKeyData& valueKey)
+{
+    Vector<IDBKeyData> keys;
+    for (auto& [key, entry] : m_records) {
+        if (entry->contains(valueKey))
+            keys.append(key);
+    }
+
+    return keys;
 }
 
 IDBKeyData IndexValueStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& range) const

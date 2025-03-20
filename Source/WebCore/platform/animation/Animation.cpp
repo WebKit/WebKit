@@ -165,10 +165,10 @@ auto Animation::initialName() -> const Style::ScopedName&
 TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionProperty)
 {
     switch (transitionProperty.mode) {
-    case Animation::TransitionMode::All: ts << "all"; break;
-    case Animation::TransitionMode::None: ts << "none"; break;
+    case Animation::TransitionMode::All: ts << "all"_s; break;
+    case Animation::TransitionMode::None: ts << "none"_s; break;
     case Animation::TransitionMode::SingleProperty: ts << animatablePropertyAsString(transitionProperty.animatableProperty); break;
-    case Animation::TransitionMode::UnknownProperty: ts << "unknown property"; break;
+    case Animation::TransitionMode::UnknownProperty: ts << "unknown property"_s; break;
     }
     return ts;
 }
@@ -176,10 +176,10 @@ TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionP
 TextStream& operator<<(TextStream& ts, Animation::Direction direction)
 {
     switch (direction) {
-    case Animation::Direction::Normal: ts << "normal"; break;
-    case Animation::Direction::Alternate: ts << "alternate"; break;
-    case Animation::Direction::Reverse: ts << "reverse"; break;
-    case Animation::Direction::AlternateReverse: ts << "alternate-reverse"; break;
+    case Animation::Direction::Normal: ts << "normal"_s; break;
+    case Animation::Direction::Alternate: ts << "alternate"_s; break;
+    case Animation::Direction::Reverse: ts << "reverse"_s; break;
+    case Animation::Direction::AlternateReverse: ts << "alternate-reverse"_s; break;
     }
     return ts;
 }
@@ -187,8 +187,8 @@ TextStream& operator<<(TextStream& ts, Animation::Direction direction)
 TextStream& operator<<(TextStream& ts, Animation::TimelineKeyword keyword)
 {
     switch (keyword) {
-    case Animation::TimelineKeyword::Auto: ts << "auto"; break;
-    case Animation::TimelineKeyword::None: ts << "none"; break;
+    case Animation::TimelineKeyword::Auto: ts << "auto"_s; break;
+    case Animation::TimelineKeyword::None: ts << "none"_s; break;
     }
     return ts;
 }
@@ -198,14 +198,14 @@ TextStream& operator<<(TextStream& ts, const Animation::AnonymousScrollTimeline&
     auto hasScroller = timeline.scroller != Scroller::Nearest;
     auto hasAxis = timeline.axis != ScrollAxis::Block;
 
-    ts << "scroll(";
+    ts << "scroll("_s;
     if (hasScroller)
         ts << (timeline.scroller == Scroller::Root ? "root" : "self");
     if (hasScroller && hasAxis)
-        ts << " ";
+        ts << ' ';
     if (hasAxis)
         ts << timeline.axis;
-    ts << ")";
+    ts << ')';
 
     return ts;
 }
@@ -217,18 +217,18 @@ TextStream& operator<<(TextStream& ts, const Animation::AnonymousViewTimeline& t
     auto hasEndInset = insets.end && insets.end != insets.start;
     auto hasStartInset = (insets.start && !insets.start->isAuto()) || (insets.start && insets.start->isAuto() && hasEndInset);
 
-    ts << "view(";
+    ts << "view("_s;
     if (hasAxis)
         ts << timeline.axis;
     if (hasAxis && hasStartInset)
-        ts << " ";
+        ts << ' ';
     if (hasStartInset)
         ts << *insets.start;
     if (hasStartInset && hasEndInset)
-        ts << " ";
+        ts << ' ';
     if (hasEndInset)
         ts << *insets.end;
-    ts << ")";
+    ts << ')';
 
     return ts;
 }
@@ -251,17 +251,17 @@ TextStream& operator<<(TextStream& ts, const Animation::Timeline& timeline)
 
 TextStream& operator<<(TextStream& ts, const Animation& animation)
 {
-    ts.dumpProperty("property", animation.property());
-    ts.dumpProperty("name", animation.name().name);
-    ts.dumpProperty("iteration count", animation.iterationCount());
-    ts.dumpProperty("delay", animation.iterationCount());
-    ts.dumpProperty("duration", animation.duration());
-    ts.dumpProperty("timeline", animation.timeline());
+    ts.dumpProperty("property"_s, animation.property());
+    ts.dumpProperty("name"_s, animation.name().name);
+    ts.dumpProperty("iteration count"_s, animation.iterationCount());
+    ts.dumpProperty("delay"_s, animation.iterationCount());
+    ts.dumpProperty("duration"_s, animation.duration());
+    ts.dumpProperty("timeline"_s, animation.timeline());
     if (animation.timingFunction())
-        ts.dumpProperty("timing function", *animation.timingFunction());
-    ts.dumpProperty("direction", animation.direction());
-    ts.dumpProperty("fill-mode", animation.fillMode());
-    ts.dumpProperty("play-state", animation.playState());
+        ts.dumpProperty("timing function"_s, *animation.timingFunction());
+    ts.dumpProperty("direction"_s, animation.direction());
+    ts.dumpProperty("fill-mode"_s, animation.fillMode());
+    ts.dumpProperty("play-state"_s, animation.playState());
 
     return ts;
 }

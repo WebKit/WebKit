@@ -74,13 +74,6 @@ private:
     String m_data;
 };
 
-inline unsigned Node::length() const
-{
-    if (auto characterData = dynamicDowncast<CharacterData>(*this))
-        return characterData->length();
-    return countChildNodes();
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CharacterData)

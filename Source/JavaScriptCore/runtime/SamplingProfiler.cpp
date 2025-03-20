@@ -766,7 +766,7 @@ void SamplingProfiler::pause()
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThreadWithLock()
 {
     ASSERT(m_lock.isLocked());
-    m_jscExecutionThread = &Thread::current();
+    m_jscExecutionThread = &Thread::currentSingleton();
 }
 
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()

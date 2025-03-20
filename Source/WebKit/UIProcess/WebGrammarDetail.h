@@ -58,4 +58,8 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGrammarDetail) \
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::GrammarDetail; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // WebGrammarDetail_h

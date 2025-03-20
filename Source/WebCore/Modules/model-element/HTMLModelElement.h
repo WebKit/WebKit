@@ -55,6 +55,7 @@ class GraphicsLayer;
 class LayoutSize;
 class Model;
 class ModelPlayer;
+class ModelPlayerProvider;
 class MouseEvent;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -214,6 +215,9 @@ private:
 #endif
     std::optional<PlatformLayerIdentifier> modelContentsLayerID() const final;
 
+    Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType , ContainerNode& parentOfInsertedTree) override;
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
+
     void defaultEventHandler(Event&) final;
     void dragDidStart(MouseEvent&);
     void dragDidChange(MouseEvent&);
@@ -245,6 +249,7 @@ private:
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
     SharedBufferBuilder m_data;
+    WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };

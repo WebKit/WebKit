@@ -211,11 +211,14 @@ TEST(WKWebView, IsDisplayingPDF)
 
     runTest(webView);
 
+    // FIXME: <webkit.org/b/288406> REGRESSION(290220@main): [ iOS Debug ] TestWebKitAPI.WKWebView.IsDisplayingPDF is a constant timeout
+#if !PLATFORM(IOS_FAMILY) || defined(NDEBUG)
 #if ENABLE(UNIFIED_PDF)
     if constexpr (TestWebKitAPI::unifiedPDFForTestingEnabled) {
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
         runTest(webView);
     }
+#endif
 #endif
 }
 

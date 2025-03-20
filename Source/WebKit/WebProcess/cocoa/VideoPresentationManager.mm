@@ -122,6 +122,24 @@ void VideoPresentationInterfaceContext::documentVisibilityChanged(bool isDocumen
         manager->documentVisibilityChanged(m_contextId, isDocumentVisible);
 }
 
+void VideoPresentationInterfaceContext::isChildOfElementFullscreenChanged(bool isChildOfElementFullscreen)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->isChildOfElementFullscreenChanged(m_contextId, isChildOfElementFullscreen);
+}
+
+void VideoPresentationInterfaceContext::audioSessionCategoryChanged(WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->audioSessionCategoryChanged(m_contextId, category, mode, policy);
+}
+
+void VideoPresentationInterfaceContext::hasBeenInteractedWith()
+{
+    if (RefPtr manager = m_manager.get())
+        manager->hasBeenInteractedWith(m_contextId);
+}
+
 void VideoPresentationInterfaceContext::videoDimensionsChanged(const FloatSize& videoDimensions)
 {
     if (m_manager)
@@ -324,6 +342,20 @@ void VideoPresentationManager::willRemoveLayerForID(PlaybackSessionContextIdenti
     removeClientForContext(contextId);
 }
 
+void VideoPresentationManager::setPlayerIdentifierForVideoElement(HTMLVideoElement& videoElement)
+{
+    RefPtr player = videoElement.player();
+    if (!player)
+        return;
+
+    auto identifier = player->identifier();
+    if (!identifier)
+        return;
+
+    auto contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
+    setPlayerIdentifier(contextId, identifier);
+}
+
 void VideoPresentationManager::swapFullscreenModes(WebCore::HTMLVideoElement& firstElement, WebCore::HTMLVideoElement& secondElement)
 {
     auto firstContextId = m_playbackSessionManager->contextIdForMediaElement(firstElement);
@@ -480,13 +512,13 @@ void VideoPresentationManager::exitVideoFullscreenForVideoElement(HTMLVideoEleme
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(*contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, videoElementPtr = &videoElement, interface = WTFMove(interface), completionHandler = WTFMove(completionHandler)](auto success) mutable {
+    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(*contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, videoElement = Ref { videoElement }, interface = WTFMove(interface), completionHandler = WTFMove(completionHandler)](auto success) mutable {
         if (!success) {
             completionHandler(false);
             return;
         }
 
-        if (m_videoElementInPictureInPicture == videoElementPtr)
+        if (m_videoElementInPictureInPicture == videoElement.ptr())
             m_videoElementInPictureInPicture = nullptr;
 
         protectedThis->setCurrentlyInFullscreen(interface, false);
@@ -553,6 +585,24 @@ void VideoPresentationManager::documentVisibilityChanged(PlaybackSessionContextI
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::VideoPresentationManagerProxy::SetDocumentVisibility(contextId, isDocumentVisibile));
+}
+
+void VideoPresentationManager::isChildOfElementFullscreenChanged(PlaybackSessionContextIdentifier contextId, bool isChildOfElementFullscreen)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManagerProxy::SetIsChildOfElementFullscreen(contextId, isChildOfElementFullscreen));
+}
+
+void VideoPresentationManager::audioSessionCategoryChanged(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManagerProxy::AudioSessionCategoryChanged(contextId, category, mode, policy));
+}
+
+void VideoPresentationManager::hasBeenInteractedWith(PlaybackSessionContextIdentifier contextId)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManagerProxy::HasBeenInteractedWith(contextId));
 }
 
 void VideoPresentationManager::videoDimensionsChanged(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)

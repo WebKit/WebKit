@@ -220,6 +220,11 @@ RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
     return WebProcess::singleton().remoteMediaPlayerManager();
 }
+
+Ref<RemoteMediaPlayerManager> GPUProcessConnection::protectedMediaPlayerManager()
+{
+    return mediaPlayerManager();
+}
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
@@ -228,6 +233,11 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
     if (!m_audioSourceProviderManager)
         m_audioSourceProviderManager = RemoteAudioSourceProviderManager::create();
     return *m_audioSourceProviderManager;
+}
+
+Ref<RemoteAudioSourceProviderManager> GPUProcessConnection::protectedAudioSourceProviderManager()
+{
+    return audioSourceProviderManager();
 }
 #endif
 

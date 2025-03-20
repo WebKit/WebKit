@@ -61,6 +61,9 @@ RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& docume
 
 RenderPtr<RenderObject> TextContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
+    if (m_text.isEmpty() && altText().isEmpty())
+        return { };
+
     auto fragment = createRenderer<RenderTextFragment>(document, m_text);
     fragment->setAltText(altText());
     return fragment;

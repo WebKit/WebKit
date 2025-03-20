@@ -111,7 +111,7 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
     if (m_positionedChildren.isEmpty())
         return;
 
-    auto verifyPositionedChildRendererExpectation = [](RenderObject& renderer) {
+    auto verifyPositionedChildRendererExpectation = [](auto& renderer) {
 #if !defined(NDEBUG)
         ASSERT(renderer.isSVGLayerAwareRenderer()); // Pre-condition to enter m_positionedChildren
         ASSERT(!renderer.isRenderSVGRoot()); // There is only one outermost RenderSVGRoot object

@@ -39,11 +39,20 @@ fn(async (t) => {
   const gpu = getGPU(t.rec);
   const adapter = await gpu.requestAdapter();
   assert(adapter !== null);
-  const device = await adapter.requestDevice(...args);
+  const device = await t.requestDeviceTracked(adapter, ...args);
   assert(device !== null);
 
-  // Default device should have no features.
-  t.expect(device.features.size === 0, 'Default device should not have any features');
+  if (device.features.size === 1) {
+    t.expect(
+      device.features.has('core-features-and-limits'),
+      'Default device should not have any features other than "core-features-and-limits"'
+    );
+  } else {
+    t.expect(
+      device.features.size === 0,
+      'Default device should not have any features other than "core-features-and-limits"'
+    );
+  }
   // All limits should be defaults.
   const limitInfo = getDefaultLimitsForAdapter(adapter);
   for (const limit of kLimits) {
@@ -52,8 +61,6 @@ fn(async (t) => {
       `Expected ${limit} == default: ${device.limits[limit]} != ${limitInfo[limit].default}`
     );
   }
-
-  device.destroy();
 });
 
 g.test('invalid').
@@ -73,7 +80,7 @@ fn(async (t) => {
 
   {
     // Request a device and destroy it immediately afterwards.
-    const device = await adapter.requestDevice();
+    const device = await t.requestDeviceTracked(adapter);
     assert(device !== null);
     device.destroy();
     const lostInfo = await device.lost;
@@ -83,7 +90,7 @@ fn(async (t) => {
   // The adapter should now be invalid since a device was lost. Requesting another device should
   // return an already lost device.
   const kTimeoutMS = 1000;
-  const device = await adapter.requestDevice();
+  const device = await t.requestDeviceTracked(adapter);
   const lost = await raceWithRejectOnTimeout(device.lost, kTimeoutMS, 'device was not lost');
   t.expect(lost.reason === 'unknown');
 });
@@ -119,12 +126,16 @@ fn(async (t) => {
       if (awaitInitialError) {
         await assertReject(
           'TypeError',
-          adapter.requestDevice({ requiredFeatures: ['unknown-feature'] })
+          t.requestDeviceTracked(adapter, {
+            requiredFeatures: ['unknown-feature']
+          })
         );
       } else {
         t.shouldReject(
           'TypeError',
-          adapter.requestDevice({ requiredFeatures: ['unknown-feature'] })
+          t.requestDeviceTracked(adapter, {
+            requiredFeatures: ['unknown-feature']
+          })
         );
       }
       break;
@@ -133,19 +144,23 @@ fn(async (t) => {
       if (awaitInitialError) {
         await assertReject(
           'OperationError',
-          adapter.requestDevice({ requiredLimits: { minUniformBufferOffsetAlignment: 255 } })
+          t.requestDeviceTracked(adapter, {
+            requiredLimits: { minUniformBufferOffsetAlignment: 255 }
+          })
         );
       } else {
         t.shouldReject(
           'OperationError',
-          adapter.requestDevice({ requiredLimits: { minUniformBufferOffsetAlignment: 255 } })
+          t.requestDeviceTracked(adapter, {
+            requiredLimits: { minUniformBufferOffsetAlignment: 255 }
+          })
         );
       }
       break;
   }
 
   let device = undefined;
-  const promise = adapter.requestDevice();
+  const promise = t.requestDeviceTracked(adapter);
   if (awaitSuccess) {
     device = await promise;
     assert(device !== null);
@@ -159,7 +174,7 @@ fn(async (t) => {
   }
 
   const kTimeoutMS = 1000;
-  const lostDevice = await adapter.requestDevice();
+  const lostDevice = await t.requestDeviceTracked(adapter);
   const lost = await raceWithRejectOnTimeout(
     lostDevice.lost,
     kTimeoutMS,
@@ -186,7 +201,7 @@ fn(async (t) => {
 
   t.shouldReject(
     'TypeError',
-    adapter.requestDevice({ requiredFeatures: ['unknown-feature'] })
+    t.requestDeviceTracked(adapter, { requiredFeatures: ['unknown-feature'] })
   );
 });
 
@@ -205,7 +220,7 @@ fn(async (t) => {
   const adapter = await gpu.requestAdapter();
   assert(adapter !== null);
 
-  const promise = adapter.requestDevice({ requiredFeatures: [feature] });
+  const promise = t.requestDeviceTracked(adapter, { requiredFeatures: [feature] });
   if (adapter.features.has(feature)) {
     const device = await promise;
     t.expect(device.features.has(feature), 'Device should include the required feature');
@@ -218,16 +233,24 @@ g.test('limits,unknown').
 desc(
   `
     Test that specifying limits that aren't part of the supported limit set causes
-    requestDevice to reject.`
+    requestDevice to reject unless the value is undefined.
+    Also tests that the invalid requestDevice() call does not expire the adapter.`
 ).
 fn(async (t) => {
   const gpu = getGPU(t.rec);
   const adapter = await gpu.requestAdapter();
   assert(adapter !== null);
 
-  const requiredLimits = { unknownLimitName: 9000 };
+  t.shouldReject(
+    'OperationError',
+    t.requestDeviceTracked(adapter, { requiredLimits: { unknownLimitName: 9000 } })
+  );
+  // Adapter is still alive because the requestDevice() call was invalid.
 
-  t.shouldReject('OperationError', adapter.requestDevice({ requiredLimits }));
+  const device = await t.requestDeviceTracked(adapter, {
+    requiredLimits: { unknownLimitName: undefined }
+  });
+  assert(device !== null);
 });
 
 g.test('limits,supported').
@@ -235,10 +258,14 @@ desc(
   `
     Test that each supported limit can be specified with valid values.
     - Tests each limit with the default values given by the spec
-    - Tests each limit with the supported values given by the adapter`
+    - Tests each limit with the supported values given by the adapter
+    - Tests each limit with undefined`
 ).
 params((u) =>
-u.combine('limit', kLimits).beginSubcases().combine('limitValue', ['default', 'adapter'])
+u.
+combine('limit', kLimits).
+beginSubcases().
+combine('limitValue', ['default', 'adapter', 'undefined'])
 ).
 fn(async (t) => {
   const { limit, limitValue } = t.params;
@@ -249,22 +276,44 @@ fn(async (t) => {
 
   const limitInfo = getDefaultLimitsForAdapter(adapter);
   let value = -1;
+  let result = -1;
   switch (limitValue) {
     case 'default':
       value = limitInfo[limit].default;
+      result = value;
       break;
     case 'adapter':
       value = adapter.limits[limit];
+      result = value;
+      break;
+    case 'undefined':
+      value = undefined;
+      result = limitInfo[limit].default;
       break;
   }
 
-  const device = await adapter.requestDevice({ requiredLimits: { [limit]: value } });
+  const requiredLimits = { [limit]: value };
+
+  if (
+  limit === 'maxStorageBuffersInFragmentStage' ||
+  limit === 'maxStorageBuffersInVertexStage')
+  {
+    requiredLimits['maxStorageBuffersPerShaderStage'] = value;
+  }
+
+  if (
+  limit === 'maxStorageTexturesInFragmentStage' ||
+  limit === 'maxStorageTexturesInVertexStage')
+  {
+    requiredLimits['maxStorageTexturesPerShaderStage'] = value;
+  }
+
+  const device = await t.requestDeviceTracked(adapter, { requiredLimits });
   assert(device !== null);
   t.expect(
-    device.limits[limit] === value,
-    'Devices reported limit should match the required limit'
+    device.limits[limit] === result,
+    `Devices reported limit for ${limit}(${device.limits[limit]}) should match the required limit (${result})`
   );
-  device.destroy();
 });
 
 g.test('limit,better_than_supported').
@@ -308,7 +357,7 @@ fn(async (t) => {
     [limit]: clamp(value, { min: 0, max: limitInfo[limit].maximumValue })
   };
 
-  t.shouldReject('OperationError', adapter.requestDevice({ requiredLimits }));
+  t.shouldReject('OperationError', t.requestDeviceTracked(adapter, { requiredLimits }));
 });
 
 g.test('limit,out_of_range').
@@ -363,10 +412,11 @@ fn(async (t) => {
   'OperationError' :
   false;
 
+  const devicePromise = t.requestDeviceTracked(adapter, { requiredLimits });
   if (errorName) {
-    t.shouldReject(errorName, adapter.requestDevice({ requiredLimits }));
+    t.shouldReject(errorName, devicePromise);
   } else {
-    await adapter.requestDevice({ requiredLimits });
+    await devicePromise;
   }
 });
 
@@ -421,8 +471,9 @@ fn(async (t) => {
       break;
   }
 
+  const devicePromise = t.requestDeviceTracked(adapter, { requiredLimits });
   if (success) {
-    const device = await adapter.requestDevice({ requiredLimits });
+    const device = await devicePromise;
     assert(device !== null);
     t.expect(
       device.limits[limit] === limitInfo[limit].default,
@@ -430,6 +481,57 @@ fn(async (t) => {
     );
     device.destroy();
   } else {
-    t.shouldReject('OperationError', adapter.requestDevice({ requiredLimits }));
+    t.shouldReject('OperationError', devicePromise);
+  }
+});
+
+g.test('always_returns_device').
+desc(
+  `
+    Test that if requestAdapter returns an adapter then requestDevice must return a device.
+
+    requestAdapter -> null = ok
+    requestAdapter -> adapter, requestDevice -> device (lost or not) = ok
+    requestAdapter -> adapter, requestDevice = null = Invalid: not spec compliant.
+
+    Note: requestDevice can throw for invalid parameters like requesting features not
+    in the adapter, reqesting limits not in the adapter, requesting limits larger than
+    the maximum for the adapter. Otherwise it does not throw.
+
+    Note: This is a regression test for a Chrome bug crbug.com/349062459
+    Checking that a requestDevice always return a device is checked in other tests above
+    but those tests have 'featureLevel: "compatibility"' set for them by the API that getGPU
+    returns when the test suite is run in compatibility mode.
+
+    This test tries to force both compat and core separately so both code paths are
+    tested in the same browser configuration.
+  `
+).
+params((u) => u.combine('featureLevel', ['core', 'compatibility'])).
+fn(async (t) => {
+  const { featureLevel } = t.params;
+  const gpu = getGPU(t.rec);
+  const adapter = await gpu.requestAdapter({
+    featureLevel
+  });
+  if (adapter) {
+    const device = await t.requestDeviceTracked(adapter);
+    assert(device instanceof GPUDevice, 'requestDevice must return a device or throw');
+
+    if (featureLevel === 'core') {
+      // This check is to make sure something lower-level is not forcing compatibility mode.
+
+      // MAINTENANCE_TODO: Simplify this check (and typecast) once we standardize how to do this.
+      const adapterExtensions = adapter;
+
+
+      t.expect(
+        // Old version of Compat design.
+        adapterExtensions.featureLevel === 'core' ||
+        // Current version of Compat design.
+        device.features.has('core-features-and-limits'),
+        'must not get a Compatibility adapter if not requested'
+      );
+    }
   }
 });

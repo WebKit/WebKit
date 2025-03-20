@@ -8,8 +8,12 @@ async function run() {
     let commandEncoder = device.createCommandEncoder();
     commandEncoder.resolveQuerySet(querySet, 0, 0, buffer, 1280);
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

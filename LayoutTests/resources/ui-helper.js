@@ -324,6 +324,11 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static selectionHitTestOffset()
+    {
+        return this.isIOSFamily() ? 40 : 0;
+    }
+
     static zoomByDoubleTappingAt(x, y)
     {
         console.assert(this.isIOSFamily());
@@ -1093,6 +1098,24 @@ window.UIHelper = class UIHelper {
 
     static midPointOfRect(rect) {
         return { x: rect.left + (rect.width / 2), y: rect.top + (rect.height / 2) };
+    }
+
+    static computeLineBounds(element, firstRunIndex, lastRunIndex = undefined) {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const clientRects = range.getClientRects();
+        const firstRect = clientRects[firstRunIndex];
+        const secondRect = clientRects[lastRunIndex || firstRunIndex];
+        const x = Math.min(firstRect.left, secondRect.left);
+        const y = Math.min(firstRect.top, secondRect.top);
+        const maxX = Math.max(firstRect.left + firstRect.width, secondRect.left + secondRect.width);
+        const maxY = Math.max(firstRect.top + firstRect.height, secondRect.top + secondRect.height);
+        return {
+            top: Math.round(y),
+            left: Math.round(x),
+            width: Math.round(maxX - x),
+            height: Math.round(maxY - y)
+        };
     }
 
     static selectionCaretBackgroundColor()
@@ -1874,9 +1897,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static propertiesOfLayerWithID(layerID)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const script = `uiController.uiScriptComplete(JSON.stringify(uiController.propertiesOfLayerWithID(${layerID})))`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, properties => resolve(JSON.parse(properties)));
+        });
+    }
+
     static getCALayerTree()
     {
-        if (!this.isWebKit2() || !this.isIOSFamily())
+        if (!this.isWebKit2())
             return Promise.resolve();
 
         return new Promise(resolve => {

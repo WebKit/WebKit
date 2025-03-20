@@ -32,15 +32,17 @@
 #import "UTIUtilities.h"
 #import <ImageIO/ImageIO.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#import <pal/cocoa/LockdownModeSoftLink.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RobinHoodHashSet.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
+
+#import <pal/cocoa/LockdownModeSoftLink.h>
 
 namespace WebCore {
 

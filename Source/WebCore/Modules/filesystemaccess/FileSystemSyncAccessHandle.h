@@ -28,10 +28,10 @@
 #include "ActiveDOMObject.h"
 #include "BufferSource.h"
 #include "ExceptionOr.h"
-#include "FileHandle.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/Deque.h>
+#include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -50,7 +50,7 @@ public:
         std::optional<unsigned long long> at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
+    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::FileHandle&&, uint64_t capacity);
     ~FileSystemSyncAccessHandle();
 
     ExceptionOr<void> truncate(unsigned long long size);
@@ -62,7 +62,7 @@ public:
     void invalidate();
 
 private:
-    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
+    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::FileHandle&&, uint64_t capacity);
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     enum class ShouldNotifyBackend : bool { No, Yes };
     void closeInternal(ShouldNotifyBackend);
@@ -74,7 +74,7 @@ private:
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
-    FileHandle m_file;
+    FileSystem::FileHandle m_file;
     bool m_isClosed { false };
     uint64_t m_capacity;
 };

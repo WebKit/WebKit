@@ -38,10 +38,10 @@ namespace WebCore {
 WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
 {
     switch (mode) {
-    case FontSmoothingMode::AutoSmoothing: ts << "auto"; break;
-    case FontSmoothingMode::NoSmoothing: ts << "no-smoothing"; break;
-    case FontSmoothingMode::Antialiased: ts << "antialiased"; break;
-    case FontSmoothingMode::SubpixelAntialiased: ts << "subpixel-antialiased"; break;
+    case FontSmoothingMode::AutoSmoothing: ts << "auto"_s; break;
+    case FontSmoothingMode::NoSmoothing: ts << "no-smoothing"_s; break;
+    case FontSmoothingMode::Antialiased: ts << "antialiased"_s; break;
+    case FontSmoothingMode::SubpixelAntialiased: ts << "subpixel-antialiased"_s; break;
     }
     return ts;
 }
@@ -49,9 +49,9 @@ WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
 WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior::Behavior behavior)
 {
     switch (behavior) {
-    case ExpansionBehavior::Behavior::Forbid: ts << "forbid"; break;
-    case ExpansionBehavior::Behavior::Allow: ts << "allow"; break;
-    case ExpansionBehavior::Behavior::Force: ts << "force"; break;
+    case ExpansionBehavior::Behavior::Forbid: ts << "forbid"_s; break;
+    case ExpansionBehavior::Behavior::Allow: ts << "allow"_s; break;
+    case ExpansionBehavior::Behavior::Force: ts << "force"_s; break;
     }
     return ts;
 }
@@ -67,9 +67,9 @@ WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior expansionBehavior)
 WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
 {
     switch (kerning) {
-    case Kerning::Auto: ts << "auto"; break;
-    case Kerning::Normal: ts << "normal"; break;
-    case Kerning::NoShift: ts << "no-shift"; break;
+    case Kerning::Auto: ts << "auto"_s; break;
+    case Kerning::Normal: ts << "normal"_s; break;
+    case Kerning::NoShift: ts << "no-shift"_s; break;
     }
     return ts;
 }
@@ -77,8 +77,8 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
 WTF::TextStream& operator<<(TextStream& ts, FontOpticalSizing opticalSizing)
 {
     switch (opticalSizing) {
-    case FontOpticalSizing::Enabled: ts << "auto"; break;
-    case FontOpticalSizing::Disabled: ts << "none"; break;
+    case FontOpticalSizing::Enabled: ts << "auto"_s; break;
+    case FontOpticalSizing::Disabled: ts << "none"_s; break;
     }
     return ts;
 }
@@ -86,7 +86,7 @@ WTF::TextStream& operator<<(TextStream& ts, FontOpticalSizing opticalSizing)
 WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal())
-        ts << "normal";
+        ts << "normal"_s;
     else {
         auto values = alternates.values();
         StringBuilder builder;
@@ -130,9 +130,9 @@ void add(Hasher& hasher, const FontVariantAlternates& key)
 WTF::TextStream& operator<<(TextStream& ts, FontVariantPosition position)
 {
     switch (position) {
-    case FontVariantPosition::Normal: ts << "normal"; break;
-    case FontVariantPosition::Subscript: ts << "subscript"; break;
-    case FontVariantPosition::Superscript: ts << "superscript"; break;
+    case FontVariantPosition::Normal: ts << "normal"_s; break;
+    case FontVariantPosition::Subscript: ts << "subscript"_s; break;
+    case FontVariantPosition::Superscript: ts << "superscript"_s; break;
     }
     return ts;
 }
@@ -140,13 +140,13 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantPosition position)
 WTF::TextStream& operator<<(TextStream& ts, FontVariantCaps caps)
 {
     switch (caps) {
-    case FontVariantCaps::Normal: ts << "normal"; break;
-    case FontVariantCaps::Small: ts << "small"; break;
-    case FontVariantCaps::AllSmall: ts << "all-small"; break;
-    case FontVariantCaps::Petite: ts << "petite"; break;
-    case FontVariantCaps::AllPetite: ts << "all-petite"; break;
-    case FontVariantCaps::Unicase: ts << "unicase"; break;
-    case FontVariantCaps::Titling: ts << "titling"; break;
+    case FontVariantCaps::Normal: ts << "normal"_s; break;
+    case FontVariantCaps::Small: ts << "small"_s; break;
+    case FontVariantCaps::AllSmall: ts << "all-small"_s; break;
+    case FontVariantCaps::Petite: ts << "petite"_s; break;
+    case FontVariantCaps::AllPetite: ts << "all-petite"_s; break;
+    case FontVariantCaps::Unicase: ts << "unicase"_s; break;
+    case FontVariantCaps::Titling: ts << "titling"_s; break;
     }
     return ts;
 }

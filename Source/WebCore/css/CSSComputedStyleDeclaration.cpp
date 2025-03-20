@@ -26,7 +26,6 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "CSSProperty.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
 #include "CSSSelectorParser.h"

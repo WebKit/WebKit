@@ -46,4 +46,6 @@ private:
 
 }
 
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(WindowFeatures);
+
 #endif // APIWindowFeatures_h

@@ -52,6 +52,7 @@ public:
     static Ref<ReadableStreamToSharedBufferSink> create(Callback&& callback) { return adoptRef(*new ReadableStreamToSharedBufferSink(WTFMove(callback))); }
     void pipeFrom(ReadableStream&);
     void clearCallback() { m_callback = { }; }
+    bool hasCallback() const { return !!m_callback; }
 
 private:
     explicit ReadableStreamToSharedBufferSink(Callback&&);

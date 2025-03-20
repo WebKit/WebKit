@@ -746,6 +746,11 @@ static BOOL accessibilityShouldRepostNotifications;
 
 static bool isValueTypeSupported(id value)
 {
+#if PLATFORM(MAC)
+    if (value && CFGetTypeID((__bridge CFTypeRef)value) == AXTextMarkerGetTypeID())
+        return true;
+#endif // PLATFORM(MAC)
+
     return [value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[WebAccessibilityObjectWrapperBase class]];
 }
 

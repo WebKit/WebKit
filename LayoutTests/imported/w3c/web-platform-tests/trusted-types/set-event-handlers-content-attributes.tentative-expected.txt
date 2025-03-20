@@ -465,6 +465,17 @@ PASS DIV.setAttribute("onafterprint", "unsafe_handler()") calls default policy
 PASS DIV.setAttribute("onwaitingforkey", "unsafe_handler()") calls default policy
 FAIL DIV.setAttribute("onbegin", "unsafe_handler()") calls default policy assert_equals: expected (string) "Element onbegin" but got (undefined) undefined
 FAIL DIV.setAttribute("onreadystatechange", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element onreadystatechange"
+FAIL DIV.setAttribute("onvisibilitychange", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element onvisibilitychange"
+FAIL DIV.setAttribute("ondevicemotion", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element ondevicemotion"
+FAIL DIV.setAttribute("ondeviceorientation", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element ondeviceorientation"
+PASS DIV.setAttribute("ondeviceorientationabsolute", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onuserproximity", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("ondevicelight", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onvrdisplayactivate", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onvrdisplaydeactivate", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onvrdisplayconnect", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onvrdisplaydisconnect", "unsafe_handler()") does not call default policy
+PASS DIV.setAttribute("onvrdisplaypresentchange", "unsafe_handler()") does not call default policy
 FAIL DIV.setAttribute("onopen", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element onopen"
 PASS DIV.setAttribute("ondoesnotexist", "unsafe_handler()") does not call default policy
 

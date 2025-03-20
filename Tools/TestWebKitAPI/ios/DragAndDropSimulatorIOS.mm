@@ -462,6 +462,21 @@ IGNORE_WARNINGS_END
         [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] session:_dragSession.get() didEndWithOperation:UIDropOperationCancel];
 }
 
+- (void)hitTestForStageModeAt:(CGPoint)hitLocation
+{
+    [_webView _simulateModelInteractionPanGestureBeginAtPoint:hitLocation];
+}
+
+- (BOOL)awaitingStageModeHitResult
+{
+    return [[_webView _stageModeInfoForTesting][@"awaitingResult"] boolValue];
+}
+
+- (BOOL)stageModeHitTestValidModel
+{
+    return [[_webView _stageModeInfoForTesting][@"hitTestSuccessful"] boolValue];
+}
+
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation
 {
     [self runFrom:startLocation to:endLocation additionalItemRequestLocations:nil];

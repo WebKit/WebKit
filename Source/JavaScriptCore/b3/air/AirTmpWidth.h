@@ -52,18 +52,10 @@ public:
     //
     // This doesn't tell you which of those properties holds, but you can query that using the other
     // methods.
-    Width width(Tmp tmp) const
-    {
-        Widths tmpWidths = widths(tmp);
-        return std::min(tmpWidths.use, tmpWidths.def);
-    }
+    inline Width width(Tmp) const;
 
     // Return the minimum required width for all defs/uses of this Tmp.
-    Width requiredWidth(Tmp tmp)
-    {
-        Widths tmpWidths = widths(tmp);
-        return std::max(tmpWidths.use, tmpWidths.def);
-    }
+    inline Width requiredWidth(Tmp);
 
     // This indirectly tells you how much of the tmp's high bits are guaranteed to be zero. The number of
     // high bits that are zero are:
@@ -71,16 +63,10 @@ public:
     //     TotalBits - defWidth(tmp)
     //
     // Where TotalBits are the total number of bits in the register, so 64 on a 64-bit system.
-    Width defWidth(Tmp tmp) const
-    {
-        return widths(tmp).def;
-    }
+    inline Width defWidth(Tmp) const;
 
     // This tells you how much of Tmp is going to be read.
-    Width useWidth(Tmp tmp) const
-    {
-        return widths(tmp).use;
-    }
+    inline Width useWidth(Tmp) const;
 
     void setWidths(Tmp, Width useWidth, Width defWidth);
 
@@ -107,16 +93,8 @@ private:
     };
 
     inline Widths& widths(Tmp);
-
-    const Widths& widths(Tmp tmp) const
-    {
-        return const_cast<TmpWidth*>(this)->widths(tmp);
-    }
-
-    void addWidths(Tmp tmp, Widths tmpWidths)
-    {
-        widths(tmp) = tmpWidths;
-    }
+    inline const Widths& widths(Tmp) const;
+    inline void addWidths(Tmp, Widths);
 
     Vector<Widths>& widthsVector(Bank bank)
     {

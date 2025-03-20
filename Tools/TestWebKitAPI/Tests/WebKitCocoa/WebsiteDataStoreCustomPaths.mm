@@ -1203,6 +1203,37 @@ TEST(WebKit, DeleteEmptyOriginDirectoryWhenFetchData)
     EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.path]);
 }
 
+TEST(WebKit, DeleteEmptyOriginDirectoryWithHiddenFile)
+{
+    RetainPtr resourceSalt = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"salt"];
+    RetainPtr resourceOriginFile = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"origin"];
+    RetainPtr generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    RetainPtr topOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    RetainPtr originDirectory = [topOriginDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    RetainPtr hiddenFile = [originDirectory URLByAppendingPathComponent:@".DS_Store"];
+
+    RetainPtr fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory.get() error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory.get() withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt.get() toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager createDirectoryAtURL:originDirectory.get() withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceOriginFile.get() toURL:[originDirectory URLByAppendingPathComponent:@"origin"] error:nil];
+    [fileManager createFileAtPath:hiddenFile.get().path contents:nil attributes:nil];
+
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory.get();
+    RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    done = false;
+    [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:originDirectory.get().path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.get().path]);
+}
+
 TEST(WebKit, DeleteEmptyOriginDirectoryWhenOriginIsGone)
 {
     NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];

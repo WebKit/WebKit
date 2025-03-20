@@ -52,17 +52,19 @@ Attachment::~Attachment()
 
 void Attachment::updateAttributes(CompletionHandler<void()>&& callback)
 {
-    if (!m_webPage) {
+    RefPtr webPage = m_webPage.get();
+
+    if (!webPage) {
         callback();
         return;
     }
 
-    if (m_webPage->willUpdateAttachmentAttributes(*this) == WebKit::WebPageProxy::ShouldUpdateAttachmentAttributes::No) {
+    if (webPage->willUpdateAttachmentAttributes(*this) == WebKit::WebPageProxy::ShouldUpdateAttachmentAttributes::No) {
         callback();
         return;
     }
 
-    m_webPage->updateAttachmentAttributes(*this, WTFMove(callback));
+    webPage->updateAttachmentAttributes(*this, WTFMove(callback));
 }
 
 void Attachment::invalidate()

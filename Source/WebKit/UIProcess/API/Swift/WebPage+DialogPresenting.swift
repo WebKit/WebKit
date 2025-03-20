@@ -28,59 +28,117 @@ import Foundation
 // MARK: Supporting types
 
 extension WebPage {
-    @_spi(Private)
+    /// The result of handling a JavaScript confirm invocation.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum JavaScriptConfirmResult: Hashable, Sendable {
+        /// Signals an affirmative action was produced by the invocation.
         case ok
+
+        /// Signals a negative action was produced by the invocation.
         case cancel
     }
 
-    @_spi(Private)
+    /// The result of handling a JavaScript confirm invocation.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum JavaScriptPromptResult: Hashable, Sendable {
+        /// Signals an affirmative action was produced by the invocation with the specified text.
         case ok(String)
+
+        /// Signals a negative action was produced by the invocation.
         case cancel
     }
 
-    @_spi(Private)
+    /// The result of handling a JavaScript open invocation.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum FileInputPromptResult: Hashable, Sendable {
-        case ok([URL])
+        /// Signals an affirmative action was produced by the invocation with the specified files.
+        case selected([URL])
+
+        /// Signals a negative action was produced by the invocation.
         case cancel
     }
 }
 
 // MARK: DialogPresenting protocol
 
-@_spi(Private)
-public protocol DialogPresenting {
-    @MainActor
-    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async
+extension WebPage {
+    /// Allows providing custom behavior to handle JavaScript actions and provide a response.
+    ///
+    /// Typically when handling these, some UI should be presented to the user for them to provide a response,
+    /// which will then be communicated back to JavaScript.
+    ///
+    /// When these methods are invoked, JavaScript is blocked until the async method returns.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
+    public protocol DialogPresenting {
+        /// A JavaScript `alert()` function has been invoked.
+        ///
+        /// - Parameters:
+        ///   - message: The message provided by JavaScript.
+        ///   - frame: Information about the frame whose JavaScript process initiated this call.
+        @MainActor
+        func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async
 
-    @MainActor
-    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult
+        /// A JavaScript `confirm()` function has been invoked.
+        ///
+        /// - Parameters:
+        ///   - message: The message provided by JavaScript.
+        ///   - frame: Information about the frame whose JavaScript process initiated this call.
+        /// - Returns: The result of handling the invocation.
+        @MainActor
+        func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult
 
-    @MainActor
-    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult
+        /// A JavaScript `prompt()` function has been invoked.
+        ///
+        /// - Parameters:
+        ///   - message: The message provided by JavaScript.
+        ///   - defaultText: The initial text provided by JavaScript, intended to be displayed in some text entry field.
+        ///   - frame: Information about the frame whose JavaScript process initiated this call.
+        /// - Returns: The result of handling the invocation; if the result is affirmative, the response will include some text returned to JavaScript.
+        @MainActor
+        func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult
 
-    @MainActor
-    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult
+        /// Returns the result of handling a JavaScript request to open files.
+        ///
+        /// - Parameter parameters: The options to use for the file dialog.
+        ///   - frame: Information about the frame whose JavaScript process initiated this call.
+        /// - Returns: The result of handling the invocation; if the result is affirmative, the response will include a set of files returned to JavaScript.
+        @MainActor
+        func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult
+    }
 }
 
 // MARK: Default implementation
 
-public extension DialogPresenting {
+@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
+public extension WebPage.DialogPresenting {
+    /// By default, this method immediately returns.
     @MainActor
     func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async {
     }
 
+    /// By default, this method immediately returns with a result of `.cancel`.
     @MainActor
     func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult {
         .cancel
     }
 
+    /// By default, this method immediately returns with a result of `.cancel`.
     @MainActor
     func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult {
         .cancel
     }
 
+    /// By default, this method immediately returns with a result of `.cancel`.
     @MainActor
     func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult {
         .cancel

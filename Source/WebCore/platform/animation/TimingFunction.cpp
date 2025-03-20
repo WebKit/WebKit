@@ -38,59 +38,59 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     switch (timingFunction.type()) {
     case TimingFunction::Type::LinearFunction: {
         auto& function = uncheckedDowncast<LinearTimingFunction>(timingFunction);
-        ts << "linear(";
+        ts << "linear("_s;
         for (size_t i = 0; i < function.points().size(); ++i) {
             if (i)
-                ts << ", ";
+                ts << ", "_s;
 
             const auto& point = function.points()[i];
             ts << point.value << ' ' << FormattedCSSNumber::create(point.progress * 100.0) << '%';
         }
-        ts << ")";
+        ts << ')';
         break;
     }
     case TimingFunction::Type::CubicBezierFunction: {
         auto& function = uncheckedDowncast<CubicBezierTimingFunction>(timingFunction);
-        ts << "cubic-bezier(" << FormattedCSSNumber::create(function.x1()) << ", " << FormattedCSSNumber::create(function.y1()) << ", " <<  FormattedCSSNumber::create(function.x2()) << ", " << FormattedCSSNumber::create(function.y2()) << ")";
+        ts << "cubic-bezier("_s << FormattedCSSNumber::create(function.x1()) << ", "_s << FormattedCSSNumber::create(function.y1()) << ", "_s <<  FormattedCSSNumber::create(function.x2()) << ", "_s << FormattedCSSNumber::create(function.y2()) << ')';
         break;
     }
     case TimingFunction::Type::StepsFunction: {
         auto& function = uncheckedDowncast<StepsTimingFunction>(timingFunction);
-        ts << "steps(" << function.numberOfSteps();
+        ts << "steps("_s << function.numberOfSteps();
         if (auto stepPosition = function.stepPosition()) {
-            ts << ", ";
+            ts << ", "_s;
             switch (stepPosition.value()) {
             case StepsTimingFunction::StepPosition::JumpStart:
-                ts << "jump-start";
+                ts << "jump-start"_s;
                 break;
 
             case StepsTimingFunction::StepPosition::JumpEnd:
-                ts << "jump-end";
+                ts << "jump-end"_s;
                 break;
 
             case StepsTimingFunction::StepPosition::JumpNone:
-                ts << "jump-none";
+                ts << "jump-none"_s;
                 break;
 
             case StepsTimingFunction::StepPosition::JumpBoth:
-                ts << "jump-both";
+                ts << "jump-both"_s;
                 break;
 
             case StepsTimingFunction::StepPosition::Start:
-                ts << "start";
+                ts << "start"_s;
                 break;
 
             case StepsTimingFunction::StepPosition::End:
-                ts << "end";
+                ts << "end"_s;
                 break;
             }
         }
-        ts << ")";
+        ts << ')';
         break;
     }
     case TimingFunction::Type::SpringFunction: {
         auto& function = uncheckedDowncast<SpringTimingFunction>(timingFunction);
-        ts << "spring(" << FormattedCSSNumber::create(function.mass()) << " " << FormattedCSSNumber::create(function.stiffness()) << " " <<  FormattedCSSNumber::create(function.damping()) << " " << FormattedCSSNumber::create(function.initialVelocity()) << ")";
+        ts << "spring("_s << FormattedCSSNumber::create(function.mass()) << ' ' << FormattedCSSNumber::create(function.stiffness()) << ' ' << FormattedCSSNumber::create(function.damping()) << ' ' << FormattedCSSNumber::create(function.initialVelocity()) << ')';
         break;
     }
     }

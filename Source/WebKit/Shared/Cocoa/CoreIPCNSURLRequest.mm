@@ -131,15 +131,13 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
                 Vector<String> valueVector;
                 valueVector.reserveInitialCapacity(valueArray.count);
                 for (id item in valueArray) {
-                    if ([item isKindOfClass:[NSString class]]) {
-                        NSString *s = item;
-                        valueVector.append(s);
-                    }
+                    if (NSString *nsString = dynamic_objc_cast<NSString>(item))
+                        valueVector.append(nsString);
                 }
                 vector.append({ key, valueVector });
             }
-            if ([value isKindOfClass:[NSString class]])
-                vector.append({ key , value });
+            if (NSString *nsString = dynamic_objc_cast<NSString>(value))
+                vector.append({ key, nsString });
         }
         vector.shrinkToFit();
         m_data.headerFields = WTFMove(vector);

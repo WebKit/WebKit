@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include "CSSParserTokenRange.h"
+#include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
@@ -38,7 +40,6 @@
 namespace WebCore {
 
 class CSSParserToken;
-class CSSParserTokenRange;
 struct CSSParserContext;
 
 namespace Style {

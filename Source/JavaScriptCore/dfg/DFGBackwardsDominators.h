@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 
 class BackwardsDominators : public WTF::Dominators<BackwardsCFG> {
     WTF_MAKE_NONCOPYABLE(BackwardsDominators);
-    WTF_MAKE_TZONE_ALLOCATED(BackwardsDominators);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BackwardsDominators);
 public:
     BackwardsDominators(Graph& graph)
         : WTF::Dominators<BackwardsCFG>(graph.ensureBackwardsCFG())

@@ -28,12 +28,9 @@ PASS Allows setting the iterations of an animation in progress
 PASS Allows setting the iterations of an animation in progress with duration "auto"
 PASS Allows setting the duration to 123.45
 PASS Allows setting the duration to auto
+PASS Allows setting the duration to Infinity
 PASS Throws when setting invalid duration: -1
 PASS Throws when setting invalid duration: NaN
-FAIL Throws when setting invalid duration: Infinity assert_throws_js: function "() => {
-      const anim = createScrollLinkedAnimationWithTiming(t,  { duration: invalid })
-      anim.play();
-    }" did not throw
 PASS Throws when setting invalid duration: -Infinity
 PASS Throws when setting invalid duration: "abc"
 PASS Throws when setting invalid duration: "100"

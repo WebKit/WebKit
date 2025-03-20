@@ -26,6 +26,10 @@
 #import "config.h"
 #import "TestCocoa.h"
 
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
+#endif
+
 template<typename T>
 static inline std::ostream& ostreamRectCommon(std::ostream& os, const T& rect)
 {
@@ -56,6 +60,19 @@ std::ostream& operator<<(std::ostream& os, const NSRect& rect)
 bool operator==(const NSRect& a, const NSRect& b)
 {
     return NSEqualRects(a, b);
+}
+
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+
+void TestWebKitAPI::Util::instantiateUIApplicationIfNeeded(Class customApplicationClass)
+{
+    if (UIApplication.sharedApplication)
+        return;
+
+    UIApplicationInitialize();
+    UIApplicationInstantiateSingleton(customApplicationClass ?: UIApplication.class);
 }
 
 #endif

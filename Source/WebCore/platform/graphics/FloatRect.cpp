@@ -215,11 +215,11 @@ TextStream& operator<<(TextStream& ts, const FloatRect &r)
 {
     if (ts.hasFormattingFlag(TextStream::Formatting::SVGStyleRect)) {
         // FIXME: callers should use the NumberRespectingIntegers flag.
-        return ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x()) << "," << TextStream::FormatNumberRespectingIntegers(r.y())
+        return ts << "at ("_s << TextStream::FormatNumberRespectingIntegers(r.x()) << ',' << TextStream::FormatNumberRespectingIntegers(r.y())
             << ") size " << TextStream::FormatNumberRespectingIntegers(r.width()) << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
     }
 
-    return ts << r.location() << " " << r.size();
+    return ts << r.location() << ' ' << r.size();
 }
 
 Ref<JSON::Object> FloatRect::toJSONObject() const

@@ -69,14 +69,14 @@ void ThreadGlobalData::setWebCoreThreadData()
     ASSERT(&threadGlobalData() != sharedMainThreadStaticData);
 
     // Set WebThread's ThreadGlobalData object to be the same as the main UI thread.
-    Thread::current().m_clientData = adoptRef(sharedMainThreadStaticData);
+    Thread::currentSingleton().m_clientData = adoptRef(sharedMainThreadStaticData);
 
     ASSERT(&threadGlobalData() == sharedMainThreadStaticData);
 }
 
 ThreadGlobalData& threadGlobalDataSlow()
 {
-    auto& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     auto* clientData = thread.m_clientData.get();
     if (UNLIKELY(clientData))
         return *static_cast<ThreadGlobalData*>(clientData);
@@ -96,7 +96,7 @@ ThreadGlobalData& threadGlobalDataSlow()
 
 ThreadGlobalData& threadGlobalDataSlow()
 {
-    auto& thread = Thread::current();
+    auto& thread = Thread::currentSingleton();
     auto* clientData = thread.m_clientData.get();
     if (UNLIKELY(clientData))
         return *static_cast<ThreadGlobalData*>(clientData);

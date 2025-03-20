@@ -33,11 +33,12 @@
 #import "WKStringCF.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
 @interface WKWebProcessPlugInController () {
-    API::ObjectStorage<WebKit::InjectedBundle> _bundle;
+    AlignedStorage<WebKit::InjectedBundle> _bundle;
     RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
 }
 @end

@@ -95,7 +95,7 @@ private:
     void setCurrentPromise(CredentialPromise&&);
     CredentialPromise* currentPromise();
 
-    bool parseDigitalCredentialsResponseData(Document&, const String&, JSC::JSObject*&) const;
+    ExceptionOr<JSC::JSObject*> parseDigitalCredentialsResponseData(Document&, const String&) const;
     void handleDigitalCredentialsPickerResult(Expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);
     void finalizeDigitalCredential(const DigitalCredentialsResponseData&);
 

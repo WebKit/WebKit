@@ -60,9 +60,7 @@ OBJC_CLASS NSString;
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
-#if PLATFORM(MAC)
 OBJC_CLASS WKAccessibilityPDFDocumentObject;
-#endif
 
 namespace WebCore {
 class Color;
@@ -85,6 +83,7 @@ class PDFIncrementalLoader;
 class PDFPluginAnnotation;
 class PluginView;
 class WebFrame;
+class WebPage;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebWheelEvent;
@@ -263,7 +262,7 @@ public:
     void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
 #endif
 
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
+    void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 
@@ -337,6 +336,8 @@ public:
 
     virtual WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const { return { }; }
 
+    virtual void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect&) { }
+
 protected:
     virtual double contentScaleFactor() const = 0;
     virtual bool platformPopulateEditorStateIfNeeded(EditorState&) const { return false; }
@@ -365,6 +366,7 @@ private:
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
+    WebPage* webPage() const;
     WebCore::Page* page() const;
 
     virtual void teardown();
@@ -473,9 +475,8 @@ protected:
     RangeSet<WTF::Range<uint64_t>> m_validRanges WTF_GUARDED_BY_LOCK(m_streamedDataLock);
 
     RetainPtr<PDFDocument> m_pdfDocument;
-#if PLATFORM(MAC)
+
     RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
-#endif
 
     String m_suggestedFilename;
 
@@ -510,7 +511,7 @@ protected:
 
 #if ENABLE(PDF_HUD)
     CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
-    CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)> m_pendingOpenCompletionHandler;
+    CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)> m_pendingOpenCompletionHandler;
 #endif
 };
 

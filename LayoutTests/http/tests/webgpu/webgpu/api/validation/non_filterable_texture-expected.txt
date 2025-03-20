@@ -1,0 +1,930 @@
+
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="sint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="uint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="2d";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="2d";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="2d-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="2d-array";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="cube";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="cube";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="cube-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="float";viewDimension="cube-array";sameGroup=false
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=true;sampleType="depth";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:423:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="sint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="uint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="2d";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="2d";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="2d-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="2d-array";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="cube";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="cube";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="cube-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="float";viewDimension="cube-array";sameGroup=false
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="compute";async=false;sampleType="depth";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateComputePipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:427:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:117:34
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="sint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="uint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="2d";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="2d";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="2d-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="2d-array";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="cube";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="cube";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="cube-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="float";viewDimension="cube-array";sameGroup=false
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="2d";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="2d";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="cube";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="cube";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=true;sampleType="depth";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="sint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="uint";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="2d";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="2d";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="2d-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="2d-array";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="cube";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="cube";sameGroup=false
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="cube-array";sameGroup=true
+PASS :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="float";viewDimension="cube-array";sameGroup=false
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="unfilterable-float";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="2d";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="2d";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="2d-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="2d-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="cube";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="cube";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="cube-array";sameGroup=true assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+FAIL :non_filterable_texture_with_filtering_sampler:pipeline="render";async=false;sampleType="depth";viewDimension="cube-array";sameGroup=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/non_filterable_texture.spec.js:122:33
+ Reached unreachable code
+

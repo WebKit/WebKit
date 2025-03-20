@@ -161,7 +161,7 @@ private:
     Vector<WeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
-    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
+    mutable Vector<uint64_t> m_commandEncoders;
     id<MTLSharedEvent> m_sharedEvent { nil };
     uint64_t m_sharedEventSignalValue { 0 };
 } SWIFT_SHARED_REFERENCE(refTexture, derefTexture);

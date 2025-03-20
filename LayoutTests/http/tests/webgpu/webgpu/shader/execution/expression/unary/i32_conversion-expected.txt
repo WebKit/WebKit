@@ -51,15 +51,255 @@ PASS :f32:inputSource="const";vectorize="_undef_"
 PASS :f32:inputSource="const";vectorize=2
 PASS :f32:inputSource="const";vectorize=3
 PASS :f32:inputSource="const";vectorize=4
-PASS :f32:inputSource="uniform";vectorize="_undef_"
+FAIL :f32:inputSource="uniform";vectorize="_undef_" assert_unreached:
+  - EXPECTATION FAILED: (4294967040.0 (0x4f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (77492166656.0 (0x51905725))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3368716075008.0 (0x544415c8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (136245858533376.0 (0x56f7d46c))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6036739206414336.0 (0x59ab930f))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (251434996189888500.0 (0x5c5f51b3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (10597064481202766000.0 (0x5f131056))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (458421159779438170000.0 (0x61c6cef9))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.8487561323032317e+22 (0x647a8d9d))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.230983322549386e+23 (0x672e4c40))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4158580788579953e+25 (0x69e20ae3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.448653064768692e+27 (0x6c95c987))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6.237109922495023e+28 (0x6f49882a))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (2.5083297631894015e+30 (0x71fd46ce))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.1220055038953209e+32 (0x74b10571))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (4.639924299185573e+33 (0x7764c414))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.979701034319178e+35 (0x7a1882b8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.484433004225048e+36 (0x7ccc415b))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4028234663852886e+38 (0x7f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:524:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:415:15
+ Reached unreachable code
 PASS :f32:inputSource="uniform";vectorize=2
 PASS :f32:inputSource="uniform";vectorize=3
 PASS :f32:inputSource="uniform";vectorize=4
-PASS :f32:inputSource="storage_r";vectorize="_undef_"
+FAIL :f32:inputSource="storage_r";vectorize="_undef_" assert_unreached:
+  - EXPECTATION FAILED: (4294967040.0 (0x4f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (77492166656.0 (0x51905725))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3368716075008.0 (0x544415c8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (136245858533376.0 (0x56f7d46c))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6036739206414336.0 (0x59ab930f))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (251434996189888500.0 (0x5c5f51b3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (10597064481202766000.0 (0x5f131056))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (458421159779438170000.0 (0x61c6cef9))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.8487561323032317e+22 (0x647a8d9d))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.230983322549386e+23 (0x672e4c40))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4158580788579953e+25 (0x69e20ae3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.448653064768692e+27 (0x6c95c987))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6.237109922495023e+28 (0x6f49882a))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (2.5083297631894015e+30 (0x71fd46ce))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.1220055038953209e+32 (0x74b10571))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (4.639924299185573e+33 (0x7764c414))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.979701034319178e+35 (0x7a1882b8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.484433004225048e+36 (0x7ccc415b))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4028234663852886e+38 (0x7f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:524:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:415:15
+ Reached unreachable code
 PASS :f32:inputSource="storage_r";vectorize=2
 PASS :f32:inputSource="storage_r";vectorize=3
 PASS :f32:inputSource="storage_r";vectorize=4
-PASS :f32:inputSource="storage_rw";vectorize="_undef_"
+FAIL :f32:inputSource="storage_rw";vectorize="_undef_" assert_unreached:
+  - EXPECTATION FAILED: (4294967040.0 (0x4f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (77492166656.0 (0x51905725))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3368716075008.0 (0x544415c8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (136245858533376.0 (0x56f7d46c))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6036739206414336.0 (0x59ab930f))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (251434996189888500.0 (0x5c5f51b3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (10597064481202766000.0 (0x5f131056))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (458421159779438170000.0 (0x61c6cef9))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.8487561323032317e+22 (0x647a8d9d))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.230983322549386e+23 (0x672e4c40))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4158580788579953e+25 (0x69e20ae3))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.448653064768692e+27 (0x6c95c987))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (6.237109922495023e+28 (0x6f49882a))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (2.5083297631894015e+30 (0x71fd46ce))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.1220055038953209e+32 (0x74b10571))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (4.639924299185573e+33 (0x7764c414))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (1.979701034319178e+35 (0x7a1882b8))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (8.484433004225048e+36 (0x7ccc415b))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+
+    (3.4028234663852886e+38 (0x7f7fffff))
+        returned: 2147483520 (0x7fffff80)
+        expected: 2147483647 (0x7fffffff)
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:524:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/expression/expression.js:415:15
+ Reached unreachable code
 PASS :f32:inputSource="storage_rw";vectorize=2
 PASS :f32:inputSource="storage_rw";vectorize=3
 PASS :f32:inputSource="storage_rw";vectorize=4

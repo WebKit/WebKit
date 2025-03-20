@@ -168,6 +168,7 @@ public:
     ~RenderLayer();
 
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
+    WEBCORE_EXPORT CheckedPtr<RenderLayerScrollableArea> checkedScrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
     String name() const;
@@ -567,15 +568,15 @@ public:
         bool isPaintedContentSatisfied() const { return hasPaintedContent != RequestState::Unknown; }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        void setHasPaintedHDRContent() { hasPaintedHDRContent = RequestState::True; }
-        void makePaintedHDRContentUnknown() { hasPaintedHDRContent = RequestState::Unknown; }
-        bool isPaintedHDRContentSatisfied() const { return hasPaintedHDRContent != RequestState::Unknown; }
+        void setHasHDRContent() { hasHDRContent = RequestState::True; }
+        void makeHDRContentUnknown() { hasHDRContent = RequestState::Unknown; }
+        bool isHDRContentSatisfied() const { return hasHDRContent != RequestState::Unknown; }
 #endif
 
         bool isSatisfied() const
         {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-            if (!isPaintedHDRContentSatisfied())
+            if (!isHDRContentSatisfied())
                 return false;
 #endif
             return isPaintedContentSatisfied();
@@ -583,7 +584,7 @@ public:
 
         RequestState hasPaintedContent { RequestState::Unknown };
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        RequestState hasPaintedHDRContent { RequestState::DontCare };
+        RequestState hasHDRContent { RequestState::DontCare };
 #endif
     };
 
@@ -594,8 +595,8 @@ public:
     // True if this layer container renderers that paint.
     void determineNonLayerDescendantsPaintedContent(PaintedContentRequest&) const;
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    // True of if renderer itself draws HDR content, no traversal is done.
-    bool isReplacedElementWithHDR() const;
+    // True if renderer itself draws HDR content, no traversal is done.
+    bool rendererHasHDRContent() const;
 #endif
 
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.

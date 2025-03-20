@@ -79,7 +79,7 @@ private:
 
     WeakPtr<ScriptExecutionContext> m_context;
     SharedBufferBuilder m_data;
-    RefPtr<FontCustomPlatformData> m_fontCustomPlatformData;
+    const RefPtr<FontCustomPlatformData> m_fontCustomPlatformData;
 };
 
 } // namespace WebCore

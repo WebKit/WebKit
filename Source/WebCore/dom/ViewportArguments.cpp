@@ -409,8 +409,8 @@ TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArgument
 {
     TextStream::IndentScope indentScope(ts);
 
-    ts << "\n" << indent << "(width " << viewportArguments.width << ", height " << viewportArguments.height << ")";
-    ts << "\n" << indent << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
+    ts << '\n' << indent << "(width "_s << viewportArguments.width << ", height "_s << viewportArguments.height << ')';
+    ts << '\n' << indent << "(zoom "_s << viewportArguments.zoom << ", minZoom "_s << viewportArguments.minZoom << ", maxZoom "_s << viewportArguments.maxZoom << ')';
 
     return ts;
 }

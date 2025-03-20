@@ -555,11 +555,12 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
                 return SIMD::bitNot(SIMD::bitOr(cond0, cond1, cond2, cond3));
             };
 
+            auto finalStride = span.last(stride);
             auto result = SIMD::splat<UnsignedType>(0);
-            for (; span.size() < stride; skip(span, stride))
+            for (; stride < span.size(); skip(span, stride))
                 result = SIMD::bitOr(result, maybeBidiRTL(span));
             if (!span.empty())
-                result = SIMD::bitOr(result, maybeBidiRTL(span.last(stride)));
+                result = SIMD::bitOr(result, maybeBidiRTL(finalStride));
             return SIMD::isNonZero(result);
         }
 

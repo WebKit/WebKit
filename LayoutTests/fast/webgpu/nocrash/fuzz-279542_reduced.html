@@ -2,8 +2,8 @@
   :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
 </style>
 <script>
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
-const log = console.debug;
 
 onload = async () => {
 let adapter0 = await navigator.gpu.requestAdapter();
@@ -22,7 +22,8 @@ for (let i=0; i < 10000; ++i) {
     });
     samplerArray.push(sampler0);
 }
-log('end');
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 };
 </script>
+

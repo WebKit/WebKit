@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CSSStyleProperties.h"
 #import "CommonVM.h"
 #import "ComposedTreeIterator.h"
 #import "Document.h"
@@ -55,7 +56,6 @@
 #import "Page.h"
 #import "PageTransitionEvent.h"
 #import "PlatformScreen.h"
-#import "PropertySetCSSStyleDeclaration.h"
 #import "Range.h"
 #import "RenderLayer.h"
 #import "RenderLayerCompositor.h"
@@ -484,7 +484,7 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
             *nodeBounds = IntRect();
 
         auto node = hitTestResult.innerNode();
-        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->document().protectedSecurityOrigin())))
+        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->protectedDocument()->protectedSecurityOrigin())))
             return nullptr;
 
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {

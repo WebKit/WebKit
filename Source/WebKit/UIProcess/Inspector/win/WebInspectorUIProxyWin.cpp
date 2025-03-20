@@ -104,20 +104,19 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
 
     if (GetSaveFileName(&ofn)) {
-        auto fd = FileSystem::openFile(filePath.data(), FileSystem::FileOpenMode::ReadWrite);
-        if (!FileSystem::isHandleValid(fd))
+        auto fileHandle = FileSystem::openFile(filePath.data(), FileSystem::FileOpenMode::ReadWrite);
+        if (!fileHandle)
             return;
 
         auto content = saveDatas[0].content.utf8();
         auto contentSize = content.length();
-        auto bytesWritten = FileSystem::writeToFile(fd, byteCast<uint8_t>(content.span()));
-        if (bytesWritten == -1 || static_cast<size_t>(bytesWritten) != contentSize) {
+        auto bytesWritten = fileHandle.write(byteCast<uint8_t>(content.span()));
+        if (bytesWritten != contentSize) {
             auto message = systemErrorMessage(GetLastError());
             if (message.isEmpty())
-                message = makeString("Error: writeToFile returns "_s, bytesWritten, ", contentLength = "_s, content.length());
+                message = makeString("Error: writeToFile returns "_s, bytesWritten ? static_cast<int64_t>(*bytesWritten) : -1, ", contentLength = "_s, content.length());
             MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
-        FileSystem::closeFile(fd);
     } else {
         auto errorCode = CommDlgExtendedError();
         if (errorCode) {
@@ -346,11 +345,30 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return DebuggableInfoData::empty();
 }
 
+// Set a default sizes based on InspectorFrontendClientLocal.
+static constexpr unsigned s_defaultAttachedSize = 300;
+static constexpr unsigned s_minimumAttachedHeight = 250;
+static const float s_maximumAttachedHeightRatio = 0.75;
+static constexpr unsigned s_minimumAttachedWidth = 500;
+
+bool WebInspectorUIProxy::platformCanAttach(bool)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return false;
+    auto deviceScaleFactor = inspectedPage->intrinsicDeviceScaleFactor();
+    RECT inspectedWindowRect;
+    GetClientRect(m_inspectedViewWindow, &inspectedWindowRect);
+
+    unsigned inspectedWindowHeight = (inspectedWindowRect.bottom - inspectedWindowRect.top) / deviceScaleFactor;
+    unsigned inspectedPageWidth = (inspectedWindowRect.right - inspectedWindowRect.left) / deviceScaleFactor;
+    unsigned maximumAttachedHeight = inspectedWindowHeight * s_maximumAttachedHeightRatio;
+
+    return s_minimumAttachedHeight <= maximumAttachedHeight && s_minimumAttachedWidth <= inspectedPageWidth;
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
-    static const unsigned defaultAttachedSize = 300;
-    static const unsigned minimumAttachedWidth = 750;
-    static const unsigned minimumAttachedHeight = 250;
     auto deviceScaleFactor = protectedInspectorPage()->deviceScaleFactor();
 
     if (m_inspectorDetachWindow && ::GetParent(m_inspectorViewWindow) == m_inspectorDetachWindow) {
@@ -365,12 +383,12 @@ void WebInspectorUIProxy::platformAttach()
 
     if (m_attachmentSide == AttachmentSide::Bottom) {
         unsigned inspectedWindowHeight = (inspectedWindowRect.bottom - inspectedWindowRect.top) / deviceScaleFactor;
-        unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
-        platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
+        unsigned maximumAttachedHeight = inspectedWindowHeight * s_maximumAttachedHeightRatio;
+        platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
     } else {
         unsigned inspectedWindowWidth = (inspectedWindowRect.right - inspectedWindowRect.left) / deviceScaleFactor;
-        unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
-        platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
+        unsigned maximumAttachedWidth = inspectedWindowWidth * s_maximumAttachedHeightRatio;
+        platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
     }
     ::ShowWindow(m_inspectorViewWindow, SW_SHOW);
 }

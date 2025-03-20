@@ -129,7 +129,10 @@ void Connection::platformInitialize(Identifier&& identifier)
 void Connection::platformInvalidate()
 {
 #if USE(GLIB)
-    g_socket_close(m_socket.get(), nullptr);
+    GUniqueOutPtr<GError> error;
+    g_socket_close(m_socket.get(), &error.outPtr());
+    if (error)
+        g_warning("Failed to close WebKit IPC socket: %s", error->message);
 #else
     if (m_socketDescriptor.value() != -1)
         closeWithRetry(m_socketDescriptor.release());

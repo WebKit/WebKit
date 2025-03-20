@@ -1,0 +1,7 @@
+<html>
+<script>
+    document.addEventListener("visibilitychange", (event) => {
+        window.parent.postMessage({ text: "visibility change triggered" }, "*");
+    });
+</script>
+</html>

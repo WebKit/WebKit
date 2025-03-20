@@ -42,13 +42,12 @@ WKTypeID WKUserContentControllerGetTypeID()
 
 WKUserContentControllerRef WKUserContentControllerCreate()
 {
-    return toAPI(&WebUserContentControllerProxy::create().leakRef());
+    return toAPILeakingRef(WebUserContentControllerProxy::create());
 }
 
 WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    Ref<API::Array> userScripts = toImpl(userContentControllerRef)->userScripts().copy();
-    return toAPI(&userScripts.leakRef());
+    return toAPILeakingRef(toImpl(userContentControllerRef)->userScripts().copy());
 }
 
 void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)

@@ -430,8 +430,8 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
         if (!m_async)
             return ExceptionOr<void> { Exception { ExceptionCode::NetworkError } };
         m_timeoutTimer.stop();
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-            networkError();
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& xhr) {
+            xhr.networkError();
         });
         return ExceptionOr<void> { };
     }
@@ -890,9 +890,9 @@ String XMLHttpRequest::statusText() const
 void XMLHttpRequest::handleCancellation()
 {
     m_exceptionCode = ExceptionCode::AbortError;
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, CancellableTask(m_abortErrorGroup, [this] {
-        abortError();
-    }));
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::Networking, m_abortErrorGroup, [](auto& xhr) {
+        xhr.abortError();
+    });
 }
 
 void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
@@ -923,8 +923,8 @@ void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, co
     if (m_async && m_sendFlag && !m_loadingActivity) {
         m_sendFlag = false;
         m_timeoutTimer.stop();
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-            networkError();
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& xhr) {
+            xhr.networkError();
         });
         return;
     }

@@ -57,12 +57,10 @@ void CoordinatedPlatformLayerBufferProxy::setTargetLayer(CoordinatedPlatformLaye
 
     m_layer = layer;
     if (m_layer) {
-        m_isValid = true;
 #if ENABLE(VIDEO) && USE(GSTREAMER)
         m_compositingRunLoop = m_layer->compositingRunLoop();
 #endif
     } else {
-        m_isValid = false;
         m_pendingBuffer = nullptr;
 #if ENABLE(VIDEO) && USE(GSTREAMER)
         m_compositingRunLoop = nullptr;
@@ -83,15 +81,12 @@ void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
         m_pendingBuffer = nullptr;
 }
 
-bool CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
+void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
     Locker locker { m_lock };
-    if (!m_isValid)
-        return false;
-
     if (!m_layer) {
         m_pendingBuffer = WTFMove(buffer);
-        return true;
+        return;
     }
 
     m_pendingBuffer = nullptr;
@@ -101,8 +96,6 @@ bool CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
         m_layer->setContentsBuffer(WTFMove(buffer), CoordinatedPlatformLayer::RequireComposition::No);
     }
     m_layer->requestComposition();
-
-    return true;
 }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -111,7 +104,7 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
     RefPtr<RunLoop> compositingRunLoop;
     {
         Locker locker { m_lock };
-        if (!m_isValid || !m_layer || !m_compositingRunLoop)
+        if (!m_layer || !m_compositingRunLoop)
             return;
 
         compositingRunLoop = m_compositingRunLoop;
@@ -119,7 +112,7 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
 
     auto dropCurrentBuffer = [this, protectedThis = Ref { *this }] {
         Locker locker { m_lock };
-        if (!m_isValid || !m_layer)
+        if (!m_layer)
             return;
 
         m_layer->replaceCurrentContentsBufferWithCopy();

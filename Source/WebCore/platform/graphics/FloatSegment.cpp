@@ -33,8 +33,8 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, FloatSegment floatSegment)
 {
     TextStream::GroupScope scope(ts);
-    ts.dumpProperty("begin", floatSegment.begin);
-    ts.dumpProperty("end", floatSegment.end);
+    ts.dumpProperty("begin"_s, floatSegment.begin);
+    ts.dumpProperty("end"_s, floatSegment.end);
     return ts;
 }
 

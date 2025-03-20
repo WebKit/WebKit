@@ -44,6 +44,38 @@ inline TmpWidth::Widths& TmpWidth::widths(Tmp tmp)
     return m_widthFP[index];
 }
 
+const TmpWidth::Widths& TmpWidth::widths(Tmp tmp) const
+{
+    return const_cast<TmpWidth*>(this)->widths(tmp);
+}
+
+Width TmpWidth::width(Tmp tmp) const
+{
+    Widths tmpWidths = widths(tmp);
+    return std::min(tmpWidths.use, tmpWidths.def);
+}
+
+void TmpWidth::addWidths(Tmp tmp, Widths tmpWidths)
+{
+    widths(tmp) = tmpWidths;
+}
+
+Width TmpWidth::requiredWidth(Tmp tmp)
+{
+    Widths tmpWidths = widths(tmp);
+    return std::max(tmpWidths.use, tmpWidths.def);
+}
+
+Width TmpWidth::defWidth(Tmp tmp) const
+{
+    return widths(tmp).def;
+}
+
+Width TmpWidth::useWidth(Tmp tmp) const
+{
+    return widths(tmp).use;
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

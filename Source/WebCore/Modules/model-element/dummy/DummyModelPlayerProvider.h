@@ -33,10 +33,13 @@ namespace WebCore {
 class WEBCORE_EXPORT DummyModelPlayerProvider final : public ModelPlayerProvider {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyModelPlayerProvider, WEBCORE_EXPORT);
 public:
-    DummyModelPlayerProvider();
+    static Ref<DummyModelPlayerProvider> create();
+
     virtual ~DummyModelPlayerProvider();
 
 private:
+    DummyModelPlayerProvider();
+
     // ModelPlayerProvider overrides.
     RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) final;
     void deleteModelPlayer(ModelPlayer&) final;

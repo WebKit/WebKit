@@ -230,9 +230,9 @@ void FileReader::enqueueTask(Function<void()>&& task)
     static uint64_t taskIdentifierSeed = 0;
     uint64_t taskIdentifier = ++taskIdentifierSeed;
     m_pendingTasks.add(taskIdentifier, WTFMove(task));
-    queueTaskKeepingObjectAlive(*this, TaskSource::FileReading, [this, pendingActivity = makePendingActivity(*this), taskIdentifier] {
-        auto task = m_pendingTasks.take(taskIdentifier);
-        if (task && !isContextStopped())
+    queueTaskKeepingObjectAlive(*this, TaskSource::FileReading, [taskIdentifier](auto& reader) {
+        auto task = reader.m_pendingTasks.take(taskIdentifier);
+        if (task && !reader.isContextStopped())
             task();
     });
 }

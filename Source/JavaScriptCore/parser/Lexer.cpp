@@ -42,6 +42,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+constinit const WTF::BitSet<256> whiteSpaceTable = makeLatin1CharacterBitSet(
+    [](LChar ch) {
+        return ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC || ch == 0xA0;
+    });
+
 bool isLexerKeyword(const Identifier& identifier)
 {
     return JSC::mainTable.entry(identifier);
@@ -52,13 +57,18 @@ enum CharacterType : uint8_t {
 
     // The first three types are fixed, and also used for identifying
     // ASCII alpha and alphanumeric characters (see isIdentStart and isIdentPart).
-    CharacterIdentifierStart,
+    CharacterLatin1IdentifierStart,
     CharacterZero,
     CharacterNumber,
 
     // For single-byte characters grandfathered into Other_ID_Continue -- namely just U+00B7 MIDDLE DOT.
     // (http://unicode.org/reports/tr31/#Backward_Compatibility)
+    //
+    // Character types are divided into two groups depending on whether they can be part of an
+    // identifier or not. Those whose type value is less or equal than CharacterOtherIdentifierPart can be
+    // part of an identifier. (See the CharacterType definition for more details.)
     CharacterOtherIdentifierPart,
+    CharacterBackSlash, // Keep the ordering until this. We use this ordering to detect identifier-part or back-slash quickly.
 
     CharacterInvalid,
     CharacterLineTerminator,
@@ -75,7 +85,6 @@ enum CharacterType : uint8_t {
     CharacterBackQuote,
     CharacterDot,
     CharacterSlash,
-    CharacterBackSlash,
     CharacterSemicolon,
     CharacterOpenBrace,
     CharacterCloseBrace,
@@ -94,7 +103,8 @@ enum CharacterType : uint8_t {
     // Other types (only one so far)
     CharacterWhiteSpace,
     CharacterHash,
-    CharacterPrivateIdentifierStart
+    CharacterPrivateIdentifierStart,
+    CharacterNonLatin1IdentifierStart,
 };
 
 // 256 Latin-1 codes
@@ -135,7 +145,7 @@ static constexpr const CharacterType typesOfLatin1Characters[256] = {
 /*  33 - !                  */ CharacterExclamationMark,
 /*  34 - "                  */ CharacterQuote,
 /*  35 - #                  */ CharacterHash,
-/*  36 - $                  */ CharacterIdentifierStart,
+/*  36 - $                  */ CharacterLatin1IdentifierStart,
 /*  37 - %                  */ CharacterModulo,
 /*  38 - &                  */ CharacterAnd,
 /*  39 - '                  */ CharacterQuote,
@@ -164,64 +174,64 @@ static constexpr const CharacterType typesOfLatin1Characters[256] = {
 /*  62 - >                  */ CharacterGreater,
 /*  63 - ?                  */ CharacterQuestion,
 /*  64 - @                  */ CharacterPrivateIdentifierStart,
-/*  65 - A                  */ CharacterIdentifierStart,
-/*  66 - B                  */ CharacterIdentifierStart,
-/*  67 - C                  */ CharacterIdentifierStart,
-/*  68 - D                  */ CharacterIdentifierStart,
-/*  69 - E                  */ CharacterIdentifierStart,
-/*  70 - F                  */ CharacterIdentifierStart,
-/*  71 - G                  */ CharacterIdentifierStart,
-/*  72 - H                  */ CharacterIdentifierStart,
-/*  73 - I                  */ CharacterIdentifierStart,
-/*  74 - J                  */ CharacterIdentifierStart,
-/*  75 - K                  */ CharacterIdentifierStart,
-/*  76 - L                  */ CharacterIdentifierStart,
-/*  77 - M                  */ CharacterIdentifierStart,
-/*  78 - N                  */ CharacterIdentifierStart,
-/*  79 - O                  */ CharacterIdentifierStart,
-/*  80 - P                  */ CharacterIdentifierStart,
-/*  81 - Q                  */ CharacterIdentifierStart,
-/*  82 - R                  */ CharacterIdentifierStart,
-/*  83 - S                  */ CharacterIdentifierStart,
-/*  84 - T                  */ CharacterIdentifierStart,
-/*  85 - U                  */ CharacterIdentifierStart,
-/*  86 - V                  */ CharacterIdentifierStart,
-/*  87 - W                  */ CharacterIdentifierStart,
-/*  88 - X                  */ CharacterIdentifierStart,
-/*  89 - Y                  */ CharacterIdentifierStart,
-/*  90 - Z                  */ CharacterIdentifierStart,
+/*  65 - A                  */ CharacterLatin1IdentifierStart,
+/*  66 - B                  */ CharacterLatin1IdentifierStart,
+/*  67 - C                  */ CharacterLatin1IdentifierStart,
+/*  68 - D                  */ CharacterLatin1IdentifierStart,
+/*  69 - E                  */ CharacterLatin1IdentifierStart,
+/*  70 - F                  */ CharacterLatin1IdentifierStart,
+/*  71 - G                  */ CharacterLatin1IdentifierStart,
+/*  72 - H                  */ CharacterLatin1IdentifierStart,
+/*  73 - I                  */ CharacterLatin1IdentifierStart,
+/*  74 - J                  */ CharacterLatin1IdentifierStart,
+/*  75 - K                  */ CharacterLatin1IdentifierStart,
+/*  76 - L                  */ CharacterLatin1IdentifierStart,
+/*  77 - M                  */ CharacterLatin1IdentifierStart,
+/*  78 - N                  */ CharacterLatin1IdentifierStart,
+/*  79 - O                  */ CharacterLatin1IdentifierStart,
+/*  80 - P                  */ CharacterLatin1IdentifierStart,
+/*  81 - Q                  */ CharacterLatin1IdentifierStart,
+/*  82 - R                  */ CharacterLatin1IdentifierStart,
+/*  83 - S                  */ CharacterLatin1IdentifierStart,
+/*  84 - T                  */ CharacterLatin1IdentifierStart,
+/*  85 - U                  */ CharacterLatin1IdentifierStart,
+/*  86 - V                  */ CharacterLatin1IdentifierStart,
+/*  87 - W                  */ CharacterLatin1IdentifierStart,
+/*  88 - X                  */ CharacterLatin1IdentifierStart,
+/*  89 - Y                  */ CharacterLatin1IdentifierStart,
+/*  90 - Z                  */ CharacterLatin1IdentifierStart,
 /*  91 - [                  */ CharacterOpenBracket,
 /*  92 - \                  */ CharacterBackSlash,
 /*  93 - ]                  */ CharacterCloseBracket,
 /*  94 - ^                  */ CharacterXor,
-/*  95 - _                  */ CharacterIdentifierStart,
+/*  95 - _                  */ CharacterLatin1IdentifierStart,
 /*  96 - `                  */ CharacterBackQuote,
-/*  97 - a                  */ CharacterIdentifierStart,
-/*  98 - b                  */ CharacterIdentifierStart,
-/*  99 - c                  */ CharacterIdentifierStart,
-/* 100 - d                  */ CharacterIdentifierStart,
-/* 101 - e                  */ CharacterIdentifierStart,
-/* 102 - f                  */ CharacterIdentifierStart,
-/* 103 - g                  */ CharacterIdentifierStart,
-/* 104 - h                  */ CharacterIdentifierStart,
-/* 105 - i                  */ CharacterIdentifierStart,
-/* 106 - j                  */ CharacterIdentifierStart,
-/* 107 - k                  */ CharacterIdentifierStart,
-/* 108 - l                  */ CharacterIdentifierStart,
-/* 109 - m                  */ CharacterIdentifierStart,
-/* 110 - n                  */ CharacterIdentifierStart,
-/* 111 - o                  */ CharacterIdentifierStart,
-/* 112 - p                  */ CharacterIdentifierStart,
-/* 113 - q                  */ CharacterIdentifierStart,
-/* 114 - r                  */ CharacterIdentifierStart,
-/* 115 - s                  */ CharacterIdentifierStart,
-/* 116 - t                  */ CharacterIdentifierStart,
-/* 117 - u                  */ CharacterIdentifierStart,
-/* 118 - v                  */ CharacterIdentifierStart,
-/* 119 - w                  */ CharacterIdentifierStart,
-/* 120 - x                  */ CharacterIdentifierStart,
-/* 121 - y                  */ CharacterIdentifierStart,
-/* 122 - z                  */ CharacterIdentifierStart,
+/*  97 - a                  */ CharacterLatin1IdentifierStart,
+/*  98 - b                  */ CharacterLatin1IdentifierStart,
+/*  99 - c                  */ CharacterLatin1IdentifierStart,
+/* 100 - d                  */ CharacterLatin1IdentifierStart,
+/* 101 - e                  */ CharacterLatin1IdentifierStart,
+/* 102 - f                  */ CharacterLatin1IdentifierStart,
+/* 103 - g                  */ CharacterLatin1IdentifierStart,
+/* 104 - h                  */ CharacterLatin1IdentifierStart,
+/* 105 - i                  */ CharacterLatin1IdentifierStart,
+/* 106 - j                  */ CharacterLatin1IdentifierStart,
+/* 107 - k                  */ CharacterLatin1IdentifierStart,
+/* 108 - l                  */ CharacterLatin1IdentifierStart,
+/* 109 - m                  */ CharacterLatin1IdentifierStart,
+/* 110 - n                  */ CharacterLatin1IdentifierStart,
+/* 111 - o                  */ CharacterLatin1IdentifierStart,
+/* 112 - p                  */ CharacterLatin1IdentifierStart,
+/* 113 - q                  */ CharacterLatin1IdentifierStart,
+/* 114 - r                  */ CharacterLatin1IdentifierStart,
+/* 115 - s                  */ CharacterLatin1IdentifierStart,
+/* 116 - t                  */ CharacterLatin1IdentifierStart,
+/* 117 - u                  */ CharacterLatin1IdentifierStart,
+/* 118 - v                  */ CharacterLatin1IdentifierStart,
+/* 119 - w                  */ CharacterLatin1IdentifierStart,
+/* 120 - x                  */ CharacterLatin1IdentifierStart,
+/* 121 - y                  */ CharacterLatin1IdentifierStart,
+/* 122 - z                  */ CharacterLatin1IdentifierStart,
 /* 123 - {                  */ CharacterOpenBrace,
 /* 124 - |                  */ CharacterOr,
 /* 125 - }                  */ CharacterCloseBrace,
@@ -269,7 +279,7 @@ static constexpr const CharacterType typesOfLatin1Characters[256] = {
 /* 167 - So category        */ CharacterInvalid,
 /* 168 - Sk category        */ CharacterInvalid,
 /* 169 - So category        */ CharacterInvalid,
-/* 170 - Ll category        */ CharacterIdentifierStart,
+/* 170 - Ll category        */ CharacterLatin1IdentifierStart,
 /* 171 - Pi category        */ CharacterInvalid,
 /* 172 - Sm category        */ CharacterInvalid,
 /* 173 - Cf category        */ CharacterInvalid,
@@ -280,81 +290,81 @@ static constexpr const CharacterType typesOfLatin1Characters[256] = {
 /* 178 - No category        */ CharacterInvalid,
 /* 179 - No category        */ CharacterInvalid,
 /* 180 - Sk category        */ CharacterInvalid,
-/* 181 - Ll category        */ CharacterIdentifierStart,
+/* 181 - Ll category        */ CharacterLatin1IdentifierStart,
 /* 182 - So category        */ CharacterInvalid,
 /* 183 - Po category        */ CharacterOtherIdentifierPart,
 /* 184 - Sk category        */ CharacterInvalid,
 /* 185 - No category        */ CharacterInvalid,
-/* 186 - Ll category        */ CharacterIdentifierStart,
+/* 186 - Ll category        */ CharacterLatin1IdentifierStart,
 /* 187 - Pf category        */ CharacterInvalid,
 /* 188 - No category        */ CharacterInvalid,
 /* 189 - No category        */ CharacterInvalid,
 /* 190 - No category        */ CharacterInvalid,
 /* 191 - Po category        */ CharacterInvalid,
-/* 192 - Lu category        */ CharacterIdentifierStart,
-/* 193 - Lu category        */ CharacterIdentifierStart,
-/* 194 - Lu category        */ CharacterIdentifierStart,
-/* 195 - Lu category        */ CharacterIdentifierStart,
-/* 196 - Lu category        */ CharacterIdentifierStart,
-/* 197 - Lu category        */ CharacterIdentifierStart,
-/* 198 - Lu category        */ CharacterIdentifierStart,
-/* 199 - Lu category        */ CharacterIdentifierStart,
-/* 200 - Lu category        */ CharacterIdentifierStart,
-/* 201 - Lu category        */ CharacterIdentifierStart,
-/* 202 - Lu category        */ CharacterIdentifierStart,
-/* 203 - Lu category        */ CharacterIdentifierStart,
-/* 204 - Lu category        */ CharacterIdentifierStart,
-/* 205 - Lu category        */ CharacterIdentifierStart,
-/* 206 - Lu category        */ CharacterIdentifierStart,
-/* 207 - Lu category        */ CharacterIdentifierStart,
-/* 208 - Lu category        */ CharacterIdentifierStart,
-/* 209 - Lu category        */ CharacterIdentifierStart,
-/* 210 - Lu category        */ CharacterIdentifierStart,
-/* 211 - Lu category        */ CharacterIdentifierStart,
-/* 212 - Lu category        */ CharacterIdentifierStart,
-/* 213 - Lu category        */ CharacterIdentifierStart,
-/* 214 - Lu category        */ CharacterIdentifierStart,
+/* 192 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 193 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 194 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 195 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 196 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 197 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 198 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 199 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 200 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 201 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 202 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 203 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 204 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 205 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 206 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 207 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 208 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 209 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 210 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 211 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 212 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 213 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 214 - Lu category        */ CharacterLatin1IdentifierStart,
 /* 215 - Sm category        */ CharacterInvalid,
-/* 216 - Lu category        */ CharacterIdentifierStart,
-/* 217 - Lu category        */ CharacterIdentifierStart,
-/* 218 - Lu category        */ CharacterIdentifierStart,
-/* 219 - Lu category        */ CharacterIdentifierStart,
-/* 220 - Lu category        */ CharacterIdentifierStart,
-/* 221 - Lu category        */ CharacterIdentifierStart,
-/* 222 - Lu category        */ CharacterIdentifierStart,
-/* 223 - Ll category        */ CharacterIdentifierStart,
-/* 224 - Ll category        */ CharacterIdentifierStart,
-/* 225 - Ll category        */ CharacterIdentifierStart,
-/* 226 - Ll category        */ CharacterIdentifierStart,
-/* 227 - Ll category        */ CharacterIdentifierStart,
-/* 228 - Ll category        */ CharacterIdentifierStart,
-/* 229 - Ll category        */ CharacterIdentifierStart,
-/* 230 - Ll category        */ CharacterIdentifierStart,
-/* 231 - Ll category        */ CharacterIdentifierStart,
-/* 232 - Ll category        */ CharacterIdentifierStart,
-/* 233 - Ll category        */ CharacterIdentifierStart,
-/* 234 - Ll category        */ CharacterIdentifierStart,
-/* 235 - Ll category        */ CharacterIdentifierStart,
-/* 236 - Ll category        */ CharacterIdentifierStart,
-/* 237 - Ll category        */ CharacterIdentifierStart,
-/* 238 - Ll category        */ CharacterIdentifierStart,
-/* 239 - Ll category        */ CharacterIdentifierStart,
-/* 240 - Ll category        */ CharacterIdentifierStart,
-/* 241 - Ll category        */ CharacterIdentifierStart,
-/* 242 - Ll category        */ CharacterIdentifierStart,
-/* 243 - Ll category        */ CharacterIdentifierStart,
-/* 244 - Ll category        */ CharacterIdentifierStart,
-/* 245 - Ll category        */ CharacterIdentifierStart,
-/* 246 - Ll category        */ CharacterIdentifierStart,
+/* 216 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 217 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 218 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 219 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 220 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 221 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 222 - Lu category        */ CharacterLatin1IdentifierStart,
+/* 223 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 224 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 225 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 226 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 227 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 228 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 229 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 230 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 231 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 232 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 233 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 234 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 235 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 236 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 237 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 238 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 239 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 240 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 241 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 242 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 243 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 244 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 245 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 246 - Ll category        */ CharacterLatin1IdentifierStart,
 /* 247 - Sm category        */ CharacterInvalid,
-/* 248 - Ll category        */ CharacterIdentifierStart,
-/* 249 - Ll category        */ CharacterIdentifierStart,
-/* 250 - Ll category        */ CharacterIdentifierStart,
-/* 251 - Ll category        */ CharacterIdentifierStart,
-/* 252 - Ll category        */ CharacterIdentifierStart,
-/* 253 - Ll category        */ CharacterIdentifierStart,
-/* 254 - Ll category        */ CharacterIdentifierStart,
-/* 255 - Ll category        */ CharacterIdentifierStart
+/* 248 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 249 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 250 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 251 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 252 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 253 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 254 - Ll category        */ CharacterLatin1IdentifierStart,
+/* 255 - Ll category        */ CharacterLatin1IdentifierStart
 };
 
 // This table provides the character that results from \X where X is the index in the table beginning
@@ -742,7 +752,7 @@ static ALWAYS_INLINE bool isIdentStart(CharacterType c)
     static_assert(std::is_same_v<CharacterType, LChar> || std::is_same_v<CharacterType, char32_t>, "Call isSingleCharacterIdentStart for UChars that don't need to check for surrogate pairs");
     if (!isLatin1(c))
         return isNonLatin1IdentStart(c);
-    return typesOfLatin1Characters[static_cast<LChar>(c)] == CharacterIdentifierStart;
+    return typesOfLatin1Characters[static_cast<LChar>(c)] == CharacterLatin1IdentifierStart;
 }
 
 static ALWAYS_INLINE UNUSED_FUNCTION bool isSingleCharacterIdentStart(UChar c)
@@ -1930,7 +1940,7 @@ start:
         char32_t codePoint;
         U16_GET(m_code, 0, 0, m_codeEnd - m_code, codePoint);
         if (isNonLatin1IdentStart(codePoint))
-            type = CharacterIdentifierStart;
+            type = CharacterNonLatin1IdentifierStart;
         else if (isLineTerminator(m_current))
             type = CharacterLineTerminator;
         else
@@ -2490,7 +2500,26 @@ start:
         fillTokenInfo(tokenRecord, token, startLineNumber, currentOffset(), startLineStartOffset, currentPosition());
         return token;
     }
-    case CharacterIdentifierStart: {
+    case CharacterLatin1IdentifierStart: {
+        // We observe one character identifier very frequently because real world web pages are shipping minified JavaScript.
+        // This path handles it in a fast path.
+        auto nextCharacter = peek(1);
+        if (LIKELY(isLatin1(nextCharacter))) {
+            // This quickly detects the character is not a part of identifier-part *and* back-slash.
+            if (typesOfLatin1Characters[static_cast<LChar>(nextCharacter)] > CharacterBackSlash) {
+                const auto character = m_current;
+                shift();
+                if (lexerFlags.contains(LexerFlags::DontBuildKeywords))
+                    tokenData->ident = nullptr;
+                else
+                    tokenData->ident = makeIdentifier(std::span { &character, 1 });
+                token = IDENT;
+                break;
+            }
+        }
+        FALLTHROUGH;
+    }
+    case CharacterNonLatin1IdentifierStart: {
         if constexpr (ASSERT_ENABLED) {
             char32_t codePoint;
             U16_GET(m_code, 0, 0, m_codeEnd - m_code, codePoint);
@@ -2522,7 +2551,7 @@ start:
 
         bool isValidPrivateName;
         if (LIKELY(isLatin1(next)))
-            isValidPrivateName = typesOfLatin1Characters[static_cast<LChar>(next)] == CharacterIdentifierStart || next == '\\';
+            isValidPrivateName = typesOfLatin1Characters[static_cast<LChar>(next)] == CharacterLatin1IdentifierStart || next == '\\';
         else {
             ASSERT(m_code + 1 < m_codeEnd);
             char32_t codePoint;

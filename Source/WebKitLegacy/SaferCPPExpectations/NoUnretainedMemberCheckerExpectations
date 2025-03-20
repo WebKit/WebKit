@@ -1,0 +1,15 @@
+WebCoreSupport/SocketStreamHandleImplCFNet.cpp
+WebCoreSupport/WebCryptoClient.h
+mac/History/BackForwardList.h
+mac/Misc/WebLocalizableStrings.h
+mac/Misc/WebSharingServicePickerController.h
+mac/Plugins/WebPluginDatabase.mm
+mac/WebCoreSupport/WebAlternativeTextClient.h
+mac/WebCoreSupport/WebChromeClient.h
+mac/WebCoreSupport/WebDragClient.h
+mac/WebCoreSupport/WebEditorClient.h
+mac/WebCoreSupport/WebGeolocationClient.h
+mac/WebCoreSupport/WebNotificationClient.h
+mac/WebCoreSupport/WebProgressTrackerClient.h
+mac/WebCoreSupport/WebValidationMessageClient.h
+mac/WebView/WebDocumentLoaderMac.h

@@ -80,7 +80,10 @@ bool URLPatternComponent::matchSpecialSchemeProtocol(ScriptExecutionContext& con
     JSC::JSLockHolder lock(vm);
 
     static constexpr std::array specialSchemeList { "ftp"_s, "file"_s, "http"_s, "https"_s, "ws"_s, "wss"_s };
-    auto protocolRegex = JSC::RegExpObject::create(vm, context.globalObject()->regExpStructure(), m_regularExpression.get(), true);
+    auto contextObject = context.globalObject();
+    if (!contextObject)
+        return false;
+    auto protocolRegex = JSC::RegExpObject::create(vm, contextObject->regExpStructure(), m_regularExpression.get(), true);
 
     auto isSchemeMatch = std::find_if(specialSchemeList.begin(), specialSchemeList.end(), [context = Ref { context }, &vm, &protocolRegex](const String& scheme) {
         auto maybeMatch = protocolRegex->exec(context->globalObject(), JSC::jsString(vm, scheme));
@@ -95,8 +98,11 @@ JSC::JSValue URLPatternComponent::componentExec(ScriptExecutionContext& context,
     Ref vm = context.vm();
     JSC::JSLockHolder lock(vm);
 
-    auto regex = JSC::RegExpObject::create(vm, context.globalObject()->regExpStructure(), m_regularExpression.get(), true);
-    return regex->exec(context.globalObject(), JSC::jsString(vm, comparedString));
+    auto contextObject = context.globalObject();
+    if (!contextObject)
+        return JSC::JSValue::JSFalse;
+    auto regex = JSC::RegExpObject::create(vm, contextObject->regExpStructure(), m_regularExpression.get(), true);
+    return regex->exec(contextObject, JSC::jsString(vm, comparedString));
 }
 
 // https://urlpattern.spec.whatwg.org/#create-a-component-match-result

@@ -49,7 +49,7 @@ public:
     virtual void enterFullScreen(WebKit::PlayStationWebView&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void exitFullScreen(WebKit::PlayStationWebView&) { }
     virtual void closeFullScreen(WebKit::PlayStationWebView&) { }
-    virtual void beganEnterFullScreen(WebKit::PlayStationWebView&, const WebCore::IntRect&, const WebCore::IntRect&) { }
+    virtual void beganEnterFullScreen(WebKit::PlayStationWebView&, const WebCore::IntRect&, const WebCore::IntRect&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void beganExitFullScreen(WebKit::PlayStationWebView&, const WebCore::IntRect&, const WebCore::IntRect&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void setCursor(WebKit::PlayStationWebView& view, const WebCore::Cursor& cursor) { }
 };

@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const dir = await navigator.storage.getDirectory();
+    const handle = await dir.getFileHandle("file", {create: true});
+    const stream = await handle.createWritable();
+    const writer = stream.getWriter();
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.terminateNetworkProcess();
+
+    return promise_rejects_dom(t, "AbortError", writer.closed);
+}, "Validate stream gets errored in case of network process crash");
+
+promise_test(async t => {
+    const dir = await navigator.storage.getDirectory();
+    const handle = await dir.getFileHandle("file", {create: true});
+    const stream = await handle.createWritable();
+    const writer = stream.getWriter();
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.clearStorage();
+
+    return promise_rejects_dom(t, "AbortError", writer.closed);
+}, "Validate stream gets errored in case of clearing storage");
+
+function createWorkerWithWritable()
+{
+    return new Worker(URL.createObjectURL(new Blob([`
+        async function test() {
+            try {
+                const dir = await navigator.storage.getDirectory();
+                const handle = await dir.getFileHandle("file", {create: true});
+                const stream = await handle.createWritable();
+                const writer = stream.getWriter();
+                self.postMessage("ready");
+                setTimeout(() => self.postMessage("test timed out"), 2000);
+                await writer.closed;
+            } catch(e) {
+                self.postMessage(e);
+            }
+        };
+        test();
+    `], { type: "text/javascript" })));
+}
+
+promise_test(async t => {
+    const worker = createWorkerWithWritable();
+    assert_equals(await new Promise(resolve => worker.onmessage = e => resolve(e.data)), "ready");
+
+    const promise = new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    if (window.testRunner)
+        testRunner.terminateNetworkProcess();
+
+    const data = await promise;
+    assert_equals(data.name, "AbortError");
+}, "Validate stream gets errored in case of network process crash in a worker");
+
+promise_test(async t => {
+    const worker = createWorkerWithWritable();
+    assert_equals(await new Promise(resolve => worker.onmessage = e => resolve(e.data)), "ready");
+
+    const promise = new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    if (window.testRunner)
+        testRunner.clearStorage();
+
+    const data = await promise;
+    assert_equals(data.name, "AbortError");
+}, "Validate stream gets errored in case of clearing storage in a worker");
+</script>
+</body>
+</html>

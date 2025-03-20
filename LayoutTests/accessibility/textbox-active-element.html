@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="textbox" role="textbox" tabindex="0" contenteditable="true" aria-activedescendant="cell1">
+
+  <table role="grid">
+    <tr>
+      <td role="gridcell" id="cell1" aria-label="Cell 1"></td>
+      <td role="gridcell" id="cell2" aria-label="Cell 2"></td>
+    </tr>
+  </table>
+
+</div>
+
+<script>
+let output = "Tests that aria-activedescendant is supported on a contenteditable textbox.\n\n";
+window.jsTestIsAsync = true;
+
+if (window.accessibilityController) {
+    var textbox = document.getElementById("textbox");
+    textbox.focus();
+    var axTextbox = accessibilityController.accessibleElementById("textbox");
+    output += expect("axTextbox.activeElement.role", '"AXRole: AXCell"');
+    output += expect("axTextbox.activeElement.title", '"AXTitle: Cell 1"');
+
+    accessibilityController.addNotificationListener((target, notification) => {
+        if (notification === "AXActiveElementChanged") {
+            output += expect("axTextbox.activeElement.role", '"AXRole: AXCell"');
+            output += expect("axTextbox.activeElement.title", '"AXTitle: Cell 2"');
+            textbox.hidden = true;
+            debug(output);
+            finishJSTest();
+        }
+    });
+
+    textbox.setAttribute('aria-activedescendant', 'cell2');
+}
+</script>
+</body>
+</html>

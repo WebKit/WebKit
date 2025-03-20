@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 17px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 30px;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <div id="transformee" class="rect" style="background-color: blue;"></div>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var transformee = document.getElementById("transformee");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              transformee.style.transform = "scale(0.5, 0.5)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30, 81, 64, 64]]);
+          },
+          () => {
+              transformee.style.transform = "scale(0.25, 0.25)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30+16, 81+16, 32, 32]]);
+          },
+          () => {
+              transformee.style.transform = "scale(0.125, 0.125)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30+16+8, 81+16+8, 16, 16]]);
+          },
+          () => {
+              transformee.style.transform = "scale(0.5, 0.5)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30+16, 81+16, 32, 32]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

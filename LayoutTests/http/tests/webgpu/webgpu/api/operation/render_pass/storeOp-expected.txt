@@ -67,6 +67,8 @@ PASS :render_pass_store_op,color_attachment_only:colorFormat="rgb10a2uint";store
 PASS :render_pass_store_op,color_attachment_only:colorFormat="rgb10a2uint";storeOperation="store"
 PASS :render_pass_store_op,color_attachment_only:colorFormat="rgb10a2unorm";storeOperation="discard"
 PASS :render_pass_store_op,color_attachment_only:colorFormat="rgb10a2unorm";storeOperation="store"
+PASS :render_pass_store_op,color_attachment_only:colorFormat="rg11b10ufloat";storeOperation="discard"
+PASS :render_pass_store_op,color_attachment_only:colorFormat="rg11b10ufloat";storeOperation="store"
 PASS :render_pass_store_op,multiple_color_attachments:storeOperation1="discard";storeOperation2="discard"
 PASS :render_pass_store_op,multiple_color_attachments:storeOperation1="discard";storeOperation2="store"
 PASS :render_pass_store_op,multiple_color_attachments:storeOperation1="store";storeOperation2="discard"

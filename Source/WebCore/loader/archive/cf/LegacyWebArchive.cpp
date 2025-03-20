@@ -486,7 +486,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& customMarkupExclusionRules, const String& mainResourceFilePath, bool saveScriptsFromMemoryCache)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter, const Vector<MarkupExclusionRule>& customMarkupExclusionRules, const String& mainResourceFilePath, bool saveScriptsFromMemoryCache)
 {
     auto* frame = node.document().frame();
     if (!frame)
@@ -510,7 +510,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = makeString(documentTypeString(node.document()), markupString);
 
-    return create(markupString, saveScriptsFromMemoryCache, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
+    return create(markupString, saveScriptsFromMemoryCache, *frame, WTFMove(nodeList), frameFilter, markupExclusionRules, mainResourceFilePath);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -656,7 +656,7 @@ static UncheckedKeyHashMap<Ref<CSSStyleSheet>, String> addSubresourcesForCSSStyl
     return frame.isMainFrame() ? uniqueCSSStyleSheets : serializationContext.replacementURLStringsForCSSStyleSheet;
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame& frame, Vector<Ref<Node>>&& nodes, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -682,7 +682,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, bo
             && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node.get()).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
-            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), markupExclusionRules, mainFrameFilePath)) {
+            if (auto subframeArchive = create(*childFrame->document(), frameFilter, markupExclusionRules, mainFrameFilePath)) {
                 auto subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {

@@ -31,9 +31,9 @@ PASS Subscriber#signal is not the same AbortSignal as the one passed into `subsc
 PASS Subscription does not emit values after completion
 PASS Subscription does not emit values after error
 PASS Completing or nexting a subscriber after an error does nothing
-FAIL Errors pushed to the subscriber that are not handled by the subscription are reported to the global assert_equals: Error message matches expected "Uncaught Error: custom error" but got "Error: custom error"
-FAIL Errors thrown in the initializer that are not handled by the subscription are reported to the global assert_equals: Error message matches expected "Uncaught Error: custom error" but got "Error: custom error"
-FAIL Subscription reports errors that are pushed after subscriber is closed by completion assert_equals: Error message matches expected "Uncaught Error: custom error" but got "Error: custom error"
+PASS Errors pushed to the subscriber that are not handled by the subscription are reported to the global
+PASS Errors thrown in the initializer that are not handled by the subscription are reported to the global
+PASS Subscription reports errors that are pushed after subscriber is closed by completion
 PASS Errors thrown by initializer function after subscriber is closed by completion are reported
 PASS Errors thrown by initializer function after subscriber is closed by error are reported
 PASS Errors pushed by initializer function after subscriber is closed by error are reported
@@ -52,4 +52,7 @@ PASS Teardowns should be called when subscription is closed by completion
 PASS Teardowns should be called when subscription is closed by subscriber pushing an error
 PASS Teardowns should be called when subscription is closed by subscriber throwing error
 PASS Teardowns should be called synchronously during addTeardown() if the subscription is inactive
+FAIL Multiple subscriptions share the same producer and teardown runs only after last subscription abort assert_equals: Producer should not be invoked again for second subscription expected 1 but got 2
+FAIL New subscription after complete creates new producer assert_array_equals: lengths differ, expected array ["producer start", "teardown"] length 2, got ["producer start", "producer start", "teardown"] length 3
+FAIL Teardown runs after last unsubscribe regardless of unsubscription order assert_equals: Producer should be invoked once expected 1 but got 3
 

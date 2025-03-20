@@ -8,9 +8,13 @@ async function run() {
     await device0.queue.onSubmittedWorkDone();
     device0.queue.writeTexture({ texture: texture1 }, new Uint8Array(202), {}, {width: 48, height: 4 });
     await device0.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
 
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

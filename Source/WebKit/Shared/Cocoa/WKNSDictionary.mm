@@ -28,11 +28,17 @@
 
 #import "WKNSArray.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 using namespace WebKit;
 
 @implementation WKNSDictionary {
-    API::ObjectStorage<API::Dictionary> _dictionary;
+    AlignedStorage<API::Dictionary> _dictionary;
+}
+
+- (Ref<API::Dictionary>)_protectedDictionary
+{
+    return *_dictionary;
 }
 
 - (void)dealloc
@@ -40,7 +46,7 @@ using namespace WebKit;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSDictionary.class, self))
         return;
 
-    _dictionary->~Dictionary();
+    self._protectedDictionary->~Dictionary();
 
     [super dealloc];
 }
@@ -66,7 +72,7 @@ using namespace WebKit;
         return nil;
 
     bool exists;
-    RefPtr value = _dictionary->get(str, exists);
+    RefPtr value = self._protectedDictionary->get(str, exists);
     if (!exists)
         return nil;
 
@@ -75,7 +81,7 @@ using namespace WebKit;
 
 - (NSEnumerator *)keyEnumerator
 {
-    return [wrapper(_dictionary->keys()) objectEnumerator];
+    return [wrapper(self._protectedDictionary->keys()) objectEnumerator];
 }
 
 #pragma mark NSCopying protocol implementation

@@ -1,7 +1,6 @@
 Modules/cookie-store/CookieStore.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
-accessibility/AXObjectCache.cpp
 accessibility/AccessibilityListBox.cpp
 accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityRenderObject.cpp
@@ -13,7 +12,6 @@ dom/Document.cpp
 dom/Element.cpp
 dom/MouseRelatedEvent.cpp
 dom/PendingScript.cpp
-dom/ViewTransition.cpp
 editing/CompositeEditCommand.cpp
 editing/Editor.cpp
 editing/EditorCommand.cpp
@@ -21,8 +19,6 @@ editing/FrameSelection.cpp
 editing/TextManipulationController.cpp
 history/BackForwardCache.cpp
 history/CachedFrame.cpp
-html/BaseDateAndTimeInputType.cpp
-html/ColorInputType.cpp
 html/HTMLLinkElement.cpp
 html/HTMLVideoElement.cpp
 html/ImageDocument.cpp
@@ -41,7 +37,6 @@ page/EventHandler.cpp
 page/FrameSnapshotting.cpp
 page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
-page/LocalFrameViewLayoutContext.cpp
 page/NavigateEvent.cpp
 page/PageColorSampler.cpp
 page/PageConsoleClient.cpp
@@ -57,6 +52,7 @@ platform/KeyboardScrollingAnimator.cpp
 platform/ScrollAnimator.cpp
 platform/ScrollView.cpp
 platform/Scrollbar.cpp
+platform/ScrollbarsController.cpp
 platform/Widget.cpp
 platform/cocoa/WebAVPlayerLayer.mm
 platform/ios/PlaybackSessionInterfaceIOS.mm
@@ -68,7 +64,6 @@ platform/mac/ScrollbarsControllerMac.mm
 platform/mac/VideoPresentationInterfaceMac.mm
 rendering/BackgroundPainter.cpp
 rendering/InlineBoxPainter.cpp
-rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
 rendering/RenderBoxModelObject.cpp
 rendering/RenderElement.cpp
@@ -86,7 +81,6 @@ rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderSearchField.cpp
 rendering/RenderTreeAsText.cpp
-rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 rendering/svg/RenderSVGRoot.cpp
 rendering/svg/SVGPaintServerHandling.h

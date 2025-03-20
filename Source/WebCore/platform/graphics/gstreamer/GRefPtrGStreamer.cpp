@@ -21,8 +21,11 @@
 #include "GRefPtrGStreamer.h"
 
 #if USE(GSTREAMER)
-#include <gst/gl/egl/gsteglimage.h>
 #include <gst/gst.h>
+
+#if USE(GSTREAMER_GL)
+#include <gst/gl/egl/gsteglimage.h>
+#endif
 
 #if USE(GSTREAMER_WEBRTC)
 #include <gst/rtp/rtp.h>
@@ -638,6 +641,8 @@ template <> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr)
         gst_object_unref(GST_OBJECT(ptr));
 }
 
+#if USE(GSTREAMER_GL)
+
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));
@@ -715,6 +720,8 @@ template<> void derefGPtr<GstGLColorConvert>(GstGLColorConvert* ptr)
     if (ptr)
         gst_object_unref(GST_OBJECT(ptr));
 }
+
+#endif // USE(GSTREAMER_GL)
 
 template <>
 GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile* ptr)

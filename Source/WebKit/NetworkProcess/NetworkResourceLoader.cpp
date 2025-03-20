@@ -294,6 +294,9 @@ bool NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
 #if HAVE(AUDIT_TOKEN)
     m_contentFilter->setHostProcessAuditToken(protectedConnectionToWebProcess()->protectedNetworkProcess()->sourceApplicationAuditToken());
 #endif
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    m_contentFilter->setUsesWebContentRestrictions(protectedConnectionToWebProcess()->usesWebContentRestrictionsForFilter());
+#endif
     m_contentFilter->startFilteringMainResource(request.url());
     if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse())) {
         m_contentFilter->stopFilteringMainResource();
@@ -583,7 +586,8 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 
     invalidateSandboxExtensions();
 
-    m_networkLoad = nullptr;
+    if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
+        networkLoad->clearClient();
 
     // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.
     connection->didCleanupResourceLoader(*this);
@@ -1155,8 +1159,10 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
 
+#if ENABLE(CONTENT_EXTENSIONS)
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         updateBytesTransferredOverNetwork(networkLoadMetrics.responseBodyBytesReceived);
+#endif
 
     tryStoreAsCacheEntry();
 
@@ -1256,7 +1262,8 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
 
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
-        m_networkLoad = nullptr;
+        if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
+            networkLoad->clearClient();
         return completionHandler({ });
     }
 #endif
@@ -1425,6 +1432,7 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
     if (RefPtr networkLoad = m_networkLoad) {
         LOADER_RELEASE_LOG("restartNetworkLoad: Cancelling existing network load so we can restart the load.");
         networkLoad->cancel();
+        networkLoad->clearClient();
         m_networkLoad = nullptr;
     }
 
@@ -1459,7 +1467,8 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         setWorkerStart({ });
         if (auto serviceWorkerFetchTask = protectedConnectionToWebProcess()->createFetchTask(*this, newRequest)) {
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
-            m_networkLoad = nullptr;
+            if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
+                networkLoad->clearClient();
             m_serviceWorkerFetchTask = WTFMove(serviceWorkerFetchTask);
             return completionHandler({ });
         }
@@ -2191,11 +2200,14 @@ void NetworkResourceLoader::sendDidReceiveDataMessage(const FragmentedSharedBuff
     RefPtr networkLoad = m_networkLoad;
     auto bytesTransferredOverNetwork = networkLoad ? networkLoad->bytesTransferredOverNetwork() : 0;
 
+#if ENABLE(CONTENT_EXTENSIONS)
     updateBytesTransferredOverNetwork(bytesTransferredOverNetwork);
+#endif
 
     send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(buffer), encodedDataLength, bytesTransferredOverNetwork));
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
 void NetworkResourceLoader::updateBytesTransferredOverNetwork(size_t bytesTransferredOverNetwork)
 {
     CheckedSize delta = bytesTransferredOverNetwork - m_bytesTransferredOverNetwork;
@@ -2205,18 +2217,39 @@ void NetworkResourceLoader::updateBytesTransferredOverNetwork(size_t bytesTransf
     if (!delta)
         return;
 
-    if (auto workerIdentifier = m_parameters.workerIdentifier)
-        reportNetworkUsageToAllSharedWorkers(*workerIdentifier, m_bytesTransferredOverNetwork);
+    WTF::switchOn(m_parameters.workerIdentifier,
+        [&] (std::monostate) { },
+        [protectedThis = Ref { *this }, delta] (WebCore::SharedWorkerIdentifier& workerIdentifier) {
+            protectedThis->reportNetworkUsageToAllSharedWorkerObjects(workerIdentifier, delta);
+        },
+        [protectedThis = Ref { *this }, delta] (WebCore::ServiceWorkerIdentifier& workerIdentifier) {
+            protectedThis->reportNetworkUsageToAllServiceWorkerClients(workerIdentifier, delta);
+        }
+    );
 }
 
-void NetworkResourceLoader::reportNetworkUsageToAllSharedWorkers(WebCore::SharedWorkerIdentifier identifier, size_t bytes)
+void NetworkResourceLoader::reportNetworkUsageToAllSharedWorkerObjects(WebCore::SharedWorkerIdentifier identifier, size_t delta)
 {
+    ASSERT(delta);
+
     Ref connection = m_connection;
     if (CheckedPtr session = connection->protectedNetworkProcess()->networkSession(sessionID())) {
         if (CheckedPtr server = session->sharedWorkerServer())
-            server->reportNetworkUsageToAllSharedWorkerClients(identifier, bytes);
+            server->reportNetworkUsageToAllSharedWorkerObjects(identifier, delta);
     }
 }
+
+void NetworkResourceLoader::reportNetworkUsageToAllServiceWorkerClients(WebCore::ServiceWorkerIdentifier identifier, size_t delta)
+{
+    ASSERT(delta);
+
+    Ref connection = m_connection;
+    if (CheckedPtr session = connection->protectedNetworkProcess()->networkSession(sessionID())) {
+        if (RefPtr server = session->swServer())
+            server->reportNetworkUsageToAllWorkerClients(identifier, delta);
+    }
+}
+#endif
 
 } // namespace WebKit
 

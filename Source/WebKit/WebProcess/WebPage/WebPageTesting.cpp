@@ -105,7 +105,7 @@ void WebPageTesting::isEditingCommandEnabled(const String& commandName, Completi
 void WebPageTesting::clearNotificationPermissionState()
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
-    auto& client = static_cast<WebNotificationClient&>(WebCore::NotificationController::from(page.get())->client());
+    auto& client = downcast<WebNotificationClient>(WebCore::NotificationController::from(page.get())->client());
     client.clearNotificationPermissionState();
 }
 #endif
@@ -148,7 +148,7 @@ void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&
     if (!page)
         return completionHandler();
 
-    Ref backForwardListProxy = static_cast<WebBackForwardListProxy&>(page->backForward().client());
+    Ref backForwardListProxy = downcast<WebBackForwardListProxy>(page->backForward().client());
     backForwardListProxy->clearCachedListCounts();
     completionHandler();
 }

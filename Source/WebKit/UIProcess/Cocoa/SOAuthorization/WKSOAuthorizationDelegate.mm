@@ -43,7 +43,8 @@
 {
     ASSERT(RunLoop::isMain() && completion);
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization (authorization = %p, _session = %p)", authorization, _session.get());
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: No session, so completing with NO as success state.");
         ASSERT_NOT_REACHED();
         completion(NO, nil);
@@ -57,7 +58,7 @@
     }
 
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: presentingViewController %p", viewController);
-    _session->presentViewController(viewController, completion);
+    session->presentViewController(viewController, completion);
 }
 
 - (void)authorizationDidNotHandle:(SOAuthorization *)authorization
@@ -65,26 +66,28 @@
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Could not handle AppSSO.");
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: Falling back to web path.");
-    _session->fallBackToWebPath();
+    session->fallBackToWebPath();
 }
 
 - (void)authorizationDidCancel:(SOAuthorization *)authorization
 {
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: (authorization = %p, _session = %p)", authorization, _session.get());
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: Aborting session.");
-    _session->abort();
+    session->abort();
 }
 
 - (void)authorizationDidComplete:(SOAuthorization *)authorization
@@ -92,13 +95,14 @@
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Complete AppSSO without any data.");
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: Falling back to web path.");
-    _session->fallBackToWebPath();
+    session->fallBackToWebPath();
 }
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithHTTPAuthorizationHeaders:(NSDictionary *)httpAuthorizationHeaders
@@ -106,26 +110,28 @@
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Complete AppSSO with unexpected callback.");
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: Falling back to web path.");
-    _session->fallBackToWebPath();
+    session->fallBackToWebPath();
 }
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithHTTPResponse:(NSHTTPURLResponse *)httpResponse httpBody:(NSData *)httpBody
 {
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: (authorization = %p, _session = %p)", authorization, _session.get());
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: Completing.");
-    _session->complete(httpResponse, httpBody);
+    session->complete(httpResponse, httpBody);
 }
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithError:(NSError *)error
@@ -134,23 +140,24 @@
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: (authorization = %p, _session = %p)", authorization, _session.get());
     if (error.code)
         LOG_ERROR("Could not complete AppSSO operation. Error: %d", error.code);
-    if (!_session) {
+    RefPtr session = _session;
+    if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: No session, so returning early.");
         ASSERT_NOT_REACHED();
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: Falling back to web path.");
-    _session->fallBackToWebPath();
+    session->fallBackToWebPath();
 }
 
 - (void)setSession:(RefPtr<WebKit::SOAuthorizationSession>&&)session
 {
     RELEASE_ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("setSession: (existing session = %p, new session = %p)", _session.get(), session.get());
-    _session = WTFMove(session);
+    _session = session.copyRef();
 
-    if (_session)
-        _session->shouldStart();
+    if (session)
+        session->shouldStart();
 }
 @end
 

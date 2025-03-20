@@ -48,10 +48,10 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, Ref<DeferredPromise>&&);
+    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, RefPtr<DeferredPromise>&&);
     virtual ~MediaKeySystemRequest();
 
-    void setAllowCallback(CompletionHandler<void(String&& mediaKeysHashSalt, Ref<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTFMove(callback); }
+    void setAllowCallback(CompletionHandler<void(String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTFMove(callback); }
     WEBCORE_EXPORT void start();
 
     WEBCORE_EXPORT void allow(String&& mediaKeysHashSalt);
@@ -63,15 +63,15 @@ public:
     const String keySystem() const { return m_keySystem; }
 
 private:
-    MediaKeySystemRequest(Document&, const String& keySystem, Ref<DeferredPromise>&&);
+    MediaKeySystemRequest(Document&, const String& keySystem, RefPtr<DeferredPromise>&&);
 
     // ActiveDOMObject.
     void stop() final;
 
     String m_keySystem;
-    Ref<DeferredPromise> m_promise;
+    RefPtr<DeferredPromise> m_promise;
 
-    CompletionHandler<void(String&&, Ref<DeferredPromise>&&)> m_allowCompletionHandler;
+    CompletionHandler<void(String&&, RefPtr<DeferredPromise>&&)> m_allowCompletionHandler;
 };
 
 } // namespace WebCore

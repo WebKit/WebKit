@@ -62,6 +62,7 @@ PASS Property animation-range value 'normal 100px'
 PASS Property animation-range value '100px'
 PASS Property animation-range value '100px normal'
 PASS Property animation-range value '10% normal'
+PASS Property animation-range value '10% calc(70% + 10% * sign(100em - 1px))'
 PASS e.style['animation-range'] = "entry 50% 0s" should not set the property value
 PASS e.style['animation-range'] = "0s entry 50%" should not set the property value
 PASS e.style['animation-range'] = "1s" should not set the property value

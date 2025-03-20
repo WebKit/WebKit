@@ -31,6 +31,7 @@
 
 #import "WKObject.h"
 #import "WebPreferences.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ template<> struct WrapperTraits<WebPreferences> {
 
 @interface WKPreferences () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebPreferences> _preferences;
+    AlignedStorage<WebKit::WebPreferences> _preferences;
 }
 
 @end

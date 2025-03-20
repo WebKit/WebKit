@@ -159,7 +159,7 @@ public:
     HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }
     HeapVersion edenVersion() const { return m_edenVersion; }
 
-    void registerPreciseAllocation(PreciseAllocation*, bool isNewAllocation = true);
+    void registerPreciseAllocation(PreciseAllocation*, bool isNewAllocation);
     const Vector<PreciseAllocation*>& preciseAllocations() const { return m_preciseAllocations; }
     unsigned preciseAllocationsNurseryOffset() const { return m_preciseAllocationsNurseryOffset; }
     unsigned preciseAllocationsOffsetForThisCollection() const { return m_preciseAllocationsOffsetForThisCollection; }

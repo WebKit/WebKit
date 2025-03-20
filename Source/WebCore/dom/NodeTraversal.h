@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ContainerNode.h"
+#include "NodeInlines.h"
 #include "Text.h"
 
 namespace WebCore {

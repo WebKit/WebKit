@@ -97,9 +97,9 @@ public:
     void setPredictedEvents(const Vector<WebMouseEvent>& predictedEvents) { m_predictedEvents = predictedEvents; }
     Vector<WebMouseEvent> predictedEvents() const { return m_predictedEvents; }
 
-private:
     static bool isMouseEventType(WebEventType);
 
+private:
     WebMouseEventButton m_button { WebMouseEventButton::None };
     unsigned short m_buttons { 0 };
     WebCore::IntPoint m_position; // Relative to the view.
@@ -125,3 +125,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebMouseEvent)
+static bool isType(const WebKit::WebEvent& event) { return WebKit::WebMouseEvent::isMouseEventType(event.type()); }
+SPECIALIZE_TYPE_TRAITS_END()

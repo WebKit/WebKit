@@ -130,7 +130,7 @@ static bool handleOptionLocalhostAlias(Options& options, const char*, const char
 static bool parseFeature(std::string_view featureString, TestFeatures& features)
 {
     auto strings = split(featureString, '=');
-    if (strings.empty() || strings.size() > 2)
+    if (strings.isEmpty() || strings.size() > 2)
         return false;
 
     auto featureName = strings[0];

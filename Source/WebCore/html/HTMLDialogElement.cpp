@@ -77,11 +77,12 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     setBooleanAttribute(openAttr, true);
 
-    m_previouslyFocusedElement = document().focusedElement();
+    Ref document = this->document();
+    m_previouslyFocusedElement = document->focusedElement();
 
-    auto hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
+    RefPtr hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
 
-    document().hideAllPopoversUntil(hideUntil, FocusPreviousElement::No, FireEvents::No);
+    document->hideAllPopoversUntil(hideUntil.get(), FocusPreviousElement::No, FireEvents::No);
 
     runFocusingSteps();
 
@@ -104,7 +105,8 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (isPopoverShowing())
         return Exception { ExceptionCode::InvalidStateError, "Element is already an open popover."_s };
 
-    if (!protectedDocument()->isFullyActive())
+    Ref document = this->document();
+    if (!document->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Invalid for dialogs within documents that are not fully active."_s };
 
     Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
@@ -139,11 +141,11 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     RenderElement::markRendererDirtyAfterTopLayerChange(this->checkedRenderer().get(), containingBlockBeforeStyleResolution.get());
 
-    m_previouslyFocusedElement = document().focusedElement();
+    m_previouslyFocusedElement = document->focusedElement();
 
-    auto hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
+    RefPtr hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
 
-    document().hideAllPopoversUntil(hideUntil, FocusPreviousElement::No, FireEvents::No);
+    document->hideAllPopoversUntil(hideUntil.get(), FocusPreviousElement::No, FireEvents::No);
 
     runFocusingSteps();
 
@@ -198,7 +200,7 @@ bool HTMLDialogElement::isValidCommandType(const CommandType command)
     return HTMLElement::isValidCommandType(command) || command == CommandType::ShowModal || command == CommandType::Close;
 }
 
-bool HTMLDialogElement::handleCommandInternal(const HTMLButtonElement& invoker, const CommandType& command)
+bool HTMLDialogElement::handleCommandInternal(HTMLButtonElement& invoker, const CommandType& command)
 {
     if (HTMLElement::handleCommandInternal(invoker, command))
         return true;
@@ -223,11 +225,14 @@ bool HTMLDialogElement::handleCommandInternal(const HTMLButtonElement& invoker, 
 
 void HTMLDialogElement::queueCancelTask()
 {
-    queueTaskKeepingThisNodeAlive(TaskSource::UserInteraction, [this] {
+    queueTaskKeepingThisNodeAlive(TaskSource::UserInteraction, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
         auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
-        dispatchEvent(cancelEvent);
+        protectedThis->dispatchEvent(cancelEvent);
         if (!cancelEvent->defaultPrevented())
-            close(nullString());
+            protectedThis->close(nullString());
     });
 }
 
@@ -243,19 +248,20 @@ void HTMLDialogElement::runFocusingSteps()
     if (!control)
         control = this;
 
-    RefPtr page = control->document().protectedPage();
+    Ref controlDocument = control->document();
+    RefPtr page = controlDocument->protectedPage();
     if (!page)
         return;
 
     if (control->isFocusable())
         control->runFocusingStepsForAutofocus();
     else if (m_isModal)
-        document().setFocusedElement(nullptr); // Focus fixup rule
+        protectedDocument()->setFocusedElement(nullptr); // Focus fixup rule
 
-    if (!control->document().isSameOriginAsTopDocument())
+    if (!controlDocument->isSameOriginAsTopDocument())
         return;
 
-    if (RefPtr mainFrameDocument = control->document().mainFrameDocument())
+    if (RefPtr mainFrameDocument = controlDocument->mainFrameDocument())
         mainFrameDocument->clearAutofocusCandidates();
     else
         LOG_ONCE(SiteIsolation, "Unable to fully perform HTMLDialogElement::runFocusingSteps() without access to the main frame document ");
@@ -286,7 +292,7 @@ void HTMLDialogElement::queueDialogToggleEventTask(ToggleState oldState, ToggleS
     if (!m_toggleEventTask)
         m_toggleEventTask = ToggleEventTask::create(*this);
 
-    m_toggleEventTask->queue(oldState, newState);
+    RefPtr { m_toggleEventTask }->queue(oldState, newState);
 }
 
 };

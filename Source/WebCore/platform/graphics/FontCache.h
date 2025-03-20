@@ -177,7 +177,7 @@ public:
 
     static void releaseNoncriticalMemoryInAllFontCaches();
 
-    void updateFontCascade(const FontCascade&, RefPtr<FontSelector>&&);
+    void updateFontCascade(const FontCascade&);
 
 #if PLATFORM(WIN)
     RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, String& outFontFamilyName);

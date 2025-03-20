@@ -56,7 +56,7 @@ OBJC_CLASS WebCoreAVFMovieObserver;
 OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct CGImage *CGImageRef;
-typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 typedef struct OpaqueFigVideoTarget *FigVideoTargetRef;
 typedef NSString *AVMediaCharacteristic;
 typedef double NSTimeInterval;
@@ -191,6 +191,7 @@ private:
     NSArray *timedMetadata() const final;
     String accessLog() const final;
     String errorLog() const final;
+    void sceneIdentifierDidChange() final;
 #endif
 
     bool supportsAcceleratedRendering() const final { return true; }
@@ -342,6 +343,8 @@ private:
     void setShouldObserveTimeControlStatus(bool);
 
     void setPreferredDynamicRangeMode(DynamicRangeMode) final;
+    void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit) final;
+
     void audioOutputDeviceChanged() final;
 
     void currentTimeDidChange(MediaTime&&) const;

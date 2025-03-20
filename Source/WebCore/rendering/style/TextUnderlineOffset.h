@@ -89,7 +89,7 @@ private:
 inline TextStream& operator<<(TextStream& ts, const TextUnderlineOffset& offset)
 {
     if (offset.isAuto())
-        ts << "auto";
+        ts << "auto"_s;
     else
         ts << offset.length();
     return ts;

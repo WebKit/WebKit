@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 
 class CFG {
     WTF_MAKE_NONCOPYABLE(CFG);
-    WTF_MAKE_TZONE_ALLOCATED(CFG);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CFG);
 public:
     typedef BasicBlock* Node;
     typedef BlockSet Set;

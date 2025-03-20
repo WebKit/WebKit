@@ -57,6 +57,13 @@ IGNORE_WARNINGS_END
 #endif
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+@interface AVOutputContext(WKSecureCoding)
+- (NSDictionary *)_webKitPropertyListData;
+- (instancetype)_initWithWebKitPropertyListData:(NSDictionary *)plist;
+@end
+NS_ASSUME_NONNULL_END
+
 #import <AVFoundation/AVAudioSession_Private.h>
 
 #if PLATFORM(IOS_FAMILY)

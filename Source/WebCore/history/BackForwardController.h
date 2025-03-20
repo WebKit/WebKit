@@ -60,9 +60,6 @@ public:
     void addItem(Ref<HistoryItem>&&);
     void setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&);
     void setCurrentItem(HistoryItem&);
-    void setProvisionalItem(const HistoryItem&);
-    void clearProvisionalItem(const HistoryItem&);
-    void commitProvisionalItem(const HistoryItem&);
 
     unsigned count() const;
     WEBCORE_EXPORT unsigned backCount() const;

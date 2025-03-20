@@ -52,7 +52,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         caps = adoptGRef(gst_pad_query_caps(m_pad.get(), nullptr));
 
     ASCIILiteral typeName;
-    if (doCapsHaveType(caps.get(), "audio")) {
+    if (doCapsHaveType(caps.get(), "audio"_s)) {
         typeName = "audio"_s;
         m_data.type = RealtimeMediaSource::Type::Audio;
     } else {
@@ -125,7 +125,7 @@ String GStreamerIncomingTrackProcessor::mediaStreamIdFromPad()
 {
     // Look-up the mediastream ID, using the msid attribute, fall back to pad name if there is no msid.
     String mediaStreamId;
-    if (gstObjectHasProperty(m_pad.get(), "msid")) {
+    if (gstObjectHasProperty(m_pad.get(), "msid"_s)) {
         GUniqueOutPtr<char> msid;
         g_object_get(m_pad.get(), "msid", &msid.outPtr(), nullptr);
         if (msid) {
@@ -202,7 +202,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     }
 
     GST_DEBUG_OBJECT(m_bin.get(), "Preparing video decoder for depayloaded RTP packets");
-    GRefPtr<GstElement> decodebin = makeGStreamerElement("decodebin3", nullptr);
+    GRefPtr<GstElement> decodebin = makeGStreamerElement("decodebin3"_s);
     m_isDecoding = true;
 
     g_signal_connect(decodebin.get(), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin*, GstElement* element, gpointer userData) {
@@ -253,7 +253,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
 
 GRefPtr<GstElement> GStreamerIncomingTrackProcessor::createParser()
 {
-    GRefPtr<GstElement> parsebin = makeGStreamerElement("parsebin", nullptr);
+    GRefPtr<GstElement> parsebin = makeGStreamerElement("parsebin"_s);
     g_signal_connect(parsebin.get(), "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer userData) {
         String elementClass = unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');

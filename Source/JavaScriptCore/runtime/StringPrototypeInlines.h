@@ -196,6 +196,24 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
 }
 
 enum class StringReplaceSubstitutions : bool { No, Yes };
+template<StringReplaceSubstitutions substitutions>
+ALWAYS_INLINE String tryMakeReplacedString(const String& string, const String& replacement, size_t matchStart, size_t matchEnd)
+{
+    if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
+        size_t dollarPos = replacement.find('$');
+        if (dollarPos != WTF::notFound) {
+            StringBuilder builder(OverflowPolicy::RecordOverflow);
+            int ovector[2] = { static_cast<int>(matchStart), static_cast<int>(matchEnd) };
+            substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarPos);
+            if (UNLIKELY(builder.hasOverflowed()))
+                return { };
+            if (auto result = tryMakeString(StringView(string).substring(0, matchStart), builder.toString(), StringView(string).substring(matchEnd, string.length() - matchEnd)); LIKELY(!result.isNull()))
+                return result;
+        }
+    }
+    return tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
+}
+
 enum class StringReplaceUseTable : bool { No, Yes };
 template<StringReplaceSubstitutions substitutions, StringReplaceUseTable useTable, typename TableType>
 ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, const String& string, const String& search, const String& replacement, const TableType* table)
@@ -215,26 +233,7 @@ ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, 
 
     size_t searchLength = search.length();
     size_t matchEnd = matchStart + searchLength;
-    String result;
-    if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
-        size_t dollarSignPosition = replacement.find('$');
-        if (dollarSignPosition != WTF::notFound) {
-            StringBuilder builder(OverflowPolicy::RecordOverflow);
-            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
-            substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarSignPosition);
-            if (UNLIKELY(builder.hasOverflowed())) {
-                throwOutOfMemoryError(globalObject, scope);
-                return nullptr;
-            }
-            result = tryMakeString(StringView(string).substring(0, matchStart), builder.toString(), StringView(string).substring(matchEnd, string.length() - matchEnd));
-            if (UNLIKELY(!result)) {
-                throwOutOfMemoryError(globalObject, scope);
-                return nullptr;
-            }
-        }
-    }
-    if (!result)
-        result = tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
+    auto result = tryMakeReplacedString<substitutions>(string, replacement, matchStart, matchEnd);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;

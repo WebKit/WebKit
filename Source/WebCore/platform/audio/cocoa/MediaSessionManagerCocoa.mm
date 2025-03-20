@@ -80,6 +80,8 @@ void MediaSessionManagerCocoa::ensureCodecsRegistered()
     dispatch_once(&onceToken, ^{
         if (shouldEnableVP9Decoder())
             registerSupplementalVP9Decoder();
+        if (shouldEnableSWVP9Decoder())
+            registerWebKitVP9Decoder();
     });
 #endif
 }
@@ -202,6 +204,10 @@ void MediaSessionManagerCocoa::updateSessionState()
 
     m_previousCategory = category;
     sharedSession->setCategory(category, mode, policy);
+
+    forEachSession([&] (auto& session) {
+        session.audioSessionCategoryChanged(category, mode, policy);
+    });
 }
 
 void MediaSessionManagerCocoa::possiblyChangeAudioCategory()

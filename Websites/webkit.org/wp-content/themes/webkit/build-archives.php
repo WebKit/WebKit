@@ -12,7 +12,6 @@ class WebKitBuildArchives {
     public static $platforms = array(
         'mac-sequoia-x86_64%20arm64'     => 'Sequoia',
         'mac-sonoma-x86_64%20arm64'     => 'Sonoma',
-        'mac-ventura-x86_64%20arm64'     => 'Ventura',
     );
 
     public static function object() {

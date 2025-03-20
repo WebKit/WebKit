@@ -501,22 +501,23 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
     auto size = pixelBuffer->size();
     auto width = size.width();
     auto height = size.height();
-
     auto dataBaseAddress = pixelBuffer->bytes().data();
-    auto leakedBuffer = &pixelBuffer.leakRef();
     
     auto derefBuffer = [] (void* context, const void*) {
         static_cast<PixelBuffer*>(context)->deref();
     };
 
     CVPixelBufferRef cvPixelBufferRaw = nullptr;
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedBuffer, nullptr, &cvPixelBufferRaw);
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, pixelBuffer.ptr(), nullptr, &cvPixelBufferRaw);
 
     auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
     if (!cvPixelBuffer) {
-        derefBuffer(leakedBuffer, nullptr);
         return nullptr;
     }
+
+    // The CVPixelBuffer now owns the pixelBuffer and will call `deref()` on it when it gets destroyed.
+    pixelBuffer->ref();
+
     ASSERT_UNUSED(status, !status);
     return RefPtr { VideoFrameCV::create({ }, false, Rotation::None, WTFMove(cvPixelBuffer), WTFMove(colorSpace)) };
 }

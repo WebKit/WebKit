@@ -31,6 +31,11 @@
 #include "FrameDestructionObserver.h"
 #include "UserMessageHandlerDescriptor.h"
 
+namespace JSC {
+class JSGlobalObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class DeferredPromise;
@@ -43,7 +48,7 @@ public:
     }
     virtual ~UserMessageHandler();
 
-    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&&, Ref<DeferredPromise>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
 
     UserMessageHandlerDescriptor* descriptor() { return m_descriptor.get(); }
     void invalidateDescriptor() { m_descriptor = nullptr; }

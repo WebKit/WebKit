@@ -7,46 +7,499 @@ PASS :features,known:feature="bgra8unorm-storage"
 PASS :features,known:feature="depth-clip-control"
 PASS :features,known:feature="depth32float-stencil8"
 PASS :features,known:feature="texture-compression-bc"
+PASS :features,known:feature="texture-compression-bc-sliced-3d"
 PASS :features,known:feature="texture-compression-etc2"
 PASS :features,known:feature="texture-compression-astc"
+PASS :features,known:feature="texture-compression-astc-sliced-3d"
 PASS :features,known:feature="timestamp-query"
 PASS :features,known:feature="indirect-first-instance"
 PASS :features,known:feature="shader-f16"
 PASS :features,known:feature="rg11b10ufloat-renderable"
 PASS :features,known:feature="float32-filterable"
-PASS :limits,unknown:
-PASS :limits,supported:limit="maxTextureDimension1D"
-PASS :limits,supported:limit="maxTextureDimension2D"
-PASS :limits,supported:limit="maxTextureDimension3D"
-PASS :limits,supported:limit="maxTextureArrayLayers"
-PASS :limits,supported:limit="maxBindGroups"
-PASS :limits,supported:limit="maxBindGroupsPlusVertexBuffers"
-PASS :limits,supported:limit="maxBindingsPerBindGroup"
-PASS :limits,supported:limit="maxDynamicUniformBuffersPerPipelineLayout"
-PASS :limits,supported:limit="maxDynamicStorageBuffersPerPipelineLayout"
-PASS :limits,supported:limit="maxSampledTexturesPerShaderStage"
-PASS :limits,supported:limit="maxSamplersPerShaderStage"
-PASS :limits,supported:limit="maxStorageBuffersPerShaderStage"
-PASS :limits,supported:limit="maxStorageTexturesPerShaderStage"
-PASS :limits,supported:limit="maxUniformBuffersPerShaderStage"
-PASS :limits,supported:limit="maxUniformBufferBindingSize"
-PASS :limits,supported:limit="maxStorageBufferBindingSize"
-PASS :limits,supported:limit="minUniformBufferOffsetAlignment"
-PASS :limits,supported:limit="minStorageBufferOffsetAlignment"
-PASS :limits,supported:limit="maxVertexBuffers"
-PASS :limits,supported:limit="maxBufferSize"
-PASS :limits,supported:limit="maxVertexAttributes"
-PASS :limits,supported:limit="maxVertexBufferArrayStride"
-PASS :limits,supported:limit="maxInterStageShaderComponents"
-PASS :limits,supported:limit="maxInterStageShaderVariables"
-PASS :limits,supported:limit="maxColorAttachments"
-PASS :limits,supported:limit="maxColorAttachmentBytesPerSample"
-PASS :limits,supported:limit="maxComputeWorkgroupStorageSize"
-PASS :limits,supported:limit="maxComputeInvocationsPerWorkgroup"
-PASS :limits,supported:limit="maxComputeWorkgroupSizeX"
-PASS :limits,supported:limit="maxComputeWorkgroupSizeY"
-PASS :limits,supported:limit="maxComputeWorkgroupSizeZ"
-PASS :limits,supported:limit="maxComputeWorkgroupsPerDimension"
+PASS :features,known:feature="float32-blendable"
+PASS :features,known:feature="clip-distances"
+PASS :features,known:feature="dual-source-blending"
+FAIL :limits,unknown: assert_unreached:
+  - EXCEPTION: TypeError: Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:250:46
+ Reached unreachable code
+FAIL :limits,supported:limit="maxTextureDimension1D" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxTextureDimension2D" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxTextureDimension3D" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxTextureArrayLayers" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxBindGroups" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxBindGroupsPlusVertexBuffers" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxBindingsPerBindGroup" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxDynamicUniformBuffersPerPipelineLayout" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxDynamicStorageBuffersPerPipelineLayout" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxSampledTexturesPerShaderStage" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxSamplersPerShaderStage" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageBuffersInFragmentStage" assert_unreached:
+  - EXCEPTION: OperationError: The operation failed for an operation-specific reason.
+    subcase: limitValue="adapter"
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="adapter"
+    OK
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageBuffersInVertexStage" assert_unreached:
+  - EXCEPTION: OperationError: The operation failed for an operation-specific reason.
+    subcase: limitValue="adapter"
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="adapter"
+    OK
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageBuffersPerShaderStage" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageTexturesInFragmentStage" assert_unreached:
+  - EXCEPTION: OperationError: The operation failed for an operation-specific reason.
+    subcase: limitValue="adapter"
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="adapter"
+    OK
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageTexturesInVertexStage" assert_unreached:
+  - EXCEPTION: OperationError: The operation failed for an operation-specific reason.
+    subcase: limitValue="adapter"
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="adapter"
+    OK
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageTexturesPerShaderStage" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxUniformBuffersPerShaderStage" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxUniformBufferBindingSize" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxStorageBufferBindingSize" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="minUniformBufferOffsetAlignment" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="minStorageBufferOffsetAlignment" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxVertexBuffers" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxBufferSize" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxVertexAttributes" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxVertexBufferArrayStride" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxInterStageShaderVariables" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxColorAttachments" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxColorAttachmentBytesPerSample" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeWorkgroupStorageSize" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeInvocationsPerWorkgroup" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeWorkgroupSizeX" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeWorkgroupSizeY" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeWorkgroupSizeZ" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
+FAIL :limits,supported:limit="maxComputeWorkgroupsPerDimension" assert_unreached:
+  - EXCEPTION: TypeError: subcase: limitValue="undefined"
+    Value NaN is outside the range [0, 9007199254740991]
+    requestDevice@[native code]
+    requestDeviceTracked@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:200:54
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:311:46
+  - INFO: subcase: limitValue="undefined"
+    OK
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
 PASS :limit,better_than_supported:limit="maxTextureDimension1D"
 PASS :limit,better_than_supported:limit="maxTextureDimension2D"
 PASS :limit,better_than_supported:limit="maxTextureDimension3D"
@@ -58,7 +511,71 @@ PASS :limit,better_than_supported:limit="maxDynamicUniformBuffersPerPipelineLayo
 PASS :limit,better_than_supported:limit="maxDynamicStorageBuffersPerPipelineLayout"
 PASS :limit,better_than_supported:limit="maxSampledTexturesPerShaderStage"
 PASS :limit,better_than_supported:limit="maxSamplersPerShaderStage"
+FAIL :limit,better_than_supported:limit="maxStorageBuffersInFragmentStage" assert_unreached:
+  - EXPECTATION FAILED: subcase: mul=1;add=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - EXPECTATION FAILED: subcase: mul=1;add=100
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - INFO: subcase: mul=1;add=1
+    OK
+  - INFO: subcase: mul=1;add=100
+    OK
+ Reached unreachable code
+FAIL :limit,better_than_supported:limit="maxStorageBuffersInVertexStage" assert_unreached:
+  - EXPECTATION FAILED: subcase: mul=1;add=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - EXPECTATION FAILED: subcase: mul=1;add=100
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - INFO: subcase: mul=1;add=1
+    OK
+  - INFO: subcase: mul=1;add=100
+    OK
+ Reached unreachable code
 PASS :limit,better_than_supported:limit="maxStorageBuffersPerShaderStage"
+FAIL :limit,better_than_supported:limit="maxStorageTexturesInFragmentStage" assert_unreached:
+  - EXPECTATION FAILED: subcase: mul=1;add=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - EXPECTATION FAILED: subcase: mul=1;add=100
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - INFO: subcase: mul=1;add=1
+    OK
+  - INFO: subcase: mul=1;add=100
+    OK
+ Reached unreachable code
+FAIL :limit,better_than_supported:limit="maxStorageTexturesInVertexStage" assert_unreached:
+  - EXPECTATION FAILED: subcase: mul=1;add=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - EXPECTATION FAILED: subcase: mul=1;add=100
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:360:17
+  - INFO: subcase: mul=1;add=1
+    OK
+  - INFO: subcase: mul=1;add=100
+    OK
+ Reached unreachable code
 PASS :limit,better_than_supported:limit="maxStorageTexturesPerShaderStage"
 PASS :limit,better_than_supported:limit="maxUniformBuffersPerShaderStage"
 PASS :limit,better_than_supported:limit="maxUniformBufferBindingSize"
@@ -69,7 +586,6 @@ PASS :limit,better_than_supported:limit="maxVertexBuffers"
 PASS :limit,better_than_supported:limit="maxBufferSize"
 PASS :limit,better_than_supported:limit="maxVertexAttributes"
 PASS :limit,better_than_supported:limit="maxVertexBufferArrayStride"
-PASS :limit,better_than_supported:limit="maxInterStageShaderComponents"
 PASS :limit,better_than_supported:limit="maxInterStageShaderVariables"
 PASS :limit,better_than_supported:limit="maxColorAttachments"
 PASS :limit,better_than_supported:limit="maxColorAttachmentBytesPerSample"
@@ -90,7 +606,11 @@ PASS :limit,out_of_range:limit="maxDynamicUniformBuffersPerPipelineLayout"
 PASS :limit,out_of_range:limit="maxDynamicStorageBuffersPerPipelineLayout"
 PASS :limit,out_of_range:limit="maxSampledTexturesPerShaderStage"
 PASS :limit,out_of_range:limit="maxSamplersPerShaderStage"
+PASS :limit,out_of_range:limit="maxStorageBuffersInFragmentStage"
+PASS :limit,out_of_range:limit="maxStorageBuffersInVertexStage"
 PASS :limit,out_of_range:limit="maxStorageBuffersPerShaderStage"
+PASS :limit,out_of_range:limit="maxStorageTexturesInFragmentStage"
+PASS :limit,out_of_range:limit="maxStorageTexturesInVertexStage"
 PASS :limit,out_of_range:limit="maxStorageTexturesPerShaderStage"
 PASS :limit,out_of_range:limit="maxUniformBuffersPerShaderStage"
 PASS :limit,out_of_range:limit="maxUniformBufferBindingSize"
@@ -101,7 +621,6 @@ PASS :limit,out_of_range:limit="maxVertexBuffers"
 PASS :limit,out_of_range:limit="maxBufferSize"
 PASS :limit,out_of_range:limit="maxVertexAttributes"
 PASS :limit,out_of_range:limit="maxVertexBufferArrayStride"
-PASS :limit,out_of_range:limit="maxInterStageShaderComponents"
 PASS :limit,out_of_range:limit="maxInterStageShaderVariables"
 PASS :limit,out_of_range:limit="maxColorAttachments"
 PASS :limit,out_of_range:limit="maxColorAttachmentBytesPerSample"
@@ -122,7 +641,11 @@ PASS :limit,worse_than_default:limit="maxDynamicUniformBuffersPerPipelineLayout"
 PASS :limit,worse_than_default:limit="maxDynamicStorageBuffersPerPipelineLayout"
 PASS :limit,worse_than_default:limit="maxSampledTexturesPerShaderStage"
 PASS :limit,worse_than_default:limit="maxSamplersPerShaderStage"
+PASS :limit,worse_than_default:limit="maxStorageBuffersInFragmentStage"
+PASS :limit,worse_than_default:limit="maxStorageBuffersInVertexStage"
 PASS :limit,worse_than_default:limit="maxStorageBuffersPerShaderStage"
+PASS :limit,worse_than_default:limit="maxStorageTexturesInFragmentStage"
+PASS :limit,worse_than_default:limit="maxStorageTexturesInVertexStage"
 PASS :limit,worse_than_default:limit="maxStorageTexturesPerShaderStage"
 PASS :limit,worse_than_default:limit="maxUniformBuffersPerShaderStage"
 PASS :limit,worse_than_default:limit="maxUniformBufferBindingSize"
@@ -133,7 +656,6 @@ PASS :limit,worse_than_default:limit="maxVertexBuffers"
 PASS :limit,worse_than_default:limit="maxBufferSize"
 PASS :limit,worse_than_default:limit="maxVertexAttributes"
 PASS :limit,worse_than_default:limit="maxVertexBufferArrayStride"
-PASS :limit,worse_than_default:limit="maxInterStageShaderComponents"
 PASS :limit,worse_than_default:limit="maxInterStageShaderVariables"
 PASS :limit,worse_than_default:limit="maxColorAttachments"
 PASS :limit,worse_than_default:limit="maxColorAttachmentBytesPerSample"
@@ -143,4 +665,10 @@ PASS :limit,worse_than_default:limit="maxComputeWorkgroupSizeX"
 PASS :limit,worse_than_default:limit="maxComputeWorkgroupSizeY"
 PASS :limit,worse_than_default:limit="maxComputeWorkgroupSizeZ"
 PASS :limit,worse_than_default:limit="maxComputeWorkgroupsPerDimension"
+FAIL :always_returns_device:featureLevel="core" assert_unreached:
+  - EXPECTATION FAILED: must not get a Compatibility adapter if not requested
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:528:15
+ Reached unreachable code
+PASS :always_returns_device:featureLevel="compatibility"
 

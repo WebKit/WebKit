@@ -4287,7 +4287,16 @@ PASS e.style['width'] = "anchor-size()" should set the property value
 PASS e.style['width'] = "anchor-size(--foo)" should set the property value
 PASS e.style['width'] = "anchor-size(--foo, 10px)" should set the property value
 PASS e.style['width'] = "anchor-size(10px)" should set the property value
-FAIL e.style['width'] = "calc((anchor-size(--foo width) + anchor-size(--bar height)) / 2)" should set the property value assert_equals: serialization should be canonical expected "calc((anchor-size(--foo width) + anchor-size(--bar height)) / 2)" but got "calc(0.5 * (anchor-size(--foo width) + anchor-size(--bar height)))"
+PASS e.style['width'] = "calc((anchor-size(--foo width) + anchor-size(--bar height)) / 2)" should set the property value
+PASS e.style['width'] = "calc(0.5 * (anchor-size(--foo width) + anchor-size(--bar height)))" should set the property value
 FAIL e.style['width'] = "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" should set the property value assert_equals: serialization should be canonical expected "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" but got "anchor-size(--foo width, calc(0.5 * anchor-size(--bar height)))"
 PASS e.style['width'] = "min(100px, 10%, anchor-size(--foo width), anchor-size(--bar height))" should set the property value
+PASS e.style['max-width'] = "calc((anchor-size(--foo width) + anchor-size(--bar height)) / 2)" should set the property value
+PASS e.style['max-width'] = "calc(0.5 * (anchor-size(--foo width) + anchor-size(--bar height)))" should set the property value
+FAIL e.style['max-width'] = "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" should set the property value assert_equals: serialization should be canonical expected "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" but got "anchor-size(--foo width, calc(0.5 * anchor-size(--bar height)))"
+PASS e.style['max-width'] = "min(100px, 10%, anchor-size(--foo width), anchor-size(--bar height))" should set the property value
+PASS e.style['margin-left'] = "calc((anchor-size(--foo width) + anchor-size(--bar height)) / 2)" should set the property value
+PASS e.style['margin-left'] = "calc(0.5 * (anchor-size(--foo width) + anchor-size(--bar height)))" should set the property value
+FAIL e.style['margin-left'] = "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" should set the property value assert_equals: serialization should be canonical expected "anchor-size(--foo width, calc(anchor-size(--bar height) * 0.5))" but got "anchor-size(--foo width, calc(0.5 * anchor-size(--bar height)))"
+PASS e.style['margin-left'] = "min(100px, 10%, anchor-size(--foo width), anchor-size(--bar height))" should set the property value
 

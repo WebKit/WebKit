@@ -1,0 +1,11 @@
+UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm
+UIProcess/Cocoa/AutomationClient.h
+UIProcess/Cocoa/DiagnosticLoggingClient.h
+UIProcess/Cocoa/FullscreenClient.h
+UIProcess/DisplayLink.h
+UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h
+UIProcess/mac/PageClientImplMac.h
+UIProcess/mac/WebPopupMenuProxyMac.h
+UIProcess/mac/WebViewImpl.h
+WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm
+WebProcess/InjectedBundle/InjectedBundle.h

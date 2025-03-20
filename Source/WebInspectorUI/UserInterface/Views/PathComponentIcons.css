@@ -115,6 +115,14 @@
     content: url(../Images/TypeIcons.svg#Source-light);
 }
 
+.page-icon .icon {
+    content: url(../Images/DocumentIcons.svg#markup-light);
+}
+
+.worker-icon .icon {
+    content: url(../Images/DocumentIcons.svg#worker-light);
+}
+
 @media (prefers-color-scheme: dark) {
     .request-icon .icon {
         content: url(../Images/TypeIcons.svg#Request-dark);
@@ -202,5 +210,13 @@
 
     .source-icon .icon {
         content: url(../Images/TypeIcons.svg#Source-dark);
+    }
+
+    .page-icon .icon {
+        content: url(../Images/DocumentIcons.svg#markup-dark);
+    }
+
+    .worker-icon .icon {
+        content: url(../Images/DocumentIcons.svg#worker-dark);
     }
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/darwin/XPCExtras.h>
 
 namespace WebKit {
 

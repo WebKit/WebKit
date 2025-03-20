@@ -27,9 +27,10 @@
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKWebProcessPlugInScriptWorld {
-    API::ObjectStorage<WebKit::InjectedBundleScriptWorld> _world;
+    AlignedStorage<WebKit::InjectedBundleScriptWorld> _world;
 }
 
 + (WKWebProcessPlugInScriptWorld *)world

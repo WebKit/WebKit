@@ -26,26 +26,24 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class DeviceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DeviceClient> : std::true_type { };
+class SecurityOriginData;
 }
 
 namespace WebCore {
 
-class DeviceClient : public CanMakeWeakPtr<DeviceClient> {
+class DeviceClient : public CanMakeWeakPtr<DeviceClient>, public CanMakeCheckedPtr<DeviceClient> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DeviceClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceClient);
 public:
     virtual ~DeviceClient() = default;
 
-    virtual void startUpdating() = 0;
+    virtual void startUpdating(const SecurityOriginData&) = 0;
     virtual void stopUpdating() = 0;
 
     virtual bool isDeviceMotionClient() const { return false; }

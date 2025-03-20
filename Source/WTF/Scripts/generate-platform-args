@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+import subprocess
+import os
+import shlex
+import shutil
+import re
+
+# Preprocesses wtf/Platform.h with clang, extracts macro definitions, and saves
+# the platform flags to a Swift-style response file containing -D arguments.
+
+framework_search_paths = shlex.split(
+    '{BUILT_PRODUCTS_DIR} {FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
+header_search_paths = shlex.split(
+    '{BUILT_PRODUCTS_DIR} {HEADER_SEARCH_PATHS}'.format_map(os.environ))
+system_framework_search_paths = shlex.split(
+    '{SYSTEM_FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
+system_header_search_paths = shlex.split(
+    '{SYSTEM_HEADER_SEARCH_PATHS}'.format_map(os.environ))
+preprocessor_definitions = shlex.split(
+    '__WK_GENERATING_PLATFORM_ARGS__ RELEASE_WITHOUT_OPTIMIZATIONS '
+    '{GCC_PREPROCESSOR_DEFINITIONS}'.format_map(os.environ))
+archs = shlex.split(os.environ['ARCHS'])
+
+if os.environ['DEPLOYMENT_LOCATION'] == 'YES':
+    output_dir = '{DSTROOT}/{PRIVATE_HEADERS_FOLDER_PATH}/Scripts'.format_map(os.environ)
+else:
+    output_dir = '{BUILT_PRODUCTS_DIR}/{PRIVATE_HEADERS_FOLDER_PATH}/Scripts'.format_map(os.environ)
+
+combined_depfile_fd = open(
+    '{DERIVED_FILES_DIR}/generate-platform-args.d'.format_map(os.environ), 'w')
+
+# This script is run as a build phase, which Xcode runs once with
+# $arch=undefined, so we have to handle multi-arch builds manually. We generate
+# argument lists for all active architectures, and the build script phase
+# declares all known output paths as outputs.
+#
+# FIXME: Computing platform defines is duplicated by DerivedSources.make in
+# JSC, WebCore, WebKit, DumpRenderTree, and WebKitTestRunner. Computing search
+# path arguments is duplicated by migrate-header-rule in WebKitLegacy. We could
+# share this implementation and generate bash-compatible and Make-compatible
+# variables for these use cases as well.
+#
+# FIXME: As an alternative, we could integrate the script as a build rule in
+# targets that compile swift, and generate the arguments on demand.
+
+for arch in archs:
+    output_name = f'platform-enabled-swift-args.{arch}.resp'
+    output_file = f'{output_dir}/{output_name}'
+    depfile = f'{{DERIVED_FILES_DIR}}/{output_name}.d'.format_map(os.environ)
+    target_triple = (f'{arch}-'
+        '{LLVM_TARGET_TRIPLE_VENDOR}-{LLVM_TARGET_TRIPLE_OS_VERSION}').format_map(os.environ)
+    target_triple += os.environ.get('LLVM_TARGET_TRIPLE_SUFFIX', '')
+
+    feature_and_platform_defines = subprocess.check_output(
+        ('xcrun', 'clang', '-x', 'c++', '-std={CLANG_CXX_LANGUAGE_STANDARD}'.format_map(os.environ),
+         '-target', target_triple, '-E', '-P', '-dM', '-MD', '-MF', depfile, '-MT', output_name,
+         *(f'-D{token}' for token in preprocessor_definitions),
+         *(arg for path in framework_search_paths for arg in ('-F', path)),
+         *(arg for path in header_search_paths for arg in ('-I', path)),
+         *(arg for path in system_framework_search_paths for arg in ('-iframework', path)),
+         *(arg for path in system_header_search_paths for arg in ('-isystem', path)),
+         '-include', 'wtf/Platform.h', '/dev/zero'), text=True)
+
+    # Concatenate all the depfiles, in case a header is only imported on specific architectures.
+    shutil.copyfileobj(open(depfile), combined_depfile_fd)
+
+    definitions = {}
+    for m in re.finditer(r'^#define (\w+) (.+)', feature_and_platform_defines, re.MULTILINE):
+        name = m.group(1)
+        value = m.group(2)
+        if value == '1':
+            definitions[name] = 1
+        elif value == '0':
+            definitions[name] = 0
+        else:
+            definitions[name] = value
+
+    # Resolve macros which are defined as the value of another macro. clang -dM
+    # prints macros in alphabetical order, so we cannot rely on macros being in
+    # topological order. Limit the maximum amount of indirection to prevent a
+    # recursive definition from causing the script to loop forever.
+    for _ in range(10):
+        changed = False
+        for name, value in definitions.items():
+            if type(value) == str and value in definitions:
+                definitions[name] = definitions[value]
+                changed = True
+        if not changed:
+            break
+
+    swift_args = '\n'.join(
+        f'-D{name}'
+        for name, value in definitions.items()
+        if value == 1 and (name.startswith('HAVE_') or name.startswith('USE_') or
+                           name.startswith('ENABLE_') or name.startswith('WTF_PLATFORM'))
+    )
+    print(f'{output_file}:\t', swift_args.replace('\n', ' '))
+    open(output_file, 'w').write(swift_args)

@@ -30,11 +30,14 @@
 #include "SWServer.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
+#include "ServiceWorkerRoute.h"
 #include <cstdint>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+static constexpr size_t maxRouteConditionCount = 256;
 
 HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& SWServerWorker::allWorkers()
 {
@@ -473,6 +476,40 @@ bool SWServerWorker::matchingImportedScripts(const Vector<std::pair<URL, ScriptB
             return false;
     }
     return true;
+}
+
+std::optional<ExceptionData> SWServerWorker::addRoutes(Vector<ServiceWorkerRoute>&& routes)
+{
+    for (auto& route : routes) {
+        if (auto exception = validateServiceWorkerRoute(route))
+            return exception;
+    }
+
+    size_t routesConditionCount = 0;
+    for (auto& route : routes)
+        routesConditionCount += computeServiceWorkerRouteConditionCount(route);
+    for (auto& route : m_routes)
+        routesConditionCount += computeServiceWorkerRouteConditionCount(route);
+
+    if (routesConditionCount > maxRouteConditionCount)
+        return ExceptionData { ExceptionCode::TypeError, "Too many routes are registered"_s };
+
+    m_routes.appendVector(WTFMove(routes));
+
+    return { };
+}
+
+// https://w3c.github.io/ServiceWorker/#get-router-source
+RouterSource SWServerWorker::getRouterSource(const FetchOptions& options, const ResourceRequest& request) const
+{
+    if (m_shouldSkipHandleFetch)
+        return RouterSourceEnum::Network;
+
+    for (auto& route : m_routes) {
+        if (matchRouterCondition(route.condition, options, request, isRunning()))
+            return route.source;
+    }
+    return RouterSourceEnum::FetchEvent;
 }
 
 } // namespace WebCore

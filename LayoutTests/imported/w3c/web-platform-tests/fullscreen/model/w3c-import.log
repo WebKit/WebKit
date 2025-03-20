@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-fullscreen-element.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-fullscreen-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-inactive-document.html

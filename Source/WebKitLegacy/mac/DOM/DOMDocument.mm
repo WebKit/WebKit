@@ -57,7 +57,7 @@
 #import <WebCore/Attr.h>
 #import <WebCore/CDATASection.h>
 #import <WebCore/CSSRuleList.h>
-#import <WebCore/CSSStyleDeclaration.h>
+#import <WebCore/CSSStyleProperties.h>
 #import <WebCore/Comment.h>
 #import <WebCore/CustomElementRegistry.h>
 #import <WebCore/DocumentFragment.h>
@@ -369,7 +369,7 @@
 - (DOMElement *)webkitCurrentFullScreenElement
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::DocumentFullscreen::webkitCurrentFullScreenElement(*IMPL)));
+    return kit(WTF::getPtr(WebCore::DocumentFullscreen::webkitFullscreenElement(*IMPL)));
 }
 
 - (BOOL)webkitFullscreenEnabled

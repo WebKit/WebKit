@@ -6,8 +6,12 @@ async function run() {
     let texture = device.createTexture({ size: { width: 400, height: 60 }, mipLevelCount: 2, format: 'etc2-rgb8unorm-srgb', usage: GPUTextureUsage.COPY_DST })
     device.queue.writeTexture({ texture: texture, mipLevel: 1 }, new Uint8Array(186_828), { bytesPerRow: 84 }, { width: 4, height: 32 });
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

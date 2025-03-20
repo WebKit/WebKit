@@ -274,6 +274,7 @@ public:
     bool atEnd() const { return m_underlyingIterator.atEnd(); }
     void advance(int numCharacters);
 
+    StringView text() const { return m_underlyingIterator.text().left(m_underlyingIterator.text().length() - m_runOffset); }
     SimpleRange range() const;
 
 private:

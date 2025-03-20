@@ -110,6 +110,8 @@ void RTCRtpSender::setTrack(Ref<MediaStreamTrack>&& track)
 
 void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<DeferredPromise>&& promise)
 {
+    ALWAYS_LOG_IF(m_connection, LOGIDENTIFIER_SENDER, " with track: ", !!withTrack);
+
     if (withTrack && m_trackKind != withTrack->kind()) {
         promise->reject(ExceptionCode::TypeError);
         return;

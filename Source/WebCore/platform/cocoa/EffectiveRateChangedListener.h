@@ -49,7 +49,8 @@ private:
 
     const Function<void()> m_callback;
     const RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
-    RetainPtr<CMTimebaseRef> m_timebase;
+    const RetainPtr<CMTimebaseRef> m_timebase;
+    std::atomic<bool> m_stopped { false };
 };
 
 } // namespace WebCore

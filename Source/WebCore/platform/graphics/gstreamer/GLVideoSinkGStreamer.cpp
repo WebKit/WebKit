@@ -20,7 +20,7 @@
 #include "config.h"
 #include "GLVideoSinkGStreamer.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include "GStreamerCommon.h"
 #include "GStreamerVideoSinkCommon.h"
@@ -87,7 +87,7 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(sink), GST_ELEMENT_FLAG_SINK);
     gst_bin_set_suppressed_flags(GST_BIN_CAST(sink), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
 
-    sink->priv->appSink = makeGStreamerElement("appsink", "webkit-gl-video-appsink");
+    sink->priv->appSink = makeGStreamerElement("appsink"_s, "webkit-gl-video-appsink"_s);
     ASSERT(sink->priv->appSink);
     g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
 
@@ -102,8 +102,8 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     if (imxVideoConvertG2D)
         gst_bin_add(GST_BIN_CAST(sink), imxVideoConvertG2D);
 
-    GstElement* upload = makeGStreamerElement("glupload", nullptr);
-    GstElement* colorconvert = makeGStreamerElement("glcolorconvert", nullptr);
+    GstElement* upload = makeGStreamerElement("glupload"_s);
+    GstElement* colorconvert = makeGStreamerElement("glcolorconvert"_s);
 
     ASSERT(upload);
     ASSERT(colorconvert);
@@ -159,9 +159,10 @@ static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, Gs
     case GST_STATE_CHANGE_NULL_TO_READY:
     case GST_STATE_CHANGE_READY_TO_READY:
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
-        if (!setGstElementGLContext(element, GST_GL_DISPLAY_CONTEXT_TYPE))
+        static ASCIILiteral gstGlDisplayContextyType = ASCIILiteral::fromLiteralUnsafe(GST_GL_DISPLAY_CONTEXT_TYPE);
+        if (!setGstElementGLContext(element, gstGlDisplayContextyType))
             return GST_STATE_CHANGE_FAILURE;
-        if (!setGstElementGLContext(element, "gst.gl.app_context"))
+        if (!setGstElementGLContext(element, "gst.gl.app_context"_s))
             return GST_STATE_CHANGE_FAILURE;
         break;
     }
@@ -227,7 +228,7 @@ bool webKitGLVideoSinkProbePlatform()
     initializeDMABufAvailability();
 #endif
 
-    return isGStreamerPluginAvailable("app") && isGStreamerPluginAvailable("opengl");
+    return isGStreamerPluginAvailable("app"_s) && isGStreamerPluginAvailable("opengl"_s);
 }
 
 #undef GST_CAT_DEFAULT

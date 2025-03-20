@@ -824,11 +824,11 @@ bool PageClientImpl::isFullScreen()
     return m_impl->fullScreenWindowController().isFullScreen;
 }
 
-void PageClientImpl::enterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
+void PageClientImpl::enterFullScreen(FloatSize, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_impl->fullScreenWindowController())
         return completionHandler(false);
-    [m_impl->fullScreenWindowController() enterFullScreen:nil completionHandler:WTFMove(completionHandler)];
+    [m_impl->fullScreenWindowController() enterFullScreen:WTFMove(completionHandler)];
 }
 
 void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandler)
@@ -838,9 +838,13 @@ void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandle
     [m_impl->fullScreenWindowController() exitFullScreen:WTFMove(completionHandler)];
 }
 
-void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
 {
-    [m_impl->fullScreenWindowController() beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    if (m_impl->fullScreenWindowController())
+        [m_impl->fullScreenWindowController() beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTFMove(completionHandler)];
+    else
+        completionHandler(false);
+
     m_impl->updateSupportsArbitraryLayoutModes();
 }
 
@@ -1039,6 +1043,7 @@ std::optional<float> PageClientImpl::computeAutomaticTopObscuredInset()
 {
     RetainPtr window = [m_view window];
     if (([window styleMask] & NSWindowStyleMaskFullSizeContentView) && ![window titlebarAppearsTransparent] && ![m_view enclosingScrollView]) {
+        [window updateConstraintsIfNeeded];
         NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:[window contentLayoutRect] fromView:nil];
         return std::max<float>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
     }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="2000" height="2000" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              ctx.fillStyle = "green";
+              ctx.fillRect(0, 0, 5, 5);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, Math.min(window.innerWidth, 2000), Math.min(window.innerHeight, 2000)]]);
+          },
+          () => {
+              ctx.fillStyle = "blue";
+              ctx.fillRect(5, 5, 5, 5);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, Math.min(window.innerWidth, 2000), Math.min(window.innerHeight, 2000)]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

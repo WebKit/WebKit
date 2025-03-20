@@ -171,10 +171,10 @@ void PDFPluginBase::teardown()
 
     if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, { })) {
         // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
-        FrameInfoData frameInfo;
+        std::optional<FrameInfoData> frameInfo;
         if (m_frame)
             frameInfo = m_frame->info();
-        existingCompletionHandler({ }, WTFMove(frameInfo), { }, { });
+        existingCompletionHandler({ }, WTFMove(frameInfo), { });
     }
 #endif // ENABLE(PDF_HUD)
 
@@ -183,6 +183,12 @@ void PDFPluginBase::teardown()
 
     if (m_pdfTestCallback && m_element)
         m_element->pluginDestroyedWithPendingPDFTestCallback(WTFMove(m_pdfTestCallback));
+}
+
+WebPage* PDFPluginBase::webPage() const
+{
+    RefPtr frame = m_frame.get();
+    return frame ? frame->page() : nullptr;
 }
 
 Page* PDFPluginBase::page() const
@@ -699,10 +705,11 @@ void PDFPluginBase::invalidateRect(const IntRect& rect)
 
 IntRect PDFPluginBase::boundsOnScreen() const
 {
-    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&] () -> WebCore::IntRect {
-        FloatRect bounds = FloatRect(FloatPoint(), size());
-        FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
-        RefPtr page = this->page();
+    Ref protectedThis { *this };
+    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&protectedThis] () -> WebCore::IntRect {
+        FloatRect bounds = FloatRect(FloatPoint(), protectedThis->size());
+        FloatRect rectInRootViewCoordinates = valueOrDefault(protectedThis->m_rootViewToPluginTransform.inverse()).mapRect(bounds);
+        RefPtr page = protectedThis->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
@@ -1184,22 +1191,22 @@ void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::
     completionHandler(m_suggestedFilename, url, span(data));
 }
 
-void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
+void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
-    FrameInfoData frameInfo;
+    std::optional<FrameInfoData> frameInfo;
     if (m_frame)
         frameInfo = m_frame->info();
 
     if (!m_documentFinishedLoading) {
         if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, WTFMove(completionHandler))) {
             // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
-            existingCompletionHandler({ }, WTFMove(frameInfo), { }, { });
+            existingCompletionHandler({ }, WTFMove(frameInfo), { });
         }
         return;
     }
 
     NSData *data = liveData();
-    completionHandler(m_suggestedFilename, WTFMove(frameInfo), span(data), createVersion4UUIDString());
+    completionHandler(m_suggestedFilename, WTFMove(frameInfo), span(data));
 }
 
 #endif // ENABLE(PDF_HUD)

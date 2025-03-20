@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
-CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
-CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
-CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
-CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html
 CONSOLE MESSAGE: Frame's network usage exceeded the limit.
 Test throttler prevents unloaded.
 

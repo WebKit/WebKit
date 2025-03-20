@@ -24,6 +24,6 @@
  */
 
 dictionary ImportNodeOptions {
-    boolean deep = false;
-    CustomElementRegistry customElements = null;
+    boolean selfOnly = false;
+    CustomElementRegistry customElementRegistry;
 };

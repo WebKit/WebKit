@@ -77,7 +77,7 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 
     // FIXME: We have enough information to do smarter-than-LRU eviction (making use of the back-forward lists, etc.)
 
-    m_snapshotsWithImages.first()->clearImage();
+    Ref { m_snapshotsWithImages.first().get() }->clearImage();
 }
 
 void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwardListItem& item)
@@ -108,7 +108,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
 void ViewSnapshotStore::discardSnapshotImages()
 {
     while (!m_snapshotsWithImages.isEmpty())
-        m_snapshotsWithImages.first()->clearImage();
+        Ref { m_snapshotsWithImages.first().get() }->clearImage();
 }
 
 void ViewSnapshotStore::discardSnapshotImagesForOrigin(const WebCore::SecurityOriginData& origin)

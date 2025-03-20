@@ -94,21 +94,23 @@ void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformat
 
 void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOption)
 {
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
 
-    m_page->didSelectOption(selectedOption);
+    page->didSelectOption(selectedOption);
     close();
 }
 
 void WebDataListSuggestionsDropdownMac::selectOption()
 {
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
 
     String selectedOption = [m_dropdownUI currentSelectedString];
     if (!selectedOption.isNull())
-        m_page->didSelectOption(selectedOption);
+        page->didSelectOption(selectedOption);
 
     close();
 }
@@ -485,7 +487,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     if (!selectedString)
         return;
 
-    _dropdown->didSelectOption(selectedString);
+    Ref { *_dropdown }->didSelectOption(selectedString);
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView

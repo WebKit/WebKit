@@ -172,7 +172,7 @@ public:
     WEBCORE_EXPORT void addAudioCaptureSource(AudioCaptureSource&);
     WEBCORE_EXPORT void removeAudioCaptureSource(AudioCaptureSource&);
     void audioCaptureSourceStateChanged() { updateSessionState(); }
-    bool hasAudioCaptureSource(AudioCaptureSource& source) const { return m_audioCaptureSources.contains(source); }
+    size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSize(); }
 
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
 
@@ -284,7 +284,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     UniqueRef<Timer> m_stateLogTimer;
-    Ref<AggregateLogger> m_logger;
+    const Ref<AggregateLogger> m_logger;
 #endif
 };
 

@@ -40,6 +40,7 @@
 #import <pal/spi/mac/NSPopoverColorWellSPI.h>
 #import <pal/spi/mac/NSPopoverSPI.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 static const size_t maxColorSuggestions = 12;
 static const CGFloat colorPickerMatrixNumColumns = 12.0;

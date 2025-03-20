@@ -38,18 +38,18 @@ WI.Timeline = class Timeline extends WI.Object
 
     static create(type)
     {
-        if (type === WI.TimelineRecord.Type.Network)
+        switch (type) {
+        case WI.TimelineRecord.Type.Network:
             return new WI.NetworkTimeline(type);
-
-        if (type === WI.TimelineRecord.Type.CPU)
+        case WI.TimelineRecord.Type.Script:
+            return new WI.ScriptTimeline(type);
+        case WI.TimelineRecord.Type.CPU:
             return new WI.CPUTimeline(type);
-
-        if (type === WI.TimelineRecord.Type.Memory)
+        case WI.TimelineRecord.Type.Memory:
             return new WI.MemoryTimeline(type);
-
-        if (type === WI.TimelineRecord.Type.Media)
+        case WI.TimelineRecord.Type.Media:
             return new WI.MediaTimeline(type);
-
+        }
         return new WI.Timeline(type);
     }
 

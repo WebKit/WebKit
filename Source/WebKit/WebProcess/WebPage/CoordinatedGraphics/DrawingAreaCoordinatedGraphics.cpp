@@ -795,4 +795,11 @@ void DrawingAreaCoordinatedGraphics::preferredBufferFormatsDidChange()
 }
 #endif
 
+#if ENABLE(DAMAGE_TRACKING)
+FrameDamageForTesting* DrawingAreaCoordinatedGraphics::frameDamageForTesting() const
+{
+    return m_layerTreeHost ? m_layerTreeHost->frameDamageForTesting() : nullptr;
+}
+#endif
+
 } // namespace WebKit

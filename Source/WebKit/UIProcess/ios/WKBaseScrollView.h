@@ -49,6 +49,9 @@
 
 @property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
 @property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;
+@property (nonatomic, readonly) CGSize interactiveScrollVelocityInPointsPerSecond;
+
+- (void)updateInteractiveScrollVelocity;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 @property (nonatomic) NSUInteger _scrollingBehavior;

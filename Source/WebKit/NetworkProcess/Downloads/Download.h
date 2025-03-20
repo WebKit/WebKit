@@ -128,12 +128,12 @@ private:
 
     CheckedPtr<DownloadManager> m_downloadManager;
     DownloadID m_downloadID;
-    Ref<DownloadManager::Client> m_client;
+    const Ref<DownloadManager::Client> m_client;
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
 
-    RefPtr<NetworkDataTask> m_download;
+    const RefPtr<NetworkDataTask> m_download;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
     RetainPtr<NSProgress> m_progress;

@@ -55,6 +55,7 @@ public:
     virtual ~MockRealtimeVideoSource();
 
     static void setIsInterrupted(bool);
+    static void triggerCameraConfigurationChange();
 
     ImageBuffer* imageBuffer();
 

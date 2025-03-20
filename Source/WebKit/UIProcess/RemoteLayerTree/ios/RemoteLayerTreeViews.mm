@@ -406,7 +406,7 @@ static Class scrollViewScrollIndicatorClass()
         return nil;
 
     _contentView = adoptNS([[UIView alloc] init]);
-    _hostingView = adoptNS([WKMaterialHostingSupport createHostingView:_contentView.get()]);
+    _hostingView = [WKMaterialHostingSupport hostingView:_contentView.get()];
 
     [self addSubview:_hostingView.get()];
 
@@ -423,9 +423,9 @@ static Class scrollViewScrollIndicatorClass()
     [_hostingView setFrame:CGRectMake(0, 0, size.width(), size.height())];
 }
 
-- (void)updateMaterialEffectType:(WKHostedMaterialEffectType)materialEffectType cornerRadius:(CGFloat)cornerRadius
+- (void)updateMaterialEffectType:(WKHostedMaterialEffectType)materialEffectType colorScheme:(WKHostedMaterialColorScheme)colorScheme cornerRadius:(CGFloat)cornerRadius
 {
-    [WKMaterialHostingSupport updateHostingView:_hostingView.get() contentView:_contentView.get() materialEffectType:materialEffectType cornerRadius:cornerRadius];
+    [WKMaterialHostingSupport updateHostingView:_hostingView.get() contentView:_contentView.get() materialEffectType:materialEffectType colorScheme:colorScheme cornerRadius:cornerRadius];
 }
 
 @end

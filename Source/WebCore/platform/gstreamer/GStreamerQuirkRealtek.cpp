@@ -49,7 +49,7 @@ GStreamerQuirkRealtek::GStreamerQuirkRealtek()
 
 GstElement* GStreamerQuirkRealtek::createWebAudioSink()
 {
-    auto sink = makeGStreamerElement("rtkaudiosink", nullptr);
+    auto sink = makeGStreamerElement("rtkaudiosink"_s);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rtkaudiosink should be available in the system but it is not");
     g_object_set(sink, "media-tunnel", FALSE, "audio-service", TRUE, nullptr);
     return sink;
@@ -60,12 +60,12 @@ void GStreamerQuirkRealtek::configureElement(GstElement* element, const OptionSe
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
         return;
 
-    if (gstObjectHasProperty(element, "media-tunnel")) {
+    if (gstObjectHasProperty(element, "media-tunnel"_s)) {
         GST_INFO("Enable 'immediate-output' in rtkaudiosink");
         g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
     }
 
-    if (gstObjectHasProperty(element, "lowdelay-mode")) {
+    if (gstObjectHasProperty(element, "lowdelay-mode"_s)) {
         GST_INFO("Enable 'lowdelay-mode' in rtk omx decoder");
         g_object_set(element, "lowdelay-mode", TRUE, nullptr);
     }

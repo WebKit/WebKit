@@ -44,7 +44,7 @@ class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
 public:
-    JSValue *reportError(NSString *errorMessage, JSGlobalContextRef, Function<void()>&& = nullptr);
+    JSValue *reportError(NSString *errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
     JSValue *reportError(NSString *errorMessage, WebExtensionCallbackHandler&);
 
 private:
@@ -120,7 +120,7 @@ public:
 #endif
 };
 
-NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&, const URL& baseURL);
 
 } // namespace WebKit
 

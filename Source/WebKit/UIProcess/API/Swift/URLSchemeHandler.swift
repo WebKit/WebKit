@@ -110,42 +110,4 @@ public protocol URLSchemeHandler {
     func reply(for request: URLRequest) -> TaskSequence
 }
 
-// MARK: Adapters
-
-final class WKURLSchemeHandlerAdapter: NSObject, WKURLSchemeHandler {
-    init(_ wrapped: any URLSchemeHandler) {
-        self.wrapped = wrapped
-    }
-
-    private let wrapped: any URLSchemeHandler
-
-    private var tasks: [ObjectIdentifier: Task<Void, Never>] = [:]
-
-    func webView(_ webView: WKWebView, start urlSchemeTask: any WKURLSchemeTask) {
-        let task = Task {
-            do {
-                for try await result in wrapped.reply(for: urlSchemeTask.request) {
-                    switch result {
-                    case let .response(response):
-                        urlSchemeTask.didReceive(response)
-
-                    case let .data(data):
-                        urlSchemeTask.didReceive(data)
-                    }
-                }
-
-                urlSchemeTask.didFinish()
-            } catch {
-                urlSchemeTask.didFailWithError(error)
-            }
-        }
-
-        tasks[ObjectIdentifier(urlSchemeTask)] = task
-    }
-
-    func webView(_ webView: WKWebView, stop urlSchemeTask: any WKURLSchemeTask) {
-        tasks.removeValue(forKey: ObjectIdentifier(urlSchemeTask))?.cancel()
-    }
-}
-
 #endif

@@ -38,7 +38,7 @@ promise_test(async (test) => {
     });
 
     if (window.testRunner)
-         testRunner.triggerMockCaptureConfigurationChange(false, true);
+         testRunner.triggerMockCaptureConfigurationChange(false, false, true);
      await promise;
 
     await validateSize(test, stream, 3000, 1687, "new video original")

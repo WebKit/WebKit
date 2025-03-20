@@ -180,7 +180,7 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
             return completionHandler(nullptr);
         }
 
-        auto data = xpc_dictionary_get_data_span(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto data = xpcDictionaryGetData(reply, WebKit::WebPushD::protocolEncodedMessageKey);
         auto decoder = IPC::Decoder::create(data, { });
         ASSERT(decoder);
 

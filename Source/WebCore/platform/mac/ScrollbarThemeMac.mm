@@ -89,7 +89,7 @@ using WebCore::ScrollbarSet;
     if (theme.isMockTheme())
         return;
 
-    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
+    downcast<ScrollbarThemeMac>(theme).preferencesChanged();
 
     for (auto& scrollbar : scrollbarMap()) {
         scrollbar->styleChanged();
@@ -105,7 +105,7 @@ using WebCore::ScrollbarSet;
     if (theme.isMockTheme())
         return;
 
-    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
+    downcast<ScrollbarThemeMac>(theme).preferencesChanged();
 }
 
 + (void)registerAsObserver

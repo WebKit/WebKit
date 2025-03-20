@@ -91,7 +91,7 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(FULLSCREEN_API)
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -151,9 +151,9 @@ public:
         : m_backing(inBacking)
     {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        if (m_backing.renderer().page().canDrawHDRContents()) {
-            m_hdrContent = RequestState::Unknown;
-            m_isReplacedElementWithHDR = RequestState::Unknown;
+        if (m_backing.renderer().document().drawsHDRContent()) {
+            m_hasHDRContent = RequestState::Unknown;
+            m_rendererHasHDRContent = RequestState::Unknown;
         }
 #endif
     }
@@ -169,7 +169,7 @@ public:
     bool isPaintsContentSatisfied() const
     {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        if (m_hdrContent == RequestState::Unknown)
+        if (m_hasHDRContent == RequestState::Unknown)
             return false;
 #endif
         return m_content != RequestState::Unknown;
@@ -186,14 +186,14 @@ public:
     bool paintsHDRContent()
     {
         determinePaintsContent();
-        return m_hdrContent == RequestState::True;
+        return m_hasHDRContent == RequestState::True;
     }
 #endif
 
     bool isContentsTypeSatisfied() const
     {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        if (m_isReplacedElementWithHDR == RequestState::Unknown)
+        if (m_rendererHasHDRContent == RequestState::Unknown)
             return false;
 #endif
         return m_contentsType != ContentsType::Unknown;
@@ -219,10 +219,10 @@ public:
     }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    bool isReplacedElementWithHDR()
+    bool rendererHasHDRContent()
     {
         determineContentsType();
-        return m_isReplacedElementWithHDR == RequestState::True;
+        return m_rendererHasHDRContent == RequestState::True;
     }
 #endif
 
@@ -230,8 +230,8 @@ public:
     RequestState m_boxDecorations { RequestState::Unknown };
     RequestState m_content { RequestState::Unknown };
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    RequestState m_hdrContent { RequestState::DontCare };
-    RequestState m_isReplacedElementWithHDR { RequestState::DontCare };
+    RequestState m_hasHDRContent { RequestState::DontCare };
+    RequestState m_rendererHasHDRContent { RequestState::DontCare };
 #endif
 
     ContentsType m_contentsType { ContentsType::Unknown };
@@ -255,7 +255,7 @@ void PaintedContentsInfo::determinePaintsContent()
     m_backing.determinePaintsContent(contentRequest);
     m_content = contentRequest.hasPaintedContent;
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    m_hdrContent = contentRequest.hasPaintedHDRContent;
+    m_hasHDRContent = contentRequest.hasHDRContent;
 #endif
 }
 
@@ -274,8 +274,8 @@ void PaintedContentsInfo::determineContentsType()
         m_contentsType = ContentsType::Painted;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (m_isReplacedElementWithHDR == RequestState::Unknown)
-        m_isReplacedElementWithHDR = m_backing.isReplacedElementWithHDR() ? RequestState::True : RequestState::False;
+    if (m_rendererHasHDRContent == RequestState::Unknown)
+        m_rendererHasHDRContent = m_backing.rendererHasHDRContent() ? RequestState::True : RequestState::False;
 #endif
 }
 
@@ -304,10 +304,10 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
             return false;
 
         // Only use background layers on the fullscreen element's backdrop.
-        CheckedPtr fullscreenManager = box->document().fullscreenManagerIfExists();
-        if (!fullscreenManager)
+        RefPtr documentFullscreen = box->document().fullscreenIfExists();
+        if (!documentFullscreen)
             return false;
-        auto* fullscreenElement = fullscreenManager->fullscreenElement();
+        RefPtr fullscreenElement = documentFullscreen->fullscreenElement();
         if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->backdropRenderer() != &renderer)
             return false;
 
@@ -954,6 +954,7 @@ void RenderLayerBacking::updateAppleVisualEffect(const RenderStyle& style)
 
     visualEffectData.effect = style.appleVisualEffect();
     visualEffectData.contextEffect = style.usedAppleVisualEffectForSubtree();
+    visualEffectData.colorScheme = renderer().document().useDarkAppearance(&style) ? AppleVisualEffectData::ColorScheme::Dark : AppleVisualEffectData::ColorScheme::Light;
 
 #if HAVE(MATERIAL_HOSTING)
     if (appleVisualEffectIsHostedMaterial(style.appleVisualEffect())) {
@@ -1004,7 +1005,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     return true;
 }
 
-static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
+static bool hasNonZeroTransformOrigin(const RenderLayerModelObject& renderer)
 {
     const RenderStyle& style = renderer.style();
     return (style.transformOriginX().isFixed() && style.transformOriginX().value())
@@ -2023,7 +2024,7 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
         m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (contentsInfo.paintsHDRContent() || contentsInfo.isReplacedElementWithHDR())
+    if (contentsInfo.paintsHDRContent() || contentsInfo.rendererHasHDRContent())
         m_graphicsLayer->setDrawsHDRContent(true);
 #endif
 }
@@ -3068,7 +3069,7 @@ void RenderLayerBacking::determinePaintsContent(RenderLayer::PaintedContentReque
     bool shouldScanDescendants = m_owningLayer.hasVisibleContent();
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (!request.isPaintedHDRContentSatisfied())
+    if (!request.isHDRContentSatisfied())
         shouldScanDescendants = true;
 #endif
 
@@ -3098,8 +3099,8 @@ void RenderLayerBacking::determinePaintsContent(RenderLayer::PaintedContentReque
         request.hasPaintedContent = RequestState::False;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (request.hasPaintedHDRContent == RequestState::Unknown)
-        request.hasPaintedHDRContent = RequestState::False;
+    if (request.hasHDRContent == RequestState::Unknown)
+        request.hasHDRContent = RequestState::False;
 #endif
 }
 
@@ -3212,7 +3213,7 @@ void RenderLayerBacking::determineNonCompositedLayerDescendantsPaintedContent(Re
         }
 #if HAVE(SUPPORT_HDR_DISPLAY)
         if (localRequest.probablyHasPaintedContent())
-            request.hasPaintedHDRContent = localRequest.hasPaintedHDRContent;
+            request.hasHDRContent = localRequest.hasHDRContent;
 #endif
         return (hasPaintingDescendant && request.isSatisfied()) ? LayerTraversal::Stop : LayerTraversal::Continue;
     });
@@ -3364,9 +3365,9 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-bool RenderLayerBacking::isReplacedElementWithHDR() const
+bool RenderLayerBacking::rendererHasHDRContent() const
 {
-    return m_owningLayer.isReplacedElementWithHDR();
+    return m_owningLayer.rendererHasHDRContent();
 }
 #endif
 
@@ -3906,6 +3907,24 @@ static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType
         case EventListenerRegionType::NonPassiveTouchCancel:
         case EventListenerRegionType::NonPassiveTouchMove:
             return { "sync touch"_s, { 0, 9 }, SRGBA<uint8_t> { 200, 200, 0, 128 } };
+        case EventListenerRegionType::PointerDown:
+        case EventListenerRegionType::PointerEnter:
+        case EventListenerRegionType::PointerLeave:
+        case EventListenerRegionType::PointerMove:
+        case EventListenerRegionType::PointerOut:
+        case EventListenerRegionType::PointerOver:
+        case EventListenerRegionType::PointerUp:
+            return { "pointer"_s, { }, Color::lightGray.colorWithAlphaByte(128) };
+        case EventListenerRegionType::NonPassivePointerDown:
+        case EventListenerRegionType::NonPassivePointerEnter:
+        case EventListenerRegionType::NonPassivePointerLeave:
+        case EventListenerRegionType::NonPassivePointerMove:
+        case EventListenerRegionType::NonPassivePointerOut:
+        case EventListenerRegionType::NonPassivePointerOver:
+        case EventListenerRegionType::NonPassivePointerUp:
+            return { "sync pointer"_s, { 0, 9 }, SRGBA<uint8_t> { 200, 200, 0, 128 } };
+        default:
+            return { ""_s, { }, Color::black };
         }
         ASSERT_NOT_REACHED();
         return { ""_s, { }, Color::black };
@@ -4539,30 +4558,30 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
 
 TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
 {
-    ts << "RenderLayerBacking " << &backing << " bounds " << backing.compositedBounds();
+    ts << "RenderLayerBacking "_s << &backing << " bounds "_s << backing.compositedBounds();
 
     if (backing.isFrameLayerWithTiledBacking())
-        ts << " frame layer tiled backing";
+        ts << " frame layer tiled backing"_s;
     if (backing.paintsIntoWindow())
-        ts << " paintsIntoWindow";
+        ts << " paintsIntoWindow"_s;
     if (backing.paintsIntoCompositedAncestor())
-        ts << " paintsIntoCompositedAncestor";
+        ts << " paintsIntoCompositedAncestor"_s;
 
-    ts << " primary layer ID " << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->object().toUInt64() : 0);
+    ts << " primary layer ID "_s << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->object().toUInt64() : 0);
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
-        ts << " viewport constrained scrolling node " << nodeID;
+        ts << " viewport constrained scrolling node "_s << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
-        ts << " scrolling node " << nodeID;
+        ts << " scrolling node "_s << nodeID;
 
     if (backing.ancestorClippingStack())
-        ts << " ancestor clip stack " << *backing.ancestorClippingStack();
+        ts << " ancestor clip stack "_s << *backing.ancestorClippingStack();
 
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
-        ts << " frame hosting node " << nodeID;
+        ts << " frame hosting node "_s << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting))
-        ts << " plugin hosting node " << nodeID;
+        ts << " plugin hosting node "_s << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Positioning))
-        ts << " positioning node " << nodeID;
+        ts << " positioning node "_s << nodeID;
     return ts;
 }
 

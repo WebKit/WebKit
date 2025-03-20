@@ -1,5 +1,5 @@
 Anchor1
 Anchor2
 
-FAIL Transition when position-anchor changes assert_equals: expected 25 but got 50
+PASS Transition when position-anchor changes
 

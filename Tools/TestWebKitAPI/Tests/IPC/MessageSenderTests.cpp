@@ -70,7 +70,7 @@ TEST_P(MessageSenderTest, SendAsyncAfterInvalidateCancelsAllAsyncReplies)
             }, i);
         }
         while (replies.size() < 60u)
-            RunLoop::current().cycle();
+            RunLoop::currentSingleton().cycle();
     }
 
     // Same should work via IPC::MessageSender.
@@ -85,7 +85,7 @@ TEST_P(MessageSenderTest, SendAsyncAfterInvalidateCancelsAllAsyncReplies)
             }, i);
         }
         while (replies.size() < 60u)
-            RunLoop::current().cycle();
+            RunLoop::currentSingleton().cycle();
     }
 }
 
@@ -99,27 +99,27 @@ TEST_P(MessageSenderTest, SendWithPromisedReplyAfterInvalidateCancelsAllAsyncRep
     // This works for IPC::Connection.
     bool done = false;
 
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::currentSingleton(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
     });
 
     while (!done)
-        RunLoop::current().cycle();
+        RunLoop::currentSingleton().cycle();
 
     // Same should work via IPC::MessageSender.
     done = false;
     SimpleMessageSender sender { b() };
 
-    sender.sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    sender.sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::currentSingleton(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
     });
 
     while (!done)
-        RunLoop::current().cycle();
+        RunLoop::currentSingleton().cycle();
 }
 
 // Tests that async reply messages sent to a connection after invalidate()
@@ -138,10 +138,10 @@ TEST_P(MessageSenderTest, SendAsyncWithErrorAsynchronousCallback)
     EXPECT_FALSE(done);
 
     while (!done)
-        RunLoop::current().cycle();
+        RunLoop::currentSingleton().cycle();
 
     done = false;
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::currentSingleton(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
@@ -149,7 +149,7 @@ TEST_P(MessageSenderTest, SendAsyncWithErrorAsynchronousCallback)
     EXPECT_FALSE(done);
 
     while (!done)
-        RunLoop::current().cycle();
+        RunLoop::currentSingleton().cycle();
 
 }
 

@@ -3,6 +3,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling=
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="linear"
@@ -22,9 +24,8 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -46,9 +47,8 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -70,15 +70,16 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="linear"
@@ -86,6 +87,52 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, first) value : f32,
+    };
+
+    @vertex
+        fn main(in : S) -> @builtin(position) vec4<f32> {
+          return vec4<f32>();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, either) value : f32,
+    };
+
+    @vertex
+        fn main(in : S) -> @builtin(position) vec4<f32> {
+          return vec4<f32>();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="linear"
@@ -93,6 +140,52 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sam
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, first) value : f32,
+    };
+
+    @vertex
+        fn main(in : S) -> @builtin(position) vec4<f32> {
+          return vec4<f32>();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, either) value : f32,
+    };
+
+    @vertex
+        fn main(in : S) -> @builtin(position) vec4<f32> {
+          return vec4<f32>();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="linear"
@@ -100,6 +193,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sam
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="center";sampling="linear"
@@ -107,6 +202,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";s
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="centroid";sampling="linear"
@@ -114,62 +211,35 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sam
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="sample";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="flat";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="perspective";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="linear";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="center";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="centroid";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling=""
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="in";use_struct=false;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling=""
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="center"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="either"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="flat"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="first";sampling="linear"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling=""
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="center"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="either"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="flat"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="either";sampling="linear"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling=""
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="linear"
@@ -190,9 +260,8 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -215,9 +284,8 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -240,15 +308,16 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="linear"
@@ -256,6 +325,54 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspectiv
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, first) value : f32,
+      @builtin(position) position : vec4<f32>,
+    };
+
+    @vertex
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, either) value : f32,
+      @builtin(position) position : vec4<f32>,
+    };
+
+    @vertex
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="linear"
@@ -263,6 +380,54 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sa
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, first) value : f32,
+      @builtin(position) position : vec4<f32>,
+    };
+
+    @vertex
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, either) value : f32,
+      @builtin(position) position : vec4<f32>,
+    };
+
+    @vertex
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="linear"
@@ -270,6 +435,8 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sa
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="center";sampling="linear"
@@ -277,6 +444,8 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="centroid";sampling="linear"
@@ -284,62 +453,35 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sa
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="center"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="either"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="sample";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="flat";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="perspective";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="linear";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="center";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="centroid";sampling="linear"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling=""
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="center"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="centroid"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="sample"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="flat"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="perspective"
-PASS :type_and_sampling:stage="vertex";io="out";use_struct=false;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling=""
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="center"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="either"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="flat"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="first";sampling="linear"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling=""
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="center"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="sample"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="first"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="either"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="flat"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="either";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling=""
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="linear"
@@ -359,9 +501,8 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -383,9 +524,8 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -407,15 +547,16 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="linear"
@@ -423,6 +564,52 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspecti
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, first) value : f32,
+    };
+
+    @fragment
+        fn main(in : S)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, either) value : f32,
+    };
+
+    @fragment
+        fn main(in : S)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="linear"
@@ -430,6 +617,52 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";s
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, first) value : f32,
+    };
+
+    @fragment
+        fn main(in : S)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, either) value : f32,
+    };
+
+    @fragment
+        fn main(in : S)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="linear"
@@ -437,6 +670,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";s
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="center";sampling="linear"
@@ -444,6 +679,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="centroid";sampling="linear"
@@ -451,13 +688,35 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";s
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling=""
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="first";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling=""
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="either";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling=""
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="linear"
@@ -473,9 +732,8 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -493,9 +751,8 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -513,15 +770,16 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="linear"
@@ -529,6 +787,44 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspect
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main(@location(0)@interpolate(perspective, first) value : f32)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main(@location(0)@interpolate(perspective, either) value : f32)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="linear"
@@ -536,6 +832,44 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main(@location(0)@interpolate(linear, first) value : f32)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main(@location(0)@interpolate(linear, either) value : f32)  {
+
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="linear"
@@ -543,6 +877,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="center";sampling="linear"
@@ -550,6 +886,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="centroid";sampling="linear"
@@ -557,13 +895,35 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling=""
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="first";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling=""
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="either";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling=""
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="linear"
@@ -583,9 +943,8 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -607,9 +966,8 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -631,15 +989,16 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="linear"
@@ -647,6 +1006,52 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspect
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, first) value : f32,
+    };
+
+    @fragment
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(perspective, either) value : f32,
+    };
+
+    @fragment
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="linear"
@@ -654,6 +1059,52 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, first) value : f32,
+    };
+
+    @fragment
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct S {
+      @location(0)@interpolate(linear, either) value : f32,
+    };
+
+    @fragment
+        fn main() -> S {
+          return S();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="linear"
@@ -661,6 +1112,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="center";sampling="linear"
@@ -668,6 +1121,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="centroid";sampling="linear"
@@ -675,13 +1130,35 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling=""
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="first";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling=""
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="either";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling=""
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="linear"
@@ -697,9 +1174,8 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -717,9 +1193,8 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -737,15 +1212,16 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:76:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="linear"
@@ -753,6 +1229,44 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspec
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main() -> @location(0)@interpolate(perspective, first) f32 {
+          return f32();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main() -> @location(0)@interpolate(perspective, either) f32 {
+          return f32();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="linear"
@@ -760,6 +1274,44 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="sample"
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="first" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main() -> @location(0)@interpolate(linear, first) f32 {
+          return f32();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="either" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @fragment
+        fn main() -> @location(0)@interpolate(linear, either) f32 {
+          return f32();
+        }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="linear"
@@ -767,6 +1319,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="center";sampling="linear"
@@ -774,6 +1328,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroi
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="centroid";sampling="linear"
@@ -781,9 +1337,29 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="center"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="either"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="flat"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="perspective"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="sample";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling=""
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="first";sampling="linear"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling=""
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="center"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="centroid"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="sample"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="first"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="either"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="flat"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="perspective"
+PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="either";sampling="linear"
 PASS :require_location:stage="vertex";attribute="%40location(0)";use_struct=true
 PASS :require_location:stage="vertex";attribute="%40location(0)";use_struct=false
 PASS :require_location:stage="vertex";attribute="%40builtin(position)";use_struct=true
@@ -808,16 +1384,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="" asse
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -834,9 +1408,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -859,9 +1432,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -884,15 +1456,17 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -909,9 +1483,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -934,9 +1507,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -959,9 +1531,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -984,9 +1555,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1009,9 +1579,8 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1019,10 +1588,12 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
     OK
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute=""
-PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(perspective)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20center)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20centroid)"
+PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20sample)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(linear)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(linear,%20center)"
@@ -1044,16 +1615,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="" asse
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1070,9 +1639,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1095,9 +1663,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1120,15 +1687,17 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1145,9 +1714,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1170,9 +1738,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1195,9 +1762,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1220,9 +1786,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1245,9 +1810,8 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1255,10 +1819,12 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
     OK
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute=""
-PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(perspective)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20center)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20centroid)"
+PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20sample)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(linear)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(linear,%20center)"
@@ -1280,16 +1846,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1306,9 +1870,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1331,9 +1894,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1356,15 +1918,17 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1381,9 +1945,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1406,9 +1969,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1431,9 +1993,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1456,9 +2017,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1481,9 +2041,8 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1491,10 +2050,12 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
     OK
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute=""
-PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20center)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20centroid)"
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20center)"
@@ -1516,16 +2077,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1542,9 +2101,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1567,9 +2125,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1592,15 +2149,17 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1617,9 +2176,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1642,9 +2200,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1667,9 +2224,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1692,9 +2248,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1717,9 +2272,8 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1727,10 +2281,12 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
     OK
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute=""
-PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20center)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20centroid)"
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20center)"
@@ -1751,16 +2307,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="" as
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1776,9 +2330,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1800,9 +2353,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1824,15 +2376,17 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1848,9 +2402,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1872,9 +2425,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1896,9 +2448,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1920,9 +2471,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1944,9 +2494,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -1964,16 +2513,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="" a
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -1985,9 +2532,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2005,9 +2551,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2025,15 +2570,17 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2045,9 +2592,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2065,9 +2611,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2085,9 +2630,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2105,9 +2649,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2125,9 +2668,8 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2149,16 +2691,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="" as
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2174,9 +2714,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2198,9 +2737,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2222,15 +2760,17 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2246,9 +2786,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2270,9 +2809,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2294,9 +2832,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2318,9 +2855,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2342,9 +2878,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2362,16 +2897,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="" a
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2383,9 +2916,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2403,9 +2935,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2423,15 +2954,17 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2443,9 +2976,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2463,9 +2995,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2483,9 +3014,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2503,9 +3033,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2523,9 +3052,8 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2547,16 +3075,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2572,9 +3098,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2596,9 +3121,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2620,15 +3144,17 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2644,9 +3170,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2668,9 +3193,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2692,9 +3216,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2716,9 +3239,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2740,9 +3262,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2760,16 +3281,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2781,9 +3300,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2801,9 +3319,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2821,15 +3338,17 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2841,9 +3360,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2861,9 +3379,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2881,9 +3398,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2901,9 +3417,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2921,9 +3436,8 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2945,16 +3459,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -2970,9 +3482,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -2994,9 +3505,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3018,15 +3528,17 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -3042,9 +3554,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3066,9 +3577,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3090,9 +3600,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3114,9 +3623,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3138,9 +3646,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3158,16 +3665,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
-PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -3179,9 +3684,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3199,9 +3703,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3219,15 +3722,17 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
   - INFO: subcase:
     OK
  Reached unreachable code
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat)"
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
+PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
   - VALIDATION FAILED: subcase:
     Missing expected compilationInfo 'error' message.
@@ -3239,9 +3744,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3259,9 +3763,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3279,9 +3782,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3299,9 +3801,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3319,9 +3820,8 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:130:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
       at (elided: below max severity)
@@ -3346,7 +3846,7 @@ FAIL :interpolation_validation:attr="trailing_comma_one_arg" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:34: Expected a Identifier, but got a )
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :interpolation_validation:attr="trailing_comma_two_arg"
 PASS :interpolation_validation:attr="newline"

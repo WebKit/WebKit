@@ -825,7 +825,7 @@ TEST(WKWebExtensionAPIWebRequest, ErrorOccurredEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='nonexistent.png' />"_s } },
-        { "/nonexistent.png"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
+        { "/nonexistent.png"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[

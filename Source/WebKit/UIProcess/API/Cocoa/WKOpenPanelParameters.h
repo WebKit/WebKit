@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! WKOpenPanelParameters contains parameters that a file upload control has specified.
  */
 WK_SWIFT_UI_ACTOR
-WK_CLASS_AVAILABLE(macos(10.12), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.12), ios(18.4), visionos(2.4))
 @interface WKOpenPanelParameters : NSObject
 
 /*! @abstract Whether the file upload control supports multiple files.
@@ -40,7 +40,7 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(WK_IOS_TBA))
 
 /*! @abstract Whether the file upload control supports selecting directories.
  */
-@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macos(10.13.4), ios(18.4), visionos(2.4));
 
 @end
 

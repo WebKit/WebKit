@@ -630,7 +630,7 @@ TEST(WebKit, FastServerTrust)
 
 TEST(WebKit, ErrorSecureCoding)
 {
-    HTTPServer server({ { "/"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } } });
+    HTTPServer server({ { "/"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } } });
     auto webView = [[WKWebView new] autorelease];
     auto delegate = [[TestNavigationDelegate new] autorelease];
     webView.navigationDelegate = delegate;

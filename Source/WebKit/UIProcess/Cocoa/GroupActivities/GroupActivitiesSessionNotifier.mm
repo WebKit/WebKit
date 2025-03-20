@@ -112,7 +112,7 @@ void GroupActivitiesSessionNotifier::webPageURLChanged(WebPageProxy& webPage)
     if (!m_webPages.contains(webPage))
         return;
 
-    auto frame = webPage.mainFrame();
+    RefPtr frame = webPage.mainFrame();
     if (!frame)
         return;
 

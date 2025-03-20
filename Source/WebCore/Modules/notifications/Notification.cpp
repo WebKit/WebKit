@@ -217,8 +217,8 @@ void Notification::stopResourcesLoader()
 
 void Notification::showSoon()
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
-        show();
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [](auto& notification) {
+        notification.show();
     });
 }
 
@@ -344,9 +344,9 @@ void Notification::dispatchClickEvent()
     ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [](auto& notification) {
         WindowFocusAllowedIndicator windowFocusAllowed;
-        dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        notification.dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

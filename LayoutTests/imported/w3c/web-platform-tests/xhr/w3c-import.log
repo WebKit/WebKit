@@ -34,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-event-order.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-upload-event-abort.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-upload-event-loadend.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/abort-with-error.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-and-redirects.any.js
@@ -86,6 +87,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-sandboxed-iframe-denied.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/allow-lists-starting-with-comma.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/anonymous-mode-unsupported.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/blob-range.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/close-worker-with-xhr-in-progress.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/content-type-unmodified.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/cookies.http.html
@@ -199,6 +201,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-get-twice.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-invalid-type.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-media-type.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-non-document-types.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/responsexml-non-well-formed.htm
@@ -290,6 +293,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-cors-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-sync.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/xhr-authorization-redirect.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xmlhttprequest-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xmlhttprequest-eventtarget.htm

@@ -48,7 +48,8 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationState) {
     WKSLinearMediaPresentationStateInline = 0,
     WKSLinearMediaPresentationStateEnteringFullscreen,
     WKSLinearMediaPresentationStateFullscreen,
-    WKSLinearMediaPresentationStateExitingFullscreen
+    WKSLinearMediaPresentationStateExitingFullscreen,
+    WKSLinearMediaPresentationStateExternal
 };
 
 typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {

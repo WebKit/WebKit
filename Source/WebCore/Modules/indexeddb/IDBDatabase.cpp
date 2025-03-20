@@ -488,4 +488,12 @@ void IDBDatabase::didDeleteIndexInfo(const IDBIndexInfo& info)
     objectStore->deleteIndex(info.name());
 }
 
+std::optional<ScriptExecutionContextIdentifier> IDBDatabase::scriptExecutionContextIdentifier() const
+{
+    if (RefPtr context = scriptExecutionContext())
+        return context->identifier();
+
+    return std::nullopt;
+}
+
 } // namespace WebCore

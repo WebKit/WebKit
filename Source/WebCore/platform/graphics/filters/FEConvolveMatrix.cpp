@@ -142,16 +142,16 @@ static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)
 {
     switch (type) {
     case EdgeModeType::Unknown:
-        ts << "UNKNOWN";
+        ts << "UNKNOWN"_s;
         break;
     case EdgeModeType::Duplicate:
-        ts << "DUPLICATE";
+        ts << "DUPLICATE"_s;
         break;
     case EdgeModeType::Wrap:
-        ts << "WRAP";
+        ts << "WRAP"_s;
         break;
     case EdgeModeType::None:
-        ts << "NONE";
+        ts << "NONE"_s;
         break;
     }
     return ts;
@@ -159,19 +159,19 @@ static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)
 
 TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feConvolveMatrix";
+    ts << indent << "[feConvolveMatrix"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " order=\"" << m_kernelSize << "\"";
-    ts << " kernelMatrix=\"" << m_kernelMatrix  << "\"";
-    ts << " divisor=\"" << m_divisor << "\"";
-    ts << " bias=\"" << m_bias << "\"";
-    ts << " target=\"" << m_targetOffset << "\"";
-    ts << " edgeMode=\"" << m_edgeMode << "\"";
-    ts << " kernelUnitLength=\"" << m_kernelUnitLength << "\"";
-    ts << " preserveAlpha=\"" << m_preserveAlpha << "\"";
+    ts << " order=\"" << m_kernelSize << '"';
+    ts << " kernelMatrix=\"" << m_kernelMatrix  << '"';
+    ts << " divisor=\"" << m_divisor << '"';
+    ts << " bias=\"" << m_bias << '"';
+    ts << " target=\"" << m_targetOffset << '"';
+    ts << " edgeMode=\"" << m_edgeMode << '"';
+    ts << " kernelUnitLength=\"" << m_kernelUnitLength << '"';
+    ts << " preserveAlpha=\"" << m_preserveAlpha << '"';
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

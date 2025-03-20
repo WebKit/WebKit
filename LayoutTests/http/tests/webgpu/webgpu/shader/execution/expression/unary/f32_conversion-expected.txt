@@ -47,6 +47,10 @@ PASS :i32:inputSource="storage_rw";vectorize="_undef_"
 PASS :i32:inputSource="storage_rw";vectorize=2
 PASS :i32:inputSource="storage_rw";vectorize=3
 PASS :i32:inputSource="storage_rw";vectorize=4
+PASS :abstract_int:inputSource="const";vectorize="_undef_"
+PASS :abstract_int:inputSource="const";vectorize=2
+PASS :abstract_int:inputSource="const";vectorize=3
+PASS :abstract_int:inputSource="const";vectorize=4
 PASS :f32:inputSource="const";vectorize="_undef_"
 PASS :f32:inputSource="const";vectorize=2
 PASS :f32:inputSource="const";vectorize=3
@@ -151,4 +155,17 @@ PASS :f16_mat:inputSource="storage_rw";cols=3;rows=4
 PASS :f16_mat:inputSource="storage_rw";cols=4;rows=2
 PASS :f16_mat:inputSource="storage_rw";cols=4;rows=3
 PASS :f16_mat:inputSource="storage_rw";cols=4;rows=4
+PASS :abstract_float:inputSource="const";vectorize="_undef_"
+PASS :abstract_float:inputSource="const";vectorize=2
+PASS :abstract_float:inputSource="const";vectorize=3
+PASS :abstract_float:inputSource="const";vectorize=4
+PASS :abstract_float_mat:inputSource="const";cols=2;rows=2
+PASS :abstract_float_mat:inputSource="const";cols=2;rows=3
+PASS :abstract_float_mat:inputSource="const";cols=2;rows=4
+PASS :abstract_float_mat:inputSource="const";cols=3;rows=2
+PASS :abstract_float_mat:inputSource="const";cols=3;rows=3
+PASS :abstract_float_mat:inputSource="const";cols=3;rows=4
+PASS :abstract_float_mat:inputSource="const";cols=4;rows=2
+PASS :abstract_float_mat:inputSource="const";cols=4;rows=3
+PASS :abstract_float_mat:inputSource="const";cols=4;rows=4
 

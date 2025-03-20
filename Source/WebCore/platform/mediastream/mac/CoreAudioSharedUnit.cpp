@@ -663,9 +663,9 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     m_ioUnitStarted = true;
 
-    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(isProducingMicrophoneSamples()));
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
+    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(!m_microphoneProcsCalledLastTime || isProducingMicrophoneSamples()));
 
     updateVoiceActivityDetection();
     updateMutedState();
@@ -680,7 +680,7 @@ void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
 
     if (!isProducingData())
         return;
-    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(isProducingMicrophoneSamples()));
+    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(!m_microphoneProcsCalledLastTime || isProducingMicrophoneSamples()));
 }
 
 void CoreAudioSharedUnit::updateMutedState(SyncUpdate syncUpdate)

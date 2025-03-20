@@ -30,7 +30,7 @@ def parser():
     parser = argparse.ArgumentParser(description='filter test output')
     parser.add_argument(
         'filter_type',
-        choices=['jsc', 'layout', 'scan-build'],
+        choices=['jsc', 'layout', 'scan-build', 'webdriver'],
         help='Choose which test logs to filter'
     )
     parser.add_argument(
@@ -83,6 +83,17 @@ def filter_scan_build(log_file_name):
                 print_all_lines = True
                 print(line, end='')
 
+def filter_webdriver_tests(log_file_name):
+    log_file = os.path.abspath(f'{log_file_name}')
+    with open(log_file, 'w') as f:
+        print_line = False
+        for line in sys.stdin:
+            f.write(line)
+            if print_line:
+                print(line, end='')
+            if 'tests ran as expected' in line:
+                print_line = True
+                print(line, end='')
 
 def main():
     args = parser()
@@ -92,6 +103,8 @@ def main():
         filter_layout_tests(args.output)
     elif args.filter_type == 'scan-build':
         filter_scan_build(args.output)
+    elif args.filter_type == 'webdriver':
+        filter_webdriver_tests(args.output)
 
 
 if __name__ == '__main__':

@@ -27,6 +27,7 @@
 #define PlatformContentFilter_h
 
 #include "SharedBuffer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -49,8 +50,9 @@ class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 
-class PlatformContentFilter : public CanMakeWeakPtr<PlatformContentFilter> {
+class PlatformContentFilter : public CanMakeWeakPtr<PlatformContentFilter>, public CanMakeCheckedPtr<PlatformContentFilter> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformContentFilter);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformContentFilter);
     WTF_MAKE_NONCOPYABLE(PlatformContentFilter);
 
 public:
@@ -78,6 +80,10 @@ public:
 #if HAVE(AUDIT_TOKEN)
     const std::optional<audit_token_t> hostProcessAuditToken() const { return m_hostProcessAuditToken; }
     void setHostProcessAuditToken(const std::optional<audit_token_t>& token) { m_hostProcessAuditToken = token; }
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    virtual void setUsesWebContentRestrictions(bool) { };
 #endif
 
 protected:

@@ -33,10 +33,10 @@
 #include "CSSCounterValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontValue.h"
-#include "CSSFontVariantAlternatesValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSRatioValue.h"
 #include "CSSRectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSTextShadowPropertyValue.h"
@@ -57,6 +57,7 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleImageSet.h"
+#include "StyleRatio.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleTextShadow.h"
@@ -80,6 +81,7 @@ inline TransformOperations forwardInheritedValue(const TransformOperations& valu
 inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
 inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
 inline DynamicRangeLimit forwardInheritedValue(const DynamicRangeLimit& value) { auto copy = value; return copy; }
+inline CornerShapeValue forwardInheritedValue(const CornerShapeValue& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {
@@ -604,10 +606,24 @@ inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& 
 {
     if (value.isRect()) {
         auto& conversionData = builderState.cssToLengthConversionData();
-        auto top = value.rect().top().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto right = value.rect().right().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto bottom = value.rect().bottom().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto left = value.rect().left().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto primitiveValueTop = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value.rect().top());
+        if (!primitiveValueTop)
+            return;
+        auto primitiveValueRight = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value.rect().right());
+        if (!primitiveValueRight)
+            return;
+        auto primitiveValueBottom = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value.rect().bottom());
+        if (!primitiveValueBottom)
+            return;
+        auto primitiveValueLeft = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value.rect().left());
+        if (!primitiveValueLeft)
+            return;
+
+        auto top = primitiveValueTop->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto right = primitiveValueRight->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto bottom = primitiveValueBottom->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto left = primitiveValueLeft->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+
         builderState.style().setClip(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
         builderState.style().setHasClip(true);
     } else {
@@ -969,41 +985,34 @@ inline void BuilderCustom::applyInheritAspectRatio(BuilderState&)
 
 inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSSValue& value)
 {
-    if (value.valueID() == CSSValueAuto)
-        return builderState.style().setAspectRatioType(AspectRatioType::Auto);
+    auto resolveRatio = [&](const CSSRatioValue& ratioValue) -> std::pair<double, double> {
+        auto styleRatio = Style::toStyle(ratioValue.ratio(), builderState);
+        return { styleRatio.numerator.value, styleRatio.denominator.value };
+    };
+
+    if (value.valueID() == CSSValueAuto) {
+        builderState.style().setAspectRatioType(AspectRatioType::Auto);
+        return;
+    }
+    if (RefPtr ratio = dynamicDowncast<CSSRatioValue>(value)) {
+        auto [width, height] = resolveRatio(*ratio);
+        if (!width || !height)
+            builderState.style().setAspectRatioType(AspectRatioType::AutoZero);
+        else
+            builderState.style().setAspectRatioType(AspectRatioType::Ratio);
+        builderState.style().setAspectRatio(width, height);
+        return;
+    }
 
     auto list = BuilderConverter::requiredListDowncast<CSSValueList, CSSValue, 2>(builderState, value);
     if (!list)
         return;
 
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    auto resolveRatioList = [&](auto& listValue) -> std::optional<std::pair<double, double>> {
-        auto ratioList = BuilderConverter::requiredListDowncast<CSSValueList, CSSPrimitiveValue, 2>(builderState, listValue);
-        if (!ratioList)
-            return { };
-
-        return std::pair { ratioList->item(0).resolveAsNumber(conversionData), ratioList->item(1).resolveAsNumber(conversionData) };
-    };
-
-    if (is<CSSValueList>(list->item(1))) {
-        auto ratio = resolveRatioList(list->item(1));
-        if (!ratio)
-            return;
-        auto [width, height] = *ratio;
-        builderState.style().setAspectRatioType(AspectRatioType::AutoAndRatio);
-        builderState.style().setAspectRatio(width, height);
-        return;
-    }
-
-    auto ratio = resolveRatioList(value);
+    auto ratio = BuilderConverter::requiredDowncast<CSSRatioValue>(builderState, list->item(1));
     if (!ratio)
         return;
-    auto [width, height] = *ratio;
-    if (!width || !height)
-        builderState.style().setAspectRatioType(AspectRatioType::AutoZero);
-    else
-        builderState.style().setAspectRatioType(AspectRatioType::Ratio);
+    auto [width, height] = resolveRatio(*ratio);
+    builderState.style().setAspectRatioType(AspectRatioType::AutoAndRatio);
     builderState.style().setAspectRatio(width, height);
 }
 
@@ -1511,32 +1520,13 @@ inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& build
 
 inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
 {
-    auto setAlternates = [&builderState](const FontVariantAlternates& alternates) {
-        auto fontDescription = builderState.fontDescription();
-        fontDescription.setVariantAlternates(alternates);
-        builderState.setFontDescription(WTFMove(fontDescription));
-    };
-
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue->valueID())) {
-            setAlternates(FontVariantAlternates::Normal());
-            return;
-        }
-        if (primitiveValue->valueID() == CSSValueHistoricalForms) {
-            auto alternates = FontVariantAlternates::Normal();
-            alternates.valuesRef().historicalForms = true;
-            setAlternates(alternates);
-            return;
-        }
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
+        applyInitialFontVariantAlternates(builderState);
         return;
     }
-
-    if (auto* alternatesValues = dynamicDowncast<CSSFontVariantAlternatesValue>(value)) {
-        setAlternates(alternatesValues->value());
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
+    auto fontDescription = builderState.fontDescription();
+    fontDescription.setVariantAlternates(extractFontVariantAlternates(value, builderState));
+    builderState.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

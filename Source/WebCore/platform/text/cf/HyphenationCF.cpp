@@ -71,7 +71,7 @@ bool canHyphenate(const AtomString& localeIdentifier)
 {
     if (localeIdentifier.isNull())
         return false;
-    return TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    return !!TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 }
 
 size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomString& localeIdentifier)

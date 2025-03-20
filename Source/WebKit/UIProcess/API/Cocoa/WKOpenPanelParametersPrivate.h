@@ -27,8 +27,8 @@
 
 @interface WKOpenPanelParameters (WKPrivate)
 
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedMIMETypes WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedFileExtensions WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_allowedFileExtensions WK_API_AVAILABLE(macos(11.0), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedMIMETypes WK_API_AVAILABLE(macos(10.13.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedFileExtensions WK_API_AVAILABLE(macos(10.13.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_allowedFileExtensions WK_API_AVAILABLE(macos(11.0), ios(18.4), visionos(2.4));
 
 @end

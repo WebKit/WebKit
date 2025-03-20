@@ -146,7 +146,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, const String&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&&);
 
     void addContentWorld(API::ContentWorld&);
 
@@ -163,3 +163,8 @@ private:
 };
 
 } // namespace WebKit
+
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebUserContentControllerProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::UserContentController; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -157,6 +157,8 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
                 return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*model]));
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
                 return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*model layerID:*properties.layerID page:*m_drawingArea->page()]));
+#else
+                UNUSED_PARAM(model);
 #endif
             }
         }

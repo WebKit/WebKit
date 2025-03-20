@@ -306,6 +306,17 @@ void Path::addRoundedRect(const RoundedRect& rect)
     addRoundedRect(FloatRoundedRect(rect));
 }
 
+void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerWidth, const float cornerHeight)
+{
+    if (rect.isEmpty())
+        return;
+
+    if (isEmpty())
+        m_data = PathSegment(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+    else
+        ensureImpl().add(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+}
+
 void Path::closeSubpath()
 {
     if (isEmpty() || isClosed())
@@ -322,6 +333,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (path.isEmpty() || !transform.isInvertible())
         return;
 
+    // FIXME: This should inspect the incoming path and add just the segments if possible.
     ensurePlatformPathImpl().addPath(const_cast<Path&>(path).ensurePlatformPathImpl(), transform);
 }
 
@@ -421,6 +433,19 @@ std::optional<PathRoundedRect> Path::singleRoundedRect() const
 
     if (auto impl = asImpl())
         return impl->singleRoundedRect();
+
+    return std::nullopt;
+}
+
+std::optional<PathContinuousRoundedRect> Path::singleContinuousRoundedRect() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathContinuousRoundedRect>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleContinuousRoundedRect();
 
     return std::nullopt;
 }
@@ -633,7 +658,7 @@ TextStream& operator<<(TextStream& ts, const Path& path)
     bool isFirst = true;
     path.applySegments([&ts, &isFirst](const PathSegment& segment) {
         if (!isFirst)
-            ts << ", ";
+            ts << ", "_s;
         else
             isFirst = false;
         ts << segment;

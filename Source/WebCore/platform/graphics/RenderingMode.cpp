@@ -33,14 +33,14 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, RenderingPurpose purpose)
 {
     switch (purpose) {
-    case RenderingPurpose::Unspecified: ts << "Unspecified"; break;
-    case RenderingPurpose::Canvas: ts << "Canvas"; break;
-    case RenderingPurpose::DOM: ts << "DOM"; break;
-    case RenderingPurpose::LayerBacking: ts << "LayerBacking"; break;
-    case RenderingPurpose::Snapshot: ts << "Snapshot"; break;
-    case RenderingPurpose::ShareableSnapshot: ts << "ShareableSnapshot"; break;
-    case RenderingPurpose::ShareableLocalSnapshot: ts << "ShareableLocalSnapshot"; break;
-    case RenderingPurpose::MediaPainting: ts << "MediaPainting"; break;
+    case RenderingPurpose::Unspecified: ts << "Unspecified"_s; break;
+    case RenderingPurpose::Canvas: ts << "Canvas"_s; break;
+    case RenderingPurpose::DOM: ts << "DOM"_s; break;
+    case RenderingPurpose::LayerBacking: ts << "LayerBacking"_s; break;
+    case RenderingPurpose::Snapshot: ts << "Snapshot"_s; break;
+    case RenderingPurpose::ShareableSnapshot: ts << "ShareableSnapshot"_s; break;
+    case RenderingPurpose::ShareableLocalSnapshot: ts << "ShareableLocalSnapshot"_s; break;
+    case RenderingPurpose::MediaPainting: ts << "MediaPainting"_s; break;
     }
     return ts;
 }
@@ -48,10 +48,10 @@ TextStream& operator<<(TextStream& ts, RenderingPurpose purpose)
 TextStream& operator<<(TextStream& ts, RenderingMode mode)
 {
     switch (mode) {
-    case RenderingMode::Unaccelerated: ts << "Unaccelerated"; break;
-    case RenderingMode::Accelerated: ts << "Accelerated"; break;
-    case RenderingMode::PDFDocument: ts << "PDFDocument"; break;
-    case RenderingMode::DisplayList: ts << "DisplayList"; break;
+    case RenderingMode::Unaccelerated: ts << "Unaccelerated"_s; break;
+    case RenderingMode::Accelerated: ts << "Accelerated"_s; break;
+    case RenderingMode::PDFDocument: ts << "PDFDocument"_s; break;
+    case RenderingMode::DisplayList: ts << "DisplayList"_s; break;
     }
     return ts;
 }
@@ -59,7 +59,7 @@ TextStream& operator<<(TextStream& ts, RenderingMode mode)
 TextStream& operator<<(TextStream& ts, RenderingMethod method)
 {
     switch (method) {
-    case RenderingMethod::Local: ts << "Local"; break;
+    case RenderingMethod::Local: ts << "Local"_s; break;
     }
 
     return ts;

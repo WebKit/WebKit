@@ -1,6 +1,6 @@
 
-PASS background-position length-em(em) / values
-PASS background-position length-em(em) / events
+PASS background-position-x length-em(em) / values
+PASS background-position-x length-em(em) / events
 PASS border-top-width length-em(em) / values
 PASS border-top-width length-em(em) / events
 PASS border-right-width length-em(em) / values

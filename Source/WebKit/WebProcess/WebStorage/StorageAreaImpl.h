@@ -59,6 +59,7 @@ private:
     void clear(WebCore::LocalFrame& sourceFrame) override;
     bool contains(const String& key) override;
     WebCore::StorageType storageType() const override;
+    bool isWebKit2StorageAreaImpl() const final { return true; }
     size_t memoryBytesUsedByCache() override;
     void prewarm() final;
 
@@ -66,3 +67,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::StorageAreaImpl)
+static bool isType(const WebCore::StorageArea& area) { return area.isWebKit2StorageAreaImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()

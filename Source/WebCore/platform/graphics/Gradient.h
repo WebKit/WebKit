@@ -62,7 +62,7 @@ class AffineTransform;
 class FloatRect;
 class GraphicsContext;
 
-class Gradient : public RenderingResource {
+class Gradient final : public RenderingResource {
 public:
     struct LinearData {
         FloatPoint point0;
@@ -85,6 +85,7 @@ public:
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
     WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, std::optional<RenderingResourceIdentifier> = std::nullopt);
+    ~Gradient();
 
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }

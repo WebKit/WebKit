@@ -7,9 +7,9 @@ import { attemptGarbageCollection } from '../../../../common/util/collect_garbag
 import { assert, unreachable } from '../../../../common/util/util.js';
 import { kBufferUsages } from '../../../capability_info.js';
 import { GPUConst } from '../../../constants.js';
-import { ValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../validation_test.js';
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsValidationTest {
   async testMapAsyncCall(
   expectation,
 
@@ -85,12 +85,12 @@ class F extends ValidationTest {
   createMappableBuffer(type, size) {
     switch (type) {
       case GPUMapMode.READ:
-        return this.device.createBuffer({
+        return this.createBufferTracked({
           size,
           usage: GPUBufferUsage.MAP_READ
         });
       case GPUMapMode.WRITE:
-        return this.device.createBuffer({
+        return this.createBufferTracked({
           size,
           usage: GPUBufferUsage.MAP_WRITE
         });
@@ -128,7 +128,7 @@ combine('usage', kBufferUsages)
 fn(async (t) => {
   const { mapMode, validUsage, usage } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage
   });
@@ -194,7 +194,7 @@ paramsSubcasesOnly([
 fn(async (t) => {
   const { mapMode, validUsage } = t.params;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: validUsage,
     mappedAtCreation: true
@@ -477,7 +477,7 @@ u.combine('bufferUsage', kBufferUsages).combine('mapMode', kMapModeOptions)
 fn(async (t) => {
   const { bufferUsage, mapMode } = t.params;
   const bufferSize = 16;
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     usage: bufferUsage,
     size: bufferSize,
     mappedAtCreation: true
@@ -509,7 +509,7 @@ so the Content process doesn't necessarily know the buffer is invalid.`
 ).
 fn((t) => {
   const buffer = t.expectGPUError('validation', () =>
-  t.device.createBuffer({
+  t.createBufferTracked({
     mappedAtCreation: true,
     size: 16,
     usage: 0xffff_ffff // Invalid usage
@@ -563,7 +563,7 @@ fn(async (t) => {
 
   // It is invalid to call getMappedRange when the buffer is unmapped after mappedAtCreation.
   {
-    const buffer = t.device.createBuffer({
+    const buffer = t.createBufferTracked({
       usage: GPUBufferUsage.MAP_READ,
       size: 16,
       mappedAtCreation: true
@@ -610,7 +610,7 @@ fn(async (t) => {
   const bufferSize = 16;
   const offset = 8;
   const subrangeSize = bufferSize - offset;
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: bufferSize,
     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     mappedAtCreation: true
@@ -653,7 +653,7 @@ fn(async (t) => {
 
   // It is invalid to call getMappedRange when the buffer is destroyed when mapped at creation.
   {
-    const buffer = t.device.createBuffer({
+    const buffer = t.createBufferTracked({
       usage: GPUBufferUsage.MAP_READ,
       size: 16,
       mappedAtCreation: true
@@ -717,7 +717,7 @@ combine('size', [0, kSizeAlignment, kSizeAlignment / 2])
 ).
 fn((t) => {
   const { offset, size } = t.params;
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: 16,
     usage: GPUBufferUsage.COPY_DST,
     mappedAtCreation: true
@@ -763,7 +763,7 @@ paramsSubcasesOnly([
 ).
 fn((t) => {
   const { bufferSize, offset, size } = t.params;
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: bufferSize,
     usage: GPUBufferUsage.COPY_DST,
     mappedAtCreation: true
@@ -925,7 +925,7 @@ combineWithParams([
 ).
 fn(async (t) => {
   const { offset1, size1, offset2, size2, remapBetweenCalls } = t.params;
-  const buffer = t.device.createBuffer({ size: 80, usage: GPUBufferUsage.MAP_READ });
+  const buffer = t.createBufferTracked({ size: 80, usage: GPUBufferUsage.MAP_READ });
   await buffer.mapAsync(GPUMapMode.READ);
 
   t.testGetMappedRangeCall(true, buffer, offset1, size1);
@@ -943,13 +943,13 @@ fn(async (t) => {
   t.testGetMappedRangeCall(success, buffer, offset2, size2);
 });
 
-g.test('getMappedRange,disjoinRanges_many').
+g.test('getMappedRange,disjointRanges_many').
 desc('Test getting a lot of small ranges, and that the disjoint check checks them all.').
 fn(async (t) => {
   const kStride = 256;
   const kNumStrides = 256;
 
-  const buffer = t.device.createBuffer({
+  const buffer = t.createBufferTracked({
     size: kStride * kNumStrides,
     usage: GPUBufferUsage.MAP_READ
   });
@@ -976,7 +976,7 @@ desc(
 fn(async (t) => {
   // It is valid to call unmap after creation of an unmapped buffer.
   {
-    const buffer = t.device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ });
+    const buffer = t.createBufferTracked({ size: 16, usage: GPUBufferUsage.MAP_READ });
     buffer.unmap();
   }
 
@@ -990,7 +990,7 @@ fn(async (t) => {
 
   // It is valid to call unmap after unmapping a mappedAtCreation buffer.
   {
-    const buffer = t.device.createBuffer({
+    const buffer = t.createBufferTracked({
       usage: GPUBufferUsage.MAP_READ,
       size: 16,
       mappedAtCreation: true
@@ -1008,7 +1008,7 @@ desc(
 fn(async (t) => {
   // It is valid to call unmap after destruction of an unmapped buffer.
   {
-    const buffer = t.device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ });
+    const buffer = t.createBufferTracked({ size: 16, usage: GPUBufferUsage.MAP_READ });
     buffer.destroy();
     buffer.unmap();
   }
@@ -1023,7 +1023,7 @@ fn(async (t) => {
 
   // It is valid to call unmap after destroying a mappedAtCreation buffer.
   {
-    const buffer = t.device.createBuffer({
+    const buffer = t.createBufferTracked({
       usage: GPUBufferUsage.MAP_READ,
       size: 16,
       mappedAtCreation: true
@@ -1041,7 +1041,7 @@ u //
 ).
 fn((t) => {
   const { bufferUsage } = t.params;
-  const buffer = t.device.createBuffer({ size: 16, usage: bufferUsage, mappedAtCreation: true });
+  const buffer = t.createBufferTracked({ size: 16, usage: bufferUsage, mappedAtCreation: true });
 
   buffer.unmap();
 });
@@ -1079,7 +1079,7 @@ desc(
 ).
 fn(async (t) => {
   let buffer = null;
-  buffer = t.device.createBuffer({
+  buffer = t.createBufferTracked({
     size: 256,
     usage: GPUBufferUsage.COPY_DST,
     mappedAtCreation: true

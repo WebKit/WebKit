@@ -131,7 +131,9 @@ public:
 
 protected:
     void willBeDestroyed() override;
-    
+
+    void layoutBlockWithNoChildren();
+
     // This method is called at the start of layout to wipe away all of the floats in our floating objects list. It also
     // repopulates the list with any floats that intrude from previous siblings or parents. Floats that were added by
     // descendants are gone when this call completes and will get added back later on after the children have gotten

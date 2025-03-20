@@ -31,7 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/TypeCasts.h>
 
-using CVPixelBufferRef = struct __CVBuffer*;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 

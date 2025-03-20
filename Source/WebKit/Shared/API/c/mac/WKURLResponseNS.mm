@@ -32,7 +32,7 @@
 WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse *urlResponse)
 {
     RetainPtr<NSURLResponse> copiedURLResponse = adoptNS([urlResponse copy]);
-    return WebKit::toAPI(&API::URLResponse::create(copiedURLResponse.get()).leakRef());
+    return WebKit::toAPILeakingRef(API::URLResponse::create(copiedURLResponse.get()));
 }
 
 NSURLResponse *WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)

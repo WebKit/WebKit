@@ -174,6 +174,11 @@ void PathStream::add(PathRoundedRect roundedRect)
     segments().append(roundedRect);
 }
 
+void PathStream::add(PathContinuousRoundedRect continuousRoundedRect)
+{
+    segments().append(continuousRoundedRect);
+}
+
 void PathStream::add(PathCloseSubpath)
 {
     segments().append(PathCloseSubpath { });
@@ -244,6 +249,11 @@ std::optional<PathRect> PathStream::singleRect() const
 std::optional<PathRoundedRect> PathStream::singleRoundedRect() const
 {
     return singleDataType<PathRoundedRect>();
+}
+
+std::optional<PathContinuousRoundedRect> PathStream::singleContinuousRoundedRect() const
+{
+    return singleDataType<PathContinuousRoundedRect>();
 }
 
 std::optional<PathArc> PathStream::singleArc() const

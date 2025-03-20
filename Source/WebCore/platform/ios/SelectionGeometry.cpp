@@ -152,37 +152,37 @@ TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
     TextStream::GroupScope group(stream);
     stream << "selection geometry";
 
-    stream.dumpProperty("quad", rect.quad());
-    stream.dumpProperty("direction", (rect.direction() == TextDirection::LTR) ? "ltr" : "rtl");
+    stream.dumpProperty("quad"_s, rect.quad());
+    stream.dumpProperty("direction"_s, (rect.direction() == TextDirection::LTR) ? "ltr" : "rtl");
 
-    stream.dumpProperty("min-x", rect.minX());
-    stream.dumpProperty("max-x", rect.maxX());
-    stream.dumpProperty("max-y", rect.maxY());
+    stream.dumpProperty("min-x"_s, rect.minX());
+    stream.dumpProperty("max-x"_s, rect.maxX());
+    stream.dumpProperty("max-y"_s, rect.maxY());
 
-    stream.dumpProperty("line number", rect.lineNumber());
+    stream.dumpProperty("line number"_s, rect.lineNumber());
     if (rect.isLineBreak())
-        stream.dumpProperty("is line break", true);
+        stream.dumpProperty("is line break"_s, true);
     if (rect.isFirstOnLine())
-        stream.dumpProperty("is first on line", true);
+        stream.dumpProperty("is first on line"_s, true);
     if (rect.isLastOnLine())
-        stream.dumpProperty("is last on line", true);
+        stream.dumpProperty("is last on line"_s, true);
 
     if (rect.containsStart())
-        stream.dumpProperty("contains start", true);
+        stream.dumpProperty("contains start"_s, true);
 
     if (rect.containsEnd())
-        stream.dumpProperty("contains end", true);
+        stream.dumpProperty("contains end"_s, true);
 
     if (rect.isHorizontal())
-        stream.dumpProperty("is horizontal", true);
+        stream.dumpProperty("is horizontal"_s, true);
 
     if (rect.isInFixedPosition())
-        stream.dumpProperty("is in fixed position", true);
+        stream.dumpProperty("is in fixed position"_s, true);
 
     if (rect.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
-        stream.dumpProperty("using individual quads", true);
+        stream.dumpProperty("using individual quads"_s, true);
 
-    stream.dumpProperty("page number", rect.pageNumber());
+    stream.dumpProperty("page number"_s, rect.pageNumber());
     return stream;
 }
 

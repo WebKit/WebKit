@@ -54,7 +54,7 @@ es.onerror = function () {
     errCount++;
     if (errCount < 2) {
         checkReadyState(es, CONNECTING);
-        retryTimeout = setTimeout(end, 1000);
+        retryTimeout = setTimeout(end, 10000);
         return;
     }
     clearTimeout(retryTimeout);

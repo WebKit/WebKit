@@ -29,6 +29,7 @@
 
 #import "APIWebAuthenticationPanel.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -40,7 +41,7 @@ template<> struct WrapperTraits<API::WebAuthenticationPanel> {
 
 @interface _WKWebAuthenticationPanel () <WKObject> {
 @package
-    API::ObjectStorage<API::WebAuthenticationPanel> _panel;
+    AlignedStorage<API::WebAuthenticationPanel> _panel;
 }
 @end
 

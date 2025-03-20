@@ -29,6 +29,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(DISASSEMBLER) && USE(CAPSTONE)
 
+#include "AssemblyComments.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
 #include <capstone/capstone.h>

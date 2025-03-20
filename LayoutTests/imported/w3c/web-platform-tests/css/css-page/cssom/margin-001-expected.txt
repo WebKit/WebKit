@@ -1,6 +1,6 @@
 
 PASS There should be 3 @page rules.
-PASS Rule #0
-FAIL Rule #1 assert_equals: expected 1 but got 0
-FAIL Rule #2 assert_equals: expected 18 but got 0
+FAIL Rule #0 undefined is not an object (evaluating 'sheet.rules[0].cssRules.length')
+FAIL Rule #1 undefined is not an object (evaluating 'sheet.rules[1].cssRules.length')
+FAIL Rule #2 undefined is not an object (evaluating 'pageRule.cssRules.length')
 

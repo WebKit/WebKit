@@ -70,25 +70,8 @@ PASS :any_type:type="texture_storage_1d%3Cr32uint,%20write%3E"
 PASS :any_type:type="texture_storage_1d%3Cr32sint,%20read_write%3E"
 PASS :any_type:type="texture_storage_1d%3Cr32float,%20read%3E"
 PASS :any_type:type="texture_storage_2d%3Crgba16uint,%20write%3E"
-PASS :any_type:type="texture_storage_2d_array%3Crg32float,%20write%3E"
-FAIL :any_type:type="texture_storage_3d%3Cbgra8unorm,%20write%3E" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    7:39: error: unresolved identifier 'bgra8unorm'
-
-    ---- shader ----
-
-
-        struct S { x : u32 }
-        struct T { y : S }
-        alias anotherAlias = u32;
-        alias random_alias = i32;
-        alias myType = texture_storage_3d<bgra8unorm, write>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    7:38: unresolved identifier 'bgra8unorm'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
+PASS :any_type:type="texture_storage_2d_array%3Crgba32float,%20write%3E"
+PASS :any_type:type="texture_storage_3d%3Cbgra8unorm,%20write%3E"
 PASS :any_type:type="texture_depth_2d"
 PASS :any_type:type="texture_depth_2d_array"
 PASS :any_type:type="texture_depth_cube"

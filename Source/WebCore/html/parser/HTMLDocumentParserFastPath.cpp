@@ -230,8 +230,8 @@ public:
     HTMLFastPathResult parseResult() const { return m_parseResult; }
 
 private:
-    Ref<Document> m_document;
-    WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_destinationParent;
+    const Ref<Document> m_document;
+    const Ref<ContainerNode> m_destinationParent;
 
     StringParsingBuffer<CharacterType> m_parsingBuffer;
 

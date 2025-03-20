@@ -27,6 +27,8 @@
 #include "ResourceMonitorThrottlerHolder.h"
 
 #include "ResourceMonitorThrottler.h"
+#include "SQLiteDatabase.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>

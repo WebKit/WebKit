@@ -29,6 +29,7 @@
 
 #import "WKObject.h"
 #import "WebExtensionSidebar.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 template<> struct WrapperTraits<WebExtensionSidebar> {
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<WebExtensionSidebar> {
 
 @interface _WKWebExtensionSidebar () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebExtensionSidebar> _webExtensionSidebar;
+    AlignedStorage<WebKit::WebExtensionSidebar> _webExtensionSidebar;
 }
 
 @property (nonatomic, readonly) WebKit::WebExtensionSidebar& _webExtensionSidebar;

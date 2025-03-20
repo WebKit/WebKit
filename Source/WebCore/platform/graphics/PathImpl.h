@@ -64,6 +64,7 @@ public:
     virtual void add(PathEllipseInRect) = 0;
     virtual void add(PathRect) = 0;
     virtual void add(PathRoundedRect) = 0;
+    virtual void add(PathContinuousRoundedRect) = 0;
     virtual void add(PathCloseSubpath) = 0;
 
     void addLinesForRect(const FloatRect&);
@@ -78,6 +79,7 @@ public:
     virtual std::optional<PathDataLine> singleDataLine() const { return std::nullopt; }
     virtual std::optional<PathRect> singleRect() const { return std::nullopt; }
     virtual std::optional<PathRoundedRect> singleRoundedRect() const { return std::nullopt; }
+    virtual std::optional<PathContinuousRoundedRect> singleContinuousRoundedRect() const { return std::nullopt; }
     virtual std::optional<PathArc> singleArc() const { return std::nullopt; }
     virtual std::optional<PathClosedArc> singleClosedArc() const { return std::nullopt; }
     virtual std::optional<PathDataQuadCurve> singleQuadCurve() const { return std::nullopt; }

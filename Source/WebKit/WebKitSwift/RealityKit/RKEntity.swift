@@ -86,6 +86,10 @@ public final class WKSRKEntity: NSObject {
             entity.name = newValue
         }
     }
+    
+    @objc(interactionPivotPoint) public var interactionPivotPoint: simd_float3 {
+        entity.visualBounds(relativeTo: nil).center
+    }
 
     @objc(boundingBoxExtents) public var boundingBoxExtents: simd_float3 {
         guard let boundingBox = self.boundingBox else { return SIMD3<Float>(0, 0, 0) }
@@ -103,16 +107,17 @@ public final class WKSRKEntity: NSObject {
 
     @objc(transform) public var transform: WKEntityTransform {
         get {
-            guard let transformComponent = entity.components[Transform.self] else {
-                Logger.realityKitEntity.error("No transform component available from entity")
-                return WKEntityTransform(scale: simd_float3.one, rotation: simd_quatf(ix: 0, iy: 0, iz: 0, r: 1), translation: simd_float3.zero)
-            }
-
-            return WKEntityTransform(scale: transformComponent.scale, rotation: transformComponent.rotation, translation: transformComponent.translation)
+            let transform = Transform(matrix: entity.transformMatrix(relativeTo: nil))
+            return WKEntityTransform(scale: transform.scale, rotation: transform.rotation, translation: transform.translation)
         }
 
         set {
-            entity.components[Transform.self] = Transform(scale: newValue.scale, rotation: newValue.rotation, translation: newValue.translation)
+            var adjustedTransform = Transform(scale: newValue.scale, rotation: newValue.rotation, translation: newValue.translation)
+            if let container = entity.parent {
+                adjustedTransform = container.convert(transform: adjustedTransform, from: nil)
+            }
+            
+            entity.transform = adjustedTransform
         }
     }
 
@@ -228,14 +233,13 @@ public final class WKSRKEntity: NSObject {
     }
 
     @objc(applyIBLData:withCompletion:) public func applyIBL(data: Data, completion: @escaping (Bool) -> Void) {
-#if canImport(RealityKit, _version: 366)
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
-            Logger.realityKitEntity.error("Cannot get CGImageSource from IBL image data")
+            Logger.realityKitEntity.error("Cannot get CGImageSource from IBL image data.")
             completion(false)
             return
         }
         guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
-            Logger.realityKitEntity.error("Cannot get CGImage from CGImageSource")
+            Logger.realityKitEntity.error("Cannot get CGImage from CGImageSource.")
             completion(false)
             return
         }
@@ -251,25 +255,43 @@ public final class WKSRKEntity: NSObject {
                 }
                 completion(true)
             } catch {
-                Logger.realityKitEntity.error("Cannot load environment resource from CGImage")
+                Logger.realityKitEntity.error("Cannot load environment resource from CGImage.")
                 completion(false)
             }
         }
-#endif
     }
-
-    @objc(removeIBL) public func removeIBL() {
-        entity.components[ImageBasedLightComponent.self] = .init(source: .none)
-        entity.components[ImageBasedLightReceiverComponent.self] = nil
+    
+    @objc(applyDefaultIBL) func applyDefaultIBL()
+    {
+        Task {
+            do {
+#if canImport(RealityFoundation, _version: 380)
+                let environment = await EnvironmentResource.defaultObject()
+                await MainActor.run {
+                    entity.components[ImageBasedLightComponent.self] = .init(source: .single(environment))
+                    entity.components[ImageBasedLightReceiverComponent.self] = .init(imageBasedLight: entity)
+                }
+#else
+                await MainActor.run {
+                    entity.components[ImageBasedLightComponent.self] = .init(source: .none)
+                    entity.components[ImageBasedLightReceiverComponent.self] = nil
+                }
+#endif
+            }
+        }
     }
 
     private func animationPlaybackStateDidUpdate() {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
     }
 
-    @objc(setParentCoreEntity:) public func setParent(_ coreEntity: REEntityRef) {
+    @objc(setParentCoreEntity:preservingWorldTransform:) public func setParent(_ coreEntity: REEntityRef, preservingWorldTransform: Bool) {
         let parentEntity = Entity.__fromCore(__EntityRef.__fromCore(coreEntity))
-        entity.setParent(parentEntity)
+        entity.setParent(parentEntity, preservingWorldTransform: preservingWorldTransform)
+    }
+    
+    @objc(interactionContainerDidRecenterFromTransform:) public func interactionContainerDidRecenter(_ transform: simd_float4x4) {
+        entity.setTransformMatrix(transform, relativeTo: nil)
     }
 }
 

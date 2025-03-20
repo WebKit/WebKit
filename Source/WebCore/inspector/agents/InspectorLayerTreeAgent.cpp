@@ -203,7 +203,7 @@ Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectF
     // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
     if (isAnonymous && !renderer->isRenderView()) {
         layerObject->setIsAnonymous(true);
-        const RenderStyle& style = renderer->style();
+        auto& style = downcast<RenderElement>(*renderer).style();
         if (style.pseudoElementType() == PseudoId::FirstLetter)
             layerObject->setPseudoElement("first-letter"_s);
         else if (style.pseudoElementType() == PseudoId::FirstLine)

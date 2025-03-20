@@ -171,7 +171,7 @@ public:
 
     virtual std::optional<ImageBufferBackendHandle> frontBufferHandle() const = 0;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    virtual std::optional<ImageBufferBackendHandle> displayListHandle() const  { return std::nullopt; }
+    virtual std::optional<WebCore::DynamicContentScalingDisplayList> displayListHandle() const  { return std::nullopt; }
 #endif
     virtual std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() const { return std::nullopt; }
 
@@ -249,7 +249,7 @@ private:
     std::optional<WebCore::IntRect> m_paintedRect;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
+    std::optional<WebCore::DynamicContentScalingDisplayList> m_displayListBufferHandle;
 #endif
 
     bool m_isOpaque;

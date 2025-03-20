@@ -51,7 +51,7 @@ WKTypeID WKDownloadGetTypeID()
 
 WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
 {
-    return toAPI(&API::URLRequest::create(toImpl(download)->request()).leakRef());
+    return toAPILeakingRef(API::URLRequest::create(toImpl(download)->request()));
 }
 
 void WKDownloadCancel(WKDownloadRef download, const void* functionContext, WKDownloadCancelCallback callback)

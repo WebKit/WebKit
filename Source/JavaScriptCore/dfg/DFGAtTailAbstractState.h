@@ -257,7 +257,6 @@ public:
     void setStructureClobberState(StructureClobberState state) { RELEASE_ASSERT(state == m_block->cfaStructureClobberStateAtTail); }
     void setIsValid(bool isValid) { m_block->cfaDidFinish = isValid; }
     void setBranchDirection(BranchDirection) { }
-    void setShouldTryConstantFolding(bool) { }
 
     void trustEdgeProofs() { m_trustEdgeProofs = true; }
     void dontTrustEdgeProofs() { m_trustEdgeProofs = false; }

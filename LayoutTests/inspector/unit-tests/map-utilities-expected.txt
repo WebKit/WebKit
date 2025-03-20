@@ -28,3 +28,11 @@ PASS: Map does have `key` => `value`.
 PASS: Map should get `key` with `value` without re-initializing.
 PASS: Map still has `key` => `value`.
 
+-- Running test case: Map.prototype.firstKey
+PASS: Map should not start with a first key.
+PASS: Map should have first key.
+PASS: Map should have same first key after adding another entry.
+PASS: Map should have same first key after changing its value.
+PASS: Map should have different first key after deleting previous first key.
+PASS: Map should not have first key after deleting all entries.
+

@@ -94,7 +94,7 @@ private:
     Markable<WallTime> m_creationTime;
     Markable<WallTime> m_modificationTime;
 #if ASSERT_ENABLED
-    Ref<Thread> m_thread { Thread::current() };
+    Ref<Thread> m_thread { Thread::currentSingleton() };
 #endif
 };
 

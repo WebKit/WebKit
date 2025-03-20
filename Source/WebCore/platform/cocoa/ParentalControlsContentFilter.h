@@ -34,6 +34,10 @@
 OBJC_CLASS NSData;
 OBJC_CLASS WebFilterEvaluator;
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+OBJC_CLASS WCRBrowserEngineClient;
+#endif
+
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public PlatformContentFilter {
@@ -53,13 +57,27 @@ public:
 #endif
     
 private:
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    static bool enabled(bool usesWebContentRestrictions);
+#else
     static bool enabled();
+#endif
 
     ParentalControlsContentFilter() = default;
     void updateFilterState();
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    void updateFilterState(bool shouldBlock, NSData *replacmentData);
+    void setUsesWebContentRestrictions(bool) final;
+#endif
 
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    bool m_usesWebContentRestrictions { false };
+    RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
+    std::optional<URL> m_evaluatedURL;
+#endif
 };
     
 } // namespace WebCore

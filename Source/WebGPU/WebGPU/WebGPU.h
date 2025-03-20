@@ -374,6 +374,7 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_DualSourceBlending = 0x00000010,
     WGPUFeatureName_Float16Renderable = 0x00000011,
     WGPUFeatureName_Float32Renderable = 0x00000012,
+    WGPUFeatureName_CoreFeaturesAndLimits = 0x00000013,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 
@@ -898,6 +899,8 @@ typedef struct WGPULimits {
     uint32_t maxComputeWorkgroupsPerDimension;
     uint32_t maxStorageBuffersInFragmentStage;
     uint32_t maxStorageTexturesInFragmentStage;
+    uint32_t maxStorageBuffersInVertexStage;
+    uint32_t maxStorageTexturesInVertexStage;
 } WGPULimits WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUMultisampleState {

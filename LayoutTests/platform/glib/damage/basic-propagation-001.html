@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .simpleRect {
+          position: fixed;
+          width: 25px;
+          height: 25px;
+          background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              spawnNewElementWithClass("div", "simpleRect");
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 25, 25]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

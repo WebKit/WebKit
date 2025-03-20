@@ -45,7 +45,7 @@ skip:
     - test/staging/Intl402
     - test/staging/JSON
     - test/staging/Temporal
-    - test/staging/sm
+    - test/staging/sm/Temporal
   files:
     # https://github.com/claudepache/es-legacy-function-reflection
     - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js

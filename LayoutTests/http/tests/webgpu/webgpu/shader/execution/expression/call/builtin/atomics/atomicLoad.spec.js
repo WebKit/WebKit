@@ -4,11 +4,11 @@
 Returns the atomically loaded the value pointed to by atomic_ptr. It does not modify the object.
 `;import { makeTestGroup } from '../../../../../../../common/framework/test_group.js';
 import { keysOf } from '../../../../../../../common/util/data_tables.js';
-import { GPUTest } from '../../../../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../../gpu_test.js';
 
 import { dispatchSizes, workgroupSizes, typedArrayCtor, kMapId } from './harness.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('load_storage').
 specURL('https://www.w3.org/TR/WGSL/#atomic-load').
@@ -61,21 +61,19 @@ fn((t) => {
   const arrayType = typedArrayCtor(scalarType);
 
   // Create input buffer with values [map_id(0)..map_id(n)]
-  const inputBuffer = t.device.createBuffer({
+  const inputBuffer = t.createBufferTracked({
     size: bufferNumElements * arrayType.BYTES_PER_ELEMENT,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     mappedAtCreation: true
   });
-  t.trackForCleanup(inputBuffer);
   const data = new arrayType(inputBuffer.getMappedRange());
   data.forEach((_, i) => data[i] = mapId.f(i, numInvocations));
   inputBuffer.unmap();
 
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: bufferNumElements * arrayType.BYTES_PER_ELEMENT,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });
-  t.trackForCleanup(outputBuffer);
 
   const bindGroup = t.device.createBindGroup({
     layout: pipeline.getBindGroupLayout(0),
@@ -162,11 +160,10 @@ fn((t) => {
 
   const arrayType = typedArrayCtor(scalarType);
 
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: wgNumElements * dispatchSize * arrayType.BYTES_PER_ELEMENT,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });
-  t.trackForCleanup(outputBuffer);
 
   const bindGroup = t.device.createBindGroup({
     layout: pipeline.getBindGroupLayout(0),

@@ -1,0 +1,33 @@
+{
+  "name": "react-stockcharts-bench",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "rm -rf build && react-scripts build"
+  },
+  "homepage": "./",
+  "devDependencies": {
+    "d3-dsv": "1.0.8",
+    "d3-format": "1.2.1",
+    "d3-scale": "1.0.7",
+    "d3-time-format": "2.1.1",
+    "prop-types": "15.6.0",
+    "raw-loader": "4.0.2",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-scripts": "4.0.3",
+    "react-stockcharts": "0.7.8"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

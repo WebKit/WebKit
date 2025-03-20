@@ -29,13 +29,14 @@
 
 #include "B3BackwardsCFG.h"
 #include <wtf/Dominators.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
 class BackwardsDominators : public WTF::Dominators<BackwardsCFG> {
     WTF_MAKE_NONCOPYABLE(BackwardsDominators);
-    WTF_MAKE_TZONE_ALLOCATED(BackwardsDominators);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BackwardsDominators);
 public:
     BackwardsDominators(Procedure& proc)
         : WTF::Dominators<BackwardsCFG>(proc.backwardsCFG())

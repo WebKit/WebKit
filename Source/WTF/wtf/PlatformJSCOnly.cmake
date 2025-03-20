@@ -9,6 +9,7 @@ if (WIN32)
 
         win/CPUTimeWin.cpp
         win/DbgHelperWin.cpp
+        win/FileHandleWin.cpp
         win/FileSystemWin.cpp
         win/LanguageWin.cpp
         win/LoggingWin.cpp
@@ -54,6 +55,7 @@ else ()
     endif ()
 
     list(APPEND WTF_SOURCES
+        posix/FileHandlePOSIX.cpp
         posix/FileSystemPOSIX.cpp
 
         unix/UniStdExtrasUnix.cpp

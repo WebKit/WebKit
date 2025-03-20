@@ -39,9 +39,9 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(Stream);
 
     public:
-        static Ref<Stream> create(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness)
+        static Ref<Stream> create(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness, GRefPtr<GstCaps>&& allowedOutputCaps = nullptr)
         {
-            return adoptRef(*new Stream(WTFMove(pad), WTFMove(downstreamHarness)));
+            return adoptRef(*new Stream(WTFMove(pad), WTFMove(downstreamHarness), WTFMove(allowedOutputCaps)));
         }
 
         ~Stream();
@@ -58,13 +58,14 @@ public:
         const RefPtr<GStreamerElementHarness> downstreamHarness() const { return m_downstreamHarness; }
 
     private:
-        Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
+        Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&, GRefPtr<GstCaps>&&);
 
         GstFlowReturn chainSample(GRefPtr<GstSample>&&);
         bool sinkEvent(GRefPtr<GstEvent>&&);
 
         GRefPtr<GstPad> m_pad;
         RefPtr<GStreamerElementHarness> m_downstreamHarness;
+        GRefPtr<GstCaps> m_allowedOutputCaps;
 
         GRefPtr<GstPad> m_targetPad;
 
@@ -79,9 +80,9 @@ public:
 
     using PadLinkCallback = Function<RefPtr<GStreamerElementHarness>(const GRefPtr<GstPad>&)>;
     using ProcessSampleCallback = Function<void(Stream&, GRefPtr<GstSample>&&)>;
-    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback> padLinkCallback = std::nullopt)
+    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback>&& padLinkCallback = std::nullopt, GRefPtr<GstCaps>&& allowedOutputCaps = nullptr)
     {
-        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputSampleCallback), WTFMove(padLinkCallback)));
+        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputSampleCallback), WTFMove(padLinkCallback), WTFMove(allowedOutputCaps)));
     }
     ~GStreamerElementHarness();
 
@@ -106,7 +107,7 @@ public:
     void dumpGraph(ASCIILiteral filenamePrefix);
 
 private:
-    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessSampleCallback&&, std::optional<PadLinkCallback>&&);
+    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessSampleCallback&&, std::optional<PadLinkCallback>&&, GRefPtr<GstCaps>&&);
 
     GstFlowReturn pushBufferFull(GRefPtr<GstBuffer>&&);
 
@@ -119,6 +120,7 @@ private:
     GRefPtr<GstElement> m_element;
     ProcessSampleCallback m_processOutputSampleCallback;
     std::optional<PadLinkCallback> m_padLinkCallback;
+    GRefPtr<GstCaps> m_streamAllowedOutputCaps;
 
     GRefPtr<GstCaps> m_inputCaps;
 

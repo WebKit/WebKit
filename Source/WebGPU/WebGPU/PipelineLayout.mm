@@ -45,7 +45,7 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
         return PipelineLayout::createInvalid(*this);
 
     std::optional<Vector<Ref<BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
-    if (auto descriptorBindGroupLayouts = descriptor.bindGroupLayoutsSpan(); descriptorBindGroupLayouts.data()) {
+    if (auto descriptorBindGroupLayouts = descriptor.bindGroupLayoutsSpan(); !descriptorBindGroupLayouts.empty()) {
         auto& deviceLimits = limits();
 
         if (descriptorBindGroupLayouts.size() > deviceLimits.maxBindGroups) {

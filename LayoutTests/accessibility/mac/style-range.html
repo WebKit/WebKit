@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="p1">One</p>
+<p id="p2">Two</p>
+<p id="p3">Three</p>
+
+<script>
+var output = "This test ensures we compute the right range when serving AXStyleTextMarkerRangeForTextMarker.\n\n";
+
+async function styleRangeForElementMatches(id, expectedString, moveOffStartBy = 0) {
+    let marker = webArea.startTextMarkerForTextMarkerRange(await selectElementTextById(id, webArea));
+    for (let i = 0; i < moveOffStartBy; i++)
+        marker = webArea.nextTextMarker(marker);
+
+    await waitFor(() => {
+        return expectedString == webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker));
+    });
+    output += `PASS: The style range for the start marker of #${id} was "${expectedString}".\n`
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    setTimeout(async function() {
+        await styleRangeForElementMatches("p2", "One\n\nTwo\n\nThree");
+        await styleRangeForElementMatches("p2", "One\n\nTwo\n\nThree", /* moveOffStartBy */ 2);
+
+        // Break up the style range dynamically.
+        document.getElementById("p2").setAttribute("style", "font-style: italic;");
+        await styleRangeForElementMatches("p1", "One", 1);
+        await styleRangeForElementMatches("p2", "Two");
+        await styleRangeForElementMatches("p3", "Three", 4);
+
+        // Create a new element with default styles, which should form a style range with sibling #p3.
+        let p = document.createElement("p");
+        p.innerHTML = "<div><span><div>Four</div></span></div>";
+        document.body.appendChild(p);
+        await styleRangeForElementMatches("p3", "Three\n\nFour");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

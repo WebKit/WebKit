@@ -154,23 +154,20 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
     }
 #endif
 
-    if (areEncryptedCaps(caps.get())) {
-        if (auto videoResolution = getVideoResolutionFromCaps(caps.get())) {
-            configuration.width = videoResolution->width();
-            configuration.height = videoResolution->height();
-        }
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    double frameRate;
+    IntSize originalSize;
+    GstVideoFormat format;
+    PlatformVideoColorSpace colorSpace;
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride, frameRate, colorSpace)) {
+        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps.get());
         return;
     }
 
-    GstVideoInfo info;
-    if (gst_video_info_from_caps(&info, caps.get())) {
-        if (GST_VIDEO_INFO_FPS_N(&info))
-            gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&info), GST_VIDEO_INFO_FPS_D(&info), &configuration.framerate);
-
-        configuration.width = GST_VIDEO_INFO_WIDTH(&info);
-        configuration.height = GST_VIDEO_INFO_HEIGHT(&info);
-        configuration.colorSpace = videoColorSpaceFromInfo(info);
-    }
+    configuration.width = originalSize.width();
+    configuration.height = originalSize.height();
+    configuration.framerate = frameRate;
+    configuration.colorSpace = colorSpace;
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const

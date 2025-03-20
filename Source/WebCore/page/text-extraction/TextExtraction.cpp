@@ -537,7 +537,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     }
 
     auto frameView = renderer->view().protectedFrameView();
-    auto appendReplacedContentOrBackgroundImage = [&](const RenderObject& renderer) {
+    auto appendReplacedContentOrBackgroundImage = [&](auto& renderer) {
         if (!renderer.style().hasBackgroundImage() && !is<RenderReplaced>(renderer))
             return;
 

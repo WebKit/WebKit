@@ -110,6 +110,12 @@ public:
         return m_set.add(WeakRef<T, WeakPtrImpl>(static_cast<const T&>(value)).releaseImpl());
     }
 
+    AddResult add(WeakRef<T, WeakPtrImpl> value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.add(value.releaseImpl());
+    }
+
     T* takeAny()
     {
         auto iterator = begin();

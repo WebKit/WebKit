@@ -67,6 +67,8 @@ class Issue(object):
         self._creator = None
         self._description = None
         self._opened = None
+        self._state = None
+        self._substate = None
         self._assignee = None
         self._watchers = None
         self._comments = None
@@ -122,6 +124,21 @@ class Issue(object):
         if self._description is None:
             self.tracker.populate(self, 'description')
         return self._description
+
+    @property
+    def state(self):
+        if self._state is None:
+            self.tracker.populate(self, 'state')
+        return self._state
+
+    @property
+    def substate(self):
+        if self._substate is None:
+            self.tracker.populate(self, 'substate')
+        return self._substate
+
+    def set_state(self, state, substate=None):
+        return bool(self.tracker.set(self, state=state, substate=substate))
 
     @property
     def opened(self):

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 
 #include "DOMAudioSession.h"
 #include <wtf/URL.h>
+#include "StringifyThis"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -48,6 +49,7 @@ public:
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&);
     void broadcastIsAutofocusProcessedToOtherProcesses(const bool&);
     void broadcastUserDidInteractWithPageToOtherProcesses(const bool&);
+    void broadcastAnotherOneToOtherProcesses(const StringifyThis&);
 
 protected:
     virtual void broadcastProcessSyncDataToOtherProcesses(const ProcessSyncData&) { }

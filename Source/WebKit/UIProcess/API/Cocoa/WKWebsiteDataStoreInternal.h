@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebsiteDataStore.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
@@ -39,7 +40,7 @@ template<> struct WrapperTraits<WebsiteDataStore> {
 
 @interface WKWebsiteDataStore () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebsiteDataStore> _websiteDataStore;
+    AlignedStorage<WebKit::WebsiteDataStore> _websiteDataStore;
     WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
 }
 @end

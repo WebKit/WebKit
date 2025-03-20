@@ -5,8 +5,11 @@
 const log = console.log;
 
 </script>
+
 <script>
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 
 async function window0() {
 // START
@@ -186,6 +189,8 @@ onload = async () => {
       
     }
   }
-  globalThis.testRunner?.notifyDone();
+  console.log('Pass')
+    globalThis.testRunner?.notifyDone();
 };
 </script>
+

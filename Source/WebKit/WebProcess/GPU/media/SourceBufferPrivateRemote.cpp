@@ -54,27 +54,27 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferPrivateRemote);
 
-WorkQueue& SourceBufferPrivateRemote::queue()
+WorkQueue& SourceBufferPrivateRemote::queueSingleton()
 {
-    return MediaSourcePrivateRemote::queue();
+    return MediaSourcePrivateRemote::queueSingleton();
 }
 
 void SourceBufferPrivateRemote::ensureOnDispatcherSync(Function<void()>&& function)
 {
-    if (queue().isCurrent())
+    if (queueSingleton().isCurrent())
         function();
     else
-        queue().dispatchSync(WTFMove(function));
+        queueSingleton().dispatchSync(WTFMove(function));
 }
 
-void SourceBufferPrivateRemote::ensureWeakOnDispatcher(Function<void()>&& function)
+void SourceBufferPrivateRemote::ensureWeakOnDispatcher(Function<void(SourceBufferPrivateRemote&)>&& function)
 {
-    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this), this] {
+    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] {
         if (RefPtr protectedThis = weakThis.get()) {
-            auto gpuProcessConnection = m_gpuProcessConnection.get();
-            if (!gpuProcessConnection || !isGPURunning())
+            auto gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
+            if (!gpuProcessConnection || !protectedThis->isGPURunning())
                 return;
-            function();
+            function(*protectedThis);
         }
     };
     ensureOnDispatcher(WTFMove(weakWrapper));
@@ -86,7 +86,7 @@ Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConne
 }
 
 SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate)
-    : SourceBufferPrivate(mediaSourcePrivate, queue())
+    : SourceBufferPrivate(mediaSourcePrivate, queueSingleton())
     , m_gpuProcessConnection(gpuProcessConnection)
     , m_receiver(MessageReceiver::create(*this))
     , m_remoteSourceBufferIdentifier(remoteSourceBufferIdentifier)
@@ -96,14 +96,14 @@ SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuPr
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    gpuProcessConnection.connection().addWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), queue(), m_receiver, m_remoteSourceBufferIdentifier.toUInt64());
+    gpuProcessConnection.protectedConnection()->addWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_remoteSourceBufferIdentifier.toUInt64());
 }
 
 SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
+        gpuProcessConnection->protectedConnection()->removeWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
 Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
@@ -127,18 +127,18 @@ Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
 
 void SourceBufferPrivateRemote::abort()
 {
-    ensureWeakOnDispatcher([this] {
+    ensureWeakOnDispatcher([](auto& buffer) {
         // When abort() is being issued; this will force the RemoteSourceBufferProxy to abort the current remote source buffer operation
         // The totalTrackBufferSizeInBytes will be recalculated after the next operation which allows for potentially having
         // m_totalTrackBufferSizeInBytes being temporarily stale as it won't be used until then.
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::Abort(), m_remoteSourceBufferIdentifier);
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::Abort());
     });
 }
 
 void SourceBufferPrivateRemote::resetParserState()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::ResetParserState());
     });
 }
 
@@ -155,9 +155,9 @@ void SourceBufferPrivateRemote::resetParserStateInternal()
 
 void SourceBufferPrivateRemote::removedFromMediaSource()
 {
-    ensureWeakOnDispatcher([this] {
-        m_removed = true;
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::RemovedFromMediaSource(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.m_removed = true;
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::RemovedFromMediaSource());
     });
 }
 
@@ -170,12 +170,12 @@ void SourceBufferPrivateRemote::setActive(bool active)
 {
     // Called from the SourceBuffer's dispatcher
     m_isActive = true;
-    ensureWeakOnDispatcher([this, active] {
-        auto mediaSource = m_mediaSource.get();
+    ensureWeakOnDispatcher([active](auto& buffer) {
+        auto mediaSource = buffer.m_mediaSource.get();
         if (!mediaSource)
             return;
 
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetActive(active), m_remoteSourceBufferIdentifier);
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetActive(active));
     });
 }
 
@@ -188,7 +188,7 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (gpuProcessConnection && isGPURunning()) {
             ContentType contentType { contentTypeString };
-            auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTFMove(contentType)), m_remoteSourceBufferIdentifier);
+            auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTFMove(contentType)), m_remoteSourceBufferIdentifier);
             std::tie(canSwitch) = sendResult.takeReplyOr(false);
         }
     });
@@ -197,15 +197,15 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
 
 void SourceBufferPrivateRemote::setMediaSourceEnded(bool isEnded)
 {
-    ensureWeakOnDispatcher([this, isEnded] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetMediaSourceEnded(isEnded), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([isEnded](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetMediaSourceEnded(isEnded));
     });
 }
 
 void SourceBufferPrivateRemote::setMode(SourceBufferAppendMode mode)
 {
-    ensureWeakOnDispatcher([this, mode] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetMode(mode), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([mode](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetMode(mode));
     });
 }
 
@@ -226,8 +226,8 @@ bool SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, const Med
         if (!isBufferFullFor(newDataSize))
             return false;
         // The buffer is full, but we will be able to evict the content prior appending.
-        ensureWeakOnDispatcher([this, newDataSize, currentTime] {
-            m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::AsyncEvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
+        ensureWeakOnDispatcher([newDataSize, currentTime](auto& buffer) {
+            buffer.sendToProxy(Messages::RemoteSourceBufferProxy::AsyncEvictCodedFrames(newDataSize, currentTime));
         });
         return false;
     }
@@ -238,7 +238,7 @@ bool SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, const Med
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
+        auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
         if (sendResult.succeeded()) {
             if (auto client = this->client()) {
                 Vector<PlatformTimeRanges> trackBufferRanges;
@@ -255,15 +255,15 @@ bool SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, const Med
 
 void SourceBufferPrivateRemote::addTrackBuffer(TrackID trackId, RefPtr<MediaDescription>&&)
 {
-    ensureWeakOnDispatcher([this, trackId] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::AddTrackBuffer(trackId), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([trackId](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::AddTrackBuffer(trackId));
     });
 }
 
 void SourceBufferPrivateRemote::resetTrackBuffers()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ResetTrackBuffers(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::ResetTrackBuffers());
     });
 }
 
@@ -273,57 +273,57 @@ void SourceBufferPrivateRemote::clearTrackBuffers(bool)
         Locker locker { m_lock };
         m_evictionData.clear();
     }
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ClearTrackBuffers(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::ClearTrackBuffers());
     });
 }
 
 void SourceBufferPrivateRemote::setAllTrackBuffersNeedRandomAccess()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetAllTrackBuffersNeedRandomAccess(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetAllTrackBuffersNeedRandomAccess());
     });
 }
 
 void SourceBufferPrivateRemote::setGroupStartTimestamp(const MediaTime& timestamp)
 {
-    ensureWeakOnDispatcher([this, timestamp] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetGroupStartTimestamp(timestamp), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([timestamp](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetGroupStartTimestamp(timestamp));
     });
 }
 
 void SourceBufferPrivateRemote::setGroupStartTimestampToEndTimestamp()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetGroupStartTimestampToEndTimestamp(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetGroupStartTimestampToEndTimestamp());
     });
 }
 
 void SourceBufferPrivateRemote::setShouldGenerateTimestamps(bool shouldGenerateTimestamps)
 {
-    ensureWeakOnDispatcher([this, shouldGenerateTimestamps] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetShouldGenerateTimestamps(shouldGenerateTimestamps), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([shouldGenerateTimestamps](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetShouldGenerateTimestamps(shouldGenerateTimestamps));
     });
 }
 
 void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime)
 {
-    ensureWeakOnDispatcher([this, currentMediaTime] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([currentMediaTime](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime));
     });
 }
 
 void SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ResetTimestampOffsetInTrackBuffers(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::ResetTimestampOffsetInTrackBuffers());
     });
 }
 
 void SourceBufferPrivateRemote::startChangingType()
 {
-    ensureWeakOnDispatcher([this] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::StartChangingType(), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::StartChangingType());
     });
 }
 
@@ -340,22 +340,22 @@ void SourceBufferPrivateRemote::setTimestampOffset(const MediaTime& timestampOff
         Locker locker { m_lock };
         m_timestampOffset = timestampOffset;
     }
-    ensureWeakOnDispatcher([this, timestampOffset] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetTimestampOffset(timestampOffset), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([timestampOffset](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetTimestampOffset(timestampOffset));
     });
 }
 
 void SourceBufferPrivateRemote::setAppendWindowStart(const MediaTime& appendWindowStart)
 {
-    ensureWeakOnDispatcher([this, appendWindowStart] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowStart(appendWindowStart), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([appendWindowStart](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetAppendWindowStart(appendWindowStart));
     });
 }
 
 void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindowEnd)
 {
-    ensureWeakOnDispatcher([this, appendWindowEnd] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([appendWindowEnd](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd));
     });
 }
 
@@ -367,8 +367,8 @@ Ref<GenericPromise> SourceBufferPrivateRemote::setMaximumBufferSize(size_t size)
     }
     GenericPromise::AutoRejectProducer producer;
     Ref promise = producer.promise();
-    ensureWeakOnDispatcher([this, size, producer = WTFMove(producer)]() mutable {
-        sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size))->chainTo(WTFMove(producer));
+    ensureWeakOnDispatcher([size, producer = WTFMove(producer)](auto& buffer) mutable {
+        buffer.sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size))->chainTo(WTFMove(producer));
     });
     return promise;
 }
@@ -386,15 +386,15 @@ Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeS
 
 void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
 {
-    ensureWeakOnDispatcher([this, time] {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(time), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([time](auto& buffer) {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SeekToTime(time));
     });
 }
 
 void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIDPairs)
 {
-    ensureWeakOnDispatcher([this, trackIDPairs = WTFMove(trackIDPairs)]() mutable {
-        m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::UpdateTrackIds(WTFMove(trackIDPairs)), m_remoteSourceBufferIdentifier);
+    ensureWeakOnDispatcher([trackIDPairs = WTFMove(trackIDPairs)](auto& buffer) mutable {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::UpdateTrackIds(WTFMove(trackIDPairs)));
     });
 }
 
@@ -431,7 +431,7 @@ RefPtr<SourceBufferPrivateClient> SourceBufferPrivateRemote::MessageReceiver::cl
 
 void SourceBufferPrivateRemote::MessageReceiver::takeOwnershipOfMemory(WebKit::SharedMemory::Handle&& bufferHandle)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     // Take ownership of shared memory and mark it as media-related memory.
     bufferHandle.takeOwnershipOfMemory(MemoryLedger::Media);
@@ -439,7 +439,7 @@ void SourceBufferPrivateRemote::MessageReceiver::takeOwnershipOfMemory(WebKit::S
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     RefPtr parent = m_parent.get();
     auto client = this->client();
@@ -452,12 +452,12 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveIn
     if (!mediaPlayer)
         return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
 
-    client->sourceBufferPrivateDidReceiveInitializationSegment(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queue(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidReceiveInitializationSegment(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queueSingleton(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionDataChanged(SourceBufferEvictionData&& evictionData)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (RefPtr parent = m_parent.get()) {
         Locker locker { parent->m_lock };
@@ -469,7 +469,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionData
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (auto client = this->client())
         client->sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
@@ -477,10 +477,10 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateHighestPrese
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->sourceBufferPrivateDurationChanged(duration)->whenSettled(SourceBufferPrivateRemote::queue(), WTFMove(completionHandler));
+        client->sourceBufferPrivateDurationChanged(duration)->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTFMove(completionHandler));
         return;
     }
     completionHandler();
@@ -488,10 +488,10 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDurationChan
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges, CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->sourceBufferPrivateBufferedChanged(WTFMove(trackBuffersRanges))->whenSettled(SourceBufferPrivateRemote::queue(), WTFMove(completionHandler));
+        client->sourceBufferPrivateBufferedChanged(WTFMove(trackBuffersRanges))->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTFMove(completionHandler));
         return;
     }
     completionHandler();
@@ -511,7 +511,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveRe
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidAttach(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
-    assertIsCurrent(SourceBufferPrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     RefPtr parent = m_parent.get();
     auto client = this->client();
@@ -524,7 +524,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidAttach(In
     if (!mediaPlayer)
         return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
 
-    client->sourceBufferPrivateDidAttach(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queue(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidAttach(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queueSingleton(), WTFMove(completionHandler));
 }
 
 SourceBufferPrivateClient::InitializationSegment SourceBufferPrivateRemote::MessageReceiver::createInitializationSegment(MediaPlayerPrivateRemote& mediaPlayer, InitializationSegmentInfo&& segmentInfo) const
@@ -571,7 +571,7 @@ void SourceBufferPrivateRemote::memoryPressure(const MediaTime& currentTime)
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::MemoryPressure(currentTime), m_remoteSourceBufferIdentifier);
+        sendToProxy(Messages::RemoteSourceBufferProxy::MemoryPressure(currentTime));
     });
 }
 
@@ -583,7 +583,7 @@ MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(T
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;
-        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::MinimumUpcomingPresentationTimeForTrackID(trackID), m_remoteSourceBufferIdentifier);
+        auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::MinimumUpcomingPresentationTimeForTrackID(trackID), m_remoteSourceBufferIdentifier);
 
         result = std::get<0>(sendResult.takeReplyOr(MediaTime::invalidTime()));
     });
@@ -597,7 +597,7 @@ void SourceBufferPrivateRemote::setMaximumQueueDepthForTrackID(TrackID trackID, 
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetMaximumQueueDepthForTrackID(trackID, depth), m_remoteSourceBufferIdentifier);
+        sendToProxy(Messages::RemoteSourceBufferProxy::SetMaximumQueueDepthForTrackID(trackID, depth));
     });
 }
 
@@ -631,7 +631,7 @@ void SourceBufferPrivateRemote::detach()
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Detach(), m_remoteSourceBufferIdentifier);
+        sendToProxy(Messages::RemoteSourceBufferProxy::Detach());
     });
 }
 
@@ -642,7 +642,7 @@ void SourceBufferPrivateRemote::attach()
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Attach(), m_remoteSourceBufferIdentifier);
+        sendToProxy(Messages::RemoteSourceBufferProxy::Attach());
     });
 }
 

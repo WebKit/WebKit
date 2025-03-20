@@ -124,7 +124,7 @@ void GStreamerMediaEndpoint::maybeInsertNetSimForElement(GstBin* bin, GstElement
 
     gst_pad_unlink(pad.get(), peer.get());
 
-    auto netsim = makeGStreamerElement("netsim", nullptr);
+    auto netsim = makeGStreamerElement("netsim"_s);
     gst_bin_add(GST_BIN_CAST(bin), netsim);
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Configuring %" GST_PTR_FORMAT " for transport element %" GST_PTR_FORMAT, netsim, element);
@@ -160,7 +160,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
     });
 
     auto binName = makeString("webkit-webrtcbin-"_s, nPipeline++);
-    m_webrtcBin = makeGStreamerElement("webrtcbin", binName.ascii().data());
+    m_webrtcBin = makeGStreamerElement("webrtcbin"_s, binName);
     if (!m_webrtcBin)
         return false;
 
@@ -187,7 +187,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
         return false;
     }
 
-    if (gstObjectHasProperty(rtpBin.get(), "add-reference-timestamp-meta")) {
+    if (gstObjectHasProperty(rtpBin.get(), "add-reference-timestamp-meta"_s)) {
         auto disableCaptureTimeTracking = StringView::fromLatin1(g_getenv("WEBKIT_GST_DISABLE_WEBRTC_CAPTURE_TIME_TRACKING"));
         if (disableCaptureTimeTracking.isEmpty() || disableCaptureTimeTracking == "0"_s)
             g_object_set(rtpBin.get(), "add-reference-timestamp-meta", TRUE, nullptr);
@@ -245,7 +245,10 @@ bool GStreamerMediaEndpoint::initializePipeline()
             endPoint->prepareDataChannel(channel, isLocal);
         }), this);
 
-        g_signal_connect_swapped(m_webrtcBin.get(), "request-aux-sender", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDTLSTransport* transport) -> GstElement* {
+        ASCIILiteral requestAuxSenderSignalName = "request-aux-sender"_s;
+        if (webkitGstCheckVersion(1, 25, 0))
+            requestAuxSenderSignalName = "request-post-rtp-aux-sender"_s;
+        g_signal_connect_swapped(m_webrtcBin.get(), requestAuxSenderSignalName.characters(), G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDTLSTransport* transport) -> GstElement* {
             // `sender` ownership is transferred to the signal caller.
             return endPoint->requestAuxiliarySender(GRefPtr(transport));
         }), this);
@@ -299,6 +302,7 @@ void GStreamerMediaEndpoint::teardownPipeline()
 
 bool GStreamerMediaEndpoint::handleMessage(GstMessage* message)
 {
+    GST_TRACE_OBJECT(m_pipeline.get(), "Received message %s from %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_EOS:
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "eos");
@@ -1101,7 +1105,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(const GRefPtr<GstCaps>& allow
 
     if (!mediaStreamID.isEmpty()) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting msid to %s on sink pad %" GST_PTR_FORMAT, mediaStreamID.ascii().data(), sinkPad.get());
-        if (gstObjectHasProperty(sinkPad.get(), "msid"))
+        if (gstObjectHasProperty(sinkPad.get(), "msid"_s))
             g_object_set(sinkPad.get(), "msid", mediaStreamID.ascii().data(), nullptr);
     }
 
@@ -1326,7 +1330,7 @@ MediaStream& GStreamerMediaEndpoint::mediaStreamFromRTCStream(String mediaStream
 {
     auto mediaStream = m_remoteStreamsById.ensure(mediaStreamId, [&] {
         auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
-        return MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, WTFMove(mediaStreamId)));
+        return MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, WTFMove(mediaStreamId)), MediaStream::AllowEventTracks::Yes);
     });
     return *mediaStream.iterator->value;
 }

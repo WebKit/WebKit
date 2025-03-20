@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,9 +22,10 @@
 
 [
     Exposed=Window
-] interface CSSPageRule : CSSGroupingRule {
+] interface CSSPageRule : CSSRule {
     attribute DOMString selectorText;
     // FIXME: Add [SameObject] below after https://webkit.org/b/163414
-    [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+    // FIXME: Should use `CSSPageDescriptors` type.
+    [PutForwards=cssText] readonly attribute CSSStyleProperties style;
 };
 

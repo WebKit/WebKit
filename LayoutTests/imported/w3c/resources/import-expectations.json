@@ -166,7 +166,7 @@
     "web-platform-tests/encoding-detection": "skip",
     "web-platform-tests/encrypted-media": "import",
     "web-platform-tests/entries-api": "import",
-    "web-platform-tests/event-timing": "skip",
+    "web-platform-tests/event-timing": "import",
     "web-platform-tests/eventsource": "import",
     "web-platform-tests/eyedropper": "skip",
     "web-platform-tests/feature-policy": "import",

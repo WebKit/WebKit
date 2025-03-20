@@ -104,7 +104,7 @@ void WebMemorySampler::stop()
     if (!m_isRunning) 
         return;
     m_sampleTimer.stop();
-    FileSystem::closeFile(m_sampleLogFile);
+    m_sampleLogFile = { };
 
     SAFE_PRINTF("Stopped memory sampler for process %s %d\n", processName().utf8(), getCurrentProcessID());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
@@ -114,10 +114,8 @@ void WebMemorySampler::stop()
     if (m_stopTimer.isActive())
         m_stopTimer.stop();
     
-    if (m_sampleLogSandboxExtension) {
-        m_sampleLogSandboxExtension->revoke();
-        m_sampleLogSandboxExtension = nullptr;
-    }    
+    if (RefPtr extension = std::exchange(m_sampleLogSandboxExtension, nullptr))
+        extension->revoke();
 }
 
 bool WebMemorySampler::isRunning() const
@@ -129,15 +127,15 @@ void WebMemorySampler::initializeTempLogFile()
 {
     auto result = FileSystem::openTemporaryFile(processName());
     m_sampleLogFilePath = result.first;
-    m_sampleLogFile = result.second;
+    m_sampleLogFile = WTFMove(result.second);
     writeHeaders();
 }
 
 void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sampleLogSandboxHandle, const String& sampleLogFilePath)
 {
     m_sampleLogSandboxExtension = SandboxExtension::create(WTFMove(sampleLogSandboxHandle));
-    if (m_sampleLogSandboxExtension)
-        m_sampleLogSandboxExtension->consume();
+    if (RefPtr extension = m_sampleLogSandboxExtension)
+        extension->consume();
     m_sampleLogFilePath = sampleLogFilePath;
     m_sampleLogFile = FileSystem::openFile(m_sampleLogFilePath, FileSystem::FileOpenMode::Truncate);
     writeHeaders();
@@ -146,13 +144,13 @@ void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sam
 void WebMemorySampler::writeHeaders()
 {
     auto processDetails = makeString("Process: "_s, processName(), " Pid: "_s, getCurrentProcessID(), '\n').utf8();
-    FileSystem::writeToFile(m_sampleLogFile, byteCast<uint8_t>(processDetails.span()));
+    m_sampleLogFile.write(byteCast<uint8_t>(processDetails.span()));
 }
 
 void WebMemorySampler::sampleTimerFired()
 {
     sendMemoryPressureEvent();
-    appendCurrentMemoryUsageToFile(m_sampleLogFile);
+    appendCurrentMemoryUsageToFile();
 }
 
 void WebMemorySampler::stopTimerFired()
@@ -163,7 +161,7 @@ void WebMemorySampler::stopTimerFired()
     stop();
 }
 
-void WebMemorySampler::appendCurrentMemoryUsageToFile(FileSystem::PlatformFileHandle&)
+void WebMemorySampler::appendCurrentMemoryUsageToFile()
 {
     // Collect statistics from allocators and get RSIZE metric
     StringBuilder statString;
@@ -180,7 +178,7 @@ void WebMemorySampler::appendCurrentMemoryUsageToFile(FileSystem::PlatformFileHa
     statString.append('\n');
 
     CString utf8String = statString.toString().utf8();
-    FileSystem::writeToFile(m_sampleLogFile, byteCast<uint8_t>(utf8String.span()));
+    m_sampleLogFile.write(byteCast<uint8_t>(utf8String.span()));
 }
 
 }

@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 
 // This calls operationCreateDirectArguments but then restores the value of lengthGPR.
 class CallCreateDirectArgumentsSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
-    WTF_MAKE_TZONE_ALLOCATED(CallCreateDirectArgumentsSlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CallCreateDirectArgumentsSlowPathGenerator);
 public:
     CallCreateDirectArgumentsSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, RegisteredStructure structure,

@@ -1,9 +1,9 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = 'copyBufferToBuffer operation tests';import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('single').
 desc(
@@ -34,11 +34,10 @@ fn((t) => {
 
   const src = t.makeBufferWithContents(srcData, GPUBufferUsage.COPY_SRC);
 
-  const dst = t.device.createBuffer({
+  const dst = t.createBufferTracked({
     size: dstBufferSize,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(dst);
 
   const encoder = t.device.createCommandEncoder();
   encoder.copyBufferToBuffer(src, srcOffset, dst, dstOffset, copySize);
@@ -92,11 +91,10 @@ fn((t) => {
 
   const src = t.makeBufferWithContents(srcData, GPUBufferUsage.COPY_SRC);
 
-  const dst = t.device.createBuffer({
+  const dst = t.createBufferTracked({
     size: srcData.length * 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(dst);
 
   const encoder = t.device.createCommandEncoder();
   encoder.copyBufferToBuffer(src, 0, dst, 0, 16);

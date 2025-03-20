@@ -44,9 +44,8 @@ FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
 
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:994:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:991:24
   - VALIDATION FAILED: subcase: builtin="read_write"
     Missing expected compilationInfo 'error' message.
 
@@ -62,9 +61,8 @@ FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
 
     }
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:994:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:991:24
   - EXPECTATION FAILED: subcase: builtin="read"
     Expected validation error
       at (elided: below max severity)

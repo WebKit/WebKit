@@ -261,19 +261,19 @@ TextStream& operator<<(TextStream& ts, FilterData::FilterDataState state)
 {
     switch (state) {
     case FilterData::PaintingSource:
-        ts << "painting source";
+        ts << "painting source"_s;
         break;
     case FilterData::Applying:
-        ts << "applying";
+        ts << "applying"_s;
         break;
     case FilterData::Built:
-        ts << "built";
+        ts << "built"_s;
         break;
     case FilterData::CycleDetected:
-        ts << "cycle detected";
+        ts << "cycle detected"_s;
         break;
     case FilterData::MarkedForRemoval:
-        ts << "marked for removal";
+        ts << "marked for removal"_s;
         break;
     }
     return ts;

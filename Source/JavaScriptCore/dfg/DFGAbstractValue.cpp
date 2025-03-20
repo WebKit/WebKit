@@ -31,6 +31,8 @@
 #include "DFGGraph.h"
 #include "JSCJSValueInlines.h"
 #include "TrackedReferences.h"
+#include <wtf/AlignedStorage.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
 
@@ -524,12 +526,8 @@ void AbstractValue::validateReferences(const TrackedReferences& trackedReference
 #if USE(JSVALUE64) && !defined(NDEBUG)
 void AbstractValue::ensureCanInitializeWithZeros()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    std::aligned_storage<sizeof(AbstractValue), alignof(AbstractValue)>::type zeroFilledStorage;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    memset(static_cast<void*>(&zeroFilledStorage), 0, sizeof(AbstractValue));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    AlignedStorage<AbstractValue> zeroFilledStorage;
+    zeroBytes(*zeroFilledStorage);
     ASSERT(*this == *static_cast<AbstractValue*>(static_cast<void*>(&zeroFilledStorage)));
 }
 #endif

@@ -1,6 +1,7 @@
 Test that an NCName and * are interpreted as an operator when in binary operator context, and as a NameTest otherwise.
 
-See bug 50366: XPath lexer misinterprets expression starting with "div".
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
 
 PASS div
 PASS   div
@@ -70,4 +71,4 @@ PASS string(mod/@and)
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+See bug 50366: XPath lexer misinterprets expression starting with "div".

@@ -10,6 +10,7 @@ CompileFlags:
         -Wno-maybe-uninitialized,
     ]
     Add: [
+        $platform_specific_flags
         "-ferror-limit=0",  # https://github.com/WebKit/WebKit/pull/30784#issuecomment-2257495415
         "-Wno-unknown-warning-option",
     ]
@@ -25,6 +26,7 @@ If:
 CompileFlags:
     Add: [
         $header_file_platform_specific_flags
+        $platform_specific_flags
         --include=config.h,
         -std=c++2a,
     ]
@@ -32,10 +34,9 @@ CompileFlags:
 If:
     PathMatch: [.*\.mm]
 CompileFlags:
-    Add: [-xobjective-c++, --include=config.h, -std=c++2a]
+    Add: [$platform_specific_flags -xobjective-c++, --include=config.h, -std=c++2a]
 ---
 If:
     PathMatch: [.*\.m]
 CompileFlags:
-    Add: [-xobjective-c, --include=config.h]
-
+    Add: [$platform_specific_flags -xobjective-c, --include=config.h]

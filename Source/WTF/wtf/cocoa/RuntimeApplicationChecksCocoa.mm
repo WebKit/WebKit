@@ -376,6 +376,12 @@ bool CocoaApplication::isWebkitTestRunner()
     return isWebkitTestRunner;
 }
 
+bool CocoaApplication::isAppleApplication()
+{
+    static bool isAppleApplication = applicationBundleIdentifier().startsWith("com.apple."_s);
+    return isAppleApplication;
+}
+
 #if PLATFORM(MAC)
 
 bool MacApplication::isSafari()
@@ -438,9 +444,10 @@ bool MacApplication::isMimeoPhotoProject()
 
 #if PLATFORM(IOS_FAMILY)
 
-static bool applicationBundleStartsWith(const String& bundleIdentifierPrefix)
+bool IOSApplication::isAppleWebApp()
 {
-    return applicationBundleIdentifier().startsWith(bundleIdentifierPrefix);
+    static bool isWebApp = applicationBundleIsEqualTo("com.apple.webapp"_s);
+    return isWebApp;
 }
 
 bool IOSApplication::isMobileMail()
@@ -563,12 +570,6 @@ bool IOSApplication::isAmazon()
 {
     static bool isAmazon = applicationBundleIsEqualTo("com.amazon.Amazon"_s);
     return isAmazon;
-}
-
-bool IOSApplication::isAppleApplication()
-{
-    static bool isAppleApplication = applicationBundleStartsWith("com.apple."_s);
-    return isAppleApplication;
 }
 
 bool IOSApplication::isEvernote()

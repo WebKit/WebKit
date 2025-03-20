@@ -1623,8 +1623,9 @@ private:
             break;
         }
 
+        case ArrayIncludes:
         case ArrayIndexOf:
-            fixupArrayIndexOf(node);
+            fixupArrayIndexOfOrArrayIncludes(node);
             break;
             
         case RegExpExec:
@@ -1649,6 +1650,7 @@ private:
         }
 
         case StringReplace:
+        case StringReplaceAll:
         case StringReplaceRegExp: {
             if (op == StringReplace
                 && node->child1()->shouldSpeculateString()
@@ -1669,7 +1671,7 @@ private:
                     m_indexInBlock, SpecNone, Check, node->origin,
                     Edge(node->child2().node(), StringUse));
                 fixEdge<StringUse>(node->child2());
-            } else if (op == StringReplace) {
+            } else if (op == StringReplace || op == StringReplaceAll) {
                 if (node->child2()->shouldSpeculateRegExpObject() && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
                     addStringReplacePrimordialChecks(node->child2().node());
                 else 
@@ -1830,6 +1832,14 @@ private:
             break;
         }
 
+        case NewRegExpUntyped: {
+            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                fixEdge<StringUse>(node->child2());
+            }
+            break;
+        }
+
         case NewSymbol: {
             if (node->child1() && node->child1()->shouldSpeculateString())
                 fixEdge<StringUse>(node->child1());
@@ -1921,6 +1931,35 @@ private:
                 fixEdge<Int52RepUse>(node->child1());
                 node->clearFlags(NodeMustGenerate);
                 break;
+            }
+            break;
+        }
+
+        case NewTypedArrayBuffer: {
+            watchHavingABadTime(node);
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+            if (node->child1()->shouldSpeculateInt52()) {
+                fixEdge<Int52RepUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
+            if (!m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                if (node->child1()->shouldSpeculateInt32OrOther() && !node->child1()->shouldSpeculateOther()) {
+                    fixEdge<Int32Use>(node->child1());
+                    node->clearFlags(NodeMustGenerate);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateInt52OrOther() && !node->child1()->shouldSpeculateOther()) {
+                    fixEdge<Int52RepUse>(node->child1());
+                    node->clearFlags(NodeMustGenerate);
+                    break;
+                }
             }
             break;
         }
@@ -2435,6 +2474,12 @@ private:
             break;
         }
 
+        case DataViewGetByteLength:
+        case DataViewGetByteLengthAsInt52: {
+            fixEdge<DataViewObjectUse>(node->child1());
+            break;
+        }
+
         case GetTypedArrayByteOffsetAsInt52: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             if (arrayMode.type() == Array::Generic)
@@ -2515,7 +2560,7 @@ private:
         case PhantomNewArrayWithSpread:
         case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
-        case PhantomNewRegexp:
+        case PhantomNewRegExp:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case GetVectorLength:
@@ -2993,8 +3038,12 @@ private:
                 fixEdge<Int32Use>(node->child1());
             else if (node->child1()->shouldSpeculateInt52())
                 fixEdge<Int52RepUse>(node->child1());
-            else
+            else {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), NumberUse));
                 fixEdge<DoubleRepUse>(node->child1());
+            }
 
             if (op == NumberToStringWithRadix)
                 fixEdge<Int32Use>(node->child2());
@@ -3281,7 +3330,7 @@ private:
         case NewGenerator:
         case NewAsyncGenerator:
         case NewInternalFieldObject:
-        case NewRegexp:
+        case NewRegExp:
         case NewMap:
         case NewSet:
         case IsTypedArrayView:
@@ -4138,8 +4187,20 @@ private:
 
         // Check that searchRegExp.exec is the primordial RegExp.prototype.exec
         emitPrimordialCheckFor(globalObject->regExpProtoExecFunction(), vm().propertyNames->exec.impl());
+        // Check that searchRegExp.flags is the primordial RegExp.prototype.flags
+        emitPrimordialCheckFor(globalObject->regExpProtoFlagsGetter(), vm().propertyNames->flags.impl());
+        // Check that searchRegExp.dotAll is the primordial RegExp.prototype.dotAll
+        emitPrimordialCheckFor(globalObject->regExpProtoDotAllGetter(), vm().propertyNames->dotAll.impl());
         // Check that searchRegExp.global is the primordial RegExp.prototype.global
         emitPrimordialCheckFor(globalObject->regExpProtoGlobalGetter(), vm().propertyNames->global.impl());
+        // Check that searchRegExp.hasIndices is the primordial RegExp.prototype.hasIndices
+        emitPrimordialCheckFor(globalObject->regExpProtoHasIndicesGetter(), vm().propertyNames->hasIndices.impl());
+        // Check that searchRegExp.ignoreCase is the primordial RegExp.prototype.ignoreCase
+        emitPrimordialCheckFor(globalObject->regExpProtoIgnoreCaseGetter(), vm().propertyNames->ignoreCase.impl());
+        // Check that searchRegExp.multiline is the primordial RegExp.prototype.multiline
+        emitPrimordialCheckFor(globalObject->regExpProtoMultilineGetter(), vm().propertyNames->multiline.impl());
+        // Check that searchRegExp.sticky is the primordial RegExp.prototype.sticky
+        emitPrimordialCheckFor(globalObject->regExpProtoStickyGetter(), vm().propertyNames->sticky.impl());
         // Check that searchRegExp.unicode is the primordial RegExp.prototype.unicode
         emitPrimordialCheckFor(globalObject->regExpProtoUnicodeGetter(), vm().propertyNames->unicode.impl());
         // Check that searchRegExp.unicodeSets is the primordial RegExp.prototype.unicodeSets
@@ -4779,12 +4840,19 @@ private:
         fixup(node->child3(), 1);
     }
 
-    void fixupArrayIndexOf(Node* node)
+    void fixupArrayIndexOfOrArrayIncludes(Node* node)
     {
+        ASSERT(node->op() == ArrayIndexOf || node->op() == ArrayIncludes);
+
+        bool isArrayIncludes = node->op() == ArrayIncludes;
+
         Edge& array = m_graph.varArgChild(node, 0);
         Edge& storage = m_graph.varArgChild(node, node->numChildren() == 3 ? 2 : 3);
         blessArrayOperation(array, Edge(), storage);
-        ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIndexOf must set Butterfly for storage edge.");
+        if (isArrayIncludes)
+            ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIncludes must set Butterfly for storage edge.");
+        else
+            ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIndexOf must set Butterfly for storage edge.");
 
         Edge& searchElement = m_graph.varArgChild(node, 1);
 
@@ -4801,15 +4869,21 @@ private:
             if (searchElement->shouldSpeculateCell()) {
                 fixEdge<CellUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
-                m_graph.convertToConstant(node, jsNumber(-1));
+                if (isArrayIncludes)
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                else
+                    m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<CellUse>(searchElementNode);
                 return;
             }
 
-            if (searchElement->shouldSpeculateOther()) {
+            if (searchElement->shouldSpeculateOther() && !isArrayIncludes) {
                 fixEdge<OtherUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
-                m_graph.convertToConstant(node, jsNumber(-1));
+                if (isArrayIncludes)
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                else
+                    m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<OtherUse>(searchElementNode);
                 return;
             }
@@ -4817,7 +4891,10 @@ private:
             if (searchElement->shouldSpeculateBoolean()) {
                 fixEdge<BooleanUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
-                m_graph.convertToConstant(node, jsNumber(-1));
+                if (isArrayIncludes)
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                else
+                    m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<BooleanUse>(searchElementNode);
                 return;
             }

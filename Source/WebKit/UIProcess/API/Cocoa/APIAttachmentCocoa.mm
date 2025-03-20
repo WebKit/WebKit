@@ -195,10 +195,11 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
 
 void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
 {
-    if (!m_webPage)
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
         return;
 
-    RefPtr pageClient = m_webPage->pageClient();
+    RefPtr pageClient = webPage->pageClient();
     if (!pageClient)
         return;
 
@@ -212,7 +213,7 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
 
     m_isCreatedFromSerializedRepresentation = true;
     setFileWrapperAndUpdateContentType(fileWrapper.get(), contentType);
-    m_webPage->updateAttachmentAttributes(*this, [] { });
+    webPage->updateAttachmentAttributes(*this, [] { });
 }
 
 void Attachment::cloneFileWrapperTo(Attachment& other)

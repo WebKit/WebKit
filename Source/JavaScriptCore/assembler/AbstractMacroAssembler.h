@@ -708,6 +708,8 @@ public:
             masm->m_assembler.linkJump(m_label, masm->m_assembler.label());
 #endif
         }
+
+        void link(AbstractMacroAssemblerType& masm) const { link(&masm); }
         
         void linkTo(Label label, AbstractMacroAssemblerType* masm) const
         {

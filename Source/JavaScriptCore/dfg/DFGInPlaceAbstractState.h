@@ -38,7 +38,7 @@
 namespace JSC { namespace DFG {
 
 class InPlaceAbstractState {
-    WTF_MAKE_TZONE_ALLOCATED(InPlaceAbstractState);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(InPlaceAbstractState);
 public:
     InPlaceAbstractState(Graph&);
     
@@ -367,8 +367,6 @@ public:
     void setStructureClobberState(StructureClobberState value) { m_structureClobberState = value; }
     void setIsValid(bool isValid) { m_isValid = isValid; }
     void setBranchDirection(BranchDirection branchDirection) { m_branchDirection = branchDirection; }
-
-    void setShouldTryConstantFolding(bool) { }
 
     void setProofStatus(Edge& edge, ProofStatus status)
     {

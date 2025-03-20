@@ -37,6 +37,7 @@
 #import "XPCEndpoint.h"
 #import <wtf/EnumTraits.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/darwin/XPCExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -62,7 +63,7 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (!event || xpc_get_type(event) == XPC_TYPE_ERROR)
         return false;
 
-    auto messageName = xpc_dictionary_get_wtfstring(event, XPCEndpoint::xpcMessageNameKey);
+    auto messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
     if (messageName.isEmpty())
         return false;
 

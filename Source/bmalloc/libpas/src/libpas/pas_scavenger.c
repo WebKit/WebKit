@@ -44,6 +44,7 @@
 #include "pas_status_reporter.h"
 #include "pas_thread_local_cache.h"
 #include "pas_utility_heap.h"
+#include "pas_utils.h"
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -108,6 +109,7 @@ static pas_scavenger_data* ensure_data_instance(pas_lock_hold_mode heap_lock_hol
         
         pthread_mutex_init(&instance->lock, NULL);
         pthread_cond_init(&instance->cond, NULL);
+        pthread_mutex_init(&instance->foreign_work.lock, NULL);
 
         pas_fence();
         
@@ -202,6 +204,7 @@ static void* scavenger_thread_main(void* arg)
         uint64_t epoch;
         uint64_t delta;
         uint64_t max_epoch;
+        int installed_foreign_work_descriptors;
         bool did_overflow;
 #if PAS_OS(DARWIN)
         qos_class_t current_qos_class;
@@ -286,13 +289,24 @@ static void* scavenger_thread_main(void* arg)
             break;
         } }
 
+
+        installed_foreign_work_descriptors = data->foreign_work.next_open_descriptor;
+        PAS_ASSERT(installed_foreign_work_descriptors <= PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS);
+        pas_fence();
+        for (int i = 0; i < installed_foreign_work_descriptors; i++) {
+            void* userdata = data->foreign_work.descriptors[i].userdata;
+            uint32_t requested_period_ticks = 1 << data->foreign_work.descriptors[i].period_log2_ticks;
+            if (!requested_period_ticks || pas_scavenger_tick_count % requested_period_ticks == 0)
+                should_go_again |= data->foreign_work.descriptors[i].func(userdata);
+        }
+
         if (verbose) {
             pas_log("%d: %.0lf: scavenger freed %zu bytes (%s, should_go_again = %s).\n",
                     getpid(), get_time_in_milliseconds(), scavenge_result.total_bytes,
                     pas_page_sharing_pool_take_result_get_string(scavenge_result.take_result),
                     should_go_again ? "yes" : "no");
         }
-        
+
         completion_callback = pas_scavenger_completion_callback;
         if (completion_callback)
             completion_callback();
@@ -385,6 +399,36 @@ static void* scavenger_thread_main(void* arg)
 
     PAS_ASSERT(!"Should not be reached");
     return NULL;
+}
+
+bool pas_scavenger_try_install_foreign_work_callback(
+    pas_scavenger_foreign_work_callback callback,
+    uint32_t period_log2_ms,
+    void* userdata)
+{
+    pas_scavenger_data* data;
+
+    PAS_ASSERT(callback);
+
+    data = ensure_data_instance(pas_lock_is_not_held);
+    pthread_mutex_lock(&data->foreign_work.lock);
+
+    int slot = data->foreign_work.next_open_descriptor;
+    if (slot >= PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS)
+        return false;
+
+    double requested_period_ms = pow(2.0, period_log2_ms);
+    uint32_t requested_ticks = (uint32_t)(requested_period_ms / pas_scavenger_period_in_milliseconds);
+
+    data->foreign_work.descriptors[slot].period_log2_ticks = pas_log2(requested_ticks);
+    data->foreign_work.descriptors[slot].func = callback;
+    data->foreign_work.descriptors[slot].userdata = userdata;
+    pas_store_store_fence();
+    data->foreign_work.next_open_descriptor = slot + 1;
+
+    pthread_mutex_unlock(&data->foreign_work.lock);
+
+    return true;
 }
 
 bool pas_scavenger_did_create_eligible(void)

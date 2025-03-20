@@ -150,6 +150,8 @@ private:
 
     void showPicker() override;
 
+    RefPtr<DateTimeEditElement> protectedDateTimeEditElement() const { return m_dateTimeEditElement; };
+
     RefPtr<DateTimeChooser> m_dateTimeChooser;
     RefPtr<DateTimeEditElement> m_dateTimeEditElement;
 };

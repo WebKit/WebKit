@@ -520,7 +520,7 @@ void Storage::synchronize()
 
         LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu recordCount=%u", recordsSize, recordCount);
 
-        RunLoop::protectedMain()->dispatch([this, protectedThis = WTFMove(protectedThis), recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
+        RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
             for (auto& recordFilterKey : m_recordFilterHashesAddedDuringSynchronization)
                 recordFilter->add(recordFilterKey);
             m_recordFilterHashesAddedDuringSynchronization.clear();
@@ -820,7 +820,7 @@ void Storage::remove(const Key& key)
 
     removeFromPendingWriteOperations(key);
 
-    serialBackgroundIOQueue().dispatch([this, protectedThis = WTFMove(protectedThis), key] () mutable {
+    serialBackgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, key] () mutable {
         deleteFiles(key);
     });
 }
@@ -883,10 +883,10 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         m_readOperationTimeoutTimer.startOneShot(readTimeout);
     }
 
-    protectedIOQueue()->dispatch([this, protectedThis = Ref { *this }, identifier, recordPath = crossThreadCopy(WTFMove(recordPath)), blobPath = crossThreadCopy(WTFMove(blobPath))]() mutable {
+    ioQueue().dispatch([this, protectedThis = Ref { *this }, identifier, recordPath = crossThreadCopy(WTFMove(recordPath)), blobPath = crossThreadCopy(WTFMove(blobPath))]() mutable {
         auto recordIOStartTime = MonotonicTime::now();
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), protectedIOQueue(), [this, protectedThis = WTFMove(protectedThis), identifier, recordIOStartTime](auto fileData, int error) mutable {
+        channel->read(0, std::numeric_limits<size_t>::max(), ioQueue(), [this, protectedThis = Ref { *this }, identifier, recordIOStartTime](auto fileData, int error) mutable {
             readRecordFromData(identifier, recordIOStartTime, WTFMove(fileData), error);
         });
 
@@ -1042,7 +1042,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
 
         auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Create);
         size_t recordSize = recordData.size();
-        channel->write(0, recordData, WorkQueue::main(), [this, protectedThis = WTFMove(protectedThis), identifier, recordSize](int error) {
+        channel->write(0, recordData, WorkQueue::main(), [this, protectedThis = Ref { *this }, identifier, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
             m_approximateRecordsSize += recordSize;
             finishWriteOperationActivity(identifier, error);
@@ -1326,7 +1326,7 @@ void Storage::shrink()
             }
         });
 
-        RunLoop::protectedMain()->dispatch([this, protectedThis = WTFMove(protectedThis)] {
+        RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }] {
             m_shrinkInProgress = false;
             // We could synchronize during the shrink traversal. However this is fast and it is better to have just one code path.
             synchronize();

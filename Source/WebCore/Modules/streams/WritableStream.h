@@ -49,6 +49,7 @@ public:
     bool locked() const;
 
     void closeIfPossible();
+    void errorIfPossible(Exception&&);
 
     InternalWritableStream& internalWritableStream();
     enum class Type : bool {

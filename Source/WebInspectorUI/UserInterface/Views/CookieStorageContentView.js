@@ -466,7 +466,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         if (editingCookie)
             promises.push(target.PageAgent.deleteCookie(editingCookie.name, editingCookie.url));
 
-        // COMPATIBILITY (iOS 18.X, macOS 15.X): `Page.setCookie` did not have a `shouldPartition` parameter yet.
+        // COMPATIBILITY (iOS 18.4, macOS 15.4): `Page.setCookie` did not have a `shouldPartition` parameter yet.
         promises.push(target.PageAgent.setCookie.invoke({
             cookie: cookieProtocolPayload,
             shouldPartition: !cookieToSet.partitionKey && !!cookieToSet.partitioned,

@@ -35,11 +35,13 @@ namespace JSC { namespace DFG {
 
 enum LocationKind {
     InvalidLocationKind,
-    
+
     ArrayLengthLoc,
     ArrayMaskLoc,
     VectorLengthLoc,
     ButterflyLoc,
+    DataViewByteLengthLoc,
+    DataViewByteLengthAsInt52Loc,
     CheckTypeInfoFlagsLoc,
     OverridesHasInstanceLoc,
     ClosureVariableLoc,

@@ -37,6 +37,7 @@
 #import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
+#import "PlatformDynamicRangeLimitCocoa.h"
 #import "VideoFrame.h"
 #import "VideoFrameMetadata.h"
 #import "VideoLayerManagerObjC.h"
@@ -446,6 +447,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
         sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds);
 
     sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
+
+    if (RefPtr player = m_player.get())
+        setLayerDynamicRangeLimit(sampleBufferDisplayLayer->rootLayer(), player->platformDynamicRangeLimit());
 
     m_videoLayerManager->setVideoLayer(sampleBufferDisplayLayer->rootLayer(), size);
 
@@ -1189,6 +1193,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::Buffe
     if (policy != MediaPlayer::BufferingPolicy::Default) {
         if (RefPtr sampleBufferDisplayLayer = m_sampleBufferDisplayLayer)
             sampleBufferDisplayLayer->flushAndRemoveImage();
+    }
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    if (RefPtr sampleBufferDisplayLayer = m_sampleBufferDisplayLayer) {
+        if (RetainPtr rootLayer = sampleBufferDisplayLayer->rootLayer())
+            setLayerDynamicRangeLimit(rootLayer.get(), platformDynamicRangeLimit);
     }
 }
 

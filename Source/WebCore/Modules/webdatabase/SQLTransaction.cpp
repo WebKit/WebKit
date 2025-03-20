@@ -201,7 +201,7 @@ void SQLTransaction::checkAndHandleClosedDatabase()
     m_errorCallbackWrapper.clear();
 
     // The next steps should be executed only if we're on the DB thread.
-    if (m_database->databaseThread().getThread() != &Thread::current())
+    if (m_database->databaseThread().getThread() != &Thread::currentSingleton())
         return;
 
     // The current SQLite transaction should be stopped, as well

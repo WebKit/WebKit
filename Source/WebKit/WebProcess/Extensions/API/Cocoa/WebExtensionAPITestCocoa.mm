@@ -369,17 +369,32 @@ JSValue *WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValue *f
 
 JSValue *WebExtensionAPITest::addTest(JSContextRef context, JSValue *testFunction)
 {
+    return addTest(context, testFunction, "test.addTest()"_s);
+}
+
+JSValue *WebExtensionAPITest::runTests(JSContextRef context, NSArray *testFunctions)
+{
+    JSValue *testResultPromises = [JSValue valueWithNewArrayInContext:toJSContext(context)];
+
+    for (JSValue *testFunction in testFunctions)
+        [testResultPromises invokeMethod:@"push" withArguments:@[ addTest(context, testFunction, "test.runTests()"_s) ]];
+
+    return [toJSContext(context)[@"Promise"] invokeMethod:@"all" withArguments:@[ testResultPromises ]];
+}
+
+JSValue *WebExtensionAPITest::addTest(JSContextRef context, JSValue *testFunction, String callingAPIName)
+{
     auto testName = testFunction[@"name"].toString;
     if (!testName.length)
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString("test.addTest()"_s, nullString(), "The supplied test function must be named."_s) inContext:toJSContext(context)];
+        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "The supplied test function must be named."_s) inContext:toJSContext(context)];
 
     RefPtr page = toWebPage(context);
     if (!page)
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString("test.addTest()"_s, nullString(), "Error creating a new test."_s) inContext:toJSContext(context)];
+        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s) inContext:toJSContext(context)];
 
     RefPtr webExtensionControllerProxy = page->webExtensionControllerProxy();
     if (!webExtensionControllerProxy)
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString("test.addTest()"_s, nullString(), "Error creating a new test."_s) inContext:toJSContext(context)];
+        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s) inContext:toJSContext(context)];
 
     __block JSValue *resolveCallback;
     __block JSValue *rejectCallback;

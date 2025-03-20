@@ -155,17 +155,17 @@ void RemoteDisplayListRecorderProxy::concatCTM(const AffineTransform& transform)
 {
     if (!updateStateForConcatCTM(transform))
         return;
-    send(Messages::RemoteDisplayListRecorder::ConcatenateCTM(transform));
+    send(Messages::RemoteDisplayListRecorder::ConcatCTM(transform));
 }
 
 void RemoteDisplayListRecorderProxy::recordSetInlineFillColor(PackedColor::RGBA color)
 {
-    send(Messages::RemoteDisplayListRecorder::SetInlineFillColor(DisplayList::SetInlineFillColor { color }));
+    send(Messages::RemoteDisplayListRecorder::SetInlineFillColor(color));
 }
 
-void RemoteDisplayListRecorderProxy::recordSetInlineStroke(DisplayList::SetInlineStroke&& strokeItem)
+void RemoteDisplayListRecorderProxy::recordSetInlineStroke(DisplayList::SetInlineStroke&& item)
 {
-    send(Messages::RemoteDisplayListRecorder::SetInlineStroke(strokeItem));
+    send(Messages::RemoteDisplayListRecorder::SetInlineStroke(item.colorData(), item.thickness()));
 }
 
 void RemoteDisplayListRecorderProxy::recordSetState(const GraphicsContextState& state)
@@ -180,7 +180,7 @@ void RemoteDisplayListRecorderProxy::setLineCap(LineCap lineCap)
 
 void RemoteDisplayListRecorderProxy::setLineDash(const DashArray& array, float dashOffset)
 {
-    send(Messages::RemoteDisplayListRecorder::SetLineDash(DisplayList::SetLineDash { array, dashOffset }));
+    send(Messages::RemoteDisplayListRecorder::SetLineDash(array, dashOffset));
 }
 
 void RemoteDisplayListRecorderProxy::setLineJoin(LineJoin lineJoin)
@@ -261,7 +261,8 @@ void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* 
 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawGlyphs(DisplayList::DrawGlyphs { font, glyphs, advances, localAnchor, mode }));
+    ASSERT(glyphs.size() == advances.size());
+    send(Messages::RemoteDisplayListRecorder::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), advances.data(), glyphs.size() }, localAnchor, mode));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
@@ -322,7 +323,7 @@ void RemoteDisplayListRecorderProxy::drawLine(const FloatPoint& point1, const Fl
 void RemoteDisplayListRecorderProxy::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle style)
 {
     appendStateChangeItemIfNecessary();
-    send(Messages::RemoteDisplayListRecorder::DrawLinesForText(DisplayList::DrawLinesForText { point, lineSegments, thickness, printing, doubleLines, style }));
+    send(Messages::RemoteDisplayListRecorder::DrawLinesForText(point, thickness, lineSegments, printing, doubleLines, style));
 }
 
 void RemoteDisplayListRecorderProxy::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
@@ -370,13 +371,13 @@ void RemoteDisplayListRecorderProxy::fillRect(const FloatRect& rect, const Color
 void RemoteDisplayListRecorderProxy::fillRect(const FloatRect& rect, Gradient& gradient)
 {
     appendStateChangeItemIfNecessary();
-    send(Messages::RemoteDisplayListRecorder::FillRectWithGradient(DisplayList::FillRectWithGradient { rect, gradient }));
+    send(Messages::RemoteDisplayListRecorder::FillRectWithGradient(rect, gradient));
 }
 
 void RemoteDisplayListRecorderProxy::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     appendStateChangeItemIfNecessary();
-    send(Messages::RemoteDisplayListRecorder::FillRectWithGradientAndSpaceTransform(DisplayList::FillRectWithGradientAndSpaceTransform { rect, gradient, gradientSpaceTransform, requiresClipToRect }));
+    send(Messages::RemoteDisplayListRecorder::FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform, requiresClipToRect));
 }
 
 void RemoteDisplayListRecorderProxy::fillRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
@@ -476,9 +477,9 @@ void RemoteDisplayListRecorderProxy::recordStrokeLine(const PathDataLine& line)
     send(Messages::RemoteDisplayListRecorder::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStroke&& strokeItem)
+void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStroke&& item)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(line, strokeItem));
+    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(line, item.colorData(), item.thickness()));
 }
 
 void RemoteDisplayListRecorderProxy::recordStrokeArc(const PathArc& arc)

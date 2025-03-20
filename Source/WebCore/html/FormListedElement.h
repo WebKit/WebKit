@@ -68,7 +68,7 @@ public:
 
     // ValidityState attribute implementations
     bool badInput() const { return hasBadInput(); }
-    bool customError() const;
+    virtual bool customError() const;
 
     // Implementations of patternMismatch, rangeOverflow, rangerUnderflow, stepMismatch, tooShort, tooLong and valueMissing must call willValidate.
     virtual bool hasBadInput() const;

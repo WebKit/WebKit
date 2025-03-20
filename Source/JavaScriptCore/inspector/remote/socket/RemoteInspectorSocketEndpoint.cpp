@@ -66,7 +66,7 @@ RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint()
 
 RemoteInspectorSocketEndpoint::~RemoteInspectorSocketEndpoint()
 {
-    ASSERT(m_workerThread.get() != &Thread::current());
+    ASSERT(m_workerThread.get() != &Thread::currentSingleton());
 
     m_shouldAbortWorkerThread = true;
     wakeupWorkerThread();

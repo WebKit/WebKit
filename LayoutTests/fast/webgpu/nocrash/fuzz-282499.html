@@ -15,8 +15,12 @@ async function run() {
         origin: { x: 316 }
     }, new Uint8Array(32), {}, {width: 16, height: 4 });
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+testRunner?.dumpAsText();
 testRunner?.waitUntilDone();
+
 run();
 </script>
+

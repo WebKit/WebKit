@@ -36,6 +36,9 @@ messages -> WebAuthenticatorCoordinatorProxy {
     isConditionalMediationAvailable(WebCore::SecurityOriginData origin) -> (bool result)
     IsUserVerifyingPlatformAuthenticatorAvailable(WebCore::SecurityOriginData origin) -> (bool result)
     GetClientCapabilities(WebCore::SecurityOriginData origin) -> (Vector<KeyValuePair<String, bool>> result)
+    SignalUnknownCredential(WebCore::SecurityOriginData origin, struct WebCore::UnknownCredentialOptions options) -> (std::optional<WebCore::ExceptionData> error)
+    SignalAllAcceptedCredentials(WebCore::SecurityOriginData origin, struct WebCore::AllAcceptedCredentialsOptions options) -> (std::optional<WebCore::ExceptionData> error)
+    SignalCurrentUserDetails(WebCore::SecurityOriginData origin, struct WebCore::CurrentUserDetailsOptions options) -> (std::optional<WebCore::ExceptionData> error)
     Cancel() -> ()
 }
 

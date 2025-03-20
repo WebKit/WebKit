@@ -191,11 +191,14 @@ public:
     static ResourceMonitorURLsController& singleton();
 
     void prepare(CompletionHandler<void(WKContentRuleList *, bool)>&&);
+    void getSource(CompletionHandler<void(String&&)>&&);
 
 private:
     friend class NeverDestroyed<ResourceMonitorURLsController, MainThreadAccessTraits>;
     ResourceMonitorURLsController() = default;
 };
+
+#define HAVE_RESOURCE_MONITOR_URLS_GET_SOURCE 1
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 

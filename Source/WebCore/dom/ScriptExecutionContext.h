@@ -56,6 +56,7 @@ class Exception;
 class JSPromise;
 class VM;
 enum class ScriptExecutionStatus;
+enum class TrustedTypesEnforcement;
 }
 
 namespace Inspector {
@@ -142,7 +143,7 @@ public:
 
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;
-    virtual void setRequiresTrustedTypes(bool required) = 0;
+    virtual void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
@@ -290,7 +291,6 @@ public:
     // These two methods are used when CryptoKeys are serialized into IndexedDB. As a side effect, it is also
     // used for things that utilize the same structure clone algorithm, for example, message passing between
     // worker and document.
-    virtual std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>& key) = 0;
     virtual std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) = 0;
     virtual std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) = 0;
 

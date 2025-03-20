@@ -170,11 +170,11 @@ void WebBackForwardCache::removeEntriesForPageAndProcess(WebPageProxy& page, Web
 void WebBackForwardCache::removeEntriesMatching(NOESCAPE const Function<bool(WebBackForwardListItem&)>& matches)
 {
     Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;
-    for (auto& item : m_itemsWithCachedPage) {
+    for (Ref item : m_itemsWithCachedPage) {
         if (matches(item))
-            itemsWithEntriesToClear.append(item);
+            itemsWithEntriesToClear.append(WTFMove(item));
     }
-    for (auto& item : itemsWithEntriesToClear) {
+    for (Ref item : itemsWithEntriesToClear) {
         m_itemsWithCachedPage.remove(item.get());
         item->setBackForwardCacheEntry(nullptr);
     }
@@ -184,8 +184,8 @@ void WebBackForwardCache::clear()
 {
     RELEASE_LOG(BackForwardCache, "WebBackForwardCache::clear");
     auto itemsWithCachedPage = WTFMove(m_itemsWithCachedPage);
-    for (auto& item : itemsWithCachedPage)
-        item.setBackForwardCacheEntry(nullptr);
+    for (Ref item : itemsWithCachedPage)
+        item->setBackForwardCacheEntry(nullptr);
 }
 
 void WebBackForwardCache::pruneToSize(unsigned newSize)

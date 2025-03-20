@@ -31,7 +31,7 @@
 
 WKTypeID WKGetTypeID(WKTypeRef typeRef)
 {
-    return WebKit::toAPI(WebKit::toImpl(typeRef)->type());
+    return WebKit::toAPI(WebKit::toProtectedImpl(typeRef)->type());
 }
 
 WKTypeRef WKRetain(WKTypeRef typeRef)

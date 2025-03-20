@@ -25,12 +25,10 @@
 
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
-#include "VideoFrameGStreamer.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "AudioTrackPrivateGStreamer.h"
-#include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
 #include "GStreamerQuirks.h"
@@ -109,6 +107,10 @@
 #include <gst/mpegts/mpegts.h>
 #undef GST_USE_UNSTABLE_API
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_MPEGTS)
+
+#if USE(GSTREAMER_GL)
+#include "GLVideoSinkGStreamer.h"
+#endif // USE(GSTREAMER_GL)
 
 #if USE(COORDINATED_GRAPHICS)
 #include "BitmapTexture.h"
@@ -234,8 +236,10 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
         g_signal_handlers_disconnect_matched(videoSinkPad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
 
+#if USE(GSTREAMER_GL)
     if (m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux)
         flushCurrentBuffer();
+#endif
 
     if (m_videoSink)
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
@@ -734,6 +738,8 @@ MediaTime MediaPlayerPrivateGStreamer::currentTime() const
 
 void MediaPlayerPrivateGStreamer::setRate(float rate)
 {
+    if (!m_pipeline)
+        return;
     RefPtr player = m_player.get();
 
     float rateClamped = clampTo(rate, -20.0, 20.0);
@@ -1256,29 +1262,6 @@ bool MediaPlayerPrivateGStreamer::requiresVideoSinkCapsNotifications() const
     return player->isVideoPlayer();
 }
 
-#if USE(COORDINATED_GRAPHICS)
-void MediaPlayerPrivateGStreamer::updateVideoInfoFromCaps(GstCaps* caps)
-{
-#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    GstVideoInfoDmaDrm drmVideoInfo;
-    gst_video_info_dma_drm_init(&drmVideoInfo);
-    if (gst_video_is_dma_drm_caps(caps)) {
-        if (!gst_video_info_dma_drm_from_caps(&drmVideoInfo, caps))
-            return;
-
-        if (!gst_video_info_dma_drm_to_video_info(&drmVideoInfo, &m_videoInfo))
-            return;
-
-        m_dmabufFormat = { drmVideoInfo.drm_fourcc, drmVideoInfo.drm_modifier };
-    }
-#endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    if (!m_dmabufFormat) {
-        if (!gst_video_info_from_caps(&m_videoInfo, caps))
-            return;
-    }
-}
-#endif // USE(COORDINATED_GRAPHICS)
-
 void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 {
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(videoSinkPad));
@@ -1292,9 +1275,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 
     GST_DEBUG_OBJECT(videoSinkPad, "Received new caps: %" GST_PTR_FORMAT, caps.get());
 
-#if USE(COORDINATED_GRAPHICS)
-    updateVideoInfoFromCaps(caps.get());
-#endif // USE(COORDINATED_GRAPHICS)
+    m_videoInfo = VideoFrameGStreamer::infoFromCaps(caps);
 
     if (!hasFirstVideoSampleReachedSink()) {
         // We want to wait for the sink to receive the first buffer before emitting dimensions, since only by then we
@@ -1737,7 +1718,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         bool isTrackCached = m_##type##Tracks.contains(streamId);       \
         if (!isTrackCached) { \
             auto track = Type##TrackPrivateGStreamer::create(*this, type##TrackIndex, stream); \
-            if (player)                                                 \
+            if (player && !useMediaSource)                              \
                 player->add##Type##Track(track);                        \
             m_##type##Tracks.add(streamId, WTFMove(track));             \
         }                                                               \
@@ -1753,6 +1734,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         type##TrackIndex++;                                             \
     } G_STMT_END
 
+    // FIXME: We probably don't need to create any *TrackPrivateGStreamer in MSE.
     bool useMediaSource = isMediaSource();
     unsigned audioTrackIndex = 0;
     unsigned videoTrackIndex = 0;
@@ -1773,7 +1755,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
             configureMediaStreamAudioTracks();
         } else if (type & GST_STREAM_TYPE_VIDEO && player && player->isVideoPlayer())
             CREATE_OR_SELECT_TRACK(video, Video);
-        else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource)
+        else if (type & GST_STREAM_TYPE_TEXT)
             CREATE_OR_SELECT_TRACK(text, Text);
         else
             GST_WARNING("Unknown track type found for stream %" PRIu64 "", streamId);
@@ -3203,14 +3185,14 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         return;
 
     GST_INFO("Creating pipeline for %s player", player->isVideoPlayer() ? "video" : "audio");
-    const char* playbinName = "playbin";
+    ASCIILiteral playbinName = "playbin"_s;
 
     // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
     // WEBKIT_GST_USE_PLAYBIN3 environment variable.
     const char* usePlaybin3 = g_getenv("WEBKIT_GST_USE_PLAYBIN3");
     bool isMediaStream = url.protocolIs("mediastream"_s);
     if (isMediaSource() || isMediaStream || (usePlaybin3 && !strcmp(usePlaybin3, "1")))
-        playbinName = "playbin3";
+        playbinName = "playbin3"_s;
 
     ASSERT(!m_pipeline);
 
@@ -3220,13 +3202,13 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     auto type = isMediaSource() ? "MSE-"_s : isMediaStream ? "mediastream-"_s : ""_s;
 
-    m_isLegacyPlaybin = !g_strcmp0(playbinName, "playbin");
+    m_isLegacyPlaybin = playbinName == "playbin"_s;
 
     static Atomic<uint32_t> pipelineId;
 
-    m_pipeline = makeGStreamerElement(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = makeGStreamerElement(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)));
     if (!m_pipeline) {
-        GST_WARNING("%s not found, make sure to install gst-plugins-base", playbinName);
+        GST_WARNING("%s not found, make sure to install gst-plugins-base", playbinName.characters());
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
         return;
     }
@@ -3310,7 +3292,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), "video-sink", createVideoSink(), nullptr);
 
     if (m_shouldPreservePitch && !isMediaStream) {
-        if (auto* scale = makeGStreamerElement("scaletempo", nullptr))
+        if (auto* scale = makeGStreamerElement("scaletempo"_s))
             g_object_set(m_pipeline.get(), "audio-filter", scale, nullptr);
     }
 }
@@ -3371,7 +3353,7 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         g_object_set(decoder, "max-threads", 2, nullptr);
     }
 
-    if (gstObjectHasProperty(decoder, "max-errors"))
+    if (gstObjectHasProperty(decoder, "max-errors"_s))
         g_object_set(decoder, "max-errors", 0, nullptr);
 
 #if USE(TEXTURE_MAPPER)
@@ -3502,24 +3484,10 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample
     if (!isDuplicateSample)
         ++m_sampleCount;
 
-    if (!GST_VIDEO_INFO_FORMAT(&m_videoInfo)) {
-        auto caps = gst_sample_get_caps(m_sample.get());
-        updateVideoInfoFromCaps(caps);
-    }
+    if (!m_videoInfo)
+        m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
 
-    if (m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferVideo::create(m_sample.get(), &m_videoInfo, m_dmabufFormat, m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags))) {
-        m_hasFirstVideoSampleBeenRendered = true;
-        return;
-    }
-
-    GST_ERROR_OBJECT(pipeline(), "CoordinatedPlatformLayerBufferProxy is inactive");
-    if (!m_hasFirstVideoSampleBeenRendered)
-        return;
-
-    RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr player = weakThis.get())
-            player->tearDown(false);
-    });
+    m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferVideo::create(m_sample.get(), &m_videoInfo->info, m_videoInfo->dmaBufFormat, m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags));
 }
 #endif // USE(COORDINATED_GRAPHICS)
 
@@ -3601,9 +3569,11 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
     // Get the video PAR and original size, if this fails the
     // video-sink has likely not yet negotiated its caps.
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    double frameRate;
     IntSize originalSize;
     GstVideoFormat format;
-    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
+    PlatformVideoColorSpace colorSpace;
+    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride, frameRate, colorSpace)) {
         GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps);
         return;
     }
@@ -3807,6 +3777,7 @@ void MediaPlayerPrivateGStreamer::repaintCancelledCallback(MediaPlayerPrivateGSt
     player->cancelRepaint();
 }
 
+#if USE(GSTREAMER_GL)
 void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
     Locker sampleLocker { m_sampleMutex };
@@ -3828,6 +3799,7 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture(shouldWait);
 #endif
 }
+#endif
 
 void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
 {
@@ -3902,7 +3874,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!presentationSize)
         return;
 
-    auto frame = VideoFrameGStreamer::create(WTFMove(sample), IntSize(*presentationSize));
+    auto frame = VideoFrameGStreamer::create(WTFMove(sample), { *m_videoInfo }, IntSize(*presentationSize));
     frame->draw(context, rect, m_videoSourceOrientation, false);
 }
 
@@ -3976,6 +3948,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
     return MediaPlayer::MovieLoadType::Download;
 }
 
+#if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
     const char* disableGLSink = g_getenv("WEBKIT_GST_DISABLE_GL_SINK");
@@ -3986,7 +3959,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 
     const char* desiredVideoSink = g_getenv("WEBKIT_GST_CUSTOM_VIDEO_SINK");
     if (desiredVideoSink)
-        return makeGStreamerElement(desiredVideoSink, nullptr);
+        return makeGStreamerElement(ASCIILiteral::fromLiteralUnsafe(desiredVideoSink));
 
     if (!webKitGLVideoSinkProbePlatform()) {
         g_warning("WebKit wasn't able to find the GL video sink dependencies. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");
@@ -3999,6 +3972,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 
     return sink;
 }
+#endif // USE(GSTREAMER_GL)
 
 bool MediaPlayerPrivateGStreamer::isHolePunchRenderingEnabled() const
 {
@@ -4062,7 +4036,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
             g_value_unset(&value);
         }
 
-        if (gstObjectHasProperty(sink, "max-lateness")) {
+        if (gstObjectHasProperty(sink, "max-lateness"_s)) {
             uint64_t maxLateness = 100 * GST_MSECOND;
             g_object_set(sink, "max-lateness", maxLateness, nullptr);
         } else {
@@ -4074,7 +4048,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     RefPtr player = m_player.get();
     if (player && !player->isVideoPlayer()) {
-        m_videoSink = makeGStreamerElement("fakevideosink", nullptr);
+        m_videoSink = makeGStreamerElement("fakevideosink"_s);
         if (!m_videoSink) {
             GST_DEBUG_OBJECT(m_pipeline.get(), "Falling back to fakesink for video rendering");
             m_videoSink = gst_element_factory_make("fakesink", nullptr);
@@ -4092,8 +4066,10 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         return m_videoSink.get();
     }
 
+#if USE(GSTREAMER_GL)
     if (!m_videoSink && m_canRenderingBeAccelerated)
         m_videoSink = createVideoSinkGL();
+#endif
 
     if (!m_videoSink) {
         m_isUsingFallbackVideoSink = true;

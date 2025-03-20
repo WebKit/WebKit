@@ -264,8 +264,9 @@ bool InputType::shouldSaveAndRestoreFormControlState() const
 FormControlState InputType::saveFormControlState() const
 {
     ASSERT(element());
-    auto currentValue = element()->value();
-    if (currentValue == element()->defaultValue())
+    Ref input = *element();
+    auto currentValue = input->value();
+    if (currentValue == input->defaultValue())
         return { };
     return { { AtomString { currentValue } } };
 }
@@ -273,21 +274,22 @@ FormControlState InputType::saveFormControlState() const
 void InputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    element()->setValue(state[0]);
+    protectedElement()->setValue(state[0]);
 }
 
 bool InputType::isFormDataAppendable() const
 {
     ASSERT(element());
     // There is no form data unless there's a name for non-image types.
-    return !element()->name().isEmpty();
+    return !protectedElement()->name().isEmpty();
 }
 
 bool InputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     // Always successful.
-    formData.append(element()->name(), element()->value());
+    Ref input = *element();
+    formData.append(input->name(), input->value());
     return true;
 }
 
@@ -507,7 +509,8 @@ String InputType::valueMissingText() const
 String InputType::validationMessage() const
 {
     ASSERT(element());
-    String value = element()->value();
+    Ref input = *element();
+    String value = input->value();
 
     // The order of the following checks is meaningful. e.g. We'd like to show the
     // badInput message even if the control has other validation errors.
@@ -527,11 +530,11 @@ String InputType::validationMessage() const
         return validationMessagePatternMismatchText(title);
     }
 
-    if (element()->tooShort())
-        return validationMessageTooShortText(value.length(), element()->minLength());
+    if (input->tooShort())
+        return validationMessageTooShortText(value.length(), input->minLength());
 
-    if (element()->tooLong())
-        return validationMessageTooLongText(value.length(), element()->effectiveMaxLength());
+    if (input->tooLong())
+        return validationMessageTooLongText(value.length(), input->effectiveMaxLength());
 
     if (!isSteppable())
         return emptyString();
@@ -595,13 +598,13 @@ bool InputType::shouldSubmitImplicitly(Event& event)
 RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
-    return RenderPtr<RenderElement>(RenderElement::createFor(*element(), WTFMove(style)));
+    return RenderPtr<RenderElement>(RenderElement::createFor(*protectedElement(), WTFMove(style)));
 }
 
 void InputType::blur()
 {
     ASSERT(element());
-    element()->defaultBlur();
+    protectedElement()->defaultBlur();
 }
 
 void InputType::createShadowSubtree()
@@ -611,7 +614,7 @@ void InputType::createShadowSubtree()
 void InputType::removeShadowSubtree()
 {
     ASSERT(element());
-    RefPtr root = element()->userAgentShadowRoot();
+    RefPtr root = protectedElement()->userAgentShadowRoot();
     if (!root)
         return;
 
@@ -644,8 +647,9 @@ DateComponentsType InputType::dateType() const
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent& event) const
 {
     ASSERT(element());
-    if (element()->active())
-        protectedElement()->dispatchSimulatedClick(&event);
+    Ref input = *element();
+    if (input->active())
+        input->dispatchSimulatedClick(&event);
     event.setDefaultHandled();
 }
 
@@ -670,13 +674,14 @@ bool InputType::hasCustomFocusLogic() const
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
     ASSERT(element());
-    return !element()->isReadOnly() && element()->isTextFormControlKeyboardFocusable(event);
+    Ref input = *element();
+    return !input->isReadOnly() && input->isTextFormControlKeyboardFocusable(event);
 }
 
 bool InputType::isMouseFocusable() const
 {
     ASSERT(element());
-    return element()->isTextFormControlMouseFocusable();
+    return protectedElement()->isTextFormControlMouseFocusable();
 }
 
 bool InputType::shouldUseInputMethod() const
@@ -786,7 +791,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
         break;
     }
 
-    if (CheckedPtr cache = element->document().existingAXObjectCache())
+    if (CheckedPtr cache = element->protectedDocument()->existingAXObjectCache())
         cache->valueChanged(*element);
 }
 
@@ -798,7 +803,7 @@ String InputType::localizeValue(const String& proposedValue) const
 String InputType::visibleValue() const
 {
     ASSERT(element());
-    return element()->value();
+    return protectedElement()->value();
 }
 
 bool InputType::isEmptyValue() const
@@ -950,12 +955,13 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
         return { };
 
     ASSERT(element());
-    const Decimal current = parseToNumber(element()->value(), 0);
+    Ref input = *element();
+    const Decimal current = parseToNumber(input->value(), 0);
     Decimal base = stepRange.stepBase();
     Decimal step = stepRange.step();
     Decimal newValue = current;
 
-    const AtomString& stepString = element()->getAttribute(HTMLNames::stepAttr);
+    const AtomString& stepString = input->getAttribute(HTMLNames::stepAttr);
 
     if (!equalLettersIgnoringASCIICase(stepString, "any"_s) && stepRange.stepMismatch(current)) {
         // Snap-to-step / clamping steps
@@ -1007,8 +1013,8 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (result.hasException() || !element())
         return result;
 
-    if (CheckedPtr cache = element()->document().existingAXObjectCache())
-        cache->valueChanged(*element());
+    if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache())
+        cache->valueChanged(input);
 
     return result;
 }
@@ -1096,7 +1102,8 @@ void InputType::stepUpFromRenderer(int n)
         sign = 0;
 
     ASSERT(element());
-    String currentStringValue = element()->value();
+    Ref input = *element();
+    String currentStringValue = input->value();
     Decimal current = parseToNumberOrNaN(currentStringValue);
     if (!current.isFinite()) {
         current = defaultValueForStepUp();
@@ -1110,7 +1117,7 @@ void InputType::stepUpFromRenderer(int n)
     if ((sign > 0 && current < stepRange.minimum()) || (sign < 0 && current > stepRange.maximum()))
         setValueAsDecimal(sign > 0 ? stepRange.minimum() : stepRange.maximum(), DispatchInputAndChangeEvent);
     else {
-        if (stepMismatch(element()->value())) {
+        if (stepMismatch(input->value())) {
             ASSERT(!step.isZero());
             const Decimal base = stepRange.stepBase();
             Decimal newValue;
@@ -1150,15 +1157,16 @@ RefPtr<TextControlInnerTextElement> InputType::innerTextElementCreatingShadowSub
 String InputType::resultForDialogSubmit() const
 {
     ASSERT(element());
-    return element()->value();
+    return protectedElement()->value();
 }
 
 void InputType::createShadowSubtreeIfNeeded()
 {
     if (m_hasCreatedShadowSubtree || !needsShadowSubtree())
         return;
+    // FIXME: Remove protectedThis once all the callsites protect InputType.
     Ref protectedThis { *this };
-    element()->ensureUserAgentShadowRoot();
+    protectedElement()->ensureUserAgentShadowRoot();
     m_hasCreatedShadowSubtree = true;
     createShadowSubtree();
 }

@@ -35,6 +35,7 @@
 #include "AirTmpInlines.h"
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/IndexMap.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -149,7 +150,7 @@ public:
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(TmpLivenessAdapter);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(TmpLivenessAdapter);
 public:
     typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
 
@@ -174,13 +175,13 @@ public:
 #define TZONE_TEMPLATE_PARAMS template<Bank adapterBank, Arg::Temperature minimumTemperature>
 #define TZONE_TYPE TmpLivenessAdapter<adapterBank, minimumTemperature>
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
 
 #undef TZONE_TEMPLATE_PARAMS
 #undef TZONE_TYPE
 
 struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
-    WTF_MAKE_TZONE_ALLOCATED(UnifiedTmpLivenessAdapter);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(UnifiedTmpLivenessAdapter);
 public:
     typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
 
@@ -205,7 +206,7 @@ public:
 };
 
 struct StackSlotLivenessAdapter : LivenessAdapter<StackSlotLivenessAdapter> {
-    WTF_MAKE_TZONE_ALLOCATED(StackSlotLivenessAdapter);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(StackSlotLivenessAdapter);
 public:
     static constexpr const char* name = "StackSlotLiveness";
     typedef StackSlot* Thing;

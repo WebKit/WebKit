@@ -160,7 +160,47 @@ PASS :texture_must_have_correct_dimension:usage=8;viewDimension="2d-array"
 PASS :texture_must_have_correct_dimension:usage=8;viewDimension="3d"
 PASS :multisampled_validation:multisampled=true
 PASS :multisampled_validation:multisampled=false
-PASS :buffer_offset_and_size_for_bind_groups_match:
+FAIL :buffer_offset_and_size_for_bind_groups_match: assert_unreached:
+  - INFO: subcase: offset=0;size=512
+    OK
+  - INFO: subcase: offset=256;size=256
+    OK
+  - INFO: subcase: offset=0;size=1024
+    OK
+  - INFO: subcase: offset=0;size="_undef_"
+    OK
+  - INFO: subcase: offset=768;size=256
+    OK
+  - INFO: subcase: offset=768;size="_undef_"
+    OK
+  - VALIDATION FAILED: subcase: offset=128;size=256
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroup.spec.js:500:28
+  - INFO: subcase: offset=0;size=0
+    OK
+  - INFO: subcase: offset=256;size=0
+    OK
+  - INFO: subcase: offset=1024;size=0
+    OK
+  - INFO: subcase: offset=1024;size="_undef_"
+    OK
+  - INFO: subcase: offset=1;size=256
+    OK
+  - INFO: subcase: offset=1;size="_undef_"
+    OK
+  - INFO: subcase: offset=128;size=256
+    OK
+  - INFO: subcase: offset=255;size=256
+    OK
+  - INFO: subcase: offset=1280;size=0
+    OK
+  - INFO: subcase: offset=0;size=1280
+    OK
+  - INFO: subcase: offset=1024;size=1
+    OK
+ Reached unreachable code
 PASS :minBindingSize:
 PASS :buffer,resource_state:
 PASS :buffer,usage:type="uniform"
@@ -228,6 +268,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba8unorm";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba8unorm";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba8unorm";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba8unorm";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba8unorm";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba8uint"
@@ -244,6 +285,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba8snorm";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba8uint"
@@ -260,6 +302,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rg
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba8uint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba8uint"
@@ -276,6 +319,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rg
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba8sint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba8uint"
@@ -292,6 +336,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba16uint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba8uint"
@@ -308,6 +353,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba16sint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba8uint"
@@ -324,6 +370,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba16float";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba8uint"
@@ -340,6 +387,7 @@ PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rg32
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="r32uint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba8uint"
@@ -356,6 +404,7 @@ PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rg32
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="r32sint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba8uint"
@@ -372,6 +421,7 @@ PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rg3
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="r32float";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba8uint"
@@ -388,6 +438,7 @@ PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rg3
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rg32uint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba8uint"
@@ -404,6 +455,7 @@ PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rg3
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rg32sint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba8uint"
@@ -420,6 +472,7 @@ PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rg
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rg32float";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba8uint"
@@ -436,6 +489,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba32uint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba8uint"
@@ -452,6 +506,7 @@ PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="r
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba32sint";resourceFormat="bgra8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba8unorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba8snorm"
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba8uint"
@@ -468,6 +523,24 @@ PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba32uint"
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba32sint"
 PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="rgba32float";resourceFormat="bgra8unorm"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba8unorm"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba8snorm"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba8uint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba8sint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba16uint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba16sint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba16float"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="r32uint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="r32sint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="r32float"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rg32uint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rg32sint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rg32float"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba32uint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba32sint"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="rgba32float"
+PASS :storage_texture,format:storageTextureFormat="bgra8unorm";resourceFormat="bgra8unorm"
 PASS :sampler,device_mismatch:
 PASS :sampler,compare_function_with_binding_type:bgType="filtering"
 PASS :sampler,compare_function_with_binding_type:bgType="non-filtering"

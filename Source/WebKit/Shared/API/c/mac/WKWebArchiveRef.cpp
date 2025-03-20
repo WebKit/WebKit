@@ -43,41 +43,41 @@ WKTypeID WKWebArchiveGetTypeID()
 
 WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResourceRef, WKArrayRef subresourcesRef, WKArrayRef subframeArchivesRef)
 {
-    auto webArchive = API::WebArchive::create(WebKit::toImpl(mainResourceRef), WebKit::toImpl(subresourcesRef), WebKit::toImpl(subframeArchivesRef));
-    return WebKit::toAPI(&webArchive.leakRef());
+    auto webArchive = API::WebArchive::create(WebKit::toProtectedImpl(mainResourceRef).get(), WebKit::toImpl(subresourcesRef), WebKit::toImpl(subframeArchivesRef));
+    return WebKit::toAPILeakingRef(WTFMove(webArchive));
 }
 
 WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 {
-    auto webArchive = API::WebArchive::create(WebKit::toImpl(dataRef));
-    return WebKit::toAPI(&webArchive.leakRef());
+    auto webArchive = API::WebArchive::create(WebKit::toProtectedImpl(dataRef).get());
+    return WebKit::toAPILeakingRef(WTFMove(webArchive));
 }
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    auto webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toImpl(rangeHandleRef)->coreRange()));
-    return WebKit::toAPI(&webArchive.leakRef());
+    auto webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toProtectedImpl(rangeHandleRef)->protectedCoreRange()));
+    return WebKit::toAPILeakingRef(WTFMove(webArchive));
 }
 
 WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<API::WebArchiveResource> mainResource = WebKit::toImpl(webArchiveRef)->mainResource();
-    return WebKit::toAPI(mainResource.leakRef());
+    RefPtr<API::WebArchiveResource> mainResource = WebKit::toProtectedImpl(webArchiveRef)->mainResource();
+    return WebKit::toAPILeakingRef(WTFMove(mainResource));
 }
 
 WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<API::Array> subresources = WebKit::toImpl(webArchiveRef)->subresources();
-    return WebKit::toAPI(subresources.leakRef());
+    RefPtr<API::Array> subresources = WebKit::toProtectedImpl(webArchiveRef)->subresources();
+    return WebKit::toAPILeakingRef(WTFMove(subresources));
 }
 
 WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<API::Array> subframeArchives = WebKit::toImpl(webArchiveRef)->subframeArchives();
-    return WebKit::toAPI(subframeArchives.leakRef());
+    RefPtr<API::Array> subframeArchives = WebKit::toProtectedImpl(webArchiveRef)->subframeArchives();
+    return WebKit::toAPILeakingRef(WTFMove(subframeArchives));
 }
 
 WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchiveRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(webArchiveRef)->data().leakRef());
+    return WebKit::toAPILeakingRef(WebKit::toProtectedImpl(webArchiveRef)->data());
 }

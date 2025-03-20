@@ -63,4 +63,6 @@ using JSSharedArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBuff
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSArrayBufferConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSSharedArrayBufferConstructor, InternalFunction);
 
+JSObject* constructArrayBufferWithSize(JSGlobalObject*, Structure*, size_t);
+
 } // namespace JSC

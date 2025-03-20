@@ -180,9 +180,9 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
     Vector<Ref<SecurityOrigin>> frameAncestorOrigins;
 
     ASSERT(navigationAction());
-    if (auto* targetFrame = navigationAction()->targetFrame()) {
+    if (RefPtr targetFrame = navigationAction()->targetFrame()) {
         if (auto parentFrameHandle = targetFrame->parentFrameHandle()) {
-            for (auto* parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame())
+            for (RefPtr parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame())
                 frameAncestorOrigins.append(SecurityOrigin::create(parent->url()));
         }
     }

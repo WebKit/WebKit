@@ -167,7 +167,7 @@ def is_expected_file(expected_file):
     if not issues:
         print(f'{expected_file} has no known issues!')
     else:
-        print('Follow this link for the latest results: https://build.webkit.org/#/builders/Apple-Sonoma-Safer-CPP-Checks\n')
+        print('Follow this link for the latest results: https://build.webkit.org/#/builders?tags=%2BSafer&tags=%2BCPP\n')
 
 
 def main():

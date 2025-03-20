@@ -105,10 +105,10 @@ Data concatenate(const Data& a, const Data& b)
     return Data(WTFMove(buffer));
 }
 
-Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
+Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& fileHandle)
 {
     ASSERT(mappedFile);
-    FileSystem::closeFile(fd);
+    fileHandle = { };
 
     return { WTFMove(mappedFile) };
 }

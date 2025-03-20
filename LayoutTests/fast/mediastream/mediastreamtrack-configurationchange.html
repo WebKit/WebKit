@@ -21,7 +21,7 @@
 
         assert_equals(track.label, "Mock audio device 1");
 
-        testRunner.triggerMockCaptureConfigurationChange(true, false);
+        testRunner.triggerMockCaptureConfigurationChange(false, true, false);
 
         await new Promise((resolve, reject) => {
             track.onconfigurationchange = resolve;
@@ -33,6 +33,30 @@
         await new Promise(resolve => setTimeout(resolve, 2000));
         assert_equals(track.readyState, "live");
     }, "Trigger configurationchange event in case OS changes microphone on its own");
+
+    promise_test(async (t) => {
+        if (!window.testRunner)
+            return;
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const track = stream.getVideoTracks()[0];
+
+        video.srcObject = stream;
+        await video.play();
+
+        assert_false(track.getSettings().backgroundBlur);
+        assert_array_equals(track.getCapabilities().backgroundBlur, [false]);
+
+        testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+        await new Promise((resolve, reject) => {
+            track.onconfigurationchange = resolve;
+            setTimeout(()=> reject("waited too long for configurationchange"), 5000);
+        });
+
+        assert_true(track.getSettings().backgroundBlur);
+        assert_array_equals(track.getCapabilities().backgroundBlur, [true]);
+    }, "Trigger configurationchange event in case background blur changes");
     </script>
 </body>
 </html>

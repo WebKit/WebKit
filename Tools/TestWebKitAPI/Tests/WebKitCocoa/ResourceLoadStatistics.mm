@@ -1889,7 +1889,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
 {
     using namespace TestWebKitAPI;
 
-    HTTPServer httpServer { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+    HTTPServer httpServer { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
 
@@ -2025,7 +2025,7 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
 
     bool didSetSite2CookieHeader { false };
     bool didSendSite2CookieHeader { false };
-    HTTPServer httpServer { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+    HTTPServer httpServer { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
 

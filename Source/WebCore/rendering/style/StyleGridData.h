@@ -73,13 +73,6 @@ struct GridTrackEntryAutoRepeat {
     RepeatTrackList list;
 };
 
-struct MasonryAutoFlow {
-    friend bool operator==(const MasonryAutoFlow&, const MasonryAutoFlow&) = default;
-
-    MasonryAutoFlowPlacementAlgorithm placementAlgorithm;
-    MasonryAutoFlowPlacementOrder placementOrder;
-};
-
 using GridTrackEntry = std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry>;
 struct GridTrackList {
     Vector<GridTrackEntry> list;
@@ -142,7 +135,6 @@ public:
     NamedGridLinesMap implicitNamedGridRowLines;
 
     unsigned gridAutoFlow : GridAutoFlowBits;
-    MasonryAutoFlow masonryAutoFlow;
 
     Vector<GridTrackSize> gridAutoRows;
     Vector<GridTrackSize> gridAutoColumns;

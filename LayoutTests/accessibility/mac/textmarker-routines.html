@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 <body id="body" tabindex="0">
 
 <div tabindex="0" id="text1">text</div>
@@ -9,34 +10,37 @@ text
 
 <div tabindex="0" id="text2">text</div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.");
+var output = "This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.\n\n";
+var item1, item2, markerRange, firstTextMarker, secondTextMarker;
 
-    if (window.accessibilityController) {
-        var item1 = accessibilityController.accessibleElementById("text1");
-        var markerRange = item1.textMarkerRangeForElement(item1);
-        var firstTextMarker = item1.startTextMarkerForTextMarkerRange(markerRange);
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    item1 = accessibilityController.accessibleElementById("text1");
+    markerRange = item1.textMarkerRangeForElement(item1);
+    firstTextMarker = item1.startTextMarkerForTextMarkerRange(markerRange);
 
-        shouldBeTrue("item1.isTextMarkerValid(firstTextMarker)");
-        shouldBe("item1.indexForTextMarker(firstTextMarker)", "0");
-        shouldBeTrue("item1.textMarkerForIndex(0).isEqual(firstTextMarker)");       
+    output += expect("item1.isTextMarkerValid(firstTextMarker)", "true");
+    output += expect("item1.indexForTextMarker(firstTextMarker)", "0");
+    output += expect("item1.textMarkerForIndex(0).isEqual(firstTextMarker)", "true");
 
-        document.getElementById("body").removeChild(document.getElementById("text1"));
+    document.getElementById("body").removeChild(document.getElementById("text1"));
 
-        shouldBeFalse("item1.isTextMarkerValid(firstTextMarker)");
+    setTimeout(async function() {
+        output += await expectAsync("item1.isTextMarkerValid(firstTextMarker)", "false");
 
-        var item2 = accessibilityController.accessibleElementById("text2");
+        item2 = accessibilityController.accessibleElementById("text2");
         markerRange = item2.textMarkerRangeForElement(item2);
-        var secondTextMarker = item2.startTextMarkerForTextMarkerRange(markerRange);
+        secondTextMarker = item2.startTextMarkerForTextMarkerRange(markerRange);
 
-        shouldBeTrue("item2.isTextMarkerValid(secondTextMarker)");
-        shouldBe("item2.indexForTextMarker(secondTextMarker)", "5");
-        shouldBeTrue("item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker)");
-    }
+        output += await expectAsync("item2.isTextMarkerValid(secondTextMarker)", "true");
+        output += await expectAsync("item2.indexForTextMarker(secondTextMarker)", "5");
+        output += await expectAsync("item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker)", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

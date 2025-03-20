@@ -543,48 +543,60 @@ Value FunSubstringAfter::evaluate() const
     return s1.substring(i + s2.length());
 }
 
+// Computes the 1-based start and end (exclusive) string indices for
+// substring. This is all the positions [1, maxLen (inclusive)] where
+// start <= position < start + len
+static std::pair<unsigned, unsigned> computeSubstringStartEnd(double start, double len, double maxLen)
+{
+    ASSERT(std::isfinite(maxLen));
+    const double end = start + len;
+    if (std::isnan(start) || std::isnan(end))
+        return std::make_pair(1, 1);
+
+    // Neither start nor end are NaN, but may still be +/- Inf
+    const double clampedStart = std::clamp<double>(start, 1, maxLen + 1);
+    const double clampedEnd = std::clamp<double>(end, clampedStart, maxLen + 1);
+    return std::make_pair(static_cast<unsigned>(clampedStart), static_cast<unsigned>(clampedEnd));
+}
+
+// substring(string, number pos, number? len)
+//
+// Characters in string are indexed from 1. Numbers are doubles and
+// substring is specified to work with IEEE-754 infinity, NaN, and
+// XPath's bespoke rounding function, round.
+//
+// <https://www.w3.org/TR/xpath/#function-substring>
 Value FunSubstring::evaluate() const
 {
     EvaluationContext clonedContext1(Expression::evaluationContext());
     EvaluationContext clonedContext2(Expression::evaluationContext());
+    EvaluationContext clonedContext3(Expression::evaluationContext());
 
-    String s;
-    double doublePos;
+    String sourceString;
+    double pos;
+    double len;
 
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext1);
-        s = argument(0).evaluate().toString();
+        sourceString = argument(0).evaluate().toString();
     }
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext2);
-        doublePos = argument(1).evaluate().toNumber();
+        pos = FunRound::round(argument(1).evaluate().toNumber());
     }
 
-    if (std::isnan(doublePos))
-        return emptyString();
-    long pos = static_cast<long>(FunRound::round(doublePos));
-    bool haveLength = argumentCount() == 3;
-    long len = -1;
-    if (haveLength) {
-        double doubleLen = argument(2).evaluate().toNumber();
-        if (std::isnan(doubleLen))
-            return emptyString();
-        len = static_cast<long>(FunRound::round(doubleLen));
+    if (argumentCount() == 3) {
+        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext3);
+        len = FunRound::round(argument(2).evaluate().toNumber());
+    } else {
+        len = std::numeric_limits<double>::infinity();
     }
 
-    if (pos > long(s.length())) 
+    const auto bounds = computeSubstringStartEnd(pos, len, sourceString.length());
+    if (bounds.second <= bounds.first)
         return emptyString();
 
-    if (pos < 1) {
-        if (haveLength) {
-            len -= 1 - pos;
-            if (len < 1)
-                return emptyString();
-        }
-        pos = 1;
-    }
-
-    return s.substring(pos - 1, len);
+    return sourceString.substring(bounds.first - 1, bounds.second - bounds.first);
 }
 
 Value FunStringLength::evaluate() const
@@ -726,7 +738,7 @@ Value FunCeiling::evaluate() const
 
 double FunRound::round(double val)
 {
-    if (!std::isnan(val) && !std::isinf(val)) {
+    if (std::isfinite(val)) {
         if (std::signbit(val) && val >= -0.5)
             val *= 0; // negative zero
         else

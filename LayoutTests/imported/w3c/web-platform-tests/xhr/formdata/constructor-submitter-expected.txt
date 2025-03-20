@@ -3,6 +3,8 @@
 
 
 PASS FormData construction should allow a null submitter
+PASS FormData construction should allow an undefined form and an undefined submitter
+PASS FormData construction should allow an undefined form and a null submitter
 PASS FormData construction should throw a TypeError if a non-null submitter is not a submit button
 PASS FormData construction should throw a 'NotFoundError' DOMException if a non-null submitter is not owned by the form
 PASS The constructed FormData object should contain an in-tree-order entry for a named submit button submitter

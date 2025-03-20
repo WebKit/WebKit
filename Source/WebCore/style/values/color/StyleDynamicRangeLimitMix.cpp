@@ -133,19 +133,19 @@ TextStream& operator<<(TextStream& ts, const DynamicRangeLimitMixParameters& mix
 {
     bool needsComma = false;
     if (!Style::isZero(mix.standard)) {
-        ts << "standard " << mix.standard;
+        ts << "standard "_s << mix.standard;
         needsComma = true;
     }
     if (!Style::isZero(mix.constrainedHigh)) {
         if (needsComma)
-            ts << ", ";
-        ts << "constrained-high " << mix.constrainedHigh;
+            ts << ", "_s;
+        ts << "constrained-high "_s << mix.constrainedHigh;
         needsComma = true;
     }
     if (!Style::isZero(mix.noLimit)) {
         if (needsComma)
-            ts << ", ";
-        ts << "no-limit " << mix.noLimit;
+            ts << ", "_s;
+        ts << "no-limit "_s << mix.noLimit;
     }
 
     return ts;

@@ -586,8 +586,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     Util::run(&receivedActionNotification);
 }
 
-// FIXME: rdar://116459903 (Web Process is crashing when using declarativeNetRequest to redirect a page)
-TEST(WKWebExtensionAPIDeclarativeNetRequest, DISABLED_RedirectRule)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",

@@ -15,10 +15,11 @@ if [[ -z "${LAUNCHD_PLIST_INPUT_FILE}" ]]; then
 fi
 
 # Update the launchd plist to point to the install location of the binary in its actual
-# location.  When using the system content path, we need to install there and create a
-# symlink if required.  Since the location can change based on the build configuration,
-# the launchd plists should contain placeholders for build settings INSTALL_PATH and
-# PRODUCT_NAME which we replace with the actual values from the current build configuration.
+# location.  When USE_SYSTEM_CONTENT_PATH is enabled, we install the plists into the
+# cryptex and create a symlink to it if required.  Since the location of the executable
+# can change based on the build configuration, the launchd plists should contain placeholders
+# for build settings INSTALL_PATH and PRODUCT_NAME which we replace with the actual values
+# from the current build configuration.
 
 GENERATED_LAUNCHD_PLIST_DIR="${TEMP_DIR}"
 mkdir -p "${GENERATED_LAUNCHD_PLIST_DIR}"

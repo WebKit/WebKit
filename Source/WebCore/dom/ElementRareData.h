@@ -27,7 +27,9 @@
 #include "CustomStateSet.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
+#include "Element.h"
 #include "ElementAnimationRareData.h"
+#include "EventTarget.h"
 #include "FormAssociatedCustomElement.h"
 #include "IntersectionObserver.h"
 #include "KeyframeEffectStack.h"
@@ -156,6 +158,9 @@ public:
     PopoverData* popoverData() { return m_popoverData.get(); }
     void setPopoverData(std::unique_ptr<PopoverData>&& popoverData) { m_popoverData = WTFMove(popoverData); }
 
+    Element* invokedPopover() const { return m_invokedPopover.get(); }
+    void setInvokedPopover(RefPtr<Element>&& element) { m_invokedPopover = WTFMove(element); }
+
     const std::optional<OptionSet<ContentRelevancy>>& contentRelevancy() const { return m_contentRelevancy; }
     void setContentRelevancy(OptionSet<ContentRelevancy>& contentRelevancy) { m_contentRelevancy = contentRelevancy; }
 
@@ -224,6 +229,8 @@ public:
             result.add(UseType::CustomStateSet);
         if (m_userInfo)
             result.add(UseType::UserInfo);
+        if (m_invokedPopover)
+            result.add(UseType::InvokedPopover);
         return result;
     }
 #endif
@@ -274,6 +281,8 @@ private:
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 
     std::unique_ptr<PopoverData> m_popoverData;
+
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_invokedPopover;
 
     RefPtr<CustomStateSet> m_customStateSet;
 
@@ -376,6 +385,11 @@ inline ShadowRoot* Node::shadowRoot() const
 inline ShadowRoot* Element::shadowRoot() const
 {
     return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
+}
+
+inline RefPtr<ShadowRoot> Node::protectedShadowRoot() const
+{
+    return shadowRoot();
 }
 
 inline void Element::removeShadowRoot()

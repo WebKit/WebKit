@@ -83,9 +83,9 @@ static void updateResultButtonPseudoType(SearchFieldResultsButtonElement& result
 void SearchInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == resultsAttr) {
-        if (m_resultsButton) {
-            if (auto* element = this->element())
-                updateResultButtonPseudoType(*m_resultsButton, element->maxResults());
+        if (RefPtr resultsButton = m_resultsButton) {
+            if (RefPtr input = element())
+                updateResultButtonPseudoType(*resultsButton, input->maxResults());
         }
     }
     BaseTextInputType::attributeChanged(name);
@@ -94,7 +94,7 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
-    return createRenderer<RenderSearchField>(*element(), WTFMove(style));
+    return createRenderer<RenderSearchField>(*protectedElement(), WTFMove(style));
 }
 
 const AtomString& SearchInputType::formControlType() const
@@ -114,19 +114,22 @@ void SearchInputType::createShadowSubtree()
     ASSERT(!m_cancelButton);
 
     TextFieldInputType::createShadowSubtree();
-    RefPtr<HTMLElement> container = containerElement();
-    RefPtr<HTMLElement> textWrapper = innerBlockElement();
+    Ref document = element()->document();
+    RefPtr container = containerElement();
+    RefPtr textWrapper = innerBlockElement();
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *container };
     ASSERT(container);
     ASSERT(textWrapper);
 
     ASSERT(element());
-    m_resultsButton = SearchFieldResultsButtonElement::create(element()->document());
-    container->insertBefore(*m_resultsButton, textWrapper.copyRef());
-    updateResultButtonPseudoType(*m_resultsButton, element()->maxResults());
+    Ref resultsButton = SearchFieldResultsButtonElement::create(document);
+    container->insertBefore(resultsButton, textWrapper.copyRef());
+    updateResultButtonPseudoType(resultsButton, element()->maxResults());
+    m_resultsButton = WTFMove(resultsButton);
 
-    m_cancelButton = SearchFieldCancelButtonElement::create(element()->document());
-    container->insertBefore(*m_cancelButton, textWrapper->protectedNextSibling());
+    Ref cancelButton = SearchFieldCancelButtonElement::create(document);
+    container->insertBefore(cancelButton, textWrapper->protectedNextSibling());
+    m_cancelButton = WTFMove(cancelButton);
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const
@@ -142,13 +145,13 @@ HTMLElement* SearchInputType::cancelButtonElement() const
 auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-    if (!element()->isMutable())
+    Ref input = *element();
+    if (!input->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
     const String& key = event.keyIdentifier();
     if (key == "U+001B"_s) {
-        Ref<HTMLInputElement> protectedInputElement(*element());
-        protectedInputElement->setValue(emptyString(), DispatchChangeEvent);
+        input->setValue(emptyString(), DispatchChangeEvent);
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
     }
@@ -199,12 +202,15 @@ float SearchInputType::decorationWidth() const
 
 void SearchInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    bool emptinessChanged = valueChanged && sanitizedValue.isEmpty() != element()->value().isEmpty();
+    bool emptinessChanged = valueChanged && sanitizedValue.isEmpty() != protectedElement()->value().isEmpty();
 
     BaseTextInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 
-    if (m_cancelButton && emptinessChanged)
-        m_cancelButton->invalidateStyleInternal();
+    if (!emptinessChanged)
+        return;
+
+    if (RefPtr cancelButton = m_cancelButton)
+        cancelButton->invalidateStyleInternal();
 }
 
 } // namespace WebCore

@@ -76,6 +76,7 @@ private struct ViewBackedMaterialHostingProvider: MaterialHostingProvider {
 private struct MaterialHostingView<P: MaterialHostingProvider>: View {
     private let content: P.Source
     private let materialEffectType: WKHostedMaterialEffectType
+    private let colorScheme: WKHostedMaterialColorScheme
     private let cornerRadius: CGFloat
 
     static func resolvedMaterialEffect(for type: WKHostedMaterialEffectType) -> Material? {
@@ -86,14 +87,17 @@ private struct MaterialHostingView<P: MaterialHostingProvider>: View {
             return Material._hostedBlurMaterial
         case .thinBlur:
             return Material._hostedThinBlurMaterial
+        case .mediaControls:
+            return Material._hostedMediaControlsMaterial
         @unknown default:
             return nil
         }
     }
 
-    init(content: P.Source, materialEffectType: WKHostedMaterialEffectType = .none, cornerRadius: CGFloat = 0) {
+    init(content: P.Source, materialEffectType: WKHostedMaterialEffectType = .none, colorScheme: WKHostedMaterialColorScheme = .light, cornerRadius: CGFloat = 0) {
         self.content = content
         self.materialEffectType = materialEffectType
+        self.colorScheme = colorScheme
         self.cornerRadius = cornerRadius
     }
 
@@ -101,7 +105,8 @@ private struct MaterialHostingView<P: MaterialHostingProvider>: View {
         let view = P.view(for: content)
 
         if let effect = MaterialHostingView<P>.resolvedMaterialEffect(for: materialEffectType) {
-            view.materialEffect(effect, in: .rect(cornerRadius: cornerRadius))
+            AnyView(view.materialEffect(effect, in: .rect(cornerRadius: cornerRadius)))
+                .environment(\.colorScheme, colorScheme == .light ? .light : .dark)
         } else {
             view
         }
@@ -130,7 +135,7 @@ private extension CALayer {
         return true;
     }
 
-    class func createHostingLayer() -> CALayer {
+    class func hostingLayer() -> CALayer {
         let contentLayer = CALayer()
 
         let hostingLayer = CAHostingLayer(rootView: MaterialHostingView<LayerBackedMaterialHostingProvider>(content: contentLayer))
@@ -140,7 +145,7 @@ private extension CALayer {
         return hostingLayer
     }
 
-    class func updateHostingLayer(_ layer: CALayer, materialEffectType: WKHostedMaterialEffectType, cornerRadius: CGFloat) {
+    class func updateHostingLayer(_ layer: CALayer, materialEffectType: WKHostedMaterialEffectType, colorScheme: WKHostedMaterialColorScheme, cornerRadius: CGFloat) {
         guard let hostingLayer = layer as? CAHostingLayer<MaterialHostingView<LayerBackedMaterialHostingProvider>> else {
             assertionFailure("updateHostingLayer should only be called with a hosting layer.")
             return
@@ -151,7 +156,7 @@ private extension CALayer {
             return
         }
 
-        hostingLayer.rootView = MaterialHostingView<LayerBackedMaterialHostingProvider>(content: contentLayer, materialEffectType: materialEffectType, cornerRadius: cornerRadius)
+        hostingLayer.rootView = MaterialHostingView<LayerBackedMaterialHostingProvider>(content: contentLayer, materialEffectType: materialEffectType, colorScheme: colorScheme, cornerRadius: cornerRadius)
     }
 
     class func contentLayer(forMaterialHostingLayer layer: CALayer) -> CALayer? {
@@ -160,16 +165,16 @@ private extension CALayer {
 
 #if canImport(UIKit)
 
-    class func createHostingView(_ contentView: UIView) -> UIView {
+    class func hostingView(_ contentView: UIView) -> UIView {
         _UIHostingView(rootView: MaterialHostingView<ViewBackedMaterialHostingProvider>(content: contentView))
     }
 
-    class func updateHostingView(_ view: UIView, contentView: UIView, materialEffectType: WKHostedMaterialEffectType, cornerRadius: CGFloat) {
+    class func updateHostingView(_ view: UIView, contentView: UIView, materialEffectType: WKHostedMaterialEffectType, colorScheme: WKHostedMaterialColorScheme, cornerRadius: CGFloat) {
         guard let hostingView = view as? _UIHostingView<MaterialHostingView<ViewBackedMaterialHostingProvider>> else {
             return;
         }
 
-        hostingView.rootView = MaterialHostingView<ViewBackedMaterialHostingProvider>(content: contentView, materialEffectType: materialEffectType, cornerRadius: cornerRadius)
+        hostingView.rootView = MaterialHostingView<ViewBackedMaterialHostingProvider>(content: contentView, materialEffectType: materialEffectType, colorScheme: colorScheme, cornerRadius: cornerRadius)
     }
 
 #endif

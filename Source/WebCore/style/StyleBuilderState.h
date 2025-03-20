@@ -28,10 +28,13 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "CascadeLevel.h"
+#include "PositionArea.h"
+#include "PositionTryFallback.h"
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleForVisitedLink.h"
+#include "TreeResolutionState.h"
 #include <wtf/BitSet.h>
 
 namespace WebCore {
@@ -61,11 +64,18 @@ void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
 enum class ApplyValueType : uint8_t { Value, Initial, Inherit };
 
+struct BuilderPositionTryFallback {
+    RefPtr<const StyleProperties> properties;
+    Vector<PositionTryFallback::Tactic> tactics;
+};
+
 struct BuilderContext {
     Ref<const Document> document;
     const RenderStyle& parentStyle;
     const RenderStyle* rootElementStyle = nullptr;
     RefPtr<const Element> element = nullptr;
+    CheckedPtr<TreeResolutionState> treeResolutionState { };
+    std::optional<BuilderPositionTryFallback> positionTryFallback { };
 };
 
 class BuilderState {
@@ -130,6 +140,9 @@ public:
 
     Ref<Calculation::RandomKeyMap> randomKeyMap(bool perElement) const;
 
+    AnchorPositionedStates* anchorPositionedStates() { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
+    const std::optional<BuilderPositionTryFallback>& positionTryFallback() const { return m_context.positionTryFallback; }
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
@@ -150,15 +163,15 @@ private:
     CSSToStyleMap m_styleMap;
 
     RenderStyle& m_style;
-    const BuilderContext m_context;
+    BuilderContext m_context;
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
 
     UncheckedKeyHashSet<AtomString> m_appliedCustomProperties;
     UncheckedKeyHashSet<AtomString> m_inProgressCustomProperties;
     UncheckedKeyHashSet<AtomString> m_inCycleCustomProperties;
-    WTF::BitSet<numCSSProperties> m_inProgressProperties;
-    WTF::BitSet<numCSSProperties> m_invalidAtComputedValueTimeProperties;
+    WTF::BitSet<cssPropertyIDEnumValueCount> m_inProgressProperties;
+    WTF::BitSet<cssPropertyIDEnumValueCount> m_invalidAtComputedValueTimeProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };

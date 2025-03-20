@@ -572,7 +572,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
                 serializable = ShadowRootSerializable::Yes;
             else if (document().settings().shadowRootReferenceTargetEnabled() && attribute.name() == HTMLNames::shadowrootreferencetargetAttr)
                 referenceTarget = AtomString(attribute.value());
-            else if (attribute.name() == HTMLNames::shadowrootcustomelementsAttr)
+            else if (attribute.name() == HTMLNames::shadowrootcustomelementregistryAttr)
                 registryKind = Element::CustomElementRegistryKind::Null;
         }
         if (mode && is<Element>(currentNode())) {

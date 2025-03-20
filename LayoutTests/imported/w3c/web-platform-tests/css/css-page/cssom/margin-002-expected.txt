@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'marginRule.style')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'sheet.rules[0].cssRules[0]')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'marginRule.style')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'sheet.rules[0].cssRules[0]')
 
 

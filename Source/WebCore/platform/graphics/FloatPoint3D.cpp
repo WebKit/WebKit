@@ -40,7 +40,7 @@ void FloatPoint3D::normalize()
 
 TextStream& operator<<(TextStream& ts, const FloatPoint3D& point)
 {
-    return ts << point.x() << " " << point.y() << " " << point.z();
+    return ts << point.x() << ' ' << point.y() << ' ' << point.z();
 }
 
 } // namespace WebCore

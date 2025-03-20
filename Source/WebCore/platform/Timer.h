@@ -135,7 +135,7 @@ private:
     Seconds m_repeatInterval; // 0 if not repeating
 
     CompactRefPtrTuple<ThreadTimerHeapItem, uint8_t> m_heapItemWithBitfields;
-    Ref<Thread> m_thread { Thread::current() };
+    Ref<Thread> m_thread { Thread::currentSingleton() };
 
     friend class ThreadTimers;
     friend class TimerHeapLessThanFunction;
@@ -158,7 +158,7 @@ public:
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
     requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
-        : m_function([objectPtr = &object, function] {
+        : m_function([objectPtr = &object, function] SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE {
             Ref protectedObject { *objectPtr };
             (objectPtr->*function)();
         })
@@ -211,9 +211,9 @@ inline bool TimerBase::isActive() const
 {
     // FIXME: Write this in terms of USE(WEB_THREAD) instead of PLATFORM(IOS_FAMILY).
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(m_thread.ptr() == &Thread::current());
+    ASSERT(m_thread.ptr() == &Thread::currentSingleton());
 #else
-    ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread.ptr() == &Thread::current());
+    ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread.ptr() == &Thread::currentSingleton());
 #endif // PLATFORM(IOS_FAMILY)
     return static_cast<bool>(nextFireTime());
 }

@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long GPUShaderStageFlags;
     Exposed=(Window,Worker),
     SecureContext
 ]
-interface GPUShaderStage {
+namespace GPUShaderStage {
     const GPUFlagsConstant VERTEX   = 0x1;
     const GPUFlagsConstant FRAGMENT = 0x2;
     const GPUFlagsConstant COMPUTE  = 0x4;

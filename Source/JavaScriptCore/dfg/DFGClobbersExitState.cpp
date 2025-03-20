@@ -59,7 +59,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case NewGenerator:
     case NewAsyncGenerator:
     case NewInternalFieldObject:
-    case NewRegexp:
+    case NewRegExp:
     case NewMap:
     case NewSet:
     case NewStringObject:
@@ -74,7 +74,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case MaterializeNewInternalFieldObject:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
-    case PhantomNewRegexp:
+    case PhantomNewRegExp:
     case CountExecution:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
@@ -94,6 +94,9 @@ bool clobbersExitState(Graph& graph, Node* node)
         // heaps into those that are observable and those that aren't, but we don't do that right now.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148440
         return false;
+
+    case NewRegExpUntyped:
+        return !(node->child1().useKind() == StringUse && node->child2().useKind() == StringUse);
 
     case CreateActivation:
         // Like above, but with the activation allocation caveat.

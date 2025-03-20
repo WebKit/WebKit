@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .container {
+          width: 100px;
+          height: 100px;
+          overflow: hidden scroll;
+          background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      spawnNewElement("div", (el) => {
+          el.style.width = "113px";
+          el.style.height = "113px";
+          el.style.background = "yellow";
+      });
+
+      var container = spawnNewElementWithClass("div", "container");
+      var containee = createNewElementWithClass("div", "containee");
+      for (let i = 0; i < 100; i++)
+          containee.innerHTML += 'Line ' + i + '<br>';
+      container.appendChild(containee);
+
+      for (let i = 0; i < 100; i++)
+          document.body.innerHTML += 'Line ' + i + '<br>';
+
+      container = document.getElementsByClassName("container")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              container.scroll(0, 100);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 113, 100, 100]]);
+          },
+          () => {
+              container.scroll(0, 999999);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 113, 100, 100]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

@@ -77,7 +77,7 @@ class PathOperation;
 class PositionArea;
 class PseudoIdSet;
 class QuotesData;
-class RenderObject;
+class RenderElement;
 class RenderStyle;
 class RotateTransformOperation;
 class RoundedRect;
@@ -150,7 +150,7 @@ enum class CursorType : uint8_t;
 enum class CursorVisibility : bool;
 enum class DisplayType : uint8_t;
 enum class EmptyCell : bool;
-enum class EventListenerRegionType : uint16_t;
+enum class EventListenerRegionType : uint32_t;
 enum class FieldSizing : bool;
 enum class FillAttachment : uint8_t;
 enum class FillBox : uint8_t;
@@ -196,6 +196,7 @@ enum class PaintOrder : uint8_t;
 enum class PaintType : uint8_t;
 enum class PointerEvents : uint8_t;
 enum class PositionType : uint8_t;
+enum class PositionVisibility : uint8_t;
 enum class PrintColorAdjust : bool;
 enum class PseudoId : uint32_t;
 enum class QuoteType : uint8_t;
@@ -250,7 +251,6 @@ enum class WhiteSpaceCollapse : uint8_t;
 enum class WordBreak : uint8_t;
 
 struct BlockEllipsis;
-struct BorderDataRadii;
 struct CounterDirectiveMap;
 struct FillRepeatXY;
 struct FontPalette;
@@ -261,11 +261,9 @@ struct Length;
 struct LengthPoint;
 struct LengthSize;
 struct ListStyleType;
-struct MasonryAutoFlow;
 struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
-struct PositionTryFallback;
 struct SingleTimelineRange;
 
 struct ScrollSnapAlign;
@@ -283,6 +281,7 @@ struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;
 template<typename> class RectEdges;
+template<typename> class RectCorners;
 
 using FontVariationSettings = FontTaggedSettings<float>;
 using IntOutsets = RectEdges<int>;
@@ -292,7 +291,9 @@ class CustomPropertyRegistry;
 class ViewTransitionName;
 struct Color;
 struct ColorScheme;
+struct CornerShapeValue;
 struct DynamicRangeLimit;
+struct PositionTryFallback;
 struct ScopedName;
 struct ScrollMargin;
 struct ScrollMarginEdge;
@@ -393,6 +394,8 @@ public:
     bool usesViewportUnits() const { return m_nonInheritedFlags.usesViewportUnits; }
     void setUsesContainerUnits() { m_nonInheritedFlags.usesContainerUnits = true; }
     bool usesContainerUnits() const { return m_nonInheritedFlags.usesContainerUnits; }
+    void setUsesAnchorFunctions();
+    bool usesAnchorFunctions() const;
 
     void setColumnStylesFromPaginationMode(PaginationMode);
     
@@ -464,9 +467,9 @@ public:
     inline bool hasInFlowPosition() const;
     inline bool hasViewportConstrainedPosition() const;
     Float floating() const { return static_cast<Float>(m_nonInheritedFlags.floating); }
-    static UsedFloat usedFloat(const RenderObject&); // Returns logical left/right (block-relative).
+    static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
-    static UsedClear usedClear(const RenderObject&); // Returns logical left/right (block-relative).
+    static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
     inline const Length& width() const;
     inline const Length& height() const;
@@ -505,7 +508,7 @@ public:
 
     inline const NinePieceImage& borderImage() const;
     inline StyleImage* borderImageSource() const;
-    inline const LengthBox& borderImageSlices() const;
+    inline const LengthBox& borderImageSlice() const;
     inline const LengthBox& borderImageWidth() const;
     inline const LengthBox& borderImageOutset() const;
     inline NinePieceImageRule borderImageHorizontalRule() const;
@@ -515,7 +518,7 @@ public:
     inline const LengthSize& borderTopRightRadius() const;
     inline const LengthSize& borderBottomLeftRadius() const;
     inline const LengthSize& borderBottomRightRadius() const;
-    inline const BorderDataRadii& borderRadii() const;
+    inline const RectCorners<LengthSize>& borderRadii() const;
     inline bool hasBorderRadius() const;
     inline bool hasExplicitlySetBorderBottomLeftRadius() const;
     inline bool hasExplicitlySetBorderBottomRightRadius() const;
@@ -547,6 +550,16 @@ public:
     float borderEndWidth() const { return borderEndWidth(writingMode()); }
 
     inline bool borderIsEquivalentForPainting(const RenderStyle&) const;
+
+    inline const Style::CornerShapeValue& cornerBottomLeftShape() const;
+    inline const Style::CornerShapeValue& cornerBottomRightShape() const;
+    inline const Style::CornerShapeValue& cornerTopLeftShape() const;
+    inline const Style::CornerShapeValue& cornerTopRightShape() const;
+
+    void setCornerBottomLeftShape(Style::CornerShapeValue&&);
+    void setCornerBottomRightShape(Style::CornerShapeValue&&);
+    void setCornerTopLeftShape(Style::CornerShapeValue&&);
+    void setCornerTopRightShape(Style::CornerShapeValue&&);
 
     float outlineSize() const { return std::max<float>(0, outlineWidth() + outlineOffset()); }
     float outlineWidth() const;
@@ -677,7 +690,7 @@ public:
     inline Ref<const FillLayer> protectedMaskLayers() const; // Defined in RenderStyleInlines.h.
     inline const NinePieceImage& maskBorder() const;
     inline StyleImage* maskBorderSource() const;
-    inline const LengthBox& maskBorderSlices() const;
+    inline const LengthBox& maskBorderSlice() const;
     inline const LengthBox& maskBorderWidth() const;
     inline const LengthBox& maskBorderOutset() const;
     inline NinePieceImageRule maskBorderHorizontalRule() const;
@@ -732,8 +745,6 @@ public:
 
     InsideLink insideLink() const { return static_cast<InsideLink>(m_inheritedFlags.insideLink); }
     bool isLink() const { return m_nonInheritedFlags.isLink; }
-
-    bool insideDefaultButton() const { return m_inheritedFlags.insideDefaultButton; }
 
     inline unsigned short widows() const;
     inline unsigned short orphans() const;
@@ -852,7 +863,6 @@ public:
     inline size_t namedGridAreaRowCount() const;
     inline size_t namedGridAreaColumnCount() const;
     inline GridAutoFlow gridAutoFlow() const;
-    inline MasonryAutoFlow masonryAutoFlow() const;
     inline bool gridSubgridRows() const;
     inline bool gridSubgridColumns() const;
     inline bool gridMasonryRows() const;
@@ -1229,7 +1239,7 @@ public:
     inline void setBorderImage(const NinePieceImage&);
     void setBorderImageSource(RefPtr<StyleImage>&&);
     void setBorderImageSliceFill(bool);
-    void setBorderImageSlices(LengthBox&&);
+    void setBorderImageSlice(LengthBox&&);
     void setBorderImageWidth(LengthBox&&);
     void setBorderImageWidthOverridesBorderWidths(bool);
     void setBorderImageOutset(LengthBox&&);
@@ -1247,11 +1257,6 @@ public:
     inline void setHasExplicitlySetBorderBottomRightRadius(bool);
     inline void setHasExplicitlySetBorderTopLeftRadius(bool);
     inline void setHasExplicitlySetBorderTopRightRadius(bool);
-
-    RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, RectEdges<bool> closedEdges) const;
-
-    RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, RectEdges<bool> closedEdges) const;
-    static RoundedRect getRoundedInnerBorderFor(const LayoutRect&, LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, std::optional<BorderDataRadii>, RectEdges<bool> closedEdges);
 
     inline void setBorderLeftWidth(float);
     inline void setBorderLeftStyle(BorderStyle);
@@ -1368,7 +1373,7 @@ public:
     inline void setMaskBorder(const NinePieceImage&);
     void setMaskBorderSource(RefPtr<StyleImage>&&);
     void setMaskBorderSliceFill(bool);
-    void setMaskBorderSlices(LengthBox&&);
+    void setMaskBorderSlice(LengthBox&&);
     void setMaskBorderWidth(LengthBox&&);
     void setMaskBorderOutset(LengthBox&&);
     void setMaskBorderHorizontalRule(NinePieceImageRule);
@@ -1421,6 +1426,10 @@ public:
     inline void setPaddingBottom(Length&&);
     inline void setPaddingLeft(Length&&);
     inline void setPaddingRight(Length&&);
+    void setPaddingStart(Length&&);
+    void setPaddingEnd(Length&&);
+    void setPaddingBefore(Length&&);
+    void setPaddingAfter(Length&&);
 
     void setCursor(CursorType c) { m_inheritedFlags.cursor = static_cast<unsigned>(c); }
     void addCursor(RefPtr<StyleImage>&&, const std::optional<IntPoint>& hotSpot);
@@ -1433,8 +1442,6 @@ public:
 
     void setInsideLink(InsideLink insideLink) { m_inheritedFlags.insideLink = static_cast<unsigned>(insideLink); }
     void setIsLink(bool v) { m_nonInheritedFlags.isLink = v; }
-
-    void setInsideDefaultButton(bool insideDefaultButton) { m_inheritedFlags.insideDefaultButton = insideDefaultButton; }
 
     PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(m_inheritedFlags.printColorAdjust); }
     void setPrintColorAdjust(PrintColorAdjust value) { m_inheritedFlags.printColorAdjust = static_cast<unsigned>(value); }
@@ -1511,8 +1518,6 @@ public:
     inline void setGridItemColumnEnd(const GridPosition&);
     inline void setGridItemRowStart(const GridPosition&);
     inline void setGridItemRowEnd(const GridPosition&);
-
-    inline void setMasonryAutoFlow(MasonryAutoFlow);
 
     inline void setMarqueeIncrement(Length&&);
     inline void setMarqueeSpeed(int);
@@ -1934,6 +1939,7 @@ public:
     static constexpr BorderStyle initialBorderStyle();
     static constexpr OutlineIsAuto initialOutlineStyleIsAuto();
     static inline LengthSize initialBorderRadius();
+    static constexpr Style::CornerShapeValue initialCornerShapeValue();
     static constexpr CaptionSide initialCaptionSide();
     static constexpr ColumnAxis initialColumnAxis();
     static constexpr ColumnProgression initialColumnProgression();
@@ -2151,7 +2157,6 @@ public:
     static constexpr AutoRepeatType initialGridAutoRepeatType();
 
     static constexpr GridAutoFlow initialGridAutoFlow();
-    static constexpr MasonryAutoFlow initialMasonryAutoFlow();
 
     static inline Vector<GridTrackSize> initialGridAutoColumns();
     static inline Vector<GridTrackSize> initialGridAutoRows();
@@ -2320,6 +2325,10 @@ public:
     inline const Vector<Style::ScopedName>& anchorNames() const;
     inline void setAnchorNames(const Vector<Style::ScopedName>&);
 
+    static inline NameScope initialAnchorScope();
+    inline const NameScope& anchorScope() const;
+    inline void setAnchorScope(const NameScope&);
+
     static inline std::optional<Style::ScopedName> initialPositionAnchor();
     inline const std::optional<Style::ScopedName>& positionAnchor() const;
     inline void setPositionAnchor(const std::optional<Style::ScopedName>&);
@@ -2332,9 +2341,16 @@ public:
     inline Style::PositionTryOrder positionTryOrder() const;
     inline void setPositionTryOrder(Style::PositionTryOrder);
 
-    static Vector<PositionTryFallback> initialPositionTryFallbacks();
-    const Vector<PositionTryFallback>& positionTryFallbacks() const;
-    void setPositionTryFallbacks(const Vector<PositionTryFallback>&);
+    static Vector<Style::PositionTryFallback> initialPositionTryFallbacks();
+    const Vector<Style::PositionTryFallback>& positionTryFallbacks() const;
+    void setPositionTryFallbacks(const Vector<Style::PositionTryFallback>&);
+
+    static constexpr OptionSet<PositionVisibility> initialPositionVisibility();
+    inline OptionSet<PositionVisibility> positionVisibility() const;
+    inline void setPositionVisibility(OptionSet<PositionVisibility>);
+
+    inline bool insideDefaultButton() const;
+    inline void setInsideDefaultButton(bool);
 
 private:
     struct NonInheritedFlags {
@@ -2415,16 +2431,15 @@ private:
         unsigned char boxDirection : 1; // BoxDirection
         unsigned char rtlOrdering : 1; // Order
 
-        // Color Stuff = 5 bits
+        // Color Stuff = 4 bits
         unsigned char hasExplicitlySetColor : 1;
         unsigned char printColorAdjust : 1; // PrintColorAdjust
         unsigned char insideLink : 2; // InsideLink
-        unsigned char insideDefaultButton : 1;
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // Total = 57 bits (fits in 8 bytes)
+        // Total = 56 bits (fits in 8 bytes)
     };
 
     // This constructor is used to implement the replace operation.
@@ -2478,10 +2493,14 @@ private:
 #endif
 };
 
+// Map from computed style values (which take zoom into account) to web-exposed values, which are zoom-independent.
 inline int adjustForAbsoluteZoom(int, const RenderStyle&);
 inline float adjustFloatForAbsoluteZoom(float, const RenderStyle&);
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderStyle&);
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderStyle&);
+
+// Map from zoom-independent style values to computed style values (which take zoom into account).
+inline float applyZoom(float, const RenderStyle&);
 
 constexpr BorderStyle collapsedBorderStyle(BorderStyle);
 

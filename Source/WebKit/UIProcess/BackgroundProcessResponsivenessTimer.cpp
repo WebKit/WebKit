@@ -115,7 +115,7 @@ void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
     if (!m_isResponsive)
         return;
 
-    if (!client().mayBecomeUnresponsive())
+    if (!protectedClient()->mayBecomeUnresponsive())
         return;
 
     setResponsive(false);
@@ -126,18 +126,18 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
     if (m_isResponsive == isResponsive)
         return;
 
-    Ref protectedClient { client() };
+    Ref client = this->client();
 
-    client().willChangeIsResponsive();
+    client->willChangeIsResponsive();
     m_isResponsive = isResponsive;
-    client().didChangeIsResponsive();
+    client->didChangeIsResponsive();
 
     if (m_isResponsive) {
         RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become responsive again", m_webProcessProxy->processID());
-        client().didBecomeResponsive();
+        client->didBecomeResponsive();
     } else {
         RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become unresponsive", m_webProcessProxy->processID());
-        client().didBecomeUnresponsive();
+        client->didBecomeUnresponsive();
     }
 }
 

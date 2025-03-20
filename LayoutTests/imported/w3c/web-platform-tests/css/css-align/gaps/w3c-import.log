@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/legacy-gap-aliases-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/row-gap-animation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/row-gap-animation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/row-gap-animation-003.html

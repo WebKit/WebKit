@@ -50,11 +50,16 @@ private:
     void notificationControllerDestroyed() final;
     void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) final;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) final;
+    bool isWebKit2WebNotificationClient() const final { return true; }
 
     HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
     WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebNotificationClient)
+static bool isType(const WebCore::NotificationClient& client) { return client.isWebKit2WebNotificationClient(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(NOTIFICATIONS)

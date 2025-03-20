@@ -27,6 +27,7 @@
 #include "TextSpacing.h"
 
 #include "Font.h"
+#include <wtf/ASCIICType.h>
 
 namespace WebCore {
 
@@ -103,6 +104,12 @@ static bool isNonIdeographicNumeral(char32_t character, uint32_t generalCategory
 // Classes are defined at https://www.w3.org/TR/css-text-4/#text-spacing-classes
 CharacterClass characterClass(char32_t character)
 {
+    // fast path
+    if (isASCIIAlpha(character))
+        return CharacterClass::NonIdeographLetter;
+    if (isASCIIDigit(character))
+        return CharacterClass::NonIdeographNumeral;
+
     auto generalCategoryMask = U_GET_GC_MASK(character);
     if (isIdeograph(character))
         return CharacterClass::Ideograph;

@@ -15,9 +15,12 @@
     height: 5em;
   }
   .test {
-    height: 19em;
+    height: 5em; break-inside: avoid;
     /* show bounds of test box without interfering with margin-collapsing */
     border-inline: solid black 1em;
+  }
+  .test:last-child {
+    height: 4em;
   }
   .large, .float {
     height: 2.5em;
@@ -38,7 +41,13 @@ switch back once fixed */
   .pager { border: solid 2px gray; margin: 0.5em 0; }
   .test  { color: #8888; text-align: center; }
   .label { color: black; font-weight: bold; }
-  .test .large { margin-top: 0; } /* margins truncated by unforced breaks */
+
+  /* reference */
+  .center .test { align-content: center; }
+  .end    .test { align-content: end; }
+  /* margins are truncated by unforced breaks, so mimic that */
+  .test .large:first-child { margin-top: 0; }
+  .test .large:last-child  { margin-bottom: 0; }
 </style>
 
 <!--
@@ -49,13 +58,21 @@ switch back once fixed */
      * after a block containing text
 -->
 
-<div class="pager">
+<div class="pager center">
   <div class="test">
       <span class="label">CENTER</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>
@@ -63,13 +80,21 @@ switch back once fixed */
 </div>
 
 
-<div class="pager">
+<div class="pager end">
   <div class="test">
       <span class="label">END</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>
@@ -79,10 +104,18 @@ switch back once fixed */
 <div class="pager">
   <div class="test">
       <span class="label">BASELINE</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>
@@ -92,37 +125,60 @@ switch back once fixed */
 <div class="pager">
   <div class="test">
       <span class="label">LAST BASELINE</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="pager">
+<div class="pager center">
   <div class="test">
       <span class="label">UNSAFE CENTER</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>
   </div>
 </div>
 
-
-<div class="pager">
+<div class="pager end">
   <div class="test">
       <span class="label">UNSAFE END</span><br>LINE 2<br>LINE 3
+  </div>
+  <div class="test">
       <div class="large"></div>
+  </div>
+  <div class="test">
       <div class="large"></div>
       <div>
         LINE 4
+      </div>
+  </div>
+  <div class="test">
+      <div>
         <div class="nobr">LINE 5<br>LINE 6</div>
       </div>
     </div>

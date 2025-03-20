@@ -1,8 +1,64 @@
 
 PASS :basic:isAsync=false
 PASS :basic:isAsync=true
-PASS :vertex_state_only:isAsync=false
-PASS :vertex_state_only:isAsync=true
+FAIL :no_attachment:isAsync=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:33:31
+ Reached unreachable code
+FAIL :no_attachment:isAsync=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:33:31
+ Reached unreachable code
+FAIL :vertex_state_only:isAsync=false assert_unreached:
+  - INFO: subcase: depthStencilFormat="depth24plus";hasColor=false
+    OK
+  - INFO: subcase: depthStencilFormat="depth24plus";hasColor=true
+    OK
+  - INFO: subcase: depthStencilFormat="depth24plus-stencil8";hasColor=false
+    OK
+  - INFO: subcase: depthStencilFormat="depth24plus-stencil8";hasColor=true
+    OK
+  - INFO: subcase: depthStencilFormat="depth32float";hasColor=false
+    OK
+  - INFO: subcase: depthStencilFormat="depth32float";hasColor=true
+    OK
+  - VALIDATION FAILED: subcase: depthStencilFormat="";hasColor=true
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:79:31
+  - INFO: subcase: depthStencilFormat="";hasColor=true
+    OK
+ Reached unreachable code
+FAIL :vertex_state_only:isAsync=true assert_unreached:
+  - INFO: subcase: depthStencilFormat="depth24plus";hasColor=false
+    OK
+  - EXPECTATION FAILED: subcase: depthStencilFormat="";hasColor=true
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:79:31
+  - INFO: subcase: depthStencilFormat="depth24plus";hasColor=true
+    OK
+  - INFO: subcase: depthStencilFormat="depth24plus-stencil8";hasColor=false
+    OK
+  - INFO: subcase: depthStencilFormat="depth24plus-stencil8";hasColor=true
+    OK
+  - INFO: subcase: depthStencilFormat="depth32float";hasColor=false
+    OK
+  - INFO: subcase: depthStencilFormat="depth32float";hasColor=true
+    OK
+  - INFO: subcase: depthStencilFormat="";hasColor=true
+    OK
+ Reached unreachable code
 PASS :pipeline_layout,device_mismatch:
 PASS :external_texture:
 

@@ -1169,7 +1169,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->fillGradient();
+    RefPtr gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1212,7 +1212,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1384,7 +1384,7 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     // from the HTML5 Canvas spec:
     // If x0 = x1 and y0 = y1, then the linear gradient must paint nothing
     // If x0 = x1 and y0 = y1 and r0 = r1, then the radial gradient must paint nothing
-    auto gradient = c->fillGradient();
+    RefPtr gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1436,7 +1436,7 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -2240,7 +2240,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 {
     if (!canvas.width() || !canvas.height())
         return Exception { ExceptionCode::InvalidStateError };
-    auto* copiedImage = canvas.copiedImage();
+    RefPtr copiedImage = canvas.copiedImage();
 
     if (!copiedImage)
         return Exception { ExceptionCode::InvalidStateError };
@@ -2406,7 +2406,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this))
         return paintContext->ensureDrawingContext();
-    if (auto* buffer = canvasBase().buffer())
+    if (RefPtr buffer = canvasBase().buffer())
         return &buffer->context();
     return nullptr;
 }
@@ -2437,7 +2437,7 @@ AffineTransform CanvasRenderingContext2DBase::baseTransform() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
+    if (RefPtr buffer = canvasBase().buffer())
         buffer->prepareForDisplay();
 }
 
@@ -2767,7 +2767,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
         return false;
 
     // If gradient size is zero, nothing would be painted.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (!fill && gradient && gradient->isZeroSize())
         return false;
 
@@ -3060,7 +3060,7 @@ std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesti
 
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
 {
-    if (auto* buffer = canvasBase().buffer()) {
+    if (RefPtr buffer = canvasBase().buffer()) {
         buffer->ensureBackendCreated();
         if (buffer->hasBackend())
             return buffer->renderingMode();

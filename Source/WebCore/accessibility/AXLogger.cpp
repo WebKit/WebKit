@@ -192,7 +192,7 @@ void AXLogger::log(AccessibilityObjectInclusion inclusion)
         return;
 
     TextStream stream(TextStream::LineMode::SingleLine);
-    stream.dumpProperty("ObjectInclusion", inclusion);
+    stream.dumpProperty("ObjectInclusion"_s, inclusion);
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
@@ -202,7 +202,7 @@ void AXLogger::log(AXRelationType relationType)
         return;
 
     TextStream stream(TextStream::LineMode::SingleLine);
-    stream.dumpProperty("RelationType", relationType);
+    stream.dumpProperty("RelationType"_s, relationType);
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
@@ -417,7 +417,7 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
     stream << "SearchCriteria " << &criteria;
     streamCriteriaObject("anchorObject"_s, criteria.anchorObject);
     streamCriteriaObject("startObject"_s, criteria.startObject);
-    stream.dumpProperty("searchDirection", criteria.searchDirection);
+    stream.dumpProperty("searchDirection"_s, criteria.searchDirection);
 
     stream.nextLine();
     stream << "(searchKeys [";
@@ -425,10 +425,10 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
         stream << searchKey << ", ";
     stream << "])";
 
-    stream.dumpProperty("searchText", criteria.searchText);
-    stream.dumpProperty("resultsLimit", criteria.resultsLimit);
-    stream.dumpProperty("visibleOnly", criteria.visibleOnly);
-    stream.dumpProperty("immediateDescendantsOnly", criteria.immediateDescendantsOnly);
+    stream.dumpProperty("searchText"_s, criteria.searchText);
+    stream.dumpProperty("resultsLimit"_s, criteria.resultsLimit);
+    stream.dumpProperty("visibleOnly"_s, criteria.visibleOnly);
+    stream.dumpProperty("immediateDescendantsOnly"_s, criteria.immediateDescendantsOnly);
 
     return stream;
 }
@@ -745,8 +745,8 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::EmbeddedImageDescription:
         stream << "EmbeddedImageDescription";
         break;
-    case AXProperty::EmitTextAfterBehavior:
-        stream << "EmitTextAfterBehavior";
+    case AXProperty::TextEmissionBehavior:
+        stream << "TextEmissionBehavior";
         break;
     case AXProperty::ExpandedTextValue:
         stream << "ExpandedTextValue";
@@ -757,6 +757,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
 #if PLATFORM(COCOA)
     case AXProperty::Font:
         stream << "Font";
+        break;
+    case AXProperty::FontOrientation:
+        stream << "FontOrientation";
         break;
 #endif // PLATFORM(COCOA)
     case AXProperty::TextColor:
@@ -1236,8 +1239,8 @@ TextStream& operator<<(TextStream& stream, AXIsolatedTree& tree)
     ASSERT(!isMainThread());
     TextStream::GroupScope groupScope(stream);
     stream << "treeID " << tree.treeID();
-    stream.dumpProperty("rootNodeID", tree.rootNode()->objectID());
-    stream.dumpProperty("focusedNodeID", tree.m_focusedNodeID);
+    stream.dumpProperty("rootNodeID"_s, tree.rootNode()->objectID());
+    stream.dumpProperty("focusedNodeID"_s, tree.m_focusedNodeID);
     constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::Role, AXStreamOptions::ParentID, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::DisplayContents, AXStreamOptions::Address };
     if (RefPtr root = tree.rootNode())
         streamSubtree(stream, root.releaseNonNull(), options);
@@ -1256,7 +1259,7 @@ void streamIsolatedSubtreeOnMainThread(TextStream& stream, const AXIsolatedTree&
 
     auto ids = tree.m_nodeMap.get(objectID);
     if (options & AXStreamOptions::ParentID)
-        stream.dumpProperty("parentObject", ids.parentID);
+        stream.dumpProperty("parentObject"_s, ids.parentID);
 
     for (auto& childID : ids.childrenIDs)
         streamIsolatedSubtreeOnMainThread(stream, tree, childID, options);
@@ -1285,7 +1288,7 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
 #if ENABLE(AX_THREAD_TEXT_APIS)
 static void streamTextRuns(TextStream& stream, const AXTextRuns& runs)
 {
-    stream.dumpProperty("textRuns", makeString(interleave(runs.runs, [](auto& builder, auto& run) {
+    stream.dumpProperty("textRuns"_s, makeString(interleave(runs.runs, [](auto& builder, auto& run) {
         builder.append(run.lineIndex, ":|"_s, run.text, "|(len: "_s, run.text.length(), ')');
     }, ", "_s)));
 }
@@ -1297,24 +1300,24 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
         stream << "objectID " << object.objectID();
 
     if (options & AXStreamOptions::Role)
-        stream.dumpProperty("role", object.roleValue());
+        stream.dumpProperty("role"_s, object.roleValue());
 
     auto* axObject = dynamicDowncast<AccessibilityObject>(object);
     if (axObject) {
         if (auto* renderer = axObject->renderer())
-            stream.dumpProperty("renderer", renderer->debugDescription());
+            stream.dumpProperty("renderer"_s, renderer->debugDescription());
         else if (auto* node = axObject->node())
-            stream.dumpProperty("node", node->debugDescription());
+            stream.dumpProperty("node"_s, node->debugDescription());
     }
 
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
-        stream.dumpProperty("parentID", parent ? parent->objectID().toUInt64() : 0);
+        stream.dumpProperty("parentID"_s, parent ? parent->objectID().toUInt64() : 0);
     }
 
     auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();
     if (!id.isEmpty())
-        stream.dumpProperty("identifier", WTFMove(id));
+        stream.dumpProperty("identifier"_s, WTFMove(id));
 
     if (options & AXStreamOptions::OuterHTML) {
         auto role = object.roleValue();
@@ -1326,7 +1329,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
             objectWithInterestingHTML = parent;
 
         if (objectWithInterestingHTML)
-            stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML().left(150));
+            stream.dumpProperty("outerHTML"_s, objectWithInterestingHTML->outerHTML().left(150));
     }
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -1343,12 +1346,12 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
     if (options & AXStreamOptions::DisplayContents) {
         if (axObject && axObject->hasDisplayContents())
-            stream.dumpProperty("hasDisplayContents", true);
+            stream.dumpProperty("hasDisplayContents"_s, true);
     }
 
     if (options & AXStreamOptions::Address) {
-        stream.dumpProperty("address", &object);
-        stream.dumpProperty("wrapper", object.wrapper());
+        stream.dumpProperty("address"_s, &object);
+        stream.dumpProperty("wrapper"_s, object.wrapper());
     }
 }
 

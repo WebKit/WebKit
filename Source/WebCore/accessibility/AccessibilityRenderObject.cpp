@@ -337,27 +337,24 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
     // last child is our previous sibling (or further back in the continuation chain)
     RenderInline* startOfConts;
     WeakPtr renderBlock = dynamicDowncast<RenderBlock>(*m_renderer);
-    if (renderBlock && (startOfConts = startOfContinuations(*m_renderer)))
-        previousSibling = childBeforeConsideringContinuations(startOfConts, renderer());
-
-    // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
-    // the parent of the start, since everything in between will be linked up via the continuation.
-    else if (renderBlock && m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(*renderBlock)) {
+    if (renderBlock && (startOfConts = startOfContinuations(*renderBlock)))
+        previousSibling = childBeforeConsideringContinuations(startOfConts, renderBlock.get());
+    else if (renderBlock && renderBlock->isAnonymousBlock() && firstChildIsInlineContinuation(*renderBlock)) {
+        // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
+        // the parent of the start, since everything in between will be linked up via the continuation.
         auto* firstParent = startOfContinuations(*renderBlock->firstChild())->parent();
         ASSERT(firstParent);
         while (firstChildIsInlineContinuation(*firstParent))
             firstParent = startOfContinuations(*firstParent->firstChild())->parent();
         previousSibling = firstParent->previousSibling();
-    }
-
-    // Case 3: The node has an actual previous sibling
-    else if (RenderObject* ps = m_renderer->previousSibling())
+    } else if (RenderObject* ps = m_renderer->previousSibling()) {
+        // Case 3: The node has an actual previous sibling
         previousSibling = ps;
-
-    // Case 4: This node has no previous siblings, but its parent is an inline,
-    // and is another node's inline continutation. Follow the continuation chain.
-    else if (is<RenderInline>(m_renderer->parent()) && (startOfConts = startOfContinuations(*m_renderer->parent())))
+    } else if (is<RenderInline>(m_renderer->parent()) && (startOfConts = startOfContinuations(*m_renderer->parent()))) {
+        // Case 4: This node has no previous siblings, but its parent is an inline,
+        // and is another node's inline continutation. Follow the continuation chain.
         previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer->parent()->firstChild());
+    }
 
     if (!previousSibling)
         return nullptr;
@@ -870,6 +867,8 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     if (isWebArea())
         result.setSize(renderer->view().frameView().contentsSize());
 
+    if (result.isEmpty())
+        return nonEmptyAncestorBoundingBox();
     return result;
 }
 
@@ -889,15 +888,15 @@ Path AccessibilityRenderObject::elementPath() const
     if (!m_renderer)
         return AccessibilityNodeObject::elementPath();
 
-    if (auto* renderText = dynamicDowncast<RenderText>(*m_renderer)) {
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(*m_renderer)) {
         Vector<LayoutRect> rects;
-        renderText->boundingRects(rects, flooredLayoutPoint(m_renderer->localToAbsolute()));
+        renderText->boundingRects(rects, flooredLayoutPoint(renderText->localToAbsolute()));
         // If only 1 rect, don't compute path since the bounding rect will be good enough.
         if (rects.size() < 2)
             return { };
 
         // Compute the path only if this is the last part of a line followed by the beginning of the next line.
-        const auto& style = m_renderer->style();
+        auto& style = renderText->style();
         bool rightToLeftText = style.writingMode().isBidiRTL();
         static const auto xTolerance = 5_lu;
         static const auto yTolerance = 5_lu;
@@ -917,7 +916,7 @@ Path AccessibilityRenderObject::elementPath() const
             return { };
 
         float outlineOffset = style.outlineOffset();
-        float deviceScaleFactor = m_renderer->document().deviceScaleFactor();
+        float deviceScaleFactor = renderText->document().deviceScaleFactor();
         Vector<FloatRect> pixelSnappedRects;
         for (auto rect : rects) {
             rect.inflate(outlineOffset);
@@ -1199,15 +1198,9 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         if (canSetFocusAttribute())
             return false;
 
-        // webkit.org/b/173870 - If an image has other alternative text, don't ignore it if alt text is empty.
-        // This means we should process title and aria-label first.
-
-        // If an image has an accname, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
-        if (hasAccNameAttribute())
-            return false;
-
         // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
         // However, if this is not a native image, fallback to the attribute on the Element.
+        // If the image is decorative (i.e. alt=""), it should be ignored even if a title, aria-label, etc. is supplied.
         AccessibilityObjectInclusion altTextInclusion = AccessibilityObjectInclusion::DefaultBehavior;
         WeakPtr image = dynamicDowncast<RenderImage>(*m_renderer);
         if (image)
@@ -1218,6 +1211,13 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
             return true;
         if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
+            return false;
+
+        // webkit.org/b/173870 - If an image has other alternative text, don't ignore it if alt text is empty.
+        // This means we should process title and aria-label first.
+
+        // If an image has an accname, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
+        if (hasAccNameAttribute())
             return false;
 
         if (image) {
@@ -1407,12 +1407,12 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     CheckedPtr renderer = this->renderer();
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer.get())) {
         auto box = InlineIterator::boxFor(*renderLineBreak);
-        return { renderLineBreak->containingBlock(), { AXTextRun(box ? box->lineIndex() : 0, makeString('\n').isolatedCopy(), { lengthOneDomOffsets }) }, /* estimatedCharacterSize */ 12 };
+        return { renderLineBreak->containingBlock(), { AXTextRun(box ? box->lineIndex() : 0, makeString('\n').isolatedCopy(), { lengthOneDomOffsets }) } };
     }
 
     if (is<HTMLImageElement>(node()) || is<HTMLMediaElement>(node())) {
         auto* containingBlock = renderer ? renderer->containingBlock() : nullptr;
-        return containingBlock ? AXTextRuns(containingBlock, { AXTextRun(0, String(span(objectReplacementCharacter)), { lengthOneDomOffsets }) }, /* estimatedCharacterSize */ 255) : AXTextRuns();
+        return containingBlock ? AXTextRuns(containingBlock, { AXTextRun(0, String(span(objectReplacementCharacter)), { lengthOneDomOffsets }) }) : AXTextRuns();
     }
 
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer.get());
@@ -1423,7 +1423,6 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     // other text in the line, and AccessibilityRenderObject::computeIsIgnored ignores the
     // first-letter RenderText, meaning we can't recover it later by combining text across AX objects.
 
-    std::optional<uint8_t> estimatedCharacterWidth;
     Vector<AXTextRun> runs;
     StringBuilder lineString;
     // Appends text to the current lineString, collapsing whitespace as necessary (similar to how TextIterator::handleTextRun() does).
@@ -1431,14 +1430,6 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         auto text = textBox->originalText();
         if (text.isEmpty())
             return;
-
-        if (!estimatedCharacterWidth) {
-            auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
-            unsigned end = textRun.length() - 1;
-            float width = renderText->style().fontCascade().widthOfTextRange(textRun, 0, end);
-            float perCharacterWidth = width / end + 1;
-            estimatedCharacterWidth = std::min(static_cast<unsigned>(std::numeric_limits<uint8_t>::max()), static_cast<unsigned>(std::ceil(perCharacterWidth)));
-        }
 
         bool collapseTabs = textBox->style().collapseWhiteSpace();
         bool collapseNewlines = !textBox->style().preserveNewline();
@@ -1484,7 +1475,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
     if (!lineString.isEmpty())
         runs.append({ currentLineIndex, lineString.toString().isolatedCopy(), WTFMove(textRunDomOffsets) });
-    return { renderText->containingBlock(), WTFMove(runs), estimatedCharacterWidth.value_or(AXTextRuns::defaultEstimatedCharacterWidth) };
+    return { renderText->containingBlock(), WTFMove(runs) };
 }
 
 AXTextRunLineID AccessibilityRenderObject::listMarkerLineID() const
@@ -2366,6 +2357,13 @@ void AccessibilityRenderObject::addRemoteSVGChildren()
     if (!root)
         return;
 
+    // FIXME: It's possible for an SVG that is rendered twice to share renderers. We don't want to add this as a child of both parents
+    // in this case, as it will create an invalid parent-child relationship in the accessibility tree.
+    // If it's parent is a WebArea, that is just the default value given when the object was created, so still add the child in that case.
+    RefPtr parent = root->parentObject();
+    if (parent && parent->roleValue() != AccessibilityRole::WebArea)
+        return;
+
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
     root->setParent(this);
@@ -2434,7 +2432,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
     WeakPtr cache = axObjectCache();
     if (!cache)
         return;
-    // FIXME: This algorithm does not work correctly when ENABLE(INCLUDE_IGNORED_IN_CORE_TREE) due to use of m_children, as this algorithm is written assuming m_children only every contains unignored objects.
+    // FIXME: This algorithm does not work correctly when ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) due to use of m_children, as this algorithm is written assuming m_children only every contains unignored objects.
     // Iterate through all of the children, including those that may have already been added, and
     // try to insert the nodes in the correct place in the DOM order.
     unsigned insertionIndex = 0;
@@ -2450,8 +2448,12 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
                     childObject = nullptr;
             }
 
-            if (childObject)
-                insertionIndex = m_children.find(Ref { *childObject }) + 1;
+            if (childObject) {
+                insertionIndex = m_children.findIf([&childObject] (const Ref<AXCoreObject>& child) {
+                    return child.ptr() == childObject;
+                });
+                ++insertionIndex;
+            }
             continue;
         }
 
@@ -2533,7 +2535,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 
     if (role != m_role) {
         if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(*this);
+            cache->handleRoleChanged(*this, role);
     }
 }
     
@@ -2561,10 +2563,6 @@ void AccessibilityRenderObject::addChildren()
         if (object.renderer()->isRenderListMarker())
             return;
 #endif
-        auto owners = object.owners();
-        if (owners.size() && !owners.contains(Ref { *this }))
-            return;
-
         addChild(object);
     };
 
@@ -2574,18 +2572,24 @@ void AccessibilityRenderObject::addChildren()
     // being part of the accessibility tree.
     RefPtr node = dynamicDowncast<ContainerNode>(this->node());
     auto* element = dynamicDowncast<Element>(node.get());
-    CheckedPtr cache = axObjectCache();
+    WeakPtr cache = axObjectCache();
 
     // ::before and ::after pseudos should be the first and last children of the element
     // that generates them (rather than being siblings to the generating element).
     if (RefPtr beforePseudo = element ? element->beforePseudoElement() : nullptr) {
-        if (RefPtr pseudoObject = cache->getOrCreate(*beforePseudo))
+        if (RefPtr pseudoObject = cache ? cache->getOrCreate(*beforePseudo) : nullptr)
             addChildIfNeeded(*pseudoObject);
     }
 
     if (node && !(element && element->isPseudoElement()) && cache) {
         // If we have a DOM node, use the DOM to find accessible children.
-        for (Ref child : composedTreeChildren(*node)) {
+        //
+        // The ComposedTreeIterator is extremely large by default, and will cause a stack
+        // overflow when building the accessibility tree from a deep DOM. Specify that we
+        // do not want its internal vector to allocate any space on the stack, in turn
+        // ensuring its contents go on the heap. We should consider rewriting our algorithm
+        // to build the accessibility tree to be iterative rather than recursive.
+        for (Ref child : composedTreeChildren</* InlineContextCapacity */ 0>(*node)) {
             if (RefPtr childObject = cache->getOrCreate(child.get()))
                 addChildIfNeeded(*childObject);
         }
@@ -2600,7 +2604,7 @@ void AccessibilityRenderObject::addChildren()
     }
 
     if (RefPtr afterPseudo = element ? element->afterPseudoElement() : nullptr) {
-        if (RefPtr pseudoObject = cache->getOrCreate(*afterPseudo))
+        if (RefPtr pseudoObject = cache ? cache->getOrCreate(*afterPseudo) : nullptr)
             addChildIfNeeded(*pseudoObject);
     }
 #else

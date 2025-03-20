@@ -42,6 +42,7 @@
 #include "IPCStreamTesterIdentifier.h"
 #include "IdentifierTypes.h"
 #include "JSIPCBinding.h"
+#include "JavaScriptEvaluationResult.h"
 #include "LegacyCustomProtocolID.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include "LogStreamIdentifier.h"
@@ -125,6 +126,7 @@
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBIndexIdentifier.h>
 #include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/InbandGenericCueIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -176,6 +178,7 @@
 #endif
 #include "TestWithoutUsingIPCConnectionMessages.h" // NOLINT
 #include "TestWithSemaphoreMessages.h" // NOLINT
+#include "TestWithSpanOfConstMessages.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
 #include "TestWithStreamBatchedMessages.h" // NOLINT
 #include "TestWithStreamBufferMessages.h" // NOLINT
@@ -373,6 +376,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
+    case MessageName::TestWithSpanOfConst_TestSpanOfConstFloat:
+        return jsValueForDecodedMessage<MessageName::TestWithSpanOfConst_TestSpanOfConstFloat>(globalObject, decoder);
+    case MessageName::TestWithSpanOfConst_TestSpanOfConstFloatSegments:
+        return jsValueForDecodedMessage<MessageName::TestWithSpanOfConst_TestSpanOfConstFloatSegments>(globalObject, decoder);
     case MessageName::TestWithStream_SendString:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringAsync:
@@ -596,6 +603,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationItemIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationTokenIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::IDBDatabaseConnectionIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::IDBResourceObjectIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::UserGestureTokenIdentifierID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::UserMediaRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::WebLockIdentifierID));
@@ -614,6 +622,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::JSObjectID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LegacyCustomProtocolID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LibWebRTCResolverIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LogStreamIdentifier));
@@ -748,6 +757,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::TextManipulationItemIdentifier"_s,
         "WebCore::TextManipulationTokenIdentifier"_s,
         "WebCore::IDBDatabaseConnectionIdentifier"_s,
+        "WebCore::IDBResourceObjectIdentifier"_s,
         "WebCore::UserGestureTokenIdentifierID"_s,
         "WebCore::UserMediaRequestIdentifier"_s,
         "WebCore::WebLockIdentifierID"_s,
@@ -766,6 +776,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
+        "WebKit::JSObjectID"_s,
         "WebKit::LegacyCustomProtocolID"_s,
         "WebKit::LibWebRTCResolverIdentifier"_s,
         "WebKit::LogStreamIdentifier"_s,
@@ -1161,6 +1172,14 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return Vector<ArgumentDescription> { };
+    case MessageName::TestWithSpanOfConst_TestSpanOfConstFloat:
+        return Vector<ArgumentDescription> {
+            { "floats"_s, "std::span<const float>"_s },
+        };
+    case MessageName::TestWithSpanOfConst_TestSpanOfConstFloatSegments:
+        return Vector<ArgumentDescription> {
+            { "floatSegments"_s, "std::span<const WebCore::FloatSegment>"_s },
+        };
     case MessageName::TestWithStream_SendString:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },

@@ -66,13 +66,10 @@ public:
 
     virtual void setEnabled(bool);
 
-    void setPlayerItemTrack(AVPlayerItemTrack*);
     AVPlayerItemTrack* playerItemTrack();
 
-    void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();
 
-    void setMediaSelectionOption(MediaSelectionOptionAVFObjC&);
     MediaSelectionOptionAVFObjC* mediaSelectionOption();
 
 private:

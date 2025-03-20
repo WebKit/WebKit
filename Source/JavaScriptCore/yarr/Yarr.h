@@ -75,6 +75,15 @@ enum class BuiltInCharacterClassID : unsigned {
     BaseUnicodePropertyID,
 };
 
+enum class SpecificPattern : uint8_t {
+    None,
+    Atom,
+    LeadingSpacesStar,
+    LeadingSpacesPlus,
+    TrailingSpacesStar,
+    TrailingSpacesPlus,
+};
+
 struct BytecodePattern;
 
 } } // namespace JSC::Yarr

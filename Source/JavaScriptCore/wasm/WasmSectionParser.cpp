@@ -124,6 +124,8 @@ auto SectionParser::parseType() -> PartialResult
             m_info->typeSignatures.append(signature.releaseNonNull());
         }
     }
+
+    RELEASE_ASSERT(m_info->typeSignatures.size() == m_info->rtts.size());
     return { };
 }
 

@@ -43,7 +43,7 @@
         let initialIndexOfGroup3 = properties.findIndex(property => property.startsWith("webkit"));
         let initialIndexOfGroup4 = properties.findIndex(property => property.includes("-"));
         let initialIndexOfGroup5 = properties.findIndex(property => property.startsWith("epub"));
-        let initialIndexOfGroup6 = properties.findIndex(property => property == "item");
+        let initialIndexOfGroup6 = properties.findIndex(property => property == "cssText");
 
         shouldBeTrue("initialIndexOfGroup2 > initialIndexOfGroup1");
         shouldBeTrue("initialIndexOfGroup3 > initialIndexOfGroup2");
@@ -59,7 +59,7 @@
         let group6 = properties.slice(initialIndexOfGroup6);
 
         // Group 1
-        shouldBe(`group1`, `["0", "1", "cssText", "cssRules", "length", "parentRule", "cssFloat"]`);
+        shouldBe(`group1`, `["0", "1", "cssFloat"]`);
 
         // Group 2 - Camel Case
         let group2Clone = [...group2];
@@ -97,6 +97,6 @@
         shouldBeTrue(`group5.every(property => property.startsWith("epub"))`);
 
         // Group 6
-        shouldBe(`group6`, `["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]`);
+        shouldBe(`group6`, `["cssText", "cssRules", "length", "parentRule", "item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]`);
     </script>
 </body>

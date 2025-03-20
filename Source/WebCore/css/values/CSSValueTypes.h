@@ -399,5 +399,20 @@ template<> struct CSSValueChildrenVisitor<CustomIdentifier> {
     }
 };
 
+// MARK: - Logging
+
+// Specialization for `VariantLike`.
+template<VariantLike CSSType> TextStream& operator<<(TextStream& ts, const CSSType& value)
+{
+    WTF::switchOn(value, [&](const auto& value) { ts << value; });
+    return ts;
+}
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike CSSType> requires (std::tuple_size_v<CSSType> == 1) TextStream& operator<<(TextStream& ts, const CSSType& value)
+{
+    return ts << get<0>(value);
+}
+
 } // namespace CSS
 } // namespace WebCore

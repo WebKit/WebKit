@@ -1713,6 +1713,14 @@ TEST(IPCSerialization, NSURLRequest)
     runTestNS({ urlRequest });
 }
 
+#if USE(AVFOUNDATION) && PLATFORM(MAC)
+TEST(IPCSerialization, AVOutputContext)
+{
+    RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
+    runTestNS({ outputContext.get() });
+}
+#endif // USE(AVFOUNDATION) && PLATFORM(MAC)
+
 #if PLATFORM(MAC)
 
 static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
@@ -1771,12 +1779,6 @@ TEST(IPCSerialization, SecureCoding)
     [actionContext setHighlightFrame:NSMakeRect(1, 2, 3, 4)];
 
     runTestNS({ actionContext.get() });
-
-    // AVOutputContext
-#if USE(AVFOUNDATION)
-    RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
-    runTestNS({ outputContext.get() });
-#endif // USE(AVFOUNDATION)
 
     // PKPaymentMerchantSession
     // This initializer doesn't exercise retryNonce or domain

@@ -29,6 +29,7 @@
 #include "IDBError.h"
 #include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
+#include "IDBValue.h"
 #include "IndexKey.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/MainThread.h>
@@ -44,7 +45,6 @@ class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBResourceIdentifier;
 class IDBTransactionInfo;
-class IDBValue;
 class ThreadSafeDataBuffer;
 
 enum class IDBGetRecordDataType : bool;
@@ -76,7 +76,6 @@ public:
     virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) = 0;
     virtual IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const String& newName) = 0;
     virtual IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) = 0;
-    virtual IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) = 0;
     virtual IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) = 0;
     virtual IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) = 0;
     virtual IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyData&, bool& keyExists) = 0;
@@ -91,6 +90,17 @@ public:
     virtual IDBError maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, double newKeyNumber) = 0;
     virtual IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) = 0;
     virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) = 0;
+
+    virtual IDBError addIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) = 0;
+    virtual void revertAddIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) = 0;
+    virtual IDBError updateIndexRecordsWithIndexKey(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&, std::optional<int64_t> recordID) = 0;
+    struct ObjectStoreRecord {
+        IDBKeyData key;
+        IDBValue value;
+        std::optional<int64_t> recordID;
+    };
+    using RecordOrError = Expected<ObjectStoreRecord, IDBError>;
+    virtual void forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, Function<void(RecordOrError&&)>&&) = 0;
 
     virtual IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) = 0;
     virtual void deleteBackingStore() = 0;

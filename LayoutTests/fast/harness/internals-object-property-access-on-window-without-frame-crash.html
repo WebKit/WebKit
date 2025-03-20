@@ -5,24 +5,25 @@ if (testRunner)
     testRunner.dumpAsText();
 
 const skippedInternalFunctions = [
-  // Calling the following internals function can cause crashes or assertions, but
-  // they don't actually involve a DOM tree and shouldn't be covered by this test.
-  "reportBacktrace",
-  "terminateWebContentProcess",
+  // Calling the following internals function can cause unexpected behavior
+  // (crashes, assertions, subsequent tests failing...) but they don't actually
+  // require a frame and so shouldn't be covered by this test.
   "beginAudioSessionInterruption",
   "beginMediaSessionInterruption",
   "createFile",
   "hasSandboxMachLookupAccessToGlobalName",
   "hasSandboxMachLookupAccessToXPCServiceName",
   "hasSandboxUnixSyscallAccess",
+  "hasServiceWorkerRegistration",
+  "reportBacktrace",
+  "setGridMaxTracksLimit",
   "setHardwareVP9DecoderDisabledForTesting",
   "setSystemHasACForTesting",
   "setSystemHasBatteryForTesting",
   "setVP9DecoderDisabledForTesting",
   "setVP9ScreenSizeAndScaleForTesting",
-  // These two crashes on mac-wk1, but don't require a frame.
-  "hasServiceWorkerRegistration",
   "storeRegistrationsOnDisk",
+  "terminateWebContentProcess",
 ];
 
 // The following exceptions can be thrown because the internals properties are

@@ -517,7 +517,7 @@ void BlockDirectory::assertIsMutatorOrMutatorIsStopped() const
     auto& heap = markedSpace().heap();
     if (!heap.worldIsStopped()) {
         if (auto owner = heap.vm().apiLock().ownerThread())
-            ASSERT(owner->get() == &Thread::current());
+            ASSERT(owner->get() == &Thread::currentSingleton());
         else {
             // FIXME: It feels like heap access should be tied to holding the API lock.
             ASSERT(heap.hasAccess());

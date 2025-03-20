@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Create Worker via ScriptTestUrl
+PASS Block Worker creation via string
+PASS Create Worker via string with default policy.
+

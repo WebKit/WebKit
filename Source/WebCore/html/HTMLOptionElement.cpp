@@ -108,7 +108,7 @@ String HTMLOptionElement::text() const
 
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
-    return document().displayStringModifiedByEncoding(text).trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    return protectedDocument()->displayStringModifiedByEncoding(text).trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 void HTMLOptionElement::setText(String&& text)
@@ -202,8 +202,8 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     }
     case AttributeNames::valueAttr:
-        for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
-            dataList.optionElementChildrenChanged();
+        for (Ref dataList : ancestorsOfType<HTMLDataListElement>(*this))
+            dataList->optionElementChildrenChanged();
         break;
     default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -253,15 +253,15 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
 
     m_isSelected = selected;
 
-    if (CheckedPtr cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
         cache->onSelectedChanged(*this);
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)
 {
     Vector<Ref<HTMLDataListElement>> ancestors;
-    for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
-        ancestors.append(dataList);
+    for (Ref dataList : ancestorsOfType<HTMLDataListElement>(*this))
+        ancestors.append(WTFMove(dataList));
     for (auto& dataList : ancestors)
         dataList->optionElementChildrenChanged();
     if (change.source != ChildChange::Source::Clone) {
@@ -307,8 +307,8 @@ void HTMLOptionElement::willResetComputedStyle()
 {
     // FIXME: This is nasty, we ask our owner select to repaint even if the new
     // style is exactly the same.
-    if (auto select = ownerSelectElement()) {
-        if (auto renderer = select->renderer())
+    if (RefPtr select = ownerSelectElement()) {
+        if (CheckedPtr renderer = select->renderer())
             renderer->repaint();
     }
 }
@@ -333,14 +333,10 @@ bool HTMLOptionElement::isDisabledFormControl() const
 String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;
-    for (RefPtr node = firstChild(); node; ) {
+    // Text nodes inside script elements are not part of the option text.
+    for (RefPtr node = firstChild(); node; node = isScriptElement(*node) ? NodeTraversal::nextSkippingChildren(*node, this) : NodeTraversal::next(*node, this)) {
         if (auto* textNode = dynamicDowncast<Text>(*node))
             text.append(textNode->data());
-        // Text nodes inside script elements are not part of the option text.
-        if (auto* element = dynamicDowncast<Element>(*node); element && isScriptElement(*element))
-            node = NodeTraversal::nextSkippingChildren(*node, this);
-        else
-            node = NodeTraversal::next(*node, this);
     }
     return text.toString();
 }

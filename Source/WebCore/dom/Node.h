@@ -146,10 +146,10 @@ public:
     NodeType nodeType() const { return nodeTypeFromBitFields(m_typeBitFields); }
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
-    inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
+    inline RefPtr<ContainerNode> protectedParentNode() const;
     static constexpr ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
-    inline Element* parentElement() const; // Defined in ElementInlines.h.
-    inline RefPtr<Element> protectedParentElement() const; // Defined in ElementInlines.h.
+    inline Element* parentElement() const;
+    inline RefPtr<Element> protectedParentElement() const;
     Node* previousSibling() const { return m_previousSibling; }
     RefPtr<Node> protectedPreviousSibling() const { return m_previousSibling; }
     static constexpr ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previousSibling); }
@@ -157,10 +157,10 @@ public:
     RefPtr<Node> protectedNextSibling() const { return m_next.get(); }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
-    inline Node* firstChild() const; // Defined in ContainerNode.h
-    inline RefPtr<Node> protectedFirstChild() const; // Defined in ContainerNode.h
-    inline Node* lastChild() const; // Defined in ContainerNode.h
-    inline RefPtr<Node> protectedLastChild() const; // Defined in ContainerNode.h
+    inline Node* firstChild() const;
+    inline RefPtr<Node> protectedFirstChild() const;
+    inline Node* lastChild() const;
+    inline RefPtr<Node> protectedLastChild() const;
     inline bool hasAttributes() const;
     inline NamedNodeMap* attributesMap() const;
     Node* pseudoAwareNextSibling() const;
@@ -266,9 +266,11 @@ public:
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
+    RefPtr<Element> protectedShadowHost() const;
     ShadowRoot* containingShadowRoot() const;
     RefPtr<ShadowRoot> protectedContainingShadowRoot() const;
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
+    inline RefPtr<ShadowRoot> protectedShadowRoot() const; // Defined in ElementRareData.h
     bool isClosedShadowHidden(const Node&) const;
 
     HTMLSlotElement* assignedSlot() const;
@@ -308,8 +310,8 @@ public:
     ContainerNode* parentInComposedTree() const;
     WEBCORE_EXPORT Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;
-    inline void setParentNode(ContainerNode*); // Defined in ContainerNode.h.
-    Node& rootNode() const;
+    inline void setParentNode(ContainerNode*);
+    inline Node& rootNode() const;
     WEBCORE_EXPORT Node& traverseToRootNode() const;
     Node& shadowIncludingRoot() const;
 
@@ -318,7 +320,7 @@ public:
     };
     Node& getRootNode(const GetRootNodeOptions&) const;
     
-    inline WebCoreOpaqueRoot opaqueRoot() const; // Defined in DocumentInlines.h.
+    inline WebCoreOpaqueRoot opaqueRoot() const;
     WebCoreOpaqueRoot traverseToOpaqueRoot() const;
 
     void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
@@ -410,7 +412,7 @@ public:
 
     // Returns the document associated with this node. A document node returns itself.
     Document& document() const { return treeScope().documentScope(); }
-    inline Ref<Document> protectedDocument() const; // Defined in DocumentInlines.h.
+    inline Ref<Document> protectedDocument() const;
 
     TreeScope& treeScope() const
     {
@@ -436,9 +438,9 @@ public:
 
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
-    unsigned countChildNodes() const;
-    unsigned length() const;
-    Node* traverseToChildAt(unsigned) const;
+    inline unsigned countChildNodes() const;
+    inline unsigned length() const;
+    inline Node* traverseToChildAt(unsigned) const;
 
     ExceptionOr<void> checkSetPrefix(const AtomString& prefix);
 
@@ -450,6 +452,7 @@ public:
     WEBCORE_EXPORT bool isDescendantOrShadowDescendantOf(const Node&) const;
     bool isDescendantOrShadowDescendantOf(const Node* other) const { return other && isDescendantOrShadowDescendantOf(*other); } 
     WEBCORE_EXPORT bool containsIncludingShadowDOM(const Node*) const;
+    bool isComposedTreeDescendantOf(const Node&) const;
 
     // Whether or not a selection can be started in this object
     virtual bool canStartSelection() const;
@@ -522,8 +525,8 @@ public:
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
     enum EventTargetInterfaceType eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in DocumentInlines.h.
-    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    inline RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
@@ -695,7 +698,7 @@ protected:
     void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(std::bit_cast<uint16_t>(bitfields)); }
 
     TabIndexState tabIndexState() const { return static_cast<TabIndexState>(rareDataBitfields().tabIndexState); }
-    void setTabIndexState(TabIndexState);
+    inline void setTabIndexState(TabIndexState);
 
     CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
     void setCustomElementState(CustomElementState);
@@ -981,6 +984,8 @@ inline NodeClass& Node::traverseToRootNodeInternal(const NodeClass& node)
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
+
+inline void collectChildNodes(Node&, NodeVector&);
 
 } // namespace WebCore
 

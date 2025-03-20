@@ -115,7 +115,7 @@
 				A54C2255148B23DF00373FA3 /* Resources */,
 				1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */,
 				1C78EE1417611302002F6AA5 /* Sources */,
-				6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */,
+				6577FFC9276ACA680011AEC8 /* Create Symlink to Cryptex Path */,
 			);
 			buildRules = (
 			);
@@ -174,7 +174,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit\nfi\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
 		};
-		6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */ = {
+		6577FFC9276ACA680011AEC8 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -183,15 +183,15 @@
 			);
 			inputPaths = (
 			);
-			name = "Create Symlink to Alt Root Path";
+			name = "Create Symlink to Cryptex Path";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+				"${OUTPUT_CRYPTEX_SYMLINK_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-cryptex.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

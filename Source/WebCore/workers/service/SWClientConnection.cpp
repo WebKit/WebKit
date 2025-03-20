@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ExceptionData.h"
 #include "MessageEvent.h"
+#include "ResourceMonitor.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -322,5 +323,17 @@ void SWClientConnection::registerServiceWorkerClients()
     SharedWorkerContextManager::singleton().forEachSharedWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
     Worker::forEachWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void SWClientConnection::reportNetworkUsageToWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, size_t bytesTransferredOverNetworkDelta)
+{
+    ASSERT(isMainThread());
+
+    if (RefPtr destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier)) {
+        if (RefPtr resourceMonitor = destinationDocument->resourceMonitorIfExists())
+            resourceMonitor->addNetworkUsage(bytesTransferredOverNetworkDelta);
+    }
+}
+#endif
 
 } // namespace WebCore

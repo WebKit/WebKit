@@ -169,19 +169,19 @@ static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
 {
     switch (type) {
     case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
-        ts << "UNKNOWN";
+        ts << "UNKNOWN"_s;
         break;
     case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
-        ts << "MATRIX";
+        ts << "MATRIX"_s;
         break;
     case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
-        ts << "SATURATE";
+        ts << "SATURATE"_s;
         break;
     case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
-        ts << "HUEROTATE";
+        ts << "HUEROTATE"_s;
         break;
     case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        ts << "LUMINANCETOALPHA";
+        ts << "LUMINANCETOALPHA"_s;
         break;
     }
     return ts;
@@ -189,24 +189,24 @@ static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
 
 TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feColorMatrix";
+    ts << indent << "[feColorMatrix"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " type=\"" << m_type << "\"";
+    ts << " type=\"" << m_type << '"';
     if (!m_values.isEmpty()) {
-        ts << " values=\"";
+        ts << " values=\""_s;
         bool isFirst = true;
         for (auto value : m_values) {
             if (isFirst)
                 isFirst = false;
             else
-                ts << " "_s;
+                ts << ' ';
             ts << value;
         }
-        ts << "\"";
+        ts << '"';
     }
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

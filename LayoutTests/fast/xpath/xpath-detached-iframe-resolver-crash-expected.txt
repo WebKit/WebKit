@@ -1,6 +1,12 @@
 Ensure that using XPath namespace resolver with a detached iframe doesn't crash.
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Did not crash.
 PASS dummyResolverCalled is true
 PASS foundNode.toString() is "[object HTMLDivElement]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -69,7 +69,7 @@ public:
         : m_token(std::exchange(other.m_token, CString()))
         , m_handle(std::exchange(other.m_handle, 0)) { }
 private:
-    char* sandboxExtensionForType(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
+    CString sandboxExtensionForType(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
 
     SandboxExtensionImpl(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
 

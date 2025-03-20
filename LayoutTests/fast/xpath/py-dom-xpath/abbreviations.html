@@ -1,10 +1,9 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="../xpath-test-pre.js"></script>
 </head>
 <body>
-<div id="console"></div>
 
 <script>
 var doc = (new DOMParser).parseFromString(
@@ -173,6 +172,5 @@ doc = (new DOMParser).parseFromString(
 test(doc, doc.documentElement, "employee[@secretary and @assistant]", [doc.getElementsByTagName("employee")[2]]);
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

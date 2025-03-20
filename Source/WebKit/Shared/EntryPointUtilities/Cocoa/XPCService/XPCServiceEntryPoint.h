@@ -35,7 +35,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if !USE(RUNNINGBOARD)
-#import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/darwin/XPCExtras.h>
 #endif
 
 // FIXME: This should be moved to an SPI header.

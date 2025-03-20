@@ -39,6 +39,7 @@ async function doTest()
 
     const answer = await remote_connection.createAnswer();
     await remote_connection.setLocalDescription(answer);
+    await local_connection.setRemoteDescription(answer);
 
     local_connection.sctp.transport.iceTransport.onstatechange = () => {
         iframe.remove();

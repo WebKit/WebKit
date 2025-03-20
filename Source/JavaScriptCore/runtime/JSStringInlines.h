@@ -430,7 +430,6 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
         return ropeString;
     };
 
-    AtomString atomString;
     if (!ropeString->isSubstring()) {
         uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         JSString* fiber0 = ropeString->fiber0();
@@ -629,7 +628,7 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
                 return JSString::create(vm, deferralContext, impl.releaseNonNull());
             };
             LChar buf[] = { static_cast<LChar>(first), static_cast<LChar>(second) };
-            WTF::HashTranslatorCharBuffer<LChar> buffer { std::span { buf, length } };
+            WTF::HashTranslatorCharBuffer<LChar> buffer { unsafeMakeSpan(buf, length) };
             return vm.keyAtomStringCache.make(vm, buffer, createFromSubstring);
         }
     }

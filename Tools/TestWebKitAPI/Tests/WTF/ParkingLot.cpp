@@ -52,8 +52,8 @@ struct SingleLatchTest {
                         down();
 
                         std::scoped_lock<std::mutex> locker(lock);
-                        awake.add(Thread::current());
-                        lastAwoken = &Thread::current();
+                        awake.add(Thread::currentSingleton());
+                        lastAwoken = &Thread::currentSingleton();
                         condition.notify_one();
                     }));
         }

@@ -150,26 +150,35 @@ public:
     }
     
     JSValue tryLiteralParse()
+        requires (reviverMode == JSONReviverMode::Disabled)
     {
+        ASSERT(m_mode == StrictJSON);
         m_lexer.next();
-        JSValue result;
         VM& vm = getVM(m_globalObject);
-        if (m_mode == StrictJSON && reviverMode == JSONReviverMode::Disabled)
-            result = parseRecursivelyEntry(vm);
-        else {
-            result = parse(vm, StartParseStatement, nullptr);
-            if (m_lexer.currentToken()->type == TokSemi)
-                m_lexer.next();
-        }
+        JSValue result = parseRecursivelyEntry(vm);
         if (m_lexer.currentToken()->type != TokEnd)
             return JSValue();
         return result;
     }
 
     JSValue tryLiteralParse(JSONRanges* sourceRanges)
+        requires (reviverMode == JSONReviverMode::Enabled)
     {
+        ASSERT(m_mode == StrictJSON);
         m_lexer.next();
-        JSValue result = parse(getVM(m_globalObject), m_mode == StrictJSON ? StartParseExpression : StartParseStatement, sourceRanges);
+        JSValue result = parse(getVM(m_globalObject), StartParseExpression, sourceRanges);
+        if (m_lexer.currentToken()->type != TokEnd)
+            return JSValue();
+        return result;
+    }
+
+    JSValue tryEval()
+        requires (reviverMode == JSONReviverMode::Disabled)
+    {
+        ASSERT(m_mode == SloppyJSON);
+        m_lexer.next();
+        VM& vm = getVM(m_globalObject);
+        JSValue result = evalRecursivelyEntry(vm);
         if (m_lexer.currentToken()->type == TokSemi)
             m_lexer.next();
         if (m_lexer.currentToken()->type != TokEnd)
@@ -178,6 +187,7 @@ public:
     }
 
     JSValue tryLiteralParsePrimitiveValue()
+        requires (reviverMode == JSONReviverMode::Disabled)
     {
         ASSERT(m_mode == StrictJSON);
         m_lexer.next();
@@ -191,7 +201,8 @@ public:
         return result;
     }
 
-    bool tryJSONPParse(Vector<JSONPData>&, bool needsFullSourceInfo);
+    bool tryJSONPParse(Vector<JSONPData>&, bool needsFullSourceInfo)
+        requires (reviverMode == JSONReviverMode::Disabled);
 
 private:
     class Lexer {
@@ -273,8 +284,9 @@ private:
     };
     
     class StackGuard;
-    JSValue parseRecursivelyEntry(VM&);
-    JSValue parseRecursively(VM&, uint8_t* stackLimit);
+    JSValue parseRecursivelyEntry(VM&) requires (reviverMode == JSONReviverMode::Disabled);
+    JSValue evalRecursivelyEntry(VM&) requires (reviverMode == JSONReviverMode::Disabled);
+    template<ParserMode> JSValue parseRecursively(VM&, uint8_t* stackLimit) requires (reviverMode == JSONReviverMode::Disabled);
     JSValue parse(VM&, ParserState, JSONRanges*);
 
     JSValue parsePrimitiveValue(VM&);

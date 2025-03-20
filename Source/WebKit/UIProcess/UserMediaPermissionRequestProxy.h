@@ -131,6 +131,10 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::UserMediaPermissionRequestProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::UserMediaPermissionRequest; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 namespace WTF {
 
 template<typename Type>

@@ -28,6 +28,7 @@
 #import "APITargetedElementRequest.h"
 #import "WKObject.h"
 #import "_WKTargetedElementRequest.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -39,6 +40,6 @@ template<> struct WrapperTraits<API::TargetedElementRequest> {
 
 @interface _WKTargetedElementRequest () <WKObject> {
 @package
-    API::ObjectStorage<API::TargetedElementRequest> _request;
+    AlignedStorage<API::TargetedElementRequest> _request;
 }
 @end

@@ -353,7 +353,27 @@ PASS :matrix_elementwise:type1="abstract-float";type2="bool"
 PASS :array_zero_value:case="i32"
 PASS :array_zero_value:case="f32"
 PASS :array_zero_value:case="u32"
-PASS :array_zero_value:case="valid_array"
+FAIL :array_zero_value:case="valid_array" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    8:58: error: cannot use override value in constant expression
+    8:46: error: 'array<u32, 2>' cannot be used as an element type of an array
+
+    ---- shader ----
+    override o : i32 = 1;
+        struct valid_S {
+          x : u32
+        }
+        struct invalid_S {
+          x : array<u32>
+        }
+        const x : array<array<u32, 2>, 2> = array<array<u32, 2>, 2>();
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
+    8:57: cannot use override value in constant expression
+    8:45: 'array<u32, 2>' cannot be used as an element type of an array
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :array_zero_value:case="invalid_rta"
 PASS :array_zero_value:case="invalid_override_array"
 PASS :array_zero_value:case="valid_struct"
@@ -362,7 +382,27 @@ PASS :array_zero_value:case="invalid_atomic"
 PASS :array_value:case="i32"
 PASS :array_value:case="f32"
 PASS :array_value:case="u32"
-PASS :array_value:case="valid_array"
+FAIL :array_value:case="valid_array" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    8:58: error: cannot use override value in constant expression
+    8:46: error: 'array<u32, 2>' cannot be used as an element type of an array
+
+    ---- shader ----
+    override o : i32 = 1;
+        struct valid_S {
+          x : u32
+        }
+        struct invalid_S {
+          x : array<u32>
+        }
+        const x : array<array<u32, 2>, 2> = array<array<u32, 2>, 2>(array(0,1), array(2,3));
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
+    8:57: cannot use override value in constant expression
+    8:45: 'array<u32, 2>' cannot be used as an element type of an array
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :array_value:case="invalid_rta"
 PASS :array_value:case="invalid_override_array"
 PASS :array_value:case="valid_struct"
@@ -462,4 +502,24 @@ PASS :must_use:ctor="array_abs";use=true
 PASS :must_use:ctor="array_abs";use=false
 PASS :must_use:ctor="array";use=true
 PASS :must_use:ctor="array";use=false
+PASS :partial_eval:eleTy="i32";compTy="array";stage="constant"
+PASS :partial_eval:eleTy="i32";compTy="array";stage="runtime"
+PASS :partial_eval:eleTy="i32";compTy="vec2";stage="constant"
+PASS :partial_eval:eleTy="i32";compTy="vec2";stage="runtime"
+PASS :partial_eval:eleTy="i32";compTy="vec3";stage="constant"
+PASS :partial_eval:eleTy="i32";compTy="vec3";stage="runtime"
+PASS :partial_eval:eleTy="i32";compTy="vec4";stage="constant"
+PASS :partial_eval:eleTy="i32";compTy="vec4";stage="runtime"
+PASS :partial_eval:eleTy="i32";compTy="S";stage="constant"
+PASS :partial_eval:eleTy="i32";compTy="S";stage="runtime"
+PASS :partial_eval:eleTy="u32";compTy="array";stage="constant"
+PASS :partial_eval:eleTy="u32";compTy="array";stage="runtime"
+PASS :partial_eval:eleTy="u32";compTy="vec2";stage="constant"
+PASS :partial_eval:eleTy="u32";compTy="vec2";stage="runtime"
+PASS :partial_eval:eleTy="u32";compTy="vec3";stage="constant"
+PASS :partial_eval:eleTy="u32";compTy="vec3";stage="runtime"
+PASS :partial_eval:eleTy="u32";compTy="vec4";stage="constant"
+PASS :partial_eval:eleTy="u32";compTy="vec4";stage="runtime"
+PASS :partial_eval:eleTy="u32";compTy="S";stage="constant"
+PASS :partial_eval:eleTy="u32";compTy="S";stage="runtime"
 

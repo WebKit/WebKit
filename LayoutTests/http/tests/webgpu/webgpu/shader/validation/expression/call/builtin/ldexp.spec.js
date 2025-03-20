@@ -84,11 +84,6 @@ beginSubcases().
 expand('a', (u) => fullRangeForType(kValidArgumentTypesA[u.typeA], 5)).
 expand('b', (u) => biasRange(kValidArgumentTypesA[u.typeA]))
 ).
-beforeAllSubcases((t) => {
-  if (scalarTypeOf(kValidArgumentTypesA[t.params.typeA]) === Type.f16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   const typeA = kValidArgumentTypesA[t.params.typeA];
   const bias = biasForType(scalarTypeOf(typeA));
@@ -113,6 +108,81 @@ fn((t) => {
     [typeA.create(t.params.a), typeB.create(t.params.b)],
     t.params.stage
   );
+});
+
+g.test('partial_values').
+desc('Validates e2 <= bias + 1 when e1 is a runtime value').
+params((u) =>
+u.
+combine('stage', ['constant', 'override', 'runtime']).
+combine('typeA', keysOf(kValidArgumentTypesA)).
+filter((t) => {
+  const ty = kValidArgumentTypesA[t.typeA];
+  const scalar = scalarTypeOf(ty);
+  return scalar !== Type.abstractInt && scalar !== Type.abstractFloat;
+}).
+expand('typeB', (u) => keysOf(supportedSecondArgTypes(u.typeA))).
+filter((t) => {
+  const ty = kValidArgumentTypesB[t.typeB];
+  const scalar = scalarTypeOf(ty);
+  return scalar !== Type.abstractInt && scalar !== Type.abstractFloat;
+}).
+beginSubcases().
+expandWithParams((p) => {
+  const ty = kValidArgumentTypesA[p.typeA];
+  const scalar = scalarTypeOf(ty);
+  const cases = [];
+  const bias = biasForType(scalar);
+  cases.push({ value: bias });
+  cases.push({ value: bias + 1 });
+  cases.push({ value: bias + 2 });
+  return cases;
+})
+// in_shader: Is the functino call statically accessed by the entry point?
+.combine('in_shader', [false, true])
+).
+fn((t) => {
+  const tyA = kValidArgumentTypesA[t.params.typeA];
+  const tyB = kValidArgumentTypesB[t.params.typeB];
+  const scalarB = scalarTypeOf(tyB);
+  const enable = `${tyA.requiresF16() ? 'enable f16;' : ''}`;
+  let bArg = '';
+  switch (t.params.stage) {
+    case 'constant':
+      bArg = `${tyB.create(t.params.value).wgsl()}`;
+      break;
+    case 'override':
+      bArg = `${tyB.toString()}(o_b)`;
+      break;
+    case 'runtime':
+      bArg = 'v_b';
+      break;
+  }
+  const wgsl = `
+${enable}
+override o_b : ${scalarB.toString()};
+fn foo() {
+  var v_b : ${tyB.toString()};
+  var v : ${tyA.toString()};
+  let tmp = ldexp(v, ${bArg});
+}`;
+
+  const bias = biasForType(scalarTypeOf(tyA));
+  const error = t.params.value > bias + 1;
+  const shader_error = error && t.params.stage === 'constant';
+  const pipeline_error = t.params.in_shader && error && t.params.stage === 'override';
+  t.expectCompileResult(!shader_error, wgsl);
+  if (!shader_error) {
+    const constants = {};
+    constants['o_b'] = t.params.value;
+    t.expectPipelineResult({
+      expectedResult: !pipeline_error,
+      code: wgsl,
+      constants,
+      reference: ['o_b'],
+      statements: t.params.in_shader ? ['foo();'] : []
+    });
+  }
 });
 
 const kArgCases = {

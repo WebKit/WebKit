@@ -31,6 +31,7 @@
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -56,21 +57,21 @@ public:
     }
     const URL& url() const final { return m_url; }
     const URL& cookieURL() const final { return url(); }
-    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final { return { }; };
+    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final { return { }; }
     String userAgent(const URL&) const final { return emptyString(); }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
 
-    void disableEval(const String&) final { };
-    void disableWebAssembly(const String&) final { };
-    void setRequiresTrustedTypes(bool) final { };
+    void disableEval(const String&) final { }
+    void disableWebAssembly(const String&) final { }
+    void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) final { }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { return nullptr; }
     SocketProvider* socketProvider() final { return nullptr; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final { }
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final { };
+    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final { }
 
-    SecurityOrigin& topOrigin() const final { return m_origin.get(); };
+    SecurityOrigin& topOrigin() const final { return m_origin.get(); }
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return { }; }
     std::optional<uint64_t> noiseInjectionHashSalt() const { return std::nullopt; }
@@ -79,7 +80,6 @@ public:
     void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
     EventTarget* errorEventTarget() final { return nullptr; };
 
-    std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
     std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final { return std::nullopt; }
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
 
@@ -117,7 +117,7 @@ private:
             return adoptRef(*new EmptyEventLoop(vm));
         }
 
-        MicrotaskQueue& microtaskQueue() final { return m_queue; };
+        MicrotaskQueue& microtaskQueue() final { return m_queue; }
 
     private:
         explicit EmptyEventLoop(JSC::VM& vm)

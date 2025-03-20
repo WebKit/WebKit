@@ -61,6 +61,8 @@ class IntPoint;
 class IntSize;
 class ScrollableArea;
 
+enum class CommandType: uint8_t;
+
 class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
 public:
     virtual ~AccessibilityObject();
@@ -391,9 +393,10 @@ public:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     virtual AXTextRuns textRuns() { return { }; }
     bool hasTextRuns() final { return textRuns().size(); }
-    TextEmissionBehavior emitTextAfterBehavior() const override { return TextEmissionBehavior::None; }
+    TextEmissionBehavior textEmissionBehavior() const override { return TextEmissionBehavior::None; }
     AXTextRunLineID listMarkerLineID() const override { return { }; }
     String listMarkerText() const override { return { }; }
+    FontOrientation fontOrientation() const final;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
@@ -442,6 +445,7 @@ public:
     static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }
     virtual RefPtr<Element> popoverTargetElement() const { return nullptr; }
+    virtual RefPtr<Element> commandForElement() const { return nullptr; }
     Element* actionElement() const override { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return { }; }
     LayoutRect elementRect() const override = 0;
@@ -542,7 +546,7 @@ public:
             addChild(*object, descend);
     }
     virtual bool canHaveChildren() const { return true; }
-    void updateChildrenIfNecessary() override;
+    virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { }
     virtual void setNeedsToUpdateSubtree() { }
     virtual void clearChildren();
@@ -756,7 +760,10 @@ public:
 #if PLATFORM(MAC)
     bool caretBrowsingEnabled() const final;
     void setCaretBrowsingEnabled(bool) final;
-#endif
+
+    AccessibilityChildrenVector allSortedLiveRegions() const final;
+    AccessibilityChildrenVector allSortedNonRootWebAreas() const final;
+#endif // PLATFORM(MAC)
 
     bool hasClickHandler() const override { return false; }
     AccessibilityObject* clickableSelfOrAncestor(ClickHandlerFilter filter = ClickHandlerFilter::ExcludeBody) const final { return Accessibility::clickableSelfOrAncestor(*this, filter); };
@@ -928,6 +935,8 @@ private:
 
     // Special handling of click point for links.
     IntPoint linkClickPoint();
+
+    virtual CommandType commandType() const;
 
 protected: // FIXME: Make the data members private.
     AccessibilityChildrenVector m_children;

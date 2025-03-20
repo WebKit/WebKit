@@ -44,7 +44,7 @@ bool DisplayUpdate::relevantForUpdateFrequency(FramesPerSecond preferredFramesPe
 
 TextStream& operator<<(TextStream& ts, const DisplayUpdate& update)
 {
-    ts << update.updateIndex << "/" << update.updatesPerSecond;
+    ts << update.updateIndex << '/' << update.updatesPerSecond;
     return ts;
 }
 

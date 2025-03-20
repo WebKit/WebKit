@@ -36,24 +36,23 @@
 namespace TestWebKitAPI {
 
 struct WebTransportServer::Data : public RefCounted<WebTransportServer::Data> {
-    static Ref<Data> create(Function<Task(ConnectionGroup)>&& connectionGroupHandler) { return adoptRef(*new Data(WTFMove(connectionGroupHandler))); }
-    Data(Function<Task(ConnectionGroup)>&& connectionGroupHandler)
+    static Ref<Data> create(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler) { return adoptRef(*new Data(WTFMove(connectionGroupHandler))); }
+    Data(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler)
         : connectionGroupHandler(WTFMove(connectionGroupHandler)) { }
 
-    Function<Task(ConnectionGroup)> connectionGroupHandler;
+    Function<ConnectionTask(ConnectionGroup)> connectionGroupHandler;
     RetainPtr<nw_listener_t> listener;
     Vector<ConnectionGroup> connectionGroups;
-    Vector<CoroutineHandle<Task::promise_type>> coroutineHandles;
+    Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
 };
 
-WebTransportServer::WebTransportServer(Function<Task(ConnectionGroup)>&& connectionGroupHandler)
+WebTransportServer::WebTransportServer(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler)
     : m_data(Data::create(WTFMove(connectionGroupHandler)))
 {
     auto configureWebTransport = [](nw_protocol_options_t options) {
         nw_webtransport_options_set_is_datagram(options, true);
         nw_webtransport_options_set_is_unidirectional(options, false);
-        // FIXME: Add a call to nw_webtransport_options_set_connection_max_sessions(options, 1)
-        // here when enabling tests after rdar://141009498 is available in OS builds.
+        nw_webtransport_options_set_connection_max_sessions(options, 1);
     };
 
     auto configureTLS = [](nw_protocol_options_t options) {

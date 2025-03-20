@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
     Exposed=(Window,Worker),
     SecureContext
 ]
-interface GPUBufferUsage {
+namespace GPUBufferUsage {
     const GPUFlagsConstant MAP_READ      = 0x0001;
     const GPUFlagsConstant MAP_WRITE     = 0x0002;
     const GPUFlagsConstant COPY_SRC      = 0x0004;

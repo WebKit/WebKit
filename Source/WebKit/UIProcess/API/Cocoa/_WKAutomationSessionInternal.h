@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebAutomationSession.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<WebAutomationSession> {
 
 @interface _WKAutomationSession () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebAutomationSession> _session;
+    AlignedStorage<WebKit::WebAutomationSession> _session;
 }
 @end

@@ -3,9 +3,9 @@
 **/export const description = `
 Validation tests for indexed draws accessing the index buffer.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsValidationTest {
   createIndexBuffer(indexData) {
     return this.makeBufferWithContents(new Uint32Array(indexData), GPUBufferUsage.INDEX);
   }
@@ -40,7 +40,7 @@ class F extends ValidationTest {
   }
 
   beginRenderPass(encoder) {
-    const colorAttachment = this.device.createTexture({
+    const colorAttachment = this.createTextureTracked({
       format: 'rgba8unorm',
       size: { width: 1, height: 1, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.RENDER_ATTACHMENT

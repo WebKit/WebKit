@@ -67,15 +67,15 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     // The File object depends solely on the extension to know the MIME type of the file.
     auto suffix = makeString('.', destinationExtension);
     auto [destinationPath, destinationFileHandle] = FileSystem::openTemporaryFile("tempImage"_s, suffix);
-    if (destinationFileHandle == FileSystem::invalidPlatformFileHandle) {
+    if (!destinationFileHandle) {
         RELEASE_LOG_ERROR(Images, "transcodeImage: Destination image could not be created: %s %s\n", path.utf8().data(), destinationUTI.utf8().data());
         return nullString();
     }
 
     CGDataConsumerCallbacks callbacks = {
         [](void* info, const void* buffer, size_t count) -> size_t {
-            auto handle = *static_cast<FileSystem::PlatformFileHandle*>(info);
-            return FileSystem::writeToFile(handle, unsafeMakeSpan(static_cast<const uint8_t*>(buffer), count));
+            auto& handle = *static_cast<FileSystem::FileHandle*>(info);
+            return handle.write(unsafeMakeSpan(static_cast<const uint8_t*>(buffer), count)).value_or(0);
         },
         nullptr
     };
@@ -87,12 +87,11 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
 
     if (!CGImageDestinationFinalize(destination.get())) {
         RELEASE_LOG_ERROR(Images, "transcodeImage: Image transcoding fails: %s %s\n", path.utf8().data(), destinationUTI.utf8().data());
-        FileSystem::closeFile(destinationFileHandle);
+        destinationFileHandle = { };
         FileSystem::deleteFile(destinationPath);
         return nullString();
     }
 
-    FileSystem::closeFile(destinationFileHandle);
     return destinationPath;
 }
 

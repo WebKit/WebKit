@@ -37,6 +37,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAsset;
@@ -47,7 +48,7 @@ OBJC_CLASS AVSampleBufferVideoRenderer;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
-typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 typedef struct __CVBuffer *CVOpenGLTextureRef;
 typedef struct OpaqueFigVideoTarget *FigVideoTargetRef;
 
@@ -132,7 +133,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setCDMSession(LegacyCDMSession*) override;
-    CDMSessionAVContentKeySession* cdmSession() const;
+    RefPtr<CDMSessionAVContentKeySession> cdmSession() const;
     void keyAdded() final;
 #endif
 
@@ -163,6 +164,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void setVideoTarget(const PlatformVideoTarget&) final;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    void sceneIdentifierDidChange() final;
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -319,6 +324,7 @@ private:
     MediaTime clampTimeToSensicalValue(const MediaTime&) const;
 
     void setShouldDisableHDR(bool) final;
+    void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
     void setShouldMaintainAspectRatio(bool) final;
 
@@ -385,7 +391,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Deque<RetainPtr<id>> m_sizeChangeObservers;
     Timer m_seekTimer;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    WeakPtr<CDMSessionAVContentKeySession> m_session;
+    ThreadSafeWeakPtr<CDMSessionAVContentKeySession> m_session;
 #endif
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

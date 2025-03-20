@@ -74,11 +74,6 @@ public:
     void clearRequestCountTracker() { m_requestCountTracker = std::nullopt; }
     void resetRequestCountTracker(CachedResourceLoader& loader, const CachedResource& resource) { m_requestCountTracker = RequestCountTracker { loader, resource }; }
 
-private:
-    SubresourceLoader(LocalFrame&, CachedResource&, const ResourceLoaderOptions&);
-
-    void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) final;
-
     void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
     void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler) final;
@@ -87,6 +82,11 @@ private:
     void didFail(const ResourceError&) final;
     void willCancel(const ResourceError&) final;
     void didCancel(LoadWillContinueInAnotherProcess) final;
+
+private:
+    SubresourceLoader(LocalFrame&, CachedResource&, const ResourceLoaderOptions&);
+
+    void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) final;
     
     void updateReferrerPolicy(const String&);
 

@@ -32,46 +32,19 @@
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "Microtask.h"
-#include "StrongInlines.h"
-#include "VMTrapsInlines.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-class JSMicrotask final : public Microtask {
-public:
-    static constexpr unsigned maxArguments = 4;
-    JSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
-    {
-        m_job.set(vm, job);
-        if (argument0 && !argument0.isUndefined())
-            m_arguments[0].set(vm, argument0);
-        if (argument1 && !argument1.isUndefined())
-            m_arguments[1].set(vm, argument1);
-        if (argument2 && !argument2.isUndefined())
-            m_arguments[2].set(vm, argument2);
-        if (argument3 && !argument3.isUndefined())
-            m_arguments[3].set(vm, argument3);
-    }
-
-private:
-    void run(JSGlobalObject*) final;
-
-    Strong<Unknown> m_job;
-    Strong<Unknown> m_arguments[maxArguments];
-};
-
-Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
-{
-    return adoptRef(*new JSMicrotask(vm, job, argument0, argument1, argument2, argument3));
-}
-
-void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
+void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier, JSValue job, std::span<const JSValue> arguments)
 {
     VM& vm = globalObject->vm();
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (UNLIKELY(!job.isObject()))
+        return;
 
     // If termination is issued, do not run microtasks. Otherwise, microtask should not care about exceptions.
     if (UNLIKELY(!scope.clearExceptionExceptTermination()))
@@ -82,13 +55,12 @@ void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier
         return;
     ASSERT(handlerCallData.type != CallData::Type::None);
 
-    MarkedArgumentBuffer handlerArguments;
-    handlerArguments.append(!argument0 ? jsUndefined() : argument0);
-    handlerArguments.append(!argument1 ? jsUndefined() : argument1);
-    handlerArguments.append(!argument2 ? jsUndefined() : argument2);
-    handlerArguments.append(!argument3 ? jsUndefined() : argument3);
-    if (UNLIKELY(handlerArguments.hasOverflowed()))
-        return;
+    unsigned count = 0;
+    for (auto argument : arguments) {
+        if (!argument)
+            break;
+        ++count;
+    }
 
     if (UNLIKELY(globalObject->hasDebugger())) {
         DeferTerminationForAWhile deferTerminationForAWhile(vm);
@@ -97,7 +69,7 @@ void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier
     }
 
     if (LIKELY(!vm.hasPendingTerminationException())) {
-        profiledCall(globalObject, ProfilingReason::Microtask, job, handlerCallData, jsUndefined(), handlerArguments);
+        profiledCall(globalObject, ProfilingReason::Microtask, job, handlerCallData, jsUndefined(), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data()), count });
         scope.clearExceptionExceptTermination();
     }
 
@@ -106,11 +78,6 @@ void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier
         globalObject->debugger()->didRunMicrotask(globalObject, identifier);
         scope.clearException();
     }
-}
-
-void JSMicrotask::run(JSGlobalObject* globalObject)
-{
-    runJSMicrotask(globalObject, identifier(), m_job.get(), m_arguments[0].get(), m_arguments[1].get(), m_arguments[2].get(), m_arguments[3].get());
 }
 
 } // namespace JSC

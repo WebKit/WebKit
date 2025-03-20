@@ -237,7 +237,7 @@ TEST(WebKit, LoadMoreThan4GB)
         return static_cast<uint8_t>('a');
     }));
 
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         if (path == "/"_s)

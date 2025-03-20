@@ -13,6 +13,7 @@ TESTS = \
     TestWithoutAttributes \
     TestWithoutUsingIPCConnection \
     TestWithSemaphore \
+    TestWithSpanOfConst \
     TestWithStream \
     TestWithStreamBatched \
     TestWithStreamBuffer \

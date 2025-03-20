@@ -4,10 +4,16 @@
 Test other buffer usage validation rules that are not tests in ./in_pass_encoder.spec.js.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../../common/util/util.js';
+import { MaxLimitsTestMixin } from '../../../../gpu_test.js';
 
-import { BufferResourceUsageTest, kAllBufferUsages } from './in_pass_encoder.spec.js';
+import {
 
-export const g = makeTestGroup(BufferResourceUsageTest);
+  BufferResourceUsageTest,
+  kAllBufferUsages,
+  skipIfStorageBuffersUsedAndNotAvailableInStages } from
+'./in_pass_encoder.spec.js';
+
+export const g = makeTestGroup(MaxLimitsTestMixin(BufferResourceUsageTest));
 
 const kBufferSize = 256;
 
@@ -94,6 +100,9 @@ unless((t) => {
 ).
 fn((t) => {
   const { usage0, usage1 } = t.params;
+
+  skipIfStorageBuffersUsedAndNotAvailableInStages(t, usage0, 'fragment', 1);
+  skipIfStorageBuffersUsedAndNotAvailableInStages(t, usage1, 'fragment', 1);
 
   const kUsages =
   GPUBufferUsage.UNIFORM |
@@ -282,6 +291,19 @@ unless(({ usage0, usage1, pass }) => {
 fn((t) => {
   const { usage0, usage1, pass } = t.params;
 
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage0,
+    pass === 'render' ? 'fragment' : 'compute',
+    1
+  );
+  skipIfStorageBuffersUsedAndNotAvailableInStages(
+    t,
+    usage1,
+    pass === 'render' ? 'fragment' : 'compute',
+    1
+  );
+
   const kUsages =
   GPUBufferUsage.COPY_SRC |
   GPUBufferUsage.COPY_DST |
@@ -328,15 +350,16 @@ fn((t) => {
       case 'uniform':
       case 'storage':
       case 'read-only-storage':{
-          const bindGroup = t.createBindGroupForTest(buffer, 0, usage, 'fragment');
           switch (pass) {
             case 'render':{
+                const bindGroup = t.createBindGroupForTest(buffer, 0, usage, 'fragment');
                 const renderPassEncoder = t.beginSimpleRenderPass(encoder);
                 renderPassEncoder.setBindGroup(0, bindGroup);
                 renderPassEncoder.end();
                 break;
               }
             case 'compute':{
+                const bindGroup = t.createBindGroupForTest(buffer, 0, usage, 'compute');
                 const computePassEncoder = encoder.beginComputePass();
                 computePassEncoder.setBindGroup(0, bindGroup);
                 computePassEncoder.end();

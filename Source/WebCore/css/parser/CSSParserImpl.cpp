@@ -34,7 +34,6 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValuesRule.h"
-#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParser.h"
@@ -60,6 +59,7 @@
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
 #include "CSSValueList.h"
+#include "CSSValuePair.h"
 #include "CSSVariableParser.h"
 #include "CSSViewTransitionRule.h"
 #include "ComputedStyleDependencies.h"
@@ -880,7 +880,7 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     auto fontFeatureValues = FontFeatureValues::create();
 
     for (auto& block : rules) {
-        if (auto* fontFeatureValuesBlockRule = dynamicDowncast<StyleRuleFontFeatureValuesBlock>(block.get()))
+        if (RefPtr fontFeatureValuesBlockRule = dynamicDowncast<StyleRuleFontFeatureValuesBlock>(block.get()))
             fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule->fontFeatureValuesType(), fontFeatureValuesBlockRule->tags());
     }
 
@@ -914,8 +914,8 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         if (!cssFontFamily)
             return fontFamilies;
         if (RefPtr families = dynamicDowncast<CSSValueList>(*cssFontFamily)) {
-            for (auto& item : *families)
-                append(downcast<CSSPrimitiveValue>(item));
+            for (Ref item : *families)
+                append(downcast<CSSPrimitiveValue>(item.get()));
             return fontFamilies;
         }
         if (RefPtr family = dynamicDowncast<CSSPrimitiveValue>(cssFontFamily.releaseNonNull()))
@@ -936,18 +936,18 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
 
     Vector<FontPaletteValues::OverriddenColor> overrideColors;
     if (auto overrideColorsValue = properties->getPropertyCSSValue(CSSPropertyOverrideColors)) {
-        const auto& list = downcast<CSSValueList>(*overrideColorsValue);
-        for (const auto& item : list) {
-            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item);
-            if (!pair.key().isInteger())
-                continue;
-            auto key = pair.key().resolveAsIntegerDeprecated<unsigned>();
-            auto color = CSSColorValue::absoluteColor(pair.color());
-            // Ignore non absolute color https://drafts.csswg.org/css-fonts/#override-color
+        overrideColors = WTF::compactMap(downcast<CSSValueList>(*overrideColorsValue), [](const auto& item) -> std::optional<FontPaletteValues::OverriddenColor> {
+            Ref pair = downcast<CSSValuePair>(item);
+            Ref first = pair->protectedFirst();
+            Ref second = pair->protectedSecond();
+
+            auto key = downcast<CSSPrimitiveValue>(first)->template resolveAsIntegerDeprecated<unsigned>();
+            auto color = CSSColorValue::absoluteColor(second);
             if (!color.isValid())
-                continue;
-            overrideColors.append(std::make_pair(key, color));
-        }
+                return { };
+
+            return { { key, WTFMove(color) } };
+        });
     }
 
     return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, WTFMove(fontFamilies), WTFMove(basePalette), WTFMove(overrideColors));
@@ -1265,13 +1265,13 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
     for (auto& property : declarations) {
         switch (property.id()) {
         case CSSPropertySyntax:
-            descriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
+            descriptor.syntax = Ref { downcast<CSSPrimitiveValue>(*property.value()) }->stringValue();
             continue;
         case CSSPropertyInherits:
             descriptor.inherits = property.value()->valueID() == CSSValueTrue;
             break;
         case CSSPropertyInitialValue:
-            descriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).asVariableData();
+            descriptor.initialValue = Ref { downcast<CSSCustomPropertyValue>(*property.value()) }->asVariableData();
             break;
         default:
             break;

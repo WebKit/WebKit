@@ -46,9 +46,10 @@
 #import "WKNSDictionary.h"
 #import "WKNavigationActionInternal.h"
 #import "WKOpenPanelParametersInternal.h"
+#import "WKScrollGeometry.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
-#import "WKUIDelegatePrivate.h"
+#import "WKUIDelegateInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
@@ -343,9 +344,14 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
         return completionHandler(nullptr);
 
     auto delegate = uiDelegate->m_delegate.get();
-    ASSERT(delegate);
+    if (!delegate)
+        return completionHandler(nullptr);
 
-    ASSERT(configuration->windowFeatures());
+    if (!configuration->windowFeatures()) {
+        ASSERT_NOT_REACHED();
+        return completionHandler(nullptr);
+    }
+
     auto apiWindowFeatures = API::WindowFeatures::create(*configuration->windowFeatures());
     auto openerInfo = configuration->openerInfo();
 

@@ -131,17 +131,17 @@ static WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorMix::Componen
 {
     ts << component.color;
     if (component.percentage)
-        ts << " " << component.percentage->value << "%";
+        ts << ' ' << component.percentage->value << '%';
     return ts;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorMix& colorMix)
 {
-    ts << "color-mix(";
-    ts << "in " << colorMix.colorInterpolationMethod;
-    ts << ", " << colorMix.mixComponents1;
-    ts << ", " << colorMix.mixComponents2;
-    ts << ")";
+    ts << "color-mix("_s;
+    ts << "in "_s << colorMix.colorInterpolationMethod;
+    ts << ", "_s << colorMix.mixComponents1;
+    ts << ", "_s << colorMix.mixComponents2;
+    ts << ')';
 
     return ts;
 }

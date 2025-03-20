@@ -49,7 +49,7 @@ private:
 
     bool computeIsIgnored() const final;
     AccessibilityRole determineAccessibilityRole() final;
-    bool childHasPseudoVisibleListItemMarkers(Node*);
+    bool childHasPseudoVisibleListItemMarkers(const Node*);
     void updateRoleAfterChildrenCreation() final { updateRole(); }
     AccessibilityRole determineAccessibilityRoleWithCleanChildren();
 };

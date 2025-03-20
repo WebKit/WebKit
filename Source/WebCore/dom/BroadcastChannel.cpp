@@ -249,24 +249,24 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
     if (m_isClosed)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, message = WTFMove(message)]() mutable {
-        if (m_isClosed || !scriptExecutionContext())
+    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [message = WTFMove(message)](auto& channel) mutable {
+        if (channel.m_isClosed || !channel.scriptExecutionContext())
             return;
 
-        auto* globalObject = scriptExecutionContext()->globalObject();
+        auto* globalObject = channel.scriptExecutionContext()->globalObject();
         if (!globalObject)
             return;
 
         auto& vm = globalObject->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        auto event = MessageEvent::create(*globalObject, WTFMove(message), scriptExecutionContext()->securityOrigin()->toString());
+        auto event = MessageEvent::create(*globalObject, WTFMove(message), channel.scriptExecutionContext()->securityOrigin()->toString());
         if (UNLIKELY(scope.exception())) {
             // Currently, we assume that the only way we can get here is if we have a termination.
             RELEASE_ASSERT(vm.hasPendingTerminationException());
             return;
         }
 
-        dispatchEvent(event.event);
+        channel.dispatchEvent(event.event);
     });
 }
 

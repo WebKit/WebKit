@@ -158,6 +158,13 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     }
 
     for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
+        auto& flexItemStyle = flexItem.style();
+
+        if (!flexItemStyle.flexBasis().isFixed()) {
+            // Note that percentage values of flex-basis are resolved against the flex item's containing block and if that containing block's size is indefinite, the used value for flex-basis is content.
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasIntrinsicFlexBasis, reasons, includeReasons);
+        }
+
         if (!is<RenderBlock>(flexItem) || flexItem.isFieldset() || flexItem.isRenderTextControl() || flexItem.isRenderTable())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedTypeOfRenderer, reasons, includeReasons);
 
@@ -173,16 +180,11 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         if (flexItem.isFlexibleBoxIncludingDeprecated())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNestedFlex, reasons, includeReasons);
 
-        auto& flexItemStyle = flexItem.style();
         if (!flexItemStyle.height().isFixed())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasNonFixedHeight, reasons, includeReasons);
 
         if (flexItemStyle.minHeight() != RenderStyle::initialMinSize() || flexItemStyle.maxHeight() != RenderStyle::initialMaxSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexWithNonInitialMinMaxHeight, reasons, includeReasons);
-
-        // Percentage values of flex-basis are resolved against the flex item's containing block and if that containing block's size is indefinite, the used value for flex-basis is content.
-        if (flexItemStyle.flexBasis().isIntrinsic() || (flexItemStyle.flexBasis().isPercent() && isColumnDirection))
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasIntrinsicFlexBasis, reasons, includeReasons);
 
         if (flexItemStyle.containsSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
@@ -364,10 +366,12 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
             if (!allowImagesToBreak)
                 return true;
             // FIXME: See RenderReplaced::computePreferredLogicalWidths where m_minPreferredLogicalWidth is set to 0.
-            auto isReplacedWithSpecialIntrinsicWidth = is<RenderReplaced>(renderer) && renderer.style().logicalMaxWidth().isPercentOrCalculated();
-            if (isReplacedWithSpecialIntrinsicWidth)
-                return true;
-            return false;
+            auto isReplacedWithSpecialIntrinsicWidth = [&] {
+                if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(renderer))
+                    return renderReplaced->style().logicalMaxWidth().isPercentOrCalculated();
+                return false;
+            };
+            return isReplacedWithSpecialIntrinsicWidth();
         };
         if (isNonSupportedFixedWidthContent())
             return false;

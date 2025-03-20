@@ -230,7 +230,6 @@ WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClientBase* c
 WK_EXPORT void WKPageSetPageInjectedBundleClient(WKPageRef page, const WKPageInjectedBundleClientBase* client);
 
 WK_EXPORT void WKPageSetFullScreenClientForTesting(WKPageRef page, const WKPageFullScreenClientBase* client);
-WK_EXPORT void WKPageDidEnterFullScreen(WKPageRef pageRef);
 WK_EXPORT void WKPageRequestExitFullScreen(WKPageRef pageRef);
 
 // A client can implement either a navigation client or loader and policy clients, but never both.

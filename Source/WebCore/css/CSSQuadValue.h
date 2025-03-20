@@ -32,6 +32,10 @@ namespace WebCore {
 class CSSQuadValue final : public CSSValue {
 public:
     static Ref<CSSQuadValue> create(Quad);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
 
     const Quad& quad() const { return m_quad; }
 
@@ -48,6 +52,26 @@ private:
 inline const Quad& CSSValue::quad() const
 {
     return downcast<CSSQuadValue>(*this).quad();
+}
+
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a)
+{
+    return CSSQuadValue::create(Quad { a, a, a, a });
+}
+
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b)
+{
+    return CSSQuadValue::create(Quad { a, b, a, b });
+}
+
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b, Ref<CSSValue> c)
+{
+    return CSSQuadValue::create(Quad { a, b, c, b });
+}
+
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b, Ref<CSSValue> c, Ref<CSSValue> d)
+{
+    return CSSQuadValue::create(Quad { WTFMove(a), WTFMove(b), WTFMove(c), WTFMove(d) });
 }
 
 } // namespace WebCore

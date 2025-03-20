@@ -45,60 +45,64 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Try to get the last cache if possible
-    size_t numberOfMatches = 0;
-    size_t startIndex = 0;
-    ([&]() ALWAYS_INLINE_LAMBDA {
-        if (regExp != m_lastRegExp.get())
-            return;
-        if (substring->substringBase() != m_lastSubstringBase.get())
-            return;
-        if (substring->substringOffset() != m_lastSubstringOffset)
-            return;
-        if (substring->length() < m_lastSubstringLength)
-            return;
-        numberOfMatches = m_lastNumberOfMatches;
-        startIndex = m_lastMatchEnd;
-    })();
+    const String& pattern = regExp->atom();
+    ASSERT(!pattern.isEmpty());
 
     JSString* substringBase = substring->substringBase();
     unsigned substringOffset = substring->substringOffset();
     unsigned substringLength = substring->length();
+
+    // Try to get the last cache if possible
+    size_t numberOfMatches = 0;
+    size_t startIndex = 0;
+    MatchResult lastResult { 0, pattern.length() };
+    ([&]() ALWAYS_INLINE_LAMBDA {
+        if (regExp != m_lastRegExp.get())
+            return;
+        if (substringBase != m_lastSubstringBase.get())
+            return;
+        if (substringOffset != m_lastSubstringOffset)
+            return;
+        if (substringLength < m_lastSubstringLength)
+            return;
+        numberOfMatches = m_lastNumberOfMatches;
+        startIndex = m_lastMatchEnd;
+        lastResult = m_lastResult;
+    })();
+
     // Keep the substring info above since the following may resolve the substring to a non-rope.
     auto input = substring->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-
-    const String& pattern = regExp->atom();
-    ASSERT(!pattern.isEmpty());
 
     auto regExpMatch = [&]() ALWAYS_INLINE_LAMBDA {
         MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
         if (UNLIKELY(scope.exception()))
             return;
 
-        if (result) {
-            do {
-                if (UNLIKELY(numberOfMatches > MAX_STORAGE_VECTOR_LENGTH)) {
-                    throwOutOfMemoryError(globalObject, scope);
-                    return;
-                }
+        while (result) {
+            lastResult = result;
+            if (UNLIKELY(numberOfMatches > MAX_STORAGE_VECTOR_LENGTH)) {
+                throwOutOfMemoryError(globalObject, scope);
+                return;
+            }
 
-                numberOfMatches++;
-                startIndex = result.end;
-                if (result.empty())
-                    startIndex++;
+            numberOfMatches++;
+            startIndex = result.end;
+            if (result.empty())
+                startIndex++;
 
-                result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
-                if (UNLIKELY(scope.exception()))
-                    return;
-            } while (result);
+            result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
+            if (UNLIKELY(scope.exception()))
+                return;
         }
     };
 
+    bool oneCharacterMatch = false;
     if (pattern.is8Bit()) {
         if (input->is8Bit()) {
             if (pattern.length() == 1) {
                 if (input->length() >= startIndex) {
+                    oneCharacterMatch = true;
                     numberOfMatches += WTF::countMatchedCharacters(input->span8().subspan(startIndex), pattern.span8()[0]);
                     startIndex = input->length(); // Because the pattern atom is one character, it is ensured that we no longer find anything until this input string's end.
                 }
@@ -110,6 +114,7 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
         } else {
             if (pattern.length() == 1) {
                 if (input->length() >= startIndex) {
+                    oneCharacterMatch = true;
                     numberOfMatches += WTF::countMatchedCharacters(input->span16().subspan(startIndex), pattern.characterAt(0));
                     startIndex = input->length(); // Because the pattern atom is one character, it is ensured that we no longer find anything until this input string's end.
                 }
@@ -127,6 +132,7 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
         } else {
             if (pattern.length() == 1) {
                 if (input->length() >= startIndex) {
+                    oneCharacterMatch = true;
                     numberOfMatches += WTF::countMatchedCharacters(input->span16().subspan(startIndex), pattern.characterAt(0));
                     startIndex = input->length(); // Because the pattern atom is one character, it is ensured that we no longer find anything until this input string's end.
                 }
@@ -150,6 +156,9 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
     JSArray* array = createPatternFilledArray(globalObject, jsString(vm, pattern), numberOfMatches);
     RETURN_IF_EXCEPTION(scope, { });
 
+    globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, substring, lastResult, oneCharacterMatch);
+    RETURN_IF_EXCEPTION(scope, { });
+
     // Cache
     {
         m_lastSubstringBase.set(vm, globalObject, substringBase);
@@ -159,6 +168,7 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
         m_lastRegExp.set(vm, globalObject, regExp);
         m_lastNumberOfMatches = numberOfMatches;
         m_lastMatchEnd = startIndex;
+        m_lastResult = lastResult;
     }
     return array;
 }

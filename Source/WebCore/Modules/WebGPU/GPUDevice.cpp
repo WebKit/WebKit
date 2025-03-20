@@ -389,11 +389,11 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         m_previouslyImportedExternalTexture.first = *videoElement;
         m_previouslyImportedExternalTexture.second = externalTexture.ptr();
         videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, scriptExecutionContext()));
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protectedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
+        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef = externalTexture](auto& gpuDevice) {
             if (!videoElementPtr)
                 return;
-            auto it = protectedThis->m_videoElementToExternalTextureMap.find(*videoElementPtr);
-            if (it == protectedThis->m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
+            auto it = gpuDevice.m_videoElementToExternalTextureMap.find(*videoElementPtr);
+            if (it == gpuDevice.m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
                 return;
 
             externalTextureRef->destroy();

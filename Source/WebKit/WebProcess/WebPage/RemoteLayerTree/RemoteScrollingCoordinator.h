@@ -105,6 +105,8 @@ private:
 
     WeakPtr<WebPage> m_webPage;
 
+    WebCore::PageIdentifier m_pageIdentifier;
+
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberBanding;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;

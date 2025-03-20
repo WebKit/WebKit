@@ -106,6 +106,15 @@ public:
         return create<ImageBufferType>(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
+    template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
+    static RefPtr<ImageBufferType> create(const FloatSize& size, const ImageBufferCreationContext& creationContext, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
+    {
+        auto backendParameters = backend->parameters();
+        auto parameters = Parameters { size, backendParameters.resolutionScale, backendParameters.colorSpace, backendParameters.pixelFormat, backendParameters.purpose };
+        auto backendInfo = populateBackendInfo<BackendType>(backendParameters);
+        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...);
+    }
+
     template<typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext& creationContext, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
     {
@@ -187,7 +196,7 @@ public:
 #if USE(SKIA)
     // During DisplayList recording a fence is created, so that we can wait until the SkSurface finished rendering
     // before we attempt to access the GPU resource from a secondary thread during replay (in threaded GPU painting mode).
-    void finishAcceleratedRenderingAndCreateFence();
+    bool finishAcceleratedRenderingAndCreateFence();
     void waitForAcceleratedRenderingFenceCompletion();
 
     const GrDirectContext* skiaGrContext() const;

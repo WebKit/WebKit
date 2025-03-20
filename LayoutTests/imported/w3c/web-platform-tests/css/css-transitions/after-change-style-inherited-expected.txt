@@ -1,0 +1,8 @@
+
+FAIL Start .inner transition based on inherited after-change color from .outer (lime) assert_equals: .inner halfway between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+FAIL Start .inner transition based on inherited after-change background-color from .outer (lime) assert_equals: .inner halfway between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+PASS Initial computed styles
+FAIL Start inner transitions based on inherited after-change color and word-spacing from two different ancestors assert_equals: .a3 color transitioning between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+FAIL @starting-style rules should not apply to after-change style assert_equals: .inner halfway between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+FAIL @container rules apply to after-change style assert_equals: .inner halfway between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+

@@ -20,9 +20,28 @@
 
 #pragma once
 
+#include "JSGlobalObject.h"
 #include "RegExpPrototype.h"
 
 namespace JSC {
+
+ALWAYS_INLINE bool regExpTestWatchpointIsValid(VM& vm, JSObject* thisObject)
+{
+    JSGlobalObject* globalObject = thisObject->globalObject();
+    RegExpPrototype* regExpPrototype = globalObject->regExpPrototype();
+
+    ASSERT(globalObject->regExpPrimordialPropertiesWatchpointSet().state() != ClearWatchpoint);
+    if (regExpPrototype != thisObject->getPrototypeDirect())
+        return false;
+
+    if (globalObject->regExpPrimordialPropertiesWatchpointSet().state() != IsWatched)
+        return false;
+
+    if (!thisObject->hasCustomProperties())
+        return true;
+
+    return thisObject->getDirectOffset(vm, vm.propertyNames->exec) == invalidOffset;
+}
 
 inline Structure* RegExpPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

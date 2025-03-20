@@ -475,20 +475,20 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
 static TextStream& operator<<(TextStream& ts, LengthType type)
 {
     switch (type) {
-    case LengthType::Auto: ts << "auto"; break;
-    case LengthType::Calculated: ts << "calc"; break;
-    case LengthType::Content: ts << "content"; break;
-    case LengthType::FillAvailable: ts << "fill-available"; break;
-    case LengthType::FitContent: ts << "fit-content"; break;
-    case LengthType::Fixed: ts << "fixed"; break;
-    case LengthType::Intrinsic: ts << "intrinsic"; break;
-    case LengthType::MinIntrinsic: ts << "min-intrinsic"; break;
-    case LengthType::MinContent: ts << "min-content"; break;
-    case LengthType::MaxContent: ts << "max-content"; break;
-    case LengthType::Normal: ts << "normal"; break;
-    case LengthType::Percent: ts << "percent"; break;
-    case LengthType::Relative: ts << "relative"; break;
-    case LengthType::Undefined: ts << "undefined"; break;
+    case LengthType::Auto: ts << "auto"_s; break;
+    case LengthType::Calculated: ts << "calc"_s; break;
+    case LengthType::Content: ts << "content"_s; break;
+    case LengthType::FillAvailable: ts << "fill-available"_s; break;
+    case LengthType::FitContent: ts << "fit-content"_s; break;
+    case LengthType::Fixed: ts << "fixed"_s; break;
+    case LengthType::Intrinsic: ts << "intrinsic"_s; break;
+    case LengthType::MinIntrinsic: ts << "min-intrinsic"_s; break;
+    case LengthType::MinContent: ts << "min-content"_s; break;
+    case LengthType::MaxContent: ts << "max-content"_s; break;
+    case LengthType::Normal: ts << "normal"_s; break;
+    case LengthType::Percent: ts << "percent"_s; break;
+    case LengthType::Relative: ts << "relative"_s; break;
+    case LengthType::Undefined: ts << "undefined"_s; break;
     }
     return ts;
 }
@@ -503,7 +503,7 @@ TextStream& operator<<(TextStream& ts, Length length)
         ts << length.type();
         break;
     case LengthType::Fixed:
-        ts << TextStream::FormatNumberRespectingIntegers(length.value()) << "px";
+        ts << TextStream::FormatNumberRespectingIntegers(length.value()) << "px"_s;
         break;
     case LengthType::Relative:
     case LengthType::Intrinsic:
@@ -512,10 +512,10 @@ TextStream& operator<<(TextStream& ts, Length length)
     case LengthType::MaxContent:
     case LengthType::FillAvailable:
     case LengthType::FitContent:
-        ts << length.type() << " " << TextStream::FormatNumberRespectingIntegers(length.value());
+        ts << length.type() << ' ' << TextStream::FormatNumberRespectingIntegers(length.value());
         break;
     case LengthType::Percent:
-        ts << TextStream::FormatNumberRespectingIntegers(length.percent()) << "%";
+        ts << TextStream::FormatNumberRespectingIntegers(length.percent()) << '%';
         break;
     case LengthType::Calculated:
         ts << length.protectedCalculationValue();
@@ -523,7 +523,7 @@ TextStream& operator<<(TextStream& ts, Length length)
     }
     
     if (length.hasQuirk())
-        ts << " has-quirk";
+        ts << " has-quirk"_s;
 
     return ts;
 }

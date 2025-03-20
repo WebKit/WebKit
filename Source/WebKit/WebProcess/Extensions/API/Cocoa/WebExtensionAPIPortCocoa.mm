@@ -108,7 +108,7 @@ NSString *WebExtensionAPIPort::name()
 
 NSDictionary *WebExtensionAPIPort::sender()
 {
-    return m_senderParameters ? toWebAPI(m_senderParameters.value()) : nil;
+    return m_senderParameters ? toWebAPI(m_senderParameters.value(), extensionContext().baseURL()) : nil;
 }
 
 JSValue *WebExtensionAPIPort::error()

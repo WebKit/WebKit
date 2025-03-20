@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ FixedContainerEdgeSamplingEnabled=true useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui;
+        }
+
+        header {
+            text-align: center;
+            position: fixed;
+            top: 0px;
+            left: 0;
+            font-size: 32px;
+            width: 100%;
+            height: 250px;
+            background: rgb(255, 100, 0);
+            color: white;
+            overflow: hidden;
+            font-weight: bold;
+            letter-spacing: -6px;
+        }
+
+        .tall {
+            width: 10px;
+            height: 2000px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        let header = document.querySelector("header");
+        sampledTopColors = []
+        for (let i = 0; i < 10; ++i) {
+            header.style.top = `${i * 11 - 100}px`;
+            await UIHelper.ensurePresentationUpdate();
+            const edgeColors = await UIHelper.fixedContainerEdgeColors();
+            sampledTopColors.push(edgeColors?.top);
+        }
+
+        for (let i = 0; i < 10; ++i)
+            shouldBeEqualToString(`sampledTopColors[${i}]`, "rgb(255, 100, 0)");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<header>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</header>
+<div class="tall"></div>
+</body>
+</html>

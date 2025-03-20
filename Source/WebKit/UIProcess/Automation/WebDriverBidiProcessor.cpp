@@ -113,7 +113,7 @@ void WebDriverBidiProcessor::sendMessageToFrontend(const String& message)
 
 // MARK: Inspector::BrowsingContextDispatcherHandler methods.
 
-void WebDriverBidiProcessor::navigate(const BrowsingContext& browsingContext, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, Ref<NavigateCallback>&& callback)
+void WebDriverBidiProcessor::navigate(const BrowsingContext& browsingContext, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, CommandCallbackOf<String, String>&& callback)
 {
     RefPtr session = m_session.get();
     if (!session)

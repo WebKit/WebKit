@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "WebExtensionMatchPattern.h"
 #include <WebCore/FloatSize.h>
 #include <WebCore/Icon.h>
+#include <WebCore/UserContentTypes.h>
 #include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -168,11 +169,11 @@ public:
         MatchPatternSet includeMatchPatterns;
         MatchPatternSet excludeMatchPatterns;
 
-        InjectionTime injectionTime = InjectionTime::DocumentIdle;
+        InjectionTime injectionTime { InjectionTime::DocumentIdle };
+        WebCore::UserContentMatchParentFrame matchParentFrame { WebCore::UserContentMatchParentFrame::Never };
 
         String identifier { ""_s };
 
-        bool matchesAboutBlank { false };
         bool injectsIntoAllFrames { false };
         WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
         WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };

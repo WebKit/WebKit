@@ -29,6 +29,8 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "HTMLMediaElement.h"
+#include "JSDOMPromiseDeferred.h"
+#include "MediaKeySystemRequest.h"
 #include "WebKitMediaKeySession.h"
 #include <JavaScriptCore/Uint8Array.h>
 
@@ -103,7 +105,11 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
     m_sessions.append(session.copyRef());
 
     // 5. Schedule a task to initialize the session, providing contentType, initData, and the new object.
-    session->generateKeyRequest(type, WTFMove(initData));
+    auto request = MediaKeySystemRequest::create(document, m_keySystem, { });
+    request->setAllowCallback([session = session.copyRef(), type = type, initData = WTFMove(initData)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&) mutable {
+        session->generateKeyRequest(type, WTFMove(initData), mediaKeysHashSalt);
+    });
+    request->start();
 
     // 6. Return the new object to the caller.
     return session;

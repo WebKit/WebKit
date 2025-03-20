@@ -99,9 +99,7 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, ThreadedDis
     ASSERT(RunLoop::isMain());
 
     const auto& webPage = m_layerTreeHost->webPage();
-    m_attributes.viewportSize = webPage.size();
-    m_attributes.deviceScaleFactor = webPage.deviceScaleFactor();
-    m_attributes.viewportSize.scale(m_attributes.deviceScaleFactor);
+    updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
 
     m_surface->didCreateCompositingRunLoop(m_compositingRunLoop->runLoop());
 
@@ -116,7 +114,7 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, ThreadedDis
 
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
 #if !HAVE(DISPLAY_LINK)
-        m_display.updateTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &ThreadedCompositor::displayUpdateFired);
+        m_display.updateTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &ThreadedCompositor::displayUpdateFired);
 #if USE(GLIB_EVENT_LOOP)
         m_display.updateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
         m_display.updateTimer->setName("[WebKit] ThreadedCompositor::DisplayUpdate");
@@ -178,6 +176,7 @@ void ThreadedCompositor::invalidate()
     m_layerTreeHost = nullptr;
     m_surface->willDestroyCompositingRunLoop();
     m_compositingRunLoop = nullptr;
+    m_surface = nullptr;
 }
 
 void ThreadedCompositor::suspend()
@@ -226,9 +225,7 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
 {
     ASSERT(RunLoop::isMain());
     Locker locker { m_attributes.lock };
-    m_attributes.viewportSize = size;
-    m_attributes.deviceScaleFactor = deviceScaleFactor;
-    m_attributes.viewportSize.scale(m_attributes.deviceScaleFactor);
+    updateSceneAttributes(size, deviceScaleFactor);
 }
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -278,8 +275,16 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
         }
 
         const auto& damageSinceLastSurfaceUse = m_surface->addDamage(!frameDamage.isInvalid() && !frameDamage.isEmpty() ? frameDamage : Damage::invalid());
+        if (m_frameDamageHistory) {
+            // Passing damage rects through region to remove overlaps so that rects are more predictable from the testing perspective.
+            // In other words - the tests should test the damaged area - not the way it's stored internally.
+            m_frameDamageHistory->addDamage(std::make_pair(!frameDamage.isInvalid(), frameDamage.region()));
+        }
+
         if (!m_damageVisualizer && !damageSinceLastSurfaceUse.isInvalid() && !FloatRect(damageSinceLastSurfaceUse.bounds()).contains(clipRect))
             rectContainingRegionThatActuallyChanged = FloatRoundedRect(damageSinceLastSurfaceUse.bounds());
+        if (!m_damageVisualizer)
+            m_textureMapper->setDamage(damageSinceLastSurfaceUse);
     }
 #endif
 
@@ -389,8 +394,9 @@ void ThreadedCompositor::renderLayerTree()
 uint32_t ThreadedCompositor::requestComposition()
 {
     ASSERT(RunLoop::isMain());
+    uint32_t compositionRequestID = ++m_compositionRequestID;
     scheduleUpdate();
-    return ++m_compositionRequestID;
+    return compositionRequestID;
 }
 
 void ThreadedCompositor::scheduleUpdate()
@@ -466,6 +472,20 @@ void ThreadedCompositor::sceneUpdateFinished()
     m_compositingRunLoop->updateCompleted(stateLocker);
 }
 #endif // !HAVE(DISPLAY_LINK)
+
+#if ENABLE(DAMAGE_TRACKING)
+void ThreadedCompositor::resetFrameDamageHistory()
+{
+    m_frameDamageHistory = WTF::makeUnique<FrameDamageHistory>();
+}
+#endif
+
+void ThreadedCompositor::updateSceneAttributes(const IntSize& size, float deviceScaleFactor)
+{
+    m_attributes.viewportSize = size;
+    m_attributes.deviceScaleFactor = deviceScaleFactor;
+    m_attributes.viewportSize.scale(m_attributes.deviceScaleFactor);
+}
 
 }
 #endif // USE(COORDINATED_GRAPHICS)

@@ -28,6 +28,7 @@
 
 #include "SWContextManager.h"
 #include "ScriptExecutionContext.h"
+#include "ServiceWorkerDebuggable.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThreadProxy.h"
 #include "WorkerInspectorController.h"
@@ -35,6 +36,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -59,14 +61,14 @@ void ServiceWorkerInspectorProxy::serviceWorkerTerminated()
     m_channel = nullptr;
 }
 
-void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel)
+void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
     m_channel = &channel;
 
     RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get();
     SWContextManager::singleton().setAsInspected(serviceWorkerThreadProxy->identifier(), true);
-    serviceWorkerThreadProxy->thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
+    serviceWorkerThreadProxy->thread().runLoop().postDebuggerTask([isAutomaticConnection, immediatelyPause] (ScriptExecutionContext& context) {
+        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend(isAutomaticConnection, immediatelyPause);
     });
 }
 
@@ -82,7 +84,7 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
 
         // In case the worker is paused running debugger tasks, ensure we break out of
         // the pause since this will be the last debugger task we send to the worker.
-        downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
+        downcast<WorkerGlobalScope>(context).protectedThread()->stopRunningDebuggerTasks();
     });
 }
 

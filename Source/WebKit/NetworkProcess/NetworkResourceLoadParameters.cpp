@@ -65,7 +65,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier
     , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep
     , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
-    , std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier
+    , WebCore::FetchingWorkerIdentifier workerIdentifier
 #if ENABLE(CONTENT_EXTENSIONS)
     , URL&& mainDocumentURL
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier

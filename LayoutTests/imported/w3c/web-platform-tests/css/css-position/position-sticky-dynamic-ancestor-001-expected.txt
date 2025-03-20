@@ -1,0 +1,6 @@
+CONTENT
+SIDEBAR TOP STICKY
+SIDEBAR CONTENT
+
+PASS Dynamic sticky position change doesn't break inner sticky positioned items
+

@@ -36,7 +36,7 @@ setTimeout(async () => {
     content1 = accessibilityController.accessibleElementById("content1");
     // Don't crash accessing the text marker that references a stale Node.
     let index = content1.indexForTextMarker(marker);
-    output += expect("content1.isTextMarkerValid(marker)", "false");
+    output += await expectAsync("content1.isTextMarkerValid(marker)", "false");
 
     debug(output);
     finishJSTest();

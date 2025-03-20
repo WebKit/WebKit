@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SystemPreviewController.h"
@@ -248,11 +247,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
     };
 
 
-    ts << "view [class: " << allowListedClassToString(view) << "]";
+    ts << "view [class: "_s << allowListedClassToString(view) << ']';
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     if ([view isKindOfClass:[WKBaseScrollView class]]) {
-        ts.dumpProperty("scrolling behavior", makeString([(WKBaseScrollView *)view _scrollingBehavior]));
+        ts.dumpProperty("scrolling behavior"_s, makeString([(WKBaseScrollView *)view _scrollingBehavior]));
 
         auto rects = [(WKBaseScrollView *)view overlayRegionsForTesting];
         auto overlaysAsStrings = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
@@ -261,31 +260,31 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
         [overlaysAsStrings sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         for (NSString *overlayAsString in overlaysAsStrings.get())
-            ts.dumpProperty("overlay region", overlayAsString);
+            ts.dumpProperty("overlay region"_s, overlayAsString);
     }
 #endif
 
-    ts.dumpProperty("layer bounds", rectToString(view.layer.bounds));
+    ts.dumpProperty("layer bounds"_s, rectToString(view.layer.bounds));
     
     if (view.layer.position.x != 0 || view.layer.position.y != 0)
-        ts.dumpProperty("layer position", pointToString(view.layer.position));
+        ts.dumpProperty("layer position"_s, pointToString(view.layer.position));
     
     if (view.layer.zPosition != 0)
-        ts.dumpProperty("layer zPosition", makeString(view.layer.zPosition));
+        ts.dumpProperty("layer zPosition"_s, makeString(view.layer.zPosition));
     
     if (view.layer.anchorPoint.x != 0.5 || view.layer.anchorPoint.y != 0.5)
-        ts.dumpProperty("layer anchorPoint", pointToString(view.layer.anchorPoint));
+        ts.dumpProperty("layer anchorPoint"_s, pointToString(view.layer.anchorPoint));
     
     if (view.layer.anchorPointZ != 0)
-        ts.dumpProperty("layer anchorPointZ", makeString(view.layer.anchorPointZ));
+        ts.dumpProperty("layer anchorPointZ"_s, makeString(view.layer.anchorPointZ));
 
     if (view.layer.cornerRadius != 0.0)
-        ts.dumpProperty("layer cornerRadius", makeString(view.layer.cornerRadius));
+        ts.dumpProperty("layer cornerRadius"_s, makeString(view.layer.cornerRadius));
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (view.layer.separated) {
         TextStream::GroupScope scope(ts);
-        ts << "separated";
+        ts << "separated"_s;
         if (shouldDumpSeparatedDetails(view))
             dumpSeparatedLayerProperties(ts, view.layer);
     }
@@ -293,7 +292,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
     if (view.subviews.count > 0) {
         TextStream::GroupScope scope(ts);
-        ts << "subviews";
+        ts << "subviews"_s;
         for (UIView *subview in view.subviews) {
             TextStream::GroupScope scope(ts);
             dumpUIView(ts, subview);
@@ -307,7 +306,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
     {
         TextStream::GroupScope scope(ts);
-        ts << "UIView tree root ";
+        ts << "UIView tree root "_s;
         dumpUIView(ts, self);
     }
 
@@ -335,85 +334,6 @@ static void dumpUIView(TextStream& ts, UIView *view)
 {
     // For subclasses to override.
     return nil;
-}
-
-- (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID
-{
-    if (!layerID)
-        return nil;
-    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
-    if (!layer)
-        return nil;
-
-    return @{
-        @"bounds" : @{
-            @"x" : @(layer.bounds.origin.x),
-            @"y" : @(layer.bounds.origin.x),
-            @"width" : @(layer.bounds.size.width),
-            @"height" : @(layer.bounds.size.height),
-
-        },
-        @"position" : @{
-            @"x" : @(layer.position.x),
-            @"y" : @(layer.position.y),
-        },
-        @"zPosition" : @(layer.zPosition),
-        @"anchorPoint" : @{
-            @"x" : @(layer.anchorPoint.x),
-            @"y" : @(layer.anchorPoint.y),
-        },
-        @"anchorPointZ" : @(layer.anchorPointZ),
-        @"transform" : @{
-            @"m11" : @(layer.transform.m11),
-            @"m12" : @(layer.transform.m12),
-            @"m13" : @(layer.transform.m13),
-            @"m14" : @(layer.transform.m14),
-
-            @"m21" : @(layer.transform.m21),
-            @"m22" : @(layer.transform.m22),
-            @"m23" : @(layer.transform.m23),
-            @"m24" : @(layer.transform.m24),
-
-            @"m31" : @(layer.transform.m31),
-            @"m32" : @(layer.transform.m32),
-            @"m33" : @(layer.transform.m33),
-            @"m34" : @(layer.transform.m34),
-
-            @"m41" : @(layer.transform.m41),
-            @"m42" : @(layer.transform.m42),
-            @"m43" : @(layer.transform.m43),
-            @"m44" : @(layer.transform.m44),
-        },
-        @"sublayerTransform" : @{
-            @"m11" : @(layer.sublayerTransform.m11),
-            @"m12" : @(layer.sublayerTransform.m12),
-            @"m13" : @(layer.sublayerTransform.m13),
-            @"m14" : @(layer.sublayerTransform.m14),
-
-            @"m21" : @(layer.sublayerTransform.m21),
-            @"m22" : @(layer.sublayerTransform.m22),
-            @"m23" : @(layer.sublayerTransform.m23),
-            @"m24" : @(layer.sublayerTransform.m24),
-
-            @"m31" : @(layer.sublayerTransform.m31),
-            @"m32" : @(layer.sublayerTransform.m32),
-            @"m33" : @(layer.sublayerTransform.m33),
-            @"m34" : @(layer.sublayerTransform.m34),
-
-            @"m41" : @(layer.sublayerTransform.m41),
-            @"m42" : @(layer.sublayerTransform.m42),
-            @"m43" : @(layer.sublayerTransform.m43),
-            @"m44" : @(layer.sublayerTransform.m44),
-        },
-
-        @"hidden" : @(layer.hidden),
-        @"doubleSided" : @(layer.doubleSided),
-        @"masksToBounds" : @(layer.masksToBounds),
-        @"contentsScale" : @(layer.contentsScale),
-        @"rasterizationScale" : @(layer.rasterizationScale),
-        @"opaque" : @(layer.opaque),
-        @"opacity" : @(layer.opacity),
-    };
 }
 
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
@@ -530,6 +450,29 @@ static void dumpUIView(TextStream& ts, UIView *view)
     [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([strongSelf = retainPtr(self), updateBlock = makeBlockPtr(updateBlock)] {
         [strongSelf _doAfterNextStablePresentationUpdate:updateBlock.get()];
     }).get()];
+}
+
+- (void)_simulateModelInteractionPanGestureBeginAtPoint:(CGPoint)hitPoint
+{
+#if ENABLE(MODEL_PROCESS)
+    [_contentView _simulateModelInteractionPanGestureBeginAtPoint:hitPoint];
+#endif
+}
+
+- (void)_simulateModelInteractionPanGestureUpdateAtPoint:(CGPoint)hitPoint
+{
+#if ENABLE(MODEL_PROCESS)
+    [_contentView _simulateModelInteractionPanGestureUpdateAtPoint:hitPoint];
+#endif
+}
+
+- (NSDictionary *)_stageModeInfoForTesting
+{
+#if ENABLE(MODEL_PROCESS)
+    return [_contentView _stageModeInfoForTesting];
+#else
+    return @{ };
+#endif
 }
 
 @end

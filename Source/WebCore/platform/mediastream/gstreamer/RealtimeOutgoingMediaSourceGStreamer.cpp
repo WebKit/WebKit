@@ -86,7 +86,7 @@ void RealtimeOutgoingMediaSourceGStreamer::initialize()
     m_tee = gst_element_factory_make("tee", nullptr);
 
     m_rtpFunnel = gst_element_factory_make("rtpfunnel", nullptr);
-    if (gstObjectHasProperty(m_rtpFunnel.get(), "forward-unknown-ssrc"))
+    if (gstObjectHasProperty(m_rtpFunnel.get(), "forward-unknown-ssrc"_s))
         g_object_set(m_rtpFunnel.get(), "forward-unknown-ssrc", TRUE, nullptr);
 
     m_rtpCapsfilter = gst_element_factory_make("capsfilter", nullptr);

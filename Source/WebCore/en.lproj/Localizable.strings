@@ -88,6 +88,9 @@
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
 
+/* Label for PDF page number indicator. */
+"%1$d of %2$d" = "%1$d of %2$d";
+
 /* Codec Level (Codec Strings) */
 "%d.%d" = "%d.%d";
 
@@ -731,7 +734,7 @@
 "Host \"%s\" is invalid." = "Host \"%s\" is invalid.";
 
 /* Phishing warning description */
-"If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
+"This website was reported as deceptive by %provider-display-name%. If you believe this website is safe, you can %report-an-error% to %provider%. Or, if you understand the risks involved, you can %bypass-link%." = "This website was reported as deceptive by %provider-display-name%. If you believe this website is safe, you can %report-an-error% to %provider%. Or, if you understand the risks involved, you can %bypass-link%.";
 
 /* Action from safe browsing warning */
 "If you understand the risks involved, you can %visit-this-unsafe-site-link%." = "If you understand the risks involved, you can %visit-this-unsafe-site-link%.";

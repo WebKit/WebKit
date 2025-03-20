@@ -136,6 +136,45 @@ TEST(WKWebExtensionAPICommands, GetAllCommandsEmptyManifest)
     Util::loadAndRunExtension(emptyCommandsManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPICommands, GetAllCommandsEmptyManifestNoActionName)
+{
+    static auto *emptyCommandsNoActionNameManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Commands",
+        @"description": @"Test Commands",
+        @"version": @"1.0",
+
+        @"permissions": @[ @"webNavigation" ],
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"action": @{
+        },
+
+        @"commands": @{
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"let commands = await browser.commands.getAll()",
+        @"browser.test.assertEq(commands.length, 1, 'Should be one command.')",
+
+        @"let executeActionCommand = commands.find(command => command.name === '_execute_action')",
+
+        @"browser.test.assertTrue(!!executeActionCommand, '_execute_action command should exist')",
+        @"browser.test.assertEq(executeActionCommand.description, 'Test Commands', 'The description should be')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(emptyCommandsNoActionNameManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPICommands, CommandEvent)
 {
     auto *backgroundScript = Util::constructScript(@[

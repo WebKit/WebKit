@@ -41,14 +41,14 @@ TEST(WTF, ThreadingThreadIdentity)
     // Imitate 'foreign' threads that are not created by WTF.
     pthread_t pthread;
     pthread_create(&pthread, nullptr, [] (void*) -> void* {
-        thread1 = &Thread::current();
+        thread1 = &Thread::currentSingleton();
         thread1->ref();
         return nullptr;
     }, nullptr);
     pthread_join(pthread, nullptr);
 
     pthread_create(&pthread, nullptr, [] (void*) -> void* {
-        thread2 = &Thread::current();
+        thread2 = &Thread::currentSingleton();
         thread2->ref();
         return nullptr;
     }, nullptr);
@@ -57,8 +57,8 @@ TEST(WTF, ThreadingThreadIdentity)
     // Now create another thread using WTF. On OSX, it may have the same pthread handle
     // but should get a different RefPtr<Thread> if the previous RefPtr<Thread> is held.
     Thread::create("DumpRenderTree: test"_s, [] {
-        EXPECT_TRUE(thread1 != &Thread::current());
-        EXPECT_TRUE(thread2 != &Thread::current());
+        EXPECT_TRUE(thread1 != &Thread::currentSingleton());
+        EXPECT_TRUE(thread2 != &Thread::currentSingleton());
         EXPECT_TRUE(thread1 != thread2);
         thread1->deref();
         thread2->deref();

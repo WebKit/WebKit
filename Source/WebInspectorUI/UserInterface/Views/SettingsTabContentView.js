@@ -435,6 +435,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let sourcesGroup = experimentalSettingsView.addGroup(WI.UIString("Sources:"));
         sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
         sourcesGroup.addSetting(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion, WI.UIString("Use fuzzy matching for CSS code completion"));
+        sourcesGroup.addSetting(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline, WI.UIString("Limit number of resources in navigation sidebar"));
 
         experimentalSettingsView.addSeparator();
 
@@ -466,15 +467,21 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             }, reloadInspectorContainerElement);
         }
 
+        listenForChange(WI.settings.experimentalGroupSourceMapErrors);
+        listenForChange(WI.settings.experimentalShowCaseSensitiveAutocomplete);
+
         if (hasCSSDomain) {
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
+            listenForChange(WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage);
         }
 
         if (hasNetworkEmulatedCondition)
             listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
 
         listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
+        listenForChange(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
+        listenForChange(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline);
 
         if (hasTimelineDomain)
             listenForChange(WI.settings.experimentalEnableWorkerTimelineRecording);

@@ -34,115 +34,115 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
 {
     switch (appearance) {
     case StyleAppearance::None:
-        ts << "none";
+        ts << "none"_s;
         break;
     case StyleAppearance::Auto:
-        ts << "auto";
+        ts << "auto"_s;
         break;
     case StyleAppearance::Base:
-        ts << "base";
+        ts << "base"_s;
         break;
     case StyleAppearance::Checkbox:
-        ts << "checkbox";
+        ts << "checkbox"_s;
         break;
     case StyleAppearance::Radio:
-        ts << "radio";
+        ts << "radio"_s;
         break;
     case StyleAppearance::PushButton:
-        ts << "push-button";
+        ts << "push-button"_s;
         break;
     case StyleAppearance::SquareButton:
-        ts << "square-button";
+        ts << "square-button"_s;
         break;
     case StyleAppearance::Button:
-        ts << "button";
+        ts << "button"_s;
         break;
     case StyleAppearance::DefaultButton:
-        ts << "default-button";
+        ts << "default-button"_s;
         break;
     case StyleAppearance::Listbox:
-        ts << "listbox";
+        ts << "listbox"_s;
         break;
     case StyleAppearance::Menulist:
-        ts << "menulist";
+        ts << "menulist"_s;
         break;
     case StyleAppearance::MenulistButton:
-        ts << "menulist-button";
+        ts << "menulist-button"_s;
         break;
     case StyleAppearance::Meter:
-        ts << "meter";
+        ts << "meter"_s;
         break;
     case StyleAppearance::ProgressBar:
-        ts << "progress-bar";
+        ts << "progress-bar"_s;
         break;
     case StyleAppearance::SliderHorizontal:
-        ts << "slider-horizontal";
+        ts << "slider-horizontal"_s;
         break;
     case StyleAppearance::SliderVertical:
-        ts << "slider-vertical";
+        ts << "slider-vertical"_s;
         break;
     case StyleAppearance::SearchField:
-        ts << "searchfield";
+        ts << "searchfield"_s;
         break;
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
-        ts << "apple-pay-button";
+        ts << "apple-pay-button"_s;
         break;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
-        ts << "attachment";
+        ts << "attachment"_s;
         break;
     case StyleAppearance::BorderlessAttachment:
-        ts << "borderless-attachment";
+        ts << "borderless-attachment"_s;
         break;
 #endif
     case StyleAppearance::TextArea:
-        ts << "textarea";
+        ts << "textarea"_s;
         break;
     case StyleAppearance::TextField:
-        ts << "textfield";
+        ts << "textfield"_s;
         break;
     case StyleAppearance::ColorWell:
-        ts << "color-well";
+        ts << "color-well"_s;
         break;
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
-        ts << "image-controls-button";
+        ts << "image-controls-button"_s;
         break;
 #endif
     case StyleAppearance::InnerSpinButton:
-        ts << "inner-spin-button";
+        ts << "inner-spin-button"_s;
         break;
     case StyleAppearance::ListButton:
-        ts << "list-button";
+        ts << "list-button"_s;
         break;
     case StyleAppearance::SearchFieldDecoration:
-        ts << "searchfield-decoration";
+        ts << "searchfield-decoration"_s;
         break;
     case StyleAppearance::SearchFieldResultsDecoration:
-        ts << "searchfield-results-decoration";
+        ts << "searchfield-results-decoration"_s;
         break;
     case StyleAppearance::SearchFieldResultsButton:
-        ts << "searchfield-results-button";
+        ts << "searchfield-results-button"_s;
         break;
     case StyleAppearance::SearchFieldCancelButton:
-        ts << "searchfield-cancel-button";
+        ts << "searchfield-cancel-button"_s;
         break;
     case StyleAppearance::SliderThumbHorizontal:
-        ts << "sliderthumb-horizontal";
+        ts << "sliderthumb-horizontal"_s;
         break;
     case StyleAppearance::SliderThumbVertical:
-        ts << "sliderthumb-vertical";
+        ts << "sliderthumb-vertical"_s;
         break;
     case StyleAppearance::Switch:
-        ts << "switch";
+        ts << "switch"_s;
         break;
     case StyleAppearance::SwitchThumb:
-        ts << "switch-thumb";
+        ts << "switch-thumb"_s;
         break;
     case StyleAppearance::SwitchTrack:
-        ts << "switch-track";
+        ts << "switch-track"_s;
         break;
     }
     return ts;

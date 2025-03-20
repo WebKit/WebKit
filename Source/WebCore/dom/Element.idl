@@ -37,7 +37,7 @@
     [CEReactions=Needed, Reflect, Unscopable] attribute DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
-    [ImplementedAs=customElementRegistry, EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? customElements;
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? customElementRegistry;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();
     [SameObject, ImplementedAs=attributesMap] readonly attribute NamedNodeMap attributes;

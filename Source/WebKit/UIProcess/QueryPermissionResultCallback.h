@@ -53,3 +53,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::QueryPermissionResultCallback)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::QueryPermissionResultCallback; }
+SPECIALIZE_TYPE_TRAITS_END()

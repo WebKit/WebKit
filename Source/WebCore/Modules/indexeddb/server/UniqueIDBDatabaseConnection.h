@@ -55,6 +55,7 @@ public:
     UniqueIDBDatabase* database() { return m_database.get(); }
     UniqueIDBDatabaseManager* manager();
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
+    Ref<IDBConnectionToClient> protectedConnectionToClient();
 
     WEBCORE_EXPORT void connectionPendingCloseFromClient();
     WEBCORE_EXPORT void connectionClosedFromClient();
@@ -90,7 +91,7 @@ private:
 
     WeakPtr<UniqueIDBDatabase> m_database;
     WeakPtr<UniqueIDBDatabaseManager> m_manager;
-    Ref<IDBConnectionToClient> m_connectionToClient;
+    const Ref<IDBConnectionToClient> m_connectionToClient;
     IDBResourceIdentifier m_openRequestIdentifier;
 
     bool m_closePending { false };

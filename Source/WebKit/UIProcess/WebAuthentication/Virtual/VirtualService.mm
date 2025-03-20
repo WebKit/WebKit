@@ -73,7 +73,8 @@ void VirtualService::startDiscoveryInternal()
 {
 
     for (auto& authenticator : m_authenticators) {
-        if (!observer())
+        RefPtr observer = this->observer();
+        if (!observer)
             return;
         auto config = authenticator.second;
         auto authenticatorId = authenticator.first;
@@ -81,10 +82,10 @@ void VirtualService::startDiscoveryInternal()
         case WebCore::AuthenticatorTransport::Nfc:
         case WebCore::AuthenticatorTransport::Ble:
         case WebCore::AuthenticatorTransport::Usb:
-            observer()->authenticatorAdded(CtapAuthenticator::create(CtapHidDriver::create(VirtualHidConnection::create(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
+            observer->authenticatorAdded(CtapAuthenticator::create(CtapHidDriver::create(VirtualHidConnection::create(authenticatorId, config, WeakPtr { downcast<VirtualAuthenticatorManager>(*observer) })), authenticatorInfoForConfig(config)));
             break;
         case WebCore::AuthenticatorTransport::Internal:
-            observer()->authenticatorAdded(LocalAuthenticator::create(VirtualLocalConnection::create(config)));
+            observer->authenticatorAdded(LocalAuthenticator::create(VirtualLocalConnection::create(config)));
             break;
         default:
             UNIMPLEMENTED();

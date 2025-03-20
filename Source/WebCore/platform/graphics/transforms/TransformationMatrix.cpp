@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2020 Google Inc.  All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -219,10 +220,11 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
         return false;
 
     // Scale the adjoint matrix to get the inverse
+    double inverseDeterminant = 1 / determinant;
 
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
-            result[i][j] = result[i][j] / determinant;
+            result[i][j] = result[i][j] * inverseDeterminant;
 
     return true;
 }
@@ -375,7 +377,7 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
         perspectiveMatrix[i][3] = 0;
     perspectiveMatrix[3][3] = 1;
 
-    if (determinant4x4(perspectiveMatrix) == 0)
+    if (!std::isnormal(determinant4x4(perspectiveMatrix)))
         return false;
 
     // First, isolate perspective. This is the messiest.
@@ -918,7 +920,9 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     TransformationMatrix mat;
 
     // Optimize cases where the axis is along a major axis
-    if (x == 1.0 && y == 0.0 && z == 0.0) {
+    // Since we've already normalized the vector we don't need to check that the
+    // other two dimensions are zero
+    if (x == 1.0) {
         mat.m_matrix[0][0] = 1.0;
         mat.m_matrix[0][1] = 0.0;
         mat.m_matrix[0][2] = 0.0;
@@ -931,7 +935,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
         mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
         mat.m_matrix[3][3] = 1.0;
-    } else if (x == 0.0 && y == 1.0 && z == 0.0) {
+    } else if (y == 1.0) {
         mat.m_matrix[0][0] = cosTheta;
         mat.m_matrix[0][1] = 0.0;
         mat.m_matrix[0][2] = -sinTheta;
@@ -944,7 +948,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
         mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
         mat.m_matrix[3][3] = 1.0;
-    } else if (x == 0.0 && y == 0.0 && z == 1.0) {
+    } else if (z == 1.0) {
         mat.m_matrix[0][0] = cosTheta;
         mat.m_matrix[0][1] = sinTheta;
         mat.m_matrix[0][2] = 0.0;
@@ -1940,11 +1944,11 @@ TransformationMatrix TransformationMatrix::transpose() const
 TextStream& operator<<(TextStream& ts, const TransformationMatrix& transform)
 {
     TextStream::IndentScope indentScope(ts);
-    ts << "\n";
-    ts << indent << "[" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
-    ts << indent << "[" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
-    ts << indent << "[" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
-    ts << indent << "[" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "]";
+    ts << '\n';
+    ts << indent << '[' << transform.m11() << ' ' << transform.m12() << ' ' << transform.m13() << ' ' << transform.m14() << "]\n"_s;
+    ts << indent << '[' << transform.m21() << ' ' << transform.m22() << ' ' << transform.m23() << ' ' << transform.m24() << "]\n"_s;
+    ts << indent << '[' << transform.m31() << ' ' << transform.m32() << ' ' << transform.m33() << ' ' << transform.m34() << "]\n"_s;
+    ts << indent << '[' << transform.m41() << ' ' << transform.m42() << ' ' << transform.m43() << ' ' << transform.m44() << ']';
     return ts;
 }
 

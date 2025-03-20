@@ -101,6 +101,20 @@ void RemoteQueue::writeBuffer(
     completionHandler(true);
 }
 
+void RemoteQueue::writeBufferWithCopy(
+    WebGPUIdentifier buffer,
+    WebCore::WebGPU::Size64 bufferOffset,
+    Vector<uint8_t>&& data)
+{
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedBuffer = objectHeap->convertBufferFromBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
+        return;
+
+    protectedBacking()->writeBufferNoCopy(*convertedBuffer, bufferOffset, data.mutableSpan(), 0, std::nullopt);
+}
+
 void RemoteQueue::writeTexture(
     const WebGPU::ImageCopyTexture& destination,
     std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
@@ -123,6 +137,25 @@ void RemoteQueue::writeTexture(
 
     protectedBacking()->writeTexture(*convertedDestination, data ? data->mutableSpan() : std::span<uint8_t> { }, *convertedDataLayout, *convertedSize);
     completionHandler(true);
+}
+
+void RemoteQueue::writeTextureWithCopy(
+    const WebGPU::ImageCopyTexture& destination,
+    Vector<uint8_t>&& data,
+    const WebGPU::ImageDataLayout& dataLayout,
+    const WebGPU::Extent3D& size)
+{
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
+    ASSERT(convertedDestination);
+    auto convertedSize = objectHeap->convertFromBacking(size);
+    ASSERT(convertedSize);
+    if (!convertedDestination || !convertedDestination || !convertedSize)
+        return;
+
+    protectedBacking()->writeTexture(*convertedDestination, data.mutableSpan(), *convertedDataLayout, *convertedSize);
 }
 
 void RemoteQueue::copyExternalImageToTexture(

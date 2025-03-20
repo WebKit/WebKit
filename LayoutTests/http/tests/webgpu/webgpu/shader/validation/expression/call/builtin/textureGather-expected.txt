@@ -1499,56 +1499,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -1561,56 +1512,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cf32%3E";offsetType="u32"
@@ -1625,56 +1527,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -1687,56 +1540,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Ci32%3E";offsetType="u32"
@@ -1751,56 +1555,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -1813,56 +1568,7 @@ PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offset
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d";sampleType="vec4%3Cu32%3E";offsetType="u32"
@@ -1877,56 +1583,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -1939,56 +1596,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";offsetType="u32"
@@ -2003,56 +1611,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -2065,56 +1624,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";offsetType="u32"
@@ -2129,56 +1639,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -2191,56 +1652,7 @@ PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";offsetType="u32"
@@ -2255,56 +1667,7 @@ PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -2317,56 +1680,7 @@ PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";offsetType="u32"
@@ -2381,56 +1695,7 @@ PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf3
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="abstract-float"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="f16"
-FAIL :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -2443,56 +1708,7 @@ PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf3
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf32%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="i32"
-FAIL :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:397:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
- Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="u32"
@@ -2500,365 +1716,29 @@ PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf3
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec3%3Cu32%3E"
 PASS :offset_argument:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";offsetType="vec4%3Cu32%3E"
 PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cf32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cf32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cf32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<f32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cf32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cf32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Ci32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Ci32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Ci32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<i32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Ci32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Ci32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cu32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cu32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cu32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d<u32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cu32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d";sampleType="vec4%3Cu32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<f32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cf32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<i32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Ci32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_2d_array<u32>;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_2d_array";sampleType="vec4%3Cu32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_depth_2d";sampleType="vec4%3Cf32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";varType="u" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";varType="l" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_depth_2d_array;
-    @group(0) @binding(2) var<uniform> u: vec2<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec2(i32(0), i32(0));
-      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
-      return vec4f(0);
-    }
-
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:441:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_depth_2d_array";sampleType="vec4%3Cf32%3E";varType="l"
 PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_2d";offset=false
 PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_2d";offset=true
 PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_2d_array";offset=false

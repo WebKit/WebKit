@@ -79,7 +79,7 @@ public:
     };
 
     FilterFunction(Type, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    virtual ~FilterFunction() = default;
+    ~FilterFunction();
 
     Type filterType() const { return m_filterType; }
 

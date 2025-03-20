@@ -28,39 +28,46 @@
 
 #import "WKNSURLExtras.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKBackForwardListItem {
-    API::ObjectStorage<WebKit::WebBackForwardListItem> _item;
+    AlignedStorage<WebKit::WebBackForwardListItem> _item;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
+- (Ref<WebKit::WebBackForwardListItem>)_protectedItem
+{
+    return *_item;
+}
 
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardListItem.class, self))
         return;
 
-    _item->~WebBackForwardListItem();
+    self._protectedItem->~WebBackForwardListItem();
 
     [super dealloc];
 }
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:_item->url()];
+    return [NSURL _web_URLWithWTFString:self._protectedItem->url()];
 }
 
 - (NSString *)title
 {
-    if (!_item->title())
+    Ref item = *_item;
+    if (!item->title())
         return nil;
 
-    return _item->title();
+    return item->title();
 }
 
 - (NSURL *)initialURL
 {
-    return [NSURL _web_URLWithWTFString:_item->originalURL()];
+    return [NSURL _web_URLWithWTFString:self._protectedItem->originalURL()];
 }
 
 - (WebKit::WebBackForwardListItem&)_item
@@ -70,19 +77,20 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (CGImageRef)_copySnapshotForTesting
 {
-    if (auto snapshot = _item->snapshot())
+    if (RefPtr snapshot = _item->snapshot())
         return snapshot->asImageForTesting().leakRef();
     return nullptr;
 }
 
 - (CGPoint)_scrollPosition
 {
-    return CGPointMake(_item->mainFrameState()->scrollPosition.x(), _item->mainFrameState()->scrollPosition.y());
+    Ref item = *_item;
+    return CGPointMake(item->mainFrameState()->scrollPosition.x(), item->mainFrameState()->scrollPosition.y());
 }
 
 - (BOOL)_wasCreatedByJSWithoutUserInteraction
 {
-    return _item->wasCreatedByJSWithoutUserInteraction();
+    return self._protectedItem->wasCreatedByJSWithoutUserInteraction();
 }
 
 #pragma mark WKObject protocol implementation

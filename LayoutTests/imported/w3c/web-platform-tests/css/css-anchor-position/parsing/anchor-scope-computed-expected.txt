@@ -1,10 +1,12 @@
 
-FAIL Property anchor-scope value 'none' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope value 'initial' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope value 'all' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope value '--a' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope value '--a, --b' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope value '--a, --b, --c' assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope has initial value none assert_true: anchor-scope doesn't seem to be supported in the computed style expected true got false
-FAIL Property anchor-scope does not inherit assert_true: expected true got false
+PASS Property anchor-scope value 'none'
+PASS Property anchor-scope value 'initial'
+PASS Property anchor-scope value 'all'
+PASS Property anchor-scope value '--a'
+PASS Property anchor-scope value '--a, --b'
+PASS Property anchor-scope value '--a, --b, --c'
+PASS Property anchor-scope value '--foo, --bar'
+PASS Property anchor-scope value '--bar, --foo'
+PASS Property anchor-scope has initial value none
+PASS Property anchor-scope does not inherit
 

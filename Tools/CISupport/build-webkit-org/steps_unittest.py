@@ -839,7 +839,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         rc = self.runStep()
-        self.assertEqual([GenerateS3URL('ios-simulator-None-release-layout-test', extension='txt', content_type='text/plain'), UploadFileToS3('logs.txt', links={'layout-test': 'Full logs'}, content_type='text/plain')], next_steps)
+        self.assertEqual([GenerateS3URL('ios-simulator-None-release-layout-test',  additions='13', extension='txt', content_type='text/plain'), UploadFileToS3('logs.txt', links={'layout-test': 'Full logs'}, content_type='text/plain')], next_steps)
         return rc
 
     def test_warnings(self):
@@ -1033,6 +1033,8 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'debug')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
@@ -1044,7 +1046,9 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual([GenerateS3URL('ios-simulator-None-debug-layout-test',  additions='13-wk1', extension='txt', content_type='text/plain'), UploadFileToS3('logs.txt', links={'layout-test': 'Full logs'}, content_type='text/plain')], next_steps)
+        return rc
 
     def test_failure(self):
         self.configureStep()
@@ -1879,8 +1883,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None):
-        self.setupStep(GenerateS3URL(identifier, extension=extension, content_type=content_type))
+    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None, additions=None):
+        self.setupStep(GenerateS3URL(identifier, extension=extension, content_type=content_type, additions=additions))
         self.setProperty('archive_revision', '1234')
 
     def disabled_test_success(self):
@@ -1900,13 +1904,14 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             return self.runStep()
 
     def test_failure(self):
-        self.configureStep('ios-simulator-16-x86_64-debug')
+        self.configureStep('ios-simulator-16-x86_64-debug', additions='123')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/generate-s3-url',
                                               '--revision', '1234',
                                               '--identifier', 'ios-simulator-16-x86_64-debug',
                                               '--extension', 'zip',
+                                              '--additions', '123'
                                               ])
             + 2,
         )

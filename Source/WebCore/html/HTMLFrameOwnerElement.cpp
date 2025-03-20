@@ -111,8 +111,8 @@ WindowProxy* HTMLFrameOwnerElement::contentWindow() const
 void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
 {
     m_sandboxFlags = flags;
-    if (m_contentFrame)
-        m_contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
+    if (RefPtr contentFrame = m_contentFrame.get())
+        contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
 }
 
 bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -143,8 +143,8 @@ bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) co
 {
     // We allow one level of self-reference because some websites depend on that, but we don't allow more than one.
     bool foundOneSelfReference = false;
-    for (Frame* frame = document().frame(); frame; frame = frame->tree().parent()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr<Frame> frame = document().frame(); frame; frame = frame->tree().parent()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         // Use creationURL() because url() can be changed via History.replaceState() so it's not reliable.

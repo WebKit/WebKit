@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" style="position: fixed;" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill the whole canvas.
+              ctx.fillStyle = "green";
+              ctx.fillRect(0, 0, 50, 50);
+          },
+          () => {
+              // Resize.
+              canvas.width = 55;
+              canvas.height = 45;
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              // The expected area that changed on the screen is the union of canvas rect with old size and new size.
+              assertRectsEq(damage.rects, [[0, 0, 55, 45], [0, 45, 50, 5]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

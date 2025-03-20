@@ -119,12 +119,12 @@ function denormalizeColor(srcInternalFormat, destType, color) {
     case gl.RG8:
     case gl.RGB8:
     case gl.RGBA8:
-    case gl.RGB5_A1:
     case gl.SRGB8_ALPHA8:
     case gl.RGB10_A2:
       srcIsNormalized = true;
       tol = 6;
       break;
+    case gl.RGB5_A1:
     case gl.RGB565:
       // RGB565 needs slightly extra tolerance, at least on Google Pixel. crbug.com/682753
       srcIsNormalized = true;

@@ -266,13 +266,13 @@ void ScrollLatchingController::dump(WTF::TextStream& ts) const
 
     for (const auto& state : m_frameStateStack) {
         TextStream::GroupScope groupScope(multilineStream);
-        multilineStream.dumpProperty("frame", ValueOrNull(state.frame));
-        multilineStream.dumpProperty("element", ValueOrNull(state.wheelEventElement.get()));
-        multilineStream.dumpProperty("scrollable area", ValueOrNull(state.scrollableArea.get()));
-        multilineStream.dumpProperty("is over widget", state.isOverWidget);
+        multilineStream.dumpProperty("frame"_s, ValueOrNull(state.frame));
+        multilineStream.dumpProperty("element"_s, ValueOrNull(state.wheelEventElement.get()));
+        multilineStream.dumpProperty("scrollable area"_s, ValueOrNull(state.scrollableArea.get()));
+        multilineStream.dumpProperty("is over widget"_s, state.isOverWidget);
     }
 
-    ts << "ScrollLatchingController state " << multilineStream.release();
+    ts << "ScrollLatchingController state "_s << multilineStream.release();
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollLatchingController& controller)

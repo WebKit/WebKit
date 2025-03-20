@@ -1,12 +1,12 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = 'checkPixels helpers behave as expected against real textures';import { makeTestGroup } from '../../../common/framework/test_group.js';
-import { GPUTest } from '../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../gpu_test.js';
 
 import { TexelView } from './texel_view.js';
 import { textureContentIsOKByT2B } from './texture_ok.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('float32').
 desc(`Basic test that actual/expected must match, for float32.`).
@@ -39,12 +39,11 @@ fn(async (t) => {
   const { format, data, opts, _ok } = t.params;
 
   const size = [1, 1];
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format,
     size,
     usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC
   });
-  t.trackForCleanup(texture);
   t.device.queue.writeTexture({ texture }, new Float32Array([data, data, data, data]), {}, size);
 
   const expColor = { R: 0.6, G: 0.6, B: 0.6, A: 0.6 };
@@ -76,12 +75,11 @@ fn(async (t) => {
   const { mode, format, _maxValue, data, _ok } = t.params;
 
   const size = [2, 1];
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format,
     size,
     usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC
   });
-  t.trackForCleanup(texture);
   t.device.queue.writeTexture({ texture }, new Int8Array(data), {}, size);
 
   let expTexelView;
@@ -123,12 +121,11 @@ fn(async (t) => {
   const data = [-_maxValue, -_maxValue - 1];
 
   const size = [2, 1];
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format,
     size,
     usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC
   });
-  t.trackForCleanup(texture);
   t.device.queue.writeTexture({ texture }, new Int8Array(data), {}, size);
 
   let expTexelView;

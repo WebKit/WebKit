@@ -171,9 +171,16 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
     auto styleValues = styleValuesOrException.releaseReturnValue();
     for (auto& styleValue : styleValues) {
         if (is<CSSUnparsedValue>(styleValue.get()))
-            return Exception { ExceptionCode::TypeError, "Values cannot contain a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
-        if (auto cssValue = styleValue->toCSSValueWithProperty(propertyID))
-            list.append(cssValue.releaseNonNull());
+            return Exception { ExceptionCode::TypeError, "Values cannot contain a CSSUnparsedValue"_s };
+
+        auto cssValue = styleValue->toCSSValueWithProperty(propertyID);
+
+        if (!cssValue)
+            continue;
+        if (is<CSSVariableReferenceValue>(*cssValue))
+            return Exception { ExceptionCode::TypeError, "Values cannot contain a CSSVariableReferenceValue"_s };
+
+        list.append(cssValue.releaseNonNull());
     }
 
     if (!setProperty(propertyID, CSSValueList::create(CSSProperty::listValuedPropertySeparator(propertyID), WTFMove(list))))

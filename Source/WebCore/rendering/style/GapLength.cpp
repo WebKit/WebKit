@@ -38,7 +38,7 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, const GapLength& gapLength)
 {
     if (gapLength.isNormal())
-        ts << "normal";
+        ts << "normal"_s;
     else
         ts << gapLength.length();
     return ts;

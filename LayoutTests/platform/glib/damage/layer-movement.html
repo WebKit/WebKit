@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .layer {
+          position: fixed;
+          left: 10px;
+          top: 10px;
+          width: 50px;
+          height: 50px;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layer"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var layer = document.getElementsByClassName("layer")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Move layer without old/new overlap.
+              layer.style.left = "60px";
+              layer.style.top = "60px";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[10, 10, 50, 50], [60, 60, 50, 50]]);
+          },
+          () => {
+              // Move layer with old/new overlap.
+              layer.style.left = "20px";
+              layer.style.top = "20px";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[20, 20, 50, 40], [20, 60, 90, 10], [60, 70, 50, 40]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

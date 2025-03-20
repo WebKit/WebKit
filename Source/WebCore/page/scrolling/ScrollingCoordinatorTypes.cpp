@@ -76,12 +76,12 @@ FloatPoint RequestedScrollData::computeDestinationPosition(FloatPoint currentScr
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)
 {
     switch (reason) {
-    case SynchronousScrollingReason::ForcedOnMainThread: ts << "forced on main thread"; break;
-    case SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers: ts << "has viewport constrained objects without supporting fixed layers"; break;
-    case SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects: ts << "has non-layer viewport-constrained objects"; break;
-    case SynchronousScrollingReason::IsImageDocument: ts << "is image document"; break;
-    case SynchronousScrollingReason::HasSlowRepaintObjects: ts << "has slow repaint objects"; break;
-    case SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling: ts << "descendant scrollers have synchronous scrolling"; break;
+    case SynchronousScrollingReason::ForcedOnMainThread: ts << "forced on main thread"_s; break;
+    case SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers: ts << "has viewport constrained objects without supporting fixed layers"_s; break;
+    case SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects: ts << "has non-layer viewport-constrained objects"_s; break;
+    case SynchronousScrollingReason::IsImageDocument: ts << "is image document"_s; break;
+    case SynchronousScrollingReason::HasSlowRepaintObjects: ts << "has slow repaint objects"_s; break;
+    case SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling: ts << "descendant scrollers have synchronous scrolling"_s; break;
     }
 
     return ts;
@@ -91,34 +91,34 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
 {
     switch (nodeType) {
     case ScrollingNodeType::MainFrame:
-        ts << "main-frame-scrolling";
+        ts << "main-frame-scrolling"_s;
         break;
     case ScrollingNodeType::Subframe:
-        ts << "subframe-scrolling";
+        ts << "subframe-scrolling"_s;
         break;
     case ScrollingNodeType::FrameHosting:
-        ts << "frame-hosting";
+        ts << "frame-hosting"_s;
         break;
     case ScrollingNodeType::PluginScrolling:
-        ts << "plugin-scrolling";
+        ts << "plugin-scrolling"_s;
         break;
     case ScrollingNodeType::PluginHosting:
-        ts << "plugin-hosting";
+        ts << "plugin-hosting"_s;
         break;
     case ScrollingNodeType::Overflow:
-        ts << "overflow-scrolling";
+        ts << "overflow-scrolling"_s;
         break;
     case ScrollingNodeType::OverflowProxy:
-        ts << "overflow-scroll-proxy";
+        ts << "overflow-scroll-proxy"_s;
         break;
     case ScrollingNodeType::Fixed:
-        ts << "fixed";
+        ts << "fixed"_s;
         break;
     case ScrollingNodeType::Sticky:
-        ts << "sticky";
+        ts << "sticky"_s;
         break;
     case ScrollingNodeType::Positioned:
-        ts << "positioned";
+        ts << "positioned"_s;
         break;
     }
     return ts;
@@ -128,13 +128,13 @@ TextStream& operator<<(TextStream& ts, ScrollingLayerPositionAction action)
 {
     switch (action) {
     case ScrollingLayerPositionAction::Set:
-        ts << "set";
+        ts << "set"_s;
         break;
     case ScrollingLayerPositionAction::SetApproximate:
-        ts << "set approximate";
+        ts << "set approximate"_s;
         break;
     case ScrollingLayerPositionAction::Sync:
-        ts << "sync";
+        ts << "sync"_s;
         break;
     }
     return ts;
@@ -142,19 +142,19 @@ TextStream& operator<<(TextStream& ts, ScrollingLayerPositionAction action)
 
 TextStream& operator<<(TextStream& ts, const ScrollableAreaParameters& scrollableAreaParameters)
 {
-    ts.dumpProperty("horizontal scroll elasticity", scrollableAreaParameters.horizontalScrollElasticity);
-    ts.dumpProperty("vertical scroll elasticity", scrollableAreaParameters.verticalScrollElasticity);
-    ts.dumpProperty("horizontal scrollbar mode", scrollableAreaParameters.horizontalScrollbarMode);
-    ts.dumpProperty("vertical scrollbar mode", scrollableAreaParameters.verticalScrollbarMode);
+    ts.dumpProperty("horizontal scroll elasticity"_s, scrollableAreaParameters.horizontalScrollElasticity);
+    ts.dumpProperty("vertical scroll elasticity"_s, scrollableAreaParameters.verticalScrollElasticity);
+    ts.dumpProperty("horizontal scrollbar mode"_s, scrollableAreaParameters.horizontalScrollbarMode);
+    ts.dumpProperty("vertical scrollbar mode"_s, scrollableAreaParameters.verticalScrollbarMode);
 
     if (scrollableAreaParameters.allowsHorizontalScrolling)
-        ts.dumpProperty("allows horizontal scrolling", scrollableAreaParameters.allowsHorizontalScrolling);
+        ts.dumpProperty("allows horizontal scrolling"_s, scrollableAreaParameters.allowsHorizontalScrolling);
     if (scrollableAreaParameters.allowsVerticalScrolling)
-        ts.dumpProperty("allows vertical scrolling", scrollableAreaParameters.allowsVerticalScrolling);
+        ts.dumpProperty("allows vertical scrolling"_s, scrollableAreaParameters.allowsVerticalScrolling);
     if (scrollableAreaParameters.horizontalNativeScrollbarVisibility == NativeScrollbarVisibility::HiddenByStyle)
-        ts.dumpProperty("horizontal scrollbar hidden by style", scrollableAreaParameters.horizontalNativeScrollbarVisibility);
+        ts.dumpProperty("horizontal scrollbar hidden by style"_s, scrollableAreaParameters.horizontalNativeScrollbarVisibility);
     if (scrollableAreaParameters.verticalNativeScrollbarVisibility == NativeScrollbarVisibility::HiddenByStyle)
-        ts.dumpProperty("vertical scrollbar hidden by style", scrollableAreaParameters.verticalNativeScrollbarVisibility);
+        ts.dumpProperty("vertical scrollbar hidden by style"_s, scrollableAreaParameters.verticalNativeScrollbarVisibility);
 
     return ts;
 }
@@ -163,13 +163,13 @@ TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
 {
     switch (stability) {
     case ViewportRectStability::Stable:
-        ts << "stable";
+        ts << "stable"_s;
         break;
     case ViewportRectStability::Unstable:
-        ts << "unstable";
+        ts << "unstable"_s;
         break;
     case ViewportRectStability::ChangingObscuredInsetsInteractively:
-        ts << "changing obscured insets interactively";
+        ts << "changing obscured insets interactively"_s;
         break;
     }
     return ts;
@@ -177,17 +177,17 @@ TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
 
 TextStream& operator<<(TextStream& ts, WheelEventHandlingResult result)
 {
-    ts << "steps " << result.steps << " was handled " << result.wasHandled;
+    ts << "steps "_s << result.steps << " was handled "_s << result.wasHandled;
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
 {
     switch (steps) {
-    case WheelEventProcessingSteps::AsyncScrolling: ts << "async scrolling"; break;
-    case WheelEventProcessingSteps::SynchronousScrolling: ts << "synchronous scrolling"; break;
-    case WheelEventProcessingSteps::NonBlockingDOMEventDispatch: ts << "non-blocking DOM event dispatch"; break;
-    case WheelEventProcessingSteps::BlockingDOMEventDispatch: ts << "blocking DOM event dispatch"; break;
+    case WheelEventProcessingSteps::AsyncScrolling: ts << "async scrolling"_s; break;
+    case WheelEventProcessingSteps::SynchronousScrolling: ts << "synchronous scrolling"_s; break;
+    case WheelEventProcessingSteps::NonBlockingDOMEventDispatch: ts << "non-blocking DOM event dispatch"_s; break;
+    case WheelEventProcessingSteps::BlockingDOMEventDispatch: ts << "blocking DOM event dispatch"_s; break;
     }
     return ts;
 }
@@ -195,11 +195,11 @@ TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
 TextStream& operator<<(TextStream& ts, ScrollUpdateType type)
 {
     switch (type) {
-    case ScrollUpdateType::PositionUpdate: ts << "position update"; break;
-    case ScrollUpdateType::AnimatedScrollWillStart: ts << "animated scroll will start"; break;
-    case ScrollUpdateType::AnimatedScrollDidEnd: ts << "animated scroll did end"; break;
-    case ScrollUpdateType::WheelEventScrollWillStart: ts << "wheel event scroll will start"; break;
-    case ScrollUpdateType::WheelEventScrollDidEnd: ts << "wheel event scroll did end"; break;
+    case ScrollUpdateType::PositionUpdate: ts << "position update"_s; break;
+    case ScrollUpdateType::AnimatedScrollWillStart: ts << "animated scroll will start"_s; break;
+    case ScrollUpdateType::AnimatedScrollDidEnd: ts << "animated scroll did end"_s; break;
+    case ScrollUpdateType::WheelEventScrollWillStart: ts << "wheel event scroll will start"_s; break;
+    case ScrollUpdateType::WheelEventScrollDidEnd: ts << "wheel event scroll did end"_s; break;
     }
     return ts;
 }
@@ -207,45 +207,45 @@ TextStream& operator<<(TextStream& ts, ScrollUpdateType type)
 TextStream& operator<<(WTF::TextStream& ts, ScrollRequestType type)
 {
     switch (type) {
-    case ScrollRequestType::CancelAnimatedScroll: ts << "cancel animated scroll"; break;
-    case ScrollRequestType::PositionUpdate: ts << "position update"; break;
-    case ScrollRequestType::DeltaUpdate: ts << "delta update"; break;
+    case ScrollRequestType::CancelAnimatedScroll: ts << "cancel animated scroll"_s; break;
+    case ScrollRequestType::PositionUpdate: ts << "position update"_s; break;
+    case ScrollRequestType::DeltaUpdate: ts << "delta update"_s; break;
     }
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const RequestedScrollData& requestedScrollData)
 {
-    ts.dumpProperty("type", requestedScrollData.requestType);
+    ts.dumpProperty("type"_s, requestedScrollData.requestType);
 
     if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll)
         return ts;
 
     if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
-        ts.dumpProperty("scroll delta", std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
+        ts.dumpProperty("scroll delta"_s, std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
     else
-        ts.dumpProperty("position", std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
+        ts.dumpProperty("position"_s, std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
 
     if (requestedScrollData.scrollType == ScrollType::Programmatic)
-        ts.dumpProperty("is programmatic", requestedScrollData.scrollType);
+        ts.dumpProperty("is programmatic"_s, requestedScrollData.scrollType);
 
     if (requestedScrollData.clamping == ScrollClamping::Clamped)
-        ts.dumpProperty("clamping", requestedScrollData.clamping);
+        ts.dumpProperty("clamping"_s, requestedScrollData.clamping);
 
     if (requestedScrollData.animated == ScrollIsAnimated::Yes)
-        ts.dumpProperty("animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
+        ts.dumpProperty("animated"_s, requestedScrollData.animated == ScrollIsAnimated::Yes);
 
     if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
         auto oldType = std::get<0>(*requestedScrollData.requestedDataBeforeAnimatedScroll);
-        ts.dumpProperty("before-animated scroll type", oldType);
+        ts.dumpProperty("before-animated scroll type"_s, oldType);
 
         if (oldType == ScrollRequestType::DeltaUpdate)
-            ts.dumpProperty("before-animated scroll delta", std::get<FloatSize>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
+            ts.dumpProperty("before-animated scroll delta"_s, std::get<FloatSize>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
         else
-            ts.dumpProperty("before-animated scroll position", std::get<FloatPoint>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
+            ts.dumpProperty("before-animated scroll position"_s, std::get<FloatPoint>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
 
-        ts.dumpProperty("before-animated scroll programatic", std::get<2>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
-        ts.dumpProperty("before-animated scroll animated", std::get<3>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
+        ts.dumpProperty("before-animated scroll programatic"_s, std::get<2>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
+        ts.dumpProperty("before-animated scroll animated"_s, std::get<3>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
     }
 
     return ts;

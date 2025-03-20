@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        body {
+            cursor: default;
+        }
+        #element {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 100px;
+            height: 50px;
+            background-color: green;
+            cursor: pointer;
+            text-align: center;
+            line-height: 50px;
+        }
+    </style>
+</head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<body onload="moveElement()">
+    <div id="element"></div>
+    <div id="console"></div>
+    <script>
+        var jsTestIsAsync = true;
+        description("Test cursor change");
+        if (window.testRunner) 
+        {
+            testRunner.waitUntilDone();
+        }
+
+        function verifyCursor()
+        {
+            cursorInfo = window.internals.getCurrentCursorInfo();
+            currentCursorType = cursorInfo.substring(cursorInfo.indexOf('=') + 1, cursorInfo.lastIndexOf(' '));
+            shouldBeEqualToString('currentCursorType', 'Pointer');
+            if (window.testRunner) {
+                finishJSTest();
+                testRunner.notifyDone();
+            }
+        }
+
+        async function moveElement() 
+        {
+            if (!window.eventSender || !window.internals) {
+                    return;
+            }   
+            
+            eventSender.mouseMoveTo(110, 110);
+            const elem = document.getElementById("element");
+            elem.style.top = "200px";  
+            elem.style.left = "300px"; 
+            var cursorInfo = window.internals.getCurrentCursorInfo(document);
+            await UIHelper.renderingUpdate();
+            verifyCursor();       
+        } 
+    </script>
+</body>
+</html>
+

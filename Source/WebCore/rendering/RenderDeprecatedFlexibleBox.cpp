@@ -299,12 +299,37 @@ static void repaintChildrenDuringLayoutIfMoved(RenderDeprecatedFlexibleBox* box,
     ASSERT(childIndex == oldChildRects.size());
 }
 
+bool RenderDeprecatedFlexibleBox::hasClampingAndNoFlexing() const
+{
+    if (isHorizontal())
+        return false;
+    auto* firstChildBox = this->firstChildBox();
+    if (!firstChildBox || firstChildBox != lastChildBox() || firstChildBox->firstChild() != firstChildBox->lastChild() || !is<RenderText>(firstChildBox->firstChild()))
+        return false;
+    if (firstChildBox->style().hasOutOfFlowPosition())
+        return false;
+
+    auto& style = this->style();
+    if (style.lineClamp().isNone() || style.lineClamp().isPercentage())
+        return false;
+    if (!style.logicalHeight().isAuto() || !firstChildBox->style().logicalHeight().isAuto())
+        return false;
+    if (style.overflowX() != Overflow::Hidden || style.overflowY() != Overflow::Hidden)
+        return false;
+    if (style.boxAlign() != RenderStyle::initialBoxAlign() || !style.isLeftToRightDirection())
+        return false;
+    return true;
+}
+
 void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
+
+    if (hasClampingAndNoFlexing())
+        return layoutSingleClampedFlexItem();
 
     LayoutRepainter repainter(*this);
     {
@@ -693,6 +718,46 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
     // a height change, we revert our height back to the intrinsic height before returning.
     if (heightSpecified)
         setHeight(oldHeight);
+}
+
+void RenderDeprecatedFlexibleBox::layoutSingleClampedFlexItem()
+{
+    auto repainter = LayoutRepainter { *this };
+
+    updateLogicalWidth();
+    updateLogicalHeight();
+
+    beginUpdateScrollInfoAfterLayoutTransaction();
+
+    auto& clampedRendererCandidate = *firstChildBox();
+    clampedRendererCandidate.setLocation({ borderLeft() + paddingLeft(), borderTop() + paddingTop() });
+
+    auto iterator = FlexBoxIterator { this };
+    auto clampedContent = applyLineClamp(iterator, { });
+
+    clampedRendererCandidate.move(clampedRendererCandidate.marginLeft(), clampedRendererCandidate.marginTop());
+    auto childBoxBottom = clampedRendererCandidate.logicalTop() + clampedRendererCandidate.borderAndPaddingBefore() + clampedRendererCandidate.borderAndPaddingAfter();
+    if (clampedContent.renderer) {
+        ASSERT(&clampedRendererCandidate == clampedContent.renderer.get());
+        childBoxBottom += clampedContent.contentHeight;
+    } else
+        childBoxBottom += clampedRendererCandidate.contentBoxRect().height() + clampedRendererCandidate.marginBottom();
+
+    setHeight(childBoxBottom + paddingBottom() + borderBottom());
+    if (overridingBorderBoxLogicalHeight().has_value() || !style().logicalMinHeight().isAuto() || !style().logicalMaxHeight().isAuto())
+        updateLogicalHeight();
+
+    computeOverflow({ });
+
+    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+
+    updateLayerTransform();
+
+    updateScrollInfoAfterLayout();
+
+    repainter.repaintAfterLayout();
+
+    clearNeedsLayout();
 }
 
 void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChildren)

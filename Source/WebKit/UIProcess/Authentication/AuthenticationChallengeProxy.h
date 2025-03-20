@@ -60,7 +60,6 @@ public:
     WebProtectionSpace* protectionSpace() const;
 
     AuthenticationDecisionListener& listener() const { return m_listener.get(); }
-    Ref<AuthenticationDecisionListener> protectedListener() const;
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
@@ -73,7 +72,11 @@ private:
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
     mutable RefPtr<WebCredential> m_webCredential;
     mutable RefPtr<WebProtectionSpace> m_webProtectionSpace;
-    Ref<AuthenticationDecisionListener> m_listener;
+    const Ref<AuthenticationDecisionListener> m_listener;
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::AuthenticationChallengeProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::AuthenticationChallenge; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -45,7 +45,7 @@ WebDeviceOrientationAndMotionAccessController::WebDeviceOrientationAndMotionAcce
 
 void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    auto originData = SecurityOrigin::createFromString(page.pageLoadState().activeURL())->data();
+    auto originData = SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL())->data();
     auto currentPermission = cachedDeviceOrientationPermission(originData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);
@@ -57,11 +57,12 @@ void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPagePro
     if (pendingRequests.size() > 1)
         return;
 
-    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTFMove(frameInfo), [this, weakThis = WeakPtr { *this }, originData](bool granted) mutable {
-        if (!weakThis)
+    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTFMove(frameInfo), [weakThis = WeakPtr { *this }, originData](bool granted) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        m_deviceOrientationPermissionDecisions.set(originData, granted);
-        auto requests = m_pendingRequests.take(originData);
+        protectedThis->m_deviceOrientationPermissionDecisions.set(originData, granted);
+        auto requests = protectedThis->m_pendingRequests.take(originData);
         for (auto& completionHandler : requests)
             completionHandler(granted ? DeviceOrientationOrMotionPermissionState::Granted : DeviceOrientationOrMotionPermissionState::Denied);
     });
@@ -76,6 +77,23 @@ DeviceOrientationOrMotionPermissionState WebDeviceOrientationAndMotionAccessCont
     if (it == m_deviceOrientationPermissionDecisions.end())
         return DeviceOrientationOrMotionPermissionState::Prompt;
     return it->value ? DeviceOrientationOrMotionPermissionState::Granted : DeviceOrientationOrMotionPermissionState::Denied;
+}
+
+void WebDeviceOrientationAndMotionAccessController::setCachedDeviceOrientationPermission(const WebCore::SecurityOriginData& origin, DeviceOrientationOrMotionPermissionState state)
+{
+    if (!m_deviceOrientationPermissionDecisions.isValidKey(origin))
+        return;
+
+    switch (state) {
+    case DeviceOrientationOrMotionPermissionState::Granted:
+        m_deviceOrientationPermissionDecisions.set(origin, true);
+        return;
+    case DeviceOrientationOrMotionPermissionState::Denied:
+        m_deviceOrientationPermissionDecisions.set(origin, false);
+        return;
+    case DeviceOrientationOrMotionPermissionState::Prompt:
+        m_deviceOrientationPermissionDecisions.remove(origin);
+    }
 }
 
 void WebDeviceOrientationAndMotionAccessController::ref() const

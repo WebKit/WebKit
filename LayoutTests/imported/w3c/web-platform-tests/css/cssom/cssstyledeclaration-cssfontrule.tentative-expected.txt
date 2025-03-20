@@ -1,4 +1,3 @@
 
 PASS a CSSStyleDeclaration for a CSSFontRule contains a unicode-range attribute
-PASS a CSSStyleDeclaration for a CSSFontRule contains a flex-direction attribute
 

@@ -197,6 +197,8 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits->maxComputeWorkgroupsPerDimension(),
             limits->maxStorageBuffersInFragmentStage(),
             limits->maxStorageTexturesInFragmentStage(),
+            limits->maxStorageBuffersInVertexStage(),
+            limits->maxStorageTexturesInVertexStage(),
         }, adapter->isFallbackAdapter() } });
     });
 }

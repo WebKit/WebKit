@@ -6,8 +6,7 @@ FAIL :null_characters:contains_null=true;placement="comment" assert_unreached:
 
     ---- shader ----
     // Here is a \0 character
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/blankspace.spec.js:25:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
@@ -23,8 +22,7 @@ FAIL :null_characters:contains_null=true;placement="eol" assert_unreached:
 
     ---- shader ----
     const name : i32 = 0;\0
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/blankspace.spec.js:25:24
   - EXPECTATION FAILED: subcase:
     Expected validation error
@@ -54,7 +52,7 @@ FAIL :blankspace:blankspace=["%C2%85","next_line"] assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a Invalid
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :blankspace:blankspace=["%E2%80%8E","left_to_right_mark"] assert_unreached:
   - VALIDATION FAILED: subcase:
@@ -69,7 +67,7 @@ FAIL :blankspace:blankspace=["%E2%80%8E","left_to_right_mark"] assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a Invalid
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :blankspace:blankspace=["%E2%80%8F","right_to_left_mark"] assert_unreached:
   - VALIDATION FAILED: subcase:
@@ -84,7 +82,7 @@ FAIL :blankspace:blankspace=["%E2%80%8F","right_to_left_mark"] assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a Invalid
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :blankspace:blankspace=["%E2%80%A8","line_separator"] assert_unreached:
   - VALIDATION FAILED: subcase:
@@ -99,7 +97,7 @@ FAIL :blankspace:blankspace=["%E2%80%A8","line_separator"] assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a Invalid
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :blankspace:blankspace=["%E2%80%A9","paragraph_separator"] assert_unreached:
   - VALIDATION FAILED: subcase:
@@ -114,7 +112,7 @@ FAIL :blankspace:blankspace=["%E2%80%A9","paragraph_separator"] assert_unreached
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a Invalid
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :bom:include_bom=true
 PASS :bom:include_bom=false

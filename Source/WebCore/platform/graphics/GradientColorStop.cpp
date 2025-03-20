@@ -32,7 +32,7 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const GradientColorStop& stop)
 {
-    ts << stop.color << " at " << stop.offset;
+    ts << stop.color << " at "_s << stop.offset;
     return ts;
 }
 

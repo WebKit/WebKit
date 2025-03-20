@@ -74,13 +74,13 @@ std::unique_ptr<FilterEffectApplier> FEImage::createSoftwareApplier() const
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feImage";
+    ts << indent << "[feImage"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " image-size=\"" << m_sourceImageRect.width() << "x" << m_sourceImageRect.height() << "\"";
+    ts << " image-size=\""_s << m_sourceImageRect.width() << 'x' << m_sourceImageRect.height() << '"';
     // FIXME: should this dump also object returned by FEImage::image() ?
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

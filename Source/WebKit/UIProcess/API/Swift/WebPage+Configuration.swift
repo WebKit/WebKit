@@ -46,7 +46,7 @@ extension WebPage {
         /// scripts and other content.
         public var userContentController: WKUserContentController = WKUserContentController()
 
-        @_spi(Private)
+        /// The web extension controller to associate with the webpage.
         public var webExtensionController: WKWebExtensionController? = nil
 
         /// The default preferences to use when loading and rendering content.
@@ -92,10 +92,16 @@ extension WebPage {
         /// The default value of this property is `true`.
         public var loadsSubresources: Bool  = true
 
-        @_spi(Private)
+        /// Indicates whether inline predictions are allowed.
+        ///
+        /// The default value is `false`. If false, inline predictions are disabled regardless of the system setting.
+        /// If true, they are enabled based on the system setting.
         public var allowsInlinePredictions: Bool = false
 
-        @_spi(Private)
+        /// Indicates whether insertion of adaptive image glyphs is allowed.
+        ///
+        /// The default value is `false`. If `false`, adaptive image glyphs are inserted as regular images.
+        /// If `true`, they are inserted with the full adaptive sizing behavior.
         public var supportsAdaptiveImageGlyph: Bool = false
 
 #if os(iOS)
@@ -176,46 +182,6 @@ extension WebPage.Configuration {
 
         /// Use the native fullscreen controller.
         case alwaysFullscreen
-    }
-}
-
-// MARK: Adapters
-
-extension WKWebViewConfiguration {
-    convenience init(_ wrapped: WebPage.Configuration) {
-        self.init()
-
-        self.websiteDataStore = wrapped.websiteDataStore
-        self.userContentController = wrapped.userContentController
-        self.webExtensionController = wrapped.webExtensionController
-
-        self.defaultWebpagePreferences = WKWebpagePreferences(wrapped.defaultNavigationPreferences)
-
-        self.applicationNameForUserAgent = wrapped.applicationNameForUserAgent
-        self.limitsNavigationsToAppBoundDomains = wrapped.limitsNavigationsToAppBoundDomains
-        self.upgradeKnownHostsToHTTPS = wrapped.upgradeKnownHostsToHTTPS
-        self.suppressesIncrementalRendering = wrapped.suppressesIncrementalRendering
-        self.allowsInlinePredictions = wrapped.allowsInlinePredictions
-        self.supportsAdaptiveImageGlyph = wrapped.supportsAdaptiveImageGlyph
-        self._loadsSubresources = wrapped.loadsSubresources
-
-#if os(iOS)
-        self.dataDetectorTypes = wrapped.dataDetectorTypes
-        self.ignoresViewportScaleLimits = wrapped.ignoresViewportScaleLimits
-
-        if wrapped.mediaPlaybackBehavior != .automatic {
-            self.allowsInlineMediaPlayback = wrapped.mediaPlaybackBehavior == .allowsInlinePlayback
-        }
-#endif
-
-#if os(macOS)
-        self.userInterfaceDirectionPolicy = wrapped.userInterfaceDirectionPolicy
-#endif
-
-        for (scheme, handler) in wrapped.urlSchemeHandlers {
-            let handlerAdapter = WKURLSchemeHandlerAdapter(handler)
-            self.setURLSchemeHandler(handlerAdapter, forURLScheme: scheme.rawValue)
-        }
     }
 }
 

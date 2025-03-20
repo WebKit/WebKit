@@ -73,7 +73,7 @@ private:
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
     void trackIdentifierChanged(const String&) final;
 
-    Ref<GroupActivitiesSession> m_session;
+    const Ref<GroupActivitiesSession> m_session;
     RetainPtr<WKGroupActivitiesCoordinatorDelegate> m_delegate;
     RetainPtr<AVDelegatingPlaybackCoordinator> m_playbackCoordinator;
 

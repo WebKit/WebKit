@@ -709,6 +709,11 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't get the private key reference: %d", status);
             return;
         }
+        if (!privateKeyRef) {
+            receiveException({ ExceptionCode::UnknownError, makeString("privateKeyRef is null. status:"_s, status) });
+            RELEASE_LOG_ERROR(WebAuthn, "privateKeyRef is null. status: %d", status);
+            return;
+        }
         auto privateKey = adoptCF(privateKeyRef);
 
         NSMutableData *dataToSign = [NSMutableData dataWithBytes:authData.data() length:authData.size()];

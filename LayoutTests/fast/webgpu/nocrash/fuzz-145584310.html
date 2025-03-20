@@ -1,0 +1,182 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter();
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+    'timestamp-query',
+  ],
+  requiredLimits: {
+    maxStorageTexturesPerShaderStage: 4,
+    maxTextureDimension1D: 8192,
+    maxUniformBufferBindingSize: 2710603,
+    maxStorageBufferBindingSize: 156398292,
+  },
+});
+// START
+b = device0.createShaderModule({
+  code : ` 
+                    @group(0) @binding(231) var<storage, read_write> c: array<array<S0, 2> >;
+                    struct S0 {
+                   d: vec3u,   e: u32}
+                    @group(0) @binding(239) var<storage> f: array<array<array<vec2i, 1>, 12> >;
+                    fn g(v: u32) -> u32 {
+                 return v;
+                 }
+                    @compute @workgroup_size(1) fn h() 
+                   {
+                for (var i=c[6076][g(806475)].d[1];
+              i<u32(f[0][g(100753173)][0].r) ;
+              ) {}
+                }
+                   `
+})
+j = device0.createTexture({
+  size : [ 4, 4, 13 ],
+  format : 'bgra8unorm',
+  usage : GPUTextureUsage.TEXTURE_BINDING
+})
+k = j.createView({dimension : 'cube'})
+l = device0.createBindGroupLayout({
+  entries : [
+    {
+      binding : 0,
+      visibility : GPUShaderStage.VERTEX,
+      texture : {viewDimension : 'cube'}
+    },
+    {
+      binding : 1,
+      visibility : GPUShaderStage.FRAGMENT,
+      buffer : {type : 'storage', hasDynamicOffset : true}
+    },
+    {
+      binding : 3,
+      visibility : GPUShaderStage.FRAGMENT,
+      buffer : {type : 'storage'}
+    },
+    {
+      binding : 220,
+      visibility : GPUShaderStage.FRAGMENT,
+      buffer : {type : 'storage', hasDynamicOffset : true}
+    },
+    {
+      binding : 231,
+      visibility : GPUShaderStage.COMPUTE,
+      buffer : {type : 'storage'}
+    },
+    {
+      binding : 239,
+      visibility : GPUShaderStage.COMPUTE,
+      buffer : {type : 'read-only-storage'}
+    }
+  ]
+})
+m = device0.createPipelineLayout({bindGroupLayouts : [ l ]})
+n = device0.createCommandEncoder()
+o = device0.createComputePipeline({layout : m, compute : {module : b}})
+p = n.beginComputePass()
+try {
+  p.setPipeline(o)
+} catch {
+}
+q = device0.createBuffer({size : 72, usage : GPUBufferUsage.STORAGE})
+s = device0.createBuffer({size : 40, usage : GPUBufferUsage.STORAGE})
+buffer44 = device0.createBuffer({size : 284, usage : GPUBufferUsage.STORAGE})
+buffer48 = device0.createBuffer({size : 60, usage : GPUBufferUsage.STORAGE})
+t = device0.createBuffer({size : 088, usage : GPUBufferUsage.STORAGE})
+bindGroup9 = device0.createBindGroup({
+  layout : l,
+  entries : [
+    {binding : 3, resource : {buffer : buffer48}},
+    {binding : 239, resource : {buffer : buffer44}},
+    {binding : 1, resource : {buffer : s}},
+    {binding : 231, resource : {buffer : t}}, {binding : 0, resource : k},
+    {binding : 220, resource : {buffer : q}}
+  ]
+})
+try {
+  p.setBindGroup(0, bindGroup9, [ 0, 0 ])
+} catch {
+}
+try {
+  p.dispatchWorkgroups(1)
+} catch {
+}
+try {
+  p.end()
+} catch {
+}
+u = n.finish()
+try {
+  device0.queue.submit([ u ])
+} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

@@ -58,6 +58,7 @@ private:
     bool isActive() const;
     void scheduleNextResponsivenessCheck();
     ResponsivenessTimer::Client& client() const;
+    Ref<ResponsivenessTimer::Client> protectedClient() const { return client(); }
 
     WeakRef<WebProcessProxy> m_webProcessProxy;
     Seconds m_checkingInterval;

@@ -79,4 +79,8 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::InjectedBundleHitTestResult)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BundleHitTestResult; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // InjectedBundleHitTestResult_h

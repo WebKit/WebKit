@@ -280,8 +280,8 @@ private:
     String m_parsedRegionId;
 
     RefPtr<DocumentFragment> m_webVTTNodeTree;
-    Ref<HTMLSpanElement> m_cueHighlightBox;
-    Ref<HTMLDivElement> m_cueBackdropBox;
+    const Ref<HTMLSpanElement> m_cueHighlightBox;
+    const Ref<HTMLDivElement> m_cueBackdropBox;
     RefPtr<VTTCueBox> m_displayTree;
 #if ENABLE(SPEECH_SYNTHESIS)
     RefPtr<SpeechSynthesis> m_speechSynthesis;

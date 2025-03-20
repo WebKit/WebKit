@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -778,6 +778,19 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
     boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
 
     return boundingBox;
+}
+
+Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::platformBoundsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>& glyphs) const
+{
+    Vector<CGRect, inlineGlyphRunCapacity> rectsForGlyphs(glyphs.size());
+    CTFontGetBoundingRectsForGlyphs(getCTFont(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, glyphs.data(), rectsForGlyphs.data(), rectsForGlyphs.size());
+
+    return rectsForGlyphs.map<Vector<FloatRect, inlineGlyphRunCapacity>>([&](const auto& rect) -> auto {
+        FloatRect boundingBox(rect);
+        boundingBox.setY(-boundingBox.maxY());
+        boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
+        return boundingBox;
+    });
 }
 
 Path Font::platformPathForGlyph(Glyph glyph) const

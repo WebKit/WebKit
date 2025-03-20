@@ -95,6 +95,9 @@ public:
     void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
     void isInWindowFullscreenActiveChanged(bool);
+#if HAVE(PIP_SKIP_PREROLL)
+    void canSkipAdChnged(bool);
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(bool);
     void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&);
@@ -118,6 +121,10 @@ private:
     void togglePlayState() final;
     void beginScrubbing() final;
     void endScrubbing() final;
+#if HAVE(PIP_SKIP_PREROLL)
+    void skipAd() final;
+    void canSkipAdChanged(bool);
+#endif
     void seekToTime(double, double, double) final;
     void fastSeek(double time) final;
     void beginScanningForward() final;
@@ -131,6 +138,7 @@ private:
     void enterInWindowFullscreen() final;
     void exitInWindowFullscreen() final;
     void enterFullscreen() final;
+    void setPlayerIdentifierForVideoElement() final;
     void exitFullscreen() final;
     void toggleMuted() final;
     void setMuted(bool) final;
@@ -297,6 +305,9 @@ private:
     void volumeChanged(PlaybackSessionContextIdentifier, double volume);
     void pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool pictureInPictureSupported);
     void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool isInWindow);
+#if HAVE(PIP_SKIP_PREROLL)
+    void canSkipAdChanged(PlaybackSessionContextIdentifier, bool value);
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier, bool);
     void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
@@ -304,6 +315,9 @@ private:
 #endif
 
     // Messages to PlaybackSessionManager
+#if HAVE(PIP_SKIP_PREROLL)
+    void skipAd(PlaybackSessionContextIdentifier);
+#endif
     void play(PlaybackSessionContextIdentifier);
     void pause(PlaybackSessionContextIdentifier);
     void togglePlayState(PlaybackSessionContextIdentifier);
@@ -320,6 +334,7 @@ private:
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
+    void setPlayerIdentifierForVideoElement(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier);
     void enterInWindow(PlaybackSessionContextIdentifier);
     void exitInWindow(PlaybackSessionContextIdentifier);

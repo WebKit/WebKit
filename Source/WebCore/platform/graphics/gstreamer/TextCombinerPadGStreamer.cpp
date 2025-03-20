@@ -138,8 +138,10 @@ static void webkitTextCombinerPadConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_text_combiner_pad_parent_class)->constructed(object);
     gst_ghost_pad_construct(GST_GHOST_PAD(object));
+IGNORE_WARNINGS_BEGIN("cast-align")
     gst_pad_set_event_function(GST_PAD_CAST(object), webkitTextCombinerPadEvent);
     gst_pad_set_chain_function(GST_PAD_CAST(object), webkitTextCombinerPadChain);
+IGNORE_WARNINGS_END
 }
 
 static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klass)

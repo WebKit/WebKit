@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import <objc/runtime.h>
+#import <wtf/ApproximateTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
@@ -44,6 +45,65 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #endif
 
+template <size_t windowSize>
+struct ScrollingDeltaWindow {
+public:
+    static constexpr auto maxDeltaDuration = 100_ms;
+
+    void update(CGPoint contentOffset)
+    {
+        auto currentTime = ApproximateTime::now();
+        auto deltaDuration = currentTime - m_lastTimestamp;
+        if (deltaDuration > maxDeltaDuration)
+            reset();
+        else {
+            m_deltas[m_lastIndex] = {
+                CGSizeMake(contentOffset.x - m_lastOffset.x, contentOffset.y - m_lastOffset.y),
+                deltaDuration
+            };
+            m_lastIndex = ++m_lastIndex % windowSize;
+        }
+        m_lastTimestamp = currentTime;
+        m_lastOffset = contentOffset;
+    }
+
+    void reset()
+    {
+        for (auto& delta : m_deltas)
+            delta = { CGSizeZero, 0_ms };
+    }
+
+    CGSize averageVelocity() const
+    {
+        if (ApproximateTime::now() - m_lastTimestamp > maxDeltaDuration)
+            return CGSizeZero;
+
+        auto cumulativeDelta = CGSizeZero;
+        CGFloat numberOfDeltas = 0;
+        for (auto [delta, duration] : m_deltas) {
+            if (!duration)
+                continue;
+
+            cumulativeDelta.width += delta.width / duration.seconds();
+            cumulativeDelta.height += delta.height / duration.seconds();
+            numberOfDeltas += 1;
+        }
+
+        if (!numberOfDeltas)
+            return CGSizeZero;
+
+        cumulativeDelta.width /= numberOfDeltas;
+        cumulativeDelta.height /= numberOfDeltas;
+        return cumulativeDelta;
+    }
+
+private:
+    std::array<std::pair<CGSize, Seconds>, windowSize> m_deltas;
+    size_t m_lastIndex { 0 };
+    ApproximateTime m_lastTimestamp;
+    CGPoint m_lastOffset { CGPointZero };
+};
+
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
 
@@ -51,6 +111,7 @@
     RetainPtr<UIPanGestureRecognizer> _axisLockingPanGestureRecognizer;
     UIAxis _axesToPreventMomentumScrolling;
     BOOL _isBeingRemovedFromSuperview;
+    ScrollingDeltaWindow<3> _scrollingDeltaWindow;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::IntRect> _overlayRegionRects;
 #endif
@@ -177,6 +238,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
 
+- (void)updateInteractiveScrollVelocity
+{
+    if (!self.tracking && !self.decelerating)
+        return;
+
+    _scrollingDeltaWindow.update(self.contentOffset);
+}
+
+- (CGSize)interactiveScrollVelocityInPointsPerSecond
+{
+    return _scrollingDeltaWindow.averageVelocity();
+}
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 

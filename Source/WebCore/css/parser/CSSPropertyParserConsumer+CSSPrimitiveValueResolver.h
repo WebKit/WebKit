@@ -45,7 +45,7 @@ struct CSSPrimitiveValueResolverBase {
         return CSSPrimitiveValue::create(value.value, CSS::toCSSUnitType(value.unit));
     }
 
-    template<CSS::Range R, typename IntType> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<R, IntType> value, CSSPropertyParserOptions)
+    template<CSS::Range R, typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<R, T> value, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::createInteger(value.value);
     }
@@ -58,6 +58,25 @@ struct CSSPrimitiveValueResolverBase {
     static RefPtr<CSSPrimitiveValue> resolve(CSS::Numeric auto value, CSSPropertyParserOptions options)
     {
         return WTF::switchOn(WTFMove(value), [&](auto&& value) { return resolve(WTFMove(value), options); });
+    }
+
+    template<CSS::Range nR, CSS::Range pR, typename T> static RefPtr<CSSPrimitiveValue> resolve(const CSS::NumberOrPercentageResolvedToNumber<nR, pR, T>& value, CSSPropertyParserOptions options)
+    {
+        return WTF::switchOn(value,
+            [&](const CSS::Number<nR, T>& value) -> RefPtr<CSSPrimitiveValue> {
+                return resolve(value, options);
+            },
+            [&](const CSS::Percentage<pR, T>& value) -> RefPtr<CSSPrimitiveValue> {
+                return WTF::switchOn(value,
+                    [&](const CSS::Percentage<pR, T>::Raw& raw) -> RefPtr<CSSPrimitiveValue> {
+                        return CSSPrimitiveValue::create(raw.value / 100.0, CSSUnitType::CSS_NUMBER);
+                    },
+                    [&](const CSS::Percentage<pR, T>::Calc& calc) -> RefPtr<CSSPrimitiveValue> {
+                        return resolve(calc, options);
+                    }
+                );
+            }
+        );
     }
 };
 

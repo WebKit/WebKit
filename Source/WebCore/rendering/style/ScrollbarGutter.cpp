@@ -33,11 +33,11 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, ScrollbarGutter scrollbarGutter)
 {
     if (scrollbarGutter.isAuto)
-        ts << "auto";
+        ts << "auto"_s;
     else if (scrollbarGutter.bothEdges)
-        ts << "stable both-edges";
+        ts << "stable both-edges"_s;
     else
-        ts << "stable";
+        ts << "stable"_s;
     return ts;
 }
 

@@ -104,11 +104,11 @@ TextStream& operator<<(TextStream& ts, const GridPosition& o)
 {
     switch (o.type()) {
     case GridPositionType::AutoPosition:
-        return ts << "auto";
+        return ts << "auto"_s;
     case GridPositionType::ExplicitPosition:
-        return ts << o.namedGridLine() << " " << o.integerPosition();
+        return ts << o.namedGridLine() << ' ' << o.integerPosition();
     case GridPositionType::SpanPosition:
-        return ts << "span" << " " << o.namedGridLine() << " " << o.integerPosition();
+        return ts << "span"_s << ' ' << o.namedGridLine() << ' ' << o.integerPosition();
     case GridPositionType::NamedGridAreaPosition:
         return ts << o.namedGridLine();
     }

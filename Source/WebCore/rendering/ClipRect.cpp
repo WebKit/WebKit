@@ -41,14 +41,14 @@ bool ClipRect::intersects(const HitTestLocation& hitTestLocation) const
 
 TextStream& operator<<(TextStream& ts, const ClipRect& clipRect)
 {
-    ts << "rect ";
+    ts << "rect "_s;
     if (clipRect.isInfinite())
-        ts << "infinite";
+        ts << "infinite"_s;
     else
         ts << clipRect.rect();
 
     if (clipRect.affectedByRadius())
-        ts << " affected by radius";
+        ts << " affected by radius"_s;
     return ts;
 }
 

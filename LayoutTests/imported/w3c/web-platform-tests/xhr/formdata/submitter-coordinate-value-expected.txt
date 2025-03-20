@@ -1,0 +1,4 @@
+
+
+PASS dispatched event coordinates should match user intention coordinates
+

@@ -30,6 +30,7 @@
 #include <WPEToolingBackends/WindowViewBackend.h>
 #include <memory>
 #include <wpe/webkit.h>
+#include <wtf/Compiler.h>
 
 #if ENABLE_WPE_PLATFORM_HEADLESS
 #include <wpe/headless/wpe-headless.h>
@@ -40,7 +41,9 @@
 #endif
 
 #if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
+IGNORE_WARNINGS_BEGIN("cast-align")
 #include <gst/gst.h>
+IGNORE_WARNINGS_END
 #endif
 
 static const char** uriArguments;

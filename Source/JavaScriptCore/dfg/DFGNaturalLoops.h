@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 template <typename CFGKind>
 class NaturalLoops : public WTF::NaturalLoops<CFGKind> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(NaturalLoops);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(NaturalLoops);
 public:
     NaturalLoops(Graph& graph)
         : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), ensureDominatorsForCFG<CFGKind>(graph), validationEnabled())
@@ -45,7 +45,7 @@ public:
     }
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, NaturalLoops<CFGKind>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, NaturalLoops<CFGKind>);
 
 using SSANaturalLoop = WTF::NaturalLoop<SSACFG>;
 using CPSNaturalLoop = WTF::NaturalLoop<CPSCFG>;

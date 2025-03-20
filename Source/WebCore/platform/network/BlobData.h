@@ -53,6 +53,7 @@ public:
 
     // For Data type.
     DataSegment* data() const { return m_data.get(); }
+    RefPtr<DataSegment> protectedData() const { return m_data; }
 
     // For File type.
     BlobDataFileReference* file() const { return m_file.get(); }

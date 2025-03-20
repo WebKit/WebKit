@@ -30,5 +30,5 @@
     Conditional=USER_MESSAGE_HANDLERS,
     Exposed=Window
 ] interface UserMessageHandler {
-    Promise<any> postMessage(SerializedScriptValue message);
+    [CallWith=CurrentGlobalObject] Promise<any> postMessage(any message);
 };

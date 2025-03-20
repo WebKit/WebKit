@@ -55,7 +55,7 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
     double doubleValue = value.toNumber(globalObject);
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    if (!std::isnan(doubleValue) && !std::isinf(doubleValue)) {
+    if (std::isfinite(doubleValue)) {
         double truncedValue = trunc(doubleValue);
         if (truncedValue >= 0 && truncedValue <= UINT_MAX)
             return static_cast<uint32_t>(truncedValue);

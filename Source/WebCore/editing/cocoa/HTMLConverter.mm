@@ -2334,32 +2334,40 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 
 #endif
 
-
 static String preferredFilenameForElement(const HTMLImageElement& element)
 {
-    if (RefPtr attachmentElement = element.attachmentElement())
-        return attachmentElement->attachmentTitle();
+    if (RefPtr attachment = element.attachmentElement()) {
+        if (auto title = attachment->attachmentTitle(); !title.isEmpty())
+            return title;
+    }
 
     auto altText = element.altText();
 
     auto urlString = element.imageSourceURL();
 
-    NSURL *url = element.document().completeURL(urlString);
-    if (!url)
-        url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
+    auto suggestedName = [&] -> String {
+        RetainPtr url = static_cast<NSURL *>(element.document().completeURL(urlString));
+        if (!url)
+            url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 
-    RefPtr frame = element.document().frame();
-    if (frame->loader().frameHasLoaded()) {
-        RefPtr dataSource = frame->loader().documentLoader();
-        if (auto resource = dataSource->subresource(url)) {
-            auto& mimeType = resource->mimeType();
+        RefPtr frame = element.document().frame();
+        if (frame->loader().frameHasLoaded()) {
+            RefPtr dataSource = frame->loader().documentLoader();
+            if (RefPtr resource = dataSource->subresource(url.get())) {
+                auto& mimeType = resource->mimeType();
 
-            if (!altText.isEmpty())
-                return suggestedFilenameWithMIMEType(url, mimeType, altText);
+                if (!altText.isEmpty())
+                    return suggestedFilenameWithMIMEType(url.get(), mimeType, altText);
 
-            return suggestedFilenameWithMIMEType(url, mimeType);
+                return suggestedFilenameWithMIMEType(url.get(), mimeType);
+            }
         }
-    }
+
+        return { };
+    }();
+
+    if (!suggestedName.isEmpty())
+        return suggestedName;
 
     if (!altText.isEmpty())
         return altText;

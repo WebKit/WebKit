@@ -49,7 +49,7 @@ bool StyleFontData::operator==(const StyleFontData& o) const
 void StyleFontData::dumpDifferences(TextStream& ts, const StyleFontData& other) const
 {
     if (fontCascade != other.fontCascade)
-        ts << "fontCascade differs:\n  " << fontCascade << "\n  " << other.fontCascade;
+        ts << "fontCascade differs:\n  "_s << fontCascade << "\n  "_s << other.fontCascade;
 }
 #endif
 

@@ -51,10 +51,10 @@ Data::Data(std::span<const uint8_t> data)
     m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, data.size(), fastFree, copiedData));
 }
 
-Data::Data(GRefPtr<GBytes>&& buffer, FileSystem::PlatformFileHandle fd)
+Data::Data(GRefPtr<GBytes>&& buffer, FileSystem::FileHandle&& fileHandle)
     : m_buffer(WTFMove(buffer))
-    , m_fileDescriptor(fd)
-    , m_isMap(m_buffer && g_bytes_get_size(m_buffer.get()) && FileSystem::isHandleValid(fd))
+    , m_fileHandle(Box<FileSystem::FileHandle>::create(WTFMove(fileHandle)))
+    , m_isMap(m_buffer && g_bytes_get_size(m_buffer.get()) && m_fileHandle->isValid())
 {
 }
 
@@ -120,13 +120,7 @@ Data concatenate(const Data& a, const Data& b)
 struct MapWrapper {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    ~MapWrapper()
-    {
-        FileSystem::closeFile(fileDescriptor);
-    }
-
     FileSystem::MappedFileData mappedFile;
-    FileSystem::PlatformFileHandle fileDescriptor;
 };
 
 static void deleteMapWrapper(MapWrapper* wrapper)
@@ -134,14 +128,14 @@ static void deleteMapWrapper(MapWrapper* wrapper)
     delete wrapper;
 }
 
-Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
+Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& fileHandle)
 {
     size_t size = mappedFile.size();
     auto* map = mappedFile.span().data();
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
-    MapWrapper* wrapper = new MapWrapper { WTFMove(mappedFile), fd };
-    return { adoptGRef(g_bytes_new_with_free_func(map, size, reinterpret_cast<GDestroyNotify>(deleteMapWrapper), wrapper)), fd };
+    MapWrapper* wrapper = new MapWrapper { WTFMove(mappedFile) };
+    return { adoptGRef(g_bytes_new_with_free_func(map, size, reinterpret_cast<GDestroyNotify>(deleteMapWrapper), wrapper)), WTFMove(fileHandle) };
 }
 
 RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
@@ -149,10 +143,9 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    int fd = FileSystem::posixFileDescriptor(m_fileDescriptor);
     gsize length;
     const auto* data = g_bytes_get_data(m_buffer.get(), &length);
-    return WebCore::SharedMemory::wrapMap(const_cast<void*>(data), length, fd);
+    return WebCore::SharedMemory::wrapMap(const_cast<void*>(data), length, m_fileHandle->platformHandle());
 }
 
 } // namespace NetworkCache

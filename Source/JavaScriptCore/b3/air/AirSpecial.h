@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
 
@@ -42,6 +43,7 @@ struct GenerationContext;
 
 class Special {
     WTF_MAKE_NONCOPYABLE(Special);
+    // TODO: move AirSpecial.h to use SequesteredMalloc
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Special, JS_EXPORT_PRIVATE);
 public:
     static const char* const dumpPrefix;

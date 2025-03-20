@@ -56,7 +56,7 @@ private:
 
     Element& parentElement() { return *m_parentElement; }
 
-    Element* m_parentElement { nullptr };
+    RefPtr<Element> m_parentElement;
     const ContainerNode::ChildChange& m_childChange;
 
     const bool m_isEnabled;

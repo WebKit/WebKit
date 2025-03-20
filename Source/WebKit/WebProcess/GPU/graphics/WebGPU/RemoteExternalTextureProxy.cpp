@@ -67,10 +67,12 @@ void RemoteExternalTextureProxy::undestroy()
     UNUSED_VARIABLE(sendResult);
 }
 
+#if PLATFORM(COCOA)
 void RemoteExternalTextureProxy::updateExternalTexture(CVPixelBufferRef)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 } // namespace WebKit::WebGPU
 

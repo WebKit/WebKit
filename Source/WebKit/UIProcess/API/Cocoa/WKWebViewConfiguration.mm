@@ -120,9 +120,14 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebViewConfiguration.class, self))
         return;
 
-    _pageConfiguration->API::PageConfiguration::~PageConfiguration();
+    self._protectedPageConfiguration->API::PageConfiguration::~PageConfiguration();
 
     [super dealloc];
+}
+
+- (Ref<API::PageConfiguration>)_protectedPageConfiguration
+{
+    return *_pageConfiguration;
 }
 
 - (void)setAllowsInlinePredictions:(BOOL)enabled
@@ -315,7 +320,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id)copyWithZone:(NSZone *)zone
 {
     WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
-    configuration->_pageConfiguration->copyDataFrom(*_pageConfiguration);
+    [configuration _protectedPageConfiguration]->copyDataFrom(self._protectedPageConfiguration);
     return configuration;
 }
 
@@ -342,38 +347,38 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKProcessPool *)processPool
 {
-    return wrapper(_pageConfiguration->processPool());
+    return wrapper(self._protectedPageConfiguration->protectedProcessPool().get());
 }
 
 - (void)setProcessPool:(WKProcessPool *)processPool
 {
-    _pageConfiguration->setProcessPool(processPool ? processPool->_processPool.get() : nullptr);
+    self._protectedPageConfiguration->setProcessPool(processPool ? processPool->_processPool.get() : nullptr);
 }
 
 - (WKPreferences *)preferences
 {
-    return wrapper(_pageConfiguration->preferences());
+    return wrapper(self._protectedPageConfiguration->protectedPreferences().get());
 }
 
 - (void)setPreferences:(WKPreferences *)preferences
 {
-    _pageConfiguration->setPreferences(preferences ? preferences->_preferences.get() : nullptr);
+    self._protectedPageConfiguration->setPreferences(preferences ? preferences->_preferences.get() : nullptr);
 }
 
 - (WKUserContentController *)userContentController
 {
-    return wrapper(_pageConfiguration->userContentController());
+    return wrapper(self._protectedPageConfiguration->protectedUserContentController().get());
 }
 
 - (void)setUserContentController:(WKUserContentController *)userContentController
 {
-    _pageConfiguration->setUserContentController(userContentController ? userContentController->_userContentControllerProxy.get() : nullptr);
+    self._protectedPageConfiguration->setUserContentController(userContentController ? userContentController->_userContentControllerProxy.get() : nullptr);
 }
 
 - (NSURL *)_requiredWebExtensionBaseURL
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _pageConfiguration->requiredWebExtensionBaseURL();
+    return self._protectedPageConfiguration->requiredWebExtensionBaseURL();
 #else
     return nil;
 #endif
@@ -382,14 +387,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setRequiredWebExtensionBaseURL:(NSURL *)baseURL
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _pageConfiguration->setRequiredWebExtensionBaseURL(baseURL);
+    self._protectedPageConfiguration->setRequiredWebExtensionBaseURL(baseURL);
 #endif
 }
 
 - (WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(_pageConfiguration->webExtensionController());
+    return wrapper(self._protectedPageConfiguration->protectedWebExtensionController().get());
 #else
     return nil;
 #endif
@@ -398,7 +403,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebExtensionController *)_weakWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(_pageConfiguration->weakWebExtensionController());
+    return wrapper(self._protectedPageConfiguration->protectedWeakWebExtensionController().get());
 #else
     return nil;
 #endif
@@ -407,7 +412,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setWeakWebExtensionController:(WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _pageConfiguration->setWeakWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
+    self._protectedPageConfiguration->setWeakWebExtensionController(webExtensionController ? Ref { webExtensionController._webExtensionController }.ptr() : nullptr);
 #endif
 }
 
@@ -423,7 +428,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setWebExtensionController:(WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _pageConfiguration->setWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
+    self._protectedPageConfiguration->setWebExtensionController(webExtensionController ? Ref { webExtensionController._webExtensionController }.ptr() : nullptr);
 #endif
 }
 
@@ -455,7 +460,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKWebsiteDataStore *)websiteDataStore
 {
-    return wrapper(_pageConfiguration->websiteDataStore());
+    return wrapper(self._protectedPageConfiguration->protectedWebsiteDataStore().get());
 }
 
 - (WKAudiovisualMediaTypes)mediaTypesRequiringUserActionForPlayback
@@ -490,17 +495,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
 {
-    _pageConfiguration->setWebsiteDataStore(websiteDataStore ? websiteDataStore->_websiteDataStore.get() : nullptr);
+    self._protectedPageConfiguration->setWebsiteDataStore(websiteDataStore ? websiteDataStore->_websiteDataStore.get() : nullptr);
 }
 
 - (WKWebpagePreferences *)defaultWebpagePreferences
 {
-    return wrapper(_pageConfiguration->defaultWebsitePolicies());
+    return wrapper(self._protectedPageConfiguration->protectedDefaultWebsitePolicies().get());
 }
 
 - (void)setDefaultWebpagePreferences:(WKWebpagePreferences *)defaultWebpagePreferences
 {
-    _pageConfiguration->setDefaultWebsitePolicies(defaultWebpagePreferences ? defaultWebpagePreferences->_websitePolicies.get() : nullptr);
+    self._protectedPageConfiguration->setDefaultWebsitePolicies(defaultWebpagePreferences ? defaultWebpagePreferences->_websitePolicies.get() : nullptr);
 }
 
 static NSString *defaultApplicationNameForUserAgent()
@@ -529,12 +534,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKVisitedLinkStore *)_visitedLinkStore
 {
-    return wrapper(_pageConfiguration->visitedLinkStore());
+    return wrapper(self._protectedPageConfiguration->protectedVisitedLinkStore().get());
 }
 
 - (void)_setVisitedLinkStore:(_WKVisitedLinkStore *)visitedLinkStore
 {
-    _pageConfiguration->setVisitedLinkStore(visitedLinkStore ? visitedLinkStore->_visitedLinkStore.get() : nullptr);
+    self._protectedPageConfiguration->setVisitedLinkStore(visitedLinkStore ? visitedLinkStore->_visitedLinkStore.get() : nullptr);
 }
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
@@ -546,10 +551,10 @@ static NSString *defaultApplicationNameForUserAgent()
     if (!canonicalScheme)
         [NSException raise:NSInvalidArgumentException format:@"'%@' is not a valid URL scheme", urlScheme];
 
-    if (_pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme))
+    if (self._protectedPageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme))
         [NSException raise:NSInvalidArgumentException format:@"URL scheme '%@' already has a registered URL scheme handler", urlScheme];
 
-    _pageConfiguration->setURLSchemeHandlerForURLScheme(WebKit::WebURLSchemeHandlerCocoa::create(urlSchemeHandler), *canonicalScheme);
+    self._protectedPageConfiguration->setURLSchemeHandlerForURLScheme(WebKit::WebURLSchemeHandlerCocoa::create(urlSchemeHandler), *canonicalScheme);
 }
 
 - (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
@@ -558,11 +563,11 @@ static NSString *defaultApplicationNameForUserAgent()
     if (!canonicalScheme)
         return nil;
 
-    auto handler = _pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme);
+    auto handler = self._protectedPageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme);
     if (!handler || !handler->isAPIHandler())
         return nil;
 
-    return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
+    return downcast<WebKit::WebURLSchemeHandlerCocoa>(handler.get())->apiHandler();
 }
 
 + (BOOL)_isValidCustomScheme:(NSString *)urlScheme
@@ -627,7 +632,7 @@ static NSString *defaultApplicationNameForUserAgent()
 - (WKWebView *)_relatedWebView
 {
     // FIXME: Remove when rdar://134318457, rdar://134318538 and rdar://125369363 are complete.
-    if (RefPtr page = _pageConfiguration->relatedPage())
+    if (RefPtr page = self._protectedPageConfiguration->relatedPage())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -642,7 +647,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (WKWebView *)_webViewToCloneSessionStorageFrom
 {
-    if (RefPtr page = _pageConfiguration->pageToCloneSessionStorageFrom())
+    if (RefPtr page = self._protectedPageConfiguration->pageToCloneSessionStorageFrom())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -650,14 +655,14 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setWebViewToCloneSessionStorageFrom:(WKWebView *)webViewToCloneSessionStorageFrom
 {
     if (webViewToCloneSessionStorageFrom)
-        _pageConfiguration->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
+        self._protectedPageConfiguration->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
     else
-        _pageConfiguration->setPageToCloneSessionStorageFrom(nullptr);
+        self._protectedPageConfiguration->setPageToCloneSessionStorageFrom(nullptr);
 }
 
 - (WKWebView *)_alternateWebViewForNavigationGestures
 {
-    if (RefPtr page = _pageConfiguration->alternateWebViewForNavigationGestures())
+    if (RefPtr page = self._protectedPageConfiguration->alternateWebViewForNavigationGestures())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -665,9 +670,9 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAlternateWebViewForNavigationGestures:(WKWebView *)alternateView
 {
     if (alternateView)
-        _pageConfiguration->setAlternateWebViewForNavigationGestures(alternateView->_page.get());
+        self._protectedPageConfiguration->setAlternateWebViewForNavigationGestures(alternateView->_page.get());
     else
-        _pageConfiguration->setAlternateWebViewForNavigationGestures(nullptr);
+        self._protectedPageConfiguration->setAlternateWebViewForNavigationGestures(nullptr);
 }
 
 - (NSString *)_groupIdentifier
@@ -682,12 +687,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_respectsImageOrientation
 {
-    return self.preferences->_preferences->shouldRespectImageOrientation();
+    return Ref { *self.preferences->_preferences }->shouldRespectImageOrientation();
 }
 
 - (void)_setRespectsImageOrientation:(BOOL)respectsImageOrientation
 {
-    self.preferences->_preferences->setShouldRespectImageOrientation(respectsImageOrientation);
+    Ref { *self.preferences->_preferences }->setShouldRespectImageOrientation(respectsImageOrientation);
 }
 
 - (BOOL)_printsBackgrounds
@@ -982,7 +987,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     if (attachmentFileWrapperClass && ![attachmentFileWrapperClass isSubclassOfClass:[NSFileWrapper class]])
         [NSException raise:NSInvalidArgumentException format:@"Class %@ does not inherit from NSFileWrapper", attachmentFileWrapperClass];
 
-    _pageConfiguration->setAttachmentFileWrapperClass(attachmentFileWrapperClass);
+    self._protectedPageConfiguration->setAttachmentFileWrapperClass(attachmentFileWrapperClass);
 }
 
 - (BOOL)_colorFilterEnabled
@@ -1017,7 +1022,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists
 {
-    return wrapper(_pageConfiguration->websiteDataStoreIfExists());
+    return wrapper(self._protectedPageConfiguration->protectedWebsiteDataStoreIfExists().get());
 }
 
 - (NSArray<NSString *> *)_corsDisablingPatterns
@@ -1027,12 +1032,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
 {
-    _pageConfiguration->setCORSDisablingPatterns(makeVector<String>(patterns));
+    self._protectedPageConfiguration->setCORSDisablingPatterns(makeVector<String>(patterns));
 }
 
 - (NSSet<NSString *> *)_maskedURLSchemes
 {
-    const auto& schemes = _pageConfiguration->maskedURLSchemes();
+    const auto& schemes = self._protectedPageConfiguration->maskedURLSchemes();
     NSMutableSet<NSString *> *set = [NSMutableSet setWithCapacity:schemes.size()];
     for (const auto& scheme : schemes)
         [set addObject:scheme];
@@ -1044,12 +1049,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     HashSet<String> set;
     for (NSString *scheme in schemes)
         set.add(scheme);
-    _pageConfiguration->setMaskedURLSchemes(WTFMove(set));
+    self._protectedPageConfiguration->setMaskedURLSchemes(WTFMove(set));
 }
 
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
-    _pageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<String> { } });
+    self._protectedPageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<String> { } });
 }
 
 - (BOOL)_loadsFromNetwork
@@ -1060,11 +1065,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setAllowedNetworkHosts:(NSSet<NSString *> *)hosts
 {
     if (!hosts)
-        return _pageConfiguration->setAllowedNetworkHosts(std::nullopt);
+        return self._protectedPageConfiguration->setAllowedNetworkHosts(std::nullopt);
     MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
     for (NSString *host in hosts)
         set.add(host);
-    _pageConfiguration->setAllowedNetworkHosts(WTFMove(set));
+    self._protectedPageConfiguration->setAllowedNetworkHosts(WTFMove(set));
 }
 
 - (NSSet<NSString *> *)_allowedNetworkHosts
@@ -1086,16 +1091,6 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (BOOL)_loadsSubresources
 {
     return _pageConfiguration->loadsSubresources();
-}
-
-- (BOOL)_deferrableUserScriptsShouldWaitUntilNotification
-{
-    return _pageConfiguration->userScriptsShouldWaitUntilNotification();
-}
-
-- (void)_setDeferrableUserScriptsShouldWaitUntilNotification:(BOOL)value
-{
-    _pageConfiguration->setUserScriptsShouldWaitUntilNotification(value);
 }
 
 - (void)_setCrossOriginAccessControlCheckEnabled:(BOOL)enabled
@@ -1186,12 +1181,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (_WKApplicationManifest *)_applicationManifest
 {
-    return wrapper(_pageConfiguration->applicationManifest());
+    return wrapper(self._protectedPageConfiguration->protectedApplicationManifest().get());
 }
 
 - (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest
 {
-    _pageConfiguration->setApplicationManifest(applicationManifest ? applicationManifest->_applicationManifest.get() : nullptr);
+    self._protectedPageConfiguration->setApplicationManifest(applicationManifest ? applicationManifest->_applicationManifest.get() : nullptr);
 }
 
 #if PLATFORM(MAC)
@@ -1269,7 +1264,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (BOOL)_applePayEnabled
 {
 #if ENABLE(APPLE_PAY)
-    return _pageConfiguration->applePayEnabled();
+    return self._protectedPageConfiguration->applePayEnabled();
 #else
     return NO;
 #endif
@@ -1278,7 +1273,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setApplePayEnabled:(BOOL)applePayEnabled
 {
 #if ENABLE(APPLE_PAY)
-    _pageConfiguration->setApplePayEnabled(applePayEnabled);
+    self._protectedPageConfiguration->setApplePayEnabled(applePayEnabled);
 #endif
 }
 
@@ -1343,9 +1338,9 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setAdditionalSupportedImageTypes:(NSArray<NSString *> *)additionalSupportedImageTypes
 {
     if (additionalSupportedImageTypes)
-        _pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>(additionalSupportedImageTypes));
+        self._protectedPageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>(additionalSupportedImageTypes));
     else
-        _pageConfiguration->setAdditionalSupportedImageTypes(std::nullopt);
+        self._protectedPageConfiguration->setAdditionalSupportedImageTypes(std::nullopt);
 }
 
 - (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled
@@ -1416,12 +1411,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_delaysWebProcessLaunchUntilFirstLoad
 {
-    return _pageConfiguration->delaysWebProcessLaunchUntilFirstLoad();
+    return self._protectedPageConfiguration->delaysWebProcessLaunchUntilFirstLoad();
 }
 
 - (void)_setDelaysWebProcessLaunchUntilFirstLoad:(BOOL)delaysWebProcessLaunchUntilFirstLoad
 {
-    _pageConfiguration->setDelaysWebProcessLaunchUntilFirstLoad(delaysWebProcessLaunchUntilFirstLoad);
+    self._protectedPageConfiguration->setDelaysWebProcessLaunchUntilFirstLoad(delaysWebProcessLaunchUntilFirstLoad);
 }
 
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking
@@ -1438,7 +1433,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     allowed |= WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-    allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();
+    allowed |= self._protectedPageConfiguration->requiredWebExtensionBaseURL().isValid();
 #endif
 
     if (!allowed)

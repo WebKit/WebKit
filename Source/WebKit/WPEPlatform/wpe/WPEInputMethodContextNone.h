@@ -33,6 +33,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_INPUT_METHOD_CONTEXT_NONE (wpe_input_method_context_none_get_type())
 G_DECLARE_FINAL_TYPE(WPEInputMethodContextNone, wpe_input_method_context_none, WPE, INPUT_METHOD_CONTEXT_NONE, WPEInputMethodContext)
 
-WPEInputMethodContext* wpeInputMethodContextNoneNew();
+WPEInputMethodContext* wpeInputMethodContextNoneNew(WPEView*);
 
 G_END_DECLS

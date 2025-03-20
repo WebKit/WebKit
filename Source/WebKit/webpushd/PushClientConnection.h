@@ -39,6 +39,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/Identified.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/ObjectIdentifier.h>
@@ -75,6 +76,7 @@ class PushClientConnection : public RefCounted<PushClientConnection>, public Ide
     WTF_MAKE_TZONE_ALLOCATED(PushClientConnection);
 public:
     static RefPtr<PushClientConnection> create(xpc_connection_t, IPC::Decoder&);
+    virtual ~PushClientConnection();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -115,6 +117,7 @@ private:
     void requestPushPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
+    void setServiceWorkerIsBeingInspected(URL&& scopeURL, bool isInspected, CompletionHandler<void()>&&);
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
@@ -129,6 +132,7 @@ private:
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
     bool m_declarativeWebPushEnabled { false };
+    HashSet<WebCore::SecurityOriginData> m_inspectedServiceWorkerOrigins;
 };
 
 } // namespace WebPushD

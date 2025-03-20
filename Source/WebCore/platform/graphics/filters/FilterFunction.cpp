@@ -38,6 +38,12 @@ FilterFunction::FilterFunction(Type filterType, std::optional<RenderingResourceI
 {
 }
 
+FilterFunction::~FilterFunction()
+{
+    for (auto& observer : m_observers)
+        observer.willDestroyFilter(renderingResourceIdentifier());
+}
+
 AtomString FilterFunction::filterName(Type filterType)
 {
     static constexpr std::pair<FilterFunction::Type, ASCIILiteral> namesArray[] = {

@@ -59,6 +59,7 @@ OBJC_CLASS PKContact;
 OBJC_CLASS PKDateComponentsRange;
 OBJC_CLASS PKPayment;
 OBJC_CLASS PKPaymentMerchantSession;
+OBJC_CLASS PKPaymentSetupFeature;
 OBJC_CLASS PKPaymentMethod;
 OBJC_CLASS PKPaymentToken;
 OBJC_CLASS PKShippingMethod;
@@ -77,6 +78,7 @@ enum class NSType : uint8_t {
 #if USE(PASSKIT)
     PKPaymentMethod,
     PKPaymentMerchantSession,
+    PKPaymentSetupFeature,
     PKContact,
     PKSecureElementPass,
     PKPayment,
@@ -152,6 +154,7 @@ template<> Class getClass<CNPhoneNumber>();
 template<> Class getClass<CNPostalAddress>();
 template<> Class getClass<PKContact>();
 template<> Class getClass<PKPaymentMerchantSession>();
+template<> Class getClass<PKPaymentSetupFeature>();
 template<> Class getClass<PKPayment>();
 template<> Class getClass<PKPaymentToken>();
 template<> Class getClass<PKShippingMethod>();

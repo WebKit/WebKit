@@ -606,6 +606,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/cocoa/MediaPlaybackTargetContextSerialized.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
+	Shared/JavaScriptEvaluationResult.serialization.in \
 	Shared/API/APIArray.serialization.in \
 	Shared/API/APIData.serialization.in \
 	Shared/API/APIDictionary.serialization.in \
@@ -615,7 +616,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APINumber.serialization.in \
 	Shared/API/APIObject.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
-	Shared/API/APISerializedScriptValue.serialization.in \
 	Shared/API/APIString.serialization.in \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \

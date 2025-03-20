@@ -69,6 +69,7 @@ public:
     virtual ~RenderWidget();
 
     HTMLFrameOwnerElement& frameOwnerElement() const { return downcast<HTMLFrameOwnerElement>(nodeForNonAnonymous()); }
+    Ref<HTMLFrameOwnerElement> protectedFrameOwnerElement() const { return frameOwnerElement(); }
 
     Widget* widget() const { return m_widget.get(); }
     RefPtr<Widget> protectedWidget() const { return m_widget; }

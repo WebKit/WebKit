@@ -4,11 +4,11 @@
 Validation tests for setVertexBuffer/setIndexBuffer state (not validation). See also operation tests.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { range } from '../../../../../../common/util/util.js';
-import { ValidationTest } from '../../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsValidationTest {
   getVertexBuffer() {
-    return this.device.createBuffer({
+    return this.createBufferTracked({
       size: 256,
       usage: GPUBufferUsage.VERTEX
     });
@@ -55,7 +55,7 @@ class F extends ValidationTest {
   }
 
   beginRenderPass(commandEncoder) {
-    const attachmentTexture = this.device.createTexture({
+    const attachmentTexture = this.createTextureTracked({
       format: 'rgba8unorm',
       size: { width: 16, height: 16, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.RENDER_ATTACHMENT

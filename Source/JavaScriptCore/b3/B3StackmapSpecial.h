@@ -30,6 +30,7 @@
 #include "AirArg.h"
 #include "AirSpecial.h"
 #include "B3ValueRep.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {

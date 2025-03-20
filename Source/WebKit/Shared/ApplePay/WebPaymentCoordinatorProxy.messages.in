@@ -24,9 +24,9 @@
 
 #if ENABLE(APPLE_PAY)
 
+// Currently DispatchedTo=Networking when APPLE_PAY_REMOTE_UI and DispatchedTo=UI when !APPLE_PAY_REMOTE_UI
 [
     DispatchedFrom=WebContent,
-    DispatchedTo=UI,
     EnabledBy=ApplePayEnabled
 ]
 messages -> WebPaymentCoordinatorProxy {

@@ -38,18 +38,17 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioResampler);
 
 AudioResampler::AudioResampler()
+    : m_kernels(Vector<std::unique_ptr<AudioResamplerKernel>>::from(makeUnique<AudioResamplerKernel>(this)))
+    , m_sourceBus(AudioBus::create(1, 0, false))
 {
-    m_kernels.append(makeUnique<AudioResamplerKernel>(this));
-    m_sourceBus = AudioBus::create(1, 0, false);
 }
 
 AudioResampler::AudioResampler(unsigned numberOfChannels)
-{
-    m_kernels = Vector<std::unique_ptr<AudioResamplerKernel>>(numberOfChannels, [&](size_t) {
+    : m_kernels(numberOfChannels, [&](size_t) {
         return makeUnique<AudioResamplerKernel>(this);
-    });
-
-    m_sourceBus = AudioBus::create(numberOfChannels, 0, false);
+    })
+    , m_sourceBus(AudioBus::create(numberOfChannels, 0, false))
+{
 }
 
 void AudioResampler::configureChannels(unsigned numberOfChannels)
@@ -83,6 +82,7 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
     if (!channelsMatch)
         return;
 
+    RefPtr sourceBus = m_sourceBus;
     // Setup the source bus.
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         // Figure out how many frames we need to get from the provider, and a pointer to the buffer.
@@ -92,11 +92,11 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
         if (fillSpan.empty())
             return;
 
-        m_sourceBus->setChannelMemory(i, fillSpan.first(framesNeeded));
+        sourceBus->setChannelMemory(i, fillSpan.first(framesNeeded));
     }
 
     // Ask the provider to supply the desired number of source frames.
-    provider->provideInput(m_sourceBus.get(), m_sourceBus->length());
+    provider->provideInput(sourceBus.get(), sourceBus->length());
 
     // Now that we have the source data, resample each channel into the destination bus.
     // FIXME: optimize for the common stereo case where it's faster to process both left/right channels in the same inner loop.

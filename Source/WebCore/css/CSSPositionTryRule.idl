@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-anchor-position-1/#csspositiontryrule
+
 typedef USVString CSSOMString;
 
 [
@@ -33,5 +35,5 @@ interface CSSPositionTryRule : CSSRule {
     readonly attribute [AtomString] CSSOMString name;
 
     // FIXME (webkit.org/b/283722): this should be a CSSPositionTryDescriptors.
-    [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+    [SameObject, PutForwards=cssText] readonly attribute CSSStyleProperties style;
 };

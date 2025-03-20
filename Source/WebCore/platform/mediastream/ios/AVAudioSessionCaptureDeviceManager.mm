@@ -110,7 +110,10 @@ void AVAudioSessionCaptureDeviceManager::createAudioSession()
 #endif
 
     NSError *error = nil;
+    // FIXME: Stop using `AVAudioSessionCategoryOptionAllowBluetooth` as it is deprecated (rdar://145294046).
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto options = AVAudioSessionCategoryOptionAllowBluetooth;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [m_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeDefault options:options error:&error];
     RELEASE_LOG_ERROR_IF(error, WebRTC, "Failed to set audio session category with error: %@.", error.localizedDescription);
 

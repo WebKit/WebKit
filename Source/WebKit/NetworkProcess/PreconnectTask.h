@@ -40,6 +40,8 @@ class NetworkProcess;
 class NetworkSession;
 
 class PreconnectTask final : public NetworkLoadClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PreconnectTask);
 public:
     PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
     ~PreconnectTask();

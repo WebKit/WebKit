@@ -6,6 +6,7 @@ list(APPEND WTF_SOURCES
 
     win/CPUTimeWin.cpp
     win/DbgHelperWin.cpp
+    win/FileHandleWin.cpp
     win/FileSystemWin.cpp
     win/LanguageWin.cpp
     win/LoggingWin.cpp

@@ -157,6 +157,7 @@ static inline uint32_t getCurrentThreadID()
 }
 
 PerfLog::PerfLog()
+    : m_queue(WorkQueue::create("JSC PerfLog"_s))
 {
     {
         StringPrintStream filename;
@@ -185,6 +186,7 @@ PerfLog::PerfLog()
 
     Locker locker { m_lock };
     write(locker, &header, sizeof(JITDump::FileHeader));
+    flush(locker);
 }
 
 void PerfLog::write(const AbstractLocker&, const void* data, size_t size)
@@ -198,38 +200,38 @@ void PerfLog::flush(const AbstractLocker&)
     fflush(m_file);
 }
 
-void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
+void PerfLog::log(CString&& name, MacroAssemblerCodeRef<LinkBufferPtrTag> code)
 {
-    if (!size) {
-        dataLogLnIf(PerfLogInternal::verbose, "0 size record ", name, " ", RawPointer(executableAddress));
-        return;
-    }
+    auto timestamp = generateTimestamp();
+    auto tid = getCurrentThreadID();
+    singleton().m_queue->dispatch([name = WTFMove(name), code, tid, timestamp] {
+        PerfLog& logger = singleton();
+        size_t size = code.size();
+        auto* executableAddress = code.code().untaggedPtr<const uint8_t*>();
+        if (!size) {
+            dataLogLnIf(PerfLogInternal::verbose, "0 size record ", name, " ", RawPointer(executableAddress));
+            return;
+        }
 
-    PerfLog& logger = singleton();
-    Locker locker { logger.m_lock };
+        Locker locker { logger.m_lock };
 
-    JITDump::CodeLoadRecord record;
-    record.header.timestamp = generateTimestamp();
-    record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + (name.length() + 1) + size;
-    record.pid = getCurrentProcessID();
-    record.tid = getCurrentThreadID();
-    record.vma = std::bit_cast<uintptr_t>(executableAddress);
-    record.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
-    record.codeSize = size;
-    record.codeIndex = logger.m_codeIndex++;
+        JITDump::CodeLoadRecord record;
+        record.header.timestamp = timestamp;
+        record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + (name.length() + 1) + size;
+        record.pid = getCurrentProcessID();
+        record.tid = tid;
+        record.vma = std::bit_cast<uintptr_t>(executableAddress);
+        record.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
+        record.codeSize = size;
+        record.codeIndex = logger.m_codeIndex++;
 
-    logger.write(locker, &record, sizeof(JITDump::CodeLoadRecord));
-    logger.write(locker, name.data(), name.length() + 1);
-    logger.write(locker, executableAddress, size);
+        logger.write(locker, &record, sizeof(JITDump::CodeLoadRecord));
+        logger.write(locker, name.data(), name.length() + 1);
+        logger.write(locker, executableAddress, size);
+        logger.flush(locker);
 
-    dataLogLnIf(PerfLogInternal::verbose, name, " [", record.codeIndex, "] ", RawPointer(executableAddress), "-", RawPointer(executableAddress + size), " ", size);
-}
-
-void PerfLog::flush()
-{
-    PerfLog& logger = singleton();
-    Locker locker { logger.m_lock };
-    logger.flush(locker);
+        dataLogLnIf(PerfLogInternal::verbose, name, " [", record.codeIndex, "] ", RawPointer(executableAddress), "-", RawPointer(executableAddress + size), " ", size);
+    });
 }
 
 } // namespace JSC

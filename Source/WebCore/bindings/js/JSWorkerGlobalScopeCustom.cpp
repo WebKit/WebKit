@@ -27,12 +27,12 @@
 #include "JSWorkerGlobalScope.h"
 
 #include "JSDOMExceptionHandling.h"
-#include "JSDOMMicrotask.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/GlobalObjectMethodTable.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -68,7 +68,7 @@ JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject,
         return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback"_s, "WorkerGlobalScope"_s, "queueMicrotask"_s));
 
     scope.release();
-    Base::queueMicrotask(createJSDOMMicrotask(vm, asObject(functionValue)));
+    globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, JSC::QueuedTask { nullptr, this, functionValue, { }, { }, { }, { } });
     return jsUndefined();
 }
 

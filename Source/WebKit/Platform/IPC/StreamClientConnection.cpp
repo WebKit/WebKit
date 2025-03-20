@@ -156,7 +156,7 @@ Connection& StreamClientConnection::connectionForTesting()
     return m_connection.get();
 }
 
-void StreamClientConnection::addWorkQueueMessageReceiver(ReceiverName name, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, uint64_t destinationID)
+void StreamClientConnection::addWorkQueueMessageReceiver(ReceiverName name, WorkQueue& workQueue, WorkQueueMessageReceiverBase& receiver, uint64_t destinationID)
 {
     protectedConnection()->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
 }

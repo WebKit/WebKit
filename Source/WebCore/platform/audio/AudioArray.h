@@ -58,6 +58,9 @@ public:
             return;
 
         Checked<size_t> initialSize = sizeof(T) * n;
+#if USE(GSTREAMER)
+        m_allocation = MallocSpan<T>::zeroedMalloc(initialSize);
+#else
         // Accelerate.framework behaves differently based on input vector alignment. And each implementation
         // has very small difference in output! We ensure 32byte alignment so that we will always take the most
         // optimized implementation if possible, which makes the result deterministic.
@@ -65,6 +68,7 @@ public:
 
         m_allocation = MallocSpan<T, FastAlignedMalloc>::alignedMalloc(alignment, initialSize);
         zero();
+#endif
     }
 
     std::span<T> span() { return m_allocation.mutableSpan(); }
@@ -118,7 +122,11 @@ public:
     }
 
 private:
+#if USE(GSTREAMER)
+    MallocSpan<T> m_allocation;
+#else
     MallocSpan<T, FastAlignedMalloc> m_allocation;
+#endif
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, AudioArray<T>);

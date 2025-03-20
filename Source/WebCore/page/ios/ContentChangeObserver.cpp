@@ -32,9 +32,9 @@
 #include "ChromeClient.h"
 #include "DOMTimer.h"
 #include "Document.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "EventNames.h"
-#include "FullscreenManager.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
@@ -64,18 +64,18 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
         return false;
     }
 
-    CheckedPtr fullscreenManager = mainFrameDocument->fullscreenManagerIfExists();
-    if (!fullscreenManager)
+    RefPtr documentFullscreen = mainFrameDocument->fullscreenIfExists();
+    if (!documentFullscreen)
         return false;
-    auto* topMostFullScreenElement = fullscreenManager->fullscreenElement();
+    RefPtr topMostFullScreenElement = documentFullscreen->fullscreenElement();
     if (!topMostFullScreenElement)
         return false;
 
     // If the document where the node lives does not have an active fullscreen element, it is a sibling/nephew document -> not a descendant.
-    fullscreenManager = document.fullscreenManagerIfExists();
-    if (!fullscreenManager)
+    documentFullscreen = document.fullscreenIfExists();
+    if (!documentFullscreen)
         return false;
-    RefPtr fullscreenElement = fullscreenManager->fullscreenElement();
+    RefPtr fullscreenElement = documentFullscreen->fullscreenElement();
     if (!fullscreenElement)
         return true;
     return !descendantCandidate.isDescendantOf(*fullscreenElement);

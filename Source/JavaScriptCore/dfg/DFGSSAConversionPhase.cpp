@@ -444,7 +444,7 @@ public:
             block->variablesAtTail.clear();
             block->valuesAtHead.clear();
             block->valuesAtHead.clear();
-            block->ssa = makeUnique<BasicBlock::SSAData>(block);
+            block->ssa = makeUniqueWithoutFastMallocCheck<BasicBlock::SSAData>(block);
         }
 
         for (auto& pair : entrypointIndexToArgumentsBlock) {

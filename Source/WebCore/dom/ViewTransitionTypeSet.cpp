@@ -54,9 +54,9 @@ void ViewTransitionTypeSet::clearFromSetLike()
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (!m_document)
         return;
-    if (m_document->documentElement()) {
+    if (RefPtr documentElement = m_document->documentElement()) {
         styleInvalidation.emplace(
-            *m_document->documentElement(),
+            *documentElement,
             CSSSelector::PseudoClass::ActiveViewTransitionType,
             Style::PseudoClassChangeInvalidation::AnyValue
         );
@@ -70,9 +70,9 @@ void ViewTransitionTypeSet::addToSetLike(const AtomString& type)
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (!m_document)
         return;
-    if (m_document->documentElement()) {
+    if (RefPtr documentElement = m_document->documentElement()) {
         styleInvalidation.emplace(
-            *m_document->documentElement(),
+            *documentElement,
             CSSSelector::PseudoClass::ActiveViewTransitionType,
             Style::PseudoClassChangeInvalidation::AnyValue
         );
@@ -86,9 +86,9 @@ bool ViewTransitionTypeSet::removeFromSetLike(const AtomString& type)
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (!m_document)
         return false;
-    if (m_document->documentElement()) {
+    if (RefPtr documentElement = m_document->documentElement()) {
         styleInvalidation.emplace(
-            *m_document->documentElement(),
+            *documentElement,
             CSSSelector::PseudoClass::ActiveViewTransitionType,
             Style::PseudoClassChangeInvalidation::AnyValue
         );

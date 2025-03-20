@@ -472,8 +472,8 @@ void PaymentRequest::closeActivePaymentHandler()
 void PaymentRequest::stop()
 {
     closeActivePaymentHandler();
-    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this] {
-        settleShowPromise(Exception { ExceptionCode::AbortError });
+    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [](auto& request) {
+        request.settleShowPromise(Exception { ExceptionCode::AbortError });
     });
 }
 

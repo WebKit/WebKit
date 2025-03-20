@@ -55,6 +55,7 @@
 #import "MediaSessionManagerCocoa.h"
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "PixelBufferConformerCV.h"
+#import "PlatformDynamicRangeLimitCocoa.h"
 #import "PlatformMediaResourceLoader.h"
 #import "PlatformScreen.h"
 #import "PlatformTextTrack.h"
@@ -63,6 +64,7 @@
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
+#import "SpatialAudioExperienceHelper.h"
 #import "TextTrack.h"
 #import "TextTrackRepresentation.h"
 #import "UTIUtilities.h"
@@ -650,6 +652,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     [m_videoLayer setContentsScale:player->playerContentsScale()];
+    setPlatformDynamicRangeLimit(player->platformDynamicRangeLimit());
     m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->presentationSize());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -1401,6 +1404,13 @@ String MediaPlayerPrivateAVFoundationObjC::errorLog() const
     RetainPtr<NSString> logString = adoptNS([[NSString alloc] initWithData:[log extendedLogData] encoding:[log extendedLogDataStringEncoding]]);
 
     return logString.get();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::sceneIdentifierDidChange()
+{
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 }
 #endif
 
@@ -4017,6 +4027,13 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldDisableHDR(bool shouldDisable)
     [m_videoLayer setToneMapToStandardDynamicRange:shouldDisable];
 }
 
+void MediaPlayerPrivateAVFoundationObjC::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    assertIsMainThread();
+
+    setLayerDynamicRangeLimit(m_videoLayer.get(), platformDynamicRangeLimit);
+}
+
 void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()
 {
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
@@ -4064,6 +4081,27 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
 
     if (!m_avPlayer)
         return;
+
+    auto player = this->player();
+    if (!player)
+        return;
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    if (player->prefersSpatialAudioExperience()) {
+        RetainPtr experience = createSpatialAudioExperienceWithOptions({
+            .hasLayer = !!m_videoLayer,
+            .hasTarget = !!m_videoTarget,
+            .isVisible = isVisible(),
+            .soundStageSize = player->soundStageSize(),
+            .sceneIdentifier = player->sceneIdentifier(),
+#if HAVE(SPATIAL_TRACKING_LABEL)
+            .spatialTrackingLabel = m_spatialTrackingLabel,
+#endif
+        });
+        [m_avPlayer setIntendedSpatialAudioExperience:experience.get()];
+        return;
+    }
+#endif
 
     if (!m_spatialTrackingLabel.isNull()) {
         INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);

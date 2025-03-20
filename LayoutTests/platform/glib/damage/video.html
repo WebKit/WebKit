@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <video width="160" height="120" src="./content/test.mp4"></video>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var video = document.getElementsByTagName("video")[0];
+      video.ontimeupdate = () => {
+          var damage = latestFrameDamage();
+          if (!assertValid(damage)
+              || !assertRectsEq(damage.rects, [[0, 0, 160, 120]]))
+              failTest(failure);
+          else
+              passTest();
+          video.pause();
+      }
+      video.play();
+    </script>
+  </body>
+</html>

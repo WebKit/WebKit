@@ -87,27 +87,27 @@ inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdju
 {
     switch (fontSizeAdjust.metric) {
     case FontSizeAdjust::Metric::CapHeight:
-        ts << "cap-height";
+        ts << "cap-height"_s;
         break;
     case FontSizeAdjust::Metric::ChWidth:
-        ts << "ch-width";
+        ts << "ch-width"_s;
         break;
     case FontSizeAdjust::Metric::IcWidth:
-        ts << "ic-width";
+        ts << "ic-width"_s;
         break;
     case FontSizeAdjust::Metric::IcHeight:
-        ts << "ic-height";
+        ts << "ic-height"_s;
         break;
     case FontSizeAdjust::Metric::ExHeight:
     default:
         if (fontSizeAdjust.isFromFont())
-            return ts << "from-font";
+            return ts << "from-font"_s;
         return ts << *fontSizeAdjust.value;
     }
 
     if (fontSizeAdjust.isFromFont())
-        return ts << " " << "from-font";
-    return ts << " " << *fontSizeAdjust.value;
+        return ts << ' ' << "from-font"_s;
+    return ts << ' ' << *fontSizeAdjust.value;
 }
 
 }

@@ -150,6 +150,7 @@ Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
 
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
+Shared/JavaScriptEvaluationResult.mm
 Shared/DocumentEditingContext.mm
 Shared/VisibleContentRectUpdateInfo.cpp
 Shared/WebSQLiteDatabaseTracker.cpp
@@ -359,6 +360,7 @@ UIProcess/API/Cocoa/WKPreviewElementInfo.mm
 UIProcess/API/Cocoa/WKProcessGroup.mm
 UIProcess/API/Cocoa/WKProcessPool.mm
 UIProcess/API/Cocoa/WKScriptMessage.mm
+UIProcess/API/Cocoa/WKScrollGeometry.mm
 UIProcess/API/Cocoa/WKSecurityOrigin.mm
 UIProcess/API/Cocoa/WKSnapshotConfiguration.mm
 UIProcess/API/Cocoa/WKURLSchemeTask.mm
@@ -542,7 +544,6 @@ UIProcess/ios/WKTextInteractionWrapper.mm
 UIProcess/ios/WKTouchActionGestureRecognizer.mm
 UIProcess/ios/WKTouchEventsGestureRecognizer.mm
 UIProcess/ios/WKUSDPreviewView.mm
-UIProcess/ios/WKVelocityTrackingScrollView.mm
 UIProcess/ios/WKVideoView.mm
 UIProcess/ios/WKVisibilityPropagationView.mm
 UIProcess/ios/WKWebEvent.mm
@@ -637,6 +638,7 @@ UIProcess/WebAuthentication/Mock/MockLocalService.mm
 UIProcess/WebAuthentication/Mock/MockNfcService.mm
 UIProcess/WebAuthentication/Mock/MockCcidService.mm
 
+UIProcess/WebsiteData/Cocoa/ScreenTimeWebsiteDataSupport.mm
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
 UIProcess/XR/ios/PlatformXRARKit.mm

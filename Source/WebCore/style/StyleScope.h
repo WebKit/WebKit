@@ -52,15 +52,16 @@ class CSSCounterStyleRegistry;
 class CSSStyleSheet;
 class Document;
 class Element;
-class WeakPtrImplWithEventTargetData;
 class HTMLSlotElement;
 class Node;
 class ProcessingInstruction;
+class RenderBoxModelObject;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
 class ShadowRoot;
 class TreeScope;
+class WeakPtrImplWithEventTargetData;
 
 namespace Style {
 
@@ -128,6 +129,7 @@ public:
 #endif
 
     WEBCORE_EXPORT Resolver& resolver();
+    Ref<Resolver> protectedResolver();
     Resolver* resolverIfExists() { return m_resolver.get(); }
     void clearResolver();
     void releaseMemory();
@@ -157,9 +159,8 @@ public:
     const CSSCounterStyleRegistry& counterStyleRegistry() const { return m_counterStyleRegistry.get(); }
     CSSCounterStyleRegistry& counterStyleRegistry() { return m_counterStyleRegistry.get(); }
 
-    AnchorPositionedStates& anchorPositionedStates() { return m_anchorPositionedStates; }
-    const AnchorPositionedStates& anchorPositionedStates() const { return m_anchorPositionedStates; }
-    void resetAnchorPositioningStateBeforeStyleResolution();
+    AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() { return m_anchorPositionedToAnchorMap; }
+    const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const { return m_anchorPositionedToAnchorMap; }
     void updateAnchorPositioningStateAfterStyleResolution();
 
 private:
@@ -216,6 +217,7 @@ private:
 
     bool invalidateForContainerDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
+    bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
 
     CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
@@ -263,7 +265,7 @@ private:
     // FIXME: These (and some things above) are only relevant for the root scope.
     UncheckedKeyHashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 
-    AnchorPositionedStates m_anchorPositionedStates;
+    AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
 };
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

@@ -68,3 +68,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::UserMediaPermissionCheckProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::UserMediaPermissionCheck; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -46,6 +46,7 @@ public:
         PathEllipseInRect,
         PathRect,
         PathRoundedRect,
+        PathContinuousRoundedRect,
 
         PathDataLine,
         PathDataQuadCurve,

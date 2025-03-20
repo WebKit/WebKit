@@ -149,15 +149,16 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, Prote
     assertQueue();
     ASSERT(!m_db);
 
-    const char* databasePath;
+    String databasePath;
     if (m_url == inMemoryDatabaseURL())
-        databasePath = WebExtensionSQLiteInMemoryDatabaseName.span().data();
+        databasePath = WebExtensionSQLiteInMemoryDatabaseName;
     else if (m_url == privateOnDiskDatabaseURL())
-        databasePath = "";
+        databasePath = ""_s;
     else {
         ASSERT(!m_url.isEmpty());
 
-        databasePath = m_url.fileSystemPath().utf8().data();
+        databasePath = m_url.fileSystemPath();
+
         auto directory = m_url.truncatedForUseAsBase().fileSystemPath();
         if (!FileSystem::makeAllDirectories(directory) || FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
             if (outError) {
@@ -169,7 +170,7 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, Prote
         }
     }
 
-    int result = sqlite3_open_v2(databasePath, &m_db, flags, vfs.isEmpty() ? nullptr : vfs.utf8().data());
+    int result = sqlite3_open_v2(FileSystem::fileSystemRepresentation(databasePath).data(), &m_db, flags, vfs.isEmpty() ? nullptr : vfs.utf8().data());
     if (result == SQLITE_OK)
         return true;
 

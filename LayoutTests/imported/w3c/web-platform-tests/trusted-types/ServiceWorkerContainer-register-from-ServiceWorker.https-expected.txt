@@ -1,0 +1,6 @@
+
+PASS WorkerNavigator exposed in service worker
+PASS register() with TrustedScriptURL works in service worker
+PASS register() fails with plain string in service worker
+PASS register() fails with plain string in service worker with a default policy
+

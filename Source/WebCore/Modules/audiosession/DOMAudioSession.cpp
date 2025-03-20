@@ -175,22 +175,18 @@ void DOMAudioSession::scheduleStateChangeEvent()
         return;
 
     m_hasScheduleStateChangeEvent = true;
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [weakThis = WeakPtr { *this }] {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& session) {
+        if (session.isContextStopped())
             return;
 
-        if (protectedThis->isContextStopped())
-            return;
-
-        protectedThis->m_hasScheduleStateChangeEvent = false;
+        session.m_hasScheduleStateChangeEvent = false;
         auto newState = computeAudioSessionState();
 
-        if (protectedThis->m_state && *protectedThis->m_state == newState)
+        if (session.m_state && *session.m_state == newState)
             return;
 
-        protectedThis->m_state = newState;
-        protectedThis->dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        session.m_state = newState;
+        session.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

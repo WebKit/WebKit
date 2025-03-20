@@ -53,6 +53,10 @@ public:
     }
 
 private:
+#if USE(PROTECTED_JIT)
+    // Must be constructed before we allocate anything using SequesteredArenaMalloc
+    ArenaLifetime m_saLifetime { };
+#endif
     JITWorklistThread& m_thread;
     JITPlan::Tier m_tier;
 };

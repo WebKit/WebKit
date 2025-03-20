@@ -89,10 +89,11 @@ static GstStaticPadTemplate s_harnessSinkPadTemplate = GST_STATIC_PAD_TEMPLATE("
  * PNG using the mermaid CLI tools or the [live editor](https://mermaid.live).
  */
 
-GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback>&& padLinkCallback)
+GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback>&& padLinkCallback, GRefPtr<GstCaps>&& allowedOutputCaps)
     : m_element(WTFMove(element))
     , m_processOutputSampleCallback(WTFMove(processOutputSampleCallback))
     , m_padLinkCallback(WTFMove(padLinkCallback))
+    , m_streamAllowedOutputCaps(WTFMove(allowedOutputCaps))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -143,7 +144,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
     } else {
         GST_DEBUG_OBJECT(m_element.get(), "Expecting output buffers on static src pad.");
         auto elementSrcPad = adoptGRef(gst_element_get_static_pad(m_element.get(), "src"));
-        auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad), nullptr);
+        auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad), nullptr, GRefPtr(m_streamAllowedOutputCaps));
         m_outputStreams.append(WTFMove(stream));
     }
 
@@ -285,13 +286,20 @@ bool GStreamerElementHarness::pushEvent(GRefPtr<GstEvent>&& event)
     return result;
 }
 
-GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness)
+GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness, GRefPtr<GstCaps>&& allowedOutputCaps)
     : m_pad(WTFMove(pad))
     , m_downstreamHarness(WTFMove(downstreamHarness))
+    , m_allowedOutputCaps(WTFMove(allowedOutputCaps))
 {
     static Atomic<uint64_t> uniqueStreamId;
     auto name = makeString("sink"_s, uniqueStreamId.exchangeAdd(1));
-    m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, name.ascii().data());
+
+    if (m_allowedOutputCaps) {
+        GRefPtr<GstPadTemplate> padTemplate = gst_pad_template_new("sink", GST_PAD_SINK, GST_PAD_ALWAYS, m_allowedOutputCaps.get());
+        m_targetPad = gst_pad_new_from_template(padTemplate.get(), name.ascii().data());
+    } else
+        m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, name.ascii().data());
+
     auto result = gst_pad_link(m_pad.get(), m_targetPad.get());
     if (GST_PAD_LINK_FAILED(result))
         GST_WARNING_OBJECT(m_pad.get(), "Pad link failed: %s", gst_pad_link_get_name(result));

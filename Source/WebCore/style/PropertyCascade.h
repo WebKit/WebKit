@@ -54,7 +54,7 @@ public:
     static constexpr OptionSet<PropertyType> normalProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
     static constexpr OptionSet<PropertyType> startingStyleProperties() { return normalProperties() | PropertyType::StartingStyle; }
 
-    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* = nullptr);
+    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* = nullptr, const StyleProperties* positionTryFallbackProperties = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -95,6 +95,7 @@ private:
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, IsImportant);
     bool shouldApplyAfterAnimation(const StyleProperties::PropertyReference&);
+    void addPositionTryFallbackProperties();
 
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
@@ -122,6 +123,7 @@ private:
         bool hasLineHeight { false };
     };
     std::optional<AnimationLayer> m_animationLayer;
+    std::optional<MatchedProperties> m_positionTryFallbackProperties;
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.

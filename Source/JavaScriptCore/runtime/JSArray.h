@@ -125,6 +125,10 @@ public:
 
     JSArray* fastWith(JSGlobalObject*, uint32_t index, JSValue, uint64_t length);
 
+    std::optional<bool> fastIncludes(JSGlobalObject*, JSValue,  uint64_t fromIndex, uint64_t length);
+
+    bool fastCopywithin(JSGlobalObject*, uint64_t from64, uint64_t to64, uint64_t count64, uint64_t length64);
+
     ALWAYS_INLINE bool definitelyNegativeOneMiss() const;
 
     enum ShiftCountMode {
@@ -162,7 +166,7 @@ public:
     JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
-        
+
 protected:
 #if ASSERT_ENABLED
     void finishCreation(VM& vm)
@@ -284,6 +288,12 @@ enum class ArrayFillMode {
     Empty,
 };
 
+enum class NeedsGCSafeOps {
+    No,
+    Yes,
+};
+
+
 template<ArrayFillMode fillMode>
 bool moveArrayElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, unsigned targetOffset, JSArray* source, unsigned sourceLength)
 {
@@ -329,7 +339,7 @@ void clearElement(T& element)
 template<>
 void clearElement(double& element);
 
-template<ArrayFillMode fillMode, typename T, typename U>
+template<ArrayFillMode fillMode, NeedsGCSafeOps needsGCSafeOps, typename T, typename U>
 ALWAYS_INLINE void copyArrayElements(T* buffer, unsigned offset, U* source, unsigned sourceSize, IndexingType sourceType)
 {
     if (sourceType == ArrayWithUndecided) {
@@ -345,7 +355,9 @@ ALWAYS_INLINE void copyArrayElements(T* buffer, unsigned offset, U* source, unsi
 
     if constexpr (std::is_same_v<T, U>) {
         if constexpr (fillMode == ArrayFillMode::Empty) {
-            if constexpr (std::is_same_v<T, double>)
+            if constexpr (needsGCSafeOps == NeedsGCSafeOps::No && sizeof(T) == sizeof(U))
+                memcpy(buffer + offset, source, sizeof(T) * sourceSize);
+            else if constexpr (std::is_same_v<T, double>)
                 memcpy(buffer + offset, source, sizeof(double) * sourceSize);
             else
                 gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);

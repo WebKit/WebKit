@@ -74,13 +74,13 @@ VelocityData HistoricalVelocityData::velocityForNewData(FloatPoint newPosition, 
 
 TextStream& operator<<(TextStream& ts, const VelocityData& velocityData)
 {
-    ts.dumpProperty("timestamp", velocityData.lastUpdateTime.secondsSinceEpoch().value());
+    ts.dumpProperty("timestamp"_s, velocityData.lastUpdateTime.secondsSinceEpoch().value());
     if (velocityData.horizontalVelocity)
-        ts.dumpProperty("horizontalVelocity", velocityData.horizontalVelocity);
+        ts.dumpProperty("horizontalVelocity"_s, velocityData.horizontalVelocity);
     if (velocityData.verticalVelocity)
-        ts.dumpProperty("verticalVelocity", velocityData.verticalVelocity);
+        ts.dumpProperty("verticalVelocity"_s, velocityData.verticalVelocity);
     if (velocityData.scaleChangeRate)
-        ts.dumpProperty("scaleChangeRate", velocityData.scaleChangeRate);
+        ts.dumpProperty("scaleChangeRate"_s, velocityData.scaleChangeRate);
 
     return ts;
 }

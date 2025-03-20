@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -421,7 +421,8 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
             m_markup.append(" shadowrootserializable=\"\""_s);
         if (shadowRoot->isClonable())
             m_markup.append(" shadowrootclonable=\"\""_s);
-        // FIXME: Add shadowrootcustomelements
+        if (shadowRoot->protectedHost()->customElementRegistry() != shadowRoot->registryForBindings())
+            m_markup.append(" shadowrootcustomelementregistry=\"\""_s);
         m_markup.append('>');
     } else
         appendNonElementNode(m_markup, node, namespaces);

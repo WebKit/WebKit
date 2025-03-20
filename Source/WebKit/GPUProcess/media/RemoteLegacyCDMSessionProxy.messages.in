@@ -29,7 +29,7 @@
     EnabledBy=LegacyEncryptedMediaAPIEnabled
 ]
 messages -> RemoteLegacyCDMSessionProxy {
-    GenerateKeyRequest(String mimeType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
+    GenerateKeyRequest(String mimeType, RefPtr<WebCore::SharedBuffer> initData, String mediaKeysHashSalt) -> (RefPtr<WebCore::SharedBuffer> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
     ReleaseKeys()
     Update(RefPtr<WebCore::SharedBuffer> update) -> (bool succeeded, RefPtr<WebCore::SharedBuffer> nextMessage, unsigned short errorCode, uint32_t systemCode) Synchronous
     CachedKeyForKeyID(String keyId) -> (RefPtr<WebCore::SharedBuffer> key) Synchronous

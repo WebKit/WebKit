@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "CachedImage.h"
 #include "DocumentInlines.h"
+#include "EditingInlines.h"
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
@@ -922,7 +923,7 @@ bool lineBreakExistsAtPosition(const Position& position)
         return false;
 
     RefPtr textNode = dynamicDowncast<Text>(*position.anchorNode());
-    if (!textNode || !position.anchorNode()->renderer()->style().preserveNewline())
+    if (!textNode || !textNode->renderer()->style().preserveNewline())
         return false;
 
     unsigned offset = position.offsetInContainerNode();
@@ -1298,9 +1299,11 @@ static std::optional<BoundaryPoint> findBidiBoundary(const RenderedPosition& pos
     return (position.box()->direction() == selectionDirection) == moveLeft ? leftBoundary.boundaryPoint() : rightBoundary.boundaryPoint();
 }
 
-static InlineIterator::LeafBoxIterator advanceInDirection(InlineIterator::LeafBoxIterator box, TextDirection direction, bool iterateInSameDirection)
+enum class BoxIterationDirection : bool { SameAsLine, OppositeOfLine };
+static InlineIterator::LeafBoxIterator advanceInDirection(InlineIterator::LeafBoxIterator box, TextDirection direction, BoxIterationDirection iterationDirection)
 {
-    return iterateInSameDirection == (direction == TextDirection::LTR) ? box->nextLineRightwardOnLine() : box->nextLineLeftwardOnLine();
+    bool shouldMoveRight = (iterationDirection == BoxIterationDirection::SameAsLine) == (direction == TextDirection::LTR);
+    return shouldMoveRight ? box->nextLineRightwardOnLine() : box->nextLineLeftwardOnLine();
 }
 
 static void forEachRenderedBoxBetween(const RenderedPosition& first, const RenderedPosition& second, NOESCAPE const Function<IterationStatus(InlineIterator::LeafBoxIterator)>& callback)
@@ -1414,6 +1417,8 @@ static std::optional<SimpleRange> makeVisuallyContiguousIfNeeded(const SimpleRan
     auto bidiLevelAtEnd = renderedEnd.box()->bidiLevel();
     auto targetBidiLevelAtStart = bidiLevelAtStart;
     auto targetBidiLevelAtEnd = bidiLevelAtEnd;
+    std::optional<BoundaryPoint> adjustedStart;
+    std::optional<BoundaryPoint> adjustedEnd;
     if (inSameLine(start, end)) {
         if (auto box = boxWithMinimumBidiLevelBetween(renderedStart, renderedEnd)) {
             targetBidiLevelAtStart = box->bidiLevel();
@@ -1422,33 +1427,68 @@ static std::optional<SimpleRange> makeVisuallyContiguousIfNeeded(const SimpleRan
             lastLineDirection = firstLineDirection;
         }
     } else {
+        bool firstLineOnlyContainsSelectedTextInOppositeDirection = true;
         firstLineDirection = start.primaryDirection();
-        for (auto box = renderedStart.box(); box; box = advanceInDirection(box, firstLineDirection, true))
+        std::optional<BoundaryPoint> firstPositionForSelectedTextInOppositeDirectionOnFirstLine;
+        for (auto box = renderedStart.box(); box; box = advanceInDirection(box, firstLineDirection, BoxIterationDirection::SameAsLine)) {
             targetBidiLevelAtStart = std::min(targetBidiLevelAtStart, box->bidiLevel());
 
+            if (box->direction() == firstLineDirection)
+                firstLineOnlyContainsSelectedTextInOppositeDirection = false;
+
+            if (!firstLineOnlyContainsSelectedTextInOppositeDirection)
+                continue;
+
+            if (RefPtr node = box->renderer().node()) {
+                if (box->isText())
+                    firstPositionForSelectedTextInOppositeDirectionOnFirstLine.emplace(node.releaseNonNull(), box->minimumCaretOffset());
+                else
+                    firstPositionForSelectedTextInOppositeDirectionOnFirstLine = makeBoundaryPointBeforeNode(node.releaseNonNull());
+            }
+        }
+
+        if (firstLineOnlyContainsSelectedTextInOppositeDirection)
+            adjustedStart = WTFMove(firstPositionForSelectedTextInOppositeDirectionOnFirstLine);
+
+        bool lastLineOnlyContainsSelectedTextInOppositeDirection = true;
         lastLineDirection = end.primaryDirection();
-        for (auto box = renderedEnd.box(); box; box = advanceInDirection(box, lastLineDirection, false))
+        std::optional<BoundaryPoint> lastPositionForSelectedTextInOppositeDirectionOnLastLine;
+        for (auto box = renderedEnd.box(); box; box = advanceInDirection(box, lastLineDirection, BoxIterationDirection::OppositeOfLine)) {
             targetBidiLevelAtEnd = std::min(targetBidiLevelAtEnd, box->bidiLevel());
-    }
 
-    bool adjustedEndpoints = false;
-    auto adjustedRange = range;
-    if (bidiLevelAtStart > targetBidiLevelAtStart && start != logicalStartOfLine(start) && endpoints.contains(RangeEndpointsToAdjust::Start)) {
-        if (auto adjustedStart = findBidiBoundary(renderedStart, targetBidiLevelAtStart + 1, movement, firstLineDirection)) {
-            adjustedEndpoints = true;
-            adjustedRange.start = WTFMove(*adjustedStart);
+            if (box->direction() == lastLineDirection)
+                lastLineOnlyContainsSelectedTextInOppositeDirection = false;
+
+            if (!lastLineOnlyContainsSelectedTextInOppositeDirection)
+                continue;
+
+            if (RefPtr node = box->renderer().node()) {
+                if (box->isText())
+                    lastPositionForSelectedTextInOppositeDirectionOnLastLine.emplace(node.releaseNonNull(), box->maximumCaretOffset());
+                else
+                    lastPositionForSelectedTextInOppositeDirectionOnLastLine = makeBoundaryPointAfterNode(node.releaseNonNull());
+            }
         }
+
+        if (lastLineOnlyContainsSelectedTextInOppositeDirection)
+            adjustedEnd = WTFMove(lastPositionForSelectedTextInOppositeDirectionOnLastLine);
     }
 
-    if (bidiLevelAtEnd > targetBidiLevelAtEnd && end != logicalEndOfLine(end) && endpoints.contains(RangeEndpointsToAdjust::End)) {
-        if (auto adjustedEnd = findBidiBoundary(renderedEnd, targetBidiLevelAtEnd + 1, movement, lastLineDirection)) {
-            adjustedEndpoints = true;
-            adjustedRange.end = WTFMove(*adjustedEnd);
-        }
-    }
+    if (!adjustedStart && bidiLevelAtStart > targetBidiLevelAtStart && start != logicalStartOfLine(start) && endpoints.contains(RangeEndpointsToAdjust::Start))
+        adjustedStart = findBidiBoundary(renderedStart, targetBidiLevelAtStart + 1, movement, firstLineDirection);
 
-    if (!adjustedEndpoints)
+    if (!adjustedEnd && bidiLevelAtEnd > targetBidiLevelAtEnd && end != logicalEndOfLine(end) && endpoints.contains(RangeEndpointsToAdjust::End))
+        adjustedEnd = findBidiBoundary(renderedEnd, targetBidiLevelAtEnd + 1, movement, lastLineDirection);
+
+    if (!adjustedStart && !adjustedEnd)
         return std::nullopt;
+
+    auto adjustedRange = range;
+    if (adjustedStart)
+        adjustedRange.start = WTFMove(*adjustedStart);
+
+    if (adjustedEnd)
+        adjustedRange.end = WTFMove(*adjustedEnd);
 
     if (!is_lt(treeOrder(adjustedRange.start, adjustedRange.end)))
         return std::nullopt;

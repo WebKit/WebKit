@@ -56,7 +56,7 @@ public:
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
+    static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, JSC::QueuedTask&&);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:
@@ -65,9 +65,9 @@ protected:
 
     DECLARE_VISIT_CHILDREN;
 
-private:
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 
+private:
     RefPtr<WorkerGlobalScope> m_wrapped;
 };
 

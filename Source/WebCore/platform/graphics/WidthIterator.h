@@ -96,7 +96,7 @@ private:
     bool rtl() const { return m_direction == TextDirection::RTL; }
     bool ltr() const { return m_direction == TextDirection::LTR; }
 
-    CheckedRef<const FontCascade> m_font;
+    CheckedRef<const FontCascade> m_fontCascade;
     CheckedRef<const TextRun> m_run;
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 

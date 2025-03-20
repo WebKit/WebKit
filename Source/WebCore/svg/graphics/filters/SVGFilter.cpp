@@ -55,11 +55,6 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<F
     return filter;
 }
 
-Ref<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-{
-    return adoptRef(*new SVGFilter(targetBoundingBox, primitiveUnits, WTFMove(expression), WTFMove(effects), renderingResourceIdentifier));
-}
-
 Ref<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion)
 {
     Ref filter = adoptRef(*new SVGFilter(targetBoundingBox, primitiveUnits, WTFMove(expression), WTFMove(effects), renderingResourceIdentifier, filterScale, filterRegion));
@@ -73,15 +68,6 @@ SVGFilter::SVGFilter(const FloatSize& filterScale, const FloatRect& filterRegion
     : Filter(Filter::Type::SVGFilter, filterScale, filterRegion, renderingResourceIdentifier)
     , m_targetBoundingBox(targetBoundingBox)
     , m_primitiveUnits(primitiveUnits)
-{
-}
-
-SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : Filter(Filter::Type::SVGFilter, renderingResourceIdentifier)
-    , m_targetBoundingBox(targetBoundingBox)
-    , m_primitiveUnits(primitiveUnits)
-    , m_expression(WTFMove(expression))
-    , m_effects(WTFMove(effects))
 {
 }
 

@@ -1,4 +1,4 @@
 
-FAIL Insert rules The string did not match the expected pattern.
-FAIL Delete rules assert_equals: expected 4 but got 0
+FAIL Insert rules undefined is not an object (evaluating 'pageRule.cssRules.length')
+FAIL Delete rules undefined is not an object (evaluating 'pageRule.cssRules.length')
 

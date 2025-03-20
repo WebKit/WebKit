@@ -57,6 +57,7 @@ public:
 private:
     RemoteAudioSession();
     IPC::Connection& ensureConnection();
+    Ref<IPC::Connection> ensureProtectedConnection();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

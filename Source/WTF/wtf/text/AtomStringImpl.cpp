@@ -66,7 +66,7 @@ using StringTableImpl = AtomStringTable::StringTableImpl;
 
 static ALWAYS_INLINE StringTableImpl& stringTable()
 {
-    return Thread::current().atomStringTable()->table();
+    return Thread::currentSingleton().atomStringTable()->table();
 }
 
 template<typename T, typename HashTranslator>

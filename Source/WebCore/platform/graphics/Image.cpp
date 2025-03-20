@@ -132,7 +132,12 @@ std::optional<Ref<Image>> Image::create(RefPtr<ShareableBitmap>&& bitmap)
 bool Image::supportsType(const String& type)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(type);
-} 
+}
+
+RefPtr<FragmentedSharedBuffer> Image::protectedData() const
+{
+    return m_encodedImageData;
+}
 
 EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
 {
@@ -401,12 +406,12 @@ RefPtr<ShareableBitmap> Image::toShareableBitmap() const
 void Image::dump(TextStream& ts) const
 {
     if (isAnimated())
-        ts.dumpProperty("animated", isAnimated());
+        ts.dumpProperty("animated"_s, isAnimated());
 
     if (isNull())
-        ts.dumpProperty("is-null-image", true);
+        ts.dumpProperty("is-null-image"_s, true);
 
-    ts.dumpProperty("size", size());
+    ts.dumpProperty("size"_s, size());
 }
 
 TextStream& operator<<(TextStream& ts, const Image& image)
@@ -414,21 +419,21 @@ TextStream& operator<<(TextStream& ts, const Image& image)
     TextStream::GroupScope scope(ts);
 
     if (image.isBitmapImage())
-        ts << "bitmap image";
+        ts << "bitmap image"_s;
     else if (image.isCrossfadeGeneratedImage())
-        ts << "crossfade image";
+        ts << "crossfade image"_s;
     else if (image.isNamedImageGeneratedImage())
-        ts << "named image";
+        ts << "named image"_s;
     else if (image.isGradientImage())
-        ts << "gradient image";
+        ts << "gradient image"_s;
     else if (image.isSVGImage())
-        ts << "svg image";
+        ts << "svg image"_s;
     else if (image.isSVGResourceImage())
-        ts << "svg resource image";
+        ts << "svg resource image"_s;
     else if (image.isSVGImageForContainer())
-        ts << "svg image for container";
+        ts << "svg image for container"_s;
     else if (image.isPDFDocumentImage())
-        ts << "pdf image";
+        ts << "pdf image"_s;
 
     image.dump(ts);
     return ts;

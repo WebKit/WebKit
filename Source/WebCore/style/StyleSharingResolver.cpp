@@ -26,10 +26,10 @@
 #include "config.h"
 #include "StyleSharingResolver.h"
 
+#include "DocumentFullscreen.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "ElementRuleCollector.h"
-#include "FullscreenManager.h"
 #include "HTMLDialogElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -264,6 +264,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
 
     if (style->containerType() != ContainerType::Normal)
         return false;
+    if (style->usesAnchorFunctions())
+        return false;
 
     if (candidateElement.elementData() != element.elementData()) {
         // Attributes that are optimized as "common attribute selectors".
@@ -291,9 +293,6 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
 #endif
 
     if (&candidateElement == m_document->activeModalDialog() || &element == m_document->activeModalDialog())
-        return false;
-
-    if (!m_document->styleScope().anchorPositionedStates().isEmptyIgnoringNullReferences())
         return false;
 
     if (candidateElement.isInTopLayer() || element.isInTopLayer())

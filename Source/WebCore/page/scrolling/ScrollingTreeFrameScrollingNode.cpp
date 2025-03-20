@@ -143,36 +143,36 @@ FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint
 
 void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "frame scrolling node";
+    ts << "frame scrolling node"_s;
     ScrollingTreeScrollingNode::dumpProperties(ts, behavior);
 
-    ts.dumpProperty("layout viewport", m_layoutViewport);
-    ts.dumpProperty("min layoutViewport origin", m_minLayoutViewportOrigin);
-    ts.dumpProperty("max layoutViewport origin", m_maxLayoutViewportOrigin);
+    ts.dumpProperty("layout viewport"_s, m_layoutViewport);
+    ts.dumpProperty("min layoutViewport origin"_s, m_minLayoutViewportOrigin);
+    ts.dumpProperty("max layoutViewport origin"_s, m_maxLayoutViewportOrigin);
 
     if (m_overrideVisualViewportSize)
-        ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
+        ts.dumpProperty("override visual viewport size"_s, m_overrideVisualViewportSize.value());
 
     if (m_frameScaleFactor != 1)
-        ts.dumpProperty("frame scale factor", m_frameScaleFactor);
+        ts.dumpProperty("frame scale factor"_s, m_frameScaleFactor);
 
     if (m_obscuredContentInsets.top())
-        ts.dumpProperty("top content inset", m_obscuredContentInsets.top());
+        ts.dumpProperty("top content inset"_s, m_obscuredContentInsets.top());
     if (m_obscuredContentInsets.bottom())
-        ts.dumpProperty("bottom content inset", m_obscuredContentInsets.bottom());
+        ts.dumpProperty("bottom content inset"_s, m_obscuredContentInsets.bottom());
     if (m_obscuredContentInsets.left())
-        ts.dumpProperty("left content inset", m_obscuredContentInsets.left());
+        ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
     if (m_obscuredContentInsets.right())
-        ts.dumpProperty("right content inset", m_obscuredContentInsets.right());
+        ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
 
     if (m_headerHeight)
-        ts.dumpProperty("header height", m_headerHeight);
+        ts.dumpProperty("header height"_s, m_headerHeight);
     if (m_footerHeight)
-        ts.dumpProperty("footer height", m_footerHeight);
+        ts.dumpProperty("footer height"_s, m_footerHeight);
 
-    ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
+    ts.dumpProperty("behavior for fixed"_s, m_behaviorForFixed);
     if (m_visualViewportIsSmallerThanLayoutViewport)
-        ts.dumpProperty("visual viewport is smaller than layout viewport", m_visualViewportIsSmallerThanLayoutViewport);
+        ts.dumpProperty("visual viewport is smaller than layout viewport"_s, m_visualViewportIsSmallerThanLayoutViewport);
 }
 
 

@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingTreeCocoa.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #import "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
 #import "ScrollingTreePluginScrollingNodeRemoteMac.h"
@@ -453,27 +454,6 @@ static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNod
     return false;
 }
 
-static const EventRegion* eventRegionForLayer(CALayer *layer)
-{
-    RefPtr layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
-    if (!layerTreeNode)
-        return nullptr;
-
-    return &layerTreeNode->eventRegion();
-}
-
-static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
-{
-    auto* eventRegion = eventRegionForLayer(layer);
-    if (!eventRegion)
-        return false;
-
-    // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
-    FloatPoint boundsOrigin = layer.bounds.origin;
-    FloatPoint originRelativePoint = localPoint - toFloatSize(boundsOrigin);
-    return eventRegion->contains(roundedIntPoint(originRelativePoint));
-}
-
 RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
 {
     RefPtr rootScrollingNode = rootNode();
@@ -552,21 +532,11 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
 
     auto rootContentsLayer = rootScrollingNode->rootContentsLayer();
 
-    Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point, layerEventRegionContainsPoint);
-
-    if (layersAtPoint.isEmpty())
-        return { };
-
-    auto [hitLayer, localPoint] = layersAtPoint.last();
-    if (!hitLayer)
-        return { };
-
-    auto* eventRegion = eventRegionForLayer(hitLayer.get());
+    auto* eventRegion = eventRegionForPoint(rootScrollingNode->rootContentsLayer().get(), point);
     if (!eventRegion)
         return { };
 
-    return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(localPoint));
+    return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(point));
 }
 #endif
 

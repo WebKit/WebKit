@@ -1214,8 +1214,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             auto renderStage = metalRenderStage(stage);
             auto &v = stageResources[renderStage][i];
             auto &u = stageResourceUsages[renderStage][i];
+            static_assert(MTLResourceUsageRead == 1 && !BindGroupLayout::BindingAccessReadOnly);
             if (v.size()) {
-                if (stage != ShaderStage::Undefined)
+                if (stage != ShaderStage::Undefined && i == BindGroupLayout::BindingAccessReadOnly)
                     externalTextureIndices[stage].containerIndex = resources.size();
                 resources.append(BindableResources {
                     .mtlResources = WTFMove(v),

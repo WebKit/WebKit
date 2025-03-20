@@ -39,7 +39,7 @@ public:
 
     void handleUpstreamEvent(GRefPtr<GstEvent>&&);
     bool handleUpstreamQuery(GstQuery*);
-    void handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&&);
+    GstPadProbeReturn handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&&);
 
     void tearDown();
 
@@ -58,6 +58,7 @@ private:
     GRefPtr<GstElement> m_sink;
     Lock m_clientLock;
     HashMap<int, GRefPtr<GstElement>> m_clients WTF_GUARDED_BY_LOCK(m_clientLock);
+    MonotonicTime m_lastTagUpdate;
 };
 
 } // namespace WebCore

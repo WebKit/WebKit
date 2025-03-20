@@ -26,6 +26,7 @@
 #import "APIResourceLoadInfo.h"
 #import "WKObject.h"
 #import "_WKResourceLoadInfo.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::ResourceLoadInfo> {
 
 @interface _WKResourceLoadInfo () <WKObject> {
 @package
-    API::ObjectStorage<API::ResourceLoadInfo> _info;
+    AlignedStorage<API::ResourceLoadInfo> _info;
 }
 @end

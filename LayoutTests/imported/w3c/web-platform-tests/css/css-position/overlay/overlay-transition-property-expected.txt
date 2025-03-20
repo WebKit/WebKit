@@ -1,0 +1,6 @@
+
+PASS e.style['transition-property'] = "overlay" should set the property value
+PASS e.style['transition'] = "overlay 2s" should set the property value
+PASS Property transition-property value 'overlay'
+PASS Property transition value 'overlay 1s'
+

@@ -90,7 +90,7 @@ bool ScrollingTreeNode::isRootNode() const
 void ScrollingTreeNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
-        ts.dumpProperty("nodeID", scrollingNodeID());
+        ts.dumpProperty("nodeID"_s, scrollingNodeID());
 }
 
 RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeNode::enclosingFrameNodeIncludingSelf()

@@ -1,0 +1,9 @@
+PASS output[0] is 13
+PASS output[1] is 42
+PASS output[2] is 1
+PASS output[3] is 2
+PASS output[4] is 3
+PASS output[5] is 4
+PASS output[6] is 5
+PASS output[7] is 6
+

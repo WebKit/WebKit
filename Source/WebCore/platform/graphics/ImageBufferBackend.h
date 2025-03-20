@@ -142,7 +142,7 @@ public:
 #endif
 
 #if USE(SKIA)
-    virtual void finishAcceleratedRenderingAndCreateFence() { }
+    virtual bool finishAcceleratedRenderingAndCreateFence() { return false; }
     virtual void waitForAcceleratedRenderingFenceCompletion() { }
 
     virtual const GrDirectContext* skiaGrContext() const { return nullptr; }

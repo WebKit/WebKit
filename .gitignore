@@ -32,6 +32,7 @@ results
 .gdb_history
 tags
 *~
+.sw[a-p]
 .*.sw[a-p]
 .cache
 .clangd

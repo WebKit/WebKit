@@ -188,6 +188,10 @@ PASS position (type: discrete) has testInterpolation function
 PASS position uses discrete animation when animating between "absolute" and "fixed" with linear easing
 PASS position uses discrete animation when animating between "absolute" and "fixed" with effect easing
 PASS position uses discrete animation when animating between "absolute" and "fixed" with keyframe easing
+PASS position-visibility (type: discrete) has testInterpolation function
+PASS position-visibility uses discrete animation when animating between "always" and "anchors-visible" with linear easing
+PASS position-visibility uses discrete animation when animating between "always" and "anchors-visible" with effect easing
+PASS position-visibility uses discrete animation when animating between "always" and "anchors-visible" with keyframe easing
 PASS quotes (type: discrete) has testInterpolation function
 PASS quotes uses discrete animation when animating between ""“" "”" "‘" "’"" and ""‘" "’" "“" "”"" with linear easing
 PASS quotes uses discrete animation when animating between ""“" "”" "‘" "’"" and ""‘" "’" "“" "”"" with effect easing

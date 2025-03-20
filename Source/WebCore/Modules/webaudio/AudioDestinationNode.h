@@ -58,6 +58,10 @@ public:
     void ref() const final;
     void deref() const final;
 
+#if PLATFORM(IOS_FAMILY)
+    virtual void setSceneIdentifier(const String&) { }
+#endif
+
 protected:
     AudioDestinationNode(BaseAudioContext&, float sampleRate);
 

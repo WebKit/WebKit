@@ -34,27 +34,27 @@ namespace WebKit {
 
 TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayInputData& inputData)
 {
-    ts << "remoteImageBufferSet: " << inputData.remoteBufferSet;
-    ts << " dirtyRegion: " << inputData.dirtyRegion;
-    ts << " supportsPartialRepaint: " << inputData.supportsPartialRepaint;
-    ts << " hasEmptyDirtyRegion: " << inputData.hasEmptyDirtyRegion;
-    ts << " requiresClearedPixels: " << inputData.requiresClearedPixels;
+    ts << "remoteImageBufferSet: "_s << inputData.remoteBufferSet;
+    ts << " dirtyRegion: "_s << inputData.dirtyRegion;
+    ts << " supportsPartialRepaint: "_s << inputData.supportsPartialRepaint;
+    ts << " hasEmptyDirtyRegion: "_s << inputData.hasEmptyDirtyRegion;
+    ts << " requiresClearedPixels: "_s << inputData.requiresClearedPixels;
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
 {
-    ts << "displayRequirement: " << outputData.displayRequirement;
-    ts << "bufferCacheIdentifiers: " << outputData.bufferCacheIdentifiers;
+    ts << "displayRequirement: "_s << outputData.displayRequirement;
+    ts << "bufferCacheIdentifiers: "_s << outputData.bufferCacheIdentifiers;
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequirement)
 {
     switch (displayRequirement) {
-    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
+    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"_s; break;
+    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"_s; break;
+    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"_s; break;
     }
 
     return ts;

@@ -27,6 +27,7 @@
 
 #import "VisitedLinkStore.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<VisitedLinkStore> {
 
 @interface _WKVisitedLinkStore () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::VisitedLinkStore> _visitedLinkStore;
+    AlignedStorage<WebKit::VisitedLinkStore> _visitedLinkStore;
 }
 
 @end

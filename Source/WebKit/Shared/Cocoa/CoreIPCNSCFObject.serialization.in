@@ -46,6 +46,7 @@ using WebKit::ObjectValue = std::variant<
 #if USE(PASSKIT)
     WebKit::CoreIPCPKPaymentMethod,
     WebKit::CoreIPCPKPaymentMerchantSession,
+    WebKit::CoreIPCPKPaymentSetupFeature,
     WebKit::CoreIPCPKContact,
     WebKit::CoreIPCPKSecureElementPass,
     WebKit::CoreIPCPKPayment,

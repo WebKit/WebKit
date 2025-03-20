@@ -34,6 +34,7 @@
 #include <WebCore/HTMLHtmlElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLParserIdioms.h>
+#include <WebCore/NodeInlines.h>
 #include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/Settings.h>

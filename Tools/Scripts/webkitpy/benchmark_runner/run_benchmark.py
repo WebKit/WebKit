@@ -19,8 +19,6 @@ benchmark_runner_subclasses = {
     WebServerBenchmarkRunner.name: WebServerBenchmarkRunner,
 }
 
-WEBKIT_PGO_DIR = '/private/tmp/WebKitPGO'
-
 def default_platform():
     if sys.platform.startswith('linux'):
         return 'linux'
@@ -60,7 +58,7 @@ def config_argument_parser():
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
     parser.add_argument('--generate-pgo-profiles', dest="generate_pgo_profiles", action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnostics directory.")
-    parser.add_argument('--profile', dest='trace_type', default=None, help="Collect profiling traces, and copy them to the diagnostic directory. Requires a valid TRACE_TYPE - options are `full` and `profile`.")
+    parser.add_argument('--profile', dest='trace_type', default=None, choices=["full", "full-no-clpc", "ktrace-full", "ktrace-profile"], help="Collect profiling traces, and copy them to the diagnostic directory. 'ktrace' tracing types are deprecated, but currently supported for backwards compatibility.")
     parser.add_argument('--profiling-interval', default=None, help="Specify the profiling sampling rate.")
 
     group = parser.add_mutually_exclusive_group()
@@ -90,9 +88,6 @@ def parse_args(parser=None):
     if (args.generate_pgo_profiles or args.trace_type) and not args.diagnose_dir:
         raise Exception('Collecting profiles requires a diagnostic directory (--diagnose-directory) to be set.')
 
-    if args.generate_pgo_profiles and args.platform != 'osx':
-        raise Exception('PGO Profile generation is currently only supported on macOS.')
-
     return args
 
 
@@ -102,7 +97,7 @@ def run_benchmark_plan(args, plan):
                                     args.local_copy, args.count, args.timeout, args.build_dir, args.output_file,
                                     args.platform, args.browser, args.browser_path, args.subtests, args.scale_unit,
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
-                                    WEBKIT_PGO_DIR if args.generate_pgo_profiles else None,
+                                    args.generate_pgo_profiles,
                                     args.diagnose_dir if args.trace_type else None,
                                     args.trace_type, args.profiling_interval,
                                     args.browser_args, args.http_server_type)

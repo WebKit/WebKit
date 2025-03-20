@@ -32,6 +32,7 @@
 #import <algorithm>
 #import <mach/mach_time.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 
 #define MOUSE_EVENT_TYPES \
@@ -224,7 +225,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     return dict.autorelease();
 }
 
-+ (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(CGEventTimestamp)referenceTimestamp
++ (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(MonotonicTime)referenceTimestamp
 {
     auto event = adoptCF(CGEventCreate(NULL));
     CGEventRef rawEvent = event.get();
@@ -233,7 +234,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     FOR_EACH_CGEVENT_DOUBLE_FIELD(STORE_DOUBLE_FIELD_TO_EVENT);
 
     if (dict[@"relativeTimeMS"])
-        CGEventSetTimestamp(event.get(), referenceTimestamp + static_cast<CGEventTimestamp>(([dict[@"relativeTimeMS"] doubleValue] * NSEC_PER_MSEC)));
+        CGEventSetTimestamp(event.get(), (referenceTimestamp + Seconds::fromMilliseconds([dict[@"relativeTimeMS"] doubleValue])).secondsSinceEpoch().nanoseconds());
 
     if ([dict[@"kCGEventGestureIsPreflight"] boolValue]) {
         CGEventSetIntegerValueField(rawEvent, kCGEventGestureIsPreflight, 1);
@@ -242,10 +243,11 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
 
     if (dict[@"windowLocation"]) {
         CGPoint windowLocation = NSPointToCGPoint(NSPointFromString(dict[@"windowLocation"]));
-        CGEventSetWindowLocation(rawEvent, windowLocation);
+        NSPoint screenPoint = [window convertPointToScreen:windowLocation];
+        CGPoint flippedScreenPoint = CGPointMake(screenPoint.x, NSScreen.screens.firstObject.frame.size.height - screenPoint.y);
 
-        NSPoint screenPoint = [window convertRectToScreen:NSMakeRect(windowLocation.x, windowLocation.y, 1, 1)].origin;
-        CGEventSetLocation(rawEvent, CGPointMake(screenPoint.x, NSScreen.screens.firstObject.frame.size.height - screenPoint.y));
+        CGEventSetLocation(rawEvent, flippedScreenPoint);
+        CGEventSetWindowLocation(rawEvent, windowLocation);
     }
 
     if (dict[@"flags"])
@@ -258,7 +260,12 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
 
 @end
 
-@implementation EventStreamPlayer
+@implementation EventStreamPlayer {
+    RetainPtr<NSMutableArray> _remainingEventDictionaries;
+    RetainPtr<NSWindow> _window;
+    BlockPtr<void()> _completionHandler;
+    MonotonicTime _startTime;
+}
 
 const float eventDispatchTimerRate = 1. / 120.;
 
@@ -272,7 +279,7 @@ const float eventDispatchTimerRate = 1. / 120.;
     if (completionHandler)
         player->_completionHandler = makeBlockPtr(completionHandler);
 
-    player->_startTime = mach_absolute_time();
+    player->_startTime = MonotonicTime::now();
 
     [NSTimer scheduledTimerWithTimeInterval:eventDispatchTimerRate target:player.get() selector:@selector(playbackTimerFired:) userInfo:nil repeats:YES];
 }
@@ -283,7 +290,7 @@ const float eventDispatchTimerRate = 1. / 120.;
     NSEvent *nsEvent = nil;
     for (id eventDict in _remainingEventDictionaries.get()) {
         auto event = [EventSerializer createEventForDictionary:eventDict inWindow:_window.get() relativeToTime:_startTime];
-        if (CGEventGetTimestamp(event.get()) < mach_absolute_time()) {
+        if (MonotonicTime::fromRawSeconds(static_cast<float>(CGEventGetTimestamp(event.get())) / NSEC_PER_SEC) < MonotonicTime::now()) {
             nsEvent = [NSEvent eventWithCGEvent:event.get()];
             [NSApp postEvent:nsEvent atStart:NO];
             [removeList addObject:eventDict];

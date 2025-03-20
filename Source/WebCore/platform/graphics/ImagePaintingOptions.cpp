@@ -33,11 +33,11 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, ImagePaintingOptions options)
 {
-    ts.dumpProperty("composite-operator", options.compositeOperator());
-    ts.dumpProperty("blend-mode", options.blendMode());
-    ts.dumpProperty("decoding-mode", options.decodingMode());
-    ts.dumpProperty("orientation", options.orientation().orientation());
-    ts.dumpProperty("interpolation-quality", options.interpolationQuality());
+    ts.dumpProperty("composite-operator"_s, options.compositeOperator());
+    ts.dumpProperty("blend-mode"_s, options.blendMode());
+    ts.dumpProperty("decoding-mode"_s, options.decodingMode());
+    ts.dumpProperty("orientation"_s, options.orientation().orientation());
+    ts.dumpProperty("interpolation-quality"_s, options.interpolationQuality());
     return ts;
 }
 
@@ -45,13 +45,13 @@ TextStream& operator<<(TextStream& ts, DecodingMode mode)
 {
     switch (mode) {
     case DecodingMode::Auto:
-        ts << "auto";
+        ts << "auto"_s;
         break;
     case DecodingMode::Synchronous:
-        ts << "synchronous";
+        ts << "synchronous"_s;
         break;
     case DecodingMode::Asynchronous:
-        ts << "asynchronous";
+        ts << "asynchronous"_s;
         break;
     }
     return ts;
@@ -62,31 +62,31 @@ TextStream& operator<<(TextStream& ts, ImageOrientation::Orientation orientation
     using Orientation = ImageOrientation::Orientation;
     switch (orientation) {
     case Orientation::FromImage:
-        ts << "from-image";
+        ts << "from-image"_s;
         break;
     case Orientation::OriginTopLeft:
-        ts << "origin-top-left";
+        ts << "origin-top-left"_s;
         break;
     case Orientation::OriginTopRight:
-        ts << "origin-bottom-right";
+        ts << "origin-bottom-right"_s;
         break;
     case Orientation::OriginBottomRight:
-        ts << "origin-top-right";
+        ts << "origin-top-right"_s;
         break;
     case Orientation::OriginBottomLeft:
-        ts << "origin-top-left";
+        ts << "origin-top-left"_s;
         break;
     case Orientation::OriginLeftTop:
-        ts << "origin-left-bottom";
+        ts << "origin-left-bottom"_s;
         break;
     case Orientation::OriginRightTop:
-        ts << "origin-right-bottom";
+        ts << "origin-right-bottom"_s;
         break;
     case Orientation::OriginRightBottom:
-        ts << "origin-right-top";
+        ts << "origin-right-top"_s;
         break;
     case Orientation::OriginLeftBottom:
-        ts << "origin-left-top";
+        ts << "origin-left-top"_s;
         break;
     }
     return ts;

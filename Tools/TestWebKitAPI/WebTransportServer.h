@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 class WebTransportServer {
 public:
-    WebTransportServer(Function<Task(ConnectionGroup)>&&);
+    WebTransportServer(Function<ConnectionTask(ConnectionGroup)>&&);
     ~WebTransportServer();
 
     uint16_t port() const;

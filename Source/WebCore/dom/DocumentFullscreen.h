@@ -27,28 +27,132 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include <wtf/Forward.h>
+#include "Document.h"
+#include "GCReachableRef.h"
+#include "HTMLMediaElement.h"
+#include "HTMLMediaElementEnums.h"
+#include "LayoutRect.h"
+#include "Page.h"
+#include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class DeferredPromise;
-class Document;
-class Element;
+class RenderStyle;
 
-class DocumentFullscreen {
+class DocumentFullscreen final : public CanMakeWeakPtr<DocumentFullscreen> {
+    WTF_MAKE_TZONE_ALLOCATED(DocumentFullscreen);
 public:
+    DocumentFullscreen(Document&);
+    ~DocumentFullscreen() = default;
+
+    void ref() const { m_document->ref(); }
+    void deref() const { m_document->deref(); }
+
+    // Document+Fullscreen.idl methods.
     static void exitFullscreen(Document&, RefPtr<DeferredPromise>&&);
     static bool fullscreenEnabled(Document&);
-
-    WEBCORE_EXPORT static bool webkitFullscreenEnabled(Document&);
-    WEBCORE_EXPORT static Element* webkitFullscreenElement(Document&);
+    static bool webkitFullscreenEnabled(Document& document) { return document.protectedFullscreen()->enabledByPermissionsPolicy(); }
+    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.protectedFullscreen()->protectedFullscreenElement().get()); };
     WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
-    WEBCORE_EXPORT static bool webkitIsFullScreen(Document&);
-    WEBCORE_EXPORT static bool webkitFullScreenKeyboardInputAllowed(Document&);
-    WEBCORE_EXPORT static Element* webkitCurrentFullScreenElement(Document&);
-    WEBCORE_EXPORT static void webkitCancelFullScreen(Document&);
+    static bool webkitIsFullScreen(Document& document) { return document.protectedFullscreen()->isFullscreen(); };
+    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.protectedFullscreen()->isFullscreenKeyboardInputAllowed(); };
+    static void webkitCancelFullScreen(Document& document) { document.protectedFullscreen()->fullyExitFullscreen(); };
+
+    // Helpers.
+    Document& document() { return m_document.get(); }
+    const Document& document() const { return m_document.get(); }
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+    Page* page() const { return document().page(); }
+    LocalFrame* frame() const { return document().frame(); }
+    Element* documentElement() const { return document().documentElement(); }
+    bool isSimpleFullscreenDocument() const;
+    Document::BackForwardCacheState backForwardCacheState() const { return document().backForwardCacheState(); }
+
+    // WHATWG Fullscreen API.
+    WEBCORE_EXPORT Element* fullscreenElement() const;
+    RefPtr<Element> protectedFullscreenElement() const { return fullscreenElement(); }
+    WEBCORE_EXPORT bool enabledByPermissionsPolicy() const;
+    WEBCORE_EXPORT void exitFullscreen(CompletionHandler<void(ExceptionOr<void>)>&&);
+    WEBCORE_EXPORT void fullyExitFullscreen();
+
+    // Legacy Mozilla API.
+    bool isFullscreen() const { return fullscreenElement(); }
+    bool isFullscreenKeyboardInputAllowed() const { return fullscreenElement() && m_areKeysEnabledInFullscreen; }
+
+    enum FullscreenCheckType {
+        EnforceIFrameAllowFullscreenRequirement,
+        ExemptIFrameAllowFullscreenRequirement,
+    };
+    WEBCORE_EXPORT void requestFullscreen(Ref<Element>&&, FullscreenCheckType, CompletionHandler<void(ExceptionOr<void>)>&&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    WEBCORE_EXPORT ExceptionOr<void> willEnterFullscreen(Element&, HTMLMediaElementEnums::VideoFullscreenMode);
+    WEBCORE_EXPORT bool willExitFullscreen();
+    WEBCORE_EXPORT void didExitFullscreen(CompletionHandler<void(ExceptionOr<void>)>&&);
+
+    WEBCORE_EXPORT static void elementEnterFullscreen(Element&);
+
+    void dispatchPendingEvents();
+
+    enum class ExitMode : bool { Resize, NoResize };
+    WEBCORE_EXPORT static void finishExitFullscreen(Frame&, ExitMode);
+
+    void exitRemovedFullscreenElement(Element&);
+
+    WEBCORE_EXPORT bool isAnimatingFullscreen() const;
+    WEBCORE_EXPORT void setAnimatingFullscreen(bool);
+
+protected:
+    friend class Document;
+
+    void clearPendingEvents() { m_pendingEvents.clear(); }
+
+private:
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const { return protectedDocument()->logger(); }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+    ASCIILiteral logClassName() const { return "DocumentFullscreen"_s; }
+    WTFLogChannel& logChannel() const;
+#endif
+
+    Document* mainFrameDocument() { return protectedDocument()->mainFrameDocument(); }
+    RefPtr<Document> protectedMainFrameDocument() { return mainFrameDocument(); }
+
+    bool didEnterFullscreen();
+
+    enum class EventType : bool { Change, Error };
+    static void queueFullscreenChangeEventForDocument(Document&);
+    void queueFullscreenChangeEventForElement(Element& target) { m_pendingEvents.append({ EventType::Change, GCReachableRef(target) }); }
+
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+
+    Deque<std::pair<EventType, GCReachableRef<Element>>> m_pendingEvents;
+
+    bool m_areKeysEnabledInFullscreen { false };
+    bool m_isAnimatingFullscreen { false };
+    bool m_pendingExitFullscreen { false };
+
+#if !RELEASE_LOG_DISABLED
+    const uint64_t m_logIdentifier;
+#endif
+
+    class CompletionHandlerScope final {
+    public:
+        CompletionHandlerScope(CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+            : m_completionHandler(WTFMove(completionHandler)) { }
+        CompletionHandlerScope(CompletionHandlerScope&&) = default;
+        CompletionHandlerScope& operator=(CompletionHandlerScope&&) = default;
+        ~CompletionHandlerScope()
+        {
+            if (m_completionHandler)
+                m_completionHandler({ });
+        }
+        CompletionHandler<void(ExceptionOr<void>)> release() { return WTFMove(m_completionHandler); }
+    private:
+        CompletionHandler<void(ExceptionOr<void>)> m_completionHandler;
+    };
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(FULLSCREEN_API)
+#endif

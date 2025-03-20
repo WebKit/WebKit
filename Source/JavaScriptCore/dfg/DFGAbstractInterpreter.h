@@ -32,6 +32,7 @@
 #include "DFGNode.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhiChildren.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 
@@ -39,7 +40,7 @@ namespace JSC { namespace DFG {
 
 template<typename AbstractStateType>
 class AbstractInterpreter {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(AbstractInterpreter);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(AbstractInterpreter);
 public:
     AbstractInterpreter(Graph&, AbstractStateType&);
     ~AbstractInterpreter();
@@ -256,7 +257,6 @@ private:
     void setConstant(Node* node, FrozenValue value)
     {
         setBuiltInConstant(node, value);
-        m_state.setShouldTryConstantFolding(true);
     }
     
     void setTupleConstant(Node* node, unsigned index, FrozenValue value)
@@ -264,7 +264,6 @@ private:
         AbstractValue& abstractValue = m_state.forTupleNode(node, index);
         abstractValue.set(m_graph, value, m_state.structureClobberState());
         abstractValue.fixTypeForRepresentation(m_graph, node);
-        m_state.setShouldTryConstantFolding(true);
     }
 
     ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type);
@@ -282,7 +281,7 @@ private:
     std::unique_ptr<PhiChildren> m_phiChildren;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename AbstractStateType>, AbstractInterpreter<AbstractStateType>);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename AbstractStateType>, AbstractInterpreter<AbstractStateType>);
 
 } } // namespace JSC::DFG
 

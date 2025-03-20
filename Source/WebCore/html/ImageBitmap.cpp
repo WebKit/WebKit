@@ -746,6 +746,7 @@ public:
 
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
     void changedInRect(const Image&, const IntRect* = nullptr) override { }
+    void imageContentChanged(const Image&) override { }
     void scheduleRenderingUpdate(const Image&) override { }
 
 private:

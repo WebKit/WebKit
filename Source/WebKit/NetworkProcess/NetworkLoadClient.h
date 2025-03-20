@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -42,7 +43,9 @@ namespace WebKit {
 enum class PrivateRelayed : bool;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
-class NetworkLoadClient {
+class NetworkLoadClient : public CanMakeThreadSafeCheckedPtr<NetworkLoadClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkLoadClient);
 public:
     virtual ~NetworkLoadClient() { }
 

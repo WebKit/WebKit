@@ -61,13 +61,16 @@ public:
 
     virtual bool automaticInspectionAllowed() const { return false; }
     JS_EXPORT_PRIVATE virtual void pauseWaitingForAutomaticInspection();
-    JS_EXPORT_PRIVATE virtual void unpauseForInitializedInspector();
+    JS_EXPORT_PRIVATE virtual void unpauseForResolvedAutomaticInspection();
 
     // RemoteControllableTarget overrides.
     JS_EXPORT_PRIVATE bool remoteControlAllowed() const final;
 
     std::optional<ProcessID> presentingApplicationPID() const { return m_presentingApplicationPID; }
     JS_EXPORT_PRIVATE void setPresentingApplicationPID(std::optional<ProcessID>&&);
+
+protected:
+    bool m_isPausedWaitingForAutomaticInspection { false };
 
 private:
     enum class Inspectable : uint8_t {

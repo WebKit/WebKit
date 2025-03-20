@@ -1,0 +1,12 @@
+<script>
+onload = () => {
+    const host = location.hash === '#1' ? 'localhost' : '127.0.0.1';
+    const nextHash = location.hash === '#1' ? '#2' : '#1';
+    setTimeout(() => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `http://${host}:8000/site-isolation/resources/recursive-create-remote-iframe.html${nextHash}`;
+        document.body.appendChild(iframe);
+        window.top.postMessage("", '*');
+    }, 10);
+}
+</script>

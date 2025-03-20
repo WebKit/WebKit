@@ -61,11 +61,11 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
 
 WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
-    if (RefPtr gl = m_context.graphicsContextGL()) {
+    if (RefPtr gl = m_context->graphicsContextGL()) {
         m_drawAttachments.release(*gl);
         m_resolveAttachments.release(*gl);
         m_resolvedFBO.release(*gl);
-        m_context.deleteFramebuffer(m_drawFramebuffer.ptr());
+        m_context->deleteFramebuffer(m_drawFramebuffer.ptr());
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.
@@ -78,7 +78,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 
 void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 {
-    RefPtr gl = m_context.graphicsContextGL();
+    RefPtr gl = m_context->graphicsContextGL();
     if (!gl)
         return;
 
@@ -122,7 +122,7 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 
 void WebXROpaqueFramebuffer::endFrame()
 {
-    RefPtr gl = m_context.graphicsContextGL();
+    RefPtr gl = m_context->graphicsContextGL();
     if (!gl)
         return;
 

@@ -35,7 +35,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - ResourceMonitorPersistence::" fmt, this, ##__VA_ARGS__)
+#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceMonitoring, "ResourceMonitorPersistence::" fmt, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -78,7 +78,7 @@ static ContinuousApproximateTime doubleToContinuousApproximateTime(double timest
 
 void ResourceMonitorPersistence::reportSQLError(ASCIILiteral method, ASCIILiteral action)
 {
-    RESOURCEMONITOR_RELEASE_LOG("%" PUBLIC_LOG_STRING ": Failed to %" PUBLIC_LOG_STRING " (%d) - %" PUBLIC_LOG_STRING, method.characters(), action.characters(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+    RELEASE_LOG_ERROR(ResourceMonitoring, "ResourceMonitorPersistence::%" PUBLIC_LOG_STRING ": Failed to %" PUBLIC_LOG_STRING " (%d) - %" PUBLIC_LOG_STRING, method.characters(), action.characters(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
 }
 
 bool ResourceMonitorPersistence::openDatabase(String&& path)
@@ -90,7 +90,7 @@ bool ResourceMonitorPersistence::openDatabase(String&& path)
     m_sqliteDB = makeUnique<SQLiteDatabase>();
 
     auto reportErrorAndCloseDatabase = [&](ASCIILiteral action) {
-        RESOURCEMONITOR_RELEASE_LOG("openDatabase: Failed to %" PUBLIC_LOG_STRING " at path '%" PUBLIC_LOG_STRING "' (%d) - %" PUBLIC_LOG_STRING, action.characters(), path.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        reportSQLError("openDatabase"_s, action);
         closeDatabase();
         return false;
     };

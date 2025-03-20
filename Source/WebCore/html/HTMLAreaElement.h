@@ -44,8 +44,8 @@ public:
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
 
     // FIXME: Use RenderElement& instead of RenderObject*.
-    WEBCORE_EXPORT LayoutRect computeRect(RenderObject*) const;
-    Path computePath(RenderObject*) const;
+    WEBCORE_EXPORT LayoutRect computeRect(const RenderObject*) const;
+    Path computePath(const RenderElement&) const;
     Path computePathForFocusRing(const LayoutSize& elementSize) const;
 
     // The parent map's image.

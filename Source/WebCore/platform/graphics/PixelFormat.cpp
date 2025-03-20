@@ -34,27 +34,27 @@ TextStream& operator<<(TextStream& ts, PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBA8:
-        ts << "RGBA8";
+        ts << "RGBA8"_s;
         break;
     case PixelFormat::BGRX8:
-        ts << "BGRX8";
+        ts << "BGRX8"_s;
         break;
     case PixelFormat::BGRA8:
-        ts << "BGRA8";
+        ts << "BGRA8"_s;
         break;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
-        ts << "RGB10";
+        ts << "RGB10"_s;
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case PixelFormat::RGB10A8:
-        ts << "RGB10A8";
+        ts << "RGB10A8"_s;
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
-        ts << "RGBA16F";
+        ts << "RGBA16F"_s;
         break;
 #endif
     }

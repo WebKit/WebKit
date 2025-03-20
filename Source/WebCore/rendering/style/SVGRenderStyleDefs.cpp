@@ -360,17 +360,17 @@ void StyleLayoutData::dumpDifferences(TextStream& ts, const StyleLayoutData& oth
 TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
 {
     switch (value) {
-    case AlignmentBaseline::Baseline: ts << "baseline"; break;
-    case AlignmentBaseline::BeforeEdge: ts << "before-edge"; break;
-    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"; break;
-    case AlignmentBaseline::Middle: ts << "middle"; break;
-    case AlignmentBaseline::Central: ts << "central"; break;
-    case AlignmentBaseline::AfterEdge: ts << "after-edge"; break;
-    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"; break;
-    case AlignmentBaseline::Ideographic: ts << "ideographic"; break;
-    case AlignmentBaseline::Alphabetic: ts << "alphabetic"; break;
-    case AlignmentBaseline::Hanging: ts << "hanging"; break;
-    case AlignmentBaseline::Mathematical: ts << "mathematical"; break;
+    case AlignmentBaseline::Baseline: ts << "baseline"_s; break;
+    case AlignmentBaseline::BeforeEdge: ts << "before-edge"_s; break;
+    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    case AlignmentBaseline::Middle: ts << "middle"_s; break;
+    case AlignmentBaseline::Central: ts << "central"_s; break;
+    case AlignmentBaseline::AfterEdge: ts << "after-edge"_s; break;
+    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
+    case AlignmentBaseline::Ideographic: ts << "ideographic"_s; break;
+    case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
+    case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
+    case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
     }
     return ts;
 }
@@ -378,10 +378,10 @@ TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
 TextStream& operator<<(TextStream& ts, BaselineShift value)
 {
     switch (value) {
-    case BaselineShift::Baseline: ts << "baseline"; break;
-    case BaselineShift::Sub: ts << "sub"; break;
-    case BaselineShift::Super: ts << "super"; break;
-    case BaselineShift::Length: ts << "length"; break;
+    case BaselineShift::Baseline: ts << "baseline"_s; break;
+    case BaselineShift::Sub: ts << "sub"_s; break;
+    case BaselineShift::Super: ts << "super"_s; break;
+    case BaselineShift::Length: ts << "length"_s; break;
     }
     return ts;
 }
@@ -389,9 +389,9 @@ TextStream& operator<<(TextStream& ts, BaselineShift value)
 TextStream& operator<<(TextStream& ts, BufferedRendering value)
 {
     switch (value) {
-    case BufferedRendering::Auto: ts << "auto"; break;
-    case BufferedRendering::Dynamic: ts << "dynamic"; break;
-    case BufferedRendering::Static: ts << "static"; break;
+    case BufferedRendering::Auto: ts << "auto"_s; break;
+    case BufferedRendering::Dynamic: ts << "dynamic"_s; break;
+    case BufferedRendering::Static: ts << "static"_s; break;
     }
     return ts;
 }
@@ -399,9 +399,9 @@ TextStream& operator<<(TextStream& ts, BufferedRendering value)
 TextStream& operator<<(TextStream& ts, ColorInterpolation value)
 {
     switch (value) {
-    case ColorInterpolation::Auto: ts << "auto"; break;
-    case ColorInterpolation::SRGB: ts << "sRGB"; break;
-    case ColorInterpolation::LinearRGB: ts << "linearRGB"; break;
+    case ColorInterpolation::Auto: ts << "auto"_s; break;
+    case ColorInterpolation::SRGB: ts << "sRGB"_s; break;
+    case ColorInterpolation::LinearRGB: ts << "linearRGB"_s; break;
     }
     return ts;
 }
@@ -409,9 +409,9 @@ TextStream& operator<<(TextStream& ts, ColorInterpolation value)
 TextStream& operator<<(TextStream& ts, ColorRendering value)
 {
     switch (value) {
-    case ColorRendering::Auto: ts << "auto"; break;
-    case ColorRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
-    case ColorRendering::OptimizeQuality: ts << "optimizeQuality"; break;
+    case ColorRendering::Auto: ts << "auto"_s; break;
+    case ColorRendering::OptimizeSpeed: ts << "optimizeSpeed"_s; break;
+    case ColorRendering::OptimizeQuality: ts << "optimizeQuality"_s; break;
     }
     return ts;
 }
@@ -419,18 +419,18 @@ TextStream& operator<<(TextStream& ts, ColorRendering value)
 TextStream& operator<<(TextStream& ts, DominantBaseline value)
 {
     switch (value) {
-    case DominantBaseline::Auto: ts << "auto"; break;
-    case DominantBaseline::UseScript: ts << "use-script"; break;
-    case DominantBaseline::NoChange: ts << "no-change"; break;
-    case DominantBaseline::ResetSize: ts << "reset-size"; break;
-    case DominantBaseline::Ideographic: ts << "ideographic"; break;
-    case DominantBaseline::Alphabetic: ts << "alphabetic"; break;
-    case DominantBaseline::Hanging: ts << "hanging"; break;
-    case DominantBaseline::Mathematical: ts << "mathematical"; break;
-    case DominantBaseline::Central: ts << "central"; break;
-    case DominantBaseline::Middle: ts << "middle"; break;
-    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"; break;
-    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"; break;
+    case DominantBaseline::Auto: ts << "auto"_s; break;
+    case DominantBaseline::UseScript: ts << "use-script"_s; break;
+    case DominantBaseline::NoChange: ts << "no-change"_s; break;
+    case DominantBaseline::ResetSize: ts << "reset-size"_s; break;
+    case DominantBaseline::Ideographic: ts << "ideographic"_s; break;
+    case DominantBaseline::Alphabetic: ts << "alphabetic"_s; break;
+    case DominantBaseline::Hanging: ts << "hanging"_s; break;
+    case DominantBaseline::Mathematical: ts << "mathematical"_s; break;
+    case DominantBaseline::Central: ts << "central"_s; break;
+    case DominantBaseline::Middle: ts << "middle"_s; break;
+    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
+    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
     }
     return ts;
 }
@@ -438,11 +438,11 @@ TextStream& operator<<(TextStream& ts, DominantBaseline value)
 TextStream& operator<<(TextStream& ts, GlyphOrientation value)
 {
     switch (value) {
-    case GlyphOrientation::Degrees0: ts << "0"; break;
-    case GlyphOrientation::Degrees90: ts << "90"; break;
-    case GlyphOrientation::Degrees180: ts << "180"; break;
-    case GlyphOrientation::Degrees270: ts << "270"; break;
-    case GlyphOrientation::Auto: ts << "Auto"; break;
+    case GlyphOrientation::Degrees0: ts << '0'; break;
+    case GlyphOrientation::Degrees90: ts << "90"_s; break;
+    case GlyphOrientation::Degrees180: ts << "180"_s; break;
+    case GlyphOrientation::Degrees270: ts << "270"_s; break;
+    case GlyphOrientation::Auto: ts << "Auto"_s; break;
     }
     return ts;
 }
@@ -450,8 +450,8 @@ TextStream& operator<<(TextStream& ts, GlyphOrientation value)
 TextStream& operator<<(TextStream& ts, MaskType value)
 {
     switch (value) {
-    case MaskType::Luminance: ts << "luminance"; break;
-    case MaskType::Alpha: ts << "alpha"; break;
+    case MaskType::Luminance: ts << "luminance"_s; break;
+    case MaskType::Alpha: ts << "alpha"_s; break;
     }
     return ts;
 }
@@ -459,13 +459,13 @@ TextStream& operator<<(TextStream& ts, MaskType value)
 TextStream& operator<<(TextStream& ts, SVGPaintType paintType)
 {
     switch (paintType) {
-    case SVGPaintType::RGBColor: ts << "rgb-color"; break;
-    case SVGPaintType::None: ts << "none"; break;
-    case SVGPaintType::CurrentColor: ts << "current-color"; break;
-    case SVGPaintType::URINone: ts << "uri-none"; break;
-    case SVGPaintType::URICurrentColor: ts << "uri-current-color"; break;
-    case SVGPaintType::URIRGBColor: ts << "uri-rgb-color"; break;
-    case SVGPaintType::URI: ts << "uri"; break;
+    case SVGPaintType::RGBColor: ts << "rgb-color"_s; break;
+    case SVGPaintType::None: ts << "none"_s; break;
+    case SVGPaintType::CurrentColor: ts << "current-color"_s; break;
+    case SVGPaintType::URINone: ts << "uri-none"_s; break;
+    case SVGPaintType::URICurrentColor: ts << "uri-current-color"_s; break;
+    case SVGPaintType::URIRGBColor: ts << "uri-rgb-color"_s; break;
+    case SVGPaintType::URI: ts << "uri"_s; break;
     }
     return ts;
 }
@@ -473,10 +473,10 @@ TextStream& operator<<(TextStream& ts, SVGPaintType paintType)
 TextStream& operator<<(TextStream& ts, ShapeRendering value)
 {
     switch (value) {
-    case ShapeRendering::Auto: ts << "auto"; break;
-    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
-    case ShapeRendering::CrispEdges: ts << "crispEdges"; break;
-    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"; break;
+    case ShapeRendering::Auto: ts << "auto"_s; break;
+    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"_s; break;
+    case ShapeRendering::CrispEdges: ts << "crispEdges"_s; break;
+    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"_s; break;
     }
     return ts;
 }
@@ -484,9 +484,9 @@ TextStream& operator<<(TextStream& ts, ShapeRendering value)
 TextStream& operator<<(TextStream& ts, TextAnchor value)
 {
     switch (value) {
-    case TextAnchor::Start: ts << "start"; break;
-    case TextAnchor::Middle: ts << "middle"; break;
-    case TextAnchor::End: ts << "end"; break;
+    case TextAnchor::Start: ts << "start"_s; break;
+    case TextAnchor::Middle: ts << "middle"_s; break;
+    case TextAnchor::End: ts << "end"_s; break;
     }
     return ts;
 }
@@ -494,78 +494,78 @@ TextStream& operator<<(TextStream& ts, TextAnchor value)
 TextStream& operator<<(TextStream& ts, VectorEffect value)
 {
     switch (value) {
-    case VectorEffect::None: ts << "none"; break;
-    case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"; break;
+    case VectorEffect::None: ts << "none"_s; break;
+    case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"_s; break;
     }
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleFillData& data)
 {
-    ts.dumpProperty("opacity", data.opacity);
-    ts.dumpProperty("paint-color", data.paintColor);
-    ts.dumpProperty("visited link paint-color", data.visitedLinkPaintColor);
-    ts.dumpProperty("paint uri", data.paintUri);
-    ts.dumpProperty("visited link paint uri", data.visitedLinkPaintUri);
-    ts.dumpProperty("visited link paint type", data.paintType);
-    ts.dumpProperty("visited link paint type", data.visitedLinkPaintType);
+    ts.dumpProperty("opacity"_s, data.opacity);
+    ts.dumpProperty("paint-color"_s, data.paintColor);
+    ts.dumpProperty("visited link paint-color"_s, data.visitedLinkPaintColor);
+    ts.dumpProperty("paint uri"_s, data.paintUri);
+    ts.dumpProperty("visited link paint uri"_s, data.visitedLinkPaintUri);
+    ts.dumpProperty("visited link paint type"_s, data.paintType);
+    ts.dumpProperty("visited link paint type"_s, data.visitedLinkPaintType);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleStrokeData& data)
 {
-    ts.dumpProperty("opacity", data.opacity);
-    ts.dumpProperty("paint-color", data.paintColor);
-    ts.dumpProperty("visited link paint-color", data.visitedLinkPaintColor);
-    ts.dumpProperty("paint uri", data.paintUri);
-    ts.dumpProperty("visited link paint uri", data.visitedLinkPaintUri);
-    ts.dumpProperty("dashOffset", data.dashOffset);
-    ts.dumpProperty("dash array", data.dashArray);
-    ts.dumpProperty("visited link paint type", data.paintType);
-    ts.dumpProperty("visited link paint type", data.visitedLinkPaintType);
+    ts.dumpProperty("opacity"_s, data.opacity);
+    ts.dumpProperty("paint-color"_s, data.paintColor);
+    ts.dumpProperty("visited link paint-color"_s, data.visitedLinkPaintColor);
+    ts.dumpProperty("paint uri"_s, data.paintUri);
+    ts.dumpProperty("visited link paint uri"_s, data.visitedLinkPaintUri);
+    ts.dumpProperty("dashOffset"_s, data.dashOffset);
+    ts.dumpProperty("dash array"_s, data.dashArray);
+    ts.dumpProperty("visited link paint type"_s, data.paintType);
+    ts.dumpProperty("visited link paint type"_s, data.visitedLinkPaintType);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleStopData& data)
 {
-    ts.dumpProperty("opacity", data.opacity);
-    ts.dumpProperty("color", data.color);
+    ts.dumpProperty("opacity"_s, data.opacity);
+    ts.dumpProperty("color"_s, data.color);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleMiscData& data)
 {
-    ts.dumpProperty("flood-opacity", data.floodOpacity);
-    ts.dumpProperty("flood-color", data.floodColor);
-    ts.dumpProperty("lighting-color", data.lightingColor);
-    ts.dumpProperty("baseline-shift", data.baselineShiftValue);
+    ts.dumpProperty("flood-opacity"_s, data.floodOpacity);
+    ts.dumpProperty("flood-color"_s, data.floodColor);
+    ts.dumpProperty("lighting-color"_s, data.lightingColor);
+    ts.dumpProperty("baseline-shift"_s, data.baselineShiftValue);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleShadowSVGData& data)
 {
     if (data.shadow)
-        ts.dumpProperty("shadow", *data.shadow);
+        ts.dumpProperty("shadow"_s, *data.shadow);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleInheritedResourceData& data)
 {
-    ts.dumpProperty("marker-start", data.markerStart);
-    ts.dumpProperty("marker-mid", data.markerMid);
-    ts.dumpProperty("marker-end", data.markerEnd);
+    ts.dumpProperty("marker-start"_s, data.markerStart);
+    ts.dumpProperty("marker-mid"_s, data.markerMid);
+    ts.dumpProperty("marker-end"_s, data.markerEnd);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleLayoutData& data)
 {
-    ts.dumpProperty("cx", data.cx);
-    ts.dumpProperty("cy", data.cy);
-    ts.dumpProperty("r", data.r);
-    ts.dumpProperty("rx", data.rx);
-    ts.dumpProperty("ry", data.ry);
-    ts.dumpProperty("x", data.x);
-    ts.dumpProperty("y", data.y);
+    ts.dumpProperty("cx"_s, data.cx);
+    ts.dumpProperty("cy"_s, data.cy);
+    ts.dumpProperty("r"_s, data.r);
+    ts.dumpProperty("rx"_s, data.rx);
+    ts.dumpProperty("ry"_s, data.ry);
+    ts.dumpProperty("x"_s, data.x);
+    ts.dumpProperty("y"_s, data.y);
     return ts;
 }
 

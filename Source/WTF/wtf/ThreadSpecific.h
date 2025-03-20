@@ -159,7 +159,7 @@ inline ThreadSpecific<T, canBeGCThread>::ThreadSpecific()
 template<typename T, CanBeGCThread canBeGCThread>
 inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
-    auto data = static_cast<Data*>(Thread::current().specificStorage().get(m_key));
+    auto data = static_cast<Data*>(Thread::currentSingleton().specificStorage().get(m_key));
     if (!data)
         return nullptr;
     return data->storagePointer();
@@ -168,7 +168,7 @@ inline T* ThreadSpecific<T, canBeGCThread>::get()
 template<typename T, CanBeGCThread canBeGCThread>
 inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 {
-    return Thread::current().specificStorage().set(m_key, data);
+    return Thread::currentSingleton().specificStorage().set(m_key, data);
 }
 
 #else

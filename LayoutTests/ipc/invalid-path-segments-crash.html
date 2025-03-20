@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+  if (!window.IPC)
+      return window.testRunner?.notifyDone();
+
+  const { CoreIPC } = await import('./coreipc.js');
+
+  const createRepeatedPath = (pathSegments, repeatCount) => Array(repeatCount).fill(pathSegments).flat();
+
+  const renderingBackendIdentifier = randomIPCID();
+  const connection = CoreIPC.newStreamConnection();
+  CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+    renderingBackendIdentifier: renderingBackendIdentifier,
+    connectionHandle: connection
+  });
+
+  const renderingBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+  const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+  connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+  const imageBufferIdentifier = randomIPCID();
+  const snapshotIdentifier = randomIPCID();
+
+  renderingBackend.CreateImageBuffer({
+    logicalSize: { width: 91, height: 119 },
+    renderingMode: 3, // DisplayList
+    renderingPurpose: 1, // Canvas
+    resolutionScale: 57,
+    colorSpace: {
+      serializableColorSpace: {
+        alias: {
+          m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 1 } }
+        }
+      }
+    },
+    pixelFormat: 1,
+    renderingResourceIdentifier: imageBufferIdentifier
+  });
+
+  const didCreateBackend = connection.connection.waitForMessage(imageBufferIdentifier, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, 1);
+
+  const imageBuffer = connection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+  const displayListRecorder = connection.newInterface("RemoteDisplayListRecorder", imageBufferIdentifier);
+  const pageID = IPC.pageID;
+
+  displayListRecorder.BeginPage({
+    pageSize: {
+      width: 100,
+      height: 100,
+    }
+  });
+
+  displayListRecorder.DrawFocusRingPath({
+    path: {
+      segments: createRepeatedPath([
+        { data: { alias: { variantType: 'WebCore::PathMoveTo', variant: { point: { x: 43, y: 22 } } } } },
+        { data: { alias: { variantType: 'WebCore::PathQuadCurveTo', variant: { controlPoint: { x: 7, y: 12 }, endPoint: { x: 91, y: 99 } } } } },
+      ], 1)
+    },
+    outlineWidth: 1,
+    color: {
+      data: {
+        optionalValue: {
+          isSemantic: false,
+          usesFunctionSerialization: false,
+          data: { variantType: 'WebCore::PackedColor::RGBA', variant: { value: 122 } }
+        }
+      }
+    }
+  });
+
+  renderingBackend.DidDrawRemoteToPDF({ pageID, imageBufferIdentifier, snapshotIdentifier: snapshotIdentifier });
+  imageBuffer.FlushContextSync({}, ()=>{
+      CoreIPC.GPU.GPUConnectionToWebProcess.ReleaseRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackendIdentifier
+      });
+    connection.connection.invalidate();
+    window.testRunner?.notifyDone();
+  });
+
+}, 20);
+</script>

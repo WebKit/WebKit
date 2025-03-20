@@ -110,13 +110,15 @@ private:
     Alternate${domainName}BackendDispatcher* m_alternateDispatcher { nullptr };
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)""")
 
-    BackendDispatcherHeaderAsyncCommandDeclaration = (
+    BackendDispatcherHeaderAsyncCommandReplyThunkDeclaration = (
     """    ${classAndExportMacro} ${callbackName} : public BackendDispatcher::CallbackBase {
     public:
         ${callbackName}(Ref<BackendDispatcher>&&, int id);
         void sendSuccess(${returns});
-    };
-    virtual void ${commandName}(${parameters}) = 0;""")
+    };""")
+
+    BackendDispatcherHeaderAsyncCommandDeclaration = (
+        """    virtual void ${commandName}(${parameters}) = 0;""")
 
     BackendDispatcherImplementationSmallSwitch = (
     """void ${domainName}BackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
@@ -173,7 +175,7 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
     }
 """)
 
-    BackendDispatcherImplementationAsyncCommand = (
+    BackendDispatcherImplementationAsyncCommandReplyThunk = (
 """${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
 void ${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${callbackParameters})

@@ -60,8 +60,8 @@ public:
     static void deleteSelection(Ref<Document>&&, OptionSet<Option> = { }, TextCompositionType = TextCompositionType::None);
     static void deleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
     static void forwardDeleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
-    static void insertText(Ref<Document>&&, const String&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
-    static void insertText(Ref<Document>&&, const String&, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Ref<Document>&&, const String&, Event* triggeringEvent, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Ref<Document>&&, const String&, Event* triggeringEvent, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
     static void insertLineBreak(Ref<Document>&&, OptionSet<Option>);
     static void insertParagraphSeparator(Ref<Document>&&, OptionSet<Option>);
     static void insertParagraphSeparatorInQuotedContent(Ref<Document>&&);
@@ -70,8 +70,8 @@ public:
     static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Document&, const VisibleSelection&);
 #endif
 
-    void insertText(const String &text, bool selectInsertedText);
-    void insertTextRunWithoutNewlines(const String &text, bool selectInsertedText);
+    void insertText(const String&, bool selectInsertedText);
+    void insertTextRunWithoutNewlines(const String&, bool selectInsertedText);
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
@@ -80,6 +80,8 @@ public:
     void deleteSelection(bool smartDelete);
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
     void setIsAutocompletion(bool isAutocompletion) { m_isAutocompletion = isAutocompletion; }
+    bool triggeringEventWasCreatedFromBindings() const { return m_triggeringEventWasCreatedFromBindings; }
+    void setTriggeringEventWasCreatedFromBindings(bool value) { m_triggeringEventWasCreatedFromBindings = value; }
 
 #if PLATFORM(IOS_FAMILY)
     void setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection);
@@ -162,6 +164,11 @@ private:
 
     bool m_shouldRetainAutocorrectionIndicator;
     bool m_shouldPreventSpellChecking;
+    bool m_triggeringEventWasCreatedFromBindings { false };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TypingCommand)
+    static bool isType(const WebCore::CompositeEditCommand& command) { return command.isTypingCommand(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -37,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "PlatformMediaResourceLoader.h"
 #include "TrackPrivateBaseGStreamer.h"
+#include "VideoFrameGStreamer.h"
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
@@ -60,9 +61,13 @@
 
 typedef struct _GstMpegtsSection GstMpegtsSection;
 
+#if USE(GSTREAMER_GL)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
 #include <epoxy/gl.h>
+#define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
+#undef GST_USE_UNSTABLE_API
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "CDMProxy.h"
@@ -209,7 +214,9 @@ public:
     void handleMessage(GstMessage*);
 
     void triggerRepaint(GRefPtr<GstSample>&&);
+#if USE(GSTREAMER_GL)
     void flushCurrentBuffer();
+#endif
 
     void handleTextSample(GRefPtr<GstSample>&&, TrackID streamId);
 
@@ -296,7 +303,9 @@ protected:
     void pushNextHolePunchBuffer();
     bool shouldIgnoreIntrinsicSize() final;
 
+#if USE(GSTREAMER_GL)
     GstElement* createVideoSinkGL();
+#endif
 
 #if USE(COORDINATED_GRAPHICS)
     void pushTextureToCompositor(bool isDuplicateSample);
@@ -401,7 +410,6 @@ protected:
 
     mutable Lock m_sampleMutex;
     GRefPtr<GstSample> m_sample WTF_GUARDED_BY_LOCK(m_sampleMutex);
-    bool m_hasFirstVideoSampleBeenRendered WTF_GUARDED_BY_LOCK(m_sampleMutex) { false };
 
     mutable FloatSize m_videoSize;
     bool m_isUsingFallbackVideoSink { false };
@@ -658,12 +666,7 @@ private:
 
     MediaTime m_estimatedVideoFrameDuration { MediaTime::zeroTime() };
 
-#if USE(COORDINATED_GRAPHICS)
-    void updateVideoInfoFromCaps(GstCaps*);
-
-    std::optional<DMABufFormat> m_dmabufFormat;
-    GstVideoInfo m_videoInfo;
-#endif
+    std::optional<VideoFrameGStreamer::Info> m_videoInfo;
 };
 
 } // namespace WebCore

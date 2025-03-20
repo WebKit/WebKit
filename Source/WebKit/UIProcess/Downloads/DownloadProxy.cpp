@@ -55,14 +55,37 @@
 namespace WebKit {
 using namespace WebCore;
 
-DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, API::DownloadClient& client, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfoData, WebPageProxy* originatingPage)
+static FrameInfoData legacyEmptyFrameInfo()
+{
+    constexpr bool isMainFrame { false };
+    constexpr bool isFocused { false };
+    constexpr bool errorOccurred { false };
+
+    return FrameInfoData {
+        isMainFrame,
+        FrameType::Local,
+        ResourceRequest { aboutBlankURL() },
+        SecurityOriginData::createOpaque(),
+        String { },
+        FrameIdentifier::generate(),
+        std::nullopt,
+        std::nullopt,
+        CertificateInfo { },
+        getCurrentProcessID(),
+        isFocused,
+        errorOccurred,
+        WebFrameMetrics { }
+    };
+}
+
+DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, API::DownloadClient& client, const ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfoData, WebPageProxy* originatingPage)
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
     , m_client(client)
     , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
     , m_originatingPage(originatingPage)
-    , m_frameInfo(API::FrameInfo::create(FrameInfoData { frameInfoData }, originatingPage))
+    , m_frameInfo(frameInfoData ? API::FrameInfo::create(FrameInfoData { *frameInfoData }, originatingPage) : API::FrameInfo::create(legacyEmptyFrameInfo(), originatingPage))
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     , m_assertion(ProcessAssertion::create(getCurrentProcessID(), "WebKit DownloadProxy DecideDestination"_s, ProcessAssertionType::FinishTaskInterruptable))
 #endif

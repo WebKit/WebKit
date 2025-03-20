@@ -10,6 +10,7 @@ list(APPEND WTF_SOURCES
     playstation/UniStdExtrasPlayStation.cpp
 
     posix/CPUTimePOSIX.cpp
+    posix/FileHandlePOSIX.cpp
     posix/FileSystemPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 

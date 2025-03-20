@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      canvas {
+          position: fixed;
+          top: 17px;
+          left: 17px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="50" height="50"/>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill part of the canvas.
+              ctx.fillStyle = "green";
+              ctx.fillRect(10, 10, 10, 10);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[26, 26, 12, 12]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

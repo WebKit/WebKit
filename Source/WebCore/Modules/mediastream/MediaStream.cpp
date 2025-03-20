@@ -62,9 +62,9 @@ Ref<MediaStream> MediaStream::create(Document& document, const Vector<Ref<MediaS
     return mediaStream;
 }
 
-Ref<MediaStream> MediaStream::create(Document& document, Ref<MediaStreamPrivate>&& streamPrivate)
+Ref<MediaStream> MediaStream::create(Document& document, Ref<MediaStreamPrivate>&& streamPrivate, AllowEventTracks allowEventTracks)
 {
-    auto mediaStream = adoptRef(*new MediaStream(document, WTFMove(streamPrivate)));
+    auto mediaStream = adoptRef(*new MediaStream(document, WTFMove(streamPrivate), allowEventTracks));
     mediaStream->suspendIfNeeded();
     return mediaStream;
 }
@@ -90,9 +90,10 @@ MediaStream::MediaStream(Document& document, const Vector<Ref<MediaStreamTrack>>
     m_private->addObserver(*this);
 }
 
-MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPrivate)
+MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPrivate, AllowEventTracks allowEventTracks)
     : ActiveDOMObject(document)
     , m_private(WTFMove(streamPrivate))
+    , m_allowEventTracks(allowEventTracks)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -212,18 +213,22 @@ void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
 
     auto track = MediaStreamTrack::create(*context, trackPrivate);
     internalAddTrack(track.copyRef());
+    ASSERT(m_allowEventTracks == AllowEventTracks::Yes);
     dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
 void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
-    if (auto track = internalTakeTrack(trackPrivate.id()))
+    if (auto track = internalTakeTrack(trackPrivate.id())) {
+        ASSERT(m_allowEventTracks == AllowEventTracks::Yes);
         dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+    }
 }
 
 void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
 {
     ALWAYS_LOG(LOGIDENTIFIER, track->logIdentifier());
+    ASSERT(m_allowEventTracks == AllowEventTracks::Yes);
 
     auto& privateTrack = track->privateTrack();
     internalAddTrack(track.copyRef());
@@ -369,14 +374,14 @@ Document* MediaStream::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void MediaStream::stop()
+void MediaStream::inactivate()
 {
     m_isActive = false;
 }
 
 bool MediaStream::virtualHasPendingActivity() const
 {
-    return m_isActive;
+    return m_isActive && m_allowEventTracks == AllowEventTracks::Yes && hasEventListeners();
 }
 
 Ref<MediaStreamPrivate> MediaStream::protectedPrivateStream()

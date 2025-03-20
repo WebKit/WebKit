@@ -63,7 +63,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
     , m_cachedSubresources(subresources)
     , m_cachedSubframeArchives(subframeArchives)
 {
-    auto coreMainResource = m_cachedMainResource->coreArchiveResource();
+    RefPtr coreMainResource = m_cachedMainResource->coreArchiveResource();
 
     Vector<Ref<ArchiveResource>> coreArchiveResources(m_cachedSubresources->size(), [&](size_t i) {
         RefPtr resource = m_cachedSubresources->at<WebArchiveResource>(i);
@@ -79,12 +79,12 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
         return Ref<LegacyWebArchive> { *subframeWebArchive->coreLegacyWebArchive() };
     });
 
-    m_legacyWebArchive = LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives));
+    lazyInitialize(m_legacyWebArchive, LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives)));
 }
 
 WebArchive::WebArchive(API::Data* data)
+    : m_legacyWebArchive(LegacyWebArchive::create(SharedBuffer::create(data->span()).get()))
 {
-    m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->span()).get());
 }
 
 WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& legacyWebArchive)
@@ -109,7 +109,7 @@ API::Array* WebArchive::subresources()
         auto subresources = WTF::map(m_legacyWebArchive->subresources(), [](auto& subresource) -> RefPtr<API::Object> {
             return WebArchiveResource::create(subresource.ptr());
         });
-        m_cachedSubresources = API::Array::create(WTFMove(subresources));
+        lazyInitialize(m_cachedSubresources, API::Array::create(WTFMove(subresources)));
     }
 
     return m_cachedSubresources.get();
@@ -119,9 +119,9 @@ API::Array* WebArchive::subframeArchives()
 {
     if (!m_cachedSubframeArchives) {
         auto subframeWebArchives = WTF::map(m_legacyWebArchive->subframeArchives(), [](auto& subframeArchive) -> RefPtr<API::Object> {
-            return WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.ptr()));
+            return WebArchive::create(downcast<LegacyWebArchive>(subframeArchive.ptr()));
         });
-        m_cachedSubframeArchives = API::Array::create(WTFMove(subframeWebArchives));
+        lazyInitialize(m_cachedSubframeArchives, API::Array::create(WTFMove(subframeWebArchives)));
     }
 
     return m_cachedSubframeArchives.get();

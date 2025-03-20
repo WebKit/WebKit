@@ -83,6 +83,7 @@ private:
     void setAllowsPictureInPicturePlayback(bool) final;
     bool isExternalPlaybackActive() const final;
     bool willRenderToLayer() const final;
+    void transferVideoViewToFullscreen() final;
     void returnVideoView() final;
 
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;

@@ -48,7 +48,7 @@ String serializationForCSS(const CSS::SerializationContext&, const CurrentColor&
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const CurrentColor&)
 {
-    return ts << "currentColor";
+    return ts << "currentColor"_s;
 }
 
 } // namespace Style

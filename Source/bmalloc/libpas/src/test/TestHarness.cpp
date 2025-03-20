@@ -373,6 +373,7 @@ void addMinHeapTests();
 void addPGMTests();
 void addRaceTests();
 void addRedBlackTreeTests();
+void addScavengerExternalWorkTests();
 void addTLCDecommitTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();

@@ -98,6 +98,10 @@ private:
     void dispatchPendingCallbacksAfterEnsuringDrawing() override;
 #endif
 
+#if ENABLE(DAMAGE_TRACKING)
+    FrameDamageForTesting* frameDamageForTesting() const override;
+#endif
+
 #if PLATFORM(GTK)
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) override;

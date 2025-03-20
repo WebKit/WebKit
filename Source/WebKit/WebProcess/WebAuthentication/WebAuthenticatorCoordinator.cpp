@@ -113,6 +113,22 @@ void WebAuthenticatorCoordinator::getClientCapabilities(const SecurityOrigin& or
     protectedPage()->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetClientCapabilities(origin.data()), WTFMove(handler));
 }
 
+void WebAuthenticatorCoordinator::signalUnknownCredential(const SecurityOrigin& origin, UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&& handler)
+{
+    protectedPage()->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::SignalUnknownCredential(origin.data(), WTFMove(options)), WTFMove(handler));
+}
+
+void WebAuthenticatorCoordinator::signalAllAcceptedCredentials(const SecurityOrigin& origin, AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&& handler)
+{
+    protectedPage()->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::SignalAllAcceptedCredentials(origin.data(), WTFMove(options)), WTFMove(handler));
+}
+
+void WebAuthenticatorCoordinator::signalCurrentUserDetails(const SecurityOrigin& origin, CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&& handler)
+{
+    protectedPage()->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::SignalCurrentUserDetails(origin.data(), WTFMove(options)), WTFMove(handler));
+}
+
+
 } // namespace WebKit
 
 #undef WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME

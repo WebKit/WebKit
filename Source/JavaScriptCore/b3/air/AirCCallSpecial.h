@@ -29,6 +29,7 @@
 
 #include "AirSpecial.h"
 #include "RegisterSet.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -44,7 +45,7 @@ namespace JSC { namespace B3 { namespace Air {
 // the prologue, whichever happened sooner.
 
 class CCallSpecial final : public Special {
-    WTF_MAKE_TZONE_ALLOCATED(CCallSpecial);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(CCallSpecial);
 public:
     CCallSpecial(bool isSIMDContext);
     ~CCallSpecial() final;

@@ -17,11 +17,14 @@ var width = document.getElementById("reference").offsetWidth;
 var target = document.getElementById("target");
 
 if (window.eventSender) {
+    if (window.frameElement)
+        window.frameElement.scrollIntoView(true);
     window.eventSender.mouseMoveTo(target.offsetLeft + 5, target.offsetTop + 5);
     window.eventSender.mouseDown();
     window.eventSender.mouseMoveTo(target.offsetLeft + 5 + width / 2, target.offsetTop + 5);
     window.eventSender.mouseUp();
 }
+onload = () => parent.postMessage("iframeLoaded");
 </script>
 </body>
 </html>

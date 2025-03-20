@@ -43,6 +43,7 @@
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
+#include "RangeBoundaryPointInlines.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "TextIterator.h"

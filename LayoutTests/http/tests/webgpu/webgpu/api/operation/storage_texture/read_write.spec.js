@@ -8,25 +8,29 @@ TODO:
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../common/util/util.js';
 import { kTextureDimensions } from '../../../capability_info.js';
-import { kColorTextureFormats, kTextureFormatInfo } from '../../../format_info.js';
-import { GPUTest } from '../../../gpu_test.js';
+import {
+  getBlockInfoForColorTextureFormat,
+  getBlockInfoForTextureFormat,
+  kPossibleStorageTextureFormats } from
+'../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 import { align } from '../../../util/math.js';
 
 const kShaderStagesForReadWriteStorageTexture = ['fragment', 'compute'];
 
 
 
-class F extends GPUTest {
-  GetInitialData(storageTexture) {
+class F extends AllFeaturesMaxLimitsGPUTest {
+  getInitialData(storageTexture) {
     const format = storageTexture.format;
-    const bytesPerBlock = kTextureFormatInfo[format].bytesPerBlock;
+    const { bytesPerBlock } = getBlockInfoForTextureFormat(format);
     assert(bytesPerBlock !== undefined);
 
     const width = storageTexture.width;
     const height = storageTexture.height;
     const depthOrArrayLayers = storageTexture.depthOrArrayLayers;
     const initialData = new ArrayBuffer(bytesPerBlock * width * height * depthOrArrayLayers);
-    const initialTypedData = this.GetTypedArrayBuffer(initialData, format);
+    const initialTypedData = this.getTypedArrayBuffer(initialData, format);
     for (let z = 0; z < depthOrArrayLayers; ++z) {
       for (let y = 0; y < height; ++y) {
         for (let x = 0; x < width; ++x) {
@@ -48,7 +52,7 @@ class F extends GPUTest {
     return initialData;
   }
 
-  GetTypedArrayBuffer(arrayBuffer, format) {
+  getTypedArrayBuffer(arrayBuffer, format) {
     switch (format) {
       case 'r32sint':
         return new Int32Array(arrayBuffer);
@@ -62,13 +66,13 @@ class F extends GPUTest {
     }
   }
 
-  GetExpectedData(
+  getExpectedData(
   shaderStage,
   storageTexture,
   initialData)
   {
     const format = storageTexture.format;
-    const bytesPerBlock = kTextureFormatInfo[format].bytesPerBlock;
+    const { bytesPerBlock } = getBlockInfoForTextureFormat(format);
     assert(bytesPerBlock !== undefined);
 
     const width = storageTexture.width;
@@ -80,8 +84,8 @@ class F extends GPUTest {
     const expectedData = new ArrayBuffer(
       bytesPerRowAlignment * (height * depthOrArrayLayers - 1) + bytesPerBlock * width
     );
-    const expectedTypedData = this.GetTypedArrayBuffer(expectedData, format);
-    const initialTypedData = this.GetTypedArrayBuffer(initialData, format);
+    const expectedTypedData = this.getTypedArrayBuffer(expectedData, format);
+    const initialTypedData = this.getTypedArrayBuffer(initialData, format);
     for (let z = 0; z < depthOrArrayLayers; ++z) {
       for (let y = 0; y < height; ++y) {
         for (let x = 0; x < width; ++x) {
@@ -110,7 +114,7 @@ class F extends GPUTest {
     return expectedData;
   }
 
-  RecordCommandsToTransform(
+  recordCommandsToTransform(
   device,
   shaderStage,
   commandEncoder,
@@ -208,12 +212,11 @@ class F extends GPUTest {
 
           });
 
-          const placeholderColorTexture = device.createTexture({
+          const placeholderColorTexture = this.createTextureTracked({
             size: [rwTexture.width, rwTexture.height, 1],
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             format: 'rgba8unorm'
           });
-          this.trackForCleanup(placeholderColorTexture);
 
           const renderPassEncoder = commandEncoder.beginRenderPass({
             colorAttachments: [
@@ -309,34 +312,41 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kColorTextureFormats).
-filter((p) => kTextureFormatInfo[p.format].color?.readWriteStorage === true).
+combine('format', kPossibleStorageTextureFormats).
 combine('shaderStage', kShaderStagesForReadWriteStorageTexture).
 combine('textureDimension', kTextureDimensions).
 combine('depthOrArrayLayers', [1, 2]).
 unless((p) => p.textureDimension === '1d' && p.depthOrArrayLayers > 1)
 ).
-beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotUsableAsStorageTexture(t.params.format);
-}).
 fn((t) => {
   const { format, shaderStage, textureDimension, depthOrArrayLayers } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableAsReadWriteStorageTexture(format);
+
+  if (t.isCompatibility) {
+    if (shaderStage === 'fragment') {
+      t.skipIf(
+        !(t.device.limits.maxStorageTexturesInFragmentStage > 0),
+        `maxStorageTexturesInFragmentStage(${t.device.limits.
+        maxStorageTexturesInFragmentStage}) is not > 0`
+      );
+    }
+  }
 
   // In compatibility mode the lowest maxComputeInvocationsPerWorkgroup is 128 vs non-compat which is 256
   // So in non-compat we get 16 * 8 * 2, vs compat where we get 8 * 8 * 2
   const kWidth = t.isCompatibility ? 8 : 16;
   const height = textureDimension === '1d' ? 1 : 8;
   const textureSize = [kWidth, height, depthOrArrayLayers];
-  const storageTexture = t.device.createTexture({
+  const storageTexture = t.createTextureTracked({
     format,
     dimension: textureDimension,
     size: textureSize,
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING
   });
-  t.trackForCleanup(storageTexture);
 
-  const bytesPerBlock = kTextureFormatInfo[format].bytesPerBlock;
-  const initialData = t.GetInitialData(storageTexture);
+  const { bytesPerBlock } = getBlockInfoForColorTextureFormat(format);
+  const initialData = t.getInitialData(storageTexture);
   t.queue.writeTexture(
     { texture: storageTexture },
     initialData,
@@ -349,14 +359,13 @@ fn((t) => {
 
   const commandEncoder = t.device.createCommandEncoder();
 
-  t.RecordCommandsToTransform(t.device, shaderStage, commandEncoder, storageTexture);
+  t.recordCommandsToTransform(t.device, shaderStage, commandEncoder, storageTexture);
 
-  const expectedData = t.GetExpectedData(shaderStage, storageTexture, initialData);
-  const readbackBuffer = t.device.createBuffer({
+  const expectedData = t.getExpectedData(shaderStage, storageTexture, initialData);
+  const readbackBuffer = t.createBufferTracked({
     size: expectedData.byteLength,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
-  t.trackForCleanup(readbackBuffer);
   const bytesPerRow = align(bytesPerBlock * kWidth, 256);
   commandEncoder.copyTextureToBuffer(
     {

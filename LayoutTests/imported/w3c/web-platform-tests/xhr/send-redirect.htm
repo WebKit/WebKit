@@ -9,56 +9,74 @@
   <body>
     <div id="log"></div>
     <script>
-      function redirect(code, method="GET", redirectLocation="content.py") {
-        var test = async_test(`${document.title} (${code}, ${method}, ${redirectLocation})`)
-        test.step(function() {
-          var client = new XMLHttpRequest()
-          client.onreadystatechange = function() {
-            test.step(function() {
-              if(client.readyState == 4) {
+      // https://fetch.spec.whatwg.org/#statuses
+      const redirect_codes = new Set([301, 302, 303, 307, 308]);
+      function maybeRedirect(code, method="GET", redirectLocation="content.py") {
+        async_test(t => {
+          const client = new XMLHttpRequest();
+          client.onreadystatechange = t.step_func(() => {
+            if(client.readyState == 4) {
+              if (redirect_codes.has(code)) {
                 let expected_method = method;
-                if (method == "POST" && (code == "301" || code == "302"))
-                  expected_method = "GET";
-                if (code == "303" && method != "GET" && method != "HEAD")
-                  expected_method = "GET";
-                assert_equals(client.getResponseHeader("x-request-method"), expected_method)
                 let expected_content_type = "application/x-pony";
-                if (method == "POST" && (code == "301" || code == "302" || code == "303"))
+                if ((method == "POST" && (code == "301" || code == "302")) ||
+                    (code == "303" && method != "GET" && method != "HEAD")) {
+                  expected_method = "GET";
                   expected_content_type = "NO";
+                }
+                assert_equals(client.getResponseHeader("x-request-method"), expected_method);
                 assert_equals(client.getResponseHeader("x-request-content-type"), expected_content_type);
-                test.done()
+                assert_equals(client.status, 200);
+              } else {
+                assert_equals(client.getResponseHeader("x-request-method"), null);
+                assert_equals(client.getResponseHeader("x-request-content-type"), null);
+                assert_equals(client.status, code);
               }
-            })
-          }
-          client.open(method, `resources/redirect.py?location=${redirectLocation}&code=${code}`)
-          client.setRequestHeader("Content-Type", "application/x-pony")
-          client.send(null)
-        })
+              t.done();
+            }
+          });
+          client.open(method, `resources/redirect.py?location=${redirectLocation}&code=${code}`);
+          client.setRequestHeader("Content-Type", "application/x-pony");
+          client.send(null);
+        }, `${document.title} (${code}, ${method}, ${redirectLocation})`);
       }
-      redirect("301")
-      redirect("302")
-      redirect("303")
-      redirect("307")
-      redirect("301", "POST")
-      redirect("302", "POST")
-      redirect("303", "POST")
-      redirect("307", "POST")
-      redirect("301", "HEAD")
-      redirect("302", "HEAD")
-      redirect("303", "HEAD")
-      redirect("307", "HEAD")
-      redirect("301", "GET", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("302", "GET", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("303", "GET", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("307", "GET", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("301", "POST", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("302", "POST", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("303", "POST", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("307", "POST", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("301", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("302", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("303", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
-      redirect("307", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
+
+      maybeRedirect(300);
+      maybeRedirect(301);
+      maybeRedirect(302);
+      maybeRedirect(303);
+      maybeRedirect(304);
+      maybeRedirect(305);
+      maybeRedirect(306);
+      maybeRedirect(307);
+      maybeRedirect(308);
+      maybeRedirect(309);
+      maybeRedirect(310);
+      maybeRedirect(350);
+      maybeRedirect(399);
+      maybeRedirect(301, "POST");
+      maybeRedirect(302, "POST");
+      maybeRedirect(303, "POST");
+      maybeRedirect(307, "POST");
+      maybeRedirect(301, "HEAD");
+      maybeRedirect(302, "HEAD");
+      maybeRedirect(303, "HEAD");
+      maybeRedirect(307, "HEAD");
+
+      const redirectedLocation = encodeURIComponent("redirect.py?location=content.py");
+      maybeRedirect(301, "GET", redirectedLocation);
+      maybeRedirect(302, "GET", redirectedLocation);
+      maybeRedirect(303, "GET", redirectedLocation);
+      maybeRedirect(307, "GET", redirectedLocation);
+      maybeRedirect(301, "POST", redirectedLocation);
+      maybeRedirect(302, "POST", redirectedLocation);
+      maybeRedirect(303, "POST", redirectedLocation);
+      maybeRedirect(307, "POST", redirectedLocation);
+      maybeRedirect(303, "CHICKEN", redirectedLocation);
+      maybeRedirect(301, "HEAD", redirectedLocation);
+      maybeRedirect(302, "HEAD", redirectedLocation);
+      maybeRedirect(303, "HEAD", redirectedLocation);
+      maybeRedirect(307, "HEAD", redirectedLocation);
     </script>
   </body>
 </html>

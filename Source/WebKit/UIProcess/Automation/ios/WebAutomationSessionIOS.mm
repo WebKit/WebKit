@@ -187,13 +187,13 @@ static TextStream& operator<<(TextStream& ts, TouchInteraction interaction)
 {
     switch (interaction) {
     case TouchInteraction::TouchDown:
-        ts << "TouchDown";
+        ts << "TouchDown"_s;
         break;
     case TouchInteraction::MoveTo:
-        ts << "MoveTo";
+        ts << "MoveTo"_s;
         break;
     case TouchInteraction::LiftUp:
-        ts << "LiftUp";
+        ts << "LiftUp"_s;
         break;
     }
     return ts;

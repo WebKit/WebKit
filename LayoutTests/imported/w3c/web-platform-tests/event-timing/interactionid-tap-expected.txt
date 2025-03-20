@@ -1,0 +1,4 @@
+Tap
+
+FAIL Event Timing: compare event timing interactionId for tap. assert_implements: Event Timing is not supported. undefined
+

@@ -14,7 +14,8 @@ bar
           (drawsContent 1)
           (appleVisualEffectData
           (effect blur-material-thick)
-          (contextEffect blur-material-thick))
+          (contextEffect blur-material-thick)
+          (colorScheme light))
           (structural layer
             (position 108.00 128.00)
             (bounds 200.00 200.00)

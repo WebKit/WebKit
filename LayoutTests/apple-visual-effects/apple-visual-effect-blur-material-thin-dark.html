@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<html>
+<head>
+<title>This tests that the thin material works properly.</title>
+<style>
+
+body {
+    background: linear-gradient(red, blue) fixed;
+}
+
+.container {
+    width: 300px;
+    height: 300px;
+}
+
+.inner {
+    -apple-visual-effect: -apple-system-blur-material-thin;
+    width: 200px;
+    height: 200px;
+}
+
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function dumpLayers() {
+    if (window.internals) {
+        internals.settings.setUseDarkAppearance(true);
+        document.getElementById('result').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+    }
+}
+window.addEventListener('load', dumpLayers, false);
+
+</script>
+</head>
+<body>
+<div class=container>foo<div class=inner>bar</div></div>
+<pre id=result></pre>
+</body>
+</html>

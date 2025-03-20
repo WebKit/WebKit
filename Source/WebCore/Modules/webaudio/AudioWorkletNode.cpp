@@ -186,7 +186,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
     if (processor) {
         Locker locker { m_processLock };
         m_processor = WTFMove(processor);
-        m_workletThread = &Thread::current();
+        m_workletThread = &Thread::currentSingleton();
     } else
         fireProcessorErrorOnMainThread(ProcessorError::ConstructorError);
 }
@@ -205,7 +205,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
         return;
     }
     Locker locker { AdoptLock, m_processLock };
-    if (!m_processor || &Thread::current() != m_workletThread.get()) {
+    if (!m_processor || &Thread::currentSingleton() != m_workletThread.get()) {
         // We're not ready yet or we are getting destroyed. In this case, we output silence.
         zeroOutput();
         return;

@@ -51,7 +51,7 @@ TEST(ElementTextPreview, PreviewForElement)
         EXPECT_NOT_NULL(preview);
         EXPECT_TRUE([[preview view] isKindOfClass:[UIImageView class]]);
         EXPECT_NOT_NULL([preview target]);
-        EXPECT_EQ([[preview target] container], webView.get());
+        EXPECT_EQ([[preview target] container], static_cast<id>(webView.get()));
 
         done = true;
     }];

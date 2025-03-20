@@ -68,7 +68,7 @@ public:
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
 
-    bool hasPendingActivity() const { return m_formDataConsumer ? m_formDataConsumer->hasPendingActivity() : false; }
+    bool hasPendingActivity() const;
 
     void setType(Type type) { m_type = type; }
 

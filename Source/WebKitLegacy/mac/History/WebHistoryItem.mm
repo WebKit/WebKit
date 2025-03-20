@@ -233,6 +233,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         NSString *target = coreItem->target();
         [result appendFormat:@" in \"%@\"", target];
     }
+    if (coreItem->isTargetItem())
+        [result appendString:@" *target*"];
     if (coreItem->formData()) {
         [result appendString:@" *POST*"];
     }
@@ -445,6 +447,11 @@ WebHistoryItem *kit(HistoryItem* item)
 - (NSString *)target
 {
     return nsStringNilIfEmpty(core(_private)->target());
+}
+
+- (BOOL)isTargetItem
+{
+    return core(_private)->isTargetItem();
 }
 
 - (NSString *)RSSFeedReferrer

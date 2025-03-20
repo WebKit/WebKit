@@ -46,6 +46,6 @@
     // Legacy Mozilla versions.
     readonly attribute boolean webkitIsFullScreen;
     readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
-    readonly attribute Element webkitCurrentFullScreenElement;
+    [ImplementedAs=webkitFullscreenElement] readonly attribute Element webkitCurrentFullScreenElement;
     undefined webkitCancelFullScreen();
 };

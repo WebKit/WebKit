@@ -56,6 +56,11 @@ HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
     return downcast<HTMLTextFormControlElement>(nodeForNonAnonymous());
 }
 
+Ref<HTMLTextFormControlElement> RenderTextControl::protectedTextFormControlElement() const
+{
+    return textFormControlElement();
+}
+
 RefPtr<TextControlInnerTextElement> RenderTextControl::innerTextElement() const
 {
     return textFormControlElement().innerTextElement();

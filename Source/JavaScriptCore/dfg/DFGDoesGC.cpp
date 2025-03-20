@@ -237,7 +237,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomNewArrayBuffer:
     case PhantomSpread:
     case PhantomClonedArguments:
-    case PhantomNewRegexp:
+    case PhantomNewRegExp:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
@@ -297,6 +297,8 @@ bool doesGC(Graph& graph, Node* node)
     case Construct:
     case ConstructForwardVarargs:
     case ConstructVarargs:
+    case DataViewGetByteLength:
+    case DataViewGetByteLengthAsInt52:
     case DefineDataProperty:
     case DefineAccessorProperty:
     case DeleteById:
@@ -411,7 +413,8 @@ bool doesGC(Graph& graph, Node* node)
     case NewArrayWithSpecies:
     case NewArrayWithSizeAndStructure:
     case NewArrayBuffer:
-    case NewRegexp:
+    case NewRegExp:
+    case NewRegExpUntyped:
     case NewStringObject:
     case NewMap:
     case NewSet:
@@ -424,6 +427,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewAsyncFunction:
     case NewBoundFunction:
     case NewTypedArray:
+    case NewTypedArrayBuffer:
     case ThrowStaticError:
     case GetPropertyEnumerator:
     case EnumeratorInByVal:
@@ -437,6 +441,7 @@ bool doesGC(Graph& graph, Node* node)
     case SetFunctionName:
     case StrCat:
     case StringReplace:
+    case StringReplaceAll:
     case StringReplaceRegExp:
     case StringReplaceString:
     case StringSlice:
@@ -447,6 +452,7 @@ bool doesGC(Graph& graph, Node* node)
     case CallDOMGetter:
     case CallDOM:
     case ArraySlice:
+    case ArrayIncludes:
     case ArrayIndexOf:
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:

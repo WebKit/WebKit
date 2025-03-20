@@ -46,6 +46,7 @@ public:
 
     // Returns true if a key was actually removed.
     bool removeKey(const IDBKeyData&);
+    bool contains(const IDBKeyData&);
 
     const IDBKeyData* getLowest() const;
 
@@ -85,6 +86,7 @@ public:
     Iterator reverseFind(const IDBKeyData&, CursorDuplicity);
 
     bool unique() const { return m_unique; }
+    Vector<IDBKeyData> keys() const;
 
 private:
     union {

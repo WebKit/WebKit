@@ -53,11 +53,18 @@ extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleSeparator;
 typedef NSString * MTCoreMaterialRecipe NS_STRING_ENUM;
 
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipeNone;
+
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformChromeLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentUltraThinLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThinLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThickLight;
+
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformChromeDark;
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentUltraThinDark;
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThinDark;
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentDark;
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThickDark;
 
 extern NSDictionary <NSString *, id> *MTVisualStylingCreateDictionaryRepresentation(MTCoreMaterialRecipe, MTCoreMaterialVisualStyleCategory, MTCoreMaterialVisualStyle, NSDictionary <NSString *, id> *);
 

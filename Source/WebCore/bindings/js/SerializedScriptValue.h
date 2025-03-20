@@ -122,7 +122,7 @@ public:
     // API implementation helpers. These don't expose special behavior for ArrayBuffers or MessagePorts.
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
     WEBCORE_EXPORT JSValueRef deserialize(JSContextRef, JSValueRef* exception);
-    WEBCORE_EXPORT static Vector<uint8_t> serializeCryptoKey(JSContextRef, const WebCore::CryptoKey&);
+    WEBCORE_EXPORT static Vector<uint8_t> serializeCryptoKey(const WebCore::CryptoKey&);
 
     bool hasBlobURLs() const { return !m_internals.blobHandles.isEmpty(); }
 

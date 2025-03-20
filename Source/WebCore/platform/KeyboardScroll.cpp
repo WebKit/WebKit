@@ -48,12 +48,12 @@ FloatSize unitVectorForScrollDirection(ScrollDirection direction)
 
 TextStream& operator<<(TextStream& ts, const KeyboardScroll& scrollData)
 {
-    return ts << "offset=" << scrollData.offset << " maximumVelocity=" << scrollData.maximumVelocity << " force=" << scrollData.force << " granularity=" << scrollData.granularity << " direction=" << scrollData.direction;
+    return ts << "offset="_s << scrollData.offset << " maximumVelocity="_s << scrollData.maximumVelocity << " force="_s << scrollData.force << " granularity="_s << scrollData.granularity << " direction="_s << scrollData.direction;
 }
 
 TextStream& operator<<(TextStream& ts, const KeyboardScrollParameters& parameters)
 {
-    return ts << "springMass=" << parameters.springMass << " springStiffness=" << parameters.springStiffness
+    return ts << "springMass="_s << parameters.springMass << " springStiffness="_s << parameters.springStiffness
     << " springDamping=" << parameters.springDamping << " maximumVelocityMultiplier=" << parameters.maximumVelocityMultiplier
     << " timeToMaximumVelocity=" << parameters.timeToMaximumVelocity << " rubberBandForce=" << parameters.rubberBandForce;
 }

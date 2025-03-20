@@ -39,6 +39,7 @@ WTF_EXTERN_C_BEGIN
 
 extern SSBProvider const SSBProviderGoogle;
 extern SSBProvider const SSBProviderTencent;
+extern SSBProvider const SSBProviderApple;
 
 WTF_EXTERN_C_END
 
@@ -50,12 +51,11 @@ WTF_EXTERN_C_END
 @property (nonatomic, readonly, getter=isMalware) BOOL malware;
 @property (nonatomic, readonly, getter=isUnwantedSoftware) BOOL unwantedSoftware;
 
-#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
 @property (nonatomic, readonly) NSString *malwareDetailsBaseURLString;
 @property (nonatomic, readonly) NSURL *learnMoreURL;
 @property (nonatomic, readonly) NSString *reportAnErrorBaseURLString;
 @property (nonatomic, readonly) NSString *localizedProviderDisplayName;
-#endif
+@property (nonatomic, readonly) NSString *localizedProviderShortName;
 
 @end
 

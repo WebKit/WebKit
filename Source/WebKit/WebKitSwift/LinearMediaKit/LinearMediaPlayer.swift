@@ -49,6 +49,9 @@ private class SwiftOnlyData: NSObject {
     @Published var presentationMode: PresentationMode = .inline
     @Published var presentationState: WKSLinearMediaPresentationState = .inline
 
+    // FIXME: Publish fullscreenSceneBehaviors once rdar://122435030 is resolved
+    var fullscreenBehaviorsSubject = CurrentValueSubject<[FullscreenBehaviors], Never>(FullscreenBehaviors.default)
+
     // Will be set to true if we entered via Docking Environment button (inline) or false otherwise.
     var enteredFromInline = false
 
@@ -117,7 +120,6 @@ enum LinearMediaPlayerErrors: Error {
     var allowFullScreenFromInline = true
     var isLiveStream = false
     var recommendedViewingRatio: NSNumber?
-    var fullscreenSceneBehaviors: WKSLinearMediaFullscreenBehaviors = []
     var startTime: Double = .nan
     var endTime: Double = .nan
     var spatialImmersive = false
@@ -193,6 +195,37 @@ enum LinearMediaPlayerErrors: Error {
         viewController.prefersAutoDimming = true
         return viewController
     }
+    
+    func enterExternalPresentation(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        Logger.linearMediaPlayer.log("\(#function)")
+
+        switch presentationState {
+        case .enteringFullscreen, .exitingFullscreen, .fullscreen, .external:
+            completionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+        case .inline:
+            swiftOnlyData.presentationState = .external
+            swiftOnlyData.fullscreenBehaviorsSubject.send([ .hostContentInline ])
+            completionHandler(true, nil)
+        @unknown default:
+            fatalError()
+        }
+    }
+    
+    func exitExternalPresentation(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        Logger.linearMediaPlayer.log("\(#function)")
+
+        switch presentationState {
+        case .enteringFullscreen, .exitingFullscreen, .fullscreen, .inline:
+            completionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+        case .external:
+            delegate?.linearMediaPlayerClearVideoReceiverEndpoint?(self)
+            swiftOnlyData.presentationState = .inline
+            swiftOnlyData.fullscreenBehaviorsSubject.send(FullscreenBehaviors.default)
+            completionHandler(true, nil)
+        @unknown default:
+            fatalError()
+        }
+    }
 
     func enterFullscreen(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
         Logger.linearMediaPlayer.log("\(#function)")
@@ -211,6 +244,8 @@ enum LinearMediaPlayerErrors: Error {
             swiftOnlyData.presentationState = .fullscreen
         case .fullscreen:
             completionHandler(true, nil)
+        case .external:
+            completionHandler(false, LinearMediaPlayerErrors.invalidStateError)
         @unknown default:
             fatalError()
         }
@@ -231,6 +266,8 @@ enum LinearMediaPlayerErrors: Error {
             swiftOnlyData.presentationState = .inline
         case .inline:
             completionHandler(true, nil)
+        case .external:
+            completionHandler(false, LinearMediaPlayerErrors.invalidStateError)
         @unknown default:
             fatalError()
         }
@@ -246,7 +283,7 @@ extension WKSLinearMediaPlayer {
             swiftOnlyData.presentationMode = .inline
         case .enteringFullscreen:
             delegate?.linearMediaPlayerEnterFullscreen?(self)
-        case .fullscreen:
+        case .fullscreen, .external:
             swiftOnlyData.presentationMode = .fullscreenFromInline
         case .exitingFullscreen:
             delegate?.linearMediaPlayerExitFullscreen?(self)
@@ -538,7 +575,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
 
     public var fullscreenSceneBehaviorsPublisher: AnyPublisher<[FullscreenBehaviors], Never> {
         // FIXME: Publish fullscreenSceneBehaviors once rdar://122435030 is resolved
-        Just(FullscreenBehaviors.default).eraseToAnyPublisher()
+        swiftOnlyData.fullscreenBehaviorsSubject.eraseToAnyPublisher()
     }
 
     public func updateRenderingConfiguration(_ config: RenderingConfiguration) {
@@ -649,7 +686,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
             swiftOnlyData.presentationState = .enteringFullscreen
         case .fullscreen:
             swiftOnlyData.presentationState = .exitingFullscreen
-        case .enteringFullscreen, .exitingFullscreen:
+        case .enteringFullscreen, .exitingFullscreen, .external:
             break
         @unknown default:
             fatalError()
@@ -663,7 +700,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         case .inline:
             swiftOnlyData.enteredFromInline = true
             swiftOnlyData.presentationState = .enteringFullscreen
-        case .enteringFullscreen, .exitingFullscreen, .fullscreen:
+        case .enteringFullscreen, .exitingFullscreen, .fullscreen, .external:
             break
         @unknown default:
             fatalError()
@@ -690,7 +727,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         switch presentationState {
         case .fullscreen:
             swiftOnlyData.presentationState = .exitingFullscreen
-        case .inline, .enteringFullscreen, .exitingFullscreen:
+        case .inline, .enteringFullscreen, .exitingFullscreen, .external:
             break
         @unknown default:
             fatalError()

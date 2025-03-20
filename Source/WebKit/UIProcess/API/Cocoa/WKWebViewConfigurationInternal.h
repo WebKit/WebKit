@@ -29,6 +29,7 @@
 
 #import "APIPageConfiguration.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/Ref.h>
 
 namespace WebKit {
@@ -41,7 +42,7 @@ template<> struct WrapperTraits<API::PageConfiguration> {
 
 @interface WKWebViewConfiguration () <WKObject> {
 @package
-    API::ObjectStorage<API::PageConfiguration> _pageConfiguration;
+    AlignedStorage<API::PageConfiguration> _pageConfiguration;
 }
 
 @property (nonatomic, readonly, nullable) NSString *_applicationNameForDesktopUserAgent;

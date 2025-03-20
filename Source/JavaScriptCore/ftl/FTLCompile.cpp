@@ -60,7 +60,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     VM& vm = graph.m_vm;
 
     if (shouldDumpDisassembly() || vm.m_perBytecodeProfiler)
-        state.proc->code().setDisassembler(makeUnique<B3::Air::Disassembler>());
+        state.proc->code().setDisassembler(makeUniqueWithoutFastMallocCheck<B3::Air::Disassembler>());
 
     if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
         graph.freeDFGIRAfterLowering();
@@ -172,10 +172,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
             stackOverflowWithEntry.link(&jit);
             jit.emitFunctionPrologue();
-            jit.move(CCallHelpers::TrustedImmPtr(codeBlock), GPRInfo::argumentGPR0);
-            jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-            jit.callOperation<OperationPtrTag>(operationThrowStackOverflowError);
-            jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
+            jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::ThrowStackOverflowAtPrologue).retaggedCode<NoPtrTag>()));
             mainPathJumps.linkTo(mainPathLabel, &jit);
         }
         break;

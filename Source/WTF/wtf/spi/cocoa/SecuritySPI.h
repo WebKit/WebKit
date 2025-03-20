@@ -67,7 +67,7 @@ enum {
 WTF_EXTERN_C_BEGIN
 
 #if !__has_include(<Security/CSCommon.h>)
-typedef struct __SecCode const *SecStaticCodeRef;
+typedef struct CF_BRIDGED_TYPE(id) __SecCode const *SecStaticCodeRef;
 
 typedef uint32_t SecCSFlags;
 enum {
@@ -95,8 +95,8 @@ WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-typedef struct __SecTask *SecTaskRef;
-typedef struct __SecTrust *SecTrustRef;
+typedef struct CF_BRIDGED_TYPE(id) __SecTask *SecTaskRef;
+typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;
 
 WTF_EXTERN_C_BEGIN
 

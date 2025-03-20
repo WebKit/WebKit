@@ -1,12 +1,11 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="sometext">
 <STRONG>strong</STRONG><strong>strong</strong><FOO>FOO</FOO><foo>foo</foo>
 </p>
-<div id="console"></div>
 <script type="text/javascript">
 
     function testHTML(query, expectedCount)
@@ -38,6 +37,5 @@
     testXML('//*[@id="sometext"]//FOO', '1');
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

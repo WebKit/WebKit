@@ -95,7 +95,7 @@ static void logConsoleWarning(const LocalFrame& frame, bool allowed, ASCIILitera
 
 static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, const URL& target, bool isUpgradingIPAddressAndLocalhostEnabled)
 {
-    auto isUpgradingLocalhostDisabled = !isUpgradingIPAddressAndLocalhostEnabled && SecurityOrigin::isLocalhostAddress(target.host());
+    auto isUpgradingLocalhostDisabled = !isUpgradingIPAddressAndLocalhostEnabled && shouldTreatAsPotentiallyTrustworthy(target);
     ASCIILiteral errorString = [&] {
     if (blocked)
         return "blocked and must"_s;
@@ -193,20 +193,20 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
     auto shouldUpgradeIPAddressAndLocalhostForTesting = document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled();
 
     // 4.1 The request's URL is not upgraded in the following cases.
-    if (!canModifyRequest(url, destination, initiator, shouldUpgradeIPAddressAndLocalhostForTesting))
+    if (!canModifyRequest(url, destination, initiator))
         return false;
 
     logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
     return true;
 }
 
-bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator, bool shouldUpgradeIPAddressAndLocalhostForTesting)
+bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator)
 {
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     if (url.protocolIs("https"_s))
         return false;
     // 4.1.2 request’s URL’s host is an IP address.
-    if (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
+    if (URL::hostIsIPAddress(url.host()) && !shouldTreatAsPotentiallyTrustworthy(url))
         return false;
     // 4.1.4 request’s destination is not "image", "audio", or "video".
     if (!destinationIsImageAudioOrVideo(destination))
@@ -225,7 +225,7 @@ static bool shouldBlockInsecureContent(LocalFrame& frame, const URL& url, MixedC
         return false;
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
-    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || SecurityOrigin::isLocalhostAddress(url.host())) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
+    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
         return false;
     logConsoleWarningForUpgrade(frame, /* blocked */ true, url, document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled());
     return true;

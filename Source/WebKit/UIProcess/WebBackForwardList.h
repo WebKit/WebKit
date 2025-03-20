@@ -56,6 +56,7 @@ public:
     WebBackForwardListItem* itemForID(WebCore::BackForwardItemIdentifier);
 
     void addItem(Ref<WebBackForwardListItem>&&);
+    void addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void goToItem(WebBackForwardListItem&);
     void removeAllItems();
     void clear();
@@ -63,8 +64,11 @@ public:
     WebBackForwardListItem* currentItem() const;
     RefPtr<WebBackForwardListItem> protectedCurrentItem() const;
     WebBackForwardListItem* backItem() const;
+    RefPtr<WebBackForwardListItem> protectedBackItem() const;
     WebBackForwardListItem* forwardItem() const;
+    RefPtr<WebBackForwardListItem> protectedForwardItem() const;
     WebBackForwardListItem* itemAtIndex(int) const;
+    RefPtr<WebBackForwardListItem> protectedItemAtIndex(int) const;
 
     RefPtr<WebBackForwardListItem> goBackItemSkippingItemsWithoutUserGesture() const;
     RefPtr<WebBackForwardListItem> goForwardItemSkippingItemsWithoutUserGesture() const;
@@ -87,10 +91,6 @@ public:
     void setItemsAsRestoredFromSession();
     void setItemsAsRestoredFromSessionIf(NOESCAPE Function<bool(WebBackForwardListItem&)>&&);
 
-    void goToProvisionalItem(WebBackForwardListItem&);
-    void clearProvisionalItem(WebBackForwardListFrameItem&);
-    void commitProvisionalItem(WebBackForwardListFrameItem&);
-
     Ref<FrameState> completeFrameStateForNavigation(Ref<FrameState>&&);
 
 #if !LOG_DISABLED
@@ -102,17 +102,15 @@ private:
 
     void didRemoveItem(WebBackForwardListItem&);
 
-    void goToItemInternal(WebBackForwardListItem&, std::optional<size_t>& indexToUpdate);
-
-    std::optional<size_t> provisionalOrCurrentIndex() const { return m_provisionalIndex ? m_provisionalIndex : m_currentIndex; }
-    void setProvisionalOrCurrentIndex(size_t);
-
     RefPtr<WebPageProxy> protectedPage();
 
     WeakPtr<WebPageProxy> m_page;
     BackForwardListItemVector m_entries;
     std::optional<size_t> m_currentIndex;
-    std::optional<size_t> m_provisionalIndex;
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebBackForwardList)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BackForwardList; }
+SPECIALIZE_TYPE_TRAITS_END()

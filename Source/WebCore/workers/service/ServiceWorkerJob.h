@@ -89,7 +89,7 @@ private:
     RefPtr<WorkerScriptLoader> m_scriptLoader;
 
 #if ASSERT_ENABLED
-    Ref<Thread> m_creationThread { Thread::current() };
+    Ref<Thread> m_creationThread { Thread::currentSingleton() };
 #endif
 };
 

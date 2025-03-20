@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-ignored.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-normal-matches-cover.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-scroll-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html
@@ -47,10 +48,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/named-range-keyframes-with-document-timeline.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-animation-longhand-properties.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/pseudo-on-scroller-named-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/pseudo-on-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-quirks-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-scrollable-body-quirks-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-scrollable-body.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-axis-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-axis-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-axis-writing-mode.html
@@ -89,6 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-update-reversed-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-with-percent-delay.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/siblings-with-anonymous-timelines.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-in-keyframe-change-timeline.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-hidden-subject.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-with-document-timeline.html
@@ -109,11 +116,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-name-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-name-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-name-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-pseudo-on-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update-reversed-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-bounds-update.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-in-shadow-root-with-timeline-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-used-values.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-with-delay-and-range.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-with-transform-on-subject.html

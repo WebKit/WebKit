@@ -28,6 +28,7 @@
 #import "APITargetedElementInfo.h"
 #import "WKObject.h"
 #import "_WKTargetedElementInfo.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -39,6 +40,6 @@ template<> struct WrapperTraits<API::TargetedElementInfo> {
 
 @interface _WKTargetedElementInfo () <WKObject> {
 @package
-    API::ObjectStorage<API::TargetedElementInfo> _info;
+    AlignedStorage<API::TargetedElementInfo> _info;
 }
 @end

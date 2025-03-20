@@ -9,11 +9,11 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-mask-position-x
-user-select
 mask-position-y
+user-select
 text-size-adjust
 initial-letter
+mask-position-x
 box-decoration-break
 Property values requiring vendor prefixes:
 None
@@ -80,6 +80,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-media-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-media-toggle-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-media-toggle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-namespace-sandwich-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-property-override.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-replaceSync-clears-stale.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-rules-cssom.html

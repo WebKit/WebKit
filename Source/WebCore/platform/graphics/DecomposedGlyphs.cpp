@@ -49,4 +49,10 @@ DecomposedGlyphs::DecomposedGlyphs(PositionedGlyphs&& positionedGlyphs, Renderin
     ASSERT(m_positionedGlyphs.glyphs.size() == m_positionedGlyphs.advances.size());
 }
 
+DecomposedGlyphs::~DecomposedGlyphs()
+{
+    for (auto& observer : m_observers)
+        observer.willDestroyDecomposedGlyphs(renderingResourceIdentifier());
+}
+
 } // namespace WebCore

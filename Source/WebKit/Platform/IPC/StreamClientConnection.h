@@ -76,7 +76,7 @@ public:
     bool hasSemaphores() const;
     void setMaxBatchSize(unsigned);
 
-    void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
+    void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::currentSingleton());
     Error flushSentMessages();
     void invalidate();
 
@@ -95,7 +95,7 @@ public:
     template<typename>
     Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
 
-    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
+    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiverBase&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     StreamClientConnectionBuffer& bufferForTesting();

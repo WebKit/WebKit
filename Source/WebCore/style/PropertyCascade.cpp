@@ -42,12 +42,15 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertyCascade);
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* animatedProperties)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* animatedProperties, const StyleProperties* positionTryFallbackProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_animationLayer(animatedProperties ? std::optional { AnimationLayer { *animatedProperties } } : std::nullopt)
 {
+    if (positionTryFallbackProperties)
+        m_positionTryFallbackProperties = MatchedProperties { *positionTryFallbackProperties };
+
     buildCascade();
 }
 
@@ -58,6 +61,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
     , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
     , m_animationLayer(parent.m_animationLayer)
+    , m_positionTryFallbackProperties(parent.m_positionTryFallbackProperties)
 {
     buildCascade();
 }
@@ -86,6 +90,9 @@ void PropertyCascade::buildCascade()
         if (hasImportant)
             cascadeLevelsWithImportant.add(cascadeLevel);
     }
+
+    if (m_positionTryFallbackProperties)
+        addPositionTryFallbackProperties();
 
     for (auto cascadeLevel : { CascadeLevel::Author, CascadeLevel::User, CascadeLevel::UserAgent }) {
         if (!cascadeLevelsWithImportant.contains(cascadeLevel))
@@ -313,6 +320,22 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
     }
 
     return false;
+}
+
+void PropertyCascade::addPositionTryFallbackProperties()
+{
+    ASSERT(m_positionTryFallbackProperties);
+
+    // "All of the properties in a @position-try are applied to the box as part of the Position Fallback Origin,
+    // a new cascade origin that lies between the Author Origin and the Animation Origin"
+    // https://drafts.csswg.org/css-anchor-position-1/#fallback-rule
+    // FIXME: Use own cascade origin. This matters for revert-layer.
+    if (m_maximumCascadeLevel < CascadeLevel::Author)
+        return;
+
+    // "It is invalid to use !important on the properties in the <declaration-list>."
+    // FIXME: "Doing so causes the property it is used on to become invalid."
+    addMatch(*m_positionTryFallbackProperties, CascadeLevel::Author, IsImportant::No);
 }
 
 static auto& declarationsForCascadeLevel(const MatchResult& matchResult, CascadeLevel cascadeLevel)

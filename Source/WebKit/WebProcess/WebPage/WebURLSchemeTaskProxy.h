@@ -63,7 +63,7 @@ public:
 
 private:
     WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&, WebFrame&);
-    bool hasLoader();
+    WebCore::ResourceLoader* coreLoader();
 
     void queueTask(Function<void()>&& task) { m_queuedTasks.append(WTFMove(task)); }
     void processNextPendingTask();

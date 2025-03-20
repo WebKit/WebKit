@@ -47,6 +47,7 @@
 #import "ResourceResponse.h"
 #import "SampleMap.h"
 #import "SecurityOrigin.h"
+#import "SpatialAudioExperienceHelper.h"
 #import "TextTrackRepresentation.h"
 #import "TrackBuffer.h"
 #import "VideoFrameCV.h"
@@ -1801,6 +1802,24 @@ void MediaPlayerPrivateWebM::setSpatialTrackingLabel(const String& spatialTracki
 void MediaPlayerPrivateWebM::updateSpatialTrackingLabel()
 {
     auto *renderer = m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer.get() : [m_sampleBufferDisplayLayer sampleBufferRenderer];
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    if (RefPtr player = m_player.get(); player && player->prefersSpatialAudioExperience()) {
+        RetainPtr experience = createSpatialAudioExperienceWithOptions({
+            .hasLayer = !!renderer,
+            .hasTarget = !!m_videoTarget,
+            .isVisible = m_visible,
+            .soundStageSize = player->soundStageSize(),
+            .sceneIdentifier = player->sceneIdentifier(),
+#if HAVE(SPATIAL_TRACKING_LABEL)
+            .spatialTrackingLabel = m_spatialTrackingLabel,
+#endif
+        });
+        [m_synchronizer setIntendedSpatialAudioExperience:experience.get()];
+        return;
+    }
+#endif
+
     if (!m_spatialTrackingLabel.isNull()) {
         INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
         renderer.STSLabel = m_spatialTrackingLabel;
@@ -1993,6 +2012,15 @@ void MediaPlayerPrivateWebM::setVideoTarget(const PlatformVideoTarget& videoTarg
     m_usingLinearMediaPlayer = !!videoTarget;
     m_videoTarget = videoTarget;
     updateDisplayLayer();
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+void MediaPlayerPrivateWebM::sceneIdentifierDidChange()
+{
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 }
 #endif
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/Forward.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Markable.h>
@@ -100,16 +101,7 @@ public:
     {
         TextStream& ts = *this;
         ts.startGroup();
-        ts << name << " " << value;
-        ts.endGroup();
-    }
-
-    template<typename T>
-    void dumpProperty(const char* name, const T& value)
-    {
-        TextStream& ts = *this;
-        ts.startGroup();
-        ts << name << " " << value;
+        ts << name << ' ' << value;
         ts.endGroup();
     }
 
@@ -118,7 +110,7 @@ public:
     {
         TextStream& ts = *this;
         ts.startGroup();
-        ts << name << " "_s << value;
+        ts << name << ' ' << value;
         ts.endGroup();
     }
 
@@ -222,7 +214,7 @@ TextStream& operator<<(TextStream& ts, ValueOrNull<T> item)
     if (item.value)
         ts << *item.value;
     else
-        ts << "null";
+        ts << "null"_s;
     return ts;
 }
 
@@ -232,7 +224,7 @@ TextStream& operator<<(TextStream& ts, const std::optional<Item>& item)
     if (item)
         return ts << item.value();
     
-    return ts << "nullopt";
+    return ts << "nullopt"_s;
 }
 
 template<typename T, typename Traits>
@@ -241,27 +233,27 @@ TextStream& operator<<(TextStream& ts, const Markable<T, Traits>& item)
     if (item)
         return ts << item.value();
     
-    return ts << "unset";
+    return ts << "unset"_s;
 }
 
 template<typename SizedContainer>
 TextStream& streamSizedContainer(TextStream& ts, const SizedContainer& sizedContainer)
 {
-    ts << "[";
+    ts << '[';
 
     unsigned count = 0;
     for (const auto& value : sizedContainer) {
         if (count)
-            ts << ", ";
+            ts << ", "_s;
         ts << value;
         if (++count == ts.containerSizeLimit())
             break;
     }
 
     if (count != sizedContainer.size())
-        ts << ", ...";
+        ts << ", ..."_s;
 
-    return ts << "]";
+    return ts << ']';
 }
 
 template<typename ItemType, size_t inlineCapacity>
@@ -282,10 +274,22 @@ TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsAr
     return streamSizedContainer(ts, set);
 }
 
+template<typename T, typename U>
+TextStream& operator<<(TextStream& ts, const ListHashSet<T, U>& set)
+{
+    return streamSizedContainer(ts, set);
+}
+
 template<typename T, size_t size>
 TextStream& operator<<(TextStream& ts, const std::array<T, size>& array)
 {
     return streamSizedContainer(ts, array);
+}
+
+template<typename T, size_t Extent>
+TextStream& operator<<(TextStream& ts, std::span<T, Extent> items)
+{
+    return streamSizedContainer(ts, items);
 }
 
 template<typename T, typename Counter>
@@ -294,7 +298,7 @@ TextStream& operator<<(TextStream& ts, const WeakPtr<T, Counter>& item)
     if (item)
         return ts << *item;
     
-    return ts << "null";
+    return ts << "null"_s;
 }
 
 template<typename T>
@@ -303,7 +307,7 @@ TextStream& operator<<(TextStream& ts, const RefPtr<T>& item)
     if (item)
         return ts << *item;
     
-    return ts << "null";
+    return ts << "null"_s;
 }
 
 template<typename T>
@@ -318,47 +322,47 @@ TextStream& operator<<(TextStream& ts, const CheckedPtr<T>& item)
     if (item)
         return ts << *item;
 
-    return ts << "null";
+    return ts << "null"_s;
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 TextStream& operator<<(TextStream& ts, const UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>& map)
 {
-    ts << "{";
+    ts << '{';
 
     unsigned count = 0;
     for (const auto& keyValuePair : map) {
         if (count)
-            ts << ", ";
-        ts << keyValuePair.key << ": " << keyValuePair.value;
+            ts << ", "_s;
+        ts << keyValuePair.key << ": "_s << keyValuePair.value;
         if (++count == ts.containerSizeLimit())
             break;
     }
 
     if (count != map.size())
-        ts << ", ...";
+        ts << ", ..."_s;
 
-    return ts << "}";
+    return ts << '}';
 }
 
 template<typename Option>
 TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
 {
-    ts << "[";
+    ts << '[';
     bool needComma = false;
     for (auto option : options) {
         if (needComma)
-            ts << ", ";
+            ts << ", "_s;
         needComma = true;
         ts << option;
     }
-    return ts << "]";
+    return ts << ']';
 }
 
 template<typename T, typename U>
 TextStream& operator<<(TextStream& ts, const std::pair<T, U>& pair)
 {
-    return ts << "[" << pair.first << ", " << pair.second << "]";
+    return ts << '[' << pair.first << ", "_s << pair.second << ']';
 }
 
 template<typename, typename = void, typename = void, typename = void, typename = void, size_t = 0>
@@ -394,6 +398,9 @@ struct supports_text_stream_insertion<RefPtr<T>> : supports_text_stream_insertio
 template<typename T>
 struct supports_text_stream_insertion<Ref<T>> : supports_text_stream_insertion<T> { };
 
+template<typename T>
+struct supports_text_stream_insertion<std::unique_ptr<T>> : supports_text_stream_insertion<T> { };
+
 template<typename T, size_t size>
 struct supports_text_stream_insertion<std::array<T, size>> : supports_text_stream_insertion<T> { };
 
@@ -414,7 +421,7 @@ TextStream& operator<<(TextStream& ts, ValueOrEllipsis<T> item)
     if constexpr (supports_text_stream_insertion<T>::value)
         ts << item.value;
     else
-        ts << "...";
+        ts << "..."_s;
     return ts;
 }
 

@@ -29,11 +29,16 @@
 #include "WPEBufferDMABufFormats.h"
 #include "WPEDisplay.h"
 #include "WPEViewPrivate.h"
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(ATK)
+#include "WPEApplicationAccessibleAtk.h"
+#include "WPEToplevelAccessibleAtk.h"
+#endif
 
 #if USE(LIBDRM)
 #include <drm_fourcc.h>
@@ -45,7 +50,7 @@
  */
 struct _WPEToplevelPrivate {
     GWeakPtr<WPEDisplay> display;
-    HashSet<WPEView*> views;
+    ListHashSet<WPEView*> views;
 
     int width;
     int height;
@@ -55,9 +60,14 @@ struct _WPEToplevelPrivate {
 #if USE(LIBDRM)
     GRefPtr<WPEBufferDMABufFormats> overridenDMABufFormats;
 #endif
+#if USE(ATK)
+    GRefPtr<AtkObject> accessible;
+#endif
 };
 
 WEBKIT_DEFINE_TYPE(WPEToplevel, wpe_toplevel, G_TYPE_OBJECT)
+
+static GList* s_toplevelList;
 
 enum {
     PROP_0,
@@ -68,6 +78,35 @@ enum {
 };
 
 static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
+
+static void wpeToplevelConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(wpe_toplevel_parent_class)->constructed(object);
+
+    s_toplevelList = g_list_prepend(s_toplevelList, object);
+#if USE(ATK)
+    auto* atkRoot = atk_get_root();
+    if (WPE_IS_APPLICATION_ACCESSIBLE_ATK(atkRoot))
+        wpeApplicationAccessibleAtkToplevelCreated(WPE_APPLICATION_ACCESSIBLE_ATK(atkRoot), WPE_TOPLEVEL(object));
+#endif
+}
+
+static void wpeToplevelDispose(GObject* object)
+{
+    s_toplevelList = g_list_remove(s_toplevelList, object);
+
+#if USE(ATK)
+    auto* toplevel = WPE_TOPLEVEL(object);
+    if (toplevel->priv->accessible) {
+        auto* atkRoot = atk_get_root();
+        if (WPE_IS_APPLICATION_ACCESSIBLE_ATK(atkRoot))
+            wpeApplicationAccessibleAtkToplevelDestroyed(WPE_APPLICATION_ACCESSIBLE_ATK(atkRoot), toplevel);
+        toplevel->priv->accessible = nullptr;
+    }
+#endif
+
+    G_OBJECT_CLASS(wpe_toplevel_parent_class)->dispose(object);
+}
 
 static void wpeToplevelSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
@@ -98,6 +137,8 @@ static void wpeToplevelGetProperty(GObject* object, guint propId, GValue* value,
 static void wpe_toplevel_class_init(WPEToplevelClass* toplevelClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(toplevelClass);
+    objectClass->constructed = wpeToplevelConstructed;
+    objectClass->dispose = wpeToplevelDispose;
     objectClass->set_property = wpeToplevelSetProperty;
     objectClass->get_property = wpeToplevelGetProperty;
 
@@ -116,6 +157,14 @@ static void wpe_toplevel_class_init(WPEToplevelClass* toplevelClass)
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
+GList* wpeToplevelList()
+{
+    GList* toplevels = nullptr;
+    for (auto* iter = s_toplevelList; iter; iter = g_list_next(iter))
+        toplevels = g_list_prepend(toplevels, iter->data);
+    return toplevels;
+}
+
 void wpeToplevelAddView(WPEToplevel* toplevel, WPEView* view)
 {
     toplevel->priv->views.add(view);
@@ -125,6 +174,35 @@ void wpeToplevelRemoveView(WPEToplevel* toplevel, WPEView* view)
 {
     toplevel->priv->views.remove(view);
 }
+
+GRefPtr<WPEView> wpeToplevelGetView(WPEToplevel* toplevel, size_t index)
+{
+    if (index >= toplevel->priv->views.size())
+        return nullptr;
+
+    size_t viewIndex = 0;
+    for (auto& view : toplevel->priv->views) {
+        if (viewIndex == index)
+            return view;
+        ++viewIndex;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+#if USE(ATK)
+AtkObject* wpeToplevelGetOrCreateAccessibleAtk(WPEToplevel* toplevel)
+{
+    if (!toplevel->priv->accessible)
+        toplevel->priv->accessible = adoptGRef(wpeToplevelAccessibleAtkNew(toplevel));
+    return toplevel->priv->accessible.get();
+}
+
+AtkObject* wpeToplevelGetAccessibleAtk(WPEToplevel* toplevel)
+{
+    return toplevel->priv->accessible.get();
+}
+#endif
 
 /**
  * wpe_toplevel_get_display:

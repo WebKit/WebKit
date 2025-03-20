@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-ltr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-rtl.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-rtl.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-rtl-ltr.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-rtl-ltr.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/htb-rtl-rtl-expected.html
@@ -54,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ltr-ltr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ltr-rtl.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ltr-rtl.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-rtl-ltr.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-rtl-ltr.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vlr-rtl-rtl-expected.html
@@ -62,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-ltr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl-expected.html

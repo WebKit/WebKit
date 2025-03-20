@@ -46,7 +46,7 @@
 #include <wtf/RefCounted.h>
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 #endif
 
 namespace WebCore::WebGPU {

@@ -33,6 +33,7 @@
 #include "FrameSelection.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
@@ -40,6 +41,7 @@
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -115,12 +117,14 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     OptionSet<ContentRelevancy> newRelevancy;
     if (oldRelevancy)
         newRelevancy = *oldRelevancy;
+
     auto setRelevancyValue = [&](ContentRelevancy reason, bool value) {
         if (value)
             newRelevancy.add(reason);
         else
             newRelevancy.remove(reason);
     };
+
     if (relevancyToCheck.contains(ContentRelevancy::OnScreen)) {
         auto viewportProximityIterator = m_elementViewportProximities.find(target);
         auto viewportProximity = ViewportProximity::Far;
@@ -152,6 +156,8 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
 
     if (oldRelevancy && oldRelevancy == newRelevancy)
         return false;
+
+    LOG_WITH_STREAM(ContentVisibility, stream << "ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement - relevancy of " << target << " changed from " << oldRelevancy << " to " << newRelevancy);
 
     auto wasSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.setContentRelevancy(newRelevancy);

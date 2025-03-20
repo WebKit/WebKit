@@ -72,6 +72,7 @@ enum class SDKAlignedBehavior {
     MediaTypesRequiringUserActionForPlayback,
     MinimizesLanguages,
     ModernCompabilityModeByDefault,
+    MutationEventsDisabledByDefault,
     NoClientCertificateLookup,
     NoExpandoIndexedPropertiesOnWindow,
     NoIMDbCSSOMViewScrollingQuirk,
@@ -128,9 +129,12 @@ enum class SDKAlignedBehavior {
     BlockOptionallyBlockableMixedContent,
     UseCFNetworkNetworkLoader,
     BlockCrossOriginRedirectDownloads,
-    BlobFileAccessEnforcement,
+    BlobFileAccessEnforcementAndNetworkProcessRoundTrip,
     DevolvableWidgets,
     SetSelectionRangeCachesSelectionIfNotFocusedOrSelected,
+    DispatchFocusEventBeforeNotifyingClient,
+    EnableTrustedTypesByDefault,
+    BlobFileAccessEnforcement,
 
     NumberOfBehaviors
 };
@@ -155,6 +159,7 @@ WTF_EXPORT_PRIVATE void clearApplicationBundleIdentifierTestingOverride();
 
 namespace CocoaApplication {
 
+WTF_EXPORT_PRIVATE bool isAppleApplication();
 WTF_EXPORT_PRIVATE bool isIBooks();
 WTF_EXPORT_PRIVATE bool isWebkitTestRunner();
 
@@ -183,7 +188,7 @@ WTF_EXPORT_PRIVATE bool isMimeoPhotoProject();
 namespace IOSApplication {
 
 WTF_EXPORT_PRIVATE bool isAmazon();
-WTF_EXPORT_PRIVATE bool isAppleApplication();
+WTF_EXPORT_PRIVATE bool isAppleWebApp();
 WTF_EXPORT_PRIVATE bool isCardiogram();
 WTF_EXPORT_PRIVATE bool isCrunchyroll();
 WTF_EXPORT_PRIVATE bool isDataActivation();

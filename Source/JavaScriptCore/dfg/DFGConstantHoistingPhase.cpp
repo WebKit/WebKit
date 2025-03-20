@@ -53,6 +53,7 @@ public:
         UncheckedKeyHashMap<FrozenValue*, Node*> jsValues;
         UncheckedKeyHashMap<FrozenValue*, Node*> doubleValues;
         UncheckedKeyHashMap<FrozenValue*, Node*> int52Values;
+        UncheckedKeyHashMap<void*, Node*> storagePointerValues;
         
         auto valuesFor = [&] (NodeType op) -> UncheckedKeyHashMap<FrozenValue*, Node*>& {
             // Use a roundabout approach because clang thinks that this closure returning a
@@ -99,6 +100,16 @@ public:
                     }
                     break;
                 }
+                case ConstantStoragePointer: {
+                    auto result = storagePointerValues.add(node->storagePointer(), node);
+                    if (result.isNewEntry)
+                        node->origin = m_graph.block(0)->at(0)->origin;
+                    else {
+                        node->setReplacement(result.iterator->value);
+                        toFree.append(node);
+                    }
+                    break;
+                }
                 default:
                     block->at(targetIndex++) = node;
                     break;
@@ -109,13 +120,14 @@ public:
         
         // Insert the constants into the root block.
         InsertionSet insertionSet(m_graph);
-        auto insertConstants = [&] (const UncheckedKeyHashMap<FrozenValue*, Node*>& values) {
-            for (auto& entry : values)
-                insertionSet.insert(0, entry.value);
+        auto insertConstants = [&] (const auto& map) {
+            for (auto& value : map.values())
+                insertionSet.insert(0, value);
         };
         insertConstants(jsValues);
         insertConstants(doubleValues);
         insertConstants(int52Values);
+        insertConstants(storagePointerValues);
         insertionSet.execute(m_graph.block(0));
         
         // Perform all of the substitutions. We want all instances of the removed constants to

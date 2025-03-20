@@ -679,15 +679,15 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
 
     m_target->didRenderFrame();
 
-    const auto& damageRegion = [this]() -> WebCore::Region {
+    const auto& damageRects = [this]() -> Vector<WebCore::IntRect, 1> {
 #if ENABLE(DAMAGE_TRACKING)
-        return m_frameDamage.region();
+        return m_frameDamage.rects();
 #else
-        return Region { };
+        return { };
 #endif
     }();
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), damageRegion, WTFMove(renderingFence)), m_id);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), damageRects, WTFMove(renderingFence)), m_id);
 
 #if ENABLE(DAMAGE_TRACKING)
     m_frameDamage = WebCore::Damage();

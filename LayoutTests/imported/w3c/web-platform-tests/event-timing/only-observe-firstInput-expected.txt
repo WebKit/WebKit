@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+FAIL Event Timing: check first-input for a PerformanceObserver observing only first-input. assert_implements: Event Timing is not supported. undefined
+

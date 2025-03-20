@@ -26,6 +26,6 @@
 // CSSOM extensions to HTMLElement / SVGElement:
 // https://drafts.csswg.org/cssom/#the-elementcssinlinestyle-interface
 interface mixin ElementCSSInlineStyle {
-    [ImplementedAs=cssomStyle, SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+    [ImplementedAs=cssomStyle, SameObject, PutForwards=cssText] readonly attribute CSSStyleProperties style;
     [ImplementedAs=ensureAttributeStyleMap, SameObject, CachedAttribute] readonly attribute StylePropertyMap attributeStyleMap;
 };

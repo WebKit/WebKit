@@ -46,7 +46,7 @@ public:
     const DisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }
 
     WEBCORE_EXPORT void setTracksDisplayListReplay(bool);
-    WEBCORE_EXPORT void replayDisplayList(GraphicsContext&);
+    WEBCORE_EXPORT void replayDisplayList(GraphicsContext&, ControlFactory* = nullptr);
 
 protected:
     RecorderImpl m_context;

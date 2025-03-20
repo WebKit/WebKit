@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ApplyBlockElementCommand.h"
 
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "RenderElement.h"

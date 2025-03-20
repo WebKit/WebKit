@@ -1,7 +1,8 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
+    description("Ensure that using XPath namespace resolver with a detached iframe doesn't crash.");
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
@@ -34,7 +35,5 @@
 </script>
 </head>
 <body onload="test()">
-<p>Ensure that using XPath namespace resolver with a detached iframe doesn't crash.</p>
-<div id="console"></div>
 </body>
 </html>

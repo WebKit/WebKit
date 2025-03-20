@@ -256,7 +256,7 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
             ts.dumpProperty(stateChangeName(change), this->*property);
     };
 
-    ts.dumpProperty("change-flags", m_changeFlags);
+    ts.dumpProperty("change-flags"_s, m_changeFlags);
 
     dump(Change::FillBrush,                     &GraphicsContextState::m_fillBrush);
     dump(Change::FillRule,                      &GraphicsContextState::m_fillRule);

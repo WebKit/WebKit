@@ -29,6 +29,10 @@
 #include "RouterRule.h"
 #include <wtf/Vector.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 class DeferredPromise;
@@ -43,7 +47,7 @@ public:
     }
     ~InstallEvent();
 
-    void addRoutes(ScriptExecutionContext&, std::variant<RouterRule, Vector<RouterRule>>&&, Ref<DeferredPromise>&&);
+    void addRoutes(JSC::JSGlobalObject&, std::variant<RouterRule, Vector<RouterRule>>&&, Ref<DeferredPromise>&&);
 
 private:
     WEBCORE_EXPORT InstallEvent(const AtomString&, ExtendableEventInit&&, IsTrusted);

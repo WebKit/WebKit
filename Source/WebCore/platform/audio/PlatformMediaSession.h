@@ -55,7 +55,10 @@ class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 class PlatformMediaSessionManager;
+enum class AudioSessionCategory : uint8_t;
+enum class AudioSessionMode : uint8_t;
 enum class DelayCallingUpdateNowPlaying : bool { No, Yes };
+enum class RouteSharingPolicy : uint8_t;
 struct NowPlayingInfo;
 
 enum class PlatformMediaSessionRemoteControlCommandType : uint8_t {
@@ -253,6 +256,8 @@ public:
     void setActiveNowPlayingSession(bool);
 
     ProcessID presentingApplicationPID() const;
+
+    virtual void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) { }
 
 #if !RELEASE_LOG_DISABLED
     virtual String description() const;

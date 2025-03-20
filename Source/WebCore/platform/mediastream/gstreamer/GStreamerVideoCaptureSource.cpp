@@ -105,7 +105,7 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
     return factory.get();
 }
 
-GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
+GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, ASCIILiteral sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), { })
     , m_capturer(adoptRef(*new GStreamerVideoCapturer(sourceFactory, deviceType)))
     , m_deviceType(deviceType)
@@ -181,6 +181,13 @@ void GStreamerVideoCaptureSource::captureEnded()
     m_capturer->stop();
 }
 
+void GStreamerVideoCaptureSource::captureDeviceUpdated(const GStreamerCaptureDevice& device)
+{
+    setName(AtomString { device.label() });
+    setPersistentId(device.persistentId());
+    configurationChanged();
+}
+
 std::pair<GstClockTime, GstClockTime> GStreamerVideoCaptureSource::queryCaptureLatency() const
 {
     if (!m_capturer)
@@ -251,6 +258,14 @@ const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
     m_currentSettings->setFrameRate(frameRate());
     m_currentSettings->setFacingMode(facingMode());
     return m_currentSettings.value();
+}
+
+void GStreamerVideoCaptureSource::configurationChanged()
+{
+    m_currentSettings = { };
+    m_capabilities = { };
+
+    RealtimeMediaSource::configurationChanged();
 }
 
 void GStreamerVideoCaptureSource::generatePresets()

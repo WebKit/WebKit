@@ -25,9 +25,8 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
+class CSSFontFaceDescriptors;
 class StyleRuleFontFace;
-class StyleRuleCSSStyleDeclaration;
 
 class CSSFontFaceRule final : public CSSRule {
 public:
@@ -35,7 +34,7 @@ public:
 
     virtual ~CSSFontFaceRule();
 
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSFontFaceDescriptors& style();
 
 private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
@@ -47,7 +46,7 @@ private:
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;
-    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<CSSFontFaceDescriptors> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

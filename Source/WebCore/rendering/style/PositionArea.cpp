@@ -73,42 +73,133 @@ PositionArea::PositionArea(PositionAreaSpan blockOrXAxis, PositionAreaSpan inlin
     ASSERT(axisIsInlineOrY(m_inlineOrYAxis.axis()));
 }
 
+PositionAreaSpan PositionArea::spanForAxis(BoxAxis physicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const
+{
+    bool useSelfWritingMode = m_blockOrXAxis.self() == PositionAreaSelf::Yes;
+    auto writingMode = useSelfWritingMode ? selfWritingMode : containerWritingMode;
+    return physicalAxis == mapPositionAreaAxisToPhysicalAxis(m_blockOrXAxis.axis(), writingMode)
+        ? m_blockOrXAxis : m_inlineOrYAxis;
+}
+
+PositionAreaSpan PositionArea::spanForAxis(LogicalBoxAxis logicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const
+{
+    bool useSelfWritingMode = m_blockOrXAxis.self() == PositionAreaSelf::Yes;
+    auto writingMode = useSelfWritingMode ? selfWritingMode : containerWritingMode;
+    return logicalAxis == mapPositionAreaAxisToLogicalAxis(m_blockOrXAxis.axis(), writingMode)
+        ? m_blockOrXAxis : m_inlineOrYAxis;
+}
+
+PositionAreaTrack PositionArea::coordMatchedTrackForAxis(BoxAxis physicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const
+{
+    auto relevantSpan = spanForAxis(physicalAxis, containerWritingMode, selfWritingMode);
+    auto positionAxis = relevantSpan.axis();
+    auto track = relevantSpan.track();
+
+    bool shouldFlip = false;
+    if (LogicalBoxAxis::Inline == mapAxisPhysicalToLogical(containerWritingMode, physicalAxis)) {
+        if (isPositionAreaDirectionLogical(positionAxis)) {
+            shouldFlip = containerWritingMode.isInlineFlipped();
+            if (relevantSpan.self() == PositionAreaSelf::Yes
+                && !containerWritingMode.isInlineMatchingAny(selfWritingMode))
+                shouldFlip = !shouldFlip;
+        }
+    } else {
+        shouldFlip = !isPositionAreaDirectionLogical(positionAxis)
+            && containerWritingMode.isBlockFlipped();
+        if (relevantSpan.self() == PositionAreaSelf::Yes
+            && !containerWritingMode.isBlockMatchingAny(selfWritingMode))
+            shouldFlip = !shouldFlip;
+    }
+
+    return shouldFlip ? flipPositionAreaTrack(track) : track;
+}
+
+static ItemPosition flip(ItemPosition alignment)
+{
+    return ItemPosition::Start == alignment ? ItemPosition::End : ItemPosition::Start;
+};
+
+ItemPosition PositionArea::defaultAlignmentForAxis(BoxAxis physicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const
+{
+    auto relevantSpan = spanForAxis(physicalAxis, containerWritingMode, selfWritingMode);
+
+    ItemPosition alignment;
+    switch (relevantSpan.track()) {
+    case PositionAreaTrack::Start:
+    case PositionAreaTrack::SpanStart:
+        alignment = ItemPosition::End;
+        break;
+    case PositionAreaTrack::End:
+    case PositionAreaTrack::SpanEnd:
+        alignment = ItemPosition::Start;
+        break;
+    case PositionAreaTrack::Center:
+    case PositionAreaTrack::SpanAll:
+        return ItemPosition::AnchorCenter;
+    }
+
+    // Remap for self alignment.
+    auto axis = relevantSpan.axis();
+    bool shouldFlip = false;
+    if (relevantSpan.self() == PositionAreaSelf::Yes && containerWritingMode != selfWritingMode) {
+        auto logicalAxis = mapPositionAreaAxisToLogicalAxis(axis, selfWritingMode);
+        if (containerWritingMode.isOrthogonal(selfWritingMode)) {
+            if (LogicalBoxAxis::Inline == logicalAxis)
+                shouldFlip = !selfWritingMode.isInlineMatchingAny(containerWritingMode);
+            else
+                shouldFlip = !selfWritingMode.isBlockMatchingAny(containerWritingMode);
+        } else if (LogicalBoxAxis::Inline == logicalAxis)
+            shouldFlip = selfWritingMode.isInlineOpposing(containerWritingMode);
+        else
+            shouldFlip = selfWritingMode.isBlockOpposing(containerWritingMode);
+    }
+
+    if (isPositionAreaDirectionLogical(axis))
+        return shouldFlip ? flip(alignment) : alignment;
+
+    ASSERT(PositionAreaAxis::Horizontal == axis || PositionAreaAxis::Vertical == axis);
+
+    if ((PositionAreaAxis::Horizontal == axis) == containerWritingMode.isHorizontal())
+        return containerWritingMode.isInlineFlipped() ? flip(alignment) : alignment;
+    return containerWritingMode.isBlockFlipped() ? flip(alignment) : alignment;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PositionAreaSpan& span)
 {
-    ts << "{ axis: ";
+    ts << "{ axis: "_s;
     switch (span.axis()) {
-    case PositionAreaAxis::Horizontal: ts << "horizontal"; break;
-    case PositionAreaAxis::Vertical:   ts << "vertical"; break;
-    case PositionAreaAxis::X:          ts << "x"; break;
-    case PositionAreaAxis::Y:          ts << "y"; break;
-    case PositionAreaAxis::Block:      ts << "block"; break;
-    case PositionAreaAxis::Inline:     ts << "inline"; break;
+    case PositionAreaAxis::Horizontal: ts << "horizontal"_s; break;
+    case PositionAreaAxis::Vertical:   ts << "vertical"_s; break;
+    case PositionAreaAxis::X:          ts << 'x'; break;
+    case PositionAreaAxis::Y:          ts << 'y'; break;
+    case PositionAreaAxis::Block:      ts << "block"_s; break;
+    case PositionAreaAxis::Inline:     ts << "inline"_s; break;
     }
 
-    ts << ", track: ";
+    ts << ", track: "_s;
     switch (span.track()) {
-    case PositionAreaTrack::Start:     ts << "start"; break;
-    case PositionAreaTrack::SpanStart: ts << "span-start"; break;
-    case PositionAreaTrack::End:       ts << "end"; break;
-    case PositionAreaTrack::SpanEnd:   ts << "span-end"; break;
-    case PositionAreaTrack::Center:    ts << "center"; break;
-    case PositionAreaTrack::SpanAll:   ts << "span-all"; break;
+    case PositionAreaTrack::Start:     ts << "start"_s; break;
+    case PositionAreaTrack::SpanStart: ts << "span-start"_s; break;
+    case PositionAreaTrack::End:       ts << "end"_s; break;
+    case PositionAreaTrack::SpanEnd:   ts << "span-end"_s; break;
+    case PositionAreaTrack::Center:    ts << "center"_s; break;
+    case PositionAreaTrack::SpanAll:   ts << "span-all"_s; break;
     }
 
-    ts << ", self: ";
+    ts << ", self: "_s;
     switch (span.self()) {
-    case PositionAreaSelf::No:  ts << "no"; break;
-    case PositionAreaSelf::Yes: ts << "yes"; break;
+    case PositionAreaSelf::No:  ts << "no"_s; break;
+    case PositionAreaSelf::Yes: ts << "yes"_s; break;
     }
 
-    ts << " }";
+    ts << " }"_s;
 
     return ts;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PositionArea& positionArea)
 {
-    ts << "{ span1: " << positionArea.blockOrXAxis() << ", span2: " << positionArea.inlineOrYAxis() << " }";
+    ts << "{ span1: "_s << positionArea.blockOrXAxis() << ", span2: "_s << positionArea.inlineOrYAxis() << " }"_s;
     return ts;
 }
 

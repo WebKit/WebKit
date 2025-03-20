@@ -37,6 +37,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "NativeWebKeyboardEvent.h"
+#import "PDFPluginBase.h"
 #import "PluginView.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
@@ -80,7 +81,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
-#import <WebCore/Editing.h>
+#import <WebCore/EditingInlines.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
 #import <WebCore/Element.h>
@@ -252,7 +253,7 @@ void WebPage::platformDetach()
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
     
-void WebPage::platformInitializeAccessibility()
+void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility)
 {
     m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
     [m_mockAccessibilityElement setWebPage:this];
@@ -607,7 +608,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
         return false;
-    
+
     // Don't send synthetic events to the UIProcess. They are only
     // used for interacting with JavaScript.
     if (platformEvent->isSyntheticEvent())
@@ -695,6 +696,11 @@ void WebPage::getSelectionContext(CompletionHandler<void(const String&, const St
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn())
+        return pluginView->accessibilityObject();
+#endif
+
     return nil;
 }
     
@@ -1363,17 +1369,35 @@ void WebPage::commitPotentialTap(OptionSet<WebEventModifier> modifiers, Transact
             targetRenders = shadowRoot->host()->renderOrDisplayContentsStyle();
         invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode);
     }
+
+    RefPtr localMainFrame = m_page->localMainFrame();
+
     if (invalidTargetForSingleClick) {
+        if (localMainFrame) {
+            constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+            auto roundedPoint = IntPoint { m_potentialTapLocation };
+            auto result = localMainFrame->eventHandler().hitTestResultAtPoint(roundedPoint, hitType);
+            localMainFrame->eventHandler().setLastTouchedNode(result.innerNode());
+        }
+
         commitPotentialTapFailed();
         return;
     }
 
+    if (localMainFrame)
+        localMainFrame->eventHandler().setLastTouchedNode(nullptr);
+
     FloatPoint adjustedPoint;
-    RefPtr localMainFrame = m_page->localMainFrame();
     Node* nodeRespondingToClick = localMainFrame ? localMainFrame->nodeRespondingToClickEvents(m_potentialTapLocation, adjustedPoint, m_potentialTapSecurityOrigin.get()) : nullptr;
     auto* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId.lessThanSameProcess(*WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())) {
+    if (!frameRespondingToClick) {
+        commitPotentialTapFailed();
+        return;
+    }
+
+    auto firstTransactionID = WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad();
+    if (firstTransactionID && lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID)) {
         commitPotentialTapFailed();
         return;
     }
@@ -4250,6 +4274,8 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
     if (!m_viewportConfiguration.isKnownToLayOutWiderThanViewport())
         m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(0);
 
+    bool mainFramePluginOverridesViewScale = mainFramePlugInDefersScalingToViewport();
+
     m_baseViewportLayoutSizeScaleFactor = [&] {
         if (!m_page->settings().automaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth())
             return 1.0;
@@ -4260,10 +4286,13 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
         if (minimumEffectiveDeviceWidth >= size.width())
             return 1.0;
 
+        if (mainFramePluginOverridesViewScale)
+            return 1.0;
+
         return size.width() / minimumEffectiveDeviceWidth;
     }();
 
-    double layoutSizeScaleFactor = layoutSizeScaleFactorFromClient * m_baseViewportLayoutSizeScaleFactor;
+    double layoutSizeScaleFactor = mainFramePluginOverridesViewScale ? 1.0 : layoutSizeScaleFactorFromClient * m_baseViewportLayoutSizeScaleFactor;
 
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
     if (!m_viewportConfiguration.setViewLayoutSize(size, layoutSizeScaleFactor, minimumEffectiveDeviceWidth))
@@ -4717,10 +4746,19 @@ bool WebPage::shouldIgnoreMetaViewport() const
     return m_page->settings().shouldIgnoreMetaViewport();
 }
 
+bool WebPage::mainFramePlugInDefersScalingToViewport() const
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr plugin = mainFramePlugIn(); plugin && !plugin->pluginHandlesPageScaleFactor())
+        return true;
+#endif
+    return false;
+}
+
 bool WebPage::shouldEnableViewportBehaviorsForResizableWindows() const
 {
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
-    return shouldIgnoreMetaViewport() && m_isWindowResizingEnabled;
+    return shouldIgnoreMetaViewport() && m_isWindowResizingEnabled && !mainFramePlugInDefersScalingToViewport();
 #else
     return false;
 #endif
@@ -4975,7 +5013,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             RefPtr pluginView = mainFramePlugIn();
             if (!pluginView)
                 return true;
-            return pluginView->pluginHandlesPageScaleFactor() ? false : m_isInStableState;
+            return !pluginView->pluginHandlesPageScaleFactor();
 #else
             UNUSED_PARAM(this);
             return true;
@@ -5566,15 +5604,19 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
                 return end;
             }();
 
-            rangeOfInterest.start = std::clamp(rangeOfInterest.start, startPositionNearSelection, endPositionNearSelection);
-            rangeOfInterest.end = std::clamp(rangeOfInterest.end, startPositionNearSelection, endPositionNearSelection);
+            if (startPositionNearSelection <= endPositionNearSelection) {
+                rangeOfInterest.start = std::clamp(rangeOfInterest.start, startPositionNearSelection, endPositionNearSelection);
+                rangeOfInterest.end = std::clamp(rangeOfInterest.end, startPositionNearSelection, endPositionNearSelection);
+            }
         }
         if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
             if (RefPtr rootEditableElement = selection.rootEditableElement()) {
                 VisiblePosition startOfEditableRoot { firstPositionInOrBeforeNode(rootEditableElement.get()) };
                 VisiblePosition endOfEditableRoot { lastPositionInOrAfterNode(rootEditableElement.get()) };
-                rangeOfInterest.start = std::clamp(rangeOfInterest.start, startOfEditableRoot, endOfEditableRoot);
-                rangeOfInterest.end = std::clamp(rangeOfInterest.end, startOfEditableRoot, endOfEditableRoot);
+                if (startOfEditableRoot <= endOfEditableRoot) {
+                    rangeOfInterest.start = std::clamp(rangeOfInterest.start, startOfEditableRoot, endOfEditableRoot);
+                    rangeOfInterest.end = std::clamp(rangeOfInterest.end, startOfEditableRoot, endOfEditableRoot);
+                }
             }
         }
     } else if (!selection.isNone())
@@ -6002,8 +6044,17 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
         if (!layer->isComposited())
             continue;
 
-        auto* layerBacking = layer->backing();
-        RefPtr graphicsLayer = layerBacking->scrolledContentsLayer() ?: layerBacking->graphicsLayer();
+        RefPtr graphicsLayer = [layer] -> RefPtr<GraphicsLayer> {
+            auto* backing = layer->backing();
+            if (RefPtr scrolledContentsLayer = backing->scrolledContentsLayer())
+                return scrolledContentsLayer;
+
+            if (RefPtr foregroundLayer = backing->foregroundLayer())
+                return foregroundLayer;
+
+            return backing->graphicsLayer();
+        }();
+
         if (!graphicsLayer)
             continue;
 
@@ -6146,6 +6197,39 @@ void WebPage::didEndContextMenuInteraction()
 }
 
 #endif // USE(UICONTEXTMENU)
+
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+
+void WebPage::createPDFPageNumberIndicator(PDFPluginBase& plugin, const IntRect& boundingBox, size_t pageCount)
+{
+    ASSERT(!m_pdfPlugInWithPageNumberIndicator.first || m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier());
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        return;
+    m_pdfPlugInWithPageNumberIndicator = std::make_pair(plugin.identifier(), WeakPtr { plugin });
+    send(Messages::WebPageProxy::CreatePDFPageNumberIndicator(plugin.identifier(), boundingBox, pageCount));
+}
+
+void WebPage::updatePDFPageNumberIndicatorLocation(PDFPluginBase& plugin, const IntRect& boundingBox)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        send(Messages::WebPageProxy::UpdatePDFPageNumberIndicatorLocation(plugin.identifier(), boundingBox));
+}
+
+void WebPage::updatePDFPageNumberIndicatorCurrentPage(PDFPluginBase& plugin, size_t pageIndex)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        send(Messages::WebPageProxy::UpdatePDFPageNumberIndicatorCurrentPage(plugin.identifier(), pageIndex));
+}
+
+void WebPage::removePDFPageNumberIndicator(PDFPluginBase& plugin)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier()) {
+        m_pdfPlugInWithPageNumberIndicator = std::make_pair(Markable<PDFPluginIdentifier> { }, nullptr);
+        send(Messages::WebPageProxy::RemovePDFPageNumberIndicator(plugin.identifier()));
+    }
+}
+
+#endif
 
 } // namespace WebKit
 

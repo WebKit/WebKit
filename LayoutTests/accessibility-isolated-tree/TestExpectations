@@ -1,3 +1,5 @@
+accessibility/isolated-tree [ Pass ]
+
 # Text failures
 #
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
@@ -28,14 +30,59 @@ accessibility/menuitem-is-selected.html [ Failure ]
 
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
 
+# This test only passes with ITM due to a workaround in the test that we should fix.
+# accessibility/mac/text-marker-from-typing-notification.html
+
 # Used to be a timeout until https://github.com/WebKit/WebKit/commit/c69e4c0caaf5368db791652eee3a057ed2751144, now is a text failure.
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+
+# Test times out without ITM, so we need to reconcile behavior here.
+accessibility/mac/style-range.html [ Pass ]
 
 # Flaky timeouts
 accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Timeout ]
 
-# When ENABLE(AX_THREAD_TEXT_APIS) is on by default, un-comment this.
-# accessibility/ax-thread-text-apis [ Pass ]
+# Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
+accessibility/content-editable-as-textarea.html [ Failure ]
+accessibility/full-size-kana-untransformed.html [ Failure ]
+accessibility/mac/aria-image-emits-object-replacement.html [ Failure ]
+accessibility/mac/attachment-element-replacement-character.html [ Failure ]
+accessibility/mac/attributed-string-for-text-marker-range-using-webarea.html [ Failure ]
+accessibility/mac/attributed-string-includes-misspelled-with-selection.html [ Failure ]
+accessibility/mac/attributed-string-with-listitem-multiple-lines.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-for-range-with-options.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-for-range.html [ Failure ]
+accessibility/mac/bounds-for-range.html [ Failure ]
+accessibility/mac/character-offset-from-upstream-position.html [ Failure ]
+accessibility/mac/content-editable-attributed-string.html [ Failure ]
+accessibility/mac/insertion-point-line-number.html [ Failure ]
+accessibility/mac/line-index-for-textmarker.html [ Failure ]
+accessibility/mac/line-text-marker-range-in-list-item.html [ Failure ]
+accessibility/mac/misspelled-attributed-string.html [ Failure ]
+accessibility/mac/object-replacement-with-no-rendered-children-at-node-start.html [ Failure ]
+accessibility/mac/object-replacement-with-rendered-children-at-node-start.html [ Failure ]
+accessibility/mac/range-for-line-index.html [ Failure ]
+accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
+accessibility/mac/text-marker-for-index.html [ Failure ]
+accessibility/mac/text-marker-p-tags.html [ Failure ]
+accessibility/mac/text-marker-string-for-document-end-replaced-node.html [ Failure ]
+accessibility/mac/text-marker-word-nav-collapsed-whitespace.html [ Failure ]
+accessibility/mac/text-markers-for-input-with-placeholder.html [ Failure ]
+accessibility/mac/textbox-role-reports-line-number.html [ Failure ]
+accessibility/mac/textmarker-range-for-range.html [ Failure ]
+accessibility/native-text-control-attributed-string.html [ Failure ]
+accessibility/search-misspellings.html [ Failure ]
+accessibility/text-marker/text-marker-previous-next.html [ Failure ]
+accessibility/mac/text-marker-for-index-2.html [ Failure ]
+accessibility/mac/text-marker-word-nav.html [ Failure ]
+accessibility/button-in-deep-dom.html [ Timeout ]
+accessibility/mac/search-predicate.html [ Timeout ]
+accessibility/mac/selected-visible-position-range.html [ Timeout ]
+accessibility/mac/text-marker-range-selection-in-list-items.html [ Timeout ]
+accessibility/mac/text-marker-word-nav.html [ Timeout ]
+accessibility/mac/text-operation/text-operation-replace-across-multiple-fields.html [ Timeout ]
+accessibility/mac/textmarker-routines.html [ Timeout ]
+accessibility/textarea-insertion-point-line-number.html [ Timeout ]
 
-# Un-skip all isolated-tree specific tests (when AX_THREAD_TEXT_APIS is enabled, un-comment this)
-# accessibility/isolated-tree [ Pass ]
+accessibility/mac/doctype-node-in-text-marker-crash.html [ Crash ]

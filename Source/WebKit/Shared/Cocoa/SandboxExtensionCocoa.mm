@@ -81,37 +81,41 @@ std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
     return byteCast<uint8_t>(m_token.span());
 }
 
-char* SandboxExtensionImpl::sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+CString SandboxExtensionImpl::sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
 {
-    uint32_t extensionFlags = 0;
-    if (flags & SandboxExtension::Flags::NoReport)
-        extensionFlags |= SANDBOX_EXTENSION_NO_REPORT;
-    if (flags & SandboxExtension::Flags::DoNotCanonicalize)
-        extensionFlags |= SANDBOX_EXTENSION_CANONICAL;
+    auto sandboxExtension = [&] {
+        uint32_t extensionFlags = 0;
+        if (flags & SandboxExtension::Flags::NoReport)
+            extensionFlags |= SANDBOX_EXTENSION_NO_REPORT;
+        if (flags & SandboxExtension::Flags::DoNotCanonicalize)
+            extensionFlags |= SANDBOX_EXTENSION_CANONICAL;
 
-    switch (type) {
-    case SandboxExtension::Type::ReadOnly:
-        return sandbox_extension_issue_file(APP_SANDBOX_READ, path, extensionFlags);
-    case SandboxExtension::Type::ReadWrite:
-        return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, extensionFlags);
-    case SandboxExtension::Type::Mach:
-        if (!auditToken)
-            return sandbox_extension_issue_mach("com.apple.webkit.extension.mach", path, extensionFlags);
-        return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach", path, extensionFlags, *auditToken);
-    case SandboxExtension::Type::IOKit:
-        if (!auditToken)
-            return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit", path, extensionFlags);
-        return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit", path, extensionFlags, *auditToken);
-    case SandboxExtension::Type::Generic:
-        return sandbox_extension_issue_generic(path, extensionFlags);
-    case SandboxExtension::Type::ReadByProcess:
-        if (!auditToken)
-            return nullptr;
+        switch (type) {
+        case SandboxExtension::Type::ReadOnly:
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_file(APP_SANDBOX_READ, path, extensionFlags), free);
+        case SandboxExtension::Type::ReadWrite:
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, extensionFlags), free);
+        case SandboxExtension::Type::Mach:
+            if (!auditToken)
+                return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_mach("com.apple.webkit.extension.mach", path, extensionFlags), free);
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach", path, extensionFlags, *auditToken), free);
+        case SandboxExtension::Type::IOKit:
+            if (!auditToken)
+                return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit", path, extensionFlags), free);
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit", path, extensionFlags, *auditToken), free);
+        case SandboxExtension::Type::Generic:
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_generic(path, extensionFlags), free);
+        case SandboxExtension::Type::ReadByProcess:
+            if (!auditToken)
+                return std::unique_ptr<char, decltype(free)*>(nullptr, free);
 #if PLATFORM(MAC)
-        extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
+            extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
 #endif
-        return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
-    }
+            return std::unique_ptr<char, decltype(free)*>(sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken), free);
+        }
+    }();
+
+    return CString(sandboxExtension.get());
 }
 
 SandboxExtensionImpl::SandboxExtensionImpl(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)

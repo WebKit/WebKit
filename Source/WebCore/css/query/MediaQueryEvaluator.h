@@ -26,10 +26,9 @@
 
 #include "GenericMediaQueryEvaluator.h"
 #include "MediaQuery.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
-
-class RenderStyle;
 
 namespace MQ {
 

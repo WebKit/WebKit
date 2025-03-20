@@ -291,13 +291,16 @@ Color PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteR
     if (!document)
         return { };
 
-    auto colorSpace = DestinationColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), {
-        { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection },
-        ImageBufferPixelFormat::BGRA8,
-        colorSpace
-    });
+    static constexpr OptionSet snapshotFlags {
+        SnapshotFlags::ExcludeSelectionHighlighting,
+        SnapshotFlags::PaintEverythingExcludingSelection,
+        SnapshotFlags::ExcludeReplacedContentExceptForIFrames,
+        SnapshotFlags::ExcludeText,
+        SnapshotFlags::FixedAndStickyLayersOnly,
+    };
 
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, ImageBufferPixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return { };
 
@@ -305,7 +308,12 @@ Color PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteR
     if (!pixelBuffer)
         return { };
 
-    static constexpr auto sampleCount = 17;
+    auto isNearlyTransparent = [](const Color& color) {
+        static constexpr auto nearlyTransparentAlphaThreshold = 0.33;
+        return color.alphaAsFloat() < nearlyTransparentAlphaThreshold;
+    };
+
+    static constexpr auto sampleCount = 29;
     static constexpr auto minimumSampleCountForPredominantColor = 0.5 * sampleCount;
     static constexpr auto bytesPerPixel = 4;
 
@@ -318,13 +326,13 @@ Color PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteR
     auto pixels = pixelBuffer->bytes();
     HashCountedSet<Color> colorDistribution;
     for (uint64_t i = 0; i < numberOfBytes; i += byteSamplingInterval) {
-        if (auto color = Color { SRGBA<uint8_t> { pixels[i + 2], pixels[i + 1], pixels[i], pixels[i + 3] } }; color.isValid())
+        if (auto color = Color { SRGBA<uint8_t> { pixels[i + 2], pixels[i + 1], pixels[i], pixels[i + 3] } }; color.isVisible())
             colorDistribution.add(WTFMove(color));
     }
 
     for (auto& [color, count] : colorDistribution) {
         if (count > minimumSampleCountForPredominantColor)
-            return color;
+            return isNearlyTransparent(color) ? Color { } : color;
     }
 
     auto colorsAreSimilar = [](const Color& a, const Color& b) {
@@ -361,7 +369,7 @@ Color PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteR
         mostFrequentColorCount += count;
 
         if (mostFrequentColorCount > minimumSampleCountForPredominantColor)
-            return WTFMove(*mostFrequentColor);
+            return isNearlyTransparent(*mostFrequentColor) ? Color { } : WTFMove(*mostFrequentColor);
     }
 
     return { };

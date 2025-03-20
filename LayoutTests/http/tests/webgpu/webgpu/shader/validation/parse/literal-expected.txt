@@ -118,13 +118,53 @@ PASS :abstract_float:val="0x.p2"
 PASS :abstract_float:val="0x1p"
 PASS :abstract_float:val="0x1p%5E"
 PASS :abstract_float:val="1.0e%2B999999999999f"
-PASS :abstract_float:val="0x1.0p%2B999999999999f"
+FAIL :abstract_float:val="0x1.0p%2B999999999999f" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test = 0x1.0p+999999999999f;
+          }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/literal.spec.js:204:26
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :abstract_float:val="0x1.00000001pf0"
 PASS :abstract_float:val="1.1eh"
 PASS :abstract_float:val="1.1e!2h"
 PASS :abstract_float:val="1.1e%2Bh"
 PASS :abstract_float:val="1.0e%2B999999h"
-PASS :abstract_float:val="0x1.0p%2B999999h"
+FAIL :abstract_float:val="0x1.0p%2B999999h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test = 0x1.0p+999999h;
+          }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/literal.spec.js:204:26
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :abstract_float:val="0xf.h"
 PASS :abstract_float:val="0x3h"
 PASS :f32:val="0f"
@@ -176,7 +216,27 @@ PASS :f32:val="0x.p2"
 PASS :f32:val="0x1p"
 PASS :f32:val="0x1p%5E"
 PASS :f32:val="1.0e%2B999999999999f"
-PASS :f32:val="0x1.0p%2B999999999999f"
+FAIL :f32:val="0x1.0p%2B999999999999f" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0x1.0p+999999999999f;
+          }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/literal.spec.js:243:26
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :f32:val="0x1.00000001pf0"
 PASS :f16:val="0h"
 PASS :f16:val="1h"
@@ -223,5 +283,25 @@ PASS :f16:val="1.1eh"
 PASS :f16:val="1.1e!2h"
 PASS :f16:val="1.1e%2Bh"
 PASS :f16:val="1.0e%2B999999h"
-PASS :f16:val="0x1.0p%2B999999h"
+FAIL :f16:val="0x1.0p%2B999999h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0x1.0p+999999h;
+          }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/literal.spec.js:277:26
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 

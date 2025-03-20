@@ -27,6 +27,7 @@
 
 #import "APIContentWorld.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -39,6 +40,6 @@ template<> struct WrapperTraits<API::ContentWorld> {
 
 @interface WKContentWorld () <WKObject> {
 @package
-    API::ObjectStorage<API::ContentWorld> _contentWorld;
+    AlignedStorage<API::ContentWorld> _contentWorld;
 }
 @end

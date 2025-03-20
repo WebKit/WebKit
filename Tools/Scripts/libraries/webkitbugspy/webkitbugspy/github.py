@@ -340,7 +340,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, source_changes=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, source_changes=None, state=None, substate=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -428,6 +428,10 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         if source_changes:
             sys.stderr.write('GitHub does not support source changes at this time\n')
+            return None
+
+        if state or substate:
+            sys.stderr.write('GitHub does not support state at this time\n')
             return None
 
         if issue and original:

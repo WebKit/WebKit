@@ -84,6 +84,10 @@ JITWorklist& JITWorklist::ensureGlobalWorklist()
 CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
 {
     if (!Options::useConcurrentJIT()) {
+#if USE(PROTECTED_JIT)
+        // Must be constructed before we allocate anything using SequesteredArenaMalloc
+        ArenaLifetime saLifetime;
+#endif
         plan->compileInThread(nullptr);
         return plan->finalize();
     }

@@ -167,6 +167,7 @@ video {
     -webkit-tap-highlight-color: transparent;
 #endif
     content: normal !important;
+    dynamic-range-limit: no-limit;
 }
 
 audio {
@@ -852,6 +853,10 @@ input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-au
     color: #000000 !important;
 }
 
+:autofill {
+    field-sizing: fixed !important;
+}
+
 input:is([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
     box-sizing: border-box;
@@ -875,7 +880,6 @@ input[type="file"]::file-selector-button {
 }
 
 input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::file-selector-button, button {
-    align-items: flex-start;
     text-align: center;
     cursor: default;
     padding-inline: 6px;
@@ -1258,7 +1262,7 @@ u, ins {
 }
 
 strong, b {
-    font-weight: bold;
+    font-weight: bolder;
 }
 
 i, cite, em, var, address, dfn {
@@ -1404,16 +1408,8 @@ iframe {
     border: 2px inset;
 }
 
-address, blockquote, center, div, figure, figcaption, footer, form, header, hr,
-legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2,
-h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col,
-thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output,
-[dir=ltr i], [dir=rtl i], [dir=auto i] {
-    unicode-bidi: isolate; 
-}
-
-textarea[dir=auto i], pre[dir=auto i] {
-    unicode-bidi: plaintext;
+hr, bdi, output {
+    unicode-bidi: isolate;
 }
 
 input[type=tel i]:dir(ltr) { direction: ltr; }

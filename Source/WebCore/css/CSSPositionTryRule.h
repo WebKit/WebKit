@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
-class StyleRuleCSSStyleDeclaration;
+class CSSStyleProperties;
+class StyleRuleCSSStyleProperties;
 
 class StyleRulePositionTry final : public StyleRuleBase {
 public:
@@ -67,13 +67,13 @@ public:
     Ref<StyleRulePositionTry> protectedPositionTryRule() const { return m_positionTryRule; }
 
     WEBCORE_EXPORT AtomString name() const;
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleProperties& style();
 
 private:
     CSSPositionTryRule(StyleRulePositionTry&, CSSStyleSheet*);
 
     Ref<StyleRulePositionTry> m_positionTryRule;
-    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

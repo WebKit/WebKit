@@ -52,7 +52,8 @@ public:
     virtual Type type() const = 0;
     virtual AuthenticatorResponseData data() const;
 
-    WEBCORE_EXPORT ArrayBuffer* rawId() const;
+    ArrayBuffer* rawId() const { return m_rawId.ptr(); }
+
     WEBCORE_EXPORT void setExtensions(AuthenticationExtensionsClientOutputs&&);
     WEBCORE_EXPORT AuthenticationExtensionsClientOutputs extensions() const;
     WEBCORE_EXPORT void setClientDataJSON(Ref<ArrayBuffer>&&);

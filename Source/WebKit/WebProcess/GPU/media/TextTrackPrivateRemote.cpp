@@ -59,7 +59,7 @@ void TextTrackPrivateRemote::setMode(TextTrackMode mode)
     if (mode == InbandTextTrackPrivate::mode())
         return;
 
-    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_id, mode), m_playerIdentifier);
+    gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_id, mode), m_playerIdentifier);
     InbandTextTrackPrivate::setMode(mode);
 }
 

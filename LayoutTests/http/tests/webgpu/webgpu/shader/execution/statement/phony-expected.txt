@@ -1,0 +1,8 @@
+
+PASS :executes:case="literal"
+PASS :executes:case="call"
+PASS :executes:case="call_in_subexpr"
+PASS :executes:case="nested_call"
+PASS :executes:case="unreached"
+PASS :executes:case="loop"
+

@@ -104,7 +104,7 @@ private:
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder : bool { No, Yes };
-    using FetchDataCallback = Function<void(RefPtr<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
+    using FetchDataCallback = Function<void(MediaRecorder&, Ref<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
     void fetchData(FetchDataCallback&&, TakePrivateRecorder);
     enum class ReturnDataIfEmpty : bool { No, Yes };
     ExceptionOr<void> requestDataInternal(ReturnDataIfEmpty);
@@ -124,6 +124,7 @@ private:
     void computeInitialBitRates() { computeBitRates(nullptr); }
     void updateBitRates() { computeBitRates(&m_stream->privateStream()); }
     void computeBitRates(const MediaStreamPrivate*);
+    void timeSlicerTimerFired();
 
     static CreatorFunction m_customCreator;
 

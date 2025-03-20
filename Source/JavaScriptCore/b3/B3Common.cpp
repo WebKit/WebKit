@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Procedure.h"
 #include "DFGCommon.h"
 #include "FTLState.h"
 #include "Options.h"
@@ -87,4 +88,3 @@ GPRReg extendedOffsetAddrRegister()
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-

@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -11,27 +12,29 @@ test
 
 test
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that if you access an element that has been removed, it return the correct value for isIgnored (true, that is, it is ignored).\n\n";
+var element1;
 
-    description("This tests that if you access an element that has been removed, it return the correct value for isIgnored (true, that is, it is ignored).");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-        document.getElementById("element1").focus();
-        var element1 = accessibilityController.focusedElement;
+    document.getElementById("element1").focus();
+    setTimeout(async function() {
+        element1 = accessibilityController.focusedElement;
 
         // The element should not be ignored (it should be a group)
-        shouldBeFalse("element1.isIgnored");
+        output += await expectAsync("element1.isIgnored", "false");
 
         // Remove the element, it should become ignored
         document.getElementById("body").removeChild(document.getElementById("element1"));
-        shouldBeTrue("element1.isIgnored");
-    }
+        output += await expectAsync("element1.isIgnored", "true");
 
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

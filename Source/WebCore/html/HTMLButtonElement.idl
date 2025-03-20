@@ -35,8 +35,8 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString value;
 
     // Command Invokers
-    [CEReactions=NotNeeded, Reflect=commandfor, EnabledBySetting=InvokerAttributesEnabled] attribute Element? commandForElement;
-    [CEReactions=NotNeeded, Reflect=command, EnabledBySetting=InvokerAttributesEnabled] attribute DOMString command;
+    [CEReactions=NotNeeded, Reflect=commandfor, EnabledBySetting=CommandAttributesEnabled] attribute Element? commandForElement;
+    [CEReactions=NotNeeded, EnabledBySetting=CommandAttributesEnabled] attribute [AtomString] DOMString command;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

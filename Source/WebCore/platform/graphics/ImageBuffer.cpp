@@ -452,10 +452,11 @@ RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()
 #endif
 
 #if USE(SKIA)
-void ImageBuffer::finishAcceleratedRenderingAndCreateFence()
+bool ImageBuffer::finishAcceleratedRenderingAndCreateFence()
 {
     if (auto* backend = ensureBackend())
-        backend->finishAcceleratedRenderingAndCreateFence();
+        return backend->finishAcceleratedRenderingAndCreateFence();
+    return false;
 }
 
 void ImageBuffer::waitForAcceleratedRenderingFenceCompletion()

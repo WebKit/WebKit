@@ -58,3 +58,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::NotificationPermissionRequest)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::NotificationPermissionRequest; }
+SPECIALIZE_TYPE_TRAITS_END()

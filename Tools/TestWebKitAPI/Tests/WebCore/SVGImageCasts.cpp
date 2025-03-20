@@ -75,6 +75,10 @@ private:
     {
     }
 
+    void imageContentChanged(const Image&) final
+    {
+    }
+
     void scheduleRenderingUpdate(const Image&) final
     {
     }

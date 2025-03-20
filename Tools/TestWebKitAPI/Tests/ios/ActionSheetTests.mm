@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
@@ -93,7 +94,7 @@ static UIViewController *overrideViewControllerForFullscreenPresentation()
 TEST(ActionSheetTests, DISABLED_DismissingActionSheetShouldNotDismissPresentingViewController)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     auto window = adoptNS([[TestWKWebViewControllerWindow alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
@@ -244,7 +245,7 @@ static void presentActionSheetAndChooseAction(WKWebView *webView, ActionSheetObs
 
 TEST(ActionSheetTests, CopyImageElementWithHREFAndTitle)
 {
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     [UIPasteboard generalPasteboard].items = @[ ];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -285,7 +286,7 @@ TEST(ActionSheetTests, CopyImageElementWithHREFAndTitle)
 
 TEST(ActionSheetTests, CopyImageElementWithHREF)
 {
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     [UIPasteboard generalPasteboard].items = @[ ];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -325,7 +326,7 @@ TEST(ActionSheetTests, CopyImageElementWithHREF)
 
 TEST(ActionSheetTests, CopyImageElementWithoutHREF)
 {
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     [UIPasteboard generalPasteboard].items = @[ ];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -352,7 +353,7 @@ TEST(ActionSheetTests, CopyImageElementWithoutHREF)
 
 TEST(ActionSheetTests, CopyLinkWritesURLAndPlainText)
 {
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     [UIPasteboard generalPasteboard].items = @[ ];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

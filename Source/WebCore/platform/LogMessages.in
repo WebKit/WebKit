@@ -72,6 +72,8 @@ FRAMELOADER_LOAD_URL, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] F
 FRAMELOADER_LOADWITHNAVIGATIONACTION, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithNavigationAction: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 FRAMELOADER_LOADURLINTOCHILDFRAME, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadURLIntoChildFrame: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY_CANNOT_CONTINUE, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: can't continue loading frame due to the following reasons (allowNavigationToInvalidURL = %d, requestURLIsValid = %d, navigationPolicyDecision = %d)", (uint64_t, uint64_t, int, int, int, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOAD_FRAMELOADREQUEST, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::load (FrameLoadRequest): frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOAD_DOCUMENTLOADER, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::load (DocumentLoader): frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
 
 RESOURCELOADER_WILLSENDREQUESTINTERNAL, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] ResourceLoader::willSendRequestInternal: calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 
@@ -107,3 +109,19 @@ HTMLMEDIAELEMENT_VISIBILITYSTATECHANGED, "HTMLMediaElement::visibilityStateChang
 HTMLMEDIAELEMENT_CREATEMEDIAPLAYER, "HTMLMediaElement::createMediaPlayer(%" PRIu64 ")", (uint64_t), DEFAULT, Media
 
 HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED, "HTMLVideoElement::mediaPlayerRenderingModeChanged(%" PRIu64 ")", (uint64_t), DEFAULT, Media
+
+PERFORMANCELOGGING_MEMORY_USAGE_INFO, "Memory usage info dump at %s:", (CString), DEFAULT, PerformanceLogging
+PERFORMANCELOGGING_MEMORY_USAGE_FOR_KEY, "  %s: %zu", (CString, size_t), DEFAULT, PerformanceLogging
+
+PERFORMANCEMONITOR_MEASURE_POSTLOAD_CPUUSAGE, "PerformanceMonitor::measurePostLoadCPUUsage: Process was using %.1f%% CPU after the page load.", (double), DEFAULT, PerformanceLogging
+PERFORMANCEMONITOR_MEASURE_POSTLOAD_MEMORYUSAGE, "PerformanceMonitor::measurePostLoadMemoryUsage: Process was using %" PRIu64 " bytes of memory after the page load.", (uint64_t), DEFAULT, PerformanceLogging
+PERFORMANCEMONITOR_MEASURE_POSTBACKGROUND_MEMORYUSAGE, "PerformanceMonitor:measurePostBackgroundingMemoryUsage: Process was using %" PRIu64 " bytes of memory after becoming non visible.", (uint64_t), DEFAULT, PerformanceLogging
+PERFORMANCEMONITOR_MEASURE_POSTBACKGROUND_CPUUSAGE, "PerformanceMonitor::measurePostBackgroundingCPUUsage: Process was using %.1f%% CPU after becoming non visible.", (double), DEFAULT, PerformanceLogging
+PERFORMANCEMONITOR_MEASURE_CPUUSAGE_IN_ACTIVITYSTATE, "PerformanceMonitor::measureCPUUsageInActivityState: Process is using %.1f%% CPU in state: %s", (double, CString), DEFAULT, PerformanceLogging
+
+POLICYCHECKIER_CHECKNAVIGATIONPOLICY_CONTINUE_LOAD_IN_ANOTHER_PROCESS, "[pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::checkNavigationPolicy: stopping because policyAction from dispatchDecidePolicyForNavigationAction is LoadWillContinueInAnotherProcess", (uint64_t, uint64_t), DEFAULT, Loading
+POLICYCHECKIER_CHECKNAVIGATIONPOLICY_CONTINUE_INITIAL_EMPTY_DOCUMENT, "[pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::checkNavigationPolicy: continuing because this is an initial empty document", (uint64_t, uint64_t), DEFAULT, Loading
+
+LOCALFRAMEVIEW_FIRING_FIRST_VISUALLY_NON_EMPTY_LAYOUT_MILESTONE, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::fireLayoutRelatedMilestonesIfNeeded: Firing first visually non-empty layout milestone on the main frame", (uint64_t, uint64_t, int), DEFAULT, Layout
+LOCALFRAMEVIEW_FIRING_RESIZE_EVENTS_DISABLED_FOR_PAGE, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page", (uint64_t, uint64_t, int), DEFAULT, Events
+LOCALFRAMEVIEW_NOT_PAINTING_LAYOUT_NEEDED, "    [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::paintContents: Not painting because render tree needs layout", (uint64_t, uint64_t, int), DEFAULT, Layout

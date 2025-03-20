@@ -28,7 +28,7 @@ const kAttributeCases = {
   // diagnostic is a keyword
   group: `@group(0) @binding(0) var s : sampler;`,
   id: `@id(1) override x : i32;`,
-  interpolate: `@fragment fn main(@location(0) @interpolate(flat) x : i32) { }`,
+  interpolate: `@fragment fn main(@location(0) @interpolate(flat, either) x : i32) { }`,
   invariant: `@fragment fn main(@builtin(position) @invariant pos : vec4f) { }`,
   location: `@fragment fn main(@location(0) x : f32) { }`,
   must_use: `@must_use fn foo() -> u32 { return 0; }`,
@@ -102,6 +102,17 @@ combine('case', keysOf(kBuiltinCases)).
 beginSubcases().
 combine('decl', ['override', 'const', 'var<private>'])
 ).
+beforeAllSubcases((t) => {
+  const wgsl = kBuiltinCases[t.params.case];
+  t.skipIf(
+    t.isCompatibility && wgsl.includes('sample_mask'),
+    'sample_mask is not supported in compatibility mode'
+  );
+  t.skipIf(
+    t.isCompatibility && wgsl.includes('sample_index'),
+    'sample_index is not supported in compatibility mode'
+  );
+}).
 fn((t) => {
   const code = `
     ${t.params.decl} ${t.params.case} : u32 = 0;
@@ -200,10 +211,9 @@ combine('case', keysOf(kEnableCases)).
 beginSubcases().
 combine('decl', ['override', 'const', 'var<private>'])
 ).
-beforeAllSubcases((t) => {
-  t.selectDeviceOrSkipTestCase('shader-f16');
-}).
 fn((t) => {
+  t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+
   const code = `
     ${kEnableCases[t.params.case]}
     ${t.params.decl} ${t.params.case} : u32 = 0;
@@ -303,10 +313,20 @@ combine('case', kInterpolationTypeCases).
 beginSubcases().
 combine('decl', ['override', 'const', 'var<private>'])
 ).
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.case === 'linear',
+    'compatibility mode does not support linear interpolation type'
+  );
+}).
 fn((t) => {
+  const attr =
+  t.isCompatibility && t.params.case === 'flat' ?
+  `@interpolate(flat, either)` :
+  `@interpolate(${t.params.case})`;
   const code = `
     ${t.params.decl} ${t.params.case} : u32 = 0;
-    @fragment fn main(@location(0) @interpolate(${t.params.case}) x : f32) { }
+    @fragment fn main(@location(0) ${attr} x : f32) { }
     fn use_var() -> u32 {
       return ${t.params.case};
     }
@@ -325,10 +345,44 @@ combine('case', kInterpolationSamplingCases).
 beginSubcases().
 combine('decl', ['override', 'const', 'var<private>'])
 ).
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.case === 'sample',
+    'compatibility mode does not support sample sampling'
+  );
+}).
 fn((t) => {
   const code = `
     ${t.params.decl} ${t.params.case} : u32 = 0;
     @fragment fn main(@location(0) @interpolate(perspective, ${t.params.case}) x : f32) { }
+    fn use_var() -> u32 {
+      return ${t.params.case};
+    }
+    `;
+
+  t.expectCompileResult(true, code);
+});
+
+const kInterpolationFlatCases = ['first', 'either'];
+
+g.test('interpolation_flat_names').
+desc('Tests interpolation type names do not use name resolution').
+params((u) =>
+u.
+combine('case', kInterpolationFlatCases).
+beginSubcases().
+combine('decl', ['override', 'const', 'var<private>'])
+).
+beforeAllSubcases((t) => {
+  t.skipIf(
+    t.isCompatibility && t.params.case === 'first',
+    'compatibility mode does not support first sampling'
+  );
+}).
+fn((t) => {
+  const code = `
+    ${t.params.decl} ${t.params.case} : u32 = 0;
+    @fragment fn main(@location(0) @interpolate(flat, ${t.params.case}) x : u32) { }
     fn use_var() -> u32 {
       return ${t.params.case};
     }

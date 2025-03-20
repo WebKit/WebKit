@@ -494,6 +494,12 @@ void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databa
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
+void IDBServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey, std::optional<int64_t> recordID)
+{
+    if (RefPtr transaction = m_transactions.get(transactionIdentifier))
+        transaction->didGenerateIndexKeyForRecord(requestIdentifier, indexInfo, key, indexKey, recordID);
+}
+
 void IDBServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDBRequestCancelled");

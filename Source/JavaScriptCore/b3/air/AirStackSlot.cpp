@@ -32,7 +32,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(StackSlot);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(StackSlot);
 
 void StackSlot::setOffsetFromFP(intptr_t value)
 {

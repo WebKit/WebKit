@@ -409,6 +409,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             let snapshotStringData = result.text;
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             workerProxy.createImportedSnapshot(snapshotStringData, result.filename, ({objectId, snapshot: serializedSnapshot}) => {
+                // FIXME: <https://webkit.org/b/287738> support exporting and importing data from worker targets
                 const target = null;
                 let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
                 snapshot.snapshotStringData = snapshotStringData;

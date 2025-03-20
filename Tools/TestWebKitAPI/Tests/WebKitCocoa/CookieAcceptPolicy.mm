@@ -115,7 +115,7 @@ TEST(WKHTTPCookieStore, CookiePolicy)
     done = false;
 
     bool requestHadCookie { false };
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         requestHadCookie = strnstr(request.data(), "Cookie", request.size());
         co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_s).serialize());

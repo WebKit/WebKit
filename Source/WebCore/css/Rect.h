@@ -27,7 +27,7 @@ namespace WebCore {
 
 class Rect final : public RectBase {
 public:
-    Rect(Ref<CSSPrimitiveValue> top, Ref<CSSPrimitiveValue> right, Ref<CSSPrimitiveValue> bottom, Ref<CSSPrimitiveValue> left)
+    Rect(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left)
         : RectBase(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left))
     { }
 

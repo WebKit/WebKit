@@ -76,11 +76,9 @@ public:
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
 
     bool shouldDumpPixels() const { return m_dumpPixels; }
-    bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; };
 
     enum class IsFinalTestOutput : bool { No, Yes };
     void outputText(StringView, IsFinalTestOutput = IsFinalTestOutput::No);
-    void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
@@ -189,7 +187,6 @@ private:
     bool m_dumpPixels { false };
     bool m_useWorkQueue { false };
     bool m_pixelResultIsPending { false };
-    bool m_dumpJSConsoleLogInStdErr { false };
     bool m_accessibilityIsolatedTreeMode { false };
 
     WTF::Seconds m_timeout;

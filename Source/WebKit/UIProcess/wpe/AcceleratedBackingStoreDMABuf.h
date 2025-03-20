@@ -29,8 +29,8 @@
 #include "FenceMonitor.h"
 #include "MessageReceiver.h"
 #include "RendererBufferFormat.h"
+#include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/Region.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,7 +41,6 @@ typedef struct _WPEBuffer WPEBuffer;
 typedef struct _WPEView WPEView;
 
 namespace WebCore {
-class Region;
 class ShareableBitmapHandle;
 }
 
@@ -58,6 +57,8 @@ class AcceleratedBackingStoreDMABuf final : public IPC::MessageReceiver, public 
     WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStoreDMABuf);
     WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf);
 public:
+    using Rects = Vector<WebCore::IntRect, 1>;
+
     static Ref<AcceleratedBackingStoreDMABuf> create(WebPageProxy&, WPEView*);
     ~AcceleratedBackingStoreDMABuf();
 
@@ -77,7 +78,7 @@ private:
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t bufferID, WebCore::Region&&, WTF::UnixFileDescriptor&&);
+    void frame(uint64_t bufferID, Rects&&, WTF::UnixFileDescriptor&&);
     void frameDone();
     void renderPendingBuffer();
     void bufferRendered();
@@ -90,7 +91,7 @@ private:
     WeakPtr<WebProcessProxy> m_legacyMainFrameProcess;
     GRefPtr<WPEBuffer> m_pendingBuffer;
     GRefPtr<WPEBuffer> m_committedBuffer;
-    WebCore::Region m_pendingDamageRegion;
+    Rects m_pendingDamageRects;
     HashMap<uint64_t, GRefPtr<WPEBuffer>> m_buffers;
     HashMap<WPEBuffer*, uint64_t> m_bufferIDs;
 };

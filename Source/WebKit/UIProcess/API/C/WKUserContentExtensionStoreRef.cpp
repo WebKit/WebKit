@@ -45,7 +45,7 @@ WKTypeID WKUserContentExtensionStoreGetTypeID()
 WKUserContentExtensionStoreRef WKUserContentExtensionStoreCreate(WKStringRef path)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return toAPI(&API::ContentRuleListStore::storeWithPath(toWTFString(path)).leakRef());
+    return toAPILeakingRef(API::ContentRuleListStore::storeWithPath(toWTFString(path)));
 #else
     UNUSED_PARAM(path);
     return nullptr;
@@ -77,7 +77,7 @@ void WKUserContentExtensionStoreCompile(WKUserContentExtensionStoreRef store, WK
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     toImpl(store)->compileContentRuleList(toWTFString(identifier), toWTFString(jsonSource), [context, callback](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
-        callback(error ? nullptr : toAPI(contentRuleList.leakRef()), toResult(error), context);
+        callback(error ? nullptr : toAPILeakingRef(WTFMove(contentRuleList)), toResult(error), context);
     });
 #else
     UNUSED_PARAM(jsonSource);
@@ -89,7 +89,7 @@ void WKUserContentExtensionStoreLookup(WKUserContentExtensionStoreRef store, WKS
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     toImpl(store)->lookupContentRuleList(toWTFString(identifier), [context, callback](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
-        callback(error ? nullptr : toAPI(contentRuleList.leakRef()), toResult(error), context);
+        callback(error ? nullptr : toAPILeakingRef(WTFMove(contentRuleList)), toResult(error), context);
     });
 #else
     callback(nullptr, kWKUserContentExtensionStoreLookupFailed, context);

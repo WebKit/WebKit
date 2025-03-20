@@ -6,7 +6,7 @@
     "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark1.3.1.patch",
     "signpost_patch": "data/patches/signposts/MotionMark1.3.1.patch",
     "entry_point": "index.html",
-    "subtest_entry_point": "developer.html",
+    "subtest_entry_point": "developer.html?",
     "config": {
         "orientation": "landscape"
     },

@@ -363,11 +363,9 @@ void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& int
         image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
-Headroom CachedImage::headroom() const
+bool CachedImage::hasHDRContent() const
 {
-    if (RefPtr image = m_image)
-        return image->headroom();
-    return Headroom::None;
+    return m_image && m_image->hasHDRContent();
 }
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
@@ -462,6 +460,12 @@ void CachedImage::CachedImageObserver::changedInRect(const Image& image, const I
 {
     for (CachedResourceHandle cachedImage : m_cachedImages)
         cachedImage->changedInRect(image, rect);
+}
+
+void CachedImage::CachedImageObserver::imageContentChanged(const Image& image)
+{
+    for (CachedResourceHandle cachedImage : m_cachedImages)
+        cachedImage->imageContentChanged(image);
 }
 
 void CachedImage::CachedImageObserver::scheduleRenderingUpdate(const Image& image)
@@ -717,6 +721,16 @@ void CachedImage::changedInRect(const Image& image, const IntRect* rect)
     if (&image != m_image)
         return;
     notifyObservers(rect);
+}
+
+void CachedImage::imageContentChanged(const Image& image)
+{
+    if (&image != m_image)
+        return;
+
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
+    while (auto* client = walker.next())
+        client->imageContentChanged(*this);
 }
 
 void CachedImage::scheduleRenderingUpdate(const Image& image)

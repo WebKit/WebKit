@@ -17,18 +17,6 @@ found in the LICENSE.txt file.
 <body>
   <div id="description"></div>
   <div id="console"></div>
-  <script id='myWorker' type='text/worker'>
-  self.onmessage = function(e) {
-      var canvas = new OffscreenCanvas(128, 128);
-      var gl = canvas.getContext("webgl2");
-      gl.clearColor(1.0, 1.0, 0.0, 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      var image = canvas.transferToImageBitmap();
-
-      self.postMessage({ bitmap: image },
-                       [ image ]);
-  };
-  </script>
   <script>
     "use strict";
     description("This test ensures that the transferToImageBitmap function of OffscreenCanvas webgl2 context is functional.");
@@ -36,14 +24,7 @@ found in the LICENSE.txt file.
         testPassed("No OffscreenCanvas support");
         finishTest();
     } else {
-      var blob = new Blob([document.getElementById('myWorker').textContent]);
-      var worker = new Worker(URL.createObjectURL(blob));
-
-      worker.onmessage = function(msg) {
-          testTransferToImageBitmap("webgl2", msg.data.bitmap);
-          finishTest();
-      }
-      worker.postMessage("Start Worker");
+      runTest();
     }
   </script>
 </body>

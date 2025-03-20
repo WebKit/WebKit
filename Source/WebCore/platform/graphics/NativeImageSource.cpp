@@ -40,7 +40,7 @@ NativeImageSource::NativeImageSource(Ref<NativeImage>&& nativeImage)
 
 void NativeImageSource::dump(TextStream& ts) const
 {
-    ts.dumpProperty("size", size());
+    ts.dumpProperty("size"_s, size());
 }
 
 } // namespace WebCore

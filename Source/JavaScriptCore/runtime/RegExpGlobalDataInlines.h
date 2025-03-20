@@ -29,12 +29,13 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void RegExpCachedResult::record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
+ALWAYS_INLINE void RegExpCachedResult::record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result, bool oneCharacterMatch)
 {
     m_lastRegExp.setWithoutWriteBarrier(regExp);
     m_lastInput.setWithoutWriteBarrier(input);
     m_result = result;
     m_reified = false;
+    m_oneCharacterMatch = oneCharacterMatch;
     vm.writeBarrier(owner);
 }
 
@@ -67,7 +68,7 @@ ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, 
     ASSERT(m_ovector[1] >= position);
     size_t end = m_ovector[1];
 
-    m_cachedResult.record(vm, owner, regExp, string, MatchResult(position, end));
+    m_cachedResult.record(vm, owner, regExp, string, MatchResult(position, end), /* oneCharacterMatch */ false);
 
     return MatchResult(position, end);
 }
@@ -80,14 +81,14 @@ ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, 
     MatchResult result = regExp->match(owner, input, startOffset);
     RETURN_IF_EXCEPTION(scope, MatchResult::failed());
     if (result)
-        m_cachedResult.record(vm, owner, regExp, string, result);
+        m_cachedResult.record(vm, owner, regExp, string, result, /* oneCharacterMatch */ false);
     return result;
 }
 
-ALWAYS_INLINE void RegExpGlobalData::recordMatch(VM& vm, JSGlobalObject* owner, RegExp* regExp, JSString* string, const MatchResult& result)
+ALWAYS_INLINE void RegExpGlobalData::recordMatch(VM& vm, JSGlobalObject* owner, RegExp* regExp, JSString* string, const MatchResult& result, bool oneCharacterMatch)
 {
     ASSERT(result);
-    m_cachedResult.record(vm, owner, regExp, string, result);
+    m_cachedResult.record(vm, owner, regExp, string, result, oneCharacterMatch);
 }
 
 inline MatchResult RegExpGlobalData::matchResult() const
@@ -98,7 +99,7 @@ inline MatchResult RegExpGlobalData::matchResult() const
 inline void RegExpGlobalData::resetResultFromCache(JSGlobalObject* owner, RegExp* regExp, JSString* string, MatchResult matchResult, Vector<int>&& vector)
 {
     m_ovector = WTFMove(vector);
-    m_cachedResult.record(getVM(owner), owner, regExp, string, matchResult);
+    m_cachedResult.record(getVM(owner), owner, regExp, string, matchResult, /* oneCharacterMatch */ false);
 }
 
 }

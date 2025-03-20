@@ -51,8 +51,8 @@
     UNUSED_PARAM(connection);
     ASSERT(isMainRunLoop());
 
-    if (_connection && publicToken.length)
-        _connection->didReceivePublicToken(makeVector(publicToken));
+    if (RefPtr connection = _connection.get(); connection && publicToken.length)
+        connection->didReceivePublicToken(makeVector(publicToken));
 }
 
 - (void)connection:(APSConnection *)connection didReceiveIncomingMessage:(APSIncomingMessage *)message
@@ -60,8 +60,8 @@
     UNUSED_PARAM(connection);
     ASSERT(isMainRunLoop());
 
-    if (_connection)
-        _connection->didReceivePushMessage(message.topic, message.userInfo);
+    if (RefPtr connection = _connection.get())
+        connection->didReceivePushMessage(message.topic, message.userInfo);
 }
 
 @end
@@ -93,11 +93,12 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
     auto identifier = ++m_handlerIdentifier;
     m_subscribeHandlers.add(identifier, WTFMove(subscribeHandler));
 
-    [m_connection requestURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier] (APSURLToken *token, NSError *error) {
-        if (!weakThis)
+    [m_connection requestURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (APSURLToken *token, NSError *error) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        auto handler = m_subscribeHandlers.take(identifier);
+        auto handler = protectedThis->m_subscribeHandlers.take(identifier);
         handler(token.tokenURL, error);
     }).get()];
 }
@@ -110,11 +111,12 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
     auto identifier = ++m_handlerIdentifier;
     m_unsubscribeHandlers.add(identifier, WTFMove(unsubscribeHandler));
 
-    [m_connection invalidateURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier] (BOOL success, NSError *error) {
-        if (!weakThis)
+    [m_connection invalidateURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (BOOL success, NSError *error) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        auto handler = m_unsubscribeHandlers.take(identifier);
+        auto handler = protectedThis->m_unsubscribeHandlers.take(identifier);
         handler(success, error);
     }).get()];
 }

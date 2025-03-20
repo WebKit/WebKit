@@ -46,16 +46,16 @@ static pas_allocation_result allocate_from_megapages(
     void* arg)
 {
     const pas_heap_config* heap_config;
+    pas_megapage_cache_size cache_size = (pas_megapage_cache_size)(uintptr_t)arg;
 
     PAS_UNUSED_PARAM(name);
     PAS_ASSERT(heap);
     PAS_ASSERT(transaction);
-    PAS_ASSERT(!arg);
     PAS_ASSERT(!alignment.alignment_begin);
 
     heap_config = pas_heap_config_kind_get_config(heap->config_kind);
 
-    PAS_PROFILE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config);
+    PAS_PROFILE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config, cache_size);
 
     return pas_large_heap_try_allocate_and_forget(
         &heap->large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
@@ -99,17 +99,17 @@ pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memo
     pas_megapage_cache_construct(
         &caches->small_exclusive_segregated_megapage_cache,
         allocate_from_megapages,
-        NULL);
+        pas_megapage_cache_size_small);
 
     pas_megapage_cache_construct(
         &caches->small_other_megapage_cache,
         allocate_from_megapages,
-        NULL);
+        pas_megapage_cache_size_small);
 
     pas_megapage_cache_construct(
         &caches->medium_megapage_cache,
         allocate_from_megapages,
-        NULL);
+        pas_megapage_cache_size_medium);
 
     for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_ASCENDING(segregated_variant)) {
         pas_shared_page_directory_by_size* directories;

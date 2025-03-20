@@ -1,0 +1,4 @@
+
+PASS Subreosurce load matched with the requestMethod script condition
+PASS Subreosurce load not matched with the requestMethod script condition
+

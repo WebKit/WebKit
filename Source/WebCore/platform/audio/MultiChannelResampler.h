@@ -61,7 +61,7 @@ private:
     unsigned m_numberOfChannels;
     size_t m_outputFramesReady { 0 };
     Function<void(AudioBus*, size_t framesToProcess)> m_provideInput;
-    RefPtr<AudioBus> m_multiChannelBus;
+    const RefPtr<AudioBus> m_multiChannelBus;
 };
 
 } // namespace WebCore

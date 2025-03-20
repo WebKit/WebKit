@@ -107,6 +107,7 @@ namespace WebCore {
     macro(BufferedChangeEvent) \
     macro(Cache) \
     macro(CacheStorage) \
+    macro(CaretPosition) \
     macro(ChannelMergerNode) \
     macro(ChannelSplitterNode) \
     macro(Client) \
@@ -319,6 +320,7 @@ namespace WebCore {
     macro(MediaStreamTrackProcessor) \
     macro(MerchantValidationEvent) \
     macro(MockRTCRtpTransform) \
+    macro(MutationEvent) \
     macro(NavigateEvent) \
     macro(Navigation) \
     macro(NavigationCurrentEntryChangeEvent) \

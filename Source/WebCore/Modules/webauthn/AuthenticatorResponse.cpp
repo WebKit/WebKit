@@ -67,11 +67,6 @@ AuthenticatorResponseData AuthenticatorResponse::data() const
     return data;
 }
 
-ArrayBuffer* AuthenticatorResponse::rawId() const
-{
-    return m_rawId.ptr();
-}
-
 void AuthenticatorResponse::setExtensions(AuthenticationExtensionsClientOutputs&& extensions)
 {
     m_extensions = WTFMove(extensions);

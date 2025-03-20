@@ -39,12 +39,12 @@ class AudioIOCallback;
 class MockAudioDestinationCocoa final : public AudioDestinationCocoa {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(MockAudioDestinationCocoa, WEBCORE_EXPORT);
 public:
-    static Ref<AudioDestination> create(AudioIOCallback& callback, float sampleRate)
+    static Ref<AudioDestination> create(const CreationOptions& options)
     {
-        return adoptRef(*new MockAudioDestinationCocoa(callback, sampleRate));
+        return adoptRef(*new MockAudioDestinationCocoa(options));
     }
 
-    WEBCORE_EXPORT MockAudioDestinationCocoa(AudioIOCallback&, float sampleRate);
+    WEBCORE_EXPORT MockAudioDestinationCocoa(const CreationOptions&);
     WEBCORE_EXPORT virtual ~MockAudioDestinationCocoa();
 
 private:

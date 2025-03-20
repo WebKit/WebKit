@@ -854,18 +854,18 @@ void PDFIncrementalLoader::logStreamLoader(TextStream& stream, NetscapePlugInStr
 void PDFIncrementalLoader::logState(TextStream& ts)
 {
     if (m_pdfThread)
-        ts << "Initial PDF thread is still in progress\n";
+        ts << "Initial PDF thread is still in progress\n"_s;
     else
-        ts << "Initial PDF thread has completed\n";
+        ts << "Initial PDF thread has completed\n"_s;
 
-    ts << "Have completed " << m_completedRangeRequests << " range requests (" << m_completedNetworkRangeRequests << " from the network)\n";
-    ts << "There are " << m_threadsWaitingOnCallback << " data provider threads waiting on a reply\n";
-    ts << "There are " << m_requestData->outstandingByteRangeRequests.size() << " byte range requests outstanding\n";
+    ts << "Have completed "_s << m_completedRangeRequests << " range requests ("_s << m_completedNetworkRangeRequests << " from the network)\n"_s;
+    ts << "There are "_s << m_threadsWaitingOnCallback << " data provider threads waiting on a reply\n"_s;
+    ts << "There are "_s << m_requestData->outstandingByteRangeRequests.size() << " byte range requests outstanding\n"_s;
 
-    ts << "There are " << m_requestData->streamLoaderMap.size() << " active network stream loaders: ";
+    ts << "There are "_s << m_requestData->streamLoaderMap.size() << " active network stream loaders: "_s;
     for (auto& loader : m_requestData->streamLoaderMap.keys())
         logStreamLoader(ts, *loader);
-    ts << "\n";
+    ts << '\n';
 }
 
 #endif

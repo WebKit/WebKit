@@ -1,6 +1,8 @@
 <!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
 <script>
+  globalThis.testRunner?.dumpAsText();
   globalThis.testRunner?.waitUntilDone();
+
   const log = globalThis.$vm?.print ?? console.log;
 
   const format = 'bgra8unorm';
@@ -46,6 +48,8 @@
     renderBundleEncoder.finish();
     await device.queue.onSubmittedWorkDone();
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
   };
 </script>
+

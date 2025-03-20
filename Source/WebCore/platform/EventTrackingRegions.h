@@ -80,9 +80,11 @@ struct EventTrackingRegions {
     void uniteSynchronousRegion(EventType, const Region&);
     void unite(const EventTrackingRegions&);
 
-    TrackingType trackingTypeForPoint(EventType, const IntPoint&);
+    TrackingType trackingTypeForPoint(EventType, const IntPoint&) const;
 
     friend bool operator==(const EventTrackingRegions&, const EventTrackingRegions&) = default;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const EventTrackingRegions&);
 
 } // namespace WebCore

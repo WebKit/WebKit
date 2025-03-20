@@ -26,15 +26,17 @@
 #pragma once
 
 #include "WebDebuggerAgent.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WorkerOrWorkletGlobalScope;
 
-class WorkerDebuggerAgent final : public WebDebuggerAgent {
+class WorkerDebuggerAgent final : public WebDebuggerAgent, public WTF::CanMakeThreadSafeCheckedPtr<WorkerDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(WorkerDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerDebuggerAgent);
 public:
     WorkerDebuggerAgent(WorkerAgentContext&);
     ~WorkerDebuggerAgent();

@@ -100,7 +100,7 @@ private:
         Ref<QuerySet> other;
         uint32_t otherIndex;
     };
-    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
+    mutable Vector<uint64_t> m_commandEncoders;
     bool m_destroyed { false };
 } SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
 

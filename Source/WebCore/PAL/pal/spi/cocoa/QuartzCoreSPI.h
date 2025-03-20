@@ -60,6 +60,14 @@
 
 #endif // __OBJC__
 
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+typedef NSString * CADynamicRange;
+
+@interface CALayer (Staging_145326880)
+@property (assign) CADynamicRange preferredDynamicRange;
+@end
+#endif // HAVE(SUPPORT_HDR_DISPLAY_APIS)
+
 #else
 
 #ifdef __OBJC__
@@ -155,6 +163,7 @@ typedef struct _CARenderContext CARenderContext;
 @property BOOL needsLayoutOnGeometryChange;
 @property BOOL shadowPathIsBounds;
 @property BOOL continuousCorners;
+@property CGFloat contentsEDRStrength;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 @property (getter=isSeparated) BOOL separated;
 #endif

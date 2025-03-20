@@ -65,8 +65,8 @@ public:
     WebCore::PushDatabase& database() { return m_database; }
     Ref<WebCore::PushDatabase> protectedDatabase() { return m_database; }
 
-    Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
-    Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }
+    Vector<String> enabledTopics() { return protectedConnection()->enabledTopics(); }
+    Vector<String> ignoredTopics() { return protectedConnection()->ignoredTopics(); }
 
     void getSubscription(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
     void subscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);

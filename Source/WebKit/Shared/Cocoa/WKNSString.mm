@@ -35,7 +35,7 @@ using namespace WebKit;
 
 - (NSObject *)_web_createTarget
 {
-    const String& string = downcast<API::String>(&self._apiObject)->string();
+    String string = RefPtr { downcast<API::String>(&self._apiObject) }->string();
     return (NSString *)string.createCFString().leakRef();
 }
 

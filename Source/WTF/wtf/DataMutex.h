@@ -122,11 +122,11 @@ private:
 
     void lock() WTF_ACQUIRES_LOCK(m_dataMutex.m_mutex)
     {
-        DATA_MUTEX_CHECK(m_dataMutex.m_currentMutexHolder != &Thread::current()); // Thread attempted recursive lock on non-recursive lock.
+        DATA_MUTEX_CHECK(m_dataMutex.m_currentMutexHolder != &Thread::currentSingleton()); // Thread attempted recursive lock on non-recursive lock.
         mutex().lock();
         m_isLocked = true;
 #if ENABLE_DATA_MUTEX_CHECKS
-        m_dataMutex.m_currentMutexHolder = &Thread::current();
+        m_dataMutex.m_currentMutexHolder = &Thread::currentSingleton();
 #endif
     }
 

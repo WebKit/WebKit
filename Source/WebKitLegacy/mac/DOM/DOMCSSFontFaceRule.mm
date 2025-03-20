@@ -25,8 +25,8 @@
 
 #import "DOMCSSFontFaceRule.h"
 
+#import <WebCore/CSSFontFaceDescriptors.h>
 #import <WebCore/CSSFontFaceRule.h>
-#import <WebCore/CSSStyleDeclaration.h>
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMNodeInternal.h"

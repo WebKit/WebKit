@@ -166,7 +166,7 @@ Path AccessibilityImageMapLink::elementPath() const
     if (!renderer)
         return Path();
     
-    return m_areaElement->computePath(renderer);
+    return m_areaElement->computePath(*renderer);
 }
     
 LayoutRect AccessibilityImageMapLink::elementRect() const

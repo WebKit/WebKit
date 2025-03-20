@@ -53,7 +53,7 @@ private:
     }
     void handleEvent(xpc_connection_t connection, xpc_object_t event) final
     {
-        String messageName = xpc_dictionary_get_wtfstring(event, XPCEndpoint::xpcMessageNameKey);
+        String messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
         if (messageName == testMessageFromClient) {
             endpointReceivedMessageFromClient = true;
 
@@ -68,7 +68,7 @@ class XPCEndpointClient final : public WebKit::XPCEndpointClient {
 private:
     void handleEvent(xpc_object_t event) final
     {
-        String messageName = xpc_dictionary_get_wtfstring(event, XPCEndpoint::xpcMessageNameKey);
+        String messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
         if (messageName == testMessageFromEndpoint)
             clientReceivedMessageFromEndpoint = true;
     }

@@ -69,7 +69,7 @@ Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperat
 
 void TranslateTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(" << m_x << ", " << m_y << ", " << m_z << ")";
+    ts << type() << '(' << m_x << ", "_s << m_y << ", "_s << m_z << ')';
 }
 
 Ref<TransformOperation> TranslateTransformOperation::selfOrCopyWithResolvedCalculatedValues(const FloatSize& borderBoxSize)

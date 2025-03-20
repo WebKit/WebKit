@@ -78,6 +78,34 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Map.prototype.firstKey",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = 200;
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.firstKey, undefined, "Map should not start with a first key.");
+
+            map.set(key1, value1);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have first key.");
+
+            map.set(key2, value2);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have same first key after adding another entry.");
+
+            map.set(key1, value2);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have same first key after changing its value.");
+
+            map.delete(key1);
+            InspectorTest.expectEqual(map.firstKey, key2, "Map should have different first key after deleting previous first key.");
+
+            map.delete(key2);
+            InspectorTest.expectEqual(map.firstKey, undefined, "Map should not have first key after deleting all entries.");
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

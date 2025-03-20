@@ -71,44 +71,44 @@ bool RTCIceTransport::virtualHasPendingActivity() const
 
 void RTCIceTransport::onStateChanged(RTCIceTransportState state)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, state]() mutable {
-        if (m_isStopped)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [state](auto& transport) mutable {
+        if (transport.m_isStopped)
             return;
 
-        if (m_transportState == state)
+        if (transport.m_transportState == state)
             return;
 
-        m_transportState = state;
-        if (m_transportState == RTCIceTransportState::Failed)
-            m_selectedCandidatePair = { };
+        transport.m_transportState = state;
+        if (transport.m_transportState == RTCIceTransportState::Failed)
+            transport.m_selectedCandidatePair = { };
 
-        if (auto connection = this->connection())
-            connection->processIceTransportStateChange(*this);
+        if (RefPtr connection = transport.connection())
+            connection->processIceTransportStateChange(transport);
     });
 }
 
 void RTCIceTransport::onGatheringStateChanged(RTCIceGatheringState state)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, state]() mutable {
-        if (m_isStopped)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [state](auto& transport) mutable {
+        if (transport.m_isStopped)
             return;
 
-        if (m_gatheringState == state)
+        if (transport.m_gatheringState == state)
             return;
 
-        m_gatheringState = state;
-        dispatchEvent(Event::create(eventNames().gatheringstatechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        transport.m_gatheringState = state;
+        transport.dispatchEvent(Event::create(eventNames().gatheringstatechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
     });
 }
 
 void RTCIceTransport::onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&& local, RefPtr<RTCIceCandidate>&& remote)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, local = WTFMove(local), remote = WTFMove(remote)]() mutable {
-        if (m_isStopped)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [local = WTFMove(local), remote = WTFMove(remote)](auto& transport) mutable {
+        if (transport.m_isStopped)
             return;
 
-        m_selectedCandidatePair = CandidatePair { WTFMove(local), WTFMove(remote) };
-        dispatchEvent(Event::create(eventNames().selectedcandidatepairchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        transport.m_selectedCandidatePair = CandidatePair { WTFMove(local), WTFMove(remote) };
+        transport.dispatchEvent(Event::create(eventNames().selectedcandidatepairchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
     });
 }
 

@@ -38,10 +38,11 @@ template<typename> class ExceptionOr;
 
 @interface WebKitFullScreenListener : NSObject <WebKitFullScreenListener> {
     RefPtr<WebCore::Element> _element;
-    CompletionHandler<void(WebCore::ExceptionOr<void>)> _completionHandler;
+    CompletionHandler<void(WebCore::ExceptionOr<void>)> _initialCompletionHandler;
+    CompletionHandler<void(bool)> _finalCompletionHandler;
 }
 
-- (id)initWithElement:(WebCore::Element*)element completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler;
+- (id)initWithElement:(WebCore::Element*)element initialCompletionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)initialCompletionHandler finalCompletionHandler:(CompletionHandler<void(bool)>&&)finalCompletionHandler;
 @end
 
 #endif

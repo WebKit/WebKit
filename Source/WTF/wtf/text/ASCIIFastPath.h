@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <unicode/utypes.h>
+#include <wtf/BitSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/LChar.h>
 
@@ -31,6 +32,26 @@
 #endif
 
 namespace WTF {
+
+template<unsigned charactersCount>
+inline constexpr BitSet<256> makeLatin1CharacterBitSet(const char (&characters)[charactersCount])
+{
+    static_assert(charactersCount > 0, "Since string literal is null terminated, characterCount is always larger than 0");
+    BitSet<256> bitmap;
+    for (unsigned i = 0; i < charactersCount - 1; ++i)
+        bitmap.set(characters[i]);
+    return bitmap;
+}
+
+inline constexpr BitSet<256> makeLatin1CharacterBitSet(NOESCAPE const Invocable<bool(LChar)> auto& matches)
+{
+    BitSet<256> bitmap;
+    for (unsigned i = 0; i < bitmap.size(); ++i) {
+        if (matches(static_cast<LChar>(i)))
+            bitmap.set(i);
+    }
+    return bitmap;
+}
 
 template <uintptr_t mask>
 inline bool isAlignedTo(const void* pointer)
@@ -144,3 +165,4 @@ inline bool charactersAreAllLatin1(std::span<const CharacterType> span)
 } // namespace WTF
 
 using WTF::charactersAreAllASCII;
+using WTF::makeLatin1CharacterBitSet;

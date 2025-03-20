@@ -312,7 +312,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -365,7 +365,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     hb_font_make_immutable(harfBuzzFont.get());
 
-    auto features = fontFeatures(m_font, fontPlatformData);
+    auto features = fontFeatures(m_fontCascade, fontPlatformData);
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
     if (fontPlatformData.orientation() == FontOrientation::Vertical)
         hb_buffer_set_script(buffer.get(), findScriptForVerticalGlyphSubstitution(face.get()));

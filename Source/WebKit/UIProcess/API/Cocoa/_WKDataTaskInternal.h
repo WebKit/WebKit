@@ -26,6 +26,7 @@
 #import "APIDataTask.h"
 #import "WKObject.h"
 #import "_WKDataTask.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ template<> struct WrapperTraits<API::DataTask> {
 
 @interface _WKDataTask () <WKObject> {
 @package
-    API::ObjectStorage<API::DataTask> _dataTask;
+    AlignedStorage<API::DataTask> _dataTask;
     RetainPtr<id <_WKDataTaskDelegate> > _delegate;
 }
 @end

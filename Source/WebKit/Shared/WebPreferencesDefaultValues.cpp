@@ -263,6 +263,17 @@ bool defaultGamepadVibrationActuatorEnabled()
 }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+bool defaultDigitalCredentialsEnabled()
+{
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 bool defaultShouldEnableScreenOrientationAPI()
 {
 #if PLATFORM(MAC)
@@ -326,6 +337,17 @@ bool defaultBuiltInNotificationsEnabled()
 }
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+bool defaultDeviceOrientationPermissionAPIEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsDeviceOrientationAndMotionPermissionAPI);
+#else
+    return false;
+#endif
+}
+#endif
+
 bool defaultRequiresPageVisibilityForVideoToBeNowPlaying()
 {
 #if USE(APPLE_INTERNAL_SDK)
@@ -355,5 +377,45 @@ bool defaultIFrameResourceMonitoringEnabled()
 #endif
 }
 #endif
+
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+bool defaultPreferSpatialAudioExperience()
+{
+#if defined(WEB_PREFERENCES_PREFER_SPATIAL_AUDIO_EXPERIENCE_ADDITIONS)
+    WEB_PREFERENCES_PREFER_SPATIAL_AUDIO_EXPERIENCE_ADDITIONS;
+#endif
+
+    return false;
+}
+#endif
+
+#if PLATFORM(COCOA)
+static bool isSafariOrWebApp()
+{
+#if PLATFORM(MAC)
+    return WTF::MacApplication::isSafari();
+#else
+    return WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService() || WTF::IOSApplication::isAppleWebApp();
+#endif
+}
+#endif
+
+bool defaultMutationEventsEnabled()
+{
+#if PLATFORM(COCOA)
+    return (WTF::CocoaApplication::isAppleApplication() && !isSafariOrWebApp()) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
+#else
+    return false;
+#endif
+}
+
+bool defaultTrustedTypesEnabled()
+{
+#if PLATFORM(COCOA)
+    return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableTrustedTypesByDefault);
+#else
+    return true;
+#endif
+}
 
 } // namespace WebKit

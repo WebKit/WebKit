@@ -103,6 +103,7 @@ struct _WebKitUserStyleSheet {
             String::fromUTF8(source), URL { },
             toStringVector(allowList), toStringVector(blockList),
             toUserContentInjectedFrames(injectedFrames),
+            UserContentMatchParentFrame::Never,
             toUserStyleLevel(level) }, world)))
         , referenceCount(1)
     {
@@ -229,7 +230,7 @@ struct _WebKitUserScript {
             String::fromUTF8(source), URL { },
             toStringVector(allowList), toStringVector(blockList),
             toUserScriptInjectionTime(injectionTime),
-            toUserContentInjectedFrames(injectedFrames), WebCore::WaitForNotificationBeforeInjecting::No }, world)))
+            toUserContentInjectedFrames(injectedFrames) }, world)))
         , referenceCount(1)
     {
     }

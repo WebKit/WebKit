@@ -69,8 +69,8 @@ private:
     void storeFetchAfterQuotaCheck(const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
 
     String m_path;
-    Ref<WTF::WorkQueue> m_taskQueue;
-    Ref<WTF::WorkQueue> m_ioQueue;
+    const Ref<WTF::WorkQueue> m_taskQueue;
+    const Ref<WTF::WorkQueue> m_ioQueue;
     QuotaCheckFunction m_quotaCheckFunction;
 
     HashMap<String, Vector<WebCore::SharedBufferBuilder>> m_nonPersistentChunks;

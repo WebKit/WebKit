@@ -30,7 +30,6 @@
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
 #include "BlendingKeyframes.h"
-#include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
 #include "CompositeOperationOrAuto.h"
 #include "Document.h"
@@ -40,6 +39,7 @@
 #include "KeyframeEffectOptions.h"
 #include "KeyframeInterpolation.h"
 #include "RenderStyle.h"
+#include "StyleInterpolationClient.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Ref.h>
@@ -61,7 +61,7 @@ namespace Style {
 struct ResolutionContext;
 }
 
-class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingClient, public KeyframeInterpolation {
+class KeyframeEffect final : public AnimationEffect, public Style::Interpolation::Client, public KeyframeInterpolation {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KeyframeEffect);
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);

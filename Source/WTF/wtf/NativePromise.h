@@ -323,7 +323,8 @@ public:
         ASSERT(m_callback);
         if (!m_callback)
             return;
-        RefPtr { std::exchange(m_callback, nullptr) }->disconnect();
+        RefPtr callback = std::exchange(m_callback, nullptr);
+        callback->disconnect();
     }
 
 private:
@@ -972,7 +973,7 @@ private:
             return promise;
         }
 
-        Ref<NativePromise> m_promise;
+        const Ref<NativePromise> m_promise;
         RefPtr<ThenCallbackType> m_thenCallback;
         const Logger::LogSiteIdentifier m_logSiteIdentifier;
     };
@@ -1334,7 +1335,7 @@ public:
         , m_creationSite(creationSite)
     {
         if constexpr (PromiseType::IsExclusive)
-            m_promise->setDispatchMode(dispatchMode, creationSite);
+            protectedPromise()->setDispatchMode(dispatchMode, creationSite);
     }
 
     template<typename RejectValueT_ = RejectValueT, typename = std::enable_if<AutoRejectNonVoid>>
@@ -1353,8 +1354,8 @@ public:
     ~NativePromiseProducer()
     {
         if constexpr (AutoReject) {
-            if (m_promise && !m_promise->isSettled()) {
-                PROMISE_LOG("Non settled AutoRejectProducer, reject with default value", *m_promise);
+            if (m_promise && !protectedPromise()->isSettled()) {
+                PROMISE_LOG("Non settled AutoRejectProducer, reject with default value", *protectedPromise());
                 if constexpr (std::is_void_v<RejectValueT>)
                     reject();
                 else
@@ -1367,13 +1368,13 @@ public:
     bool isSettled() const
     {
         ASSERT(m_promise, "used after moved");
-        return m_promise && m_promise->isSettled();
+        return m_promise && protectedPromise()->isSettled();
     }
     explicit operator bool() const { return isSettled(); }
     bool isNothing() const
     {
         ASSERT(m_promise, "used after moved");
-        return m_promise && !m_promise->isSettled();
+        return m_promise && !protectedPromise()->isSettled();
     }
 
     template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
@@ -1381,10 +1382,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
-        m_promise->resolve(std::forward<ResolveValueType_>(resolveValue), resolveSite);
+        protectedPromise()->resolve(std::forward<ResolveValueType_>(resolveValue), resolveSite);
     }
 
     template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
@@ -1392,10 +1393,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
-        m_promise->resolve(resolveSite);
+        protectedPromise()->resolve(resolveSite);
     }
 
     template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
@@ -1403,10 +1404,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
-        m_promise->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
+        protectedPromise()->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
     }
 
     template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
@@ -1414,10 +1415,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
-        m_promise->reject(rejectSite);
+        protectedPromise()->reject(rejectSite);
     }
 
     template<typename SettleValue>
@@ -1425,13 +1426,13 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(site, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(site, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
         if constexpr (PromiseType::IsExclusive && std::is_invocable_r_v<typename PromiseType::Result, SettleValue>)
-            m_promise->settleWithFunction(WTFMove(result), site);
+            protectedPromise()->settleWithFunction(WTFMove(result), site);
         else
-            m_promise->settle(std::forward<SettleValue>(result), site);
+            protectedPromise()->settle(std::forward<SettleValue>(result), site);
     }
 
     template<typename = std::enable_if<PromiseType::IsExclusive>>
@@ -1439,10 +1440,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(site, " ignored already resolved or rejected ", *m_promise);
+            PROMISE_LOG(site, " ignored already resolved or rejected ", *protectedPromise());
             return;
         }
-        m_promise->settleWithFunction(WTFMove(resultRunnable), site);
+        protectedPromise()->settleWithFunction(WTFMove(resultRunnable), site);
     }
 
     operator Ref<PromiseType>() const
@@ -1519,14 +1520,19 @@ private:
     void setDispatchMode(PromiseDispatchMode dispatchMode, const Logger::LogSiteIdentifier& callSite) const
     {
         ASSERT(m_promise, "used after move");
-        m_promise->setDispatchMode(dispatchMode, callSite);
+        protectedPromise()->setDispatchMode(dispatchMode, callSite);
     }
 
     friend PromiseType;
     void assertIsDead() const
     {
         if (m_promise)
-            m_promise->assertIsDead();
+            protectedPromise()->assertIsDead();
+    }
+
+    RefPtr<PromiseType> protectedPromise() const
+    {
+        return m_promise;
     }
 
     // The Producer may be moved to resolve/reject the completion promise.

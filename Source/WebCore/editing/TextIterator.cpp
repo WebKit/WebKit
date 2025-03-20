@@ -222,12 +222,12 @@ static inline bool fullyClipsContents(Node& node)
     return box->contentBoxSize().isEmpty();
 }
 
-static inline bool ignoresContainerClip(Node& node)
+static inline bool ignoresContainerClip(const Node& node)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer || renderer->isRenderTextOrLineBreak())
         return false;
-    return renderer->style().hasOutOfFlowPosition();
+    return renderer->isOutOfFlowPositioned();
 }
 
 static void pushFullyClippedState(BitStack& stack, Node& node)
@@ -1278,11 +1278,11 @@ void SimplifiedBackwardsTextIterator::advance()
         // Don't handle node if we start iterating at [node, 0].
         if (!m_handledNode && !(m_node == m_endContainer && !m_endOffset)) {
             CheckedPtr renderer = m_node->renderer();
-            if (renderer && renderer->isRenderText() && m_node->isTextNode()) {
-                if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
+            if (auto* renderText = dynamicDowncast<RenderText>(renderer.get())) {
+                if (renderText->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
             } else if (isRendererReplacedElement(renderer.get(), m_behaviors)) {
-                if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
+                if (downcast<RenderElement>(*renderer).style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();

@@ -28,7 +28,7 @@
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
 #include "AXCoreObject.h"
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "PlatformScreen.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"

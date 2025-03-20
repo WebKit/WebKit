@@ -47,8 +47,10 @@ enum class BoxAxis : uint8_t {
     Vertical
 };
 
-constexpr BoxAxis mapAxisLogicalToPhysical(WritingMode, LogicalBoxAxis);
-constexpr LogicalBoxAxis mapAxisPhysicalToLogical(WritingMode, BoxAxis);
+constexpr BoxAxis mapAxisLogicalToPhysical(const WritingMode, const LogicalBoxAxis);
+constexpr LogicalBoxAxis mapAxisPhysicalToLogical(const WritingMode, const BoxAxis);
+constexpr LogicalBoxAxis oppositeAxis(LogicalBoxAxis axis) { return axis == LogicalBoxAxis::Inline ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline; }
+constexpr BoxAxis oppositeAxis(BoxAxis axis) { return axis == BoxAxis::Horizontal ? BoxAxis::Vertical : BoxAxis::Horizontal; }
 
 /* Sides */
 
@@ -92,8 +94,8 @@ constexpr std::array<BoxSide, 4> allBoxSides = {
 
 using BoxSideSet = OptionSet<BoxSideFlag>;
 
-constexpr BoxSide mapSideLogicalToPhysical(WritingMode, LogicalBoxSide);
-constexpr LogicalBoxSide mapSidePhysicalToLogical(WritingMode, BoxSide);
+constexpr BoxSide mapSideLogicalToPhysical(const WritingMode, const LogicalBoxSide);
+constexpr LogicalBoxSide mapSidePhysicalToLogical(const WritingMode, const BoxSide);
 
 /* Corners */
 
@@ -114,26 +116,46 @@ enum class BoxCorner : uint8_t {
 
 // Numeric values used below for bit-hacking; don't change without adjusting mapping methods.
 
-constexpr BoxCorner mapCornerLogicalToPhysical(WritingMode, LogicalBoxCorner);
-constexpr LogicalBoxCorner mapCornerPhysicalToLogical(WritingMode, BoxCorner);
+constexpr BoxCorner mapCornerLogicalToPhysical(const WritingMode, const LogicalBoxCorner);
+constexpr LogicalBoxCorner mapCornerPhysicalToLogical(const WritingMode, const BoxCorner);
 
 /** Implementation Below **********************************************/
 
-constexpr BoxAxis mapAxisLogicalToPhysical(WritingMode writingMode, LogicalBoxAxis logicalAxis)
+constexpr BoxAxis WritingMode::inlineAxis() const
+{
+    return isHorizontal() ? BoxAxis::Horizontal : BoxAxis::Vertical;
+}
+
+constexpr BoxAxis WritingMode::blockAxis() const
+{
+    return isHorizontal() ? BoxAxis::Vertical : BoxAxis::Horizontal;
+}
+
+constexpr LogicalBoxAxis WritingMode::horizontalAxis() const
+{
+    return isHorizontal() ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block;
+}
+
+constexpr LogicalBoxAxis WritingMode::verticalAxis() const
+{
+    return isHorizontal() ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
+}
+
+constexpr BoxAxis mapAxisLogicalToPhysical(const WritingMode writingMode, const LogicalBoxAxis logicalAxis)
 {
     bool isBlock = logicalAxis == LogicalBoxAxis::Block;
     bool isVertical = isBlock != writingMode.isVertical();
     return isVertical ? BoxAxis::Vertical : BoxAxis::Horizontal;
 }
 
-constexpr LogicalBoxAxis mapAxisPhysicalToLogical(WritingMode writingMode, BoxAxis axis)
+constexpr LogicalBoxAxis mapAxisPhysicalToLogical(const WritingMode writingMode, const BoxAxis axis)
 {
     bool isVertical = axis == BoxAxis::Vertical;
     bool isBlock = isVertical != writingMode.isVertical();
     return isBlock ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
 }
 
-constexpr BoxSide mapSideLogicalToPhysical(WritingMode writingMode, LogicalBoxSide logicalSide)
+constexpr BoxSide mapSideLogicalToPhysical(const WritingMode writingMode, const LogicalBoxSide logicalSide)
 {
     switch (logicalSide) {
     case LogicalBoxSide::BlockStart:
@@ -188,7 +210,7 @@ constexpr BoxSide mapSideLogicalToPhysical(WritingMode writingMode, LogicalBoxSi
     return BoxSide::Top;
 }
 
-constexpr LogicalBoxSide mapSidePhysicalToLogical(WritingMode writingMode, BoxSide side)
+constexpr LogicalBoxSide mapSidePhysicalToLogical(const WritingMode writingMode, const BoxSide side)
 {
     switch (side) {
     case BoxSide::Top:
@@ -255,7 +277,7 @@ constexpr LogicalBoxSide mapSidePhysicalToLogical(WritingMode writingMode, BoxSi
     return LogicalBoxSide::BlockStart;
 }
 
-constexpr BoxCorner mapCornerLogicalToPhysical(WritingMode writingMode, LogicalBoxCorner logicalBoxCorner)
+constexpr BoxCorner mapCornerLogicalToPhysical(const WritingMode writingMode, const LogicalBoxCorner logicalBoxCorner)
 {
     bool isBlockStart = !(static_cast<uint8_t>(logicalBoxCorner) & 2);
     bool isInlineStart = !(static_cast<uint8_t>(logicalBoxCorner) & 1);
@@ -274,7 +296,7 @@ constexpr BoxCorner mapCornerLogicalToPhysical(WritingMode writingMode, LogicalB
     return isLeft ? BoxCorner::BottomLeft : BoxCorner::BottomRight;
 }
 
-constexpr LogicalBoxCorner mapCornerPhysicalToLogical(WritingMode writingMode, BoxCorner boxCorner)
+constexpr LogicalBoxCorner mapCornerPhysicalToLogical(const WritingMode writingMode, const BoxCorner boxCorner)
 {
     bool isTop = !(static_cast<uint8_t>(boxCorner) & 2);
     bool isLeft = !(static_cast<uint8_t>(boxCorner) & 1);

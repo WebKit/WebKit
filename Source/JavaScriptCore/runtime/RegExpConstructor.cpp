@@ -338,14 +338,14 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
     JSValue flagsArg = args.at(1);
 
     bool isPatternRegExp = patternArg.inherits<RegExpObject>();
-    bool constructAsRegexp = isRegExp(vm, globalObject, patternArg);
+    bool constructAsRegExp = isRegExp(vm, globalObject, patternArg);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (!newTarget && constructAsRegexp && flagsArg.isUndefined()) {
+    if (!newTarget && constructAsRegExp && flagsArg.isUndefined()) {
         JSValue constructor = patternArg.get(globalObject, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (callee == constructor) {
-            // We know that patternArg is a object otherwise constructAsRegexp would be false.
+            // We know that patternArg is a object otherwise constructAsRegExp would be false.
             return patternArg.getObject();
         }
     }
@@ -369,7 +369,7 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
         return RegExpObject::create(vm, structure, regExp, areLegacyFeaturesEnabled(globalObject, newTarget));
     }
 
-    if (constructAsRegexp) {
+    if (constructAsRegExp) {
         JSValue pattern = patternArg.get(globalObject, vm.propertyNames->source);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (flagsArg.isUndefined()) {

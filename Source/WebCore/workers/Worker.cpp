@@ -255,14 +255,14 @@ void Worker::reportError(const String& errorMessage)
     if (m_wasTerminated)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, errorMessage] {
-        if (m_wasTerminated)
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [errorMessage](auto& worker) {
+        if (worker.m_wasTerminated)
             return;
 
-        auto event = Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No);
-        AbstractWorker::dispatchEvent(event);
-        if (!event->defaultPrevented() && scriptExecutionContext())
-            scriptExecutionContext()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage));
+        Ref event = Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No);
+        worker.AbstractWorker::dispatchEvent(event);
+        if (!event->defaultPrevented() && worker.scriptExecutionContext())
+            worker.scriptExecutionContext()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage));
     });
 }
 

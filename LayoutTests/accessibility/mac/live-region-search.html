@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+</div>
+
+<script>
+var output = "This test ensures that live region searches work correctly after dynamic page changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var container = document.getElementById("container");
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "0");
+
+    var dynamicStatus = document.createElement("div");
+    dynamicStatus.id = "dynamic-status";
+    dynamicStatus.role = "status";
+    dynamicStatus.innerText = "Hello";
+
+    var dynamicStatus2 = document.createElement("div");
+    dynamicStatus2.id = "dynamic-status2";
+    dynamicStatus2.role = "status";
+    dynamicStatus2.innerText = "Hello2";
+
+    container.appendChild(dynamicStatus);
+    setTimeout(async function() {
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "1");
+        dynamicStatus = document.getElementById("container").removeChild(dynamicStatus);
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "0");
+        container.appendChild(dynamicStatus);
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "1");
+        dynamicStatus.role = "group";
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "0");
+        dynamicStatus.setAttribute("aria-live", "polite");
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "1");
+        container.setAttribute("aria-live", "polite");
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "2");
+        container.appendChild(dynamicStatus2);
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "3");
+        container.removeAttribute("aria-live");
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "2");
+        dynamicStatus2.remove();
+        output += await expectAsync("webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false)", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

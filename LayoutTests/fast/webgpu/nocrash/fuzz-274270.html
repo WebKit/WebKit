@@ -9,9 +9,13 @@ async function run() {
     new VideoFrame(canvas, { timestamp: 0 });
     context.getCurrentTexture().createView({format : 'rgba16float'});
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
 
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

@@ -114,12 +114,12 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
     releaseAllDisplayAttachments();
 
-    if (RefPtr gl = m_context.graphicsContextGL()) {
+    if (RefPtr gl = m_context->graphicsContextGL()) {
         m_drawAttachments.release(*gl);
         m_resolveAttachments.release(*gl);
         m_displayFBO.release(*gl);
         m_resolvedFBO.release(*gl);
-        m_context.deleteFramebuffer(m_drawFramebuffer.ptr());
+        m_context->deleteFramebuffer(m_drawFramebuffer.ptr());
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.
@@ -132,7 +132,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 
 void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 {
-    RefPtr gl = m_context.graphicsContextGL();
+    RefPtr gl = m_context->graphicsContextGL();
     if (!gl)
         return;
 
@@ -197,7 +197,7 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 
 void WebXROpaqueFramebuffer::endFrame()
 {
-    RefPtr gl = m_context.graphicsContextGL();
+    RefPtr gl = m_context->graphicsContextGL();
     if (!gl)
         return;
 
@@ -393,7 +393,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     const bool needsIntermediateResolve = m_attributes.antialias && layeredLayout;
 
     // Set up recommended samples for WebXR.
-    auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
+    auto sampleCount = m_attributes.antialias ? std::min(4, m_context->maxSamples()) : 0;
 
     // Drawing target
     if (framebufferResize) {
@@ -508,7 +508,7 @@ void WebXROpaqueFramebuffer::releaseDisplayAttachmentsAtIndex(size_t index)
     if (index >= m_displayAttachmentsSets.size())
         return;
 
-    RefPtr gl = m_context.graphicsContextGL();
+    RefPtr gl = m_context->graphicsContextGL();
     for (auto& attachments : m_displayAttachmentsSets[index]) {
         if (gl)
             attachments.release(*gl);

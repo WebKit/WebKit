@@ -1914,7 +1914,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    auto imageOverlayElements = self.axBackingObject->imageOverlayElements();
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    std::optional imageOverlayElements = backingObject ? backingObject->imageOverlayElements() : std::nullopt;
     return imageOverlayElements ? accessibleElementsForObjects(*imageOverlayElements) : nil;
 }
 
@@ -1957,8 +1958,8 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     AXCoreObject::AccessibilityChildrenVector accessibleElements;
     for (const auto& object : objects) {
         Accessibility::enumerateUnignoredDescendants<AXCoreObject>(object.get(), true, [&accessibleElements] (AXCoreObject& descendant) {
-            auto* wrapper = descendant.wrapper();
-            if (wrapper && wrapper.isAccessibilityElement)
+            RetainPtr wrapper = descendant.wrapper();
+            if (wrapper && [wrapper.get() isAccessibilityElement])
                 accessibleElements.append(descendant);
         });
     }

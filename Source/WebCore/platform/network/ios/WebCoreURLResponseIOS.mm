@@ -31,6 +31,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "FrameLoaderTypes.h"
 #import "QuickLook.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 

@@ -18,6 +18,7 @@ export { TestCaseRecorder } from '../internal/logging/test_case_recorder.js';
 
 
 
+
 export class SubcaseBatchState {
   constructor(
   recorder,
@@ -40,6 +41,18 @@ export class SubcaseBatchState {
    * @internal MAINTENANCE_TODO: Make this not visible to test code?
    */
   async finalize() {}
+
+  /** Throws an exception marking the subcase as skipped. */
+  skip(msg) {
+    throw new SkipTestCase(msg);
+  }
+
+  /** Throws an exception making the subcase as skipped if condition is true */
+  skipIf(cond, msg = '') {
+    if (cond) {
+      this.skip(typeof msg === 'function' ? msg() : msg);
+    }
+  }
 }
 
 /**
@@ -125,6 +138,8 @@ export class Fixture {
         if (WEBGL_lose_context) WEBGL_lose_context.loseContext();
       } else if ('destroy' in o) {
         o.destroy();
+      } else if ('destroyAsync' in o) {
+        await o.destroyAsync();
       } else if ('close' in o) {
         o.close();
       } else {
@@ -138,11 +153,29 @@ export class Fixture {
   /**
    * Tracks an object to be cleaned up after the test finishes.
    *
-   * MAINTENANCE_TODO: Use this in more places. (Will be easier once .destroy() is allowed on
-   * invalid objects.)
+   * Usually when creating buffers/textures/query sets, you can use the helpers in GPUTest instead.
    */
   trackForCleanup(o) {
-    this.objectsToCleanUp.push(o);
+    if (o instanceof Promise) {
+      this.eventualAsyncExpectation(() =>
+      o.then(
+        (o) => this.trackForCleanup(o),
+        () => {}
+      )
+      );
+      return o;
+    }
+
+    if (o instanceof GPUDevice) {
+      this.objectsToCleanUp.push({
+        async destroyAsync() {
+          o.destroy();
+          await o.lost;
+        }
+      });
+    } else {
+      this.objectsToCleanUp.push(o);
+    }
     return o;
   }
 
@@ -159,6 +192,12 @@ export class Fixture {
       }
     }
     return o;
+  }
+
+  /** Call requestDevice() and track the device for cleanup. */
+  requestDeviceTracked(adapter, desc = undefined) {
+
+    return this.trackForCleanup(adapter.requestDevice(desc));
   }
 
   /** Log a debug message. */

@@ -75,9 +75,4 @@ WebProtectionSpace* AuthenticationChallengeProxy::protectionSpace() const
     return m_webProtectionSpace.get();
 }
 
-Ref<AuthenticationDecisionListener> AuthenticationChallengeProxy::protectedListener() const
-{
-    return m_listener;
-}
-
 } // namespace WebKit

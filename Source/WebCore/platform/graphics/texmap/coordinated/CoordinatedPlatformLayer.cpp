@@ -710,8 +710,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
     if (!m_backingStoreProxy)
         return;
 
-    bool scaleChanged = m_backingStoreProxy->setContentsScale(m_contentsScale);
-    if (!scaleChanged && m_dirtyRegion.isEmpty() && !m_pendingTilesCreation && !m_needsTilesUpdate)
+    if (m_dirtyRegion.isEmpty() && !m_pendingTilesCreation && !m_needsTilesUpdate)
         return;
 
     IntRect contentsRect(IntPoint::zero(), IntSize(m_size));
@@ -741,6 +740,9 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
             m_backingStoreProxy = CoordinatedBackingStoreProxy::create(m_contentsScale);
             m_needsTilesUpdate = true;
             m_pendingChanges.add(Change::BackingStore);
+        } else {
+            if (m_backingStoreProxy->setContentsScale(m_contentsScale))
+                m_needsTilesUpdate = true;
         }
 
         if (affectedByTransformAnimation) {
@@ -945,9 +947,9 @@ void CoordinatedPlatformLayer::flushCompositingState(TextureMapper& textureMappe
     }
 
     if (m_backingStoreProxy) {
-        auto update = m_backingStoreProxy->takePendingUpdate();
-        m_backingStore->resize(layer.size(), update.scale());
+        m_backingStore->resize(layer.size(), m_contentsScale);
 
+        auto update = m_backingStoreProxy->takePendingUpdate();
         for (auto tileID : update.tilesToCreate())
             m_backingStore->createTile(tileID);
         for (auto tileID : update.tilesToRemove())

@@ -51,6 +51,7 @@ public:
     virtual void show();
 
     WebPageProxy* page() const { return m_page.get(); }
+    RefPtr<WebPageProxy> protectedPage() const;
 
 #if PLATFORM(COCOA)
     virtual NSMenu *platformMenu() const = 0;

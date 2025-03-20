@@ -115,8 +115,8 @@ static bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& 
             }
             return *hasStrongDirectionalityContent;
         }
-        if (is<RenderInline>(renderer)) {
-            auto& style = renderer.style();
+        if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer)) {
+            auto& style = renderInline->style();
             return style.writingMode().isBidiRTL() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
         }
         return false;
@@ -242,8 +242,13 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
 LineLayout::~LineLayout()
 {
     auto& rootRenderer = flow();
-
-    if (!isDamaged() && !rootRenderer.document().renderTreeBeingDestroyed())
+    auto shouldPopulateBreakingPositionCache = [&] {
+        auto mayHaveInvalidContent = isDamaged() || !m_inlineContent;
+        if (rootRenderer.document().renderTreeBeingDestroyed() || mayHaveInvalidContent)
+            return false;
+        return !m_inlineContentCache.inlineItems().isPopulatedFromCache();
+    };
+    if (shouldPopulateBreakingPositionCache())
         Layout::InlineItemsBuilder::populateBreakingPositionCache(m_inlineContentCache.inlineItems().content(), rootRenderer.document());
     clearInlineContent();
     layoutState().destroyInlineContentCache(rootLayoutBox());
@@ -1259,6 +1264,11 @@ bool LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
 
 bool LineLayout::removedFromTree(const RenderElement& parent, RenderObject& child)
 {
+    if (!child.everHadLayout()) {
+        BoxTreeUpdater { flow() }.remove(parent, child);
+        return false;
+    }
+
     if (!m_inlineContent) {
         // This should only be called on partial layout.
         ASSERT_NOT_REACHED();

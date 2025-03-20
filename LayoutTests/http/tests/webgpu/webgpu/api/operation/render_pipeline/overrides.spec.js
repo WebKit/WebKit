@@ -3,10 +3,10 @@
 **/export const description = `
 Testing render pipeline using overridable constants in vertex stage and fragment stage.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
 
-class F extends GPUTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   async ExpectShaderOutputWithConstants(
   isAsync,
   format,
@@ -14,7 +14,7 @@ class F extends GPUTest {
   vertex,
   fragment)
   {
-    const renderTarget = this.device.createTexture({
+    const renderTarget = this.createTextureTracked({
       format,
       size: { width: 1, height: 1, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
@@ -171,6 +171,7 @@ fn(async (t) => {
   );
 });
 
+const kPrecisionTestFormat = 'rgba32float';
 g.test('precision').
 desc(`Test that the float number precision is preserved for constants`).
 params((u) =>
@@ -191,7 +192,7 @@ combineWithParams([
 )
 ).
 fn(async (t) => {
-  const format = 'rgba32float';
+  const format = kPrecisionTestFormat;
   await t.ExpectShaderOutputWithConstants(
     t.params.isAsync,
     format,
@@ -311,12 +312,12 @@ fn(async (t) => {
     t.params.fragmentConstants1
   );
 
-  const renderTarget0 = t.device.createTexture({
+  const renderTarget0 = t.createTextureTracked({
     format,
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
-  const renderTarget1 = t.device.createTexture({
+  const renderTarget1 = t.createTextureTracked({
     format,
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT

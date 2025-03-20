@@ -63,26 +63,26 @@ TextStream& operator<<(TextStream& ts, ScrollAlignment::Behavior b)
 {
     switch (b) {
     case ScrollAlignment::Behavior::NoScroll:
-        return ts << "NoScroll";
+        return ts << "NoScroll"_s;
     case ScrollAlignment::Behavior::AlignCenter:
-        return ts << "AlignCenter";
+        return ts << "AlignCenter"_s;
     case ScrollAlignment::Behavior::AlignTop:
-        return ts << "AlignTop";
+        return ts << "AlignTop"_s;
     case ScrollAlignment::Behavior::AlignBottom:
-        return ts << "AlignBottom";
+        return ts << "AlignBottom"_s;
     case ScrollAlignment::Behavior::AlignLeft:
-        return ts << "AlignLeft";
+        return ts << "AlignLeft"_s;
     case ScrollAlignment::Behavior::AlignRight:
-        return ts << "AlignRight";
+        return ts << "AlignRight"_s;
     case ScrollAlignment::Behavior::AlignToClosestEdge:
-        return ts << "AlignToClosestEdge";
+        return ts << "AlignToClosestEdge"_s;
     }
     return ts;
 }
     
 TextStream& operator<<(TextStream& ts, const ScrollAlignment& s)
 {
-    return ts << "ScrollAlignment: visible: " << s.m_rectVisible << " hidden: " << s.m_rectHidden << " partial: " << s.m_rectPartial;
+    return ts << "ScrollAlignment: visible: "_s << s.m_rectVisible << " hidden: "_s << s.m_rectHidden << " partial: "_s << s.m_rectPartial;
 }
 
 }; // namespace WebCore

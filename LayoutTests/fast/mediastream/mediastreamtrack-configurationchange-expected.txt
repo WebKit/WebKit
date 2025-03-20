@@ -1,4 +1,5 @@
 
 
 PASS Trigger configurationchange event in case OS changes microphone on its own
+PASS Trigger configurationchange event in case background blur changes
 

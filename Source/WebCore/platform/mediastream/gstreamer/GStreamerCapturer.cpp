@@ -59,7 +59,7 @@ GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice&& device, GRefPtr<Gs
     m_device.emplace(WTFMove(device));
 }
 
-GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&& caps, CaptureDevice::DeviceType deviceType)
+GStreamerCapturer::GStreamerCapturer(ASCIILiteral sourceFactory, GRefPtr<GstCaps>&& caps, CaptureDevice::DeviceType deviceType)
     : m_caps(WTFMove(caps))
     , m_sourceFactory(sourceFactory)
     , m_deviceType(deviceType)
@@ -89,7 +89,6 @@ void GStreamerCapturer::tearDown(bool disconnectSignals)
     if (!disconnectSignals)
         return;
 
-    m_sink = nullptr;
     m_valve = nullptr;
     m_src = nullptr;
     m_capsfilter = nullptr;
@@ -98,6 +97,30 @@ void GStreamerCapturer::tearDown(bool disconnectSignals)
 
 GStreamerCapturerObserver::~GStreamerCapturerObserver()
 {
+}
+
+void GStreamerCapturer::setDevice(std::optional<GStreamerCaptureDevice>&& device)
+{
+    if (device)
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting new capture device: %s", device->label().utf8().data());
+    else
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Clearing capture device");
+    tearDown(true);
+    m_device = WTFMove(device);
+
+    if (UNLIKELY(!m_device))
+        return;
+
+    setupPipeline();
+    start();
+
+#ifndef GST_DISABLE_GST_DEBUG
+    auto totalObservers = m_observers.computeSize();
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Notifying %u observers that the capture device changed", totalObservers);
+#endif
+    forEachObserver([&](auto& observer) {
+        observer.captureDeviceUpdated(*m_device);
+    });
 }
 
 void GStreamerCapturer::addObserver(GStreamerCapturerObserver& observer)
@@ -192,7 +215,7 @@ void GStreamerCapturer::setupPipeline()
         disconnectSimpleBusMessageCallback(pipeline());
     }
 
-    m_pipeline = makeElement("pipeline");
+    m_pipeline = makeElement("pipeline"_s);
     auto clock = adoptGRef(gst_system_clock_obtain());
     gst_pipeline_use_clock(GST_PIPELINE(m_pipeline.get()), clock.get());
     gst_element_set_base_time(m_pipeline.get(), 0);
@@ -204,10 +227,11 @@ void GStreamerCapturer::setupPipeline()
     GRefPtr<GstElement> source = createSource();
     GRefPtr<GstElement> converter = createConverter();
 
-    m_valve = makeElement("valve");
-    m_capsfilter = makeElement("capsfilter");
+    m_valve = makeElement("valve"_s);
+    m_capsfilter = makeElement("capsfilter"_s);
     auto queue = gst_element_factory_make("queue", nullptr);
-    m_sink = makeElement("appsink");
+    if (!m_sink)
+        m_sink = makeElement("appsink"_s);
 
     gst_util_set_object_arg(G_OBJECT(m_capsfilter.get()), "caps-change-mode", "delayed");
 
@@ -225,9 +249,9 @@ void GStreamerCapturer::setupPipeline()
     gst_element_link_many(tail, m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
 }
 
-GstElement* GStreamerCapturer::makeElement(const char* factoryName)
+GstElement* GStreamerCapturer::makeElement(ASCIILiteral factoryName)
 {
-    auto* element = makeGStreamerElement(factoryName, nullptr);
+    auto* element = makeGStreamerElement(factoryName);
     auto elementName = makeString(unsafeSpan(name()), "_capturer_"_s, unsafeSpan(GST_OBJECT_NAME(element)), '_', hex(reinterpret_cast<uintptr_t>(this)));
     gst_object_set_name(GST_OBJECT(element), elementName.ascii().data());
 

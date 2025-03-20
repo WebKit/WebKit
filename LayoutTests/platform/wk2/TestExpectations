@@ -778,7 +778,6 @@ fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass ]
 fast/speechrecognition/permission-error.html [ Pass ]
 fast/speechrecognition/start-recognition-then-stop.html [ Pass ]
 fast/speechrecognition/start-second-recognition.html [ Pass ]
-fullscreen/full-screen-enter-while-exiting.html [ Pass ]
 imported/w3c/web-platform-tests/permissions/ [ Pass ]
 http/tests/notifications/permission/ [ Pass ]
 http/tests/permissions/ [ Pass ]
@@ -810,3 +809,15 @@ webkit.org/b/286450 imported/w3c/web-platform-tests/webcodecs/audio-encoder.http
 webkit.org/b/287126 fast/forms/datalist/datalist-hide-using-escape-key.html [ Pass Timeout Failure ]
 
 webkit.org/b/287724 imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html [ Pass Failure ]
+
+webkit.org/b/288774 fast/dynamic/content-visibility-crash-with-continuation-and-table.html [ Pass Failure ]
+
+webkit.org/b/288847 imported/w3c/web-platform-tests/cookie-store/cookieStore_event_delete.https.window.html [ Pass Failure ]
+
+webkit.org/b/288851 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.html [ Pass Failure ]
+
+webkit.org/b/289479 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-queued-navigations.html [ Pass Failure ]
+
+webkit.org/b/289542 imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-throws.html [ Pass Failure ]
+
+webkit.org/b/289550 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.sharedworker.html [ Pass Failure ]

@@ -32,9 +32,10 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/Range.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKWebProcessPlugInRangeHandle {
-    API::ObjectStorage<WebKit::InjectedBundleRangeHandle> _rangeHandle;
+    AlignedStorage<WebKit::InjectedBundleRangeHandle> _rangeHandle;
 }
 
 - (void)dealloc

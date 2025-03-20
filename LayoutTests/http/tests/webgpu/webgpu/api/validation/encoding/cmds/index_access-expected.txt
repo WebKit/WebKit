@@ -19,10 +19,34 @@ PASS :out_of_bounds:indexCount=7;firstIndex=0;instanceCount=1
 PASS :out_of_bounds:indexCount=7;firstIndex=0;instanceCount=10000
 PASS :out_of_bounds:indexCount=10000;firstIndex=0;instanceCount=1
 PASS :out_of_bounds:indexCount=10000;firstIndex=0;instanceCount=10000
-PASS :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=1
-PASS :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=10000
-PASS :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=1
-PASS :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=10000
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=1 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: Device was unexpectedly lost. Reason: unknown, Message:
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:106:13
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=10000 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: Device was unexpectedly lost. Reason: unknown, Message:
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:106:13
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=1 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: Device was unexpectedly lost. Reason: unknown, Message:
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:106:13
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=10000 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: Device was unexpectedly lost. Reason: unknown, Message:
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:106:13
+ Reached unreachable code
 PASS :out_of_bounds:indexCount=2;firstIndex=4294967295;instanceCount=1
 PASS :out_of_bounds:indexCount=2;firstIndex=4294967295;instanceCount=10000
 PASS :out_of_bounds_zero_sized_index_buffer:indexCount=3;firstIndex=1;instanceCount=1

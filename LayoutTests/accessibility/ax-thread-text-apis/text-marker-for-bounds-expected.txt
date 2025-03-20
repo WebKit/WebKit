@@ -1,8 +1,0 @@
-This tests that endTextMarkerForBounds and startTextMarkerForBounds work correctly.
-
-PASS: rangeFromBounds === rangeFromElement
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-Text text text text text text text text text text.

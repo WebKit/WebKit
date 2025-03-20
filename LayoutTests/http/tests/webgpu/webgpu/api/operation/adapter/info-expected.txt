@@ -1,0 +1,35 @@
+
+PASS :adapter_info:
+FAIL :same_object: assert_unreached:
+  - EXPECTATION FAILED: adapter.info should obey [SameObject]
+      at (elided: below max severity)
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/info.spec.js:63:9
+ Reached unreachable code
+FAIL :device_matches_adapter: assert_unreached:
+  - EXCEPTION: Error: subcase: testDeviceFirst=true;testMembersFirst=true
+
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/info.spec.js:103:13
+  - EXCEPTION: Error: subcase: testDeviceFirst=true;testMembersFirst=false
+
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/info.spec.js:123:13
+  - INFO: subcase: testDeviceFirst=true;testMembersFirst=true
+    OK
+  - INFO: subcase: testDeviceFirst=true;testMembersFirst=false
+    OK
+  - EXCEPTION: Error: subcase: testDeviceFirst=false;testMembersFirst=true
+
+      at (elided: only 2 shown)
+  - INFO: subcase: testDeviceFirst=false;testMembersFirst=true
+    OK
+  - EXCEPTION: Error: subcase: testDeviceFirst=false;testMembersFirst=false
+
+      at (elided: only 2 shown)
+  - INFO: subcase: testDeviceFirst=false;testMembersFirst=false
+    OK
+ Reached unreachable code
+PASS :subgroup_sizes:
+

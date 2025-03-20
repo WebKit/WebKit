@@ -1,0 +1,4 @@
+
+PASS IntersectionObserver observing elements with css zoom
+FAIL Validate intersection rect assert_approx_equals: entries[0].boundingClientRect.left expected 8 +/- 0 but got 2
+

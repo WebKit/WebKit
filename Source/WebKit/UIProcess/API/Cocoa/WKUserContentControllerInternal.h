@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebUserContentControllerProxy.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 template<> struct WrapperTraits<WebUserContentControllerProxy> {
@@ -38,7 +39,7 @@ class WebScriptMessageHandler;
 
 @interface WKUserContentController () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
+    AlignedStorage<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
 }
 
 - (void)_addScriptMessageHandler:(WebKit::WebScriptMessageHandler&)scriptMessageHandler;

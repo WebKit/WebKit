@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,15 +32,15 @@ namespace WebCore {
 class ProgressEvent : public Event {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressEvent);
 public:
-    static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
+    static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, double loaded, double total)
     {
         return adoptRef(*new ProgressEvent(EventInterfaceType::ProgressEvent, type, lengthComputable, loaded, total));
     }
 
     struct Init : EventInit {
         bool lengthComputable { false };
-        unsigned long long loaded { 0 };
-        unsigned long long total { 0 };
+        double loaded { 0 };
+        double total { 0 };
     };
 
     static Ref<ProgressEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -49,17 +49,17 @@ public:
     }
 
     bool lengthComputable() const { return m_lengthComputable; }
-    unsigned long long loaded() const { return m_loaded; }
-    unsigned long long total() const { return m_total; }
+    double loaded() const { return m_loaded; }
+    double total() const { return m_total; }
 
 protected:
-    ProgressEvent(enum EventInterfaceType, const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
+    ProgressEvent(enum EventInterfaceType, const AtomString& type, bool lengthComputable, double loaded, double total);
     ProgressEvent(enum EventInterfaceType, const AtomString&, const Init&, IsTrusted);
 
 private:
     bool m_lengthComputable;
-    unsigned long long m_loaded;
-    unsigned long long m_total;
+    double m_loaded;
+    double m_total;
 };
 
 } // namespace WebCore

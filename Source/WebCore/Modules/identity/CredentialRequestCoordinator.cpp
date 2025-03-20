@@ -35,6 +35,7 @@
 #include "DigitalCredentialsResponseData.h"
 #include "Document.h"
 #include "ExceptionData.h"
+#include "ExceptionOr.h"
 #include "JSDigitalCredential.h"
 #include "Page.h"
 #include <JavaScriptCore/JSObject.h>
@@ -203,32 +204,34 @@ void CredentialRequestCoordinator::handleDigitalCredentialsPickerResult(Expected
     finalizeDigitalCredential(responseData);
 }
 
-bool CredentialRequestCoordinator::parseDigitalCredentialsResponseData(Document& document, const String& responseData, JSC::JSObject*& outObject) const
+ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredentialsResponseData(Document& document, const String& responseData) const
 {
-
     auto* globalObject = document.globalObject();
     if (!globalObject) {
         LOG(DigitalCredentials, "No JavaScript global object available for parseDigitalCredentialsResponseData.");
-        return false;
+        return Exception { ExceptionCode::InvalidStateError, "No JavaScript global object available."_s };
     }
 
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSC::JSONParse(globalObject, responseData);
-    if (scope.exception()) {
+    JSC::JSLockHolder lock(globalObject);
+    auto parsedJSON = JSC::JSONParse(globalObject, responseData);
+    if (!parsedJSON) {
         LOG(DigitalCredentials, "Failed to parse response JSON data");
-        scope.clearException();
-        return false;
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_s };
     }
 
-    auto* object = constructEmptyObject(globalObject);
-    object->putDirect(vm,
-        JSC::Identifier::fromString(vm, "response"_s),
-        JSC::jsString(vm, responseData));
+    if (UNLIKELY(scope.exception())) {
+        LOG(DigitalCredentials, "Failed to parse response JSON data");
+        scope.clearException();
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_s };
+    }
 
-    outObject = object;
-    return true;
+    if (!parsedJSON.isObject()) {
+        LOG(DigitalCredentials, "Parsed JSON data is not an object");
+        return Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_s };
+    }
+    return parsedJSON.getObject();
 }
 
 void CredentialRequestCoordinator::finalizeDigitalCredential(const DigitalCredentialsResponseData& responseData)
@@ -253,17 +256,24 @@ void CredentialRequestCoordinator::finalizeDigitalCredential(const DigitalCreden
         return;
     }
 
-    JSC::JSObject* parsedObject = nullptr;
-    if (!parseDigitalCredentialsResponseData(*document, responseData.responseData, parsedObject)) {
-        m_currentPromise->reject(Exception {
-            ExceptionCode::TypeError,
-            "Error parsing response as JSON from wallet."_s });
+    auto parsedObject = parseDigitalCredentialsResponseData(*document, responseData.responseData);
+
+    if (parsedObject.hasException()) {
+        m_currentPromise->reject(parsedObject.releaseException());
         m_currentPromise.reset();
         return;
     }
 
+    if (!parsedObject.returnValue()) {
+        m_currentPromise->reject(ExceptionCode::TypeError, "No parsed object."_s);
+        m_currentPromise.reset();
+        return;
+    }
+
+    auto returnValue = parsedObject.releaseReturnValue();
+
     Ref credential = DigitalCredential::create(
-        { parsedObject->vm(), parsedObject },
+        { returnValue->vm(), returnValue },
         responseData.protocol);
     m_currentPromise->resolve(WTFMove(credential.ptr()));
     m_currentPromise.reset();

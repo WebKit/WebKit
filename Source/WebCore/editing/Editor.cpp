@@ -31,6 +31,7 @@
 #include "AlternativeTextController.h"
 #include "ApplyStyleCommand.h"
 #include "AttachmentAssociatedElement.h"
+#include "BoundaryPointInlines.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSSerializationContext.h"
@@ -77,6 +78,7 @@
 #include "HTMLOListElement.h"
 #include "HTMLQuoteElement.h"
 #include "HTMLSpanElement.h"
+#include "HTMLTextAreaElement.h"
 #include "HTMLUListElement.h"
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
@@ -97,6 +99,7 @@
 #include "Quirks.h"
 #include "Range.h"
 #include "RemoveFormatCommand.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderImage.h"
@@ -844,22 +847,14 @@ bool Editor::hasBidiSelection() const
     } else
         startNode = document->selection().selection().visibleStart().deepEquivalent().protectedDeprecatedNode();
 
-    if (!startNode)
+    if (!startNode || !startNode->renderer())
         return false;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    CheckedPtr renderer = startNode->renderer();
-    while (renderer && !is<RenderBlockFlow>(*renderer))
-        renderer = renderer->parent();
-
-    if (!renderer)
-        return false;
-
-    if (!renderer->style().isLeftToRightDirection())
-        return true;
-
-    return downcast<RenderBlockFlow>(*renderer).containsNonZeroBidiLevel();
+    if (CheckedPtr renderBlockFlow = ancestorsOfType<RenderBlockFlow>(*startNode->renderer()).first())
+        return !renderBlockFlow->style().isLeftToRightDirection() || renderBlockFlow->containsNonZeroBidiLevel();
+    return false;
 }
 
 TriState Editor::selectionUnorderedListState() const
@@ -1124,14 +1119,14 @@ String Editor::selectionStartCSSPropertyValue(CSSPropertyID propertyID)
     return selectionStyle->style()->getPropertyValue(propertyID);
 }
 
-static void notifyTextFromControls(Element* startRoot, Element* endRoot)
+static void notifyTextFromControls(Element* startRoot, Element* endRoot, bool wasUserEdit = true)
 {
     RefPtr startingTextControl { enclosingTextFormControl(firstPositionInOrBeforeNode(startRoot)) };
     RefPtr endingTextControl { enclosingTextFormControl(firstPositionInOrBeforeNode(endRoot)) };
     if (startingTextControl)
-        startingTextControl->didEditInnerTextValue();
+        startingTextControl->didEditInnerTextValue(wasUserEdit);
     if (endingTextControl && startingTextControl != endingTextControl)
-        endingTextControl->didEditInnerTextValue();
+        endingTextControl->didEditInnerTextValue(wasUserEdit);
 }
 
 static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
@@ -1246,7 +1241,11 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     Ref composition = *command.composition();
     VisibleSelection newSelection(command.endingSelection());
 
-    notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement());
+    bool wasUserEdit = [&command] {
+        RefPtr typingCommand = dynamicDowncast<TypingCommand>(command);
+        return !typingCommand || !typingCommand->triggeringEventWasCreatedFromBindings();
+    }();
+    notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement(), wasUserEdit);
 
     if (command.isTopLevelCommand()) {
         // Don't clear the typing style with this selection change. We do those things elsewhere if necessary.
@@ -1454,7 +1453,8 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
                     options.add(TypingCommand::Option::IsAutocompletion);
                 if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options.contains(TypingCommand::Option::IsAutocompletion)))
                     options.remove(TypingCommand::Option::RetainAutocorrectionIndicator);
-                TypingCommand::insertText(document.copyRef(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None);
+                auto compositionType = triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None;
+                TypingCommand::insertText(document.copyRef(), text, triggeringEvent, selection, options, compositionType);
             }
 
             // Reveal the current selection. Note that focus may have changed after insertion.
@@ -2065,6 +2065,81 @@ void Editor::toggleUnderline()
     command("ToggleUnderline"_s).execute();
 }
 
+void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection direction)
+{
+    // Note that the passed-in argument is the direction that has been changed to by
+    // some code or user interaction outside the scope of this function. The former
+    // direction is not known, nor is it required for the kind of text alignment
+    // changes done by this function.
+    //
+    // Rules:
+    // When text has no explicit alignment, set alignment to match the writing direction.
+    // If the text has left or right alignment, flip left->right and right->left.
+    // Otherwise, do nothing.
+
+    Ref document = this->document();
+    RefPtr selectionStyle = EditingStyle::styleAtSelectionStart(document->selection().selection());
+    if (!selectionStyle || !selectionStyle->style())
+        return;
+
+    auto value = selectionStyle->style()->propertyAsValueID(CSSPropertyTextAlign);
+    if (!value)
+        return;
+
+    auto newValue = CSSValueInvalid;
+    switch (*value) {
+    case CSSValueStart:
+    case CSSValueEnd:
+        switch (direction) {
+        case WritingDirection::Natural:
+            return;
+        case WritingDirection::LeftToRight:
+            newValue = CSSValueLeft;
+            break;
+        case WritingDirection::RightToLeft:
+            newValue = CSSValueRight;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        break;
+    case CSSValueLeft:
+    case CSSValueWebkitLeft:
+        newValue = CSSValueRight;
+        break;
+    case CSSValueRight:
+    case CSSValueWebkitRight:
+        newValue = CSSValueLeft;
+        break;
+    case CSSValueCenter:
+    case CSSValueWebkitCenter:
+    case CSSValueJustify:
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto isTextControl = [](Element* focusedElement) {
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(focusedElement))
+            return input->isTextField() || input->isSearchField();
+        return is<HTMLTextAreaElement>(focusedElement);
+    };
+
+    if (RefPtr focusedElement = document->focusedElement(); isTextControl(focusedElement.get())) {
+        if (direction != WritingDirection::Natural) {
+            focusedElement->setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
+            document->updateStyleIfNeeded();
+        }
+        return;
+    }
+
+    Ref style = MutableStyleProperties::create();
+    style->setProperty(CSSPropertyTextAlign, newValue);
+    applyParagraphStyle(style.ptr());
+}
+
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
     Ref document = protectedDocument();
@@ -2106,16 +2181,12 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     CheckedPtr renderer = node->renderer();
+    if (renderer && !is<RenderBlockFlow>(*renderer))
+        renderer = renderer->containingBlock();
     if (!renderer)
         return result;
 
-    if (!renderer->isRenderBlockFlow()) {
-        renderer = renderer->containingBlock();
-        if (!renderer)
-            return result;
-    }
-
-    switch (renderer->writingMode().bidiDirection()) {
+    switch (downcast<RenderBlockFlow>(*renderer).writingMode().bidiDirection()) {
     case TextDirection::LTR:
         return WritingDirection::LeftToRight;
     case TextDirection::RTL:
@@ -2412,6 +2483,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     client()->startDelayingAndCoalescingContentChangeNotifications();
 #endif
 
+    RefPtr<CompositionEvent> event;
     RefPtr target { document->focusedElement() };
     if (target) {
         // Dispatch an appropriate composition event to the focused node.
@@ -2429,7 +2501,6 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         // 3. Canceling the ongoing composition.
         //    Send a compositionend event when function deletes the existing composition node, i.e.
         //    m_compositionNode != 0 && test.isEmpty().
-        RefPtr<CompositionEvent> event;
         if (!m_compositionNode) {
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
@@ -2465,7 +2536,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     m_customCompositionAnnotations.clear();
 
     if (!text.isEmpty()) {
-        TypingCommand::insertText(document.copyRef(), text, OptionSet { TypingCommand::Option::SelectInsertedText, TypingCommand::Option::PreventSpellChecking }, TypingCommand::TextCompositionType::Pending);
+        TypingCommand::insertText(document.copyRef(), text, event.get(), OptionSet { TypingCommand::Option::SelectInsertedText, TypingCommand::Option::PreventSpellChecking }, TypingCommand::TextCompositionType::Pending);
 
         // Find out what node has the composition now.
         Position base = document->selection().selection().base().downstream();

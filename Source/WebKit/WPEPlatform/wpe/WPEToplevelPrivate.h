@@ -27,6 +27,19 @@
 
 #include "WPEToplevel.h"
 #include "WPEView.h"
+#include <wtf/glib/GRefPtr.h>
 
+#if USE(ATK)
+typedef struct _AtkObject AtkObject;
+#endif
+
+GList* wpeToplevelList();
 void wpeToplevelAddView(WPEToplevel*, WPEView*);
 void wpeToplevelRemoveView(WPEToplevel*, WPEView*);
+GRefPtr<WPEView> wpeToplevelGetView(WPEToplevel*, size_t);
+
+
+#if USE(ATK)
+AtkObject* wpeToplevelGetOrCreateAccessibleAtk(WPEToplevel*);
+AtkObject* wpeToplevelGetAccessibleAtk(WPEToplevel*);
+#endif

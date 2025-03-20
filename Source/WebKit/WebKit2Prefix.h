@@ -65,6 +65,7 @@
 #include <mutex>
 #include <string>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #endif
 
 #ifdef __OBJC__

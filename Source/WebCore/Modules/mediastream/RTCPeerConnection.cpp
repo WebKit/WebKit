@@ -569,7 +569,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
     Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
     certificates.reserveInitialCapacity(configuration.certificates.size());
     for (auto& certificate : configuration.certificates) {
-        if (!origin.isSameOriginAs(certificate->origin()))
+        if (!origin.isSameOriginAs(certificate->protectedOrigin()))
             return Exception { ExceptionCode::InvalidAccessError, "Certificate does not have a valid origin"_s };
 
         if (currentMilliSeconds > certificate->expires())
@@ -799,28 +799,28 @@ void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, newState);
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, newState] {
-        if (isClosed() || m_iceGatheringState == newState)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [newState](auto& connection) {
+        if (connection.isClosed() || connection.m_iceGatheringState == newState)
             return;
 
-        m_iceGatheringState = newState;
-        dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        updateConnectionState();
+        connection.m_iceGatheringState = newState;
+        connection.dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        connection.updateConnectionState();
     });
 }
 
 void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-        if (isClosed())
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& connection) {
+        if (connection.isClosed())
             return;
-        auto newState = computeIceConnectionStateFromIceTransports();
-        if (m_iceConnectionState == newState)
+        auto newState = connection.computeIceConnectionStateFromIceTransports();
+        if (connection.m_iceConnectionState == newState)
             return;
 
-        m_iceConnectionState = newState;
-        dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        updateConnectionState();
+        connection.m_iceConnectionState = newState;
+        connection.dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        connection.updateConnectionState();
     });
 }
 
@@ -943,34 +943,34 @@ void RTCPeerConnection::processIceTransportChanges()
 
 void RTCPeerConnection::updateNegotiationNeededFlag(std::optional<uint32_t> eventId)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, eventId]() mutable {
-        if (isClosed())
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [eventId](auto& connection) mutable {
+        if (connection.isClosed())
             return;
         if (!eventId) {
-            if (!m_negotiationNeededEventId)
+            if (!connection.m_negotiationNeededEventId)
                 return;
-            eventId = m_negotiationNeededEventId;
+            eventId = connection.m_negotiationNeededEventId;
         }
-        if (m_hasPendingOperation) {
-            m_negotiationNeededEventId = *eventId;
+        if (connection.m_hasPendingOperation) {
+            connection.m_negotiationNeededEventId = *eventId;
             return;
         }
-        if (signalingState() != RTCSignalingState::Stable) {
-            m_negotiationNeededEventId = *eventId;
+        if (connection.signalingState() != RTCSignalingState::Stable) {
+            connection.m_negotiationNeededEventId = *eventId;
             return;
         }
 
-        if (!protectedBackend()->isNegotiationNeeded(*eventId))
+        if (!connection.protectedBackend()->isNegotiationNeeded(*eventId))
             return;
 
-        dispatchEvent(Event::create(eventNames().negotiationneededEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        connection.dispatchEvent(Event::create(eventNames().negotiationneededEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 
 void RTCPeerConnection::scheduleEvent(Ref<Event>&& event)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, event = WTFMove(event)]() mutable {
-        dispatchEvent(event);
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [event = WTFMove(event)](auto& connection) mutable {
+        connection.dispatchEvent(event);
     });
 }
 
@@ -982,13 +982,13 @@ void RTCPeerConnection::dispatchEvent(Event& event)
 
 void RTCPeerConnection::dispatchDataChannelEvent(UniqueRef<RTCDataChannelHandler>&& channelHandler, String&& label, RTCDataChannelInit&& channelInit)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, label = WTFMove(label), channelHandler = WTFMove(channelHandler), channelInit = WTFMove(channelInit)]() mutable {
-        if (isClosed())
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [label = WTFMove(label), channelHandler = WTFMove(channelHandler), channelInit = WTFMove(channelInit)](auto& connection) mutable {
+        if (connection.isClosed())
             return;
 
-        auto channel = RTCDataChannel::create(*document(), channelHandler.moveToUniquePtr(), WTFMove(label), WTFMove(channelInit), RTCDataChannelState::Open);
-        ALWAYS_LOG(LOGIDENTIFIER, makeString("Dispatching data-channel event for channel "_s, channel->label()));
-        dispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, Ref { channel }));
+        Ref channel = RTCDataChannel::create(*connection.document(), channelHandler.moveToUniquePtr(), WTFMove(label), WTFMove(channelInit), RTCDataChannelState::Open);
+        ALWAYS_LOG_WITH_THIS(&connection, LOGIDENTIFIER_WITH_THIS(&connection), makeString("Dispatching data-channel event for channel "_s, channel->label()));
+        connection.dispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, Ref { channel }));
         channel->fireOpenEventIfNeeded();
     });
 }

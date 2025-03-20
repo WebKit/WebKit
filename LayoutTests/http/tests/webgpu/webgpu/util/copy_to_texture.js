@@ -1,6 +1,6 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { assert, memcpy } from '../../common/util/util.js';import { GPUTest, TextureTestMixin } from '../gpu_test.js';
+**/import { assert, memcpy } from '../../common/util/util.js';import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../gpu_test.js';
 import { reifyExtent3D, reifyOrigin3D } from '../util/unions.js';
 
 import { makeInPlaceColorConversion } from './color_space_conversion.js';
@@ -55,7 +55,7 @@ export const kCopySubrectInfo = [
 }];
 
 
-export class CopyToTextureUtils extends TextureTestMixin(GPUTest) {
+export class TextureUploadingUtils extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
   doFlipY(
   sourcePixels,
   width,
@@ -187,6 +187,5 @@ export class CopyToTextureUtils extends TextureTestMixin(GPUTest) {
       copySize,
       texelCompareOptions
     );
-    this.trackForCleanup(dstTextureCopyView.texture);
   }
 }

@@ -13,13 +13,16 @@ Some platform (e.g. Metal) require a fence call to make writes visible
 to reads performed by the same invocation. These tests attempt to ensure
 WebGPU implementations emit correct fence calls.`;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable, iterRange } from '../../../../common/util/util.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { kPossibleReadWriteStorageTextureFormats } from '../../../format_info.js';
+import { UniqueFeaturesOrLimitsGPUTest } from '../../../gpu_test.js';
 import { PRNG } from '../../../util/prng.js';
 
-const kRWStorageFormats = ['r32uint', 'r32sint', 'r32float'];
 const kDimensions = ['1d', '2d', '2d-array', '3d'];
 
-export const g = makeTestGroup(GPUTest);
+// MAINTENANCE_TODO: Switch this to AllFeaturesMaxLimitsGPUTest
+// Currently the test breaks if switch as it asks for a texture larger
+// than the max size.
+export const g = makeTestGroup(UniqueFeaturesOrLimitsGPUTest);
 
 function indexToCoord(dim) {
   switch (dim) {
@@ -139,12 +142,16 @@ function getTextureSize(numTexels, dim) {
 
 g.test('texture_intra_invocation_coherence').
 desc(`Tests writes from an invocation are visible to reads from the same invocation`).
-params((u) => u.combine('format', kRWStorageFormats).combine('dim', kDimensions)).
+params((u) =>
+u.combine('format', kPossibleReadWriteStorageTextureFormats).combine('dim', kDimensions)
+).
 beforeAllSubcases((t) => {
   t.selectDeviceForTextureFormatOrSkipTestCase(t.params.format);
 }).
 fn((t) => {
   t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures');
+  t.skipIfTextureFormatNotSupported(t.params.format);
+  t.skipIfTextureFormatNotUsableAsReadWriteStorageTexture(t.params.format);
 
   const wgx = 16;
   const wgy = t.device.limits.maxComputeInvocationsPerWorkgroup / wgx;
@@ -204,7 +211,8 @@ fn main(@builtin(global_invocation_id) gid : vec3u) {
   // To get a variety of testing, seed the random number generator based on which case this is.
   // This means subcases will not execute the same code.
   const seed =
-  kRWStorageFormats.indexOf(t.params.format) * kRWStorageFormats.length +
+  kPossibleReadWriteStorageTextureFormats.indexOf(t.params.format) *
+  kPossibleReadWriteStorageTextureFormats.length +
   kDimensions.indexOf(t.params.dim);
   const prng = new PRNG(seed);
 
@@ -238,32 +246,27 @@ fn main(@builtin(global_invocation_id) gid : vec3u) {
     write_indices,
     GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE
   );
-  t.trackForCleanup(write_index_buffer);
   const read_index_buffer = t.makeBufferWithContents(
     read_indices,
     GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE
   );
-  t.trackForCleanup(read_index_buffer);
   const write_mask_buffer = t.makeBufferWithContents(
     write_masks,
     GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE
   );
-  t.trackForCleanup(write_mask_buffer);
-  const output_buffer = t.makeBufferWithContents(
-    new Uint32Array([...iterRange(invocations, (x) => 0)]),
-    GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
-  );
-  t.trackForCleanup(output_buffer);
+  const output_buffer = t.createBufferTracked({
+    size: invocations * 4,
+    usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
+  });
 
   // Texture
   const texture_size = getTextureSize(invocations * num_writes_per_invocation, t.params.dim);
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format: t.params.format,
     dimension: t.params.dim === '2d-array' ? '2d' : t.params.dim,
     size: texture_size,
     usage: GPUTextureUsage.STORAGE_BINDING
   });
-  t.trackForCleanup(texture);
 
   const pipeline = t.device.createComputePipeline({
     layout: 'auto',

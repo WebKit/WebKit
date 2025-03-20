@@ -36,10 +36,13 @@ class WebPage;
 class WebModelPlayerProvider final : public WebCore::ModelPlayerProvider {
     WTF_MAKE_TZONE_ALLOCATED(WebModelPlayerProvider);
 public:
-    WebModelPlayerProvider(WebPage&);
+    static Ref<WebModelPlayerProvider> create(WebPage&);
+
     virtual ~WebModelPlayerProvider();
 
 private:
+    WebModelPlayerProvider(WebPage&);
+
     // WebCore::ModelPlayerProvider overrides.
     RefPtr<WebCore::ModelPlayer> createModelPlayer(WebCore::ModelPlayerClient&) final;
     void deleteModelPlayer(WebCore::ModelPlayer&) final;

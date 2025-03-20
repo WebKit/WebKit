@@ -171,8 +171,10 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
         });
     }
 
-    _refreshPreview()
+    async _refreshPreview()
     {
+        await this.representedObject.ensureEffect();
+
         this._previewContainer.removeChildren();
 
         let keyframes = this.representedObject.keyframes;

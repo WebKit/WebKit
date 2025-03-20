@@ -46,7 +46,6 @@ struct TextRecognitionResult;
 
 enum class EnterKeyHint : uint8_t;
 enum class PageIsEditable : bool;
-enum class PopoverVisibilityState : bool;
 enum class ToggleState : bool;
 
 #if PLATFORM(IOS_FAMILY)
@@ -55,11 +54,6 @@ enum class SelectionRenderingBehavior : bool;
 
 enum class FireEvents : bool { No, Yes };
 enum class FocusPreviousElement : bool { No, Yes };
-enum class PopoverState : uint8_t {
-    None,
-    Auto,
-    Manual,
-};
 
 class HTMLElement : public StyledElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLElement);
@@ -158,18 +152,17 @@ public:
 
     void queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState);
     ExceptionOr<void> showPopover(const ShowPopoverOptions&);
-    ExceptionOr<void> showPopoverInternal(const HTMLElement* = nullptr);
+    ExceptionOr<void> showPopoverInternal(HTMLElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
     ExceptionOr<bool> togglePopover(std::optional<std::variant<WebCore::HTMLElement::TogglePopoverOptions, bool>>);
 
-    PopoverState popoverState() const;
     const AtomString& popover() const;
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
     bool isValidCommandType(const CommandType) override;
-    bool handleCommandInternal(const HTMLButtonElement& invoker, const CommandType&) override;
+    bool handleCommandInternal(HTMLButtonElement& invoker, const CommandType&) override;
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
@@ -208,6 +201,8 @@ protected:
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
+    void setInvoker(HTMLElement*);
+
     String nodeName() const final;
 
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);

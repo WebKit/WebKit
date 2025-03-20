@@ -39,13 +39,15 @@ class MemoryIndex;
 class MemoryIndexCursor : public MemoryCursor {
     WTF_MAKE_TZONE_ALLOCATED(MemoryIndexCursor);
 public:
-    MemoryIndexCursor(MemoryIndex&, const IDBCursorInfo&);
+    static Ref<MemoryIndexCursor> create(MemoryIndex&, const IDBCursorInfo&, MemoryBackingStoreTransaction&);
+
     virtual ~MemoryIndexCursor();
 
     void indexRecordsAllChanged();
     void indexValueChanged(const IDBKeyData& indexKey, const IDBKeyData& primaryKey);
 
 private:
+    MemoryIndexCursor(MemoryIndex&, const IDBCursorInfo&, MemoryBackingStoreTransaction&);
     void currentData(IDBGetResult&) final;
     void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) final;
 

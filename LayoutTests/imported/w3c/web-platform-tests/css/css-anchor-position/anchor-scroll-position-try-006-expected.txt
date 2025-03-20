@@ -1,6 +1,8 @@
 
-FAIL Should use the last fallback position initially assert_equals: Anchored element should be at the top of anchor expected 600 but got 800
-FAIL Should use the third fallback position with enough space below assert_equals: Anchored element should be at the bottom of anchor expected 450 but got 700
-FAIL Should use the second fallback position with enough space right assert_equals: Anchored element should be at the top of anchor expected 450 but got 800
-FAIL Should use the first fallback position with enough space below and right assert_equals: Anchored element should be at the bottom of anchor expected 450 but got 700
+PASS Should use the last (fourth) position option initially
+FAIL Should still use the last position option as long as it fits. assert_equals: Anchored element should be at the top of anchor expected 350 but got 600
+FAIL Should use the third position option with enough space below, and not enough above assert_equals: Anchored element should be at the bottom of anchor expected 199 but got 500
+FAIL Should use the second position option with enough space right assert_equals: Anchored element should be at the top of anchor expected 450 but got 600
+FAIL Should still use the second position option as long as it fits assert_equals: Anchored element should be at the top of anchor expected 350 but got 600
+FAIL Should use the first position option with enough space below and right assert_equals: Anchored element should be at the bottom of anchor expected 199 but got 500
 

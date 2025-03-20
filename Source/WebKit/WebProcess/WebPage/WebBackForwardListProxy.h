@@ -50,14 +50,12 @@ private:
     void setChildItem(WebCore::BackForwardFrameItemIdentifier, Ref<WebCore::HistoryItem>&&) final;
 
     void goToItem(WebCore::HistoryItem&) override;
-    void goToProvisionalItem(const WebCore::HistoryItem&) final;
-    void clearProvisionalItem(const WebCore::HistoryItem&) final;
-    void commitProvisionalItem(const WebCore::HistoryItem&) final;
 
     RefPtr<WebCore::HistoryItem> itemAtIndex(int, WebCore::FrameIdentifier) override;
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
     bool containsItem(const WebCore::HistoryItem&) const final;
+    bool isWebBackForwardListProxy() const final { return true; }
     const WebBackForwardListCounts& cacheListCountsIfNecessary() const;
 
     void close() override;
@@ -67,3 +65,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebBackForwardListProxy)
+static bool isType(const WebCore::BackForwardClient& client) { return client.isWebBackForwardListProxy(); }
+SPECIALIZE_TYPE_TRAITS_END()

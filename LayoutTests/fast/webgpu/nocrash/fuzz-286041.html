@@ -38,8 +38,11 @@ async function imageWithData(width, height, color0, color1) {
   return URL.createObjectURL(blob);
 }
 </script>
+
 <script>
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 
 async function window0() {
     try {
@@ -110,7 +113,8 @@ let adapter0 = await navigator.gpu.requestAdapter({}
  await device0.queue.onSubmittedWorkDone();
 // END
 } catch {}
-globalThis.testRunner?.notifyDone();
+console.log('Pass')
+    globalThis.testRunner?.notifyDone();
 try {
 } catch {}
 try {
@@ -129,3 +133,4 @@ onload = async () => {
   }
 };
 </script>
+

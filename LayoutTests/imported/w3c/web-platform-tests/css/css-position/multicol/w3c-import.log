@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-in-multicols-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-rtl-in-multicols.tentative-expected.html
@@ -22,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-rtl-ltr-in-multicols.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vrl-in-multicols-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-rtl-in-multicols.tentative-expected.html

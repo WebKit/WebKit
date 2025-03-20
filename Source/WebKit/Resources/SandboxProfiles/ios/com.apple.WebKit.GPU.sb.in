@@ -100,9 +100,7 @@
     (allow mach-lookup
            (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
            (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
-#if ENABLE(LINEAR_MEDIA_PLAYER)
            (global-name "com.apple.coremedia.mediaplaybackd.videotarget.xpc") ; Needed for FigVideoTarget
-#endif
            (global-name "com.apple.coremedia.remotequeue"))
     (allow mach-lookup
 #if HAVE(REFACTORED_MEDIASERVERD)
@@ -283,7 +281,7 @@
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
-    (allow iokit-open-user-client (with telemetry) (with report)
+    (allow iokit-open-user-client
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
         (apply-message-filter
             (allow (with telemetry) (with report) (with message "IOSurfaceAcceleratorClient")
@@ -667,17 +665,6 @@
     "com.apple.avfoundation.videoperformancehud") ;; <rdar://problem/31594568>
 
 ;; Sandbox extensions
-(define (apply-read-and-issue-extension op path-filter)
-    (op file-read* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
-(define (apply-write-and-issue-extension op path-filter)
-    (op file-write* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
-(define (read-only-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter))
-(define (read-write-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter)
-    (apply-write-and-issue-extension allow path-filter))
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
@@ -820,6 +807,7 @@
         SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
+        SYS_kqueue
         SYS_kqueue_workloop_ctl
         SYS_lseek
         SYS_lstat64
@@ -961,6 +949,7 @@
     io_service_get_matching_services_bin
     io_service_open_extended
     mach_eventlink_associate
+    mach_eventlink_create
     mach_exception_raise
     mach_memory_entry_ownership
     mach_port_extract_right

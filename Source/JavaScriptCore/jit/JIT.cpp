@@ -53,6 +53,7 @@
 #include "TypeProfilerLog.h"
 #include <wtf/BubbleSort.h>
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/text/MakeString.h>
 
@@ -389,7 +390,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_new_async_generator_func)
         DEFINE_OP(op_new_async_generator_func_exp)
         DEFINE_OP(op_new_object)
-        DEFINE_OP(op_new_regexp)
+        DEFINE_OP(op_new_reg_exp)
         DEFINE_OP(op_not)
         DEFINE_OP(op_nstricteq)
         DEFINE_OP(op_create_lexical_environment)
@@ -858,12 +859,9 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
 
     stackOverflowWithEntry.link(this);
     emitFunctionPrologue();
-    stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
-    callThrowOperationWithCallFrameRollback(operationThrowStackOverflowError, regT0);
+    stackOverflow.link(this);
+    jumpThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::ThrowStackOverflowAtPrologue).retaggedCode<NoPtrTag>()));
 
     ASSERT(m_jmpTable.isEmpty());
 
@@ -1027,6 +1025,10 @@ CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, BaselineJITPla
 
 CompilationResult JIT::compileSync(VM&, CodeBlock* codeBlock, JITCompilationEffort effort)
 {
+#if USE(PROTECTED_JIT)
+    // Must be constructed before we allocate anything using SequesteredArenaMalloc
+    ArenaLifetime saLifetime;
+#endif
     auto plan = adoptRef(*new BaselineJITPlan(codeBlock));
     plan->compileSync(effort);
     return plan->finalize();
@@ -1092,11 +1094,6 @@ void JIT::exceptionCheck(Jump jumpToHandler)
 void JIT::exceptionCheck()
 {
     exceptionCheck(emitExceptionCheck(vm()));
-}
-
-void JIT::exceptionChecksWithCallFrameRollback(Jump jumpToHandler)
-{
-    jumpToHandler.linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()), this);
 }
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+* Copyright (C) 2015-2025 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -36,10 +36,9 @@
     [ImplementedAs=isClonable] readonly attribute boolean clonable;
     [EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] readonly attribute boolean serializable;
     readonly attribute Element host;
-    attribute EventHandler onslotchange;
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, ImplementedAs=registryForBindings] readonly attribute CustomElementRegistry? customElementRegistry;
     [EnabledBySetting=ShadowRootReferenceTargetEnabled] attribute [AtomString] DOMString referenceTarget;
-
-    [ImplementedAs=registryForBindings, EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? customElements;
+    attribute EventHandler onslotchange;
 };
 
 ShadowRoot includes DocumentOrShadowRoot;

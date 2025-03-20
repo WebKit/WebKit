@@ -37,9 +37,7 @@
 #import "DocumentMarkerController.h"
 #import "Editing.h"
 #import "EditorClient.h"
-#import "HTMLInputElement.h"
 #import "HTMLNames.h"
-#import "HTMLTextAreaElement.h"
 #import "LocalFrame.h"
 #import "MutableStyleProperties.h"
 #import "Pasteboard.h"
@@ -56,79 +54,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection direction)
-{
-    // Note that the passed-in argument is the direction that has been changed to by
-    // some code or user interaction outside the scope of this function. The former
-    // direction is not known, nor is it required for the kind of text alignment
-    // changes done by this function.
-    //
-    // Rules:
-    // When text has no explicit alignment, set to alignment to match the writing direction.
-    // If the text has left or right alignment, flip left->right and right->left. 
-    // Otherwise, do nothing.
-
-    Ref document = protectedDocument();
-    auto selectionStyle = EditingStyle::styleAtSelectionStart(document->selection().selection());
-    if (!selectionStyle || !selectionStyle->style())
-         return;
-
-    auto value = selectionStyle->style()->propertyAsValueID(CSSPropertyTextAlign);
-    if (!value)
-        return;
-        
-    CSSValueID newValue;
-    switch (*value) {
-    case CSSValueStart:
-    case CSSValueEnd:
-        switch (direction) {
-        case WritingDirection::Natural:
-            // no-op
-            return;
-        case WritingDirection::LeftToRight:
-            newValue = CSSValueLeft;
-            break;
-        case WritingDirection::RightToLeft:
-            newValue = CSSValueRight;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        break;
-    case CSSValueLeft:
-    case CSSValueWebkitLeft:
-        newValue = CSSValueRight;
-        break;
-    case CSSValueRight:
-    case CSSValueWebkitRight:
-        newValue = CSSValueLeft;
-        break;
-    case CSSValueCenter:
-    case CSSValueWebkitCenter:
-    case CSSValueJustify:
-        // no-op
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr focusedElement = document->focusedElement();
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(focusedElement); (input && (input->isTextField() || input->isSearchField()))
-        || is<HTMLTextAreaElement>(focusedElement)) {
-        if (direction == WritingDirection::Natural)
-            return;
-        focusedElement->setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
-        document->updateStyleIfNeeded();
-        return;
-    }
-
-    auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyTextAlign, newValue);
-    applyParagraphStyle(style.ptr());
-}
 
 void Editor::removeUnchangeableStyles()
 {

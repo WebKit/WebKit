@@ -123,7 +123,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                 if (RefPtr frame = document().frame()) {
                     frame->eventHandler().setCapturingMouseEventsElement(this);
                     m_capturing = true;
-                    if (Page* page = document().page())
+                    if (RefPtr page = document().page())
                         page->chrome().registerPopupOpeningObserver(*this);
                 }
             }
@@ -191,7 +191,7 @@ void SpinButtonElement::releaseCapture()
         if (RefPtr frame = document().frame()) {
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
             m_capturing = false;
-            if (Page* page = document().page())
+            if (RefPtr page = document().page())
                 page->chrome().unregisterPopupOpeningObserver(*this);
         }
     }
@@ -199,7 +199,7 @@ void SpinButtonElement::releaseCapture()
 
 bool SpinButtonElement::matchesReadWritePseudoClass() const
 {
-    return shadowHost()->matchesReadWritePseudoClass();
+    return protectedShadowHost()->matchesReadWritePseudoClass();
 }
 
 void SpinButtonElement::startRepeatingTimer()

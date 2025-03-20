@@ -40,8 +40,10 @@ public:
 
     WEBCORE_EXPORT AuthenticationChallenge(NSURLAuthenticationChallenge *);
 
+#ifdef __OBJC__
     id sender() const { return m_sender.get(); }
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
+#endif
 
     WEBCORE_EXPORT void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
     WEBCORE_EXPORT AuthenticationClient* authenticationClient() const;

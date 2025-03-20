@@ -29,6 +29,7 @@
 
 #import "LengthBox.h"
 #import "PlatformControl.h"
+#import <wtf/CheckedRef.h>
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ private:
     void drawCellFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
     void drawCellOrFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, bool drawCell = true);
 
-    ControlFactoryMac& m_controlFactory;
+    const CheckedRef<ControlFactoryMac> m_controlFactory;
 };
 
 } // namespace WebCore

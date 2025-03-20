@@ -245,6 +245,9 @@ static MemoryCompactRobinHoodHashSet<String>& schemesHandledBySchemeHandler() WT
 
 void LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(const String& scheme)
 {
+    if (scheme == "about"_s)
+        return;
+
     Locker locker { schemeRegistryLock };
     schemesHandledBySchemeHandler().add(scheme);
 }
@@ -446,6 +449,9 @@ bool LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& s
 
 void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
 {
+    if (scheme == "about"_s)
+        return;
+
     ASSERT(!isInNetworkProcess());
     if (scheme.isNull())
         return;

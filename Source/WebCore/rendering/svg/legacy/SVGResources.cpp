@@ -183,9 +183,23 @@ static inline bool isChainableResource(const SVGElement& element, const SVGEleme
     return false;
 }
 
+static inline bool svgPaintTypeHasURL(const SVGPaintType& paintType)
+{
+    switch (paintType) {
+    case SVGPaintType::URI:
+    case SVGPaintType::URINone:
+    case SVGPaintType::URICurrentColor:
+    case SVGPaintType::URIRGBColor:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(TreeScope& treeScope, const SVGPaintType& paintType, const String& paintUri, AtomString& id, bool& hasPendingResource)
 {
-    if (paintType != SVGPaintType::URI && paintType != SVGPaintType::URIRGBColor && paintType != SVGPaintType::URICurrentColor)
+    if (!svgPaintTypeHasURL(paintType))
         return nullptr;
 
     id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.protectedDocumentScope());

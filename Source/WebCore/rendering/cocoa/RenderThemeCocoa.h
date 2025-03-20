@@ -65,6 +65,7 @@ protected:
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const override;
+    bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const override;
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -80,6 +81,7 @@ protected:
 
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    bool paintMenuListButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     void adjustMeterStyle(RenderStyle&, const Element*) const override;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
@@ -117,6 +119,11 @@ protected:
     bool paintSwitchThumb(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
+    void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) override;
+    void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) override;
+
+    bool supportsFocusRing(const RenderObject&, const RenderStyle&) const override;
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/RenderThemeCocoaAdditions.h>
 #endif
@@ -135,7 +142,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO)
-    String mediaControlsStyleSheet() override;
+    Vector<String> mediaControlsStyleSheets(const HTMLMediaElement&) override;
     Vector<String, 2> mediaControlsScripts() override;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
     String mediaControlsFormattedStringForDuration(double) override;

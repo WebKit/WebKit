@@ -29,20 +29,28 @@
 #import "AttachmentLayout.h"
 #import "CaretRectComputation.h"
 #import "ColorBlending.h"
+#import "DateComponents.h"
 #import "DrawGlyphsRecorder.h"
 #import "FloatRoundedRect.h"
 #import "FontCacheCoreText.h"
 #import "GraphicsContextCG.h"
+#import "HTMLButtonElement.h"
 #import "HTMLDataListElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMeterElement.h"
 #import "HTMLOptionElement.h"
+#import "HTMLSelectElement.h"
 #import "ImageBuffer.h"
+#import "LocalizedDateCache.h"
+#import "NodeRenderStyle.h"
 #import "Page.h"
+#import "RenderButton.h"
+#import "RenderMenulist.h"
 #import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderText.h"
+#import "Theme.h"
 #import "TypedElementDescendantIteratorInlines.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -73,6 +81,34 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/RenderThemeCocoaAdditionsBefore.mm>
+#else
+
+namespace WebCore {
+
+constexpr auto logicalSwitchHeight = 31.f;
+constexpr auto logicalSwitchWidth = 51.f;
+
+static bool renderThemePaintSwitchThumb(OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
+{
+    return true;
+}
+
+static bool renderThemePaintSwitchTrack(OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&)
+{
+    return true;
+}
+
+static Vector<String> additionalMediaControlsStyleSheets(const HTMLMediaElement&)
+{
+    return { };
+}
+
+} // namespace WebCore
+
 #endif
 
 @interface WebCoreRenderThemeBundle : NSObject
@@ -186,11 +222,15 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
 
 #if ENABLE(VIDEO)
 
-String RenderThemeCocoa::mediaControlsStyleSheet()
+Vector<String> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
 {
     if (m_mediaControlsStyleSheet.isEmpty())
         m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
-    return m_mediaControlsStyleSheet;
+
+    auto mediaControlsStyleSheets = Vector<String>::from(m_mediaControlsStyleSheet);
+    mediaControlsStyleSheets.appendVector(additionalMediaControlsStyleSheets(mediaElement));
+
+    return mediaControlsStyleSheets;
 }
 
 Vector<String, 2> RenderThemeCocoa::mediaControlsScripts()
@@ -306,7 +346,12 @@ Color RenderThemeCocoa::controlTintColor(const RenderStyle& style, OptionSet<Sty
     if (!style.hasAutoAccentColor())
         return style.usedAccentColor(options);
 
-    return systemColor(CSSValueAppleSystemBlue, options);
+#if PLATFORM(MAC)
+    auto cssColorValue = CSSValueAppleSystemControlAccent;
+#else
+    auto cssColorValue = CSSValueAppleSystemBlue;
+#endif
+    return systemColor(cssColorValue, options | StyleColorOptions::UseSystemAppearance);
 }
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -411,6 +456,16 @@ void RenderThemeCocoa::adjustInnerSpinButtonStyle(RenderStyle& style, const Elem
 #endif
 
     RenderTheme::adjustInnerSpinButtonStyle(style, element);
+}
+
+bool RenderThemeCocoa::paintInnerSpinButton(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (paintInnerSpinButtonStyleForVectorBasedControls(box, paintInfo, rect))
+        return false;
+#endif
+
+    return RenderTheme::paintInnerSpinButton(box, paintInfo, rect);
 }
 
 void RenderThemeCocoa::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
@@ -521,6 +576,16 @@ void RenderThemeCocoa::paintMenuListButtonDecorations(const RenderBox& box, cons
 #endif
 
     RenderTheme::paintMenuListButtonDecorations(box, paintInfo, rect);
+}
+
+bool RenderThemeCocoa::paintMenuListButton(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (paintMenuListButtonForVectorBasedControls(box, paintInfo, rect))
+        return false;
+#endif
+
+    return RenderTheme::paintMenuListButton(box, paintInfo, rect);
 }
 
 void RenderThemeCocoa::adjustMeterStyle(RenderStyle& style, const Element* element) const
@@ -750,27 +815,87 @@ void RenderThemeCocoa::adjustSwitchStyle(RenderStyle& style, const Element* elem
         return;
 #endif
 
+#if PLATFORM(MAC)
     RenderTheme::adjustSwitchStyle(style, element);
+#else
+    UNUSED_PARAM(element);
+
+    // FIXME: Deduplicate sizing with the generic code somehow.
+    if (style.width().isAuto() || style.height().isAuto()) {
+        style.setLogicalWidth({ logicalSwitchWidth * style.usedZoom(), LengthType::Fixed });
+        style.setLogicalHeight({ logicalSwitchHeight * style.usedZoom(), LengthType::Fixed });
+    }
+
+    adjustSwitchStyleDisplay(style);
+
+    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+        style.setOutlineStyle(BorderStyle::None);
+#endif
 }
 
-bool RenderThemeCocoa::paintSwitchThumb(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+bool RenderThemeCocoa::paintSwitchThumb(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if PLATFORM(MAC)
+    bool useDefaultImplementation = true;
 #if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    if (paintSwitchThumbForVectorBasedControls(box, paintInfo, rect))
-        return false;
+    if (renderer.settings().vectorBasedControlsOnMacEnabled())
+        useDefaultImplementation = false;
+#endif
+    if (useDefaultImplementation)
+        return RenderTheme::paintSwitchThumb(renderer, paintInfo, rect);
 #endif
 
-    return RenderTheme::paintSwitchThumb(box, paintInfo, rect);
+    return renderThemePaintSwitchThumb(extractControlStyleStatesForRenderer(renderer), renderer, paintInfo, rect, platformFocusRingColor(renderer.styleColorOptions()));
 }
 
-bool RenderThemeCocoa::paintSwitchTrack(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+bool RenderThemeCocoa::paintSwitchTrack(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if PLATFORM(MAC)
+    bool useDefaultImplementation = true;
 #if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    if (paintSwitchTrackForVectorBasedControls(box, paintInfo, rect))
-        return false;
+    if (renderer.settings().vectorBasedControlsOnMacEnabled())
+        useDefaultImplementation = false;
+#endif
+    if (useDefaultImplementation)
+        return RenderTheme::paintSwitchTrack(renderer, paintInfo, rect);
 #endif
 
-    return RenderTheme::paintSwitchTrack(box, paintInfo, rect);
+    return renderThemePaintSwitchTrack(extractControlStyleStatesForRenderer(renderer), renderer, paintInfo, rect);
+}
+
+void RenderThemeCocoa::paintPlatformResizer(const RenderLayerModelObject& renderer, GraphicsContext& context, const LayoutRect& resizerCornerRect)
+{
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (paintPlatformResizerForVectorBasedControls(renderer, context, resizerCornerRect))
+        return;
+#endif
+    RenderTheme::paintPlatformResizer(renderer, context, resizerCornerRect);
+}
+
+void RenderThemeCocoa::paintPlatformResizerFrame(const RenderLayerModelObject& renderer, GraphicsContext& context, const LayoutRect& resizerCornerRect)
+{
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (paintPlatformResizerFrameForVectorBasedControls(renderer, context, resizerCornerRect))
+        return;
+#endif
+    RenderTheme::paintPlatformResizerFrame(renderer, context, resizerCornerRect);
+}
+
+bool RenderThemeCocoa::supportsFocusRing(const RenderObject& renderer, const RenderStyle& style) const
+{
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+
+#if PLATFORM(MAC)
+    auto tryFocusRingForVectorBasedControls = renderer.settings().vectorBasedControlsOnMacEnabled();
+#else
+    auto tryFocusRingForVectorBasedControls = renderer.settings().macStyleControlsOnCatalyst();
+#endif
+    if (tryFocusRingForVectorBasedControls)
+        return supportsFocusRingForVectorBasedControls(renderer, style);
+
+#endif
+
+    return RenderTheme::supportsFocusRing(renderer, style);
 }
 
 }

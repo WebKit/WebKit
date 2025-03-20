@@ -392,10 +392,12 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
 
     auto [startFrame, endFrame] = m_ringBuffer->getStoreTimeBounds();
 
+    bool needsFlush = false;
+
     // Check to see if the underlying media has seeked, which would require us to "flush"
     // our outstanding buffers.
     if (rangeStart != m_endTimeAtLastProcess)
-        m_seekTo = endFrame;
+        needsFlush = true;
 
     m_startTimeAtLastProcess = rangeStart;
     m_endTimeAtLastProcess = rangeStart + rangeDuration;
@@ -403,6 +405,9 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // StartOfStream indicates a discontinuity, such as when an AVPlayerItem is re-added
     // to an AVPlayer, so "flush" outstanding buffers.
     if (flagsOut && *flagsOut & kMTAudioProcessingTapFlag_StartOfStream)
+        needsFlush = true;
+
+    if (needsFlush)
         m_seekTo = endFrame;
 
     m_ringBuffer->store(bufferListInOut, itemCount, endFrame);
@@ -414,7 +419,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     *numberFramesOut = 0;
 
     if (m_audioCallback)
-        m_audioCallback(endFrame, itemCount);
+        m_audioCallback(endFrame, itemCount, needsFlush);
 }
 
 void AudioSourceProviderAVFObjC::setAudioCallback(AudioCallback&& callback)

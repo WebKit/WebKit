@@ -78,6 +78,7 @@
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PasteboardItemInfo.h"
+#include "PositionInlines.h"
 #include "Quirks.h"
 #include "Range.h"
 #include "RenderBlock.h"
@@ -87,6 +88,7 @@
 #include "TextIterator.h"
 #include "TextManipulationController.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UnicodeHelpers.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -311,13 +313,18 @@ auto UserSelectNoneStateCache::computeState(Node& targetNode) -> State
     return state;
 }
 
+static String directionAttributeAndValue(TextDirection direction)
+{
+    return makeString("dir=\""_s, direction == TextDirection::LTR ? "ltr"_s : "rtl"_s, '"');
+}
+
 enum class MSOListMode : bool { Preserve, DoNotPreserve };
 class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
     StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Ref<Node>>* nodes, ResolveURLs, SerializeComposedTree, IgnoreUserSelectNone,
-        AnnotateForInterchange, StandardFontFamilySerializationMode, MSOListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
+        AnnotateForInterchange, StandardFontFamilySerializationMode, MSOListMode, bool needsPositionStyleConversion, PreserveDirectionForInlineText, Node* highestNodeToBeSerialized = nullptr);
 
     RefPtr<Node> serializeNodes(const Position& start, const Position& end);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
@@ -375,14 +382,13 @@ public:
         if (!renderer)
             return;
 
-        auto directionValue = renderer->writingMode().bidiDirection() == TextDirection::LTR ? "ltr"_s : "rtl"_s;
-        m_reversedPrecedingMarkup.append(makeString("<body dir=\""_s, WTFMove(directionValue), "\">"_s));
+        m_reversedPrecedingMarkup.append(makeString("<body "_s, directionAttributeAndValue(renderer->writingMode().bidiDirection()), '>'));
         append("</body>"_s);
     }
 
 private:
     bool containsOnlyASCII() const;
-    void appendStyleNodeOpenTag(StringBuilder&, StyleProperties*, Document&, bool isBlock = false);
+    void appendStyleNodeOpenTag(StringBuilder&, StyleProperties*, Document&, bool isBlock = false, std::optional<TextDirection> directionToAppend = std::nullopt);
     const String& styleNodeCloseTag(bool isBlock = false);
 
     String renderedTextRespectingRange(const Text&);
@@ -473,11 +479,14 @@ private:
     bool m_needRelativeStyleWrapper { false };
     bool m_needClearingDiv { false };
     bool m_inMSOList { false };
+    bool m_preserveDirectionForInlineText { false };
+    bool m_hasAppendedAnyText { false };
 };
 
 inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs,
     SerializeComposedTree serializeComposedTree, IgnoreUserSelectNone ignoreUserSelectNone, AnnotateForInterchange annotate,
-    StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
+    StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode, bool needsPositionStyleConversion,
+    PreserveDirectionForInlineText preserveDirectionForInlineText, Node* highestNodeToBeSerialized)
     : MarkupAccumulator(nodes, resolveURLs, start.document()->isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML)
     , m_start(start)
     , m_end(end)
@@ -488,6 +497,7 @@ inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, c
     , m_needsPositionStyleConversion(needsPositionStyleConversion)
     , m_standardFontFamilySerializationMode(standardFontFamilySerializationMode)
     , m_shouldPreserveMSOList(msoListMode == MSOListMode::Preserve)
+    , m_preserveDirectionForInlineText(preserveDirectionForInlineText == PreserveDirectionForInlineText::Yes)
 {
 }
 
@@ -512,14 +522,14 @@ void StyledMarkupAccumulator::wrapWithStyleNode(StyleProperties* style, Document
     append(styleNodeCloseTag(isBlock));
 }
 
-void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StyleProperties* style, Document& document, bool isBlock)
+void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StyleProperties* style, Document& document, bool isBlock, std::optional<TextDirection> directionToAppend)
 {
     // With AnnotateForInterchange::Yes, wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(!shouldAnnotate() || propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
-    if (isBlock)
-        out.append("<div style=\""_s);
-    else
-        out.append("<span style=\""_s);
+    out.append('<', isBlock ? "div"_s : "span"_s, ' ');
+    if (directionToAppend)
+        out.append(directionAttributeAndValue(*directionToAppend), ' ');
+    out.append("style=\""_s);
 
     appendAttributeValue(out, style->asText(CSS::defaultSerializationContext()), document.isHTMLDocument());
     out.append("\">"_s);
@@ -556,7 +566,7 @@ String StyledMarkupAccumulator::takeResults()
 }
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
-{    
+{
     const bool parentIsTextarea = is<HTMLTextAreaElement>(text.parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
@@ -567,7 +577,23 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         // FIXME: Should this be included in forceInline?
         wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
 
-        appendStyleNodeOpenTag(out, wrappingStyle->style(), text.protectedDocument());
+        appendStyleNodeOpenTag(out, wrappingStyle->style(), text.protectedDocument(), false, [&] -> std::optional<TextDirection> {
+            if (m_hasAppendedAnyText)
+                return std::nullopt;
+
+            if (!m_preserveDirectionForInlineText)
+                return std::nullopt;
+
+            auto directionFromText = baseTextDirection(text.wholeText());
+            if (!directionFromText)
+                return std::nullopt;
+
+            auto enclosingBlockDirection = directionOfEnclosingBlock({ const_cast<Text*>(&text), 0 });
+            if (enclosingBlockDirection == directionFromText)
+                return std::nullopt;
+
+            return enclosingBlockDirection;
+        }());
     }
 
     if (!shouldAnnotate() || parentIsTextarea) {
@@ -583,6 +609,8 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
 
     if (wrappingSpan)
         out.append(styleNodeCloseTag());
+
+    m_hasAppendedAnyText = true;
 }
     
 String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
@@ -1053,7 +1081,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     RefPtr specialCommonAncestor = highestAncestorToWrapMarkup(start, end, *commonAncestor, annotate);
 
-    StyledMarkupAccumulator accumulator(start, end, nodes, resolveURLs, serializeComposedTree, ignoreUserSelectNone, annotate, standardFontFamilySerializationMode, msoListMode, needsPositionStyleConversion, specialCommonAncestor.get());
+    StyledMarkupAccumulator accumulator(start, end, nodes, resolveURLs, serializeComposedTree, ignoreUserSelectNone, annotate, standardFontFamilySerializationMode, msoListMode, needsPositionStyleConversion, preserveDirectionForInlineText, specialCommonAncestor.get());
 
     Position adjustedStart = start;
 

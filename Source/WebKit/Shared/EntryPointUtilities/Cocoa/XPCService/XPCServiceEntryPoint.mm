@@ -79,28 +79,33 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
 
 bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
 {
-    clientIdentifier = xpc_dictionary_get_wtfstring(m_initializerMessage, "client-identifier"_s);
+    clientIdentifier = xpcDictionaryGetString(m_initializerMessage, "client-identifier"_s);
     return !clientIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
 {
-    clientBundleIdentifier = xpc_dictionary_get_wtfstring(m_initializerMessage, "client-bundle-identifier"_s);
+    clientBundleIdentifier = xpcDictionaryGetString(m_initializerMessage, "client-bundle-identifier"_s);
     return !clientBundleIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    auto behaviorData = xpc_dictionary_get_data_span(m_initializerMessage, "client-sdk-aligned-behaviors"_s);
+    auto behaviorData = xpcDictionaryGetData(m_initializerMessage, "client-sdk-aligned-behaviors"_s);
     if (behaviorData.empty())
         return false;
-    memcpySpan(behaviors.storageBytes(), behaviorData);
+    auto storageBytes = behaviors.storageBytes();
+    if (behaviorData.size() > storageBytes.size()) {
+        RELEASE_LOG_FAULT(Process, "XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors: Receives too many bytes (got %lu but expected %lu bytes)", behaviorData.size(), storageBytes.size());
+        return false;
+    }
+    memcpySpan(storageBytes, behaviorData);
     return true;
 }
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>& identifier)
 {
-    auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_wtfstring(m_initializerMessage, "process-identifier"_s));
+    auto parsedIdentifier = parseInteger<uint64_t>(xpcDictionaryGetString(m_initializerMessage, "process-identifier"_s));
     if (!parsedIdentifier)
         return false;
     if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*parsedIdentifier))
@@ -112,7 +117,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = xpc_dictionary_get_wtfstring(m_initializerMessage, "ui-process-name"_s);
+    clientProcessName = xpcDictionaryGetString(m_initializerMessage, "ui-process-name"_s);
     return !clientProcessName.isEmpty();
 }
 
@@ -120,32 +125,32 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 {
     xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
 
-    auto inspectorProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "inspector-process"_s);
+    auto inspectorProcess = xpcDictionaryGetString(extraDataInitializationDataObject, "inspector-process"_s);
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
-    auto serviceWorkerProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "service-worker-process"_s);
+    auto serviceWorkerProcess = xpcDictionaryGetString(extraDataInitializationDataObject, "service-worker-process"_s);
     if (!serviceWorkerProcess.isEmpty())
         extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
-    auto registrableDomain = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "registrable-domain"_s);
+    auto registrableDomain = xpcDictionaryGetString(extraDataInitializationDataObject, "registrable-domain"_s);
     if (!registrableDomain.isEmpty())
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 
-    auto isPrewarmedProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "is-prewarmed"_s);
+    auto isPrewarmedProcess = xpcDictionaryGetString(extraDataInitializationDataObject, "is-prewarmed"_s);
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
-    auto isLockdownModeEnabled = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "enable-lockdown-mode"_s);
+    auto isLockdownModeEnabled = xpcDictionaryGetString(extraDataInitializationDataObject, "enable-lockdown-mode"_s);
     if (!isLockdownModeEnabled.isEmpty())
         extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
 
     if (!isClientSandboxed()) {
-        auto userDirectorySuffix = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "user-directory-suffix"_s);
+        auto userDirectorySuffix = xpcDictionaryGetString(extraDataInitializationDataObject, "user-directory-suffix"_s);
         if (!userDirectorySuffix.isEmpty())
             extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
     }
 
-    auto alwaysRunsAtBackgroundPriority = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "always-runs-at-background-priority"_s);
+    auto alwaysRunsAtBackgroundPriority = xpcDictionaryGetString(extraDataInitializationDataObject, "always-runs-at-background-priority"_s);
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
         extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 

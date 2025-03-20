@@ -30,14 +30,14 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKStringPrivate.h>
-#include <sstream>
 #include <string>
-#include <vector>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -137,16 +137,16 @@ inline WTF::String toWTFString(JSContextRef context, JSValueRef value)
 }
 
 template<typename StringType>
-inline std::vector<StringType> split(const StringType& string, char delimiter)
+inline Vector<StringType> split(const StringType& string, char delimiter)
 {
-    std::vector<StringType> result;
+    Vector<StringType> result;
 
     size_t i = 0;
     while (i < string.size()) {
         auto foundIndex = string.find_first_of(delimiter, i);
 
         if (foundIndex != i)
-            result.push_back(string.substr(i, foundIndex - i));
+            result.append(string.substr(i, foundIndex - i));
 
         if (foundIndex == StringType::npos)
             break;
@@ -155,6 +155,23 @@ inline std::vector<StringType> split(const StringType& string, char delimiter)
     }
 
     return result;
+}
+
+inline WTF::String stripTrailingSpacesAddNewline(const WTF::String& string)
+{
+    StringBuilder builder;
+    for (auto line : StringView(string).splitAllowingEmptyEntries('\n')) {
+        while (line.endsWith(' '))
+            line = line.left(line.length() - 1);
+        builder.append(line, '\n');
+    }
+    return builder.toString();
+}
+
+inline WTF::String addLeadingSpaceStripTrailingSpacesAddNewline(const WTF::String& string)
+{
+    auto result = stripTrailingSpacesAddNewline(string);
+    return (result.isEmpty() || result.startsWith('\n')) ? result : makeString(' ', result);
 }
 
 } // namespace WTR

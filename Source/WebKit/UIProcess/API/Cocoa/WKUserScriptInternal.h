@@ -26,6 +26,7 @@
 #import "WKUserScriptPrivate.h"
 
 #import "APIUserScript.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -67,6 +68,6 @@ inline WKUserScriptInjectionTime toWKUserScriptInjectionTime(WebCore::UserScript
 
 @interface WKUserScript () <WKObject> {
 @package
-    API::ObjectStorage<API::UserScript> _userScript;
+    AlignedStorage<API::UserScript> _userScript;
 }
 @end

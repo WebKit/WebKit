@@ -57,16 +57,16 @@ TextStream& operator<<(TextStream& ts, ContentsFormat contentsFormat)
 {
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
-        ts << "RGBA8";
+        ts << "RGBA8"_s;
         break;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
-        ts << "RGBA10";
+        ts << "RGBA10"_s;
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
-        ts << "RGBA16F";
+        ts << "RGBA16F"_s;
         break;
 #endif
     }

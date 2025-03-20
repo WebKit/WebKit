@@ -84,6 +84,7 @@ private:
     void didChangeForm() final;
     void invalidateElementsCollectionCachesInAncestors();
 
+    bool customError() const final { return m_validityStateFlags.customError; }
     bool hasBadInput() const final { return m_validityStateFlags.badInput; }
     bool patternMismatch() const final { return m_validityStateFlags.patternMismatch; }
     bool rangeOverflow() const final { return m_validityStateFlags.rangeOverflow; }

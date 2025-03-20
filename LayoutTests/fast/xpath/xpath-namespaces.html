@@ -1,12 +1,12 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="xpath-test-pre.js"></script>
 </head>
 <body>
-<p>This tests that XPath expressions with prefixes work correctly.</p>
-<div id="console"></div>
+<p></p>
 <script>
+    description("This tests that XPath expressions with prefixes work correctly.");
     var xmlString = '<ns:foo xmlns:ns="http://www.example.org" xmlns:foo="urn:foobar"/>';
 
     var doc = (new DOMParser()).parseFromString(xmlString, "text/xml");
@@ -38,6 +38,5 @@
     checkSnapshot("/xmpl:*", result, [doc.documentElement]);
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

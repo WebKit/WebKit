@@ -183,20 +183,20 @@ bool DestinationColorSpace::usesRec2100TransferFunctions() const
 TextStream& operator<<(TextStream& ts, const DestinationColorSpace& colorSpace)
 {
     if (colorSpace == DestinationColorSpace::SRGB())
-        ts << "sRGB";
+        ts << "sRGB"_s;
     else if (colorSpace == DestinationColorSpace::LinearSRGB())
-        ts << "LinearSRGB";
+        ts << "LinearSRGB"_s;
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
     else if (colorSpace == DestinationColorSpace::DisplayP3())
-        ts << "DisplayP3";
+        ts << "DisplayP3"_s;
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
     else if (colorSpace == DestinationColorSpace::ExtendedSRGB())
-        ts << "ExtendedSRGB";
+        ts << "ExtendedSRGB"_s;
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
     else if (colorSpace == DestinationColorSpace::ExtendedRec2020())
-        ts << "ExtendedRec2020";
+        ts << "ExtendedRec2020"_s;
 #endif
 #if USE(CG)
     else if (auto description = adoptCF(CGColorSpaceCopyICCProfileDescription(colorSpace.platformColorSpace())))

@@ -68,6 +68,11 @@ RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()
     failApplyConstraintCallbacks("Source terminated"_s);
 }
 
+Ref<IPC::Connection> RemoteRealtimeMediaSourceProxy::protectedConnection() const
+{
+    return m_connection;
+}
+
 void RemoteRealtimeMediaSourceProxy::updateConnection()
 {
     m_connection = getSourceConnection(m_shouldCaptureInGPUProcess);
@@ -76,23 +81,23 @@ void RemoteRealtimeMediaSourceProxy::updateConnection()
 void RemoteRealtimeMediaSourceProxy::startProducingData(WebCore::PageIdentifier pageIdentifier)
 {
     m_interrupted = false;
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier, pageIdentifier }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier, pageIdentifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::stopProducingData()
 {
     m_interrupted = false;
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::endProducingData()
 {
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::EndProducingData { m_identifier }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::EndProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const MediaDeviceHashSalts& deviceIDHashSalts, WebCore::PageIdentifier pageIdentifier, CreateCallback&& callback, bool shouldUseRemoteFrame)
 {
-    m_connection->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalts, m_constraints, shouldUseRemoteFrame, pageIdentifier), WTFMove(callback));
+    protectedConnection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalts, m_constraints, shouldUseRemoteFrame, pageIdentifier), WTFMove(callback));
 }
 
 RemoteRealtimeMediaSourceProxy RemoteRealtimeMediaSourceProxy::clone()
@@ -107,14 +112,14 @@ RemoteRealtimeMediaSourceProxy RemoteRealtimeMediaSourceProxy::clone()
 
 void RemoteRealtimeMediaSourceProxy::createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier cloneIdentifier, WebCore::PageIdentifier pageIdentifier)
 {
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, cloneIdentifier, pageIdentifier }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, cloneIdentifier, pageIdentifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
 {
     m_pendingApplyConstraintsRequests.append(std::make_pair(WTFMove(completionHandler), constraints));
     // FIXME: Use sendAsyncWithReply.
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
 
 struct RemoteRealtimeMediaSourceProxy::PromiseConverter {
@@ -126,17 +131,17 @@ struct RemoteRealtimeMediaSourceProxy::PromiseConverter {
 
 Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSourceProxy::takePhoto(PhotoSettings&& settings)
 {
-    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::TakePhoto { identifier(), WTFMove(settings) });
+    return protectedConnection()->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::TakePhoto { identifier(), WTFMove(settings) });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoCapabilities()
 {
-    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities { identifier() });
+    return protectedConnection()->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities { identifier() });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoSettings()
 {
-    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings { identifier() });
+    return protectedConnection()->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings { identifier() });
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
@@ -163,7 +168,7 @@ void RemoteRealtimeMediaSourceProxy::end()
 {
     ASSERT(!m_isEnded);
     m_isEnded = true;
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
+    protectedConnection()->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback)
@@ -199,7 +204,7 @@ void RemoteRealtimeMediaSourceProxy::didFail(CaptureSourceError&& reason)
 
 bool RemoteRealtimeMediaSourceProxy::isPowerEfficient() const
 {
-    auto syncResult = m_connection->sendSync(Messages::UserMediaCaptureManagerProxy::IsPowerEfficient { identifier() }, 0, GPUProcessConnection::defaultTimeout);
+    auto syncResult = protectedConnection()->sendSync(Messages::UserMediaCaptureManagerProxy::IsPowerEfficient { identifier() }, 0, GPUProcessConnection::defaultTimeout);
     auto [isPowerEfficient] = syncResult.takeReplyOr(false);
     return isPowerEfficient;
 }

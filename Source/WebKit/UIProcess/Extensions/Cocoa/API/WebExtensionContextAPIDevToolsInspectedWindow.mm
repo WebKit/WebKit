@@ -34,13 +34,14 @@
 
 #import "APIInspectorExtension.h"
 #import "APISerializedScriptValue.h"
+#import "JavaScriptEvaluationResult.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
 #import <WebCore/ExceptionDetails.h>
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
@@ -72,13 +73,7 @@ void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier web
                 return;
             }
 
-            if (!result.value()) {
-                Expected<std::span<const uint8_t>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(result.value().error());
-                completionHandler({ WTFMove(returnedValue) });
-                return;
-            }
-
-            completionHandler({ result.value()->get().dataReference() });
+            completionHandler({ WTFMove(*result) });
         });
     });
 }

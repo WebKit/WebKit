@@ -1,0 +1,5 @@
+Click me
+No, click me!
+
+FAIL Event Timing: events from programmatic click are not observed assert_implements: Event Timing is not supported. undefined
+

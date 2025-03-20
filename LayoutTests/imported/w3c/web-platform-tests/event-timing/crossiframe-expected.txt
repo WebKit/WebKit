@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+FAIL Event Timing: entries should only be observable by its own frame. assert_implements: Event Timing is not supported undefined
+

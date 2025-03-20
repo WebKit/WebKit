@@ -1,7 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-PASS :sampled_2d_coords:
-PASS :sampled_3d_coords:texture_type="texture_3d"
-PASS :sampled_3d_coords:texture_type="texture_cube"
-PASS :arrayed_2d_coords:
-PASS :arrayed_3d_coords:
 

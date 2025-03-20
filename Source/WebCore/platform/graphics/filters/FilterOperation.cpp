@@ -477,73 +477,73 @@ TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
 {
     switch (filter.type()) {
     case FilterOperation::Type::Reference:
-        ts << "reference";
+        ts << "reference"_s;
         break;
     case FilterOperation::Type::Grayscale: {
         const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
-        ts << "grayscale(" << colorMatrixFilter.amount() << ")";
+        ts << "grayscale("_s << colorMatrixFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Sepia: {
         const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
-        ts << "sepia(" << colorMatrixFilter.amount() << ")";
+        ts << "sepia("_s << colorMatrixFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Saturate: {
         const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
-        ts << "saturate(" << colorMatrixFilter.amount() << ")";
+        ts << "saturate("_s << colorMatrixFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::HueRotate: {
         const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
-        ts << "hue-rotate(" << colorMatrixFilter.amount() << ")";
+        ts << "hue-rotate("_s << colorMatrixFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Invert: {
         const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
-        ts << "invert(" << componentTransferFilter.amount() << ")";
+        ts << "invert("_s << componentTransferFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::AppleInvertLightness: {
-        ts << "apple-invert-lightness()";
+        ts << "apple-invert-lightness()"_s;
         break;
     }
     case FilterOperation::Type::Opacity: {
         const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
-        ts << "opacity(" << componentTransferFilter.amount() << ")";
+        ts << "opacity("_s << componentTransferFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Brightness: {
         const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
-        ts << "brightness(" << componentTransferFilter.amount() << ")";
+        ts << "brightness("_s << componentTransferFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Contrast: {
         const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
-        ts << "contrast(" << componentTransferFilter.amount() << ")";
+        ts << "contrast("_s << componentTransferFilter.amount() << ')';
         break;
     }
     case FilterOperation::Type::Blur: {
         const auto& blurFilter = downcast<BlurFilterOperation>(filter);
-        ts << "blur(" << blurFilter.stdDeviation().value() << ")"; // FIXME: should call floatValueForLength() but that's outisde of platform/.
+        ts << "blur("_s << blurFilter.stdDeviation().value() << ')'; // FIXME: should call floatValueForLength() but that's outisde of platform/.
         break;
     }
     case FilterOperation::Type::DropShadow: {
         const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
-        ts << "drop-shadow(" << dropShadowFilter.x() << " " << dropShadowFilter.y() << " " << dropShadowFilter.location() << " ";
-        ts << dropShadowFilter.color() << ")";
+        ts << "drop-shadow("_s << dropShadowFilter.x() << ' ' << dropShadowFilter.y() << ' ' << dropShadowFilter.location() << ' ';
+        ts << dropShadowFilter.color() << ')';
         break;
     }
     case FilterOperation::Type::Passthrough:
-        ts << "passthrough";
+        ts << "passthrough"_s;
         break;
     case FilterOperation::Type::Default: {
         const auto& defaultFilter = downcast<DefaultFilterOperation>(filter);
-        ts << "default type=" << (int)defaultFilter.representedType();
+        ts << "default type="_s << (int)defaultFilter.representedType();
         break;
     }
     case FilterOperation::Type::None:
-        ts << "none";
+        ts << "none"_s;
         break;
     }
     return ts;

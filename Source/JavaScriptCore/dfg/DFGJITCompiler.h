@@ -87,7 +87,7 @@ struct CallLinkRecord {
 // compilation, and also records information used in linking (e.g. a list of all
 // call to be linked).
 class JITCompiler : public CCallHelpers {
-    WTF_MAKE_TZONE_ALLOCATED(JITCompiler);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(JITCompiler);
 public:
     friend class SpeculativeJIT;
 
@@ -166,8 +166,6 @@ public:
     {
         call(address, OperationPtrTag);
     }
-
-    void exceptionJumpWithCallFrameRollback();
 
     OSRExitCompilationInfo& appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
     {

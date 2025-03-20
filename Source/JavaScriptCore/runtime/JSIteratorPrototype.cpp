@@ -162,8 +162,11 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject
         return throwVMTypeError(globalObject, scope, "Iterator.prototype.forEach requires that |this| be an Object."_s);
 
     JSValue callbackArg = callFrame->argument(0);
-    if (!callbackArg.isCallable())
+    if (!callbackArg.isCallable()) {
+        iteratorClose(globalObject, thisValue);
+        RETURN_IF_EXCEPTION(scope, { });
         return throwVMTypeError(globalObject, scope, "Iterator.prototype.forEach requires the callback argument to be callable."_s);
+    }
 
     auto callData = JSC::getCallData(callbackArg);
     ASSERT(callData.type != CallData::Type::None);

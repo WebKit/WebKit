@@ -47,7 +47,7 @@
 #include <wtf/Vector.h>
 
 #ifdef __swift__
-typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 #endif
 
 typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;

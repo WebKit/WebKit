@@ -47,15 +47,15 @@ public:
 
     static void create(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
     {
-        auto pingLoad = new PingLoad(networkProcess, sessionID, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler));
+        Ref pingLoad = adoptRef(*new PingLoad(networkProcess, sessionID, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler)));
 
         // Keep the load alive until didFinish.
-        pingLoad->m_selfReference = adoptRef(pingLoad);
+        pingLoad->m_selfReference = WTFMove(pingLoad);
     }
 
     static void create(NetworkConnectionToWebProcess& networkConnectionToWebProcess, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
     {
-        auto pingLoad = adoptRef(*new PingLoad(networkConnectionToWebProcess, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler)));
+        Ref pingLoad = adoptRef(*new PingLoad(networkConnectionToWebProcess, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler)));
 
         // Keep the load alive until didFinish.
         pingLoad->m_selfReference = WTFMove(pingLoad);
@@ -93,7 +93,7 @@ private:
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
-    Ref<NetworkLoadChecker> m_networkLoadChecker;
+    const Ref<NetworkLoadChecker> m_networkLoadChecker;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 

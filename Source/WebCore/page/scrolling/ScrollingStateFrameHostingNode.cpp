@@ -82,7 +82,7 @@ Ref<ScrollingStateNode> ScrollingStateFrameHostingNode::clone(ScrollingStateTree
 
 void ScrollingStateFrameHostingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Frame hosting node";
+    ts << "Frame hosting node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 }
 

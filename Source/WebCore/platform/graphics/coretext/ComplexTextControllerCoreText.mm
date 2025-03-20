@@ -177,7 +177,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, 0, cp.size(), m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade.primaryFont(), cp, stringLocation, 0, cp.size(), m_run.ltr()));
         return;
     }
 
@@ -190,14 +190,14 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         isSystemFallback = true;
 
         U16_GET(cp, 0, 0, cp.size(), baseCharacter);
-        font = m_font.fallbackRangesAt(0).fontForCharacter(baseCharacter);
+        font = m_fontCascade.fallbackRangesAt(0).fontForCharacter(baseCharacter);
         if (!font)
-            font = &m_font.fallbackRangesAt(0).fontForFirstRange();
-        stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation(), m_font.fontDescription().computedLocale()).get()));
+            font = &m_fontCascade.fallbackRangesAt(0).fontForFirstRange();
+        stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, font->getCFStringAttributes(m_fontCascade.enableKerning(), font->platformData().orientation(), m_fontCascade.fontDescription().computedLocale()).get()));
         // We don't know which font should be used to render this grapheme cluster, so enable CoreText's fallback mechanism by using the CTFont which doesn't have CoreText's fallback disabled.
         CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, font->platformData().ctFont());
     } else
-        stringAttributes = font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation(), m_font.fontDescription().computedLocale());
+        stringAttributes = font->getCFStringAttributes(m_fontCascade.enableKerning(), font->platformData().orientation(), m_fontCascade.fontDescription().computedLocale());
 
     RetainPtr<CTLineRef> line;
 
@@ -259,8 +259,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
             RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runCTFont);
             if (!safeCFEqual(runFontEqualityObject.get(), font->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
-                for (unsigned i = 0; !m_font.fallbackRangesAt(i).isNull(); ++i) {
-                    runFont = m_font.fallbackRangesAt(i).fontForCharacter(baseCharacter);
+                for (unsigned i = 0; !m_fontCascade.fallbackRangesAt(i).isNull(); ++i) {
+                    runFont = m_fontCascade.fallbackRangesAt(i).fontForCharacter(baseCharacter);
                     if (!runFont)
                         continue;
                     if (safeCFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
@@ -270,17 +270,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
                 if (!runFont) {
                     RetainPtr<CFStringRef> fontName = adoptCF(CTFontCopyPostScriptName(runCTFont));
                     if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
-                        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, runRange.location, runRange.location + runRange.length, m_run.ltr()));
+                        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade.primaryFont(), cp, stringLocation, runRange.location, runRange.location + runRange.length, m_run.ltr()));
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont, CTFontGetSize(runCTFont));
                     runFont = FontCache::forCurrentThread().fontForPlatformData(runFontPlatformData).ptr();
                 }
-                if (m_fallbackFonts && runFont != m_font.primaryFont().ptr())
+                if (m_fallbackFonts && runFont != m_fontCascade.primaryFont().ptr())
                     m_fallbackFonts->add(*runFont);
             }
         }
-        if (m_fallbackFonts && runFont != m_font.primaryFont().ptr())
+        if (m_fallbackFonts && runFont != m_fontCascade.primaryFont().ptr())
             m_fallbackFonts->add(*font);
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");

@@ -1093,10 +1093,10 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     }
 }
 
-bool WebFrameLoaderClient::shouldGoToHistoryItem(WebCore::HistoryItem& item, WebCore::IsSameDocumentNavigation) const
+WebCore::ShouldGoToHistoryItem WebFrameLoaderClient::shouldGoToHistoryItem(WebCore::HistoryItem& item, WebCore::IsSameDocumentNavigation) const
 {
     WebView* view = getWebView(m_webFrame.get());
-    return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:kit(&item)];
+    return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:kit(&item)] ? WebCore::ShouldGoToHistoryItem::Yes : WebCore::ShouldGoToHistoryItem::No;
 }
 
 bool WebFrameLoaderClient::supportsAsyncShouldGoToHistoryItem() const
@@ -1104,7 +1104,7 @@ bool WebFrameLoaderClient::supportsAsyncShouldGoToHistoryItem() const
     return false;
 }
 
-void WebFrameLoaderClient::shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(bool)>&&) const
+void WebFrameLoaderClient::shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

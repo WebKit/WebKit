@@ -224,7 +224,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
         unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
 
         auto marshallFPR = [&] (FPRReg fprReg) {
-            jit.purifyNaN(fprReg);
+            jit.purifyNaN(fprReg, fprReg);
 #if USE(JSVALUE64)
             jit.moveDoubleTo64(fprReg, scratch);
             materializeDoubleEncodeOffset(doubleEncodeOffsetGPRReg);

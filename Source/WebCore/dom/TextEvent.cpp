@@ -70,6 +70,7 @@ TextEvent::TextEvent()
     : UIEvent(EventInterfaceType::TextEvent)
     , m_shouldSmartReplace(false)
     , m_shouldMatchStyle(false)
+    , m_createdFromBindings(true)
     , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)
 {
 }

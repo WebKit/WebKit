@@ -127,7 +127,7 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 
 WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)
 {
-    return toAPI(&API::FrameHandle::create(toImpl(frameRef)->frameID()).leakRef());
+    return toAPILeakingRef(API::FrameHandle::create(toImpl(frameRef)->frameID()));
 }
 
 WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)

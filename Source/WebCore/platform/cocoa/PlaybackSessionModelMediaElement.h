@@ -93,6 +93,7 @@ public:
     WEBCORE_EXPORT void enterInWindowFullscreen() final;
     WEBCORE_EXPORT void exitInWindowFullscreen() final;
     WEBCORE_EXPORT void enterFullscreen() final;
+    WEBCORE_EXPORT void setPlayerIdentifierForVideoElement() final;
     WEBCORE_EXPORT void exitFullscreen() final;
     WEBCORE_EXPORT void toggleMuted() final;
     WEBCORE_EXPORT void setMuted(bool) final;

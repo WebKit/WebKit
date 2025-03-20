@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,6 @@
 
 #include <dispatch/dispatch.h>
 #include <os/object.h>
-#include <span>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/ASCIILiteral.h>
-#include <wtf/text/WTFString.h>
 
 #if HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
 #include <xpc/xpc.h>
@@ -216,6 +212,7 @@ const char* xpc_type_get_name(xpc_type_t);
 void xpc_main(xpc_connection_handler_t);
 xpc_object_t xpc_string_create(const char *string);
 const char* xpc_string_get_string_ptr(xpc_object_t);
+size_t xpc_string_get_length(xpc_object_t);
 os_transaction_t os_transaction_create(const char *description);
 void xpc_transaction_exit_clean(void);
 void xpc_track_activity(void);
@@ -257,21 +254,3 @@ void xpc_release(xpc_object_t);
 #endif
 
 WTF_EXTERN_C_END
-
-inline std::span<const uint8_t> xpc_dictionary_get_data_span(xpc_object_t xdict, ASCIILiteral key)
-{
-    size_t dataSize { 0 };
-    auto* data = static_cast<const uint8_t*>(xpc_dictionary_get_data(xdict, key.characters(), &dataSize)); // NOLINT
-    return unsafeMakeSpan(data, dataSize);
-}
-
-// ASCIILiteral version of XPC_ERROR_KEY_DESCRIPTION.
-static constexpr auto xpcErrorDescriptionKey = "XPCErrorDescription"_s;
-
-inline String xpc_dictionary_get_wtfstring(xpc_object_t xdict, ASCIILiteral key)
-{
-    auto* cstring = xpc_dictionary_get_string(xdict, key.characters()); // NOLINT
-    if (!cstring)
-        return { };
-    return String::fromUTF8(cstring);
-}

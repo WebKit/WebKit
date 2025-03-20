@@ -110,6 +110,11 @@ Resolver& Scope::resolver()
     return *m_resolver;
 }
 
+Ref<Resolver> Scope::protectedResolver()
+{
+    return resolver();
+}
+
 void Scope::createDocumentResolver()
 {
     ASSERT(!m_resolver);
@@ -926,7 +931,9 @@ bool Scope::isForUserAgentShadowTree() const
 
 bool Scope::invalidateForLayoutDependencies(LayoutDependencyUpdateContext& context)
 {
-    return invalidateForContainerDependencies(context) || invalidateForAnchorDependencies(context);
+    return invalidateForContainerDependencies(context)
+        || invalidateForAnchorDependencies(context)
+        || invalidateForPositionTryFallbacks(context);
 }
 
 bool Scope::invalidateForContainerDependencies(LayoutDependencyUpdateContext& context)
@@ -994,7 +1001,7 @@ bool Scope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& conte
     if (m_document->renderView()->anchors().isEmptyIgnoringNullReferences())
         return false;
 
-    auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_document);
+    auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);
 
     for (auto& anchorRenderer : m_document->renderView()->anchors()) {
         auto rect = anchorRenderer.absoluteBoundingBoxRect();
@@ -1026,6 +1033,34 @@ bool Scope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& conte
     }
 
     return !anchoredElementsToInvalidate.isEmpty();
+}
+
+bool Scope::invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext& context)
+{
+    ASSERT(!m_shadowRoot);
+
+    if (!m_document->renderView())
+        return false;
+
+    bool invalidated = false;
+
+    for (auto& box : m_document->renderView()->positionTryBoxes()) {
+        if (!AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(box))
+            continue;
+
+        CheckedPtr element = box.element();
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element.get()))
+            element = pseudoElement->hostElement();
+
+        if (element) {
+            if (!context.invalidatedAnchorPositioned.add(*element).isNewEntry)
+                continue;
+            element->invalidateForAnchorRectChange();
+            invalidated = true;
+        }
+    }
+
+    return invalidated;
 }
 
 const MatchResult* Scope::cachedMatchResult(const Element& element)
@@ -1087,23 +1122,12 @@ Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
     return host;
 }
 
-void Scope::resetAnchorPositioningStateBeforeStyleResolution()
-{
-    // FIXME: Move this transient state to TreeResolver.
-    for (auto elementAndState : m_anchorPositionedStates) {
-        elementAndState.value->anchorNames.clear();
-        elementAndState.value->stage = AnchorPositionResolutionStage::FindAnchors;
-        elementAndState.value->hasAnchorFunctions = false;
-    }
-}
-
 void Scope::updateAnchorPositioningStateAfterStyleResolution()
 {
     AnchorPositionEvaluator::updateSnapshottedScrollOffsets(m_document);
 
-    m_anchorPositionedStates.removeIf([](auto& elementAndState) {
-        // Remove if we have no anchors after initial resolution.
-        return elementAndState.value->stage != AnchorPositionResolutionStage::FindAnchors && elementAndState.value->anchorNames.isEmpty();
+    m_anchorPositionedToAnchorMap.removeIf([](auto& elementAndState) {
+        return elementAndState.value.isEmpty();
     });
 }
 

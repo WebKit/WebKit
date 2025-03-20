@@ -132,6 +132,14 @@ void MockRealtimeAudioSourceGStreamer::captureEnded()
     captureFailed();
 }
 
+void MockRealtimeAudioSourceGStreamer::captureDeviceUpdated(const GStreamerCaptureDevice& device)
+{
+    setName(AtomString { device.label() });
+    setPersistentId(device.persistentId());
+
+    configurationChanged();
+}
+
 std::pair<GstClockTime, GstClockTime> MockRealtimeAudioSourceGStreamer::queryCaptureLatency() const
 {
     if (!m_capturer)

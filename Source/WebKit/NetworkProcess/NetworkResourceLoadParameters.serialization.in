@@ -101,7 +101,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
-    std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier;
+    WebCore::FetchingWorkerIdentifier workerIdentifier;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
@@ -115,3 +115,5 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     bool linkPreconnectEarlyHintsEnabled;
     bool shouldRecordFrameLoadForStorageAccess;
 };
+
+using WebCore::FetchingWorkerIdentifier = std::variant<std::monostate, WebCore::SharedWorkerIdentifier, WebCore::ServiceWorkerIdentifier>;

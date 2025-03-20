@@ -3,7 +3,7 @@
 **/export const description = `
 Execution Tests for matrix indexing expressions
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import {
   MatrixValue,
 
@@ -11,11 +11,13 @@ import {
   abstractFloat,
   f32,
   vec } from
+
 '../../../../../util/conversion.js';
+import { align } from '../../../../../util/math.js';
 
 import { allInputSources, basicExpressionBuilder, run } from '../../expression.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('concrete_float_column').
 specURL('https://www.w3.org/TR/WGSL/#matrix-access-expr').
@@ -28,12 +30,10 @@ combine('indexType', ['i32', 'u32']).
 combine('columns', [2, 3, 4]).
 combine('rows', [2, 3, 4])
 ).
-beforeAllSubcases((t) => {
-  if (t.params.elementType === 'f16') {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn(async (t) => {
+  if (t.params.elementType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const elementType = Type[t.params.elementType];
   const indexType = Type[t.params.indexType];
   const matrixType = Type.mat(t.params.columns, t.params.rows, elementType);
@@ -76,12 +76,10 @@ combine('indexType', ['i32', 'u32']).
 combine('columns', [2, 3, 4]).
 combine('rows', [2, 3, 4])
 ).
-beforeAllSubcases((t) => {
-  if (t.params.elementType === 'f16') {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn(async (t) => {
+  if (t.params.elementType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const elementType = Type[t.params.elementType];
   const indexType = Type[t.params.indexType];
   const matrixType = Type.mat(t.params.columns, t.params.rows, elementType);
@@ -197,4 +195,74 @@ fn(async (t) => {
     { inputSource: 'const' },
     cases
   );
+});
+
+g.test('non_const_index').
+specURL('https://www.w3.org/TR/WGSL/#matrix-access-expr').
+desc(`Test indexing of a matrix using non-const index`).
+params((u) => u.combine('columns', [2, 3, 4]).combine('rows', [2, 3, 4])).
+fn((t) => {
+  const cols = t.params.columns;
+  const rows = t.params.rows;
+  const values = Array.from(Array(cols * rows).keys());
+  const wgsl = `
+@group(0) @binding(0) var<storage, read_write> output : array<f32, ${cols * rows}>;
+
+@compute @workgroup_size(${cols}, ${rows})
+fn main(@builtin(local_invocation_id) invocation_id : vec3<u32>) {
+  let m = mat${cols}x${rows}f(${values.join(', ')});
+  output[invocation_id.x*${rows} + invocation_id.y] = m[invocation_id.x][invocation_id.y];
+}
+`;
+
+  const pipeline = t.device.createComputePipeline({
+    layout: 'auto',
+    compute: {
+      module: t.device.createShaderModule({ code: wgsl }),
+      entryPoint: 'main'
+    }
+  });
+
+  const bufferSize = (arr) => {
+    let offset = 0;
+    let alignment = 0;
+    for (const value of arr) {
+      alignment = Math.max(alignment, value.type.alignment);
+      offset = align(offset, value.type.alignment) + value.type.size;
+    }
+    return align(offset, alignment);
+  };
+
+  const toArray = (arr) => {
+    const array = new Uint8Array(bufferSize(arr));
+    let offset = 0;
+    for (const value of arr) {
+      offset = align(offset, value.type.alignment);
+      value.copyTo(array, offset);
+      offset += value.type.size;
+    }
+    return array;
+  };
+
+  const expected = values.map((i) => Type['f32'].create(i));
+
+  const outputBuffer = t.createBufferTracked({
+    size: bufferSize(expected),
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+  });
+
+  const bindGroup = t.device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: outputBuffer } }]
+  });
+
+  const encoder = t.device.createCommandEncoder();
+  const pass = encoder.beginComputePass();
+  pass.setPipeline(pipeline);
+  pass.setBindGroup(0, bindGroup);
+  pass.dispatchWorkgroups(1);
+  pass.end();
+  t.queue.submit([encoder.finish()]);
+
+  t.expectGPUBufferValuesEqual(outputBuffer, toArray(expected));
 });

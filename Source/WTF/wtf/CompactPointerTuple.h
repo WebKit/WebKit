@@ -99,6 +99,11 @@ public:
 
     uint64_t data() const { return m_data; }
 
+    void swap(CompactPointerTuple& other)
+    {
+        std::swap(m_data, other.m_data);
+    }
+
 private:
     static constexpr uint64_t encodeType(Type type)
     {
@@ -134,6 +139,12 @@ public:
     void setPointer(PointerType pointer) { m_pointer = pointer; }
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
+
+    void swap(CompactPointerTuple& other)
+    {
+        std::swap(m_pointer, other.m_pointer);
+        std::swap(m_type, other.m_type);
+    }
 
 private:
     PointerType m_pointer { nullptr };

@@ -67,7 +67,7 @@ static WeakPtr<NetworkProcess>& globalNetworkProcess()
 static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
     if (RunLoop::isMain()) {
-        auto sendSync = globalNetworkProcess()->parentProcessConnection()->sendSync(Messages::SecItemShimProxy::SecItemRequestSync(SecItemRequestData(requestType, query, attributesToMatch)), 0);
+        auto sendSync = globalNetworkProcess()->protectedParentProcessConnection()->sendSync(Messages::SecItemShimProxy::SecItemRequestSync(SecItemRequestData(requestType, query, attributesToMatch)), 0);
         auto [response] = sendSync.takeReplyOr(std::nullopt);
         return response;
     }
@@ -81,7 +81,7 @@ static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData:
             return;
         }
 
-        globalNetworkProcess()->parentProcessConnection()->sendWithAsyncReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), [&](auto reply) {
+        globalNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), [&](auto reply) {
             if (reply)
                 response = WTFMove(*reply);
 

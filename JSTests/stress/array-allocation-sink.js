@@ -7,7 +7,7 @@ function assert(actual, expected) {
 
 function run(func, a) {
     let expected;
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (a == undefined)
             a = [1, 2];
         let res = func(a);

@@ -103,9 +103,9 @@ void WorkerOrWorkletGlobalScope::disableWebAssembly(const String& errorMessage)
     m_script->disableWebAssembly(errorMessage);
 }
 
-void WorkerOrWorkletGlobalScope::setRequiresTrustedTypes(bool required)
+void WorkerOrWorkletGlobalScope::setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement enforcement)
 {
-    m_script->setRequiresTrustedTypes(required);
+    m_script->setTrustedTypesEnforcement(enforcement);
 }
 
 bool WorkerOrWorkletGlobalScope::isJSExecutionForbidden() const
@@ -128,7 +128,7 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 bool WorkerOrWorkletGlobalScope::isContextThread() const
 {
     auto* thread = workerOrWorkletThread();
-    return thread && thread->thread() ? thread->thread() == &Thread::current() : isMainThread();
+    return thread && thread->thread() ? thread->thread() == &Thread::currentSingleton() : isMainThread();
 }
 
 void WorkerOrWorkletGlobalScope::postTask(Task&& task)

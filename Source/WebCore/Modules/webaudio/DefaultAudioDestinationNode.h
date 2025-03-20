@@ -58,6 +58,10 @@ public:
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
     bool isConnected() const;
 
+#if PLATFORM(IOS_FAMILY)
+    void setSceneIdentifier(const String&) final;
+#endif
+
 private:
     void createDestination();
     void clearDestination();

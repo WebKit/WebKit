@@ -44,7 +44,7 @@ std::unique_ptr<FilterEffectApplier> SourceAlpha::createSoftwareApplier() const
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, FilterRepresentation) const
 {
-    ts << indent << "[SourceAlpha]\n";
+    ts << indent << "[SourceAlpha]\n"_s;
     return ts;
 }
 

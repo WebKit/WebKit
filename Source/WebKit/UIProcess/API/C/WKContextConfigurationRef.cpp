@@ -35,7 +35,7 @@ using namespace WebKit;
 
 WKContextConfigurationRef WKContextConfigurationCreate()
 {
-    return toAPI(&API::ProcessPoolConfiguration::create().leakRef());
+    return toAPILeakingRef(API::ProcessPoolConfiguration::create());
 }
 
 WKContextConfigurationRef WKContextConfigurationCreateWithLegacyOptions()
@@ -73,7 +73,7 @@ void WKContextConfigurationSetInjectedBundlePath(WKContextConfigurationRef confi
 
 WKArrayRef WKContextConfigurationCopyCustomClassesForParameterCoder(WKContextConfigurationRef configuration)
 {
-    return toAPI(&API::Array::createStringArray(Vector<String>()).leakRef());
+    return toAPILeakingRef(API::Array::createStringArray(Vector<String>()));
 }
 
 void WKContextConfigurationSetCustomClassesForParameterCoder(WKContextConfigurationRef configuration, WKArrayRef classesForCoder)
@@ -139,7 +139,7 @@ void WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(WKCon
 WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef)
 {
     // FIXME: Delete this function.
-    return toAPI(&API::Array::create().leakRef());
+    return toAPILeakingRef(API::Array::create());
 }
 
 void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArrayRef overrideLanguages)

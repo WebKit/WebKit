@@ -1140,7 +1140,7 @@ private:
             break;
         }
 
-        case NewRegexp: {
+        case NewRegExp: {
             target = &m_heap.newAllocation(node, Allocation::Kind::RegExpObject);
 
             writes.add(RegExpObjectRegExpPLoc, LazyNode(node->cellOperand()));
@@ -1902,7 +1902,7 @@ escapeChildren:
         case Allocation::Kind::RegExpObject: {
             FrozenValue* regExp = allocation.identifier()->cellOperand();
             return m_graph.addNode(
-                allocation.identifier()->prediction(), NewRegexp,
+                allocation.identifier()->prediction(), NewRegExp,
                 where->origin.withSemantic(
                     allocation.identifier()->origin.semantic),
                 OpInfo(regExp));
@@ -2289,8 +2289,8 @@ escapeChildren:
                         node->convertToPhantomCreateActivation();
                         break;
 
-                    case NewRegexp:
-                        node->convertToPhantomNewRegexp();
+                    case NewRegExp:
+                        node->convertToPhantomNewRegExp();
                         break;
 
                     default:
@@ -2642,7 +2642,7 @@ escapeChildren:
             break;
         }
 
-        case NewRegexp: {
+        case NewRegExp: {
             Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
             ASSERT(locations.size() == 2);
 

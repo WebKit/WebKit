@@ -44,7 +44,7 @@ inline ElementAncestorIterator<ElementType>& ElementAncestorIterator<ElementType
 template <typename ElementType>
 inline ElementAncestorIterator<ElementType> ElementAncestorRange<ElementType>::begin() const
 {
-    return ElementAncestorIterator<ElementType>(m_first);
+    return ElementAncestorIterator<ElementType>(m_first.get());
 }
 
 // Standalone functions

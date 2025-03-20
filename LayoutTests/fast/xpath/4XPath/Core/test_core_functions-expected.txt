@@ -72,6 +72,7 @@ PASS DOM.evaluate("lang('')", LCHILD2, null, XPathResult.ANY_TYPE, null).boolean
 PASS DOM.evaluate("lang('foo')", LCHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("lang('foo')", LCHILD2, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

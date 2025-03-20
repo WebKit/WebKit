@@ -55,8 +55,10 @@ public:
                     GST_DEBUG_OBJECT(pad, "FLUSH_START received, aborting all pending tasks in the player sinkTaskQueue.");
                     self->m_isFlushing = true;
                     player->sinkTaskQueue().startAborting();
+#if USE(GSTREAMER_GL)
                     GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
                     player->flushCurrentBuffer();
+#endif
                 } else
                     GST_DEBUG_OBJECT(pad, "Received FLUSH_START while already flushing, ignoring.");
             } else if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_STOP) {
@@ -106,6 +108,7 @@ public:
             gst_query_add_allocation_pool(query, nullptr, size, 3, 0);
         }
 
+#if USE(GSTREAMER_GL)
         // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
         // pipeline has to be drained before a frame with the new resolution can be decoded.
         // In this context, it's important that we don't hold references to any previous frame
@@ -115,6 +118,7 @@ public:
             GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
             player->flushCurrentBuffer();
         }
+#endif
 
         return GST_PAD_PROBE_OK;
     }

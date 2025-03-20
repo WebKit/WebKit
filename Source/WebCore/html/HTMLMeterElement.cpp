@@ -54,7 +54,7 @@ HTMLMeterElement::~HTMLMeterElement() = default;
 
 Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
 {
-    Ref<HTMLMeterElement> meter = adoptRef(*new HTMLMeterElement(tagName, document));
+    Ref meter = adoptRef(*new HTMLMeterElement(tagName, document));
     meter->ensureUserAgentShadowRoot();
     return meter;
 }
@@ -219,11 +219,12 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
 
 void HTMLMeterElement::didElementStateChange()
 {
-    m_value->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio()*100, CSSUnitType::CSS_PERCENTAGE);
-    setValueClass(*m_value, gaugeRegion());
+    Ref valueElement = *m_valueElement;
+    valueElement->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio() * 100, CSSUnitType::CSS_PERCENTAGE);
+    setValueClass(valueElement, gaugeRegion());
 
-    if (RenderMeter* render = renderMeter())
-        render->updateFromElement();
+    if (CheckedPtr renderer = renderMeter())
+        renderer->updateFromElement();
 }
 
 RenderMeter* HTMLMeterElement::renderMeter() const
@@ -233,28 +234,30 @@ RenderMeter* HTMLMeterElement::renderMeter() const
 
 void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    ASSERT(!m_value);
+    ASSERT(!m_valueElement);
 
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet));
 
-    auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
+    Ref document = this->document();
+    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
     style->setTextContent(String { shadowStyle });
     root.appendChild(WTFMove(style));
 
     // Pseudos are set to allow author styling.
-    auto inner = HTMLDivElement::create(document());
+    Ref inner = HTMLDivElement::create(document);
     inner->setIdAttribute("inner"_s);
     inner->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
     root.appendChild(inner);
 
-    auto bar = HTMLDivElement::create(document());
+    Ref bar = HTMLDivElement::create(document);
     bar->setIdAttribute("bar"_s);
     bar->setUserAgentPart(UserAgentParts::webkitMeterBar());
     inner->appendChild(bar);
 
-    m_value = HTMLDivElement::create(document());
-    m_value->setIdAttribute("value"_s);
-    bar->appendChild(*m_value);
+    Ref valueElement = HTMLDivElement::create(document);
+    valueElement->setIdAttribute("value"_s);
+    bar->appendChild(valueElement);
+    m_valueElement = WTFMove(valueElement);
 
     didElementStateChange();
 }

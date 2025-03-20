@@ -35,6 +35,7 @@
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
@@ -1120,6 +1121,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditions.mm>)
+#import <WebKitAdditions/WKWebViewMacAdditions.mm>
+#endif
+
 @end
 
 #pragma mark -
@@ -1353,6 +1358,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)insertText:(id)string replacementRange:(NSRange)replacementRange
 {
     _impl->insertText(string, replacementRange);
+}
+
+- (void)_setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
+{
+    _page->setContentOffset(WebCore::IntPoint { contentOffset }, animated ? WebCore::ScrollIsAnimated::Yes : WebCore::ScrollIsAnimated::No);
 }
 
 #pragma mark - QLPreviewPanelController

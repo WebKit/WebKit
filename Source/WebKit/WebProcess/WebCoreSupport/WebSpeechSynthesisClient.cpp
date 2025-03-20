@@ -84,17 +84,19 @@ void WebSpeechSynthesisClient::resetState()
 
 void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance)
 {
-    WTF::CompletionHandler<void()> startedCompletionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
+    CompletionHandler<void()> startedCompletionHandler = [weakThis = WeakPtr { *this }]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (auto observer = corePageObserver())
+        if (auto observer = protectedThis->corePageObserver())
             observer->didStartSpeaking();
     };
 
-    WTF::CompletionHandler<void()> finishedCompletionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
+    CompletionHandler<void()> finishedCompletionHandler = [weakThis = WeakPtr { *this }]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (auto observer = corePageObserver())
+        if (auto observer = protectedThis->corePageObserver())
             observer->didFinishSpeaking();
     };
 
@@ -125,10 +127,11 @@ void WebSpeechSynthesisClient::pause()
     if (!page)
         return;
 
-    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
+    CompletionHandler<void()> completionHandler = [weakThis = WeakPtr { *this }]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (auto observer = corePageObserver())
+        if (auto observer = protectedThis->corePageObserver())
             observer->didPauseSpeaking();
     };
 
@@ -141,10 +144,11 @@ void WebSpeechSynthesisClient::resume()
     if (!page)
         return;
 
-    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
+    CompletionHandler<void()> completionHandler = [weakThis = WeakPtr { *this }]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (auto observer = corePageObserver())
+        if (auto observer = protectedThis->corePageObserver())
             observer->didResumeSpeaking();
     };
 

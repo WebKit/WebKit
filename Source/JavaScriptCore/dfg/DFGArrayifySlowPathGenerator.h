@@ -37,7 +37,7 @@
 namespace JSC { namespace DFG {
 
 class ArrayifySlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
-    WTF_MAKE_TZONE_ALLOCATED(ArrayifySlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(ArrayifySlowPathGenerator);
 public:
     ArrayifySlowPathGenerator(
         const MacroAssembler::JumpList& from, SpeculativeJIT* jit, Node* node, GPRReg baseGPR,

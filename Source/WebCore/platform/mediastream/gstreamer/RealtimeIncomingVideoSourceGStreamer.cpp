@@ -101,7 +101,7 @@ void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
 
     ensureSizeAndFramerate(GRefPtr<GstCaps>(caps));
 
-    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), intrinsicSize(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
+    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), std::nullopt, intrinsicSize(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
 
 const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()

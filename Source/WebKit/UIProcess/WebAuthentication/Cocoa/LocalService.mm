@@ -71,9 +71,11 @@ LOCAL_SERVICE_ADDITIONS
 
 void LocalService::startDiscoveryInternal()
 {
-    if (!platformStartDiscovery() || !observer())
+    if (!platformStartDiscovery())
         return;
-    observer()->authenticatorAdded(LocalAuthenticator::create(createLocalConnection()));
+
+    if (RefPtr observer = this->observer())
+        observer->authenticatorAdded(LocalAuthenticator::create(createLocalConnection()));
 }
 
 bool LocalService::platformStartDiscovery() const

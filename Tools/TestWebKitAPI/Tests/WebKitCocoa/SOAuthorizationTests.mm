@@ -869,7 +869,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWith307Simple)
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
 
-    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
@@ -926,7 +926,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWith307CrossOrigin)
         { "/simple.html"_s, { SimpleHtml } },
         { "/simple2.html"_s, { SimpleHtml } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    TestWebKitAPI::HTTPServer server2(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task {
+    TestWebKitAPI::HTTPServer server2(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
@@ -984,7 +984,7 @@ TEST(SOAuthorizationRedirect, InterceptionFailedWith307PUT)
         { "/simple.html"_s, { SimpleHtml } },
         { "/simple.html?name=test"_s, { "<html><body>FAIL</body></html>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    TestWebKitAPI::HTTPServer server2(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task {
+    TestWebKitAPI::HTTPServer server2(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);

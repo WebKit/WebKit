@@ -100,6 +100,11 @@ TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& in
 
 LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
+    if (auto lineLayoutResult = placeSingleCharacterContentIfApplicable(lineInput)) {
+        ASSERT(!previousLine);
+        return *lineLayoutResult;
+    }
+
     initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine);
     auto& rootStyle = this->rootStyle();
     auto placedContentEnd = isWrappingAllowed() ? placeInlineTextContent(rootStyle, lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(rootStyle, lineInput.needsLayoutRange);
@@ -112,7 +117,7 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
         , WTFMove(result.runs)
         , { }
         , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, m_overflowContentLogicalWidth }
-        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left()  }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left() }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastInlineContent }
@@ -148,6 +153,31 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
     m_lineLogicalRect = initialLogicalRect;
     m_trimmedTrailingWhitespaceWidth = { };
     m_overflowContentLogicalWidth = { };
+}
+
+std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterContentIfApplicable(const LineInput& lineInput)
+{
+    if (m_inlineItemList.size() != 1)
+        return { };
+    auto* inlineTextItem = dynamicDowncast<InlineTextItem>(m_inlineItemList[0]);
+    if (!inlineTextItem || inlineTextItem->length() > 1 || inlineTextItem->isWhitespace())
+        return { };
+    ASSERT(lineInput.needsLayoutRange.start.index + 1 == lineInput.needsLayoutRange.end.index && !lineInput.needsLayoutRange.start.offset && !lineInput.needsLayoutRange.end.offset);
+
+    auto lineRect = lineInput.initialLogicalRect;
+    auto contentWidth = inlineTextItem->width().value_or(0.f);
+    Line::RunList singleRun;
+    singleRun.append({ Line::Run(*inlineTextItem, inlineTextItem->style(), { }, contentWidth) });
+
+    auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), contentWidth, lineRect.width(), { }, singleRun, true);
+    auto contentRight = contentLeft + contentWidth;
+
+    return LineLayoutResult { lineInput.needsLayoutRange
+        , WTFMove(singleRun)
+        , { }
+        , { contentLeft, contentWidth, contentRight, std::max(0.f, contentRight - lineRect.right()) }
+        , { lineRect.topLeft(), lineRect.width(), lineRect.left() }
+    };
 }
 
 InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const RenderStyle& rootStyle, const InlineItemRange& layoutRange)

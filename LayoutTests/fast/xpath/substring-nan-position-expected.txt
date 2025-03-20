@@ -1,4 +1,7 @@
-Test for bug 41862: XPath substring function is broken when passing NaN as the position parameter.
+Test for bug 41862 (http://bugs.webkit.org/show_bug.cgi?id=41862): XPath substring function is broken when passing NaN as the position parameter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
 
 PASS document.evaluate("substring('12345', number('NaN'))", document, null, XPathResult.STRING_TYPE, null).stringValue is ''
 PASS document.evaluate("substring('12345', number('NaN'), 3)", document, null, XPathResult.STRING_TYPE, null).stringValue is ''

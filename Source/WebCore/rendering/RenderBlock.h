@@ -257,6 +257,8 @@ public:
 
     void updateDescendantTransformsAfterLayout();
 
+    virtual bool canPerformSimplifiedLayout() const;
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     bool establishesIndependentFormattingContextIgnoringDisplayType(const RenderStyle&) const;
@@ -298,7 +300,6 @@ protected:
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool canPerformSimplifiedLayout() const;
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
 
@@ -455,21 +456,6 @@ private:
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock&, RenderBox&, const LayoutPoint&, HitTestSource);
-
-inline RenderPtr<RenderBlock> RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, DisplayType display)
-{
-    return createAnonymousBlockWithStyleAndDisplay(parent.document(), parent.style(), display);
-}
-
-inline RenderPtr<RenderBox> RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
-{
-    return createAnonymousBlockWithStyleAndDisplay(document(), renderer.style(), style().display());
-}
-
-inline RenderPtr<RenderBlock> RenderBlock::createAnonymousBlock(DisplayType display) const
-{
-    return createAnonymousBlockWithStyleAndDisplay(document(), style(), display);
-}
 
 } // namespace WebCore
 

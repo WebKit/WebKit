@@ -48,7 +48,7 @@ static CSSParserContext parserContextForElement(const Element& element)
 
     CSSParserContext result = CSSParserContext { element.document(), baseURL, element.document().characterSetWithUTF8Fallback() };
     if (shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent)
-        result.mode = UASheetMode;
+        result.setUASheetMode();
     return result;
 }
 

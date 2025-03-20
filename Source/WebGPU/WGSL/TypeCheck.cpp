@@ -1392,6 +1392,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4U8Packed();
             else if (targetName == "extractBits"_s)
                 m_shaderModule.setUsesExtractBits();
+            else if (targetName == "insertBits"_s)
+                m_shaderModule.setUsesInsertBits();
             else if (
                 targetName == "textureGather"_s
                 || targetName == "textureGatherCompare"_s

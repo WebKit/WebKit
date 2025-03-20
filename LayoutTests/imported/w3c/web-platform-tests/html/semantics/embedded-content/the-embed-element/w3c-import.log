@@ -26,8 +26,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-ignored-in-media-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-image.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-subdocument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-named-attribute-detached-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html
@@ -35,7 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-03-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-03.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-svg-navigation-resets-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/historical.html

@@ -182,6 +182,9 @@
             },
             "/webkit/WebKitWebView/run-async-js-functions": {
                 "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/284812"}}
+            },
+            "/webkit/WebKitWebView/save": {
+                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/289436"}}
             }
         }
     },

@@ -7,10 +7,9 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
     Missing expected compilationInfo 'error' message.
 
@@ -18,10 +17,9 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec2(-4611686018427387905, -4611686018427387905));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-1n"
     Missing expected compilationInfo 'error' message.
 
@@ -227,6 +225,18 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a="-1n";b="9223372036854775807n"
     Expected validation error
       at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-9223372036854775808n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-4611686018427387905n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="4611686018427387903n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="9223372036854775807n"
+    Expected validation error
+      at (elided: below max severity)
   - INFO: subcase: a="-9223372036854775808n";b="-9223372036854775808n"
     OK
   - INFO: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
@@ -253,18 +263,14 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
     OK
   - INFO: subcase: a="-1n";b="9223372036854775807n"
     OK
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-9223372036854775808n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-4611686018427387905n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="4611686018427387903n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="9223372036854775807n"
-    Expected validation error
-      at (elided: below max severity)
+  - INFO: subcase: a="4611686018427387903n";b="-9223372036854775808n"
+    OK
+  - INFO: subcase: a="4611686018427387903n";b="-4611686018427387905n"
+    OK
+  - INFO: subcase: a="4611686018427387903n";b="4611686018427387903n"
+    OK
+  - INFO: subcase: a="4611686018427387903n";b="9223372036854775807n"
+    OK
   - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-9223372036854775808n"
     Expected validation error
       at (elided: below max severity)
@@ -280,14 +286,6 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="9223372036854775807n"
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: a="4611686018427387903n";b="-9223372036854775808n"
-    OK
-  - INFO: subcase: a="4611686018427387903n";b="-4611686018427387905n"
-    OK
-  - INFO: subcase: a="4611686018427387903n";b="4611686018427387903n"
-    OK
-  - INFO: subcase: a="4611686018427387903n";b="9223372036854775807n"
-    OK
   - INFO: subcase: a="9223372036854775807n";b="-9223372036854775808n"
     OK
   - INFO: subcase: a="9223372036854775807n";b="-4611686018427387905n"
@@ -307,10 +305,9 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
     Missing expected compilationInfo 'error' message.
 
@@ -318,10 +315,9 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec3(-4611686018427387905, -4611686018427387905, -4611686018427387905));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-1n"
     Missing expected compilationInfo 'error' message.
 
@@ -545,33 +541,6 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-9223372036854775808n"
     Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-4611686018427387905n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-1n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="4611686018427387903n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="9223372036854775807n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-9223372036854775808n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-4611686018427387905n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-1n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="4611686018427387903n"
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="9223372036854775807n"
-    Expected validation error
-      at (elided: below max severity)
   - INFO: subcase: a="-9223372036854775808n";b="-9223372036854775808n"
     OK
   - INFO: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
@@ -602,6 +571,33 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
     OK
   - INFO: subcase: a="4611686018427387903n";b="-9223372036854775808n"
     OK
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-4611686018427387905n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="-1n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="4611686018427387903n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="4611686018427387903n";b="9223372036854775807n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-9223372036854775808n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-4611686018427387905n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="-1n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="4611686018427387903n"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="9223372036854775807n"
+    Expected validation error
+      at (elided: below max severity)
   - INFO: subcase: a="4611686018427387903n";b="-4611686018427387905n"
     OK
   - INFO: subcase: a="4611686018427387903n";b="-1n"
@@ -629,10 +625,9 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
     Missing expected compilationInfo 'error' message.
 
@@ -640,10 +635,9 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = dot(vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec4(-4611686018427387905, -4611686018427387905, -4611686018427387905, -4611686018427387905));
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - VALIDATION FAILED: subcase: a="-9223372036854775808n";b="-1n"
     Missing expected compilationInfo 'error' message.
 
@@ -861,32 +855,6 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a="-1n";b="4611686018427387903n"
     Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: a="-9223372036854775808n";b="-9223372036854775808n"
-    OK
-  - INFO: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
-    OK
-  - INFO: subcase: a="-9223372036854775808n";b="-1n"
-    OK
-  - INFO: subcase: a="-9223372036854775808n";b="4611686018427387903n"
-    OK
-  - INFO: subcase: a="-9223372036854775808n";b="9223372036854775807n"
-    OK
-  - INFO: subcase: a="-4611686018427387905n";b="-9223372036854775808n"
-    OK
-  - INFO: subcase: a="-4611686018427387905n";b="-4611686018427387905n"
-    OK
-  - INFO: subcase: a="-4611686018427387905n";b="-1n"
-    OK
-  - INFO: subcase: a="-4611686018427387905n";b="4611686018427387903n"
-    OK
-  - INFO: subcase: a="-4611686018427387905n";b="9223372036854775807n"
-    OK
-  - INFO: subcase: a="-1n";b="-9223372036854775808n"
-    OK
-  - INFO: subcase: a="-1n";b="-4611686018427387905n"
-    OK
-  - INFO: subcase: a="-1n";b="4611686018427387903n"
-    OK
   - EXPECTATION FAILED: subcase: a="-1n";b="9223372036854775807n"
     Expected validation error
       at (elided: below max severity)
@@ -920,6 +888,32 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a="9223372036854775807n";b="9223372036854775807n"
     Expected validation error
       at (elided: below max severity)
+  - INFO: subcase: a="-9223372036854775808n";b="-9223372036854775808n"
+    OK
+  - INFO: subcase: a="-9223372036854775808n";b="-4611686018427387905n"
+    OK
+  - INFO: subcase: a="-9223372036854775808n";b="-1n"
+    OK
+  - INFO: subcase: a="-9223372036854775808n";b="4611686018427387903n"
+    OK
+  - INFO: subcase: a="-9223372036854775808n";b="9223372036854775807n"
+    OK
+  - INFO: subcase: a="-4611686018427387905n";b="-9223372036854775808n"
+    OK
+  - INFO: subcase: a="-4611686018427387905n";b="-4611686018427387905n"
+    OK
+  - INFO: subcase: a="-4611686018427387905n";b="-1n"
+    OK
+  - INFO: subcase: a="-4611686018427387905n";b="4611686018427387903n"
+    OK
+  - INFO: subcase: a="-4611686018427387905n";b="9223372036854775807n"
+    OK
+  - INFO: subcase: a="-1n";b="-9223372036854775808n"
+    OK
+  - INFO: subcase: a="-1n";b="-4611686018427387905n"
+    OK
+  - INFO: subcase: a="-1n";b="4611686018427387903n"
+    OK
   - INFO: subcase: a="-1n";b="9223372036854775807n"
     OK
   - INFO: subcase: a="4611686018427387903n";b="-9223372036854775808n"
@@ -967,8 +961,6 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - INFO: subcase: a=-11728123330560;b=-11728123330560
     OK
   - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
@@ -985,9 +977,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+  - INFO: subcase: a=-11728123330560;b=2147483520
     OK
-  - INFO: subcase: a=-11728123330560;b=11728123330560
+  - INFO: subcase: a=-11728123330560;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
     OK
@@ -1007,9 +999,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=-3.78956116703702e-13;b=2147483520
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=-3.78956116703702e-13;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
     OK
@@ -1031,9 +1023,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
@@ -1055,9 +1047,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754942106924411e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754942106924411e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
     OK
@@ -1079,9 +1071,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+  - INFO: subcase: a="_negzero_";b=2147483520
     OK
-  - INFO: subcase: a="_negzero_";b=11728123330560
+  - INFO: subcase: a="_negzero_";b=4294967040
     OK
   - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
     OK
@@ -1103,9 +1095,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=0;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=0;b=3.78956116703702e-13
+  - INFO: subcase: a=0;b=2147483520
     OK
-  - INFO: subcase: a=0;b=11728123330560
+  - INFO: subcase: a=0;b=4294967040
     OK
   - INFO: subcase: a=0;b=3.4028234663852886e+38
     OK
@@ -1127,9 +1119,9 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+  - INFO: subcase: a=1.401298464324817e-45;b=2147483520
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+  - INFO: subcase: a=1.401298464324817e-45;b=4294967040
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
     OK
@@ -1151,55 +1143,51 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+  - INFO: subcase: a=2147483520;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+  - INFO: subcase: a=2147483520;b="_negzero_"
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+  - INFO: subcase: a=2147483520;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=2147483520
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=4294967040
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=4294967040;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=11728123330560;b=-11728123330560
+  - INFO: subcase: a=4294967040;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+  - INFO: subcase: a=4294967040;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+  - INFO: subcase: a=4294967040;b="_negzero_"
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b="_negzero_"
+  - INFO: subcase: a=4294967040;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=11728123330560;b=0
+  - INFO: subcase: a=4294967040;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+  - INFO: subcase: a=4294967040;b=2147483520
     OK
-  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
-    OK
-  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
-    OK
-  - INFO: subcase: a=11728123330560;b=11728123330560
+  - INFO: subcase: a=4294967040;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
     OK
@@ -1215,23 +1203,24 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
-  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
@@ -1243,14 +1232,22 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - EXPECTATION FAILED: subcase: a=2147483520;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=-3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=-3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -1258,9 +1255,13 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-3.4028234663852886e+38
     OK
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=4294967040;b=-3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=4294967040;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
@@ -1269,19 +1270,24 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -1553,18 +1559,18 @@ FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=-65504
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
     Expected validation error
       at (elided: only 2 shown)
@@ -1635,8 +1641,6 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - INFO: subcase: a=-11728123330560;b=-11728123330560
     OK
   - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
@@ -1653,9 +1657,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+  - INFO: subcase: a=-11728123330560;b=2147483520
     OK
-  - INFO: subcase: a=-11728123330560;b=11728123330560
+  - INFO: subcase: a=-11728123330560;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
     OK
@@ -1675,9 +1679,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=-3.78956116703702e-13;b=2147483520
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=-3.78956116703702e-13;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
     OK
@@ -1699,9 +1703,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
@@ -1723,9 +1727,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754942106924411e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754942106924411e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
     OK
@@ -1747,9 +1751,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+  - INFO: subcase: a="_negzero_";b=2147483520
     OK
-  - INFO: subcase: a="_negzero_";b=11728123330560
+  - INFO: subcase: a="_negzero_";b=4294967040
     OK
   - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
     OK
@@ -1771,9 +1775,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=0;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=0;b=3.78956116703702e-13
+  - INFO: subcase: a=0;b=2147483520
     OK
-  - INFO: subcase: a=0;b=11728123330560
+  - INFO: subcase: a=0;b=4294967040
     OK
   - INFO: subcase: a=0;b=3.4028234663852886e+38
     OK
@@ -1795,9 +1799,9 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+  - INFO: subcase: a=1.401298464324817e-45;b=2147483520
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+  - INFO: subcase: a=1.401298464324817e-45;b=4294967040
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
     OK
@@ -1819,55 +1823,51 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+  - INFO: subcase: a=2147483520;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+  - INFO: subcase: a=2147483520;b="_negzero_"
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+  - INFO: subcase: a=2147483520;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=2147483520
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=4294967040
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=4294967040;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=11728123330560;b=-11728123330560
+  - INFO: subcase: a=4294967040;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+  - INFO: subcase: a=4294967040;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+  - INFO: subcase: a=4294967040;b="_negzero_"
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b="_negzero_"
+  - INFO: subcase: a=4294967040;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=11728123330560;b=0
+  - INFO: subcase: a=4294967040;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+  - INFO: subcase: a=4294967040;b=2147483520
     OK
-  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
-    OK
-  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
-    OK
-  - INFO: subcase: a=11728123330560;b=11728123330560
+  - INFO: subcase: a=4294967040;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
     OK
@@ -1883,23 +1883,24 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
-  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
@@ -1911,14 +1912,22 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - EXPECTATION FAILED: subcase: a=2147483520;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=-3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=-3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -1926,9 +1935,13 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-3.4028234663852886e+38
     OK
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=4294967040;b=-3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=4294967040;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
@@ -1937,19 +1950,24 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -2221,18 +2239,18 @@ FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=-65504
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
     Expected validation error
       at (elided: only 2 shown)
@@ -2303,8 +2321,6 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - INFO: subcase: a=-11728123330560;b=-11728123330560
     OK
   - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
@@ -2321,9 +2337,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+  - INFO: subcase: a=-11728123330560;b=2147483520
     OK
-  - INFO: subcase: a=-11728123330560;b=11728123330560
+  - INFO: subcase: a=-11728123330560;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
     OK
@@ -2343,9 +2359,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=-3.78956116703702e-13;b=2147483520
     OK
-  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=-3.78956116703702e-13;b=4294967040
     OK
   - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
     OK
@@ -2367,9 +2383,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
@@ -2391,9 +2407,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=-1.1754942106924411e-38;b=2147483520
     OK
-  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+  - INFO: subcase: a=-1.1754942106924411e-38;b=4294967040
     OK
   - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
     OK
@@ -2415,9 +2431,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+  - INFO: subcase: a="_negzero_";b=2147483520
     OK
-  - INFO: subcase: a="_negzero_";b=11728123330560
+  - INFO: subcase: a="_negzero_";b=4294967040
     OK
   - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
     OK
@@ -2439,9 +2455,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=0;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=0;b=3.78956116703702e-13
+  - INFO: subcase: a=0;b=2147483520
     OK
-  - INFO: subcase: a=0;b=11728123330560
+  - INFO: subcase: a=0;b=4294967040
     OK
   - INFO: subcase: a=0;b=3.4028234663852886e+38
     OK
@@ -2463,9 +2479,9 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+  - INFO: subcase: a=1.401298464324817e-45;b=2147483520
     OK
-  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+  - INFO: subcase: a=1.401298464324817e-45;b=4294967040
     OK
   - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
     OK
@@ -2487,55 +2503,51 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+  - INFO: subcase: a=1.1754943508222875e-38;b=2147483520
     OK
-  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+  - INFO: subcase: a=1.1754943508222875e-38;b=4294967040
     OK
   - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+  - INFO: subcase: a=2147483520;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+  - INFO: subcase: a=2147483520;b="_negzero_"
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+  - INFO: subcase: a=2147483520;b=0
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=0
+  - INFO: subcase: a=2147483520;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+  - INFO: subcase: a=2147483520;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+  - INFO: subcase: a=2147483520;b=2147483520
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+  - INFO: subcase: a=2147483520;b=4294967040
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+  - INFO: subcase: a=4294967040;b=-11728123330560
     OK
-  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=-3.78956116703702e-13
     OK
-  - INFO: subcase: a=11728123330560;b=-11728123330560
+  - INFO: subcase: a=4294967040;b=-1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+  - INFO: subcase: a=4294967040;b=-1.1754942106924411e-38
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+  - INFO: subcase: a=4294967040;b="_negzero_"
     OK
-  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+  - INFO: subcase: a=4294967040;b=0
     OK
-  - INFO: subcase: a=11728123330560;b="_negzero_"
+  - INFO: subcase: a=4294967040;b=1.401298464324817e-45
     OK
-  - INFO: subcase: a=11728123330560;b=0
+  - INFO: subcase: a=4294967040;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+  - INFO: subcase: a=4294967040;b=2147483520
     OK
-  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
-    OK
-  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
-    OK
-  - INFO: subcase: a=11728123330560;b=11728123330560
+  - INFO: subcase: a=4294967040;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
     OK
@@ -2551,23 +2563,24 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
-    OK
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
-  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
@@ -2579,14 +2592,22 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - EXPECTATION FAILED: subcase: a=2147483520;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=2147483520;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=4294967040;b=-3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=-3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -2594,9 +2615,13 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
     OK
   - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
     OK
-  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=-3.4028234663852886e+38
     OK
-  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=2147483520;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=4294967040;b=-3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=4294967040;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
@@ -2605,19 +2630,24 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
     Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=2147483520
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=4294967040
     Expected validation error
       at (elided: only 2 shown)
   - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+  - INFO: subcase: a=4294967040;b=3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
     OK
-  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+  - INFO: subcase: a=3.4028234663852886e+38;b=2147483520
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=4294967040
     OK
   - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
     OK
@@ -2889,18 +2919,18 @@ FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
     OK
   - EXPECTATION FAILED: subcase: a=-65504;b=-65504
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
     Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:69:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/dot.spec.js:64:37
   - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
     Expected validation error
       at (elided: only 2 shown)

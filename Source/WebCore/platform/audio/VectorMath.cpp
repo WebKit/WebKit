@@ -187,10 +187,12 @@ float dotProduct(std::span<const float> inputVector1, std::span<const float> inp
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
 
+#if CPU(X86_SSE2)
 static inline bool is16ByteAligned(const float* vector)
 {
     return !(reinterpret_cast<uintptr_t>(vector) & 0x0F);
 }
+#endif
 
 void multiplyByScalarThenAddToVector(std::span<const float> inputVector1, float scalar, std::span<const float> inputVector2, std::span<float> outputVector)
 {

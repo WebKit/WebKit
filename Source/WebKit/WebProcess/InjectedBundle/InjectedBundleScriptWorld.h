@@ -71,4 +71,8 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::InjectedBundleScriptWorld)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BundleScriptWorld; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // InjectedBundleScriptWorld_h

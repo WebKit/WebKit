@@ -29,6 +29,7 @@
 
 #include "AuthenticatorCoordinator.h"
 #include "ExceptionData.h"
+#include "PublicKeyCredential.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
@@ -75,6 +76,9 @@ public:
     virtual void isConditionalMediationAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void getClientCapabilities(const SecurityOrigin&, CapabilitiesCompletionHandler&&) = 0;
+    virtual void signalUnknownCredential(const SecurityOrigin&, UnknownCredentialOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) = 0;
+    virtual void signalAllAcceptedCredentials(const SecurityOrigin&, AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) = 0;
+    virtual void signalCurrentUserDetails(const SecurityOrigin&, CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) = 0;
     virtual void cancel(CompletionHandler<void()>&&) = 0;
 };
 

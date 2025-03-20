@@ -36,8 +36,6 @@ public:
     RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();
 
-    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
-
     int value() const;
     void updateValue();
 
@@ -62,7 +60,6 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
-    void layout() final;
 
     void computePreferredLogicalWidths() final;
 

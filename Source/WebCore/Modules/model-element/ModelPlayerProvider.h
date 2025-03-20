@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ namespace WebCore {
 class ModelPlayer;
 class ModelPlayerClient;
 
-class WEBCORE_EXPORT ModelPlayerProvider {
+class WEBCORE_EXPORT ModelPlayerProvider : public RefCountedAndCanMakeWeakPtr<ModelPlayerProvider> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayerProvider, WEBCORE_EXPORT);
 public:
     virtual ~ModelPlayerProvider();

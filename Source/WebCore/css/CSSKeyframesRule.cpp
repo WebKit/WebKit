@@ -87,19 +87,8 @@ std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) c
         return { pair.first, pair.second };
     });
 
-    // FIXME: using Vector::operator==() here fails on Intel, so we provide our own logic.
-    auto keysAreEqual = [](const Vector<StyleRuleKeyframe::Key>& a, const Vector<StyleRuleKeyframe::Key>& b) {
-        if (a.size() != b.size())
-            return false;
-        for (auto i = a.size(); i--;) {
-            if (!(a[i] == b[i]))
-                return false;
-        }
-        return true;
-    };
-
     for (auto i = m_keyframes.size(); i--; ) {
-        if (keysAreEqual(m_keyframes[i]->keys(), convertedKeys))
+        if (m_keyframes[i]->keys() == convertedKeys)
             return i;
     }
     return std::nullopt;

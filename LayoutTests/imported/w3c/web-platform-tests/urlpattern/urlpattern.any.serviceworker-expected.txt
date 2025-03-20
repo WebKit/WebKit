@@ -166,6 +166,7 @@ PASS Pattern: [{"port":""}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http","port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http","port":"80{20}?"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","port":"80"}]
+PASS Pattern: [{"protocol":"http","port":"100000"}] Inputs: [{"protocol":"http","port":"100000"}]
 PASS Pattern: [{"port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http{s}?","port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"port":"80"}] Inputs: [{"port":"80"}]
@@ -284,9 +285,9 @@ PASS Pattern: [{"protocol":":name*"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"protocol":":name+"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"protocol":":name"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"hostname":"bad hostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad#hostname"}] Inputs: [{"hostname":"bad"}]
 PASS Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad/hostname"}] Inputs: [{"hostname":"bad"}]
 PASS Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined
@@ -294,12 +295,12 @@ PASS Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: [{"hostname":"badhostname"}]
 PASS Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined
-PASS Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad\nhostname"}] Inputs: [{"hostname":"badhostname"}]
+PASS Pattern: [{"hostname":"bad\rhostname"}] Inputs: [{"hostname":"badhostname"}]
+PASS Pattern: [{"hostname":"bad\thostname"}] Inputs: [{"hostname":"badhostname"}]
 PASS Pattern: [{}] Inputs: ["https://example.com/"]
 PASS Pattern: [] Inputs: ["https://example.com/"]
 PASS Pattern: [] Inputs: [{}]

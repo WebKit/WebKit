@@ -1,0 +1,63 @@
+
+
+
+
+
+
+
+
+
+
+
+
+PASS .item 1
+PASS .item 2
+FAIL .item 3 assert_equals:
+<div class="container">
+  <div class="item" style="top: 10px; bottom: 20px;" data-offset-y="0">
+    <div class="inner" style="height: 95px;"></div>
+  </div>
+</div>
+offsetTop expected 0 but got -2
+FAIL .item 4 assert_equals:
+<div class="container">
+  <div class="item" style="top: 10px; bottom: 20px;" data-offset-y="-20">
+    <div class="inner" style="height: 120px;"></div>
+  </div>
+</div>
+offsetTop expected -20 but got -15
+PASS .item 5
+PASS .item 6
+FAIL .item 7 assert_equals:
+<div class="container">
+  <div class="item" style="top: -10px; bottom: -20px;" data-offset-y="-40">
+    <div class="inner" style="height: 160px;"></div>
+  </div>
+</div>
+offsetTop expected -40 but got -25
+PASS .item 8
+PASS .item 9
+FAIL .item 10 assert_equals:
+<div class="container">
+  <div class="item rtl" style="top: 10px; bottom: 20px;" data-offset-y="0">
+    <div class="inner" style="height: 95px;"></div>
+  </div>
+</div>
+offsetTop expected 0 but got -2
+FAIL .item 11 assert_equals:
+<div class="container">
+  <div class="item rtl" style="top: 10px; bottom: 20px;" data-offset-y="-20">
+    <div class="inner" style="height: 120px;"></div>
+  </div>
+</div>
+offsetTop expected -20 but got -15
+PASS .item 12
+PASS .item 13
+FAIL .item 14 assert_equals:
+<div class="container">
+  <div class="item rtl" style="top: -10px; bottom: -20px;" data-offset-y="-40">
+    <div class="inner" style="height: 160px;"></div>
+  </div>
+</div>
+offsetTop expected -40 but got -25
+

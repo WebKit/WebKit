@@ -668,12 +668,12 @@ String Cache::dumpFilePath() const
 
 void Cache::dumpContentsToFile()
 {
-    auto fd = openFile(dumpFilePath(), FileOpenMode::Truncate);
-    if (!isHandleValid(fd))
+    auto fileHandle = openFile(dumpFilePath(), FileOpenMode::Truncate);
+    if (!fileHandle)
         return;
 
     constexpr auto prologue = "{\n\"entries\": [\n"_s;
-    writeToFile(fd, prologue.span8());
+    fileHandle.write(prologue.span8());
 
     struct Totals {
         unsigned count { 0 };
@@ -683,7 +683,7 @@ void Cache::dumpContentsToFile()
     Totals totals;
     auto flags = { Storage::TraverseFlag::ComputeWorth, Storage::TraverseFlag::ShareCount };
     size_t capacity = m_storage->capacity();
-    m_storage->traverse(resourceType(), flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
+    m_storage->traverse(resourceType(), flags, [fileHandle = WTFMove(fileHandle), totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {
             CString writeData = makeString(
                 "{}\n"
@@ -695,8 +695,8 @@ void Cache::dumpContentsToFile()
                 "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
                 "}\n}\n"_s
             ).utf8();
-            writeToFile(fd, byteCast<uint8_t>(writeData.span()));
-            closeFile(fd);
+            fileHandle.write(byteCast<uint8_t>(writeData.span()));
+            fileHandle = { };
             return;
         }
         auto entry = Entry::decodeStorageRecord(*record);
@@ -709,7 +709,7 @@ void Cache::dumpContentsToFile()
         StringBuilder json;
         entry->asJSON(json, info);
         json.append(",\n"_s);
-        writeToFile(fd, byteCast<uint8_t>(json.toString().utf8().span()));
+        fileHandle.write(byteCast<uint8_t>(json.toString().utf8().span()));
     });
 }
 

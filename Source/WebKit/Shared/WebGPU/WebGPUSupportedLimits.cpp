@@ -71,6 +71,8 @@ std::optional<SupportedLimits> ConvertToBackingContext::convertToBacking(const W
         supportedLimits.maxComputeWorkgroupsPerDimension(),
         supportedLimits.maxStorageBuffersInFragmentStage(),
         supportedLimits.maxStorageTexturesInFragmentStage(),
+        supportedLimits.maxStorageBuffersInVertexStage(),
+        supportedLimits.maxStorageTexturesInVertexStage(),
     } };
 }
 
@@ -110,7 +112,9 @@ RefPtr<WebCore::WebGPU::SupportedLimits> ConvertFromBackingContext::convertFromB
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension,
         supportedLimits.maxStorageBuffersInFragmentStage,
-        supportedLimits.maxStorageTexturesInFragmentStage
+        supportedLimits.maxStorageTexturesInFragmentStage,
+        supportedLimits.maxStorageBuffersInVertexStage,
+        supportedLimits.maxStorageTexturesInVertexStage
     ) };
 }
 

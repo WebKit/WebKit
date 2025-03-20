@@ -733,33 +733,33 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
     case IOSurface::Format::BGRX:
-        ts << "BGRX";
+        ts << "BGRX"_s;
         break;
     case IOSurface::Format::BGRA:
-        ts << "BGRA";
+        ts << "BGRA"_s;
         break;
     case IOSurface::Format::YUV422:
-        ts << "YUV422";
+        ts << "YUV422"_s;
         break;
     case IOSurface::Format::RGBX:
-        ts << "RGBX";
+        ts << "RGBX"_s;
         break;
     case IOSurface::Format::RGBA:
-        ts << "RGBA";
+        ts << "RGBA"_s;
         break;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case IOSurface::Format::RGB10:
-        ts << "RGB10";
+        ts << "RGB10"_s;
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case IOSurface::Format::RGB10A8:
-        ts << "RGB10A8";
+        ts << "RGB10A8"_s;
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case IOSurface::Format::RGBA16F:
-        ts << "RGBA16F";
+        ts << "RGBA16F"_s;
         break;
 #endif
     }
@@ -770,10 +770,10 @@ static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
 {
     switch (state) {
     case SetNonVolatileResult::Valid:
-        ts << "valid";
+        ts << "valid"_s;
         break;
     case SetNonVolatileResult::Empty:
-        ts << "empty";
+        ts << "empty"_s;
         break;
     }
     return ts;
@@ -781,7 +781,7 @@ static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
 
 TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 {
-    return ts << "IOSurface " << surface.surfaceID() << " name " << [surfaceNameToNSString(surface.name()) UTF8String] << " size " << surface.size() << " format " << surface.m_format << " state " << surface.state();
+    return ts << "IOSurface "_s << surface.surfaceID() << " name "_s << [surfaceNameToNSString(surface.name()) UTF8String] << " size "_s << surface.size() << " format "_s << surface.m_format << " state "_s << surface.state();
 }
 
 } // namespace WebCore

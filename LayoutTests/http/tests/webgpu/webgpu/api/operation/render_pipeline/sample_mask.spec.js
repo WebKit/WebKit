@@ -19,7 +19,7 @@ The cross-platform behavior is unknown. could be any of:
 Details could be found at: https://github.com/gpuweb/cts/issues/2201
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, range } from '../../../../common/util/util.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { checkElementsPassPredicate, checkElementsEqual } from '../../../util/check_contents.js';
 import { Type } from '../../../util/conversion.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
@@ -129,7 +129,7 @@ fragmentShaderOutputMaskOrAlphaToCoverageMask)
 const kSampleMaskTestShader = `
 struct Varyings {
   @builtin(position) Position : vec4<f32>,
-  @location(0) @interpolate(flat) uvFlat : vec2<f32>,
+  @location(0) @interpolate(flat, either) uvFlat : vec2<f32>,
   @location(1) @interpolate(perspective, sample) uvInterpolated : vec2<f32>,
 }
 
@@ -263,7 +263,7 @@ struct FragmentOutput2 {
 }
 `;
 
-class F extends TextureTestMixin(GPUTest) {
+class F extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
 
 
 
@@ -331,7 +331,7 @@ class F extends TextureTestMixin(GPUTest) {
     const renderTargetTextures = [];
     const resolveTargetTextures = [];
     for (let i = 0; i < colorTargetsCount; i++) {
-      const renderTargetTexture = this.device.createTexture({
+      const renderTargetTexture = this.createTextureTracked({
         format,
         size: {
           width: kRenderTargetSize,
@@ -347,7 +347,7 @@ class F extends TextureTestMixin(GPUTest) {
       const resolveTargetTexture =
       sampleCount === 1 ?
       null :
-      this.device.createTexture({
+      this.createTextureTracked({
         format,
         size: {
           width: kRenderTargetSize,
@@ -361,7 +361,7 @@ class F extends TextureTestMixin(GPUTest) {
       resolveTargetTextures.push(resolveTargetTexture);
     }
 
-    const depthStencilTexture = this.device.createTexture({
+    const depthStencilTexture = this.createTextureTracked({
       size: {
         width: kRenderTargetSize,
         height: kRenderTargetSize
@@ -531,11 +531,10 @@ combine('fragmentShaderOutputMask', [
 fn((t) => {
   const { sampleCount, rasterizationMask, sampleMask, fragmentShaderOutputMask } = t.params;
 
-  const fragmentMaskUniformBuffer = t.device.createBuffer({
+  const fragmentMaskUniformBuffer = t.createBufferTracked({
     size: 4,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
   });
-  t.trackForCleanup(fragmentMaskUniformBuffer);
   t.device.queue.writeBuffer(
     fragmentMaskUniformBuffer,
     0,
@@ -647,11 +646,10 @@ fn(async (t) => {
   const sampleMask = 0xffffffff;
 
   const alphaValues = new Float32Array(4); // [alpha0, alpha1, 0, 0]
-  const alphaValueUniformBuffer = t.device.createBuffer({
+  const alphaValueUniformBuffer = t.createBufferTracked({
     size: alphaValues.byteLength,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
   });
-  t.trackForCleanup(alphaValueUniformBuffer);
 
   const module = t.device.createShaderModule({ code: kSampleMaskTestShader });
   const pipeline = t.device.createRenderPipeline({

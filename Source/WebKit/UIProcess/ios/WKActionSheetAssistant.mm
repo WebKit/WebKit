@@ -293,7 +293,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)isShowingSheet
 {
-    return _interactionSheet != nil;
+    return !!_interactionSheet;
 }
 
 - (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information

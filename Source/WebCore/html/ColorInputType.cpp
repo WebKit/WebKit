@@ -107,7 +107,7 @@ static std::optional<Color> parseColorValue(StringView string, HTMLInputElement&
     if (context.colorSpace().isNull())
         return parseSimpleColorValue(string);
 
-    auto parserContext = context.document().cssParserContext();
+    auto parserContext = context.protectedDocument()->cssParserContext();
     parserContext.mode = HTMLStandardMode;
     auto color = CSSPropertyParserHelpers::parseColorRaw(string.toString(), parserContext, [] {
         return colorParsingParameters();
@@ -150,7 +150,7 @@ ColorInputType::~ColorInputType()
 bool ColorInputType::isMouseFocusable() const
 {
     ASSERT(element());
-    return element()->isTextFormControlFocusable();
+    return protectedElement()->isTextFormControlFocusable();
 }
 
 bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
@@ -181,24 +181,26 @@ bool ColorInputType::supportsRequired() const
 String ColorInputType::fallbackValue() const
 {
     ASSERT(element());
-    return serializeColorValue(Color::black, *element());
+    return serializeColorValue(Color::black, *protectedElement());
 }
 
 String ColorInputType::sanitizeValue(const String& proposedValue) const
 {
     ASSERT(element());
-    auto color = parseColorValue(proposedValue, *element());
+    Ref input = *element();
+    auto color = parseColorValue(proposedValue, input);
 
     if (!color)
         return fallbackValue();
 
-    return serializeColorValue(*color, *element());
+    return serializeColorValue(*color, input);
 }
 
 Color ColorInputType::valueAsColor() const
 {
     ASSERT(element());
-    auto color = parseColorValue(element()->value(), *element());
+    Ref input = *element();
+    auto color = parseColorValue(input->value(), input);
     ASSERT(!!color);
     // FIXME: This is a speculative fix for rdar://144872437.
     if (!color)
@@ -216,7 +218,7 @@ void ColorInputType::createShadowSubtree()
     Ref wrapperElement = HTMLDivElement::create(document);
     Ref colorSwatch = HTMLDivElement::create(document);
 
-    Ref shadowRoot = *element()->userAgentShadowRoot();
+    Ref shadowRoot = *protectedElement()->userAgentShadowRoot();
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { shadowRoot };
     shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, wrapperElement);
 
@@ -246,8 +248,9 @@ void ColorInputType::attributeChanged(const QualifiedName& name)
     if (name == valueAttr) {
         updateColorSwatch();
 
-        if (CheckedPtr cache = element()->document().existingAXObjectCache())
-            cache->valueChanged(*element());
+        Ref input = *element();
+        if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache())
+            cache->valueChanged(input);
     }
 
     InputType::attributeChanged(name);
@@ -305,20 +308,21 @@ void ColorInputType::didChooseColor(const Color& color)
 {
     ASSERT(element());
 
-    if (element()->isDisabledFormControl())
+    Ref input = *element();
+    if (input->isDisabledFormControl())
         return;
 
-    auto serializedColor = serializeColorValue(color, *element());
-    if (serializedColor == element()->value())
+    auto serializedColor = serializeColorValue(color, input);
+    if (serializedColor == input->value())
         return;
 
     EventQueueScope scope;
-    element()->setValueFromRenderer(serializedColor);
+    input->setValueFromRenderer(serializedColor);
     updateColorSwatch();
-    element()->dispatchFormControlChangeEvent();
+    input->dispatchFormControlChangeEvent();
 
-    if (CheckedPtr cache = element()->document().existingAXObjectCache())
-        cache->valueChanged(*element());
+    if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache())
+        cache->valueChanged(input);
 }
 
 void ColorInputType::didEndChooser()
@@ -346,7 +350,7 @@ void ColorInputType::updateColorSwatch()
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ASSERT(element());
-    RefPtr shadow = element()->userAgentShadowRoot();
+    RefPtr shadow = protectedElement()->userAgentShadowRoot();
     if (!shadow)
         return nullptr;
 
@@ -359,22 +363,23 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     ASSERT(element());
     if (!element()->renderer())
         return IntRect();
-    return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
+    return element()->protectedDocument()->protectedView()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
 bool ColorInputType::supportsAlpha() const
 {
     ASSERT(element());
-    return element()->alpha();
+    return protectedElement()->alpha();
 }
 
 Vector<Color> ColorInputType::suggestedColors() const
 {
     Vector<Color> suggestions;
     ASSERT(element());
-    if (auto dataList = element()->dataList()) {
-        for (auto& option : dataList->suggestions()) {
-            if (auto color = parseColorValue(option.value(), *element()))
+    Ref input = *element();
+    if (auto dataList = input->dataList()) {
+        for (Ref option : dataList->suggestions()) {
+            if (auto color = parseColorValue(option->value(), input))
                 suggestions.append(*color);
         }
     }
@@ -384,7 +389,7 @@ Vector<Color> ColorInputType::suggestedColors() const
 void ColorInputType::selectColor(StringView string)
 {
     ASSERT(element());
-    if (auto color = parseColorValue(string, *element()))
+    if (auto color = parseColorValue(string, *protectedElement()))
         didChooseColor(*color);
 }
 

@@ -334,7 +334,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 {
     m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
-    m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
 
     m_pixelResult.clear();
     m_repaintRects.clear();
@@ -423,17 +422,6 @@ void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilde
     size_t size = m_pages.size();
     for (size_t i = 0; i < size; ++i)
         stringBuilder.append(m_pages[i]->dumpHistory());
-}
-
-void InjectedBundle::dumpToStdErr(const String& output)
-{
-    if (!isTestRunning())
-        return;
-    if (output.isEmpty())
-        return;
-    // FIXME: Do we really have to convert to UTF-8 instead of using toWK?
-    auto string = output.tryGetUTF8();
-    postPageMessage("DumpToStdErr", string ? string->data() : "Out of memory\n");
 }
 
 void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTestOutput)
@@ -845,6 +833,8 @@ void postMessageWithAsyncReply(JSContextRef context, const char* messageName, WK
                 resultJS = stringArrayToJS(context, static_cast<WKArrayRef>(result));
             else if (WKGetTypeID(result) == WKStringGetTypeID())
                 resultJS = JSValueMakeString(context, toJS(static_cast<WKStringRef>(result)).get());
+            else if (WKGetTypeID(result) == WKBooleanGetTypeID())
+                resultJS = JSValueMakeBoolean(context, booleanValue(static_cast<WKBooleanRef>(result)));
             else
                 RELEASE_ASSERT_NOT_REACHED();
             arguments = &resultJS;

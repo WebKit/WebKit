@@ -33,10 +33,10 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, ScrollAxis axis)
 {
     switch (axis) {
-    case ScrollAxis::Block: ts << "block"; break;
-    case ScrollAxis::Inline: ts << "inline"; break;
-    case ScrollAxis::X: ts << "x"; break;
-    case ScrollAxis::Y: ts << "y"; break;
+    case ScrollAxis::Block: ts << "block"_s; break;
+    case ScrollAxis::Inline: ts << "inline"_s; break;
+    case ScrollAxis::X: ts << 'x'; break;
+    case ScrollAxis::Y: ts << 'y'; break;
     }
     return ts;
 }

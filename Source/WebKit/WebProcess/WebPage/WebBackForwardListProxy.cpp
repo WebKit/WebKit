@@ -85,34 +85,6 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     m_cachedBackForwardListCounts = backForwardListCounts;
 }
 
-void WebBackForwardListProxy::goToProvisionalItem(const HistoryItem& item)
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
-
-    auto sendResult = page->sendSync(Messages::WebPageProxy::BackForwardGoToProvisionalItem(item.itemID()));
-    auto [backForwardListCounts] = sendResult.takeReplyOr(WebBackForwardListCounts { });
-    m_cachedBackForwardListCounts = backForwardListCounts;
-}
-
-void WebBackForwardListProxy::clearProvisionalItem(const HistoryItem& item)
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
-
-    auto sendResult = page->sendSync(Messages::WebPageProxy::BackForwardClearProvisionalItem(item.itemID(), item.frameItemID()));
-    auto [backForwardListCounts] = sendResult.takeReplyOr(WebBackForwardListCounts { });
-    m_cachedBackForwardListCounts = backForwardListCounts;
-}
-
-void WebBackForwardListProxy::commitProvisionalItem(const HistoryItem& item)
-{
-    if (RefPtr page = m_page.get())
-        page->send(Messages::WebPageProxy::BackForwardCommitProvisionalItem(item.itemID(), item.frameItemID()));
-}
-
 RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex, FrameIdentifier frameID)
 {
     RefPtr page = m_page.get();

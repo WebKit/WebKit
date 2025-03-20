@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-green-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-inherit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-inherit.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html
@@ -26,4 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-size.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/ua-style-iframe.html

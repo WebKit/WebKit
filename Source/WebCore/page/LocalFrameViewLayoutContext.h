@@ -70,6 +70,8 @@ public:
     WEBCORE_EXPORT void layout(bool canDeferUpdateLayerPositions = false);
     bool needsLayout(OptionSet<LayoutOptions> layoutOptions = { }) const;
 
+    void interleavedLayout();
+
     // We rely on the side-effects of layout, like compositing updates, to update state in various subsystems
     // whose dependencies are poorly defined. This call triggers such updates.
     void setNeedsLayoutAfterViewConfigurationChange();
@@ -209,6 +211,7 @@ private:
     Ref<LocalFrameView> protectedView() const;
     RenderView* renderView() const;
     Document* document() const;
+    RefPtr<Document> protectedDocument() const;
 
     SingleThreadWeakRef<LocalFrameView> m_frameView;
     Timer m_layoutTimer;

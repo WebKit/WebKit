@@ -128,7 +128,7 @@ Position nextVisuallyDistinctCandidate(const Position&, SkipDisplayContents = Sk
 Position previousVisuallyDistinctCandidate(const Position&);
 
 Position firstPositionInOrBeforeNode(Node*);
-Position lastPositionInOrAfterNode(Node*);
+inline Position lastPositionInOrAfterNode(Node*);
 
 Position firstEditablePositionAfterPositionInRoot(const Position&, ContainerNode* root);
 Position lastEditablePositionBeforePositionInRoot(const Position&, ContainerNode* root);
@@ -251,13 +251,6 @@ inline Position firstPositionInOrBeforeNode(Node* node)
     if (!node)
         return { };
     return editingIgnoresContent(*node) ? positionBeforeNode(node) : firstPositionInNode(node);
-}
-
-inline Position lastPositionInOrAfterNode(Node* node)
-{
-    if (!node)
-        return { };
-    return editingIgnoresContent(*node) ? positionAfterNode(node) : lastPositionInNode(node);
 }
 
 }

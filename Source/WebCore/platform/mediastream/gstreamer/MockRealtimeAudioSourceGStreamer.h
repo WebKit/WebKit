@@ -41,6 +41,7 @@ public:
 
     // GStreamerCapturerObserver
     void captureEnded() final;
+    void captureDeviceUpdated(const GStreamerCaptureDevice&) final;
 
     std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const final;
 

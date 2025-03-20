@@ -13,17 +13,15 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.24.12.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.26.0.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch
+  path: patches/fdo-0007-Bump-to-Meson-1.7.0.patch
+- kind: patch
   path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
 - kind: patch
-  path: patches/fdo-0010-GStreamer-Vendor-WebRTC-related-patches-scheduled-to.patch
-- kind: patch
   path: patches/fdo-0013-ffmpeg-Bump-to-version-7.0.2.patch
-- kind: patch
-  path: patches/fdo-0014-GStreamer-Vendor-an-oggdemux-patch-scheduled-for-1.2.patch
 config:
   options:
     target_arch: '%{arch}'

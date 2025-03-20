@@ -334,7 +334,7 @@ std::optional<OpusCookieContents> parseOpusPrivateData(std::span<const uint8_t> 
 static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& cookie)
 {
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    return { cookie.cookieData->span() };
+    return { Ref { *cookie.cookieData }->span() };
 #else
     auto samplesPerPacket = cookie.framesPerPacket * (cookie.frameDuration.seconds() * cookie.sampleRate);
 

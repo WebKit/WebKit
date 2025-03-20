@@ -88,8 +88,9 @@ private:
     static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);
 
     Ref<Storage> protectedStorage() const;
+    Ref<Cache> protectedCache() const;
 
-    WeakRef<Cache> m_cache;
+    const WeakRef<Cache> m_cache;
     ThreadSafeWeakPtr<Storage> m_storage; // Not expected to be null.
 
     class PendingFrameLoad;

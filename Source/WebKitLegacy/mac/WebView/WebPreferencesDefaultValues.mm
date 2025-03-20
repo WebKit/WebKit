@@ -227,3 +227,7 @@ bool defaultMediaSourceEnabled()
 #endif
 
 } // namespace WebKit
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPreferencesDefaultValuesAdditions.mm>
+#endif

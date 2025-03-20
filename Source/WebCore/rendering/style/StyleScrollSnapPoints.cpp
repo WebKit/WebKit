@@ -32,10 +32,10 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, ScrollSnapAlign align)
 {
     auto populateTextStreamForAlignType = [&](ScrollSnapAxisAlignType type) {
         switch (type) {
-        case ScrollSnapAxisAlignType::None: ts << "none"; break;
-        case ScrollSnapAxisAlignType::Start: ts << "start"; break;
-        case ScrollSnapAxisAlignType::Center: ts << "center"; break;
-        case ScrollSnapAxisAlignType::End: ts << "end"; break;
+        case ScrollSnapAxisAlignType::None: ts << "none"_s; break;
+        case ScrollSnapAxisAlignType::Start: ts << "start"_s; break;
+        case ScrollSnapAxisAlignType::Center: ts << "center"_s; break;
+        case ScrollSnapAxisAlignType::End: ts << "end"_s; break;
         }
     };
     populateTextStreamForAlignType(align.blockAlign);
@@ -50,18 +50,18 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, ScrollSnapType type)
 {
     if (type.strictness != ScrollSnapStrictness::None) {
         switch (type.axis) {
-        case ScrollSnapAxis::XAxis: ts << "x"; break;
-        case ScrollSnapAxis::YAxis: ts << "y"; break;
-        case ScrollSnapAxis::Block: ts << "block"; break;
-        case ScrollSnapAxis::Inline: ts << "inline"; break;
-        case ScrollSnapAxis::Both: ts << "both"; break;
+        case ScrollSnapAxis::XAxis: ts << 'x'; break;
+        case ScrollSnapAxis::YAxis: ts << 'y'; break;
+        case ScrollSnapAxis::Block: ts << "block"_s; break;
+        case ScrollSnapAxis::Inline: ts << "inline"_s; break;
+        case ScrollSnapAxis::Both: ts << "both"_s; break;
         }
         ts << ' ';
     }
     switch (type.strictness) {
-    case ScrollSnapStrictness::None: ts << "none"; break;
-    case ScrollSnapStrictness::Proximity: ts << "proximity"; break;
-    case ScrollSnapStrictness::Mandatory: ts << "mandatory"; break;
+    case ScrollSnapStrictness::None: ts << "none"_s; break;
+    case ScrollSnapStrictness::Proximity: ts << "proximity"_s; break;
+    case ScrollSnapStrictness::Mandatory: ts << "mandatory"_s; break;
     }
     return ts;
 }

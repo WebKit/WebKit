@@ -329,12 +329,12 @@ static std::optional<WKFindOptions> findOptionsFromArray(JSContextRef context, J
     return options;
 }
 
-bool TestRunner::findString(JSContextRef context, JSStringRef target, JSValueRef optionsArrayAsValue)
+void TestRunner::findString(JSContextRef context, JSStringRef target, JSValueRef optionsArrayAsValue, JSValueRef callback)
 {
-    if (auto options = findOptionsFromArray(context, optionsArrayAsValue))
-        return WKBundlePageFindString(page(), toWK(target).get(), *options);
-
-    return false;
+    postMessageWithAsyncReply(context, "FindString", createWKDictionary({
+        { "String", toWK(target) },
+        { "FindOptions", adoptWK(WKUInt64Create(findOptionsFromArray(context, optionsArrayAsValue).value_or(WKFindOptions { }))) },
+    }), callback);
 }
 
 void TestRunner::findStringMatchesInPage(JSContextRef context, JSStringRef target, JSValueRef optionsArrayAsValue)
@@ -1671,9 +1671,10 @@ void TestRunner::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
     }));
 }
 
-void TestRunner::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
+void TestRunner::triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay)
 {
     postSynchronousMessage("TriggerMockCaptureConfigurationChange", createWKDictionary({
+        { "camera", adoptWK(WKBooleanCreate(forCamera)) },
         { "microphone", adoptWK(WKBooleanCreate(forMicrophone)) },
         { "display", adoptWK(WKBooleanCreate(forDisplay)) },
     }));
@@ -1817,6 +1818,11 @@ void TestRunner::removeAllSessionCredentials(JSContextRef context, JSValueRef ca
 void TestRunner::clearDOMCache(JSStringRef origin)
 {
     postSynchronousMessage("ClearDOMCache", toWK(origin));
+}
+
+void TestRunner::clearStorage()
+{
+    postSynchronousMessage("ClearStorage");
 }
 
 void TestRunner::clearDOMCaches()
@@ -2100,6 +2106,11 @@ void TestRunner::waitBeforeFinishingFullscreenExit()
     postPageMessage("WaitBeforeFinishingFullscreenExit");
 }
 
+void TestRunner::scrollDuringEnterFullscreen()
+{
+    postPageMessage("ScrollDuringEnterFullscreen");
+}
+
 void TestRunner::finishFullscreenExit()
 {
     postPageMessage("FinishFullscreenExit");
@@ -2153,6 +2164,16 @@ void TestRunner::setObscuredContentInsets(JSContextRef context, double top, doub
 void TestRunner::setResourceMonitorList(JSContextRef context, JSStringRef rulesText, JSValueRef callback)
 {
     postMessageWithAsyncReply(context, "SetResourceMonitorList", toWK(rulesText), callback);
+}
+
+void TestRunner::dumpChildFrameScrollPositions()
+{
+    postSynchronousPageMessage("DumpChildFrameScrollPositions");
+}
+
+bool TestRunner::shouldDumpAllFrameScrollPositions() const
+{
+    return postSynchronousPageMessageReturningBoolean("ShouldDumpAllFrameScrollPositions");
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

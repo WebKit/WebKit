@@ -71,6 +71,8 @@ public:
 
 private:
     // WebKit::WebPageOverlay::Client.
+    bool isPageOverlayClientImpl() const final { return true; }
+
     void willMoveToPage(WebKit::WebPageOverlay& pageOverlay, WebKit::WebPage* page) override
     {
         if (!m_client.willMoveToPage)
@@ -221,6 +223,10 @@ private:
     API::Client<WKBundlePageOverlayAccessibilityClientBase> m_accessibilityClient;
 };
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(PageOverlayClientImpl)
+static bool isType(const WebKit::WebPageOverlay::Client& client) { return client.isPageOverlayClientImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 WKTypeID WKBundlePageOverlayGetTypeID()
 {
     return WebKit::toAPI(WebKit::WebPageOverlay::APIType);
@@ -234,7 +240,7 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* 
 
 void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClientBase* client)
 {
-    static_cast<PageOverlayClientImpl&>(WebKit::toImpl(bundlePageOverlayRef)->client()).setAccessibilityClient(client);
+    downcast<PageOverlayClientImpl>(WebKit::toImpl(bundlePageOverlayRef)->client()).setAccessibilityClient(client);
 }
 
 void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlayRef, WKRect rect)

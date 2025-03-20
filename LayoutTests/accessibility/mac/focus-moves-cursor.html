@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
 <input id="textfield" onfocus="setTimeout('sendTestEvents()', 0);">
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that when setting focus, the cursor moves.");
+var output = "This tests that when setting focus, the cursor moves.\n\n";
+var textfield;
 
-    var windowEventSender = window.eventSender;    
-    if (window.accessibilityController && window.eventSender) {
-        window.jsTestIsAsync = true;
-        var textfield = accessibilityController.accessibleElementById("textfield");
-        shouldBe("textfield.stringValue", "'AXValue: '");
+var windowEventSender = window.eventSender;    
+if (window.accessibilityController && window.eventSender) {
+    window.jsTestIsAsync = true;
+    textfield = accessibilityController.accessibleElementById("textfield");
+    output += expect("textfield.stringValue", "'AXValue: '");
+    eventSender.keyDown("a");
+    output += expect("textfield.stringValue", "'AXValue: '");
+
+    textfield.takeFocus();
+}
+
+function sendTestEvents() {
+    textfield = accessibilityController.accessibleElementById("textfield");
+    setTimeout(async function() {
+        output += await expectAsync("textfield.isFocused", "true");
+        output += await expectAsync("document.activeElement == document.getElementById('textfield')", "true");
+
         eventSender.keyDown("a");
-        shouldBe("textfield.stringValue", "'AXValue: '");
-
-        textfield.takeFocus();
-    }
-
-    function sendTestEvents() {
-        var textfield = accessibilityController.accessibleElementById("textfield");
-        shouldBeTrue("textfield.isFocused");
-        shouldBe("document.activeElement", "document.getElementById('textfield')");
-
-        eventSender.keyDown("a");
-        shouldBe("textfield.stringValue", "'AXValue: a'");
+        output += await expectAsync("textfield.stringValue", "'AXValue: a'");
+        debug(output);
         finishJSTest();
-    }
+    }, 0);
+}
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -92,8 +92,8 @@ private:
 
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
 
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::AgentRegistry m_agents;
 
     WeakRef<WebPageProxy> m_inspectedPage;

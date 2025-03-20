@@ -133,7 +133,7 @@ public:
 #endif
 
     bool hasObserver(MediaSessionObserver&) const;
-    void addObserver(MediaSessionObserver&);
+    WEBCORE_EXPORT void addObserver(MediaSessionObserver&);
     void removeObserver(MediaSessionObserver&);
 
     RefPtr<HTMLMediaElement> activeMediaElement() const;
@@ -145,6 +145,8 @@ public:
     void setCameraActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTFMove(promise), MediaProducerMediaCaptureKind::Camera); }
     void setScreenshareActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTFMove(promise), MediaProducerMediaCaptureKind::Display); }
 #endif
+
+    WEBCORE_EXPORT bool hasActionHandler(const MediaSessionAction) const;
 
 private:
     explicit MediaSession(Navigator&);

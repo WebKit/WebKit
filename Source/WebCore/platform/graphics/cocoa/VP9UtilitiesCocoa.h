@@ -40,6 +40,8 @@ struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
 struct VideoInfo;
 
+WEBCORE_EXPORT bool shouldEnableSWVP9Decoder();
+WEBCORE_EXPORT void registerWebKitVP9Decoder();
 WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();

@@ -423,6 +423,16 @@ void PlaybackSessionModelMediaElement::enterFullscreen()
     element->enterFullscreenIgnoringPermissionsPolicy();
 }
 
+void PlaybackSessionModelMediaElement::setPlayerIdentifierForVideoElement()
+{
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    ASSERT(element);
+    if (!element)
+        return;
+
+    element->setPlayerIdentifierForVideoElement();
+}
+
 void PlaybackSessionModelMediaElement::exitFullscreen()
 {
     RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);

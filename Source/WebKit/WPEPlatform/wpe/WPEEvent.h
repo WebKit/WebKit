@@ -155,6 +155,10 @@ typedef enum {
 WPE_API GType          wpe_event_get_type                       (void);
 WPE_API WPEEvent      *wpe_event_ref                            (WPEEvent      *event);
 WPE_API void           wpe_event_unref                          (WPEEvent      *event);
+WPE_API void           wpe_event_set_user_data                  (WPEEvent      *event,
+                                                                 gpointer       user_data,
+                                                                 GDestroyNotify destroy_func);
+WPE_API gpointer       wpe_event_get_user_data                  (WPEEvent      *event);
 WPE_API WPEEventType   wpe_event_get_event_type                 (WPEEvent      *event);
 WPE_API WPEView       *wpe_event_get_view                       (WPEEvent      *event);
 WPE_API WPEInputSource wpe_event_get_input_source               (WPEEvent      *event);

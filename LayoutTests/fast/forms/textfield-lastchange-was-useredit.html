@@ -14,7 +14,16 @@ if (!window.testRunner || !window.internals)
     testFailed('This test requires access to window.internals');
 
 var textField;
-function runTest(element) {
+
+function dispatchTextEventsInTextField(targetElement, text) {
+    [...text].map(letter => {
+        const event = document.createEvent("TextEvent");
+        event.initTextEvent("textInput", true, true, null, letter);
+        targetElement.dispatchEvent(event);
+    });
+}
+
+[...document.querySelectorAll('input, textarea')].map(element => {
     debug((textField ? '\n' : '') + element.localName);
 
     textField = element;
@@ -46,11 +55,11 @@ function runTest(element) {
         shouldBeFalse('textField.innerText = " WebKit "; internals.wasLastChangeUserEdit(textField)');
     }
 
-    textField.parentNode.removeChild(textField);
-}
+    textField.focus();
+    shouldBeFalse('dispatchTextEventsInTextField(textField, "foo"); internals.wasLastChangeUserEdit(textField)');
 
-runTest(document.getElementsByTagName('input')[0]);
-runTest(document.getElementsByTagName('textarea')[0]);
+    textField.parentNode.removeChild(textField);
+});
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

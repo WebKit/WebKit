@@ -67,7 +67,7 @@ inline MatchingContextHolder::MatchingContextHolder(VM& vm, bool usesPatternCont
         m_stackLimit = vm.softStackLimit();
         vm.m_executingRegExp = regExp;
     } else {
-        StackBounds stack = Thread::current().stack();
+        StackBounds stack = Thread::currentSingleton().stack();
         m_stackLimit = stack.recursionLimit(Options::reservedZoneSize());
     }
 

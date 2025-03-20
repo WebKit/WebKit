@@ -32,6 +32,7 @@
 #include "CGUtilities.h"
 #include "GraphicsContextCG.h"
 #include "PathStream.h"
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -296,9 +297,34 @@ void PathCG::add(PathRoundedRect roundedRect)
     addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
+void PathCG::add(PathContinuousRoundedRect continuousRoundedRect)
+{
+#if HAVE(CG_PATH_CONTINUOUS_ROUNDED_RECT)
+    CGPathAddContinuousRoundedRect(ensureMutablePlatformPath(), nullptr, continuousRoundedRect.rect, continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight);
+#else
+    // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
+    // FIXME: Determine if PreferNative is the optimal strategy here.
+    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+#endif
+}
+
 static inline void addToCGContextPath(CGContextRef context, PathRoundedRect segment)
 {
     // No API to add rounded rects to context.
+    Ref path = PathCG::create();
+    path->add(WTFMove(segment));
+    // CGContextAddPath has a bug with existing MoveToPoints in context path.
+    // rdar://118395262
+    auto ctm = CGContextGetCTM(context);
+    auto transformedPath = adoptCF(CGPathCreateCopyByTransformingPath(path->platformPath(), &ctm));
+    CGContextSetCTM(context, CGAffineTransformIdentity);
+    CGContextAddPath(context, transformedPath.get());
+    CGContextSetCTM(context, ctm);
+}
+
+static inline void addToCGContextPath(CGContextRef context, PathContinuousRoundedRect segment)
+{
+    // No API to add continuous rounded rects to context.
     auto path = PathCG::create();
     path->add(WTFMove(segment));
     // CGContextAddPath has a bug with existing MoveToPoints in context path.

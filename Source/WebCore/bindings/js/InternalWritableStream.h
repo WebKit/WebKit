@@ -45,6 +45,7 @@ public:
     JSC::JSValue getWriter(JSC::JSGlobalObject&);
 
     void closeIfPossible();
+    void errorIfPossible(Exception&&);
 
 private:
     InternalWritableStream(JSDOMGlobalObject& globalObject, JSC::JSObject& jsObject)

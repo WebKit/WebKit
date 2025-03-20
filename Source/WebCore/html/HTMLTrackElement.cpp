@@ -221,7 +221,7 @@ void HTMLTrackElement::scheduleLoad()
 
 void HTMLTrackElement::scheduleTask(Function<void()>&& task)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [task = WTFMove(task)]() mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [task = WTFMove(task)](auto&) mutable {
         task();
     });
 }

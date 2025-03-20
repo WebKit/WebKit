@@ -112,7 +112,7 @@ void BaseAudioSharedUnit::startProducingData()
 
 void BaseAudioSharedUnit::continueStartProducingData()
 {
-    if (!m_producingCount)
+    if (!m_producingCount || m_clients.isEmptyIgnoringNullReferences())
         return;
 
     if (isProducingData())
@@ -222,7 +222,20 @@ void BaseAudioSharedUnit::stopProducingData()
 {
     ASSERT(isMainThread());
     ASSERT(m_producingCount);
+#if PLATFORM(MAC)
+    if (!m_suspended) {
+        prewarmAudioUnitCreation([weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->continueStopProducingData();
+        });
+        return;
+    }
+#endif
+    continueStopProducingData();
+}
 
+void BaseAudioSharedUnit::continueStopProducingData()
+{
     if (m_producingCount && --m_producingCount)
         return;
 
@@ -310,7 +323,7 @@ OSStatus BaseAudioSharedUnit::suspend()
         client.setMuted(true);
     });
 
-    ASSERT(!m_producingCount);
+    m_producingCount = 0;
 
     return 0;
 }

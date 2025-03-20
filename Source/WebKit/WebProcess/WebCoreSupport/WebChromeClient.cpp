@@ -82,6 +82,7 @@
 #include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseTracker.h>
+#include <WebCore/DocumentFullscreen.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/ElementInlines.h>
@@ -89,7 +90,6 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
@@ -167,6 +167,11 @@
 #include <WebCore/ScrollbarsControllerMock.h>
 #endif
 
+#if ENABLE(DAMAGE_TRACKING)
+#include "LayerTreeHost.h"
+#include <WebCore/Damage.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -204,7 +209,7 @@ void WebChromeClient::chromeDestroyed()
 
 Ref<WebPage> WebChromeClient::protectedPage() const
 {
-    return m_page.get();
+    return *m_page;
 }
 
 void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
@@ -318,7 +323,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
 {
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document())
-        document->fullscreenManager().cancelFullscreen();
+        document->fullscreen().fullyExitFullscreen();
 #endif
 
     auto& webProcess = WebProcess::singleton();
@@ -345,6 +350,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */
         frame.loader().isHTTPFallbackInProgress(),
+        navigationAction.isInitialFrameSrcLoad(),
         openedMainFrameName,
         { }, /* requesterOrigin */
         { }, /* requesterTopOrigin */
@@ -484,7 +490,12 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 {
     // Notify the bundle client.
     auto page = protectedPage();
+    // FIXME: Remove this after rdar://143399667 is fixed.
     page->injectedBundleUIClient().willAddMessageToConsole(page.ptr(), source, level, message, lineNumber, columnNumber, sourceID);
+
+    if (!page->shouldSendConsoleLogsToUIProcessForTesting())
+        return;
+    page->send(Messages::WebPageProxy::AddMessageToConsoleForTesting(message.length() > String::MaxLength / 2 ? "Out of memory"_s : message), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void WebChromeClient::addMessageWithArgumentsToConsole(MessageSource source, MessageLevel level, const String& message, std::span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID)
@@ -1264,6 +1275,11 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     protectedPage()->videoPresentationManager().enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
+void WebChromeClient::setPlayerIdentifierForVideoElement(HTMLVideoElement& videoElement)
+{
+    protectedPage()->videoPresentationManager().setPlayerIdentifierForVideoElement(videoElement);
+}
+
 void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     protectedPage()->videoPresentationManager().exitVideoFullscreenForVideoElement(videoElement, WTFMove(completionHandler));
@@ -1276,7 +1292,8 @@ void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElemen
 
 void WebChromeClient::clearPlaybackControlsManager()
 {
-    protectedPage()->playbackSessionManager().clearPlaybackControlsManager();
+    if (RefPtr page = m_page.get())
+        page->playbackSessionManager().clearPlaybackControlsManager();
 }
 
 void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement& mediaElement)
@@ -1329,9 +1346,9 @@ bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool 
     return protectedPage()->fullScreenManager().supportsFullScreenForElement(element, withKeyboard);
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode, CompletionHandler<void(ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
 {
-    protectedPage()->fullScreenManager().enterFullScreenForElement(element, mode, WTFMove(completionHandler));
+    protectedPage()->fullScreenManager().enterFullScreenForElement(element, mode, WTFMove(willEnterFullscreen), WTFMove(didEnterFullscreen));
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(element); videoElement && mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
         setVideoFullscreenMode(*videoElement, mode);
@@ -1491,6 +1508,15 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer& footerParent)
 bool WebChromeClient::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
     return protectedPage()->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
+}
+
+void WebChromeClient::frameViewLayoutOrVisualViewportChanged(const LocalFrameView& frameView)
+{
+    RefPtr page = protectedPage();
+    if (!page)
+        return;
+
+    page->frameViewLayoutOrVisualViewportChanged(frameView);
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -1993,5 +2019,29 @@ void WebChromeClient::didProgrammaticallyClearTextFormControl(const HTMLTextForm
 {
     protectedPage()->didProgrammaticallyClearTextFormControl(element);
 }
+
+#if ENABLE(DAMAGE_TRACKING)
+void WebChromeClient::resetDamageHistoryForTesting()
+{
+    const auto* drawingArea = page().drawingArea();
+    if (!drawingArea)
+        return;
+
+    if (auto* frameDamageForTesting = drawingArea->frameDamageForTesting())
+        frameDamageForTesting->resetFrameDamageHistory();
+}
+
+WebCore::FrameDamageHistory* WebChromeClient::damageHistoryForTesting() const
+{
+    const auto* drawingArea = page().drawingArea();
+    if (!drawingArea)
+        return nullptr;
+
+    if (const auto* frameDamageForTesting = drawingArea->frameDamageForTesting())
+        return frameDamageForTesting->frameDamageHistory();
+
+    return nullptr;
+}
+#endif
 
 } // namespace WebKit

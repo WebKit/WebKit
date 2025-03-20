@@ -40,8 +40,8 @@ PASS :interpolation_type:isAsync=false;output="";input="%40interpolate(linear)"
 PASS :interpolation_type:isAsync=false;output="%40interpolate(perspective)";input=""
 PASS :interpolation_type:isAsync=false;output="%40interpolate(perspective)";input="%40interpolate(perspective)"
 PASS :interpolation_type:isAsync=false;output="%40interpolate(linear)";input="%40interpolate(perspective)"
-PASS :interpolation_type:isAsync=false;output="%40interpolate(linear)";input="%40interpolate(flat)"
-PASS :interpolation_type:isAsync=false;output="%40interpolate(flat)";input="%40interpolate(perspective)"
+PASS :interpolation_type:isAsync=false;output="%40interpolate(linear)";input="%40interpolate(flat,%20either)"
+PASS :interpolation_type:isAsync=false;output="%40interpolate(flat,%20either)";input="%40interpolate(perspective)"
 PASS :interpolation_type:isAsync=false;output="%40interpolate(linear,%20center)";input="%40interpolate(linear,%20center)"
 PASS :interpolation_type:isAsync=true;output="";input=""
 PASS :interpolation_type:isAsync=true;output="";input="%40interpolate(perspective)"
@@ -50,14 +50,14 @@ PASS :interpolation_type:isAsync=true;output="";input="%40interpolate(linear)"
 PASS :interpolation_type:isAsync=true;output="%40interpolate(perspective)";input=""
 PASS :interpolation_type:isAsync=true;output="%40interpolate(perspective)";input="%40interpolate(perspective)"
 PASS :interpolation_type:isAsync=true;output="%40interpolate(linear)";input="%40interpolate(perspective)"
-PASS :interpolation_type:isAsync=true;output="%40interpolate(linear)";input="%40interpolate(flat)"
-PASS :interpolation_type:isAsync=true;output="%40interpolate(flat)";input="%40interpolate(perspective)"
+PASS :interpolation_type:isAsync=true;output="%40interpolate(linear)";input="%40interpolate(flat,%20either)"
+PASS :interpolation_type:isAsync=true;output="%40interpolate(flat,%20either)";input="%40interpolate(perspective)"
 PASS :interpolation_type:isAsync=true;output="%40interpolate(linear,%20center)";input="%40interpolate(linear,%20center)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective)";input="%40interpolate(perspective)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective)";input="%40interpolate(perspective,%20center)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective)";input="%40interpolate(perspective,%20sample)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(linear,%20center)";input="%40interpolate(linear)"
-PASS :interpolation_sampling:isAsync=false;output="%40interpolate(flat)";input="%40interpolate(flat)"
+PASS :interpolation_sampling:isAsync=false;output="%40interpolate(flat,%20either)";input="%40interpolate(flat,%20either)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective,%20center)";input="%40interpolate(perspective,%20sample)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective,%20center)";input="%40interpolate(perspective,%20centroid)"
 PASS :interpolation_sampling:isAsync=false;output="%40interpolate(perspective,%20centroid)";input="%40interpolate(perspective)"
@@ -65,7 +65,7 @@ PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective)";i
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective)";input="%40interpolate(perspective,%20center)"
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective)";input="%40interpolate(perspective,%20sample)"
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(linear,%20center)";input="%40interpolate(linear)"
-PASS :interpolation_sampling:isAsync=true;output="%40interpolate(flat)";input="%40interpolate(flat)"
+PASS :interpolation_sampling:isAsync=true;output="%40interpolate(flat,%20either)";input="%40interpolate(flat,%20either)"
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective,%20center)";input="%40interpolate(perspective,%20sample)"
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective,%20center)";input="%40interpolate(perspective,%20centroid)"
 PASS :interpolation_sampling:isAsync=true;output="%40interpolate(perspective,%20centroid)";input="%40interpolate(perspective)"
@@ -75,50 +75,32 @@ PASS :max_shader_variable_location:isAsync=false;locationDelta=-2
 PASS :max_shader_variable_location:isAsync=true;locationDelta=0
 PASS :max_shader_variable_location:isAsync=true;locationDelta=-1
 PASS :max_shader_variable_location:isAsync=true;locationDelta=-2
-PASS :max_components_count,output:isAsync=false;numScalarDelta=0;topology="triangle-list"
-PASS :max_components_count,output:isAsync=false;numScalarDelta=0;topology="point-list"
-PASS :max_components_count,output:isAsync=false;numScalarDelta=1;topology="triangle-list"
-FAIL :max_components_count,output:isAsync=false;numScalarDelta=-1;topology="point-list" assert_unreached:
+PASS :max_variables_count,output:isAsync=false;numVariablesDelta=0;topology="triangle-list"
+PASS :max_variables_count,output:isAsync=false;numVariablesDelta=0;topology="point-list"
+PASS :max_variables_count,output:isAsync=false;numVariablesDelta=1;topology="triangle-list"
+PASS :max_variables_count,output:isAsync=false;numVariablesDelta=-1;topology="point-list"
+PASS :max_variables_count,output:isAsync=true;numVariablesDelta=0;topology="triangle-list"
+PASS :max_variables_count,output:isAsync=true;numVariablesDelta=0;topology="point-list"
+PASS :max_variables_count,output:isAsync=true;numVariablesDelta=1;topology="triangle-list"
+PASS :max_variables_count,output:isAsync=true;numVariablesDelta=-1;topology="point-list"
+PASS :max_variables_count,input:isAsync=false;numVariablesDelta=0;useExtraBuiltinInputs=false
+FAIL :max_variables_count,input:isAsync=false;numVariablesDelta=0;useExtraBuiltinInputs=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
-    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:417:35
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:349:31
  Reached unreachable code
-FAIL :max_components_count,output:isAsync=false;numScalarDelta=-3;topology="point-list" assert_unreached:
-  - VALIDATION FAILED: Validation succeeded unexpectedly.
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
-    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:417:35
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
- Reached unreachable code
-PASS :max_components_count,output:isAsync=false;numScalarDelta=-4;topology="point-list"
-PASS :max_components_count,output:isAsync=true;numScalarDelta=0;topology="triangle-list"
-PASS :max_components_count,output:isAsync=true;numScalarDelta=0;topology="point-list"
-PASS :max_components_count,output:isAsync=true;numScalarDelta=1;topology="triangle-list"
-FAIL :max_components_count,output:isAsync=true;numScalarDelta=-1;topology="point-list" assert_unreached:
+PASS :max_variables_count,input:isAsync=false;numVariablesDelta=1;useExtraBuiltinInputs=false
+PASS :max_variables_count,input:isAsync=false;numVariablesDelta=-1;useExtraBuiltinInputs=true
+PASS :max_variables_count,input:isAsync=true;numVariablesDelta=0;useExtraBuiltinInputs=false
+FAIL :max_variables_count,input:isAsync=true;numVariablesDelta=0;useExtraBuiltinInputs=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:34
-    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:413:26
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:349:31
  Reached unreachable code
-FAIL :max_components_count,output:isAsync=true;numScalarDelta=-3;topology="point-list" assert_unreached:
-  - EXPECTATION FAILED: DID NOT REJECT
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
-    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:34
-    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:413:26
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
- Reached unreachable code
-PASS :max_components_count,output:isAsync=true;numScalarDelta=-4;topology="point-list"
-PASS :max_components_count,input:isAsync=false;numScalarDelta=0;useExtraBuiltinInputs=false
-PASS :max_components_count,input:isAsync=false;numScalarDelta=0;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=false;numScalarDelta=1;useExtraBuiltinInputs=false
-PASS :max_components_count,input:isAsync=false;numScalarDelta=-3;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=false;numScalarDelta=-4;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=true;numScalarDelta=0;useExtraBuiltinInputs=false
-PASS :max_components_count,input:isAsync=true;numScalarDelta=0;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=true;numScalarDelta=1;useExtraBuiltinInputs=false
-PASS :max_components_count,input:isAsync=true;numScalarDelta=-3;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=true;numScalarDelta=-4;useExtraBuiltinInputs=true
+PASS :max_variables_count,input:isAsync=true;numVariablesDelta=1;useExtraBuiltinInputs=false
+PASS :max_variables_count,input:isAsync=true;numVariablesDelta=-1;useExtraBuiltinInputs=true
 

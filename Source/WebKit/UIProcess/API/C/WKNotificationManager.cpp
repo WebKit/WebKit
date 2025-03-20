@@ -81,5 +81,5 @@ void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationMa
 
 WKNotificationManagerRef WKNotificationManagerGetSharedServiceWorkerNotificationManager()
 {
-    return toAPI(&WebNotificationManagerProxy::sharedServiceWorkerManager());
+    return toAPI(&WebNotificationManagerProxy::serviceWorkerManagerSingleton());
 }

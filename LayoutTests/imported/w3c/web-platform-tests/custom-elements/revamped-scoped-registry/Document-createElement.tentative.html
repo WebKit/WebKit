@@ -3,11 +3,13 @@
 <head>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <link rel="help" href="https://github.com/whatwg/html/issues/10854">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
 <script>
+// Keep this ~synchronized with Document-createElementNS
+"use strict";
 
 const scopedRegistry = new CustomElementRegistry();
 const otherScopedRegistry = new CustomElementRegistry();
@@ -21,7 +23,7 @@ test(() => {
 }, 'createElement should use the global registry by default');
 
 test(() => {
-    assert_true(document.createElement('a-b', {customElements: scopedRegistry}) instanceof ScopedABElement);
+    assert_true(document.createElement('a-b', {customElementRegistry: scopedRegistry}) instanceof ScopedABElement);
 }, 'createElement should use the specified scoped registry');
 
 test(() => {
@@ -30,26 +32,36 @@ test(() => {
         form: HTMLFormElement,
         span: HTMLSpanElement,
         table: HTMLTableElement,
+        unknown: HTMLUnknownElement,
     };
-    for (const localName in elements)
-        assert_true(document.createElement(localName, {customElements: scopedRegistry}) instanceof elements[localName], localName);
-    for (const localName in elements)
-        assert_true(document.createElement(localName, {customElements: window.customElements}) instanceof elements[localName], localName);
-}, 'createElement should create a builtin element regardles of a custom element registry specified');
+    for (const localName in elements) {
+        const scopedElement = document.createElement(localName, {customElementRegistry: scopedRegistry});
+        assert_true(scopedElement instanceof elements[localName], localName);
+        assert_equals(scopedElement.customElementRegistry, scopedRegistry);
+
+        const globalExplicitElement = document.createElement(localName, {customElementRegistry: window.customElements});
+        assert_true(globalExplicitElement instanceof elements[localName], localName);
+        assert_equals(globalExplicitElement.customElementRegistry, window.customElements);
+
+        const globalImplicitElement = document.createElement(localName);
+        assert_true(globalImplicitElement instanceof elements[localName], localName);
+        assert_equals(globalImplicitElement.customElementRegistry, window.customElements);
+    }
+}, 'createElement should create a builtin element regardless of a custom element registry specified');
 
 test(() => {
-    assert_true(document.createElement('a-b', {customElements: window.customElements}) instanceof GlobalABElement);
+    assert_true(document.createElement('a-b', {customElementRegistry: window.customElements}) instanceof GlobalABElement);
 }, 'createElement should use the specified global registry');
 
 test(() => {
-    const element = document.createElement('a-b', {customElements: otherScopedRegistry});
+    const element = document.createElement('a-b', {customElementRegistry: otherScopedRegistry});
     assert_equals(element.__proto__.constructor.name, 'HTMLElement');
 }, 'createElement should create an upgrade candidate when there is no matching definition in the specified registry');
 
 test(() => {
     class CDElement extends HTMLElement { }
     const registry = new CustomElementRegistry;
-    const cdElement = document.createElement('c-d', {customElements: registry});
+    const cdElement = document.createElement('c-d', {customElementRegistry: registry});
     assert_false(cdElement instanceof CDElement);
     assert_equals(cdElement.__proto__.constructor.name, 'HTMLElement');
     registry.define('c-d', CDElement);
@@ -58,6 +70,18 @@ test(() => {
     document.body.appendChild(cdElement);
     assert_true(cdElement instanceof CDElement);
 }, 'createElement should create an upgrade candidate and the candidate should be upgraded when the element is defined');
+
+test(() => {
+    const doc = new Document();
+    const scopedElement = doc.createElement("time", {customElementRegistry: scopedRegistry});
+    assert_equals(scopedElement.namespaceURI, null);
+    assert_equals(scopedElement.customElementRegistry, scopedRegistry);
+
+    const abElement = doc.createElement("a-b", {customElementRegistry: scopedRegistry});
+    assert_equals(abElement.namespaceURI, null);
+    assert_equals(abElement.customElementRegistry, scopedRegistry);
+    assert_false(abElement instanceof ScopedABElement);
+}, 'createElement on a non-HTML document should still handle registries correctly');
 
 </script>
 </body>

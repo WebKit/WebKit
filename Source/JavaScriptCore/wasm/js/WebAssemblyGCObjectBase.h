@@ -30,6 +30,7 @@
 
 #include "JSObject.h"
 #include "WasmTypeDefinition.h"
+#include "WebAssemblyGCStructure.h"
 
 namespace JSC {
 
@@ -38,16 +39,15 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetPrototype | OverridesPut | OverridesIsExtensible | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
-    DECLARE_EXPORT_INFO;
+    DECLARE_INFO;
 
-    RefPtr<const Wasm::RTT> rtt() { return m_rtt; }
-
-    static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCObjectBase, m_rtt); };
+    const WebAssemblyGCStructure* gcStructure() const { return uncheckedDowncast<WebAssemblyGCStructure>(structure()); }
+    Ref<const Wasm::RTT> rtt() const { return gcStructure()->rtt(); }
 
 protected:
     DECLARE_VISIT_CHILDREN;
 
-    WebAssemblyGCObjectBase(VM&, Structure*, RefPtr<const Wasm::RTT>&&);
+    WebAssemblyGCObjectBase(VM&, WebAssemblyGCStructure*);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 
@@ -63,8 +63,6 @@ protected:
     JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool shouldThrowIfCantSet);
     JS_EXPORT_PRIVATE static bool isExtensible(JSObject*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, JSGlobalObject*);
-
-    RefPtr<const Wasm::RTT> m_rtt;
 };
 
 } // namespace JSC

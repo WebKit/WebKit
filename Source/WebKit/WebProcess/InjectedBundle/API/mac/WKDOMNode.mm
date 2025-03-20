@@ -30,6 +30,7 @@
 #import "WKBundleAPICast.h"
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
+#import <WebCore/NodeInlines.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/SimpleRange.h>
 #import <wtf/MainThread.h>

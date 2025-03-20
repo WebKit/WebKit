@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver observing an SVG <rect> element with changing 'transform'
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.right expected 10 +/- 0 but got 0
+FAIL change target's y property to -64) assert_equals: entries.length expected 2 but got 1
+

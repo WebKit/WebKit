@@ -94,6 +94,7 @@ extern "C" {
     M(BackForwardCache) \
     M(CacheStorage) \
     M(ContentObservation) \
+    M(ContentRuleLists) \
     M(ContextMenu) \
     M(DigitalCredentials) \
     M(DisplayLink) \
@@ -148,7 +149,9 @@ extern "C" {
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
+    M(ResourceMonitoring) \
     M(Sandbox) \
+    M(ScreenTime) \
     M(ScrollAnimations) \
     M(Scrolling) \
     M(SecureCoding) \

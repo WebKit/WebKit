@@ -255,6 +255,7 @@ Tests/WebKitCocoa/SessionStorage.mm
 Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm
 Tests/WebKitCocoa/ShouldOpenExternalURLsInNewWindowActions.mm
 Tests/WebKitCocoa/ShrinkToFit.mm
+Tests/WebKitCocoa/ShouldOpenAppLinks.mm
 Tests/WebKitCocoa/SimulateClickOverText.mm
 Tests/WebKitCocoa/SiteIsolation.mm
 Tests/WebKitCocoa/SnapshotStore.mm

@@ -58,7 +58,7 @@ static BOOL isForcingPreviewUpdate;
     if (!self)
         return nil;
 
-    _webFrame = &frame;
+    lazyInitialize(_webFrame, Ref { frame });
     _wkView = wkView;
 
     return self;
@@ -115,8 +115,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _setAutodisplay:YES];
 
     // Enabling autodisplay normally implicitly calls endPrinting() via -[WKView drawRect:], but not when content is in accelerated compositing mode.
-    if (_webFrame->page())
-        _webFrame->page()->endPrinting();
+    if (RefPtr page = _webFrame->page())
+        page->endPrinting();
 }
 
 - (void)_delayedResumeAutodisplay
@@ -258,7 +258,8 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 {
     ASSERT(RunLoop::isMain());
 
-    if (!_webFrame->page() || !_printOperation) {
+    RefPtr page = _webFrame->page();
+    if (!page || !_printOperation) {
         _printingCallbackCondition.notifyOne();
         return;
     }
@@ -279,7 +280,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
     WebKit::PrintInfo printInfo([_printOperation.get() printInfo]);
     // Return to printing mode if we're already back to screen (e.g. due to window resizing).
-    _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
+    page->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
     auto callback = [context](API::Data* data) {
@@ -298,7 +299,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
             view->_printingCallbackCondition.notifyOne();
         }
     };
-    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(*_webFrame, printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    _expectedPrintCallback = page->drawPagesToPDF(*_webFrame, printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedPrintCallback;
 }
@@ -366,7 +367,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
     };
-    _expectedComputedPagesCallback = _webFrame->page()->computePagesForPrinting(_webFrame->frameID(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
+    _expectedComputedPagesCallback = _webFrame->protectedPage()->computePagesForPrinting(_webFrame->frameID(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
@@ -517,10 +518,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_webFrame || !_webFrame->page())
         return;
 
+    RefPtr page = _webFrame->page();
+    if (!page)
+        return;
+
     WebCore::IntRect scaledPrintingRect(nsRect);
     scaledPrintingRect.scale(1 / _totalScaleFactorForPrinting);
     WebCore::IntSize imageSize(nsRect.size);
-    imageSize.scale(_webFrame->page()->deviceScaleFactor());
+    imageSize.scale(page->deviceScaleFactor());
     HashMap<WebCore::IntRect, RefPtr<WebCore::ShareableBitmap>>::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
@@ -535,14 +540,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
                 // Preview isn't available yet, request it asynchronously.
                 // Return to printing mode if we're already back to screen (e.g. due to window resizing).
-                _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
+                page->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
                 auto callback = [context](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
-                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                _latestExpectedPreviewCallback = page->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(*_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
@@ -560,7 +565,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
     WebCore::GraphicsContextStateSaver stateSaver(context);
 
-    bitmap->paint(context, _webFrame->page()->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());
+    bitmap->paint(context, _webFrame->protectedPage()->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());
 }
 
 - (void)drawRect:(NSRect)nsRect

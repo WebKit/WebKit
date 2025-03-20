@@ -30,6 +30,7 @@
 #include "AirLiveness.h"
 #include "AirTmpMap.h"
 #include <wtf/Nonmovable.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { 
@@ -41,7 +42,7 @@ namespace B3 { namespace Air {
 class Code;
 
 class GenerateAndAllocateRegisters {
-    WTF_MAKE_TZONE_ALLOCATED(GenerateAndAllocateRegisters);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(GenerateAndAllocateRegisters);
     WTF_MAKE_NONMOVABLE(GenerateAndAllocateRegisters);
 
     struct TmpData {

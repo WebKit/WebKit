@@ -78,6 +78,8 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootEle
         || containsProperty(CSSPropertyTranslate)
         || containsProperty(CSSPropertyRotate)
         || containsProperty(CSSPropertyScale)
+        || containsProperty(CSSPropertyOffsetPath)
+        // CSS containment
         || containsProperty(CSSPropertyContain)
         // CSS filter & backdrop-filter
         // FIXME: exclude root element for those properties (bug 225034)
@@ -94,7 +96,8 @@ bool WillChangeData::canBeBackdropRoot() const
         || containsProperty(CSSPropertyClipPath)
         || containsProperty(CSSPropertyFilter)
         || containsProperty(CSSPropertyMixBlendMode)
-        || containsProperty(CSSPropertyMask);
+        || containsProperty(CSSPropertyMask)
+        || containsProperty(CSSPropertyViewTransitionName);
 }
 
 // "If any non-initial value of a property would create a stacking context on the element,
@@ -109,6 +112,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyTranslate:
     case CSSPropertyTransform:
     case CSSPropertyTransformStyle:
+    case CSSPropertyOffsetPath:
     case CSSPropertyClipPath:
     case CSSPropertyMask:
     case CSSPropertyWebkitMask:
@@ -127,6 +131,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
+    case CSSPropertyViewTransitionName:
     case CSSPropertyContain:
         return true;
     default:
@@ -159,6 +164,7 @@ static bool propertyTriggersCompositingOnBoxesOnly(CSSPropertyID property)
     case CSSPropertyRotate:
     case CSSPropertyTranslate:
     case CSSPropertyTransform:
+    case CSSPropertyOffsetPath:
         return true;
     default:
         return false;

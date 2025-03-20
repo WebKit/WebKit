@@ -26,7 +26,7 @@
 #import "DOMAttrInternal.h"
 
 #import <WebCore/Attr.h>
-#import <WebCore/CSSStyleDeclaration.h>
+#import <WebCore/CSSStyleProperties.h>
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"

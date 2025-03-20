@@ -34,64 +34,64 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:
-        ts << "A98-RGB";
+        ts << "A98-RGB"_s;
         break;
     case ColorSpace::DisplayP3:
-        ts << "DisplayP3";
+        ts << "DisplayP3"_s;
         break;
     case ColorSpace::ExtendedA98RGB:
-        ts << "Extended A98-RGB";
+        ts << "Extended A98-RGB"_s;
         break;
     case ColorSpace::ExtendedDisplayP3:
-        ts << "Extended DisplayP3";
+        ts << "Extended DisplayP3"_s;
         break;
     case ColorSpace::ExtendedLinearSRGB:
-        ts << "Extended Linear sRGB";
+        ts << "Extended Linear sRGB"_s;
         break;
     case ColorSpace::ExtendedProPhotoRGB:
-        ts << "Extended ProPhotoRGB";
+        ts << "Extended ProPhotoRGB"_s;
         break;
     case ColorSpace::ExtendedRec2020:
-        ts << "Extended Rec2020";
+        ts << "Extended Rec2020"_s;
         break;
     case ColorSpace::ExtendedSRGB:
-        ts << "Extended sRGB";
+        ts << "Extended sRGB"_s;
         break;
     case ColorSpace::HSL:
-        ts << "HSL";
+        ts << "HSL"_s;
         break;
     case ColorSpace::HWB:
-        ts << "HWB";
+        ts << "HWB"_s;
         break;
     case ColorSpace::LCH:
-        ts << "LCH";
+        ts << "LCH"_s;
         break;
     case ColorSpace::Lab:
-        ts << "Lab";
+        ts << "Lab"_s;
         break;
     case ColorSpace::LinearSRGB:
-        ts << "Linear sRGB";
+        ts << "Linear sRGB"_s;
         break;
     case ColorSpace::OKLCH:
-        ts << "OKLCH";
+        ts << "OKLCH"_s;
         break;
     case ColorSpace::OKLab:
-        ts << "OKLab";
+        ts << "OKLab"_s;
         break;
     case ColorSpace::ProPhotoRGB:
-        ts << "ProPhotoRGB";
+        ts << "ProPhotoRGB"_s;
         break;
     case ColorSpace::Rec2020:
-        ts << "Rec2020";
+        ts << "Rec2020"_s;
         break;
     case ColorSpace::SRGB:
-        ts << "sRGB";
+        ts << "sRGB"_s;
         break;
     case ColorSpace::XYZ_D50:
-        ts << "XYZ-D50";
+        ts << "XYZ-D50"_s;
         break;
     case ColorSpace::XYZ_D65:
-        ts << "XYZ-D50";
+        ts << "XYZ-D50"_s;
         break;
     }
     return ts;

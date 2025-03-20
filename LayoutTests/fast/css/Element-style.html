@@ -22,10 +22,10 @@ test(() => {
 
 test(() => {
     const testDiv = document.getElementById("testDiv");
-    assert_equals(testDiv.style.__proto__, CSSStyleDeclaration.prototype, "HTMLElement.style type");
+    assert_equals(testDiv.style.__proto__, CSSStyleProperties.prototype, "HTMLElement.style type");
 
     const testSVG = document.getElementById("testSVG");
-    assert_equals(testSVG.style.__proto__, CSSStyleDeclaration.prototype, "SVGElement.style type");
+    assert_equals(testSVG.style.__proto__, CSSStyleProperties.prototype, "SVGElement.style type");
 }, "'style' property type");
 
 test(() => {

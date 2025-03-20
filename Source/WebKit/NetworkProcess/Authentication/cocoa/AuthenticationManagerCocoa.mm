@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/NSXPCConnectionSPI.h>
 #import <pal/spi/cocoa/SecKeyProxySPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/darwin/XPCExtras.h>
 
 namespace WebKit {
 
@@ -62,7 +63,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             if (type == XPC_TYPE_ERROR || !weakThis)
                 return;
 
-            if (type != XPC_TYPE_DICTIONARY || xpc_dictionary_get_wtfstring(event.get(), ClientCertificateAuthentication::XPCMessageNameKey) != ClientCertificateAuthentication::XPCMessageNameValue) {
+            if (type != XPC_TYPE_DICTIONARY || xpcDictionaryGetString(event.get(), ClientCertificateAuthentication::XPCMessageNameKey) != ClientCertificateAuthentication::XPCMessageNameValue) {
                 ASSERT_NOT_REACHED();
                 return;
             }

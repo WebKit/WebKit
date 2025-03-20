@@ -68,7 +68,6 @@ public:
 
     bool isAppleColorFilterPropertyValue() const { return m_classType == ClassType::AppleColorFilterProperty; }
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
-    bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
@@ -92,11 +91,9 @@ public:
     bool isFontFaceSrcLocalValue() const { return m_classType == ClassType::FontFaceSrcLocal; }
     bool isFontFaceSrcResourceValue() const { return m_classType == ClassType::FontFaceSrcResource; }
     bool isFontFeatureValue() const { return m_classType == ClassType::FontFeature; }
-    bool isFontPaletteValuesOverrideColorsValue() const { return m_classType == ClassType::FontPaletteValuesOverrideColors; }
     bool isFontStyleRangeValue() const { return m_classType == ClassType::FontStyleRange; }
     bool isFontStyleWithAngleValue() const { return m_classType == ClassType::FontStyleWithAngle; }
     bool isFontValue() const { return m_classType == ClassType::Font; }
-    bool isFontVariantAlternatesValue() const { return m_classType == ClassType::FontVariantAlternates; }
     bool isFontVariationValue() const { return m_classType == ClassType::FontVariation; }
     bool isFunctionValue() const { return m_classType == ClassType::Function; }
     bool isGradientValue() const { return m_classType == ClassType::Gradient; }
@@ -116,6 +113,7 @@ public:
     bool isPendingSubstitutionValue() const { return m_classType == ClassType::PendingSubstitutionValue; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
+    bool isRatioValue() const { return m_classType == ClassType::Ratio; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
     bool isReflectValue() const { return m_classType == ClassType::Reflect; }
@@ -210,7 +208,6 @@ protected:
 
         // Other non-list classes.
         AppleColorFilterProperty,
-        AspectRatio,
         Attr,
         BackgroundRepeat,
         BasicShape,
@@ -232,10 +229,8 @@ protected:
         FontFaceSrcLocal,
         FontFaceSrcResource,
         FontFeature,
-        FontPaletteValuesOverrideColors,
         FontStyleRange,
         FontStyleWithAngle,
-        FontVariantAlternates,
         FontVariation,
         GridLineNames,
         GridLineValue,
@@ -245,6 +240,7 @@ protected:
         Path,
         PendingSubstitutionValue,
         Quad,
+        Ratio,
         Ray,
         Rect,
         Reflect,

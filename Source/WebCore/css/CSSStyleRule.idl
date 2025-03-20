@@ -26,7 +26,7 @@ typedef USVString CSSOMString;
     Exposed=Window
 ] interface CSSStyleRule : CSSRule {
     attribute DOMString selectorText;
-    [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+    [SameObject, PutForwards=cssText] readonly attribute CSSStyleProperties style;
 
     // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects
     [SameObject] readonly attribute StylePropertyMap styleMap;

@@ -52,7 +52,7 @@ WebLocalFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() con
     if (!frame())
         return nullptr;
 
-    return toWebLocalFrameLoaderClient(frame()->loader().client());
+    return dynamicDowncast<WebLocalFrameLoaderClient>(frame()->loader().client());
 }
 
 #if PLATFORM(WIN)

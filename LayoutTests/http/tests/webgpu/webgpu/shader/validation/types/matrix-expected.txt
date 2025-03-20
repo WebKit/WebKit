@@ -88,9 +88,8 @@ FAIL :invalid:case="no_enable_mat2x2h" assert_unreached:
 
     ---- shader ----
     alias T = mat2x2h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -100,9 +99,8 @@ FAIL :invalid:case="no_enable_mat2x3h" assert_unreached:
 
     ---- shader ----
     alias T = mat2x3h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -112,9 +110,8 @@ FAIL :invalid:case="no_enable_mat2x4h" assert_unreached:
 
     ---- shader ----
     alias T = mat2x4h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -124,9 +121,8 @@ FAIL :invalid:case="no_enable_mat3x2h" assert_unreached:
 
     ---- shader ----
     alias T = mat3x2h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -136,9 +132,8 @@ FAIL :invalid:case="no_enable_mat3x3h" assert_unreached:
 
     ---- shader ----
     alias T = mat3x3h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -148,9 +143,8 @@ FAIL :invalid:case="no_enable_mat3x4h" assert_unreached:
 
     ---- shader ----
     alias T = mat3x4h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -160,9 +154,8 @@ FAIL :invalid:case="no_enable_mat4x2h" assert_unreached:
 
     ---- shader ----
     alias T = mat4x2h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -172,9 +165,8 @@ FAIL :invalid:case="no_enable_mat4x3h" assert_unreached:
 
     ---- shader ----
     alias T = mat4x3h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -184,9 +176,8 @@ FAIL :invalid:case="no_enable_mat4x4h" assert_unreached:
 
     ---- shader ----
     alias T = mat4x4h;
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:159:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/matrix.spec.js:147:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code

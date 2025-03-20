@@ -476,6 +476,7 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
                     f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
                     extension='txt',
                     content_type='text/plain',
+                    additions=f'{self.build.number}'
                 ), UploadFileToS3(
                     'build-log.txt',
                     links={self.name: 'Full build log'},
@@ -796,6 +797,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
                 f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
                 extension='txt',
                 content_type='text/plain',
+                additions=f'{self.build.number}',
             ), UploadFileToS3(
                 'logs.txt',
                 links={self.name: 'Full logs'},
@@ -946,6 +948,7 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin, ShellMixin):
         steps_to_add = [
             GenerateS3URL(
                 f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                additions=f"{self.build.number}{'-wk1' if self.getProperty('use-dump-render-tree', False) else ''}",
                 extension='txt',
                 content_type='text/plain',
             ), UploadFileToS3(
@@ -1403,6 +1406,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
         steps_to_add = [
             GenerateS3URL(
                 f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                additions=f'{self.build.number}',
                 extension='txt',
                 content_type='text/plain',
             ), UploadFileToS3(
@@ -1440,6 +1444,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
 class RunWebKit1Tests(RunWebKitTests):
     def run(self):
         self.command += ["--dump-render-tree"]
+        self.setProperty('use-dump-render-tree', True)
         return super().run()
 
 
@@ -1608,10 +1613,11 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
     haltOnFailure = False
     flunkOnFailure = False
 
-    def __init__(self, identifier, extension='zip', content_type=None, minified=False, **kwargs):
+    def __init__(self, identifier, extension='zip', content_type=None, minified=False, additions=None, **kwargs):
         self.identifier = identifier
         self.extension = extension
         self.minified = minified
+        self.additions = additions
         kwargs['command'] = [
             'python3', '../Shared/generate-s3-url',
             '--revision', WithProperties('%(archive_revision)s'),
@@ -1623,6 +1629,8 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
             kwargs['command'] += ['--content-type', content_type]
         if minified:
             kwargs['command'] += ['--minified']
+        if additions:
+            kwargs['command'] += ['--additions', additions]
         super().__init__(logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
@@ -1645,7 +1653,7 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
             self.build.s3url = match.group('url')
             print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
             bucket_url = S3_BUCKET_MINIFIED if self.minified else S3_BUCKET
-            self.build.s3_archives.append(S3URL + f"{bucket_url}/{self.identifier}/{self.getProperty('archive_revision')}.{self.extension}")
+            self.build.s3_archives.append(S3URL + f"{bucket_url}/{self.identifier}/{self.getProperty('archive_revision')}{f'-{self.additions}' if self.additions else ''}.{self.extension}")
             defer.returnValue(rc)
         else:
             print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
@@ -1728,6 +1736,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
                 f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
                 extension='txt',
                 content_type='text/plain',
+                additions=f'{self.build.number}'
             ), UploadFileToS3(
                 'build-log.txt',
                 links={self.name: 'Full build log'},

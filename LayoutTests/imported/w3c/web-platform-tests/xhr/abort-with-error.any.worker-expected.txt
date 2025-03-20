@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: abort() still works when error thrown internally
+

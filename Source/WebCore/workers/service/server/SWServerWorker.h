@@ -28,12 +28,14 @@
 #include "ClientOrigin.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
+#include "ExceptionData.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerRoute.h"
 #include "ServiceWorkerTypes.h"
 #include "Site.h"
 #include "Timer.h"
@@ -52,6 +54,7 @@ class SWServerToContextConnection;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
+struct ServiceWorkerRoute;
 enum class WorkerThreadMode : bool;
 enum class WorkerType : bool;
 
@@ -126,7 +129,7 @@ public:
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 
-    bool shouldSkipFetchEvent() const { return m_shouldSkipHandleFetch; }
+    WEBCORE_EXPORT RouterSource getRouterSource(const FetchOptions&, const ResourceRequest&) const;
     
     WEBCORE_EXPORT SWServerRegistration* registration() const;
 
@@ -153,6 +156,8 @@ public:
 
     void needsRunning() { m_lastNeedRunningTime = ApproximateTime::now(); }
     bool isIdle(Seconds) const;
+
+    std::optional<ExceptionData> addRoutes(Vector<ServiceWorkerRoute>&&);
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
@@ -195,6 +200,7 @@ private:
     bool m_isInspected { false };
     bool m_isActivateEventFired { false };
     ApproximateTime m_lastNeedRunningTime;
+    Vector<ServiceWorkerRoute> m_routes;
 };
 
 } // namespace WebCore

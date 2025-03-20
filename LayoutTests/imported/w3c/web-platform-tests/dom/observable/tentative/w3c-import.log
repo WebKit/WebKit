@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-event-target.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-every.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-filter.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-finally.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-find.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-first.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-flatMap.any.js

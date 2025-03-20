@@ -34,9 +34,10 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/NativeImage.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKWebProcessPlugInNodeHandle {
-    API::ObjectStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;
+    AlignedStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;
 }
 
 - (void)dealloc

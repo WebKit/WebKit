@@ -45,7 +45,7 @@
 
 namespace JSC { namespace B3 {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Procedure);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Procedure);
 
 Procedure::Procedure(bool usesSIMD)
     : m_cfg(new CFG(*this))

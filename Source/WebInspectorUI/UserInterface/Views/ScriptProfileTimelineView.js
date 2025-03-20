@@ -25,19 +25,15 @@
 
 WI.ScriptProfileTimelineView = class ScriptProfileTimelineView extends WI.TimelineView
 {
-    constructor(timeline, extraArguments)
+    constructor(target, timeline)
     {
-        super(timeline, extraArguments);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Script, timeline);
 
-        console.assert(timeline.type === WI.TimelineRecord.Type.Script);
+        super(timeline);
+
+        this._target = target;
 
         this.element.classList.add("script");
-
-        this._recording = extraArguments.recording;
-        this._recording.addEventListener(WI.TimelineRecording.Event.TargetAdded, this._handleRecordingTargetAdded, this);
-
-        this._selectedTarget = null;
-        this._displayedTarget = null;
 
         this._forceNextLayout = false;
         this._lastLayoutStartTime = undefined;
@@ -59,9 +55,6 @@ WI.ScriptProfileTimelineView = class ScriptProfileTimelineView extends WI.Timeli
         this._clearFocusNodesButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearFocusNodes, this);
         this._updateClearFocusNodesButtonItem();
 
-        this._targetNavigationItem = new WI.NavigationItem("script-profile-target");
-        WI.addMouseDownContextMenuHandlers(this._targetNavigationItem.element, this._populateTargetNavigationItemContextMenu.bind(this));
-
         this._profileOrientationButton = new WI.TextToggleButtonNavigationItem("profile-orientation", WI.UIString("Inverted"));
         this._profileOrientationButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._profileOrientationButtonClicked, this);
         if (WI.ScriptProfileTimelineView.profileOrientationSetting.value === WI.ScriptProfileTimelineView.ProfileOrientation.TopDown)
@@ -76,38 +69,40 @@ WI.ScriptProfileTimelineView = class ScriptProfileTimelineView extends WI.Timeli
         else
             this._topFunctionsButton.activated = true;
 
-        timeline.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
+        this.representedObject.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
     }
 
     // Public
 
     get scrollableElements() { return this._profileView.scrollableElements; }
-
     get showsLiveRecordingData() { return false; }
 
     closed()
     {
         this.representedObject.removeEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
 
-        this._recording.removeEventListener(WI.TimelineRecording.Event.TargetAdded, this._handleRecordingTargetAdded, this);
+        this._profileView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
 
         super.closed();
     }
 
     get navigationItems()
     {
-        let navigationItems = [];
-        navigationItems.push(this._clearFocusNodesButtonItem);
-        if (this._recording.targets.length > 1)
-            navigationItems.push(this._targetNavigationItem);
-        navigationItems.push(this._profileOrientationButton);
-        navigationItems.push(this._topFunctionsButton);
-        return navigationItems;
+        return [this._clearFocusNodesButtonItem, this._profileOrientationButton, this._topFunctionsButton];
     }
 
     get selectionPathComponents()
     {
         return this._profileView.selectionPathComponents;
+    }
+
+    reset()
+    {
+        super.reset();
+
+        this._createProfileView();
+
+        this._updateClearFocusNodesButtonItem();
     }
 
     layout()
@@ -151,26 +146,7 @@ WI.ScriptProfileTimelineView = class ScriptProfileTimelineView extends WI.Timeli
         }
         console.assert(type);
         type ??= WI.CallingContextTree.Type.TopDown;
-
-        if (!this._displayedTarget)
-            return new WI.CallingContextTree(WI.mainTarget, type);
-        return this._recording.callingContextTree(this._displayedTarget, type);
-    }
-
-    _updateTargetNavigationItemDisplay()
-    {
-        this._targetNavigationItem.element.textContent = this._displayNameForTarget(this._displayedTarget);
-
-        this._targetNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "selector-arrows"));
-
-        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
-    }
-
-    _displayNameForTarget(target)
-    {
-        if (target.type === WI.TargetType.Worker)
-            return WI.UIString("Worker \u201C%s\u201D").format(target.displayName);
-        return WI.UIString("Page");
+        return this.representedObject.callingContextTree(this._target, type);
     }
 
     _profileViewSelectionPathComponentsDidChange(event)
@@ -253,53 +229,6 @@ WI.ScriptProfileTimelineView = class ScriptProfileTimelineView extends WI.Timeli
     _clearFocusNodes()
     {
         this._profileView.clearFocusNodes();
-    }
-
-    _handleRecordingTargetAdded(event)
-    {
-        if (this._selectedTarget)
-            return;
-
-        let targets = this._recording.targets;
-        if (!targets.length)
-            return;
-
-        let displayedTarget = targets.includes(WI.mainTarget) ? WI.mainTarget : targets[0];
-        if (displayedTarget !== this._displayedTarget) {
-            this._displayedTarget = displayedTarget;
-            this._showProfileView();
-        }
-
-        if (targets.length > 1)
-            this._updateTargetNavigationItemDisplay();
-    }
-
-    _populateTargetNavigationItemContextMenu(contextMenu)
-    {
-        const rankFunctions = [
-            (target) => target === WI.mainTarget,
-            (target) => target.type === WI.TargetType.Page,
-            (target) => target.type === WI.TargetType.Worker,
-        ];
-        let sortedTargets = this._recording.targets.sort((a, b) => {
-            let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
-            let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
-            if ((aRank >= 0 && bRank < 0) || aRank < bRank)
-                return -1;
-            if ((bRank >= 0 && aRank < 0) || bRank < aRank)
-                return 1;
-
-            return this._displayNameForTarget(a).extendedLocaleCompare(this._displayNameForTarget(b));
-        });
-        for (let target of sortedTargets) {
-            contextMenu.appendCheckboxItem(this._displayNameForTarget(target), () => {
-                this._selectedTarget = target;
-                this._displayedTarget = target;
-                this._updateTargetNavigationItemDisplay();
-
-                this._showProfileView();
-            }, target === this._displayedTarget);
-        }
     }
 };
 

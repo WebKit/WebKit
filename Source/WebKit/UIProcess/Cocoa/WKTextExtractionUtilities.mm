@@ -87,7 +87,12 @@ inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExt
         auto& [url, range] = linkAndRange;
         if (UNLIKELY(range.location + range.length > data.content.length()))
             return { };
-        return adoptNS([allocWKTextExtractionLinkInstance() initWithURL:url range:NSMakeRange(range.location, range.length)]);
+
+        RetainPtr nsURL = static_cast<NSURL *>(url);
+        if (!nsURL)
+            return { };
+
+        return adoptNS([allocWKTextExtractionLinkInstance() initWithURL:nsURL.get() range:NSMakeRange(range.location, range.length)]);
     });
 
     return adoptNS([allocWKTextExtractionTextItemInstance()

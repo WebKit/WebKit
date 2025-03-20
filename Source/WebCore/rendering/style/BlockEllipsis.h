@@ -53,13 +53,13 @@ inline TextStream& operator<<(TextStream& ts, const BlockEllipsis& blockEllipsis
 {
     switch (blockEllipsis.type) {
     case BlockEllipsis::Type::None:
-        ts << "none";
+        ts << "none"_s;
         break;
     case BlockEllipsis::Type::Auto:
-        ts << "auto";
+        ts << "auto"_s;
         break;
     case BlockEllipsis::Type::String:
-        ts << "custom: " << blockEllipsis.string;
+        ts << "custom: "_s << blockEllipsis.string;
         break;
     }
     return ts;

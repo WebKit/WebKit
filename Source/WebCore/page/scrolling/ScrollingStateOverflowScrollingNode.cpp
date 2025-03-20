@@ -117,7 +117,7 @@ Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStat
 
 void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Overflow scrolling node";
+    ts << "Overflow scrolling node"_s;
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
 }

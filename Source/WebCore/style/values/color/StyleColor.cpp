@@ -315,9 +315,9 @@ void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext
 
 TextStream& operator<<(TextStream& ts, const Color& value)
 {
-    ts << "Style::Color[";
+    ts << "Style::Color["_s;
     WTF::switchOn(value, [&](const auto& kind) { ts << kind; });
-    ts << "]";
+    ts << ']';
 
     return ts;
 }

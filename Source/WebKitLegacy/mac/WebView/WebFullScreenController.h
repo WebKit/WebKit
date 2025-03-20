@@ -54,6 +54,7 @@ template<typename> class ExceptionOr;
     float _savedScale;
 
     BOOL _isEnteringFullScreen;
+    CompletionHandler<void(bool)> _didEnterFullscreen;
     CompletionHandler<void()> _exitCompletionHandler;
     BOOL _isFullScreen;
 }
@@ -71,7 +72,7 @@ template<typename> class ExceptionOr;
 - (void)setElement:(RefPtr<WebCore::Element>&&)element;
 - (WebCore::Element*)element;
 
-- (void)enterFullScreen:(NSScreen *)screen completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler;
+- (void)enterFullScreen:(NSScreen *)screen willEnterFullscreen:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)willEnterFullscreen didEnterFullscreen:(CompletionHandler<void(bool)>&&)didEnterFullscreen;
 - (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler;
 - (void)close;
 @end

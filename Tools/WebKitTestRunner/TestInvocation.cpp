@@ -134,7 +134,6 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     setValue(beginTestMessageBody, "UseFlexibleViewport", options().useFlexibleViewport());
     setValue(beginTestMessageBody, "DumpPixels", m_dumpPixels);
     setValue(beginTestMessageBody, "Timeout", static_cast<uint64_t>(m_timeout.milliseconds()));
-    setValue(beginTestMessageBody, "DumpJSConsoleLogInStdErr", m_dumpJSConsoleLogInStdErr);
     setValue(beginTestMessageBody, "additionalSupportedImageTypes", options().additionalSupportedImageTypes().c_str());
     auto allowedHostsValue = adoptWK(WKMutableArrayCreate());
     for (auto& host : TestController::singleton().allowedHosts())
@@ -379,11 +378,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
         m_textOutput.append(toWTFString(stringValue(messageBody)));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "DumpToStdErr")) {
-        fprintf(stderr, "%s", toWTFString(stringValue(messageBody)).utf8().data());
         return;
     }
 
@@ -707,6 +701,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ScrollDuringEnterFullscreen")) {
+        TestController::singleton().scrollDuringEnterFullscreen();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "FinishFullscreenExit")) {
         TestController::singleton().finishFullscreenExit();
         return;
@@ -925,9 +924,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "TriggerMockCaptureConfigurationChange")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
+        bool forCamera = booleanValue(messageBodyDictionary, "camera");
         bool forMicrophone = booleanValue(messageBodyDictionary, "microphone");
         bool forDisplay = booleanValue(messageBodyDictionary, "display");
-        TestController::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
+        TestController::singleton().triggerMockCaptureConfigurationChange(forCamera, forMicrophone, forDisplay);
         return nullptr;
     }
 
@@ -1217,6 +1217,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearStorage")) {
+        TestController::singleton().clearStorage();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "ClearDOMCache")) {
         auto origin = stringValue(messageBody);
         TestController::singleton().clearDOMCache(origin);
@@ -1449,6 +1454,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "ShouldDumpBackForwardListsForAllWindows"))
         return adoptWK(WKBooleanCreate(m_shouldDumpBackForwardListsForAllWindows));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpChildFrameScrollPositions")) {
+        m_shouldDumpAllFrameScrollPositions = true;
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ShouldDumpAllFrameScrollPositions"))
+        return adoptWK(WKBooleanCreate(m_shouldDumpAllFrameScrollPositions));
 
     ASSERT_NOT_REACHED();
     return nullptr;

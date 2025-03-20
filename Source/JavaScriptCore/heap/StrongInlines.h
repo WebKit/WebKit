@@ -56,15 +56,4 @@ inline void Strong<T, shouldStrongDestructorGrabLock>::set(VM& vm, ExternalType 
     set(value);
 }
 
-#if ENABLE(REFTRACKER)
-inline void initializeSystemForStrongRefTracker()
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        WTF::initializeMainThread();
-        JSC::initialize();
-    });
-}
-#endif // ENABLE(REFTRACKER)
-
 } // namespace JSC

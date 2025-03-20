@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebInspectorUIProxy.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
@@ -39,7 +40,7 @@ template<> struct WrapperTraits<WebInspectorUIProxy> {
 
 @interface _WKInspector () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebInspectorUIProxy> _inspector;
+    AlignedStorage<WebKit::WebInspectorUIProxy> _inspector;
     WeakObjCPtr<id <_WKInspectorDelegate> > _delegate;
 }
 @end

@@ -67,7 +67,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    Ref<MediaStreamTrack> m_track;
+    const Ref<MediaStreamTrack> m_track;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;

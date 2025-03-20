@@ -4,19 +4,19 @@ PASS Property position-try-fallbacks value 'flip-block'
 PASS Property position-try-fallbacks value 'flip-inline'
 PASS Property position-try-fallbacks value 'flip-start'
 PASS Property position-try-fallbacks value 'flip-block, flip-inline'
-FAIL Property position-try-fallbacks value '--foo, --bar' assert_true: '--foo, --bar' is a supported value for position-try-fallbacks. expected true got false
+PASS Property position-try-fallbacks value '--foo, --bar'
 PASS Property position-try-fallbacks value 'flip-start flip-inline flip-block'
-FAIL Property position-try-fallbacks value 'flip-start --flop' assert_true: 'flip-start --flop' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value '--flop flip-start' assert_true: '--flop flip-start' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value 'left top' assert_true: 'left top' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value 'top left' assert_true: 'top left' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value 'start start' assert_true: 'start start' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value 'left, right' assert_true: 'left, right' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value '--foo, left' assert_true: '--foo, left' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value '--foo, left, --bar' assert_true: '--foo, left, --bar' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value '--foo, flip-start, left' assert_true: '--foo, flip-start, left' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value '--foo flip-start, left' assert_true: '--foo flip-start, left' is a supported value for position-try-fallbacks. expected true got false
-FAIL Property position-try-fallbacks value 'left, --bar flip-start' assert_true: 'left, --bar flip-start' is a supported value for position-try-fallbacks. expected true got false
+PASS Property position-try-fallbacks value 'flip-start --flop'
+PASS Property position-try-fallbacks value '--flop flip-start'
+PASS Property position-try-fallbacks value 'left top'
+PASS Property position-try-fallbacks value 'top left'
+PASS Property position-try-fallbacks value 'start start'
+PASS Property position-try-fallbacks value 'left, right'
+PASS Property position-try-fallbacks value '--foo, left'
+PASS Property position-try-fallbacks value '--foo, left, --bar'
+PASS Property position-try-fallbacks value '--foo, flip-start, left'
+PASS Property position-try-fallbacks value '--foo flip-start, left'
+PASS Property position-try-fallbacks value 'left, --bar flip-start'
 PASS Property position-try-fallbacks has initial value none
 PASS Property position-try-fallbacks does not inherit
 

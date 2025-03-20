@@ -31,6 +31,7 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "RemoteRenderingBackendProxy.h"
 #import "VideoPresentationManager.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -236,6 +237,11 @@ void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier la
 RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
 {
     return protectedWebPage()->ensureRemoteRenderingBackendProxy();
+}
+
+Ref<RemoteRenderingBackendProxy> RemoteLayerTreeContext::ensureProtectedRemoteRenderingBackendProxy()
+{
+    return ensureRemoteRenderingBackendProxy();
 }
 
 void RemoteLayerTreeContext::gpuProcessConnectionWasDestroyed()

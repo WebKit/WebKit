@@ -483,27 +483,5 @@ RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range, const CSSParser
     return CSSValueList::createSpaceSeparated(WTFMove(parsedValues));
 }
 
-RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    auto packOrNextValue = consumeIdent<CSSValuePack, CSSValueNext>(range);
-    auto definiteFirstOrOrderedValue = consumeIdent<CSSValueDefiniteFirst, CSSValueOrdered>(range);
-
-    if (!packOrNextValue) {
-        packOrNextValue = consumeIdent<CSSValuePack, CSSValueNext>(range);
-        if (!packOrNextValue)
-            packOrNextValue = CSSPrimitiveValue::create(CSSValuePack);
-    }
-
-    CSSValueListBuilder parsedValues;
-    if (packOrNextValue) {
-        CSSValueID packOrNextValueID = packOrNextValue->valueID();
-        if (!definiteFirstOrOrderedValue || (definiteFirstOrOrderedValue && definiteFirstOrOrderedValue->valueID() == CSSValueDefiniteFirst) || packOrNextValueID == CSSValueNext)
-            parsedValues.append(packOrNextValue.releaseNonNull());
-    }
-    if (definiteFirstOrOrderedValue && definiteFirstOrOrderedValue->valueID() == CSSValueOrdered)
-        parsedValues.append(definiteFirstOrOrderedValue.releaseNonNull());
-    return CSSValueList::createSpaceSeparated(WTFMove(parsedValues));
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

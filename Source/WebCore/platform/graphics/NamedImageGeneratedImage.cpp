@@ -70,7 +70,7 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
 void NamedImageGeneratedImage::dump(TextStream& ts) const
 {
     GeneratedImage::dump(ts);
-    ts.dumpProperty("name", m_name);
+    ts.dumpProperty("name"_s, m_name);
 }
 
 }

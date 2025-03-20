@@ -108,7 +108,7 @@ String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 void DisplayList::dump(TextStream& ts) const
 {
     TextStream::GroupScope group(ts);
-    ts << "display list";
+    ts << "display list"_s;
 
     for (const auto& item : m_items) {
         TextStream::GroupScope group(ts);

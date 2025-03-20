@@ -27,7 +27,6 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CompositeOperation.h"
@@ -36,6 +35,7 @@
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
+#include "StyleInterpolation.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TransformOperations.h"
@@ -200,7 +200,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
             ASSERT(existingImplicitBlendingKeyframe->style());
             auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitBlendingKeyframe->style());
             for (auto property : implicitProperties) {
-                CSSPropertyAnimation::blendProperty(effect, property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
+                Style::Interpolation::interpolate(property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace, effect);
                 existingImplicitBlendingKeyframe->addProperty(property);
             }
             existingImplicitBlendingKeyframe->setStyle(WTFMove(keyframeStyle));
@@ -243,7 +243,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
 bool BlendingKeyframes::containsAnimatableCSSProperty() const
 {
     for (auto property : m_properties) {
-        if (CSSPropertyAnimation::isPropertyAnimatable(property))
+        if (Style::Interpolation::canInterpolate(property))
             return true;
     }
     return false;

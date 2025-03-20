@@ -33,7 +33,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/OSObjectPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/darwin/XPCExtras.h>
 #endif
 
 namespace WebKit {

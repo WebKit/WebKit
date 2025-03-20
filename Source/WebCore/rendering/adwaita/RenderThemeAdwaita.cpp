@@ -206,11 +206,11 @@ Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
     return { StringImpl::createWithoutCopying(ModernMediaControlsJavaScript) };
 }
 
-String RenderThemeAdwaita::mediaControlsStyleSheet()
+Vector<String> RenderThemeAdwaita::mediaControlsStyleSheets(const HTMLMediaElement&)
 {
     if (m_mediaControlsStyleSheet.isEmpty())
         m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
-    return m_mediaControlsStyleSheet;
+    return { m_mediaControlsStyleSheet };
 }
 
 String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
@@ -340,9 +340,10 @@ Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderPr
     return renderer.page().preferredRenderingUpdateInterval();
 }
 
-IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
+IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress& renderer, const IntRect& bounds) const
 {
-    return { bounds.x(), bounds.y(), bounds.width(), progressBarSize };
+    bool isHorizontal = renderer.isHorizontalWritingMode();
+    return { bounds.x(), bounds.y(), isHorizontal ? bounds.width() : progressBarSize, isHorizontal ? progressBarSize : bounds.height() };
 }
 
 void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element*) const

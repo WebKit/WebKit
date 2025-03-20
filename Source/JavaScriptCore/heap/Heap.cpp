@@ -1351,7 +1351,7 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
 {
     checkConn(conn);
     m_currentThreadState = currentThreadState;
-    m_currentThread = &Thread::current();
+    m_currentThread = &Thread::currentSingleton();
     
     if (conn == GCConductor::Mutator)
         sanitizeStackForVM(vm());
@@ -1684,9 +1684,9 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     }
         
     {
-        auto* previous = Thread::current().setCurrentAtomStringTable(nullptr);
+        auto* previous = Thread::currentSingleton().setCurrentAtomStringTable(nullptr);
         auto scopeExit = makeScopeExit([&] {
-            Thread::current().setCurrentAtomStringTable(previous);
+            Thread::currentSingleton().setCurrentAtomStringTable(previous);
         });
 
         if (vm().typeProfiler())
@@ -2282,7 +2282,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     stopIfNecessary();
     
     ASSERT(vm().currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm().atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm().atomStringTable() == Thread::currentSingleton().atomStringTable());
     
     Locker locker { *m_threadLock };
     // We may be able to steal the conn. That only works if the collector is definitely not running
@@ -2563,11 +2563,6 @@ GCActivityCallback* Heap::edenActivityCallback()
 RefPtr<GCActivityCallback> Heap::protectedEdenActivityCallback()
 {
     return m_edenActivityCallback;
-}
-
-IncrementalSweeper& Heap::sweeper()
-{
-    return m_sweeper.get();
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
@@ -3374,17 +3369,6 @@ void Heap::scheduleOpportunisticFullCollection()
     m_shouldDoOpportunisticFullCollection = true;
 }
 
-#if ENABLE(WEBASSEMBLY)
-PreciseSubspace* Heap::webAssemblyInstanceSpaceSlow()
-{
-    ASSERT(!m_webAssemblyInstanceSpace);
-    auto space = makeUnique<PreciseSubspace>("PreciseSubspace JSWebAssemblyInstance"_s, *this, webAssemblyInstanceHeapCellType, fastMallocAllocator.get());
-    WTF::storeStoreFence();
-    m_webAssemblyInstanceSpace = WTFMove(space);
-    return m_webAssemblyInstanceSpace.get();
-}
-#endif // ENABLE(WEBASSEMBLY)
-
 #define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type) \
     IsoSubspace* Heap::name##Slow() \
     { \
@@ -3413,6 +3397,20 @@ DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(evalExecutableSpace, destructibleCellHe
 DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType, ModuleProgramExecutable, Heap::ScriptExecutableSpaceAndSets) // Hash:0x6506fa3c
 
 #undef DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW
+
+// FIXME: We should figure out how to adapt IsoAlignedMemoryAllocators for these so they're at least somewhat isolated.
+#define DEFINE_DYNAMIC_NON_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type, SubspaceType) \
+    SubspaceType* Heap::name##Slow() \
+    { \
+        ASSERT(!m_##name); \
+        auto space = makeUnique<SubspaceType>(ASCIILiteral(#SubspaceType " " #name), *this, heapCellType, fastMallocAllocator.get()); \
+        WTF::storeStoreFence(); \
+        m_##name = WTFMove(space); \
+        return m_##name.get(); \
+    }
+
+FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_NON_ISO_SUBSPACE(DEFINE_DYNAMIC_NON_ISO_SUBSPACE_MEMBER_SLOW)
+#undef DEFINE_DYNAMIC_NON_ISO_SUBSPACE_MEMBER_SLOW
 
 #if ENABLE(WEBASSEMBLY)
 

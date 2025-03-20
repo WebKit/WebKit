@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include "OutlineValue.h"
 #include "RenderStyle.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
 
@@ -41,47 +43,56 @@ bool BorderData::isEquivalentForPainting(const BorderData& other, bool currentCo
     if (!currentColorDiffers)
         return true;
 
-    auto visibleBorderHasCurrentColor = (m_top.isVisible() && m_top.color().containsCurrentColor())
-        || (m_right.isVisible() && m_right.color().containsCurrentColor())
-        || (m_bottom.isVisible() && m_bottom.color().containsCurrentColor())
-        || (m_left.isVisible() && m_left.color().containsCurrentColor());
+    auto visibleBorderHasCurrentColor = m_edges.anyOf([](const auto& edge) {
+        return edge.isVisible() && edge.color().containsCurrentColor();
+    });
+
     return !visibleBorderHasCurrentColor;
 }
 
 TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
 {
-    ts << borderValue.width() << " " << borderValue.style() << " " << borderValue.color();
+    ts << borderValue.width() << ' ' << borderValue.style() << ' ' << borderValue.color();
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const OutlineValue& outlineValue)
 {
     ts << static_cast<const BorderValue&>(outlineValue);
-    ts.dumpProperty("outline-offset", outlineValue.offset());
+    ts.dumpProperty("outline-offset"_s, outlineValue.offset());
     return ts;
 }
 
 void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
     if (behavior == DumpStyleValues::All || left() != BorderValue())
-        ts.dumpProperty("left", left());
+        ts.dumpProperty("left"_s, left());
     if (behavior == DumpStyleValues::All || right() != BorderValue())
-        ts.dumpProperty("right", right());
+        ts.dumpProperty("right"_s, right());
     if (behavior == DumpStyleValues::All || top() != BorderValue())
-        ts.dumpProperty("top", top());
+        ts.dumpProperty("top"_s, top());
     if (behavior == DumpStyleValues::All || bottom() != BorderValue())
-        ts.dumpProperty("bottom", bottom());
+        ts.dumpProperty("bottom"_s, bottom());
 
-    ts.dumpProperty("image", image());
+    if (behavior == DumpStyleValues::All || topLeftCornerShape() != Style::CornerShapeValue::round())
+        ts.dumpProperty("top-left corner shape"_s, topLeftCornerShape());
+    if (behavior == DumpStyleValues::All || topRightCornerShape() != Style::CornerShapeValue::round())
+        ts.dumpProperty("top-right corner shape"_s, topRightCornerShape());
+    if (behavior == DumpStyleValues::All || bottomLeftCornerShape() != Style::CornerShapeValue::round())
+        ts.dumpProperty("bottom-left corner shape"_s, bottomLeftCornerShape());
+    if (behavior == DumpStyleValues::All || bottomRightCornerShape() != Style::CornerShapeValue::round())
+        ts.dumpProperty("bottom-right corner shape"_s, bottomRightCornerShape());
+
+    ts.dumpProperty("image"_s, image());
 
     if (behavior == DumpStyleValues::All || !topLeftRadius().isZero())
-        ts.dumpProperty("top-left", topLeftRadius());
+        ts.dumpProperty("top-left"_s, topLeftRadius());
     if (behavior == DumpStyleValues::All || !topRightRadius().isZero())
-        ts.dumpProperty("top-right", topRightRadius());
+        ts.dumpProperty("top-right"_s, topRightRadius());
     if (behavior == DumpStyleValues::All || !bottomLeftRadius().isZero())
-        ts.dumpProperty("bottom-left", bottomLeftRadius());
+        ts.dumpProperty("bottom-left"_s, bottomLeftRadius());
     if (behavior == DumpStyleValues::All || !bottomRightRadius().isZero())
-        ts.dumpProperty("bottom-right", bottomRightRadius());
+        ts.dumpProperty("bottom-right"_s, bottomRightRadius());
 }
 
 TextStream& operator<<(TextStream& ts, const BorderData& borderData)

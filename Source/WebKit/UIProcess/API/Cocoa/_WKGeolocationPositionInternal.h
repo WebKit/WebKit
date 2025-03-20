@@ -28,6 +28,7 @@
 #if TARGET_OS_IPHONE
 
 #import "WebGeolocationPosition.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -39,7 +40,7 @@ template<> struct WrapperTraits<WebGeolocationPosition> {
 
 @interface _WKGeolocationPosition () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebGeolocationPosition> _geolocationPosition;
+    AlignedStorage<WebKit::WebGeolocationPosition> _geolocationPosition;
 }
 @end
 

@@ -32,13 +32,13 @@ namespace WebKit {
 
 TextStream& operator<<(TextStream& ts, const PerPageInfo& pageInfo)
 {
-    ts << "PerPageInfo " << pageInfo.pageIndex << " bounds " << pageInfo.pageBounds << " rect in page bounds " << pageInfo.rectInPageLayoutCoordinates;
+    ts << "PerPageInfo "_s << pageInfo.pageIndex << " bounds "_s << pageInfo.pageBounds << " rect in page bounds "_s << pageInfo.rectInPageLayoutCoordinates;
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const PDFPageCoverageAndScales& coverage)
 {
-    ts << "PDFPageCoverage " << coverage.pages << " pdfDocumentScale " << coverage.pdfDocumentScale << " " << " tiling scale " << coverage.tilingScaleFactor << " contents offset " << coverage.contentsOffset;
+    ts << "PDFPageCoverage "_s << coverage.pages << " pdfDocumentScale "_s << coverage.pdfDocumentScale << ' ' << " tiling scale "_s << coverage.tilingScaleFactor << " contents offset "_s << coverage.contentsOffset;
     return ts;
 }
 

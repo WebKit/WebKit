@@ -1,6 +1,6 @@
 <!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
 <p>This test passes if WebKit does not crash.</p>
-
+<script src="../resources/ipc.js"></script>
 <script>
   if (window.testRunner) {
     testRunner.dumpAsText();
@@ -13,9 +13,13 @@
 
     const { CoreIPC } = await import('./coreipc.js');
 
+    const renderingBackendIdentifier = randomIPCID();
     const connection = CoreIPC.newStreamConnection();
-    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: 393221, connectionHandle: connection });
-    const remoteBackend = connection.newInterface("RemoteRenderingBackend", 393221);
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: renderingBackendIdentifier, connectionHandle: connection });
+    const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+    connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
 
     // The pixel formats to test
     const pixelFormats = [
@@ -51,6 +55,8 @@
         });
       } catch {}
     }
+
+    connection.connection.invalidate();
 
     window.testRunner?.notifyDone();
   }, 10);

@@ -113,6 +113,48 @@ const WPE::DRM::Crtc wpeScreenDRMGetCrtc(WPEScreenDRM* screen)
     return *screen->priv->crtc;
 }
 
+double wpeScreenDRMGuessScale(WPEScreenDRM* screen)
+{
+    // - If the screen does not have physical size values, use 1x.
+    // - If the screen is at least 1200px tall and has 192dpi, use 2x.
+    // - Otherwise, use 1x.
+    //
+    // This is a simplistic approach to choose the scale factor depending
+    // on its characteristics, but works reasonably well for many devices.
+    // In particular, this logic keeps 1x (no scaling) all the way up to
+    // and including FullHD/1080p screens, regardless of their pixel density,
+    // as it is very rare that "high DPI" screens have appropriate sizes to
+    // apply a higher scaling factor.
+    //
+    // Note that, for the sake of simplicity, this never uses fractional
+    // scaling, and checks the resolution of the current mode instead of
+    // the preferred/maximum resolution (which woule have been better).
+
+    static constexpr uint32_t minimum2xScaleDPI = 2 * 96;
+    static constexpr uint32_t minimum2xPixelHeight = 1200;
+    static constexpr float mmPerInch = 25.4;
+
+    const auto pixelWidth = screen->priv->mode.hdisplay;
+    const auto pixelHeight = screen->priv->mode.vdisplay;
+
+    if (pixelHeight < minimum2xPixelHeight)
+        return 1.0;
+
+    const auto physicalWidth = wpe_screen_get_physical_width(WPE_SCREEN(screen));
+    const auto physicalHeight = wpe_screen_get_physical_height(WPE_SCREEN(screen));
+
+    if (physicalWidth <= 0 || physicalHeight <= 0)
+        return 1.0;
+
+    const auto horizontalDPI = static_cast<float>(pixelWidth) / (physicalWidth / mmPerInch);
+    const auto verticalDPI = static_cast<float>(pixelHeight) / (physicalHeight / mmPerInch);
+
+    if (horizontalDPI <= minimum2xScaleDPI || verticalDPI <= minimum2xScaleDPI)
+        return 1.0;
+
+    return 2.0;
+}
+
 /**
  * wpe_screen_drm_get_crtc_index: (skip)
  * @screen: a #WPEScreenDRM

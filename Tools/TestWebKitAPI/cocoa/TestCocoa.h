@@ -39,6 +39,10 @@ static inline ::testing::AssertionResult assertNSObjectsAreEqual(const char* exp
     return ::testing::internal::EqFailure(expectedExpression, actualExpression, toSTD([expected description]), toSTD([actual description]), false /* ignoring_case */);
 }
 
+#if PLATFORM(IOS_FAMILY)
+void instantiateUIApplicationIfNeeded(Class customApplicationClass = nil);
+#endif
+
 } // namespace Util
 } // namespace TestWebKitAPI
 

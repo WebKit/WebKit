@@ -137,6 +137,7 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+        ASSERT(sizeof...(args) == static_cast<size_t>(m_protoCallFrame.argumentCount()));
         constexpr unsigned argumentCountIncludingThis = 1 + sizeof...(args);
         if constexpr (argumentCountIncludingThis <= 4) {
             if (LIKELY(m_numParameters <= argumentCountIncludingThis)) {

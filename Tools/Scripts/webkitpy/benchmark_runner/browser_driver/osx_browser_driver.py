@@ -43,11 +43,49 @@ class OSXBrowserDriver(BrowserDriver):
         self._terminate_processes(self.process_name, self.bundle_id)
 
     @contextmanager
-    def profile(self, output_path, profile_filename, profiling_interval, trace_type='profile', timeout=300):
+    def profile(self, output_path, profile_filename, profiling_interval, trace_type, timeout=300):
+        if trace_type.startswith("ktrace-"):
+            yield from self.profile_deprecated(output_path, profile_filename, profiling_interval, trace_type, timeout)
+            return
         trace_process = None
         additional_trace_arguments = {
-            'full': ['--type=full'],
-            'profile': ['--type=profile'],
+            'full': ['--Logging:enable-logs'],
+            'full-no-clpc': ['--omit', 'CLPC', '--Logging:enable-logs'],
+        }
+        if trace_type not in additional_trace_arguments:
+            _log.error('`{}` is not a valid type of trace. Defaulting to `profile`.'.format(trace_type))
+            trace_type = 'profile'
+        try:
+            _log.info('Gathering traces')
+            trace_command = ['sudo', 'trace', 'record', os.path.join(output_path, profile_filename + '.atrc')]
+            trace_command += additional_trace_arguments[trace_type]
+            if profiling_interval:
+                trace_command += ['--profiling-interval', profiling_interval]
+            _log.info('Running trace command: {}'.format(trace_command))
+            trace_process = subprocess.Popen(trace_command)
+            time.sleep(5)  # Wait a few seconds for `trace` process to start
+            yield
+        except Exception as error:
+            raise Exception('Failed to start trace. Error: {}'.format(error))
+        finally:
+            if not trace_process:
+                return
+            try:
+                subprocess.call(['sudo', 'pkill', '-2', 'trace'])
+                _log.info('Stopping trace task.')
+                with Timeout(timeout):
+                    trace_process.wait()
+            except Exception as error:
+                _log.error('Failed to quit trace.')
+            finally:
+                _log.info('Killing trace task.')
+                subprocess.call(['sudo', 'pkill', '-9', 'trace'])
+
+    def profile_deprecated(self, output_path, profile_filename, profiling_interval, trace_type='ktrace-profile', timeout=300):
+        trace_process = None
+        additional_trace_arguments = {
+            'ktrace-full': ['--type=full'],
+            'ktrace-profile': ['--type=profile'],
         }
         if trace_type not in additional_trace_arguments:
             _log.error('`{}` is not a valid type of trace. Defaulting to `profile`.'.format(trace_type))
@@ -164,3 +202,11 @@ class OSXBrowserDriver(BrowserDriver):
         temp_args = args[:]
         temp_args.insert(pos, url)
         return temp_args
+
+    def prepare_pgo_profile_collection(self):
+        shutil.rmtree(self.pgo_profile_output_directory, ignore_errors=True)
+        os.mkdir(self.pgo_profile_output_directory)
+
+    def collect_pgo_profile(self, destination):
+        _log.info(f'Copying PGO profiles from {self.pgo_profile_output_directory} to {destination}')
+        shutil.copytree(self.pgo_profile_output_directory, destination, dirs_exist_ok=True)

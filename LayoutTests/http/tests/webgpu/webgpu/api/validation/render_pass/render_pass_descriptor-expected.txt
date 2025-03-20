@@ -44,6 +44,7 @@ PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba32float"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgb10a2uint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgb10a2unorm"
+PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg11b10ufloat"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,unaligned:formats=["r8unorm","r32float","rgba8unorm","rgba32float","r8unorm"]
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,unaligned:formats=["r32float","rgba8unorm","rgba32float","r8unorm","r8unorm"]
 PASS :color_attachments,depthSlice,definedness:dimension="2d"
@@ -91,9 +92,18 @@ PASS :resolveTarget,format_supports_resolve:format="rg16float"
 PASS :resolveTarget,format_supports_resolve:format="rgba16uint"
 PASS :resolveTarget,format_supports_resolve:format="rgba16sint"
 PASS :resolveTarget,format_supports_resolve:format="rgba16float"
+PASS :resolveTarget,format_supports_resolve:format="r32uint"
+PASS :resolveTarget,format_supports_resolve:format="r32sint"
 PASS :resolveTarget,format_supports_resolve:format="r32float"
+PASS :resolveTarget,format_supports_resolve:format="rg32uint"
+PASS :resolveTarget,format_supports_resolve:format="rg32sint"
+PASS :resolveTarget,format_supports_resolve:format="rg32float"
+PASS :resolveTarget,format_supports_resolve:format="rgba32uint"
+PASS :resolveTarget,format_supports_resolve:format="rgba32sint"
+PASS :resolveTarget,format_supports_resolve:format="rgba32float"
 PASS :resolveTarget,format_supports_resolve:format="rgb10a2uint"
 PASS :resolveTarget,format_supports_resolve:format="rgb10a2unorm"
+PASS :resolveTarget,format_supports_resolve:format="rg11b10ufloat"
 PASS :depth_stencil_attachment,sample_counts_mismatch:
 PASS :depth_stencil_attachment,loadOp_storeOp_match_depthReadOnly_stencilReadOnly:format="stencil8"
 PASS :depth_stencil_attachment,loadOp_storeOp_match_depthReadOnly_stencilReadOnly:format="depth16unorm"
@@ -121,7 +131,64 @@ PASS :depth_stencil_attachment,depth_clear_value:depthLoadOp="_undef_";depthClea
 PASS :depth_stencil_attachment,depth_clear_value:depthLoadOp="_undef_";depthClearValue=1.5
 PASS :timestampWrites,query_set_type:queryType="occlusion"
 PASS :timestampWrites,query_set_type:queryType="timestamp"
-PASS :timestampWrite,query_index:
+FAIL :timestampWrite,query_index: assert_unreached:
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=0
+    OK
+  - VALIDATION FAILED: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(2) || endOfPassWriteIndex(0) >= querySetCount(2) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(0)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :occlusionQuerySet,query_set_type:queryType="occlusion"
 PASS :occlusionQuerySet,query_set_type:queryType="timestamp"
 

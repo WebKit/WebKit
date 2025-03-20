@@ -26,6 +26,7 @@
 #import "APIFrameTreeNode.h"
 #import "WKObject.h"
 #import "_WKFrameTreeNode.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::FrameTreeNode> {
 
 @interface _WKFrameTreeNode () <WKObject> {
 @package
-    API::ObjectStorage<API::FrameTreeNode> _node;
+    AlignedStorage<API::FrameTreeNode> _node;
 }
 @end

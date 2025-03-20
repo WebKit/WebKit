@@ -40,7 +40,7 @@ public:
     // which doesn't support analysis.
     void lock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
-        Thread& me = Thread::current();
+        auto& me = Thread::currentSingleton();
         if (&me == m_owner) {
             m_recursionCount++;
             return;
@@ -69,7 +69,7 @@ public:
     // which doesn't support analysis.
     bool tryLock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
-        Thread& me = Thread::current();
+        auto& me = Thread::currentSingleton();
         if (&me == m_owner) {
             m_recursionCount++;
             return true;
@@ -90,7 +90,7 @@ public:
         return m_lock.isLocked();
     }
 
-    bool isOwner() const { return m_owner == &Thread::current(); }
+    bool isOwner() const { return m_owner == &Thread::currentSingleton(); }
     
 private:
     Thread* m_owner { nullptr }; // Use Thread* instead of RefPtr<Thread> since m_owner thread is always alive while m_onwer is set.

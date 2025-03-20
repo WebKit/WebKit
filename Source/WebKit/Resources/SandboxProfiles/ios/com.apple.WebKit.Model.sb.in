@@ -26,11 +26,6 @@
 (allow mach-lookup
     (global-name "com.apple.CARenderServer"))
 
-(allow iokit-open-user-client
-    (iokit-user-client-class "AppleParavirtDeviceUserClient"))
-(allow iokit-open-user-client
-    (iokit-user-client-class "AGXDeviceUserClient"))
-
 (allow syscall-mach (machtrap-number MSC_mk_timer_arm_leeway))
 
 (allow syscall-unix
@@ -42,13 +37,6 @@
         SYS_sendmsg
         SYS_setsockopt
     ))
-
-#if ENABLE(SANDBOX_WORKAROUND_FOR_MODEL_PROCESS)
-;; FIXME: Remove after rdar://124086612 is addressed
-(allow mach-bootstrap
-    (apply-message-filter
-        (allow mach-message-send (message-number 800 804))))
-#endif
 
 ;; FIXME: Remove after rdar://138963941 is addressed
 (deny syscall-unix (with no-report) (syscall-number SYS_necp_open))

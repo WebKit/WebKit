@@ -130,7 +130,7 @@ void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& chall
         return;
     }
 
-    m_client->downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
+    m_client->protectedDownloadsAuthenticationManager()->didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
 }
 
 void Download::didCreateDestination(const String& path)
@@ -145,7 +145,7 @@ void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten,
         m_hasReceivedData = true;
     }
     
-    m_monitor.downloadReceivedBytes(bytesWritten);
+    protectedMonitor()->downloadReceivedBytes(bytesWritten);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     updateProgress(totalBytesWritten, totalBytesExpectedToWrite);
@@ -165,10 +165,8 @@ void Download::didFinish()
             return;
         protectedThis->send(Messages::DownloadProxy::DidFinish());
 
-        if (protectedThis->m_sandboxExtension) {
-            protectedThis->m_sandboxExtension->revoke();
-            protectedThis->m_sandboxExtension = nullptr;
-        }
+        if (RefPtr extension = std::exchange(protectedThis->m_sandboxExtension, nullptr))
+            extension->revoke();
 
         if (CheckedPtr downloadManager = protectedThis->m_downloadManager)
             downloadManager->downloadFinished(*protectedThis);
@@ -190,10 +188,9 @@ void Download::didFail(const ResourceError& error, std::span<const uint8_t> resu
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
-    if (m_sandboxExtension) {
-        m_sandboxExtension->revoke();
-        m_sandboxExtension = nullptr;
-    }
+    if (RefPtr extension = std::exchange(m_sandboxExtension, nullptr))
+        extension->revoke();
+
     if (CheckedPtr downloadManager = m_downloadManager)
         downloadManager->downloadFinished(*this);
 }

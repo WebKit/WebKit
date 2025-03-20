@@ -49,14 +49,15 @@ using namespace WebCore;
 
 #pragma mark Commands for 'PLATFORM(MAC)'
 
-void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
+void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Inspector::CommandCallback<void>&& callback)
 {
     auto page = webPageProxyForHandle(handle);
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->identifier()))
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+    if (auto pendingCallback = m_pendingInspectorCallbacksPerPage.take(page->identifier()))
+        pendingCallback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
+
     m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTFMove(callback));
 
     // Don't bring the inspector to front since this may be done automatically.

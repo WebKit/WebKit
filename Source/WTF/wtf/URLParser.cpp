@@ -156,7 +156,7 @@ static constexpr std::array<uint8_t, 256> characterClassTable {
     UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '['
     UserInfoEncode | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '\\'
     UserInfoEncode | ForbiddenHost | ForbiddenDomain, // ']'
-    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '^'
+    UserInfoEncode | PathEncode | ForbiddenHost | ForbiddenDomain, // '^'
     0, // '_'
     UserInfoEncode | PathEncode, // '`'
     ValidScheme, // 'a'
@@ -375,7 +375,7 @@ ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator
 {
     ++iterator;
     while (UNLIKELY(!iterator.atEnd() && isTabOrNewline(*iterator))) {
-        if (reportSyntaxViolation == ReportSyntaxViolation::Yes)
+        if constexpr (reportSyntaxViolation == ReportSyntaxViolation::Yes)
             syntaxViolation(iteratorForSyntaxViolationPosition);
         ++iterator;
     }
@@ -1167,6 +1167,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
         File,
         FileSlash,
         FileHost,
+        FilePathStart,
         PathStart,
         Path,
         OpaquePath,
@@ -1683,7 +1684,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                             state = State::Fragment;
                             break;
                         }
-                        state = State::Path;
+                        state = authorityOrHostBegin == c ? State::FilePathStart : State::Path;
                         break;
                     }
                     if (parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)) == HostParsingResult::InvalidHost) {
@@ -1704,6 +1705,20 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     m_hostHasPercentOrNonASCII = true;
                 ++c;
             } while (!c.atEnd());
+            break;
+        case State::FilePathStart:
+            LOG_STATE("FilePathStart");
+            if (*c == '/' || *c != '\\') {
+                if (UNLIKELY(m_urlIsSpecial && *c == '\\'))
+                    syntaxViolation(c);
+                appendToASCIIBuffer('/');
+                advance(c);
+                m_url.m_pathAfterLastSlash = currentPosition(c);
+                if (isWindowsDriveLetter(c)
+                    && currentPosition(c) == m_url.m_hostEnd + 1)
+                    appendWindowsDriveLetter(c);
+            }
+            state = State::Path;
             break;
         case State::PathStart:
             LOG_STATE("PathStart");
@@ -1776,6 +1791,16 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 appendToASCIIBuffer('/');
                 ++c;
                 m_url.m_pathAfterLastSlash = currentPosition(c);
+            } else if (*c == ' ') {
+                auto nextC = c;
+                advance<CharacterType, ReportSyntaxViolation::No>(nextC);
+                ASSERT(!nextC.atEnd());
+                if (*nextC == '?' || *nextC == '#') {
+                    syntaxViolation(c);
+                    percentEncodeByte(' ');
+                } else
+                    appendToASCIIBuffer(' ');
+                ++c;
             } else {
                 utf8PercentEncode<isInC0ControlEncodeSet>(c);
                 ++c;
@@ -2003,6 +2028,8 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
     case State::PathStart:
         LOG_FINAL_STATE("PathStart");
         RELEASE_ASSERT_NOT_REACHED();
+    case State::FilePathStart:
+        FALLTHROUGH;
     case State::Path:
         LOG_FINAL_STATE("Path");
         m_url.m_pathEnd = currentPosition(c);

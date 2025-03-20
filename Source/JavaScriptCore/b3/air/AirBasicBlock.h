@@ -31,6 +31,7 @@
 #include "AirInst.h"
 #include "B3SuccessorCollection.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
@@ -46,7 +47,7 @@ class PhaseInsertionSet;
 
 class BasicBlock {
     WTF_MAKE_NONCOPYABLE(BasicBlock);
-    WTF_MAKE_TZONE_ALLOCATED(BasicBlock);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BasicBlock);
 public:
     static const char* const dumpPrefix;
     static constexpr unsigned uninsertedIndex = UINT_MAX;

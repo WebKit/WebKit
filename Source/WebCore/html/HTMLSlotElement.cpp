@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLSlotElement.h"
 
+#include "AXObjectCache.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -230,6 +231,12 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
     Ref<Event> event = Event::create(eventNames().slotchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
     event->setTarget(Ref { *this });
     dispatchEvent(event);
+}
+
+void HTMLSlotElement::updateAccessibilityOnSlotChange() const
+{
+    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+        cache->onSlottedContentChange(*this);
 }
 
 } // namespace WebCore

@@ -262,6 +262,30 @@ void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier ser
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
 
+void WebSWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier serviceWorkerIdentifier, bool isInspected)
+{
+    SWServerToContextConnection::setAsInspected(serviceWorkerIdentifier, isInspected);
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (isInspected) {
+        CheckedPtr session = protectedConnection()->networkSession();
+        RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+
+        if (session && worker) {
+            auto scopeURL = worker->registrationKey().scope();
+            session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, true);
+
+            worker->whenTerminated([connection = WeakPtr { m_connection }, scopeURL]() {
+                if (RefPtr protectedConnection = connection.get()) {
+                    if (CheckedPtr session = protectedConnection->networkSession())
+                        session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, false);
+                }
+            });
+        }
+    }
+#endif
+}
+
 void WebSWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     SWServerToContextConnection::workerTerminated(serviceWorkerIdentifier);
@@ -474,6 +498,16 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
     m_isInspectable = inspectable;
     send(Messages::WebSWContextManagerConnection::SetInspectable { inspectable });
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier identifier, size_t bytesTransferredOverNetworkDelta)
+{
+    if (RefPtr server = this->server()) {
+        if (RefPtr connection = dynamicDowncast<WebSWServerConnection>(server->connection(identifier.processIdentifier())))
+            connection->reportNetworkUsageToWorkerClient(identifier, bytesTransferredOverNetworkDelta);
+    }
+}
+#endif
 
 #undef MESSAGE_CHECK
 } // namespace WebKit

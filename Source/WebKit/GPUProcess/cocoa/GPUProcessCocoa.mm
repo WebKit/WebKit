@@ -165,7 +165,7 @@ void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProc
         }
 
         RELEASE_LOG(ModelElement, "GPUProcess: Shared simulation join request succeeded");
-        completionHandler(IPC::SharedFileHandle::create([sharedSimulationConnection fileDescriptor]));
+        completionHandler(IPC::SharedFileHandle::create(FileSystem::FileHandle::adopt([sharedSimulationConnection fileDescriptor])));
     });
 }
 #endif

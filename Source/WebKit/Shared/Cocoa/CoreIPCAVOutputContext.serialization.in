@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,13 +20,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(AVFOUNDATION)
+#if USE(AVFOUNDATION) && HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+webkit_platform_headers: "CoreIPCAVOutputContext.h"
 
-# FIXME: Remove SupportWKKeyedCoder once AVOutputContext conforms to the WebKit Property List secure coding protocol, tracked by rdar://119289362
+header: "CoreIPCAVOutputContext.h"
+[CustomHeader, WebKitPlatform] struct WebKit::CoreIPCAVOutputContextData {
+    String contextID;
+    String contextType;
+};
 
+header: "CoreIPCAVOutputContext.h"
+[CustomHeader, WebKitPlatform] class WebKit::CoreIPCAVOutputContext {
+    WebKit::CoreIPCAVOutputContextData m_data;
+};
+#endif // USE(AVFOUNDATION) && HAVE(HAVE_WK_SECURE_CODING_AVOUTPUTCONTEXT)
+
+#if USE(AVFOUNDATION) && !HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
 secure_coding_header: <pal/cocoa/AVFoundationSoftLink.h>
 [WebKitSecureCodingClass=PAL::getAVOutputContextClass(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
     AVOutputContextSerializationKeyContextID: String
     AVOutputContextSerializationKeyContextType: String
 }
-#endif // USE(AVFOUNDATION)
+#endif // USE(AVFOUNDATION) && !HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)

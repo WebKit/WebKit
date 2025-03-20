@@ -103,6 +103,7 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
         .timestampCounterSet = timestampCounterSet,
         .statisticCounterSet = statisticCounterSet,
         .canPresentRGB10A2PixelFormats = false, // To be filled in by the caller.
+        .supportsResidencySets = false,
     };
 }
 
@@ -110,6 +111,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
 {
     Vector<WGPUFeatureName> features;
 
+    features.append(WGPUFeatureName_CoreFeaturesAndLimits);
     features.append(WGPUFeatureName_Float16Renderable);
     features.append(WGPUFeatureName_Float32Renderable);
     features.append(WGPUFeatureName_Float32Blendable);
@@ -197,6 +199,7 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
+    baseCapabilities.supportsResidencySets = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -242,6 +245,8 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
             .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
             .maxStorageBuffersInFragmentStage = UINT32_MAX,
             .maxStorageTexturesInFragmentStage = UINT32_MAX,
+            .maxStorageBuffersInVertexStage = UINT32_MAX,
+            .maxStorageTexturesInVertexStage = UINT32_MAX,
         },
         WTFMove(features),
         baseCapabilities,
@@ -254,6 +259,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
+    baseCapabilities.supportsResidencySets = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -299,6 +305,8 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
             .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
             .maxStorageBuffersInFragmentStage = UINT32_MAX,
             .maxStorageTexturesInFragmentStage = UINT32_MAX,
+            .maxStorageBuffersInVertexStage = UINT32_MAX,
+            .maxStorageTexturesInVertexStage = UINT32_MAX,
         },
         WTFMove(features),
         baseCapabilities,
@@ -353,6 +361,8 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
             .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
             .maxStorageBuffersInFragmentStage = UINT32_MAX,
             .maxStorageTexturesInFragmentStage = UINT32_MAX,
+            .maxStorageBuffersInVertexStage = UINT32_MAX,
+            .maxStorageTexturesInVertexStage = UINT32_MAX,
         },
         WTFMove(features),
         baseCapabilities,
@@ -410,6 +420,8 @@ static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next
         .maxComputeWorkgroupsPerDimension = mergeMaximum(previous.maxComputeWorkgroupsPerDimension, next.maxComputeWorkgroupsPerDimension),
         .maxStorageBuffersInFragmentStage = mergeMaximum(previous.maxStorageBuffersInFragmentStage, next.maxStorageBuffersInFragmentStage),
         .maxStorageTexturesInFragmentStage = mergeMaximum(previous.maxStorageTexturesInFragmentStage, next.maxStorageTexturesInFragmentStage),
+        .maxStorageBuffersInVertexStage = mergeMaximum(previous.maxStorageBuffersInVertexStage, next.maxStorageBuffersInVertexStage),
+        .maxStorageTexturesInVertexStage = mergeMaximum(previous.maxStorageTexturesInVertexStage, next.maxStorageTexturesInVertexStage),
     };
 };
 
@@ -435,6 +447,7 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
         previous.timestampCounterSet,
         previous.statisticCounterSet,
         previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
+        previous.supportsResidencySets || next.supportsResidencySets,
     };
 }
 
@@ -564,6 +577,10 @@ bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
         return true;
     if (target.maxStorageTexturesInFragmentStage > reference.maxStorageTexturesInFragmentStage)
         return true;
+    if (target.maxStorageBuffersInVertexStage > reference.maxStorageBuffersInVertexStage)
+        return true;
+    if (target.maxStorageTexturesInVertexStage > reference.maxStorageTexturesInVertexStage)
+        return true;
 
     return false;
 }
@@ -615,8 +632,10 @@ WGPULimits defaultLimits()
         .maxComputeWorkgroupSizeY =    256,
         .maxComputeWorkgroupSizeZ =    64,
         .maxComputeWorkgroupsPerDimension =    65535,
-        .maxStorageBuffersInFragmentStage = UINT32_MAX,
-        .maxStorageTexturesInFragmentStage = UINT32_MAX,
+        .maxStorageBuffersInFragmentStage = 8,
+        .maxStorageTexturesInFragmentStage = 4,
+        .maxStorageBuffersInVertexStage = 8,
+        .maxStorageTexturesInVertexStage = 4,
     };
 }
 

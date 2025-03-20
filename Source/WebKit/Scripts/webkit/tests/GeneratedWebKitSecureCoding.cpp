@@ -42,7 +42,7 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCod
     return [archiver accumulatedDictionary];
 }
 
-static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
+[[maybe_unused]] static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
 {
     if (WebKit::conformsToWebKitSecureCoding(object))
         return [object _webKitPropertyListData];

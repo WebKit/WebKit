@@ -62,7 +62,7 @@ TEST(WebKit, LoadAndDecodeImage)
     };
 
     HTTPServer server {
-        { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
+        { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } },
         { "/test_png"_s, { pngData() } },
         { "/test_untagged_png"_s, { untaggedPNGData() } },
         { "/test_gif"_s, { gifData() } },

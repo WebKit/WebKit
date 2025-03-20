@@ -68,7 +68,7 @@ namespace WebKit {
 
 class RemoteVideoFrameObjectHeapProxy;
 
-class LibWebRTCCodecs : public IPC::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
+class LibWebRTCCodecs : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>, public GPUProcessConnection::Client {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCCodecs);
 public:
     static Ref<LibWebRTCCodecs> create();
@@ -188,10 +188,10 @@ public:
 #endif
     bool hasAV1HardwareDecoder() const { return m_hasAV1HardwareDecoder; }
 
-    void ref() const final { return IPC::WorkQueueMessageReceiver::ref(); }
-    void deref() const final { return IPC::WorkQueueMessageReceiver::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver::controlBlock(); }
-    size_t weakRefCount() const final { return IPC::WorkQueueMessageReceiver::weakRefCount(); }
+    void ref() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::ref(); }
+    void deref() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::controlBlock(); }
+    size_t weakRefCount() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::weakRefCount(); }
 
     WorkQueue& workQueue() const { return m_queue; }
 
@@ -215,8 +215,10 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&);
 
     IPC::Connection* encoderConnection(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
+    RefPtr<IPC::Connection> protectedEncoderConnection(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     void setEncoderConnection(Encoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     IPC::Connection* decoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
+    RefPtr<IPC::Connection> protectedDecoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void setDecoderConnection(Decoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_connectionLock);
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
@@ -243,7 +245,7 @@ private:
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };

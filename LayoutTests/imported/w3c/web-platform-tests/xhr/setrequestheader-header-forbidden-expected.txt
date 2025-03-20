@@ -1,3 +1,4 @@
 
 PASS XMLHttpRequest: setRequestHeader() - headers that are forbidden
+PASS XMLHttpRequest: setRequestHeader() - headers that are forbidden 1
 

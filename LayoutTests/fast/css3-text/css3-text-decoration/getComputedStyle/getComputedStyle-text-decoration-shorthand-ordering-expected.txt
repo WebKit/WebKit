@@ -14,7 +14,7 @@ PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'do
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'blue'
 
 -style -line -color ordering (double line-through underline overline green):
-PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through underline overline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'double'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'green'
 

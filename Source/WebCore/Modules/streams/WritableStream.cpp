@@ -97,6 +97,11 @@ void WritableStream::closeIfPossible()
     m_internalWritableStream->closeIfPossible();
 }
 
+void WritableStream::errorIfPossible(Exception&& e)
+{
+    m_internalWritableStream->errorIfPossible(WTFMove(e));
+}
+
 JSC::JSValue JSWritableStream::abort(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)
 {
     return wrapped().internalWritableStream().abortForBindings(globalObject, callFrame.argument(0));

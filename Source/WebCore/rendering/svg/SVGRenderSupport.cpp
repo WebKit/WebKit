@@ -28,6 +28,8 @@
 #include "SVGRenderSupport.h"
 
 #include "ElementAncestorIteratorInlines.h"
+#include "LegacyRenderSVGForeignObject.h"
+#include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMarker.h"
@@ -167,6 +169,12 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
             continue;
 
         if (auto* text = dynamicDowncast<RenderSVGText>(current.ptr()); (text && !text->isObjectBoundingBoxValid()))
+            continue;
+
+        if (auto* image = dynamicDowncast<LegacyRenderSVGImage>(current.ptr()); (image && !image->isObjectBoundingBoxValid()))
+            continue;
+
+        if (auto* foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(current.ptr()); (foreignObject && !foreignObject->isObjectBoundingBoxValid()))
             continue;
 
         const AffineTransform& transform = current->localToParentTransform();

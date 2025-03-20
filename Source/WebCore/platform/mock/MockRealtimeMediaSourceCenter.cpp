@@ -53,6 +53,7 @@
 #endif
 
 #if USE(GSTREAMER)
+#include "GStreamerMockDeviceProvider.h"
 #include "MockDisplayCaptureSourceGStreamer.h"
 #include "MockRealtimeVideoSourceGStreamer.h"
 #endif
@@ -62,15 +63,15 @@ namespace WebCore {
 static inline Vector<MockMediaDevice> defaultDevices()
 {
     return Vector<MockMediaDevice> {
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, { }, MockMicrophoneProperties { 44100 , { } } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, { },  MockMicrophoneProperties { 48000, { false } } },
-        MockMediaDevice { "239c24b1-3b15-11e3-8224-0800200c9a66"_s, "Mock audio device 3"_s, { },  MockMicrophoneProperties { 96000, { true } } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, { }, true, MockMicrophoneProperties { 44100 , { } } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, { }, false, MockMicrophoneProperties { 48000, { false } } },
+        MockMediaDevice { "239c24b1-3b15-11e3-8224-0800200c9a66"_s, "Mock audio device 3"_s, { }, false, MockMicrophoneProperties { 96000, { true } } },
 
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, { },  MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, { },  MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, { },  MockSpeakerProperties { String { }, 48000 } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, { }, true, MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, { }, false, MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, { }, false, MockSpeakerProperties { String { }, 48000 } },
 
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, { },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, { }, true,
             MockCameraProperties {
                 30,
                 VideoFacingMode::User, {
@@ -85,7 +86,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 false, // background blur enabled
             } },
 
-        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, { },
+        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, { }, false,
             MockCameraProperties {
                 15,
                 VideoFacingMode::Environment, {
@@ -104,11 +105,11 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 true, // background blur enabled
             } },
 
-        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
-        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, { }, true, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, { }, false, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
 
-        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
-        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
+        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, { }, true, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, { }, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
     };
 }
 
@@ -433,8 +434,11 @@ void MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(bool isCame
     MockRealtimeAudioSource::setIsInterrupted(isMicrophoneInterrupted);
 }
 
-void MockRealtimeMediaSourceCenter::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
+void MockRealtimeMediaSourceCenter::triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay)
 {
+    if (forCamera)
+        MockRealtimeVideoSource::triggerCameraConfigurationChange();
+
 #if PLATFORM(COCOA)
     if (forMicrophone) {
         auto devices = audioCaptureDeviceManager().captureDevices();
@@ -447,6 +451,13 @@ void MockRealtimeMediaSourceCenter::triggerMockCaptureConfigurationChange(bool f
         if (auto capturer = MockRealtimeDisplaySourceFactory::singleton().latestCapturer())
             capturer->triggerMockCaptureConfigurationChange();
     }
+#elif USE(GSTREAMER)
+    if (forMicrophone) {
+        auto devices = audioCaptureDeviceManager().captureDevices();
+        if (devices.size() > 1)
+            webkitGstMockDeviceProviderSwitchDefaultDevice(devices[0], devices[1]);
+    }
+    UNUSED_PARAM(forDisplay);
 #else
     UNUSED_PARAM(forMicrophone);
     UNUSED_PARAM(forDisplay);

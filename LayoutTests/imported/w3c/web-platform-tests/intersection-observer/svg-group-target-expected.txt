@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <g> element
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.left expected 108 +/- 0 but got 8
+FAIL descendant rect translated down by 150 units (out of SVG viewport) assert_equals: entries.length expected 2 but got 1
+FAIL descendant rect translated down by 100 units assert_equals: entries.length expected 3 but got 1
+

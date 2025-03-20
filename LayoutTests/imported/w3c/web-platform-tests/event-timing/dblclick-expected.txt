@@ -1,0 +1,5 @@
+Outside target!
+Click me
+
+FAIL Event Timing dblclick. assert_implements: Event Counts isn't supported undefined
+

@@ -33,15 +33,19 @@ messages -> RemoteRenderingBackend Stream {
     GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    ReleaseNativeImage(WebCore::RenderingResourceIdentifier identifier)
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
+    ReleaseFont(WebCore::RenderingResourceIdentifier identifier)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
+    ReleaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs)
+    ReleaseDecomposedGlyphs(WebCore::RenderingResourceIdentifier identifier) StreamBatched
     CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
+    ReleaseGradient(WebCore::RenderingResourceIdentifier identifier)
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
+    ReleaseFilter(WebCore::RenderingResourceIdentifier identifier)
     ReleaseAllDrawingResources()
     ReleaseAllImageResources()
-    ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-
     CreateRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)
     ReleaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier)
 

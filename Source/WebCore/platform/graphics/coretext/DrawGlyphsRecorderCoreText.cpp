@@ -430,8 +430,16 @@ void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, std::span<const GlyphBuf
 {
     FloatPoint penPosition = startPoint;
 
+#if USE(CORE_TEXT)
+    auto glyphBounds = font.boundsForGlyphs(glyphs);
+#endif
+
     for (size_t i = 0; i < glyphs.size(); ++i) {
+#if USE(CORE_TEXT)
+        const auto& bounds = glyphBounds[i];
+#else
         auto bounds = font.boundsForGlyph(glyphs[i]);
+#endif
 
         // Create a local ImageBuffer because decoding the SVG fonts has to happen in WebProcess.
         if (auto imageBuffer = m_owner.createAlignedImageBuffer(bounds, DestinationColorSpace::SRGB(), RenderingMethod::Local)) {

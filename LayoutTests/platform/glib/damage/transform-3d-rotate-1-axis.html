@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 17px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 30px;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <div id="transformee" class="rect" style="background-color: blue; transform: rotate3d(0, 1, 0, 0deg);"></div>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var transformee = document.getElementById("transformee");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              transformee.style.transform = "rotate3d(0, 1, 0, 45deg)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30, 81, 64, 64]]);
+          },
+          () => {
+              transformee.style.transform = "rotate3d(0, 1, 0, 85deg)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[39, 81, 46, 64]]);
+          },
+          () => {
+              transformee.style.transform = "rotate3d(0, 1, 0, 45deg)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[39, 81, 46, 64]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

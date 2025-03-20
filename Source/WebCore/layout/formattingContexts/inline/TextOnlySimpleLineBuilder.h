@@ -36,6 +36,7 @@ struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 
 class TextOnlySimpleLineBuilder final : public AbstractLineBuilder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
@@ -46,6 +47,7 @@ public:
 private:
     InlineItemPosition placeInlineTextContent(const RenderStyle&, const InlineItemRange&);
     InlineItemPosition placeNonWrappingInlineTextContent(const RenderStyle&, const InlineItemRange&);
+    std::optional<LineLayoutResult> placeSingleCharacterContentIfApplicable(const LineInput&);
     TextOnlyLineBreakResult handleOverflowingTextContent(const RenderStyle&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
     TextOnlyLineBreakResult commitCandidateContent(const RenderStyle&, const CandidateTextContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);

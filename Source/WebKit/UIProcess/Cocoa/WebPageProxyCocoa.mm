@@ -86,6 +86,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextAnimationTypes.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
@@ -164,17 +165,17 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTre
         themeColorChanged(layerTreeTransaction.themeColor());
         pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
         sampledPageTopColorChanged(layerTreeTransaction.sampledPageTopColor());
-    }
 
-    if (!m_hasUpdatedRenderingAfterDidCommitLoad
-        && (internals().firstLayerTreeTransactionIdAfterDidCommitLoad && layerTreeTransaction.transactionID().greaterThanOrEqualSameProcess(*internals().firstLayerTreeTransactionIdAfterDidCommitLoad))) {
-        m_hasUpdatedRenderingAfterDidCommitLoad = true;
+        if (!m_hasUpdatedRenderingAfterDidCommitLoad
+            && (internals().firstLayerTreeTransactionIdAfterDidCommitLoad && layerTreeTransaction.transactionID().greaterThanOrEqualSameProcess(*internals().firstLayerTreeTransactionIdAfterDidCommitLoad))) {
+            m_hasUpdatedRenderingAfterDidCommitLoad = true;
 #if ENABLE(SCREEN_TIME)
-        if (RefPtr pageClient = this->pageClient())
-            pageClient->didChangeScreenTimeWebpageControllerURL();
+            if (RefPtr pageClient = this->pageClient())
+                pageClient->didChangeScreenTimeWebpageControllerURL();
 #endif
-        stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
-        internals().lastVisibleContentRectUpdate = { };
+            stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
+            internals().lastVisibleContentRectUpdate = { };
+        }
     }
 
     if (RefPtr pageClient = this->pageClient())
@@ -632,6 +633,38 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 }
 #endif
 
+#if PLATFORM(VISION)
+void WebPageProxy::enterExternalPlaybackForNowPlayingMediaSession(CompletionHandler<void(bool, UIViewController *)>&& enterHandler, CompletionHandler<void(bool)>&& exitHandler)
+{
+    if (!m_videoPresentationManager) {
+        enterHandler(false, nil);
+        exitHandler(false);
+        return;
+    }
+
+    RefPtr videoPresentationInterface = m_videoPresentationManager->controlsManagerInterface();
+    if (!videoPresentationInterface) {
+        enterHandler(false, nil);
+        exitHandler(false);
+        return;
+    }
+
+    videoPresentationInterface->enterExternalPlayback(WTFMove(enterHandler), WTFMove(exitHandler));
+}
+
+void WebPageProxy::exitExternalPlayback()
+{
+    if (!m_videoPresentationManager)
+        return;
+
+    RefPtr videoPresentationInterface = m_videoPresentationManager->controlsManagerInterface();
+    if (!videoPresentationInterface)
+        return;
+
+    videoPresentationInterface->exitExternalPlayback();
+}
+#endif
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 void WebPageProxy::didChangePlaybackRate(PlaybackSessionContextIdentifier identifier)
@@ -695,7 +728,6 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 #endif
     });
 }
-
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
@@ -1538,6 +1570,18 @@ String WebPageProxy::presentingApplicationBundleIdentifier() const
 
     return { };
 }
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+void WebPageProxy::initializeAccessibility()
+{
+    RELEASE_LOG(Process, "WebPageProxy::initializeAccessibility");
+    if (!hasRunningProcess())
+        return;
+
+    auto handleArray = SandboxExtension::createHandlesForMachLookup({ }, protectedLegacyMainFrameProcess()->auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::InitializeAccessibility(WTFMove(handleArray)), webPageIDInMainFrameProcess());
+}
+#endif
 
 } // namespace WebKit
 

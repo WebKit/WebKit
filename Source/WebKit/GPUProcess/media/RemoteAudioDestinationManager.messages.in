@@ -37,6 +37,9 @@ messages -> RemoteAudioDestinationManager {
 #if PLATFORM(COCOA)
     AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle)
 #endif
+#if PLATFORM(IOS_FAMILY)
+    SetSceneIdentifier(WebKit::RemoteAudioDestinationIdentifier identifier, String sceneIdentifier);
+#endif
 }
 
 #endif

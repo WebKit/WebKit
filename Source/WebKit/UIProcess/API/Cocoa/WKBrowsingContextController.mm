@@ -81,7 +81,7 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKBrowsingContextController {
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
-    RefPtr<WebKit::WebPageProxy> _page;
+    const RefPtr<WebKit::WebPageProxy> _page;
     std::unique_ptr<WebKit::PageLoadStateObserver> _pageLoadStateObserver;
 
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
@@ -104,7 +104,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(browsingContextControllerMap().get(*_page) == self);
     browsingContextControllerMap().remove(*_page);
 
-    _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
+    _page->protectedPageLoadState()->removeObserver(Ref { *_pageLoadStateObserver });
 
     [super dealloc];
 }
@@ -169,7 +169,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(!userData);
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData(WebCore::SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), { });
+    _page->loadData(WebCore::SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), nullptr);
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
@@ -186,7 +186,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     ASSERT(!userData);
-    _page->loadData(WebCore::SharedBuffer::create(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), { });
+    _page->loadData(WebCore::SharedBuffer::create(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), nullptr);
 }
 
 - (void)stopLoading
@@ -251,7 +251,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
-    _page->goToBackForwardItem(item._item);
+    _page->goToBackForwardItem(Ref { item._item });
 }
 
 - (WKBackForwardList *)backForwardList
@@ -263,12 +263,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)isLoading
 {
-    return _page->pageLoadState().isLoading();
+    return _page->protectedPageLoadState()->isLoading();
 }
 
 - (NSURL *)activeURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
+    return [NSURL _web_URLWithWTFString:_page->protectedPageLoadState()->activeURL()];
 }
 
 - (NSURL *)provisionalURL
@@ -278,7 +278,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSURL *)committedURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().url()];
+    return [NSURL _web_URLWithWTFString:_page->protectedPageLoadState()->url()];
 }
 
 - (NSURL *)unreachableURL
@@ -288,7 +288,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)hasOnlySecureContent
 {
-    return _page->pageLoadState().hasOnlySecureContent();
+    return _page->protectedPageLoadState()->hasOnlySecureContent();
 }
 
 - (double)estimatedProgress
@@ -300,12 +300,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)title
 {
-    return _page->pageLoadState().title();
+    return _page->protectedPageLoadState()->title();
 }
 
 - (NSArray *)certificateChain
 {
-    if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
+    if (RefPtr mainFrame = _page->mainFrame())
         return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo().trust().get()).autorelease();
 
     return nil;
@@ -363,7 +363,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailProvisionalLoadWithError:)])
-        [loadDelegate browsingContextController:browsingContext didFailProvisionalLoadWithError:wrapper(*WebKit::toImpl(error))];
+        [loadDelegate browsingContextController:browsingContext didFailProvisionalLoadWithError:wrapper(*WebKit::toProtectedImpl(error))];
 }
 
 static void didCommitNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
@@ -396,7 +396,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailLoadWithError:)])
-        [loadDelegate browsingContextController:browsingContext didFailLoadWithError:wrapper(*WebKit::toImpl(error))];
+        [loadDelegate browsingContextController:browsingContext didFailLoadWithError:wrapper(*WebKit::toProtectedImpl(error))];
 }
 
 static bool canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace, const void *clientInfo)
@@ -420,7 +420,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didReceiveAuthenticationChallenge:)])
-        [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext didReceiveAuthenticationChallenge:wrapper(*WebKit::toImpl(authenticationChallenge))];
+        [(id<WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext didReceiveAuthenticationChallenge:wrapper(*WebKit::toProtectedImpl(authenticationChallenge))];
 }
 
 static void processDidCrash(WKPageRef page, const void* clientInfo)
@@ -611,10 +611,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!(self = [super init]))
         return nil;
 
-    _page = WebKit::toImpl(pageRef);
+    if (RefPtr page = WebKit::toImpl(pageRef))
+        lazyInitialize(_page, page.releaseNonNull());
 
     _pageLoadStateObserver = makeUniqueWithoutRefCountedCheck<WebKit::PageLoadStateObserver>(self);
-    _page->pageLoadState().addObserver(*_pageLoadStateObserver);
+    _page->protectedPageLoadState()->addObserver(Ref { *_pageLoadStateObserver });
 
     ASSERT(!browsingContextControllerMap().contains(*_page));
     browsingContextControllerMap().set(*_page, self);
@@ -749,7 +750,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->legacyMainFrameProcess().isResponsive();
+    return _page->protectedLegacyMainFrameProcess()->isResponsive();
 }
 
 @end

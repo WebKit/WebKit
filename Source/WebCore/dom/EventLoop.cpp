@@ -26,8 +26,10 @@
 #include "config.h"
 #include "EventLoop.h"
 
+#include "JSExecState.h"
 #include "Microtasks.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/MicrotaskQueueInlines.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -249,9 +251,8 @@ void EventLoop::removeRepeatingTimer(EventLoopTimer& timer)
     invalidateNextTimerFireTimeCache();
 }
 
-void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
+void EventLoop::queueMicrotask(JSC::QueuedTask&& microtask)
 {
-    ASSERT(microtask->taskSource() == TaskSource::Microtask);
     microtaskQueue().append(WTFMove(microtask));
     scheduleToRunIfNeeded(); // FIXME: Remove this once everything is integrated with the event loop.
 }
@@ -318,7 +319,7 @@ void EventLoop::run(std::optional<ApproximateTime> deadline)
     if (!m_tasks.isEmpty()) {
         auto tasks = std::exchange(m_tasks, { });
         m_groupsWithSuspendedTasks.clear();
-        Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
+        TaskVector remainingTasks;
         bool hasReachedDeadline = false;
         for (auto& task : tasks) {
             auto* group = task->group();
@@ -334,7 +335,7 @@ void EventLoop::run(std::optional<ApproximateTime> deadline)
 
             task->execute();
             didPerformMicrotaskCheckpoint = true;
-            microtaskQueue().performMicrotaskCheckpoint();
+            performMicrotaskCheckpoint();
         }
         for (auto& task : m_tasks)
             remainingTasks.append(WTFMove(task));
@@ -346,7 +347,7 @@ void EventLoop::run(std::optional<ApproximateTime> deadline)
 
     // FIXME: Remove this once everything is integrated with the event loop.
     if (!didPerformMicrotaskCheckpoint)
-        microtaskQueue().performMicrotaskCheckpoint();
+        performMicrotaskCheckpoint();
 }
 
 void EventLoop::clearAllTasks()
@@ -404,6 +405,50 @@ Markable<MonotonicTime> EventLoop::nextTimerFireTime() const
         m_nextTimerFireTimeCache = nextFireTime;
     }
     return m_nextTimerFireTimeCache;
+}
+
+class JSMicrotaskDispatcher final : public WebCoreMicrotaskDispatcher {
+    WTF_MAKE_TZONE_ALLOCATED(JSMicrotaskDispatcher);
+public:
+    JSMicrotaskDispatcher(EventLoopTaskGroup& group)
+        : WebCoreMicrotaskDispatcher(Type::JavaScript, group)
+    {
+    }
+
+    ~JSMicrotaskDispatcher() final = default;
+
+    JSC::QueuedTask::Result run(JSC::QueuedTask& task) final
+    {
+        auto runnability = currentRunnability();
+        if (runnability == JSC::QueuedTask::Result::Executed)
+            JSExecState::runTask(task.globalObject(), task);
+        return runnability;
+    }
+
+    static Ref<JSMicrotaskDispatcher> create(EventLoopTaskGroup& group)
+    {
+        return adoptRef(*new JSMicrotaskDispatcher(group));
+    }
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSMicrotaskDispatcher);
+
+EventLoopTaskGroup::EventLoopTaskGroup(EventLoop& eventLoop)
+    : m_eventLoop(eventLoop)
+    , m_jsMicrotaskDispatcher(JSMicrotaskDispatcher::create(*this))
+{
+    eventLoop.registerGroup(*this);
+}
+
+EventLoopTaskGroup::~EventLoopTaskGroup()
+{
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->unregisterGroup(*this);
+}
+
+Ref<JSC::MicrotaskDispatcher> EventLoopTaskGroup::jsMicrotaskDispatcher() const
+{
+    return m_jsMicrotaskDispatcher;
 }
 
 void EventLoopTaskGroup::markAsReadyToStop()
@@ -488,11 +533,47 @@ void EventLoopTaskGroup::queueTask(TaskSource source, EventLoop::TaskFunction&& 
     return queueTask(makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
 }
 
+class EventLoopFunctionMicrotaskDispatcher final : public WebCoreMicrotaskDispatcher {
+    WTF_MAKE_TZONE_ALLOCATED(EventLoopFunctionMicrotaskDispatcher);
+public:
+    EventLoopFunctionMicrotaskDispatcher(EventLoopTaskGroup& group, EventLoop::TaskFunction&& function)
+        : WebCoreMicrotaskDispatcher(Type::Function, group)
+        , m_function(WTFMove(function))
+    {
+    }
+
+    ~EventLoopFunctionMicrotaskDispatcher() final = default;
+
+    JSC::QueuedTask::Result run(JSC::QueuedTask&) final
+    {
+        auto runnability = currentRunnability();
+        if (runnability == JSC::QueuedTask::Result::Executed)
+            m_function();
+        return runnability;
+    }
+
+    static Ref<EventLoopFunctionMicrotaskDispatcher> create(EventLoopTaskGroup& group, EventLoop::TaskFunction&& function)
+    {
+        return adoptRef(*new EventLoopFunctionMicrotaskDispatcher(group, WTFMove(function)));
+    }
+
+private:
+    EventLoop::TaskFunction m_function;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopFunctionMicrotaskDispatcher);
+
 void EventLoopTaskGroup::queueMicrotask(EventLoop::TaskFunction&& function)
+{
+    queueMicrotask(JSC::QueuedTask { EventLoopFunctionMicrotaskDispatcher::create(*this, WTFMove(function)) });
+}
+
+void EventLoopTaskGroup::queueMicrotask(JSC::QueuedTask&& task)
 {
     if (m_state == State::Stopped || !m_eventLoop)
         return;
-    protectedEventLoop()->queueMicrotask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::Microtask, *this, WTFMove(function)));
+
+    protectedEventLoop()->queueMicrotask(WTFMove(task));
 }
 
 void EventLoopTaskGroup::performMicrotaskCheckpoint()

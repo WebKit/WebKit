@@ -42,9 +42,6 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     : m_context(context)
     , m_client(client)
     , m_failedWebSocketChannelCreation(false)
-    , m_syncMethodDone(true)
-    , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
-    , m_bufferedAmount(0)
     , m_suspended(false)
 {
 }
@@ -52,21 +49,6 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
 Ref<ThreadableWebSocketChannelClientWrapper> ThreadableWebSocketChannelClientWrapper::create(ScriptExecutionContext& context, WebSocketChannelClient& client)
 {
     return adoptRef(*new ThreadableWebSocketChannelClientWrapper(context, client));
-}
-
-void ThreadableWebSocketChannelClientWrapper::clearSyncMethodDone()
-{
-    m_syncMethodDone = false;
-}
-
-void ThreadableWebSocketChannelClientWrapper::setSyncMethodDone()
-{
-    m_syncMethodDone = true;
-}
-
-bool ThreadableWebSocketChannelClientWrapper::syncMethodDone() const
-{
-    return m_syncMethodDone;
 }
 
 WorkerThreadableWebSocketChannel::Peer* ThreadableWebSocketChannelClientWrapper::peer() const
@@ -77,7 +59,6 @@ WorkerThreadableWebSocketChannel::Peer* ThreadableWebSocketChannelClientWrapper:
 void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(Ref<WorkerThreadableWebSocketChannel::Peer>&& peer)
 {
     m_peer = WTFMove(peer);
-    m_syncMethodDone = true;
 }
 
 void ThreadableWebSocketChannelClientWrapper::clearPeer()
@@ -121,28 +102,6 @@ void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extens
     unsigned length = extensions.length();
     m_extensions.resize(length);
     StringView(extensions).getCharacters(m_extensions.mutableSpan());
-}
-
-ThreadableWebSocketChannel::SendResult ThreadableWebSocketChannelClientWrapper::sendRequestResult() const
-{
-    return m_sendRequestResult;
-}
-
-void ThreadableWebSocketChannelClientWrapper::setSendRequestResult(ThreadableWebSocketChannel::SendResult sendRequestResult)
-{
-    m_sendRequestResult = sendRequestResult;
-    m_syncMethodDone = true;
-}
-
-unsigned ThreadableWebSocketChannelClientWrapper::bufferedAmount() const
-{
-    return m_bufferedAmount;
-}
-
-void ThreadableWebSocketChannelClientWrapper::setBufferedAmount(unsigned bufferedAmount)
-{
-    m_bufferedAmount = bufferedAmount;
-    m_syncMethodDone = true;
 }
 
 void ThreadableWebSocketChannelClientWrapper::clearClient()
@@ -253,16 +212,6 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
 {
     if (m_suspended)
         return;
-    if (!m_syncMethodDone) {
-        // When a synchronous operation is in progress (i.e. the execution stack contains
-        // WorkerThreadableWebSocketChannel::waitForMethodCompletion()), we cannot invoke callbacks in this run loop.
-        RefPtr protectedContext = m_context.get();
-        protectedContext->postTask([this, protectedThis = Ref { *this }] (ScriptExecutionContext& context) {
-            ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-            processPendingTasks();
-        });
-        return;
-    }
 
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> pendingTasks = WTFMove(m_pendingTasks);
     Ref protectedContext = { *m_context };

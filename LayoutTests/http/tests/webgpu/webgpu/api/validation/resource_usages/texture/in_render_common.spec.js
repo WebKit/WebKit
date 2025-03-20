@@ -4,6 +4,7 @@
 Texture Usages Validation Tests in Same or Different Render Pass Encoders.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../../common/util/util.js';
+import { MaxLimitsTestMixin } from '../../../../gpu_test.js';
 import { ValidationTest } from '../../validation_test.js';
 
 
@@ -92,7 +93,7 @@ class F extends ValidationTest {
   }
 }
 
-export const g = makeTestGroup(F);
+export const g = makeTestGroup(MaxLimitsTestMixin(F));
 
 const kTextureSize = 16;
 const kTextureLevels = 3;
@@ -117,7 +118,7 @@ unless((t) => t.inSamePass && t.level0 !== t.level1)
 fn((t) => {
   const { layer0, level0, layer1, level1, inSamePass } = t.params;
 
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format: 'r32float',
     usage: GPUTextureUsage.RENDER_ATTACHMENT,
     size: [kTextureSize, kTextureSize, kTextureLayers],
@@ -179,12 +180,22 @@ combineWithParams([
 combineWithParams([
 { bgLayer: 0, bgLayerCount: 1 },
 { bgLayer: 1, bgLayerCount: 1 },
-{ bgLayer: 1, bgLayerCount: 2 }]
+{ bgLayer: 1, bgLayerCount: 2 },
+{ bgLayer: 0, bgLayerCount: kTextureLayers }]
 ).
 combine('bgUsage', kTextureBindingTypes).
 unless((t) => t.bgUsage !== 'sampled-texture' && t.bgLevelCount > 1).
 combine('inSamePass', [true, false])
 ).
+beforeAllSubcases((t) => {
+  if (t.isCompatibility) {
+    t.skipIf(t.params.bgLayer !== 0, 'view base array layer must equal 0 in compatibility mode');
+    t.skipIf(
+      t.params.bgLayerCount !== kTextureLayers,
+      'view array layers must equal texture array layers in compatibility mode'
+    );
+  }
+}).
 fn((t) => {
   const {
     colorAttachmentLevel,
@@ -197,7 +208,14 @@ fn((t) => {
     inSamePass
   } = t.params;
 
-  const texture = t.device.createTexture({
+  t.skipIf(
+    t.isCompatibility &&
+    bgUsage !== 'sampled-texture' &&
+    !(t.device.limits.maxStorageTexturesInFragmentStage >= 1),
+    `maxStorageTexturesInFragmentStage(${t.device.limits.maxStorageTexturesInFragmentStage}) < 1`
+  );
+
+  const texture = t.createTextureTracked({
     format: 'r32float',
     usage:
     GPUTextureUsage.RENDER_ATTACHMENT |
@@ -233,7 +251,7 @@ fn((t) => {
   } else {
     renderPass.end();
 
-    const texture2 = t.device.createTexture({
+    const texture2 = t.createTextureTracked({
       format: 'r32float',
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
       size: [kTextureSize, kTextureSize, 1],
@@ -287,7 +305,8 @@ combineWithParams([
 combineWithParams([
 { bgLayer: 0, bgLayerCount: 1 },
 { bgLayer: 1, bgLayerCount: 1 },
-{ bgLayer: 1, bgLayerCount: 2 }]
+{ bgLayer: 1, bgLayerCount: 2 },
+{ bgLayer: 0, bgLayerCount: kTextureLayers }]
 ).
 beginSubcases().
 combine('depthReadOnly', [true, false]).
@@ -295,6 +314,15 @@ combine('stencilReadOnly', [true, false]).
 combine('bgAspect', ['depth-only', 'stencil-only']).
 combine('inSamePass', [true, false])
 ).
+beforeAllSubcases((t) => {
+  if (t.isCompatibility) {
+    t.skipIf(t.params.bgLayer !== 0, 'view base array layer must equal 0 in compatibility mode');
+    t.skipIf(
+      t.params.bgLayerCount !== kTextureLayers,
+      'view array layers must equal texture array layers in compatibility mode'
+    );
+  }
+}).
 fn((t) => {
   const {
     dsLevel,
@@ -309,7 +337,7 @@ fn((t) => {
     inSamePass
   } = t.params;
 
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format: 'depth24plus-stencil8',
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
     size: [kTextureSize, kTextureSize, kTextureLayers],
@@ -354,7 +382,7 @@ fn((t) => {
   } else {
     renderPass.end();
 
-    const texture2 = t.device.createTexture({
+    const texture2 = t.createTextureTracked({
       format: 'rgba8unorm',
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
       size: [kTextureSize, kTextureSize, 1],
@@ -410,7 +438,8 @@ combine('bg0Levels', [
 combine('bg0Layers', [
 { base: 0, count: 1 },
 { base: 1, count: 1 },
-{ base: 1, count: 2 }]
+{ base: 1, count: 2 },
+{ base: 0, count: kTextureLayers }]
 ).
 combine('bg1Levels', [
 { base: 0, count: 1 },
@@ -420,7 +449,8 @@ combine('bg1Levels', [
 combine('bg1Layers', [
 { base: 0, count: 1 },
 { base: 1, count: 1 },
-{ base: 1, count: 2 }]
+{ base: 1, count: 2 },
+{ base: 0, count: kTextureLayers }]
 ).
 combine('bgUsage0', kTextureBindingTypes).
 combine('bgUsage1', kTextureBindingTypes).
@@ -432,10 +462,29 @@ unless(
 beginSubcases().
 combine('inSamePass', [true, false])
 ).
+beforeAllSubcases((t) => {
+  if (t.isCompatibility) {
+    t.skipIf(
+      t.params.bg0Layers.base !== 0 || t.params.bg1Layers.base !== 0,
+      'view base array layer must equal 0 in compatibility mode'
+    );
+    t.skipIf(
+      t.params.bg0Layers.count !== kTextureLayers || t.params.bg1Layers.count !== kTextureLayers,
+      'view array layers must equal texture array layers in compatibility mode'
+    );
+  }
+}).
 fn((t) => {
   const { bg0Levels, bg0Layers, bg1Levels, bg1Layers, bgUsage0, bgUsage1, inSamePass } = t.params;
 
-  const texture = t.device.createTexture({
+  t.skipIf(
+    t.isCompatibility && (
+    bgUsage0 !== 'sampled-texture' || bgUsage1 !== 'sampled-texture') &&
+    !(t.device.limits.maxStorageTexturesInFragmentStage >= 2),
+    `maxStorageTexturesInFragmentStage(${t.device.limits.maxStorageTexturesInFragmentStage}) < 2`
+  );
+
+  const texture = t.createTextureTracked({
     format: 'r32float',
     usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
     size: [kTextureSize, kTextureSize, kTextureLayers],
@@ -458,7 +507,7 @@ fn((t) => {
   const bindGroup0 = t.createBindGroupForTest(bg0, bgUsage0, 'unfilterable-float');
   const bindGroup1 = t.createBindGroupForTest(bg1, bgUsage1, 'unfilterable-float');
 
-  const colorTexture = t.device.createTexture({
+  const colorTexture = t.createTextureTracked({
     format: 'r32float',
     usage: GPUTextureUsage.RENDER_ATTACHMENT,
     size: [kTextureSize, kTextureSize, 1],
@@ -523,7 +572,8 @@ combine('view0Levels', [
 combine('view0Layers', [
 { base: 0, count: 1 },
 { base: 1, count: 1 },
-{ base: 1, count: 2 }]
+{ base: 1, count: 2 },
+{ base: 0, count: kTextureLayers }]
 ).
 combine('view1Levels', [
 { base: 0, count: 1 },
@@ -533,17 +583,31 @@ combine('view1Levels', [
 combine('view1Layers', [
 { base: 0, count: 1 },
 { base: 1, count: 1 },
-{ base: 1, count: 2 }]
+{ base: 1, count: 2 },
+{ base: 0, count: kTextureLayers }]
 ).
 combine('aspect0', ['depth-only', 'stencil-only']).
 combine('aspect1', ['depth-only', 'stencil-only']).
 combine('inSamePass', [true, false])
 ).
+beforeAllSubcases((t) => {
+  if (t.isCompatibility) {
+    t.skipIf(
+      t.params.view0Layers.base !== 0 || t.params.view1Layers.base !== 0,
+      'view base array layer must equal 0 in compatibility mode'
+    );
+    t.skipIf(
+      t.params.view0Layers.count !== kTextureLayers ||
+      t.params.view1Layers.count !== kTextureLayers,
+      'view array layers must equal texture array layers in compatibility mode'
+    );
+  }
+}).
 fn((t) => {
   const { view0Levels, view0Layers, view1Levels, view1Layers, aspect0, aspect1, inSamePass } =
   t.params;
 
-  const texture = t.device.createTexture({
+  const texture = t.createTextureTracked({
     format: 'depth24plus-stencil8',
     usage: GPUTextureUsage.TEXTURE_BINDING,
     size: [kTextureSize, kTextureSize, kTextureLayers],
@@ -571,7 +635,7 @@ fn((t) => {
   const bindGroup0 = t.createBindGroupForTest(bindGroupView0, 'sampled-texture', sampleType0);
   const bindGroup1 = t.createBindGroupForTest(bindGroupView1, 'sampled-texture', sampleType1);
 
-  const colorTexture = t.device.createTexture({
+  const colorTexture = t.createTextureTracked({
     format: 'rgba8unorm',
     usage: GPUTextureUsage.RENDER_ATTACHMENT,
     size: [kTextureSize, kTextureSize, 1],

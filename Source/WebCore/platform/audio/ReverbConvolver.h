@@ -86,7 +86,7 @@ private:
 
     // Background thread and synchronization
     bool m_useBackgroundThreads;
-    RefPtr<Thread> m_backgroundThread;
+    const RefPtr<Thread> m_backgroundThread;
     bool m_wantsToExit { false };
     bool m_moreInputBuffered { false };
     mutable Lock m_backgroundThreadLock;

@@ -165,6 +165,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 #endif
@@ -181,3 +182,4 @@
 #undef try
 #undef catch
 #endif
+

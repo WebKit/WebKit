@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useTrustedTypes=true ] -->
+<!DOCTYPE html>
 <head>
   <script nonce="123" src="/resources/testharness.js"></script>
   <script nonce="123"src="/resources/testharnessreport.js"></script>
@@ -58,7 +58,7 @@
     const input = 'script_run_beacon="should not run"';
     trustedTypes.createPolicy('default', {
       createScript: s => s,
-    }, true);
+    });
     let violation = await trusted_type_violation_for(EvalError, _ =>
       eval(input) // script-src will block.
     );

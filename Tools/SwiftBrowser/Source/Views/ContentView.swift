@@ -23,7 +23,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
-@_spi(Private) import WebKit
+import WebKit
 @_spi(Private) import _WebKit_SwiftUI
 
 private struct ToolbarBackForwardMenuView: View {
@@ -217,6 +217,7 @@ struct ContentView: View {
     @Environment(BrowserViewModel.self) private var viewModel
 
     @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize) private var scrollBounceBehaviorBasedOnSize: Bool?
+    @AppStorage(AppStorageKeys.backgroundHidden) private var backgroundHidden: Bool?
 
     #if os(iOS)
     private static let navigationToolbarItemPlacement = ToolbarItemPlacement.bottomBar
@@ -230,9 +231,10 @@ struct ContentView: View {
 
             WebView(viewModel.page)
                 .webViewBackForwardNavigationGestures(.enabled)
+                .webViewMagnificationGestures(.enabled)
                 .webViewLinkPreviews(.enabled)
                 .webViewTextSelection(.enabled)
-                .webViewAllowsElementFullscreen()
+                .webViewElementFullscreenBehavior(.enabled)
                 .webViewFindNavigator(isPresented: $findNavigatorIsPresented)
                 .task {
                     // FIXME: Observe navigation changes.
@@ -275,6 +277,7 @@ struct ContentView: View {
                         .presentationDetents([.medium, .large])
                 }
                 .scrollBounceBehavior(scrollBounceBehaviorBasedOnSize == true ? .basedOnSize : .automatic)
+                .webViewContentBackground(backgroundHidden == true ? .hidden : .automatic)
                 .webViewContextMenu { element in
                     if let url = element.linkURL {
                         Button("Open Link in New Window") {

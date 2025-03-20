@@ -36,9 +36,8 @@ FAIL :size_non_struct:attr="struct" assert_unreached:
     @workgroup_size(1)
     @compute fn main() {
     }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:219:24
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:216:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -48,26 +47,5 @@ PASS :size_non_struct:attr="mat"
 PASS :size_non_struct:attr="array"
 PASS :size_non_struct:attr="scalar"
 PASS :size_creation_fixed_footprint:array_size=",%204"
-FAIL :size_creation_fixed_footprint:array_size="" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    struct S {
-      @size(64) a: array<f32>,
-    };
-    @group(0) @binding(0)
-    var<storage> a: S;
-
-    @workgroup_size(1)
-    @compute fn main() {
-      _ = a.a[0];
-    }
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:237:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :size_creation_fixed_footprint:array_size=""
 

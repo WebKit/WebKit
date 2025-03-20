@@ -283,26 +283,24 @@ WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
 }
 #endif
 
-std::optional<TrackID> SourceBufferPrivateGStreamer::tryRegisterTrackId(TrackID preferredId)
+RegisteredTrack SourceBufferPrivateGStreamer::registerTrack(TrackID preferredId, StreamType streamType)
 {
     ASSERT(isMainThread());
 
     RefPtr mediaSource = m_mediaSource.get();
-    if (!mediaSource)
-        return std::nullopt;
+    ASSERT(mediaSource);
 
-    return downcast<MediaSourcePrivateGStreamer>(mediaSource)->registerTrackId(preferredId);
+    return downcast<MediaSourcePrivateGStreamer>(mediaSource)->registerTrack(preferredId, streamType);
 }
 
-bool SourceBufferPrivateGStreamer::tryUnregisterTrackId(TrackID trackId)
+void SourceBufferPrivateGStreamer::unregisterTrack(TrackID trackId)
 {
     ASSERT(isMainThread());
 
     RefPtr mediaSource = m_mediaSource.get();
-    if (!mediaSource)
-        return false;
+    ASSERT(mediaSource);
 
-    return downcast<MediaSourcePrivateGStreamer>(mediaSource)->unregisterTrackId(trackId);
+    downcast<MediaSourcePrivateGStreamer>(mediaSource)->unregisterTrack(trackId);
 }
 
 size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const

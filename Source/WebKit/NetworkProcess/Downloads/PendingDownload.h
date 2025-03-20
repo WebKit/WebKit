@@ -53,6 +53,7 @@ class NetworkSession;
 
 class PendingDownload : public RefCountedAndCanMakeWeakPtr<PendingDownload>, public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PendingDownload);
 public:
     static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
     {
@@ -97,7 +98,7 @@ private:
     uint64_t messageSenderDestinationID() const override;
 
 private:
-    Ref<NetworkLoad> m_networkLoad;
+    const Ref<NetworkLoad> m_networkLoad;
     RefPtr<IPC::Connection> m_parentProcessConnection;
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;

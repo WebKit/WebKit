@@ -33,11 +33,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-static
-#ifndef WK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE
-PAS_ALWAYS_INLINE
-#endif
-pas_large_free
+static PAS_ALWAYS_INLINE pas_large_free
 pas_large_free_create_merged(pas_large_free left,
                              pas_large_free right,
                              pas_large_free_heap_config* config)

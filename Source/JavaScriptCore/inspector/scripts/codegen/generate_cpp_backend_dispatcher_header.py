@@ -102,8 +102,12 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         if exportMacro is not None:
             classComponents.append(exportMacro)
 
+        use_legacy_async_callbacks = self.model().framework.setting('legacy_async_callbacks', False)
         command_declarations = []
         for command in self.commands_for_domain(domain):
+            if command.is_async and use_legacy_async_callbacks:
+                command_declarations.append(self._generate_legacy_async_response_thunk_declaration_for_command(command))
+
             command_declarations.append(self._generate_handler_declaration_for_command(command))
 
         handler_args = {
@@ -140,14 +144,14 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'returns': ", ".join(returns),
         }
         if len(returns) == 1:
-            lines.append('    virtual Protocol::ErrorStringOr<%(returns)s> %(commandName)s(%(parameters)s) = 0;' % command_args)
-        elif len(returns) > 1:
-            lines.append('    virtual Protocol::ErrorStringOr<std::tuple<%(returns)s>> %(commandName)s(%(parameters)s) = 0;' % command_args)
+            lines.append('    virtual Inspector::CommandResult<%(returns)s> %(commandName)s(%(parameters)s) = 0;' % command_args)
+        elif len(returns):
+            lines.append('    virtual Inspector::CommandResultOf<%(returns)s> %(commandName)s(%(parameters)s) = 0;' % command_args)
         else:
-            lines.append('    virtual Protocol::ErrorStringOr<void> %(commandName)s(%(parameters)s) = 0;' % command_args)
+            lines.append('    virtual Inspector::CommandResult<void> %(commandName)s(%(parameters)s) = 0;' % command_args)
         return self.wrap_with_guard_for_condition(command.condition, '\n'.join(lines))
 
-    def _generate_async_handler_declaration_for_command(self, command):
+    def _generate_legacy_async_response_thunk_declaration_for_command(self, command):
         callbackName = "%sCallback" % ucfirst(command.command_name)
 
         parameters = []
@@ -176,6 +180,39 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'commandName': command.command_name,
             'parameters': ", ".join(parameters),
             'returns': ", ".join(returns),
+        }
+
+        return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherHeaderAsyncCommandReplyThunkDeclaration).substitute(None, **command_args))
+
+    def _generate_async_handler_declaration_for_command(self, command):
+        parameters = []
+        for parameter in command.call_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+            parameters.append("%s %s" % (CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
+
+        returns = []
+        for parameter in command.return_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+            returns.append(CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional))
+
+        # FIXME: Remove legacy_async_callbacks when IndexedDBAgent moves off of it. <rdar://143782962>
+        use_legacy_async_callbacks = self.model().framework.setting('legacy_async_callbacks', False)
+        if use_legacy_async_callbacks:
+            parameters.append("Ref<%sCallback>&&" % ucfirst(command.command_name))
+        elif len(returns) > 1:
+            parameters.append("CommandCallbackOf<%s>&&" % ", ".join(returns))
+        elif len(returns):
+            parameters.append("CommandCallback<%s>&&" % returns[0])
+        else:
+            parameters.append("CommandCallback<void>&&")
+
+        command_args = {
+            'commandName': command.command_name,
+            'parameters': ", ".join(parameters),
         }
 
         return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args))

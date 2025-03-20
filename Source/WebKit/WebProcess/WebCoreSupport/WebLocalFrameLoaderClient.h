@@ -164,9 +164,9 @@ private:
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;
 
-    bool shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation) const final;
+    WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation) const final;
     bool supportsAsyncShouldGoToHistoryItem() const final;
-    void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(bool)>&&) const final;
+    void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(WebCore::SecurityOrigin&) final;
@@ -242,6 +242,7 @@ private:
 #endif
 
     void didChangeScrollOffset() final;
+    bool isWebLocalFrameLoaderClient() const final { return true; }
 
     bool allowScript(bool enabledPerSettings) final;
 
@@ -317,15 +318,8 @@ private:
     RefPtr<WebCore::HistoryItem> createHistoryItemTree(bool clipAtTarget, WebCore::BackForwardItemIdentifier) const final;
 };
 
-// As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
-inline WebLocalFrameLoaderClient* toWebLocalFrameLoaderClient(WebCore::LocalFrameLoaderClient& client)
-{
-    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebLocalFrameLoaderClient*>(&client);
-}
-
-inline const WebLocalFrameLoaderClient* toWebLocalFrameLoaderClient(const WebCore::LocalFrameLoaderClient& client)
-{
-    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebLocalFrameLoaderClient*>(&client);
-}
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebLocalFrameLoaderClient)
+    static bool isType(const WebCore::LocalFrameLoaderClient& client) { return client.isWebLocalFrameLoaderClient(); }
+SPECIALIZE_TYPE_TRAITS_END()

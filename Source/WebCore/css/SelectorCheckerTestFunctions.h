@@ -48,8 +48,8 @@
 #endif
 
 #if ENABLE(FULLSCREEN_API)
+#include "DocumentFullscreen.h"
 #include "DocumentOrShadowRootFullscreen.h"
-#include "FullscreenManager.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -411,24 +411,24 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesAnimatingFullscreenTransitionPseudoClass(const Element& element)
 {
-    CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
-    if (!fullscreenManager || &element != fullscreenManager->fullscreenElement())
+    RefPtr documentFullscreen = element.document().fullscreenIfExists();
+    if (!documentFullscreen || &element != documentFullscreen->fullscreenElement())
         return false;
-    return fullscreenManager->isAnimatingFullscreen();
+    return documentFullscreen->isAnimatingFullscreen();
 }
 
 ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
-    return fullscreenManager && fullscreenManager->fullscreenElement();
+    RefPtr documentFullscreen = element.document().fullscreenIfExists();
+    return documentFullscreen && documentFullscreen->fullscreenElement();
 }
 
 ALWAYS_INLINE bool matchesInWindowFullscreenPseudoClass(const Element& element)
 {
 #if ENABLE(VIDEO)
-    if (&element != element.document().fullscreenManager().fullscreenElement())
+    if (&element != element.document().fullscreen().fullscreenElement())
         return false;
 
     auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);

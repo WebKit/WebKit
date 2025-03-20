@@ -53,6 +53,7 @@ private:
     void setAsSrcObject(bool) final;
     void memoryPressure() final;
     bool detachable() const final;
+    void setLogIdentifier(uint64_t) final;
 
     explicit MediaSourceInterfaceWorker(Ref<MediaSourceHandle>&&);
 

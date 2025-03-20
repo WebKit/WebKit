@@ -69,7 +69,7 @@ runtime/Exception.cpp
 runtime/ExecutableBase.cpp
 runtime/FunctionExecutable.cpp
 runtime/FunctionRareData.cpp
-runtime/GenericArgumentsInlines.h
+runtime/GenericArgumentsImplInlines.h
 runtime/Identifier.cpp
 runtime/Identifier.h
 runtime/IdentifierInlines.h
@@ -133,7 +133,6 @@ runtime/Symbol.cpp
 runtime/SymbolConstructor.cpp
 runtime/SymbolTable.cpp
 runtime/SyntheticModuleRecord.cpp
-runtime/VM.cpp
 runtime/WeakMapImpl.cpp
 runtime/WriteBarrier.h
 tools/CellProfile.h
@@ -150,14 +149,12 @@ wasm/WasmOSREntryPlan.cpp
 wasm/WasmOperations.cpp
 wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingCompiler.cpp
-wasm/js/JSWebAssemblyArray.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp
 wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyModule.cpp
-wasm/js/JSWebAssemblyStruct.cpp
 wasm/js/JSWebAssemblyTable.cpp
 wasm/js/JSWebAssemblyTag.cpp
 wasm/js/WebAssemblyFunction.cpp

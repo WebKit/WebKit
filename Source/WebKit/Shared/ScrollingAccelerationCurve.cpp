@@ -119,16 +119,16 @@ TextStream& operator<<(TextStream& ts, const ScrollingAccelerationCurve& curve)
 {
     TextStream::GroupScope group(ts);
 
-    ts << "ScrollingAccelerationCurve";
+    ts << "ScrollingAccelerationCurve"_s;
 
-    ts.dumpProperty("gainLinear", curve.m_parameters.gainLinear);
-    ts.dumpProperty("gainParabolic", curve.m_parameters.gainParabolic);
-    ts.dumpProperty("gainCubic", curve.m_parameters.gainCubic);
-    ts.dumpProperty("gainQuartic", curve.m_parameters.gainQuartic);
-    ts.dumpProperty("tangentSpeedLinear", curve.m_parameters.tangentSpeedLinear);
-    ts.dumpProperty("tangentSpeedParabolicRoot", curve.m_parameters.tangentSpeedParabolicRoot);
-    ts.dumpProperty("resolution", curve.m_parameters.resolution);
-    ts.dumpProperty("frameRate", curve.m_parameters.frameRate);
+    ts.dumpProperty("gainLinear"_s, curve.m_parameters.gainLinear);
+    ts.dumpProperty("gainParabolic"_s, curve.m_parameters.gainParabolic);
+    ts.dumpProperty("gainCubic"_s, curve.m_parameters.gainCubic);
+    ts.dumpProperty("gainQuartic"_s, curve.m_parameters.gainQuartic);
+    ts.dumpProperty("tangentSpeedLinear"_s, curve.m_parameters.tangentSpeedLinear);
+    ts.dumpProperty("tangentSpeedParabolicRoot"_s, curve.m_parameters.tangentSpeedParabolicRoot);
+    ts.dumpProperty("resolution"_s, curve.m_parameters.resolution);
+    ts.dumpProperty("frameRate"_s, curve.m_parameters.frameRate);
 
     return ts;
 }

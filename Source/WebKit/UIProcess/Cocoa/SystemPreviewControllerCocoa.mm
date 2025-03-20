@@ -276,7 +276,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     WebKit::SystemPreviewController* _previewController;
     long long _expectedContentLength;
     RetainPtr<NSMutableData> _data;
-    FileSystem::PlatformFileHandle _fileHandle;
+    FileSystem::FileHandle _fileHandle;
     String _filePath;
 };
 @end
@@ -289,7 +289,6 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         return nil;
 
     _previewController = previewController;
-    _fileHandle = FileSystem::invalidPlatformFileHandle;
     return self;
 }
 
@@ -337,8 +336,8 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
     auto result = FileSystem::openTemporaryFile("SystemPreview"_s, fileExtension);
     _filePath = result.first;
-    _fileHandle = result.second;
-    ASSERT(FileSystem::isHandleValid(_fileHandle));
+    _fileHandle = WTFMove(result.second);
+    ASSERT(_fileHandle);
 
     _previewController->loadStarted(URL::fileURLWithFileSystemPath(_filePath));
     decisionHandler(_WKDataTaskResponsePolicyAllow);
@@ -355,7 +354,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 - (void)dataTask:(_WKDataTask *)dataTask didCompleteWithError:(NSError *)error
 {
     if (error) {
-        FileSystem::closeFile(_fileHandle);
+        _fileHandle = { };
         _previewController->loadFailed();
         return;
     }
@@ -365,9 +364,9 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (void)completeLoad
 {
-    ASSERT(_fileHandle != FileSystem::invalidPlatformFileHandle);
-    size_t byteCount = FileSystem::writeToFile(_fileHandle, span(_data.get()));
-    FileSystem::closeFile(_fileHandle);
+    ASSERT(_fileHandle);
+    auto byteCount = _fileHandle.write(span(_data.get()));
+    _fileHandle = { };
 
     if (byteCount != _data.get().length) {
         _previewController->loadFailed();
@@ -579,7 +578,7 @@ void SystemPreviewController::takeActivityToken()
     if (!page)
         return;
 
-    m_activity = page->legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s);
+    m_activity = page->legacyMainFrameProcess().protectedThrottler()->backgroundActivity("System preview download"_s);
 #endif
 }
 

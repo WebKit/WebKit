@@ -85,8 +85,8 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
     FloatRect paintRect = m_localOverflowRect;
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
-    if (m_oldImage)
-        context.drawImageBuffer(*m_oldImage, paintRect, { context.compositeOperation() });
+    if (RefPtr oldImage = m_oldImage)
+        context.drawImageBuffer(*oldImage, paintRect, { context.compositeOperation() });
 }
 
 void RenderViewTransitionCapture::layout()

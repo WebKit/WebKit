@@ -30,6 +30,12 @@
 
 namespace JSC { namespace DFG {
 
+CodeOriginPool::CodeOriginPool()
+{
+    // Ensure that CallSiteIndex 0 => non-inlined-function BytecodeIndex(0).
+    addCodeOrigin(CodeOrigin(BytecodeIndex(0)));
+}
+
 CallSiteIndex CodeOriginPool::addCodeOrigin(CodeOrigin codeOrigin)
 {
     if (m_codeOrigins.isEmpty()

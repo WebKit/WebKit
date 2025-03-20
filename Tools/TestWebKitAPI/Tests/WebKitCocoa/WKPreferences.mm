@@ -76,12 +76,6 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"WebGPU Disabled", result.get());
 
-    [webView evaluateJavaScript:@"log(navigator.xr ? 'WebXR Enabled' : 'WebXR Disabled');" completionHandler:^(id, NSError *error) {
-        EXPECT_NULL(error);
-    }];
-    result = (NSString *)[getNextMessage() body];
-    EXPECT_WK_STREQ(@"WebXR Disabled", result.get());
-
     [webView evaluateJavaScript:@"log(window.AudioContext ? 'Web Audio Enabled' : 'Web Audio Disabled');" completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);
     }];
@@ -123,12 +117,6 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     }];
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"ApplePay Disabled", result.get());
-
-    [webView evaluateJavaScript:@"log(navigator.credentials ? 'Web Authentication Enabled' : 'Web Authentication Disabled');" completionHandler:^(id, NSError *error) {
-        EXPECT_NULL(error);
-    }];
-    result = (NSString *)[getNextMessage() body];
-    EXPECT_WK_STREQ(@"Web Authentication Disabled", result.get());
 
     [webView evaluateJavaScript:@"log(navigator.setAppBadge ? 'Badging Enabled' : 'Badging Disabled');" completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 17px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 30px;
+          background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <div id="transformee" class="rect" style="background-color: blue; transform: translate3d(0, 0, 0);"></div>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var transformee = document.getElementById("transformee");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              transformee.style.transform = "perspective(500px) translate3d(0, 0, -250px)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[30, 81, 64, 64]]);
+          },
+          () => {
+              transformee.style.transform = "perspective(500px) translate3d(0, 0, -400px)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[40, 91, 44, 44]]);
+          },
+          () => {
+              transformee.style.transform = "perspective(500px) translate3d(0, 0, -250px)";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[40, 91, 44, 44]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

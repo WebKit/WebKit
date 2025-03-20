@@ -107,7 +107,7 @@ void runTest(
                             emptyCondition, lock, locker,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(Thread::current(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::currentSingleton(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return !shouldContinue || !queue.isEmpty();
                             });
                         if (!shouldContinue && queue.isEmpty())
@@ -137,7 +137,7 @@ void runTest(
                             fullCondition, lock, locker,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(Thread::current(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::currentSingleton(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return queue.size() < maxQueueSize;
                             });
                         mustNotify = queue.isEmpty();

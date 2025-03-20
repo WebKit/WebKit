@@ -31,6 +31,7 @@
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/CoroutineUtilities.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
@@ -130,7 +131,8 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple)
 {
     std::apply(
         [&](auto&&... args) {
-            (object->*function)(std::forward<decltype(args)>(args)...);
+            // Use of object without protection is safe here since std::apply() runs synchronously.
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -141,7 +143,8 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, Completi
 {
     std::apply(
         [&](auto&&... args) {
-            (object->*function)(std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
+            // Use of object without protection is safe here since std::apply() runs synchronously.
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -152,7 +155,8 @@ void callMemberFunction(T* object, MF U::* function, Connection& connection, Arg
 {
     std::apply(
         [&](auto&&... args) {
-            (object->*function)(connection, std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
+            // Use of object without protection is safe here since std::apply() runs synchronously.
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -163,8 +167,59 @@ void callMemberFunction(T* object, MF U::* function, Connection& connection, Arg
 {
     std::apply(
         [&](auto&&... args) {
-            (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            // Use of object without protection is safe here since std::apply() runs synchronously.
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple));
+}
+
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
+void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+{
+    [&] (auto completionHandler) -> Task {
+        Ref protectedObject { *object };
+        // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
+        completionHandler(co_await std::apply([&](auto&&... args) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::forward<ArgsTuple>(tuple)));
+    }(WTFMove(completionHandler));
+}
+
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
+void callMemberFunctionCoroutine(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+{
+    [&] (auto completionHandler) -> Task {
+        Ref protectedObject { *object };
+        // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
+        completionHandler(co_await std::apply([&](auto&&... args) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+        }, std::forward<ArgsTuple>(tuple)));
+    }(WTFMove(completionHandler));
+}
+
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
+void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+{
+    [&] (auto completionHandler) -> Task {
+        Ref protectedObject { *object };
+        // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
+        co_await std::apply([&](auto&&... args) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::forward<ArgsTuple>(tuple));
+        completionHandler();
+    }(WTFMove(completionHandler));
+}
+
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
+void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+{
+    [&] (auto completionHandler) -> Task {
+        Ref protectedObject { *object };
+        // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
+        co_await std::apply([&](auto&&... args) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+        }, std::forward<ArgsTuple>(tuple));
+        completionHandler();
+    }(WTFMove(completionHandler));
 }
 
 // MethodSignatureValidation template works on function types of message-handling methods,
@@ -195,6 +250,7 @@ template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     static constexpr bool expectsConnectionArgument = false;
     using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
+    using CompletionHandlerType = void;
 };
 
 template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
@@ -208,11 +264,27 @@ template<typename FunctionType> struct MethodSignatureValidation { };
 
 template<typename R, typename... MethodArgumentTypes>
 struct MethodSignatureValidation<R(MethodArgumentTypes...)>
-    : MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>> { };
+    : MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>> {
+    using ReturnType = R;
+    static constexpr bool returnsVoid = std::is_same_v<R, void>;
+};
 
 template<typename R, typename... MethodArgumentTypes>
 struct MethodSignatureValidation<R(MethodArgumentTypes...) const>
-    : MethodSignatureValidation<R(MethodArgumentTypes...)> { };
+    : MethodSignatureValidation<R(MethodArgumentTypes...)> {
+    using ReturnType = R;
+    static constexpr bool returnsVoid = std::is_same_v<R, void>;
+};
+
+template<typename> struct AwaitableReturnTuple;
+template<> struct AwaitableReturnTuple<Awaitable<void>> {
+    using Type = std::tuple<>;
+    static constexpr bool hasParameters = false;
+};
+template<typename... T> struct AwaitableReturnTuple<Awaitable<T...>> {
+    using Type = std::tuple<T...>;
+    static constexpr bool hasParameters = true;
+};
 
 // Main dispatch functions
 
@@ -308,19 +380,36 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
     if (UNLIKELY(!replyID))
         return;
 
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
-    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+    if constexpr (ValidationType::returnsVoid)
+        static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    else
+        static_assert(std::is_same_v<typename AwaitableReturnTuple<typename ValidationType::ReturnType>::Type, typename MessageType::ReplyArguments>);
 
+    using CompletionHandlerType = std::conditional_t<ValidationType::returnsVoid, typename ValidationType::CompletionHandlerType, typename MessageType::Reply>;
     CompletionHandlerType completionHandler {
         [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
             connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
         }, MessageType::callbackThread };
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    if constexpr (ValidationType::expectsConnectionArgument)
-        callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-    else
-        callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+    if constexpr (ValidationType::returnsVoid) {
+        if constexpr (ValidationType::expectsConnectionArgument)
+            callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+        else
+            callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+    } else {
+        if constexpr (AwaitableReturnTuple<typename ValidationType::ReturnType>::hasParameters) {
+            if constexpr (ValidationType::expectsConnectionArgument)
+                callMemberFunctionCoroutine(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+            else
+                callMemberFunctionCoroutine(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+        } else {
+            if constexpr (ValidationType::expectsConnectionArgument)
+                callMemberFunctionCoroutineVoid(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+            else
+                callMemberFunctionCoroutineVoid(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+        }
+    }
 }
 
 template<typename MessageType, typename T, typename U, typename MF>

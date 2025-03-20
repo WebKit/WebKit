@@ -179,46 +179,41 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGetOrInsertComputed, (JSGlobalObject* g
         return throwVMTypeError(globalObject, scope, WeakMapInvalidKeyError);
 
     JSValue valueCallback = callFrame->argument(1);
-    if (!valueCallback.isCallable())
+    auto callData = JSC::getCallData(valueCallback);
+    if (UNLIKELY(callData.type == CallData::Type::None))
         return throwVMTypeError(globalObject, scope, "WeakMap.prototype.getOrInsertComputed requires the callback argument to be callable."_s);
 
     JSCell* keyCell = key.asCell();
 
     auto hash = jsWeakMapHash(keyCell);
-
-    JSValue value;
-
     {
         AssertNoGC assertNoGC;
-
         auto [index, exists] = map->findBucketIndex(keyCell, hash);
         if (exists)
-            value = map->getBucket(keyCell, hash, index);
-        else {
-            auto callData = JSC::getCallData(valueCallback);
-            ASSERT(callData.type != CallData::Type::None);
+            return JSValue::encode(map->getBucket(keyCell, hash, index));
+    }
 
-            if (LIKELY(callData.type == CallData::Type::JS)) {
-                CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 2);
-                RETURN_IF_EXCEPTION(scope, { });
+    JSValue value;
+    if (LIKELY(callData.type == CallData::Type::JS)) {
+        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 1);
+        RETURN_IF_EXCEPTION(scope, { });
 
-                value = cachedCall.callWithArguments(globalObject, jsUndefined(), key);
-                RETURN_IF_EXCEPTION(scope, { });
-            } else {
-                MarkedArgumentBuffer args;
-                args.append(key);
-                ASSERT(!args.hasOverflowed());
+        value = cachedCall.callWithArguments(globalObject, jsUndefined(), key);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        MarkedArgumentBuffer args;
+        args.append(key);
+        ASSERT(!args.hasOverflowed());
 
-                value = call(globalObject, valueCallback, callData, jsUndefined(), args);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
+        value = call(globalObject, valueCallback, callData, jsUndefined(), args);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
-            // FIXME: rdar://145147128 can we optimize this more to detect a rehash like Map does?
-
-            // Call to valueCallback can modify our state, so we need to check if we re-hashed
-            index = map->findBucketIndex(keyCell, hash).first;
-            map->addBucket(vm, keyCell, value, hash, index);
-        }
+    // FIXME: rdar://145147128 can we optimize this more to detect a rehash like Map does?
+    {
+        // Call to valueCallback can modify our state, so we need to check if we re-hashed
+        AssertNoGC assertNoGC;
+        map->add(vm, keyCell, value, hash);
     }
 
     return JSValue::encode(value);

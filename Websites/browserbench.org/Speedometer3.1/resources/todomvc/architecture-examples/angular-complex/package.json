@@ -1,0 +1,18 @@
+{
+    "name": "todomvc-angular-complex",
+    "version": "1.0.0",
+    "description": "TodoMVC complex app written with Angular.",
+    "private": true,
+    "engines": {
+        "node": ">=18.13.0",
+        "npm": ">=8.19.3"
+    },
+    "scripts": {
+        "build": "node scripts/build.js",
+        "serve": "http-server ./dist -p 7002 -c-1 --cors"
+    },
+    "devDependencies": {
+        "big-dom-generator": "file:../../big-dom-generator",
+        "todomvc-angular": "file:../angular"
+    }
+}

@@ -225,6 +225,7 @@ Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
+Shared/JavaScriptEvaluationResult.cpp
 Shared/KeyEventInterpretationContext.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
@@ -386,6 +387,7 @@ Shared/WebsiteData/WebsiteData.cpp
 
 Shared/XR/XRDeviceProxy.cpp
 
+UIProcess/AboutSchemeHandler.cpp
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/BrowsingContextGroup.cpp

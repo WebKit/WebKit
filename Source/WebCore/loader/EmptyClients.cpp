@@ -122,9 +122,6 @@ class EmptyBackForwardClient final : public BackForwardClient {
     void addItem(Ref<HistoryItem>&&) final { }
     void setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem&) final { }
-    void goToProvisionalItem(const HistoryItem&) final { }
-    void clearProvisionalItem(const HistoryItem&) final { }
-    void commitProvisionalItem(const HistoryItem&) final { }
     RefPtr<HistoryItem> itemAtIndex(int, FrameIdentifier) final { return nullptr; }
     unsigned backListCount() const final { return 0; }
     unsigned forwardListCount() const final { return 0; }
@@ -234,6 +231,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         void didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
         void openDBRequestCancelled(const IDBOpenRequestData&) final { }
         void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) final { }
+        void didGenerateIndexKeyForRecord(const IDBResourceIdentifier&, const IDBResourceIdentifier&, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&, std::optional<int64_t>) { }
         ~EmptyIDBConnectionToServerDeletegate() { }
     };
 
@@ -1018,9 +1016,9 @@ void EmptyFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
 }
 
-bool EmptyFrameLoaderClient::shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const
+ShouldGoToHistoryItem EmptyFrameLoaderClient::shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const
 {
-    return false;
+    return ShouldGoToHistoryItem::No;
 }
 
 bool EmptyFrameLoaderClient::supportsAsyncShouldGoToHistoryItem() const
@@ -1028,7 +1026,7 @@ bool EmptyFrameLoaderClient::supportsAsyncShouldGoToHistoryItem() const
     return false;
 }
 
-void EmptyFrameLoaderClient::shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(bool)>&&) const
+void EmptyFrameLoaderClient::shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1225,7 +1223,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         EmptyBroadcastChannelRegistry::create(),
         makeUniqueRef<DummyStorageProvider>(),
-        makeUniqueRef<DummyModelPlayerProvider>(),
+        DummyModelPlayerProvider::create(),
         EmptyBadgeClient::create(),
         EmptyHistoryItemClient::create(),
 #if ENABLE(CONTEXT_MENUS)

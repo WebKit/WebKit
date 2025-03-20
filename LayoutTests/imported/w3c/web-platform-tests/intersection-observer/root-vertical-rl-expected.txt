@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver vertical-rl root.
+PASS First rAF.
+FAIL Set transform=translateX(50px) on target. assert_approx_equals: entries[1].intersectionRect.right expected 250 +/- 0 but got 200
+

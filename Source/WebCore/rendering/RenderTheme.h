@@ -91,7 +91,7 @@ public:
 
     virtual String extraDefaultStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
-    virtual String mediaControlsStyleSheet() { return String(); }
+    virtual Vector<String> mediaControlsStyleSheets(const HTMLMediaElement&) { return { }; }
     virtual Vector<String, 2> mediaControlsScripts() { return { }; }
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
@@ -244,6 +244,9 @@ public:
     virtual bool hasSwitchHapticFeedback(SwitchTrigger) const { return false; }
     OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
 
+    virtual void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
+    virtual void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
+
 protected:
     ControlStyle extractControlStyleForRenderer(const RenderObject&) const;
 
@@ -288,6 +291,7 @@ protected:
     virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
 
     virtual void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const;
+    virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const { }
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -303,6 +307,7 @@ protected:
 
     virtual void adjustMenuListButtonStyle(RenderStyle&, const Element*) const { }
     virtual void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { }
+    virtual bool paintMenuListButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustMeterStyle(RenderStyle&, const Element*) const;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

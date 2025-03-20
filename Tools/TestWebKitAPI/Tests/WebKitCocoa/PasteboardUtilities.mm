@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PasteboardUtilities.h"
+#import "TestCocoa.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -38,7 +39,7 @@
 RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled)
 {
 #if PLATFORM(IOS_FAMILY)
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
 #endif
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);

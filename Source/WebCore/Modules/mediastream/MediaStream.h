@@ -63,7 +63,9 @@ public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
     static Ref<MediaStream> create(Document&, const Vector<Ref<MediaStreamTrack>>&);
-    static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
+
+    enum class AllowEventTracks : bool { No, Yes };
+    static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&, AllowEventTracks = AllowEventTracks::No);
     WEBCORE_EXPORT virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
@@ -93,6 +95,7 @@ public:
 
     void startProducingData();
     void stopProducingData();
+    void inactivate();
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
@@ -104,9 +107,11 @@ public:
     uint64_t logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
+    void allowEventTracksForTesting() { m_allowEventTracks = AllowEventTracks::Yes; }
+
 protected:
     MediaStream(Document&, const Vector<Ref<MediaStreamTrack>>&);
-    MediaStream(Document&, Ref<MediaStreamPrivate>&&);
+    MediaStream(Document&, Ref<MediaStreamPrivate>&&, AllowEventTracks = AllowEventTracks::No);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
@@ -134,7 +139,7 @@ private:
     void mediaCanStart(Document&) final;
 
     // ActiveDOMObject.
-    void stop() final;
+    void stop() final { inactivate(); }
     bool virtualHasPendingActivity() const final;
 
     void updateActiveState();
@@ -152,6 +157,7 @@ private:
 
     MediaProducerMediaStateFlags m_state;
 
+    AllowEventTracks m_allowEventTracks { AllowEventTracks::No };
     bool m_isActive { false };
     bool m_isProducingData { false };
     bool m_isWaitingUntilMediaCanStart { false };

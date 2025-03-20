@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf-8">
+
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #container {
+        font-size: 16px;
+        width: 310px;
+    }
+</style>
+<script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("When selecting content outside and inside multi-column, the highlight boxes should not be coalesced.");
+
+        var container = document.getElementById("container");
+        await UIHelper.longPressElement(container);
+        await UIHelper.waitForSelectionToAppear();
+        getSelection().selectAllChildren(container);
+        await UIHelper.waitForSelectionToAppear();
+        selectionRects = await UIHelper.getUISelectionViewRects();
+
+        if (selectionRects.length != 5) {
+            testFailed(`The value of selectionRects.length should be 5, but got ${selectionRects.length}`);
+            finishJSTest();
+            return;
+        }
+        testPassed(`selectionRects.length is ${selectionRects.length}`);
+
+        shouldBe("selectionRects[0].width", "310");
+        shouldBe("selectionRects[1].width", "310");
+        shouldBe("selectionRects[2].width", "150");
+        shouldBe("selectionRects[3].width", "150");
+        shouldBeGreaterThan("150", "selectionRects[4].width");
+
+        outsideContentLineBottom = selectionRects[1].top + selectionRects[1].height;
+        firstMultiColumnLineTop = selectionRects[2].top;
+        shouldBeGreaterThan("firstMultiColumnLineTop", "outsideContentLineBottom");
+
+        finishJSTest();
+    });
+</script>
+</head>
+
+<body>
+    <div id="container">
+        <p id="outside">The selected content outside of the multi-column element.</p>
+        <div style="column-count: 2; column-gap: 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit.Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula.</div>
+    </div>
+</body>
+
+</html>

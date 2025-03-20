@@ -75,13 +75,22 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
 
 id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error)
 {
+    static bool requireSafeMath = false;
     auto options = [MTLCompileOptions new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
-    options.mathMode = MTLMathModeRelaxed;
-    options.mathFloatingPointFunctions = MTLMathFloatingPointFunctionsFast;
+    static auto mathMode = MTLMathModeRelaxed;
+    static auto mathFunctions = MTLMathFloatingPointFunctionsFast;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        requireSafeMath = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitWebGPUEnableSafeMath"];
+        mathMode = requireSafeMath || [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitWebGPUEnableSafeMathMode"] ? MTLMathModeSafe : MTLMathModeRelaxed;
+        mathFunctions = requireSafeMath || [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitWebGPUEnablePrecisionMathFunctions"] ? MTLMathFloatingPointFunctionsPrecise : MTLMathFloatingPointFunctionsFast;
+    });
+    options.mathMode = mathMode;
+    options.mathFloatingPointFunctions = mathFunctions;
 #else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    options.fastMathEnabled = YES;
+    options.fastMathEnabled = !requireSafeMath;
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     // FIXME(PERFORMANCE): Run the asynchronous version of this
@@ -1102,6 +1111,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "float16-renderable"_s;
     case WGPUFeatureName_Float32Renderable:
         return "float32-renderable"_s;
+    case WGPUFeatureName_CoreFeaturesAndLimits:
+        return "core-features-and-limits"_s;
     case WGPUFeatureName_Force32:
         return emptyString();
     }

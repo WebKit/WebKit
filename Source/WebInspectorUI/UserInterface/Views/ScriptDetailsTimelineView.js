@@ -25,11 +25,13 @@
 
 WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.TimelineView
 {
-    constructor(timeline, extraArguments)
+    constructor(target, timeline)
     {
-        super(timeline, extraArguments);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Script, timeline);
 
-        console.assert(timeline.type === WI.TimelineRecord.Type.Script);
+        super(timeline);
+
+        this._target = target;
 
         let columns = {name: {}, location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
 
@@ -38,8 +40,6 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         columns.name.icon = true;
         columns.name.disclosure = true;
         columns.name.locked = true;
-
-        // The "Target" column is only added once there's more than one `WI.Target`.
 
         columns.location.title = WI.UIString("Location");
         columns.location.icon = true;
@@ -79,14 +79,12 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         this.element.classList.add("script");
         this.addSubview(this._dataGrid);
 
-        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
-        timeline.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
-
-        this._targets = new Set;
+        this.representedObject.addEventListener(WI.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
+        this.representedObject.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
 
         this._pendingRecords = [];
 
-        for (let record of timeline.records)
+        for (let record of this.representedObject.records)
             this._processRecord(record);
     }
 
@@ -190,11 +188,7 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         if (!this._pendingRecords.length)
             return;
 
-        let previousTargetCount = this._targets.size;
-
         for (let scriptTimelineRecord of this._pendingRecords) {
-            this._targets.add(scriptTimelineRecord.target);
-
             let rootNodes = [];
             if (scriptTimelineRecord.profile) {
                 // FIXME: Support using the bottom-up tree once it is implemented.
@@ -215,14 +209,6 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         }
 
         this._pendingRecords = [];
-
-        if (previousTargetCount <= 1 && this._targets.size > 1) {
-            this._dataGrid.insertColumn("target", {
-                title: WI.UIString("Context"),
-                width: "10%",
-                sortable: true,
-            }, 1);
-        }
     }
 
     _scriptTimelineRecordAdded(event)
@@ -237,6 +223,9 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
 
     _processRecord(scriptTimelineRecord)
     {
+        if (scriptTimelineRecord.target !== this._target)
+            return;
+
         this._pendingRecords.push(scriptTimelineRecord);
     }
 

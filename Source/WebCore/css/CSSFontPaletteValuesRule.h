@@ -29,9 +29,8 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
 class DOMMapAdapter;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 class StyleRuleFontPaletteValues;
 
 class CSSFontPaletteValuesRule final : public CSSRule {

@@ -57,7 +57,7 @@ void IDBStorageRegistry::removeConnectionToClient(IPC::Connection::UniqueID conn
             m_connectionsToClient.add(identifier, WTFMove(connectionToClient));
             continue;
         }
-        connectionToClient->connectionToClient().connectionToClientClosed();
+        connectionToClient->protectedConnectionToClient()->connectionToClientClosed();
     }
 }
 

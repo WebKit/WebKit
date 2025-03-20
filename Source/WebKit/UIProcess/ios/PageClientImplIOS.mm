@@ -38,6 +38,7 @@
 #import "KeyEventInterpretationContext.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
+#import "PDFPluginIdentifier.h"
 #import "PlatformXRSystem.h"
 #import "RemoteLayerTreeNode.h"
 #import "RunningBoardServicesSPI.h"
@@ -867,9 +868,11 @@ void PageClientImpl::unlockFullscreenOrientation()
     [[webView() fullScreenWindowController] resetSupportedOrientations];
 }
 
-void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
 {
-    [[webView() fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    if (![webView() fullScreenWindowController])
+        return completionHandler(false);
+    [[webView() fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTFMove(completionHandler)];
 }
 
 void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void()>&& completionHandler)
@@ -986,6 +989,11 @@ void PageClientImpl::videoControlsManagerDidChange()
 {
     PageClientImplCocoa::videoControlsManagerDidChange();
     [webView() _videoControlsManagerDidChange];
+}
+
+void PageClientImpl::videosInElementFullscreenChanged()
+{
+    [webView() _videosInElementFullscreenChanged];
 }
 
 void PageClientImpl::refView()
@@ -1289,6 +1297,35 @@ bool PageClientImpl::canStartNavigationSwipeAtLastInteractionLocation() const
 {
     return [m_contentView _canStartNavigationSwipeAtLastInteractionLocation];
 }
+
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+
+void PageClientImpl::createPDFPageNumberIndicator(PDFPluginIdentifier identifier, const IntRect& rect, size_t pageCount)
+{
+    [webView() _createPDFPageNumberIndicator:identifier withFrame:rect pageCount:pageCount];
+}
+
+void PageClientImpl::removePDFPageNumberIndicator(PDFPluginIdentifier identifier)
+{
+    [webView() _removePDFPageNumberIndicator:identifier];
+}
+
+void PageClientImpl::updatePDFPageNumberIndicatorLocation(PDFPluginIdentifier identifier, const IntRect& rect)
+{
+    [webView() _updatePDFPageNumberIndicator:identifier withFrame:rect];
+}
+
+void PageClientImpl::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier identifier, size_t pageIndex)
+{
+    [webView() _updatePDFPageNumberIndicator:identifier currentPage:pageIndex];
+}
+
+void PageClientImpl::removeAnyPDFPageNumberIndicator()
+{
+    [webView() _removeAnyPDFPageNumberIndicator];
+}
+
+#endif
 
 } // namespace WebKit
 

@@ -84,8 +84,9 @@ IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    runOrDelayTaskForImport([this, jobData] {
-        send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, jobData] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
     });
 }
 
@@ -174,8 +175,9 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
     CompletionHandlerWithFinalizer<void(std::optional<ServiceWorkerRegistrationData>)> completionHandler(WTFMove(callback), [] (auto& callback) {
         callback(std::nullopt);
     });
-    runOrDelayTaskForImport([this, completionHandler = WTFMove(completionHandler), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(completionHandler));
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(completionHandler));
     });
 }
 
@@ -223,8 +225,9 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
         return;
     }
 
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
     });
 }
 
@@ -492,6 +495,17 @@ void WebSWClientConnection::cookieChangeSubscriptions(WebCore::ServiceWorkerRegi
     sendWithAsyncReply(Messages::WebSWServerConnection::CookieChangeSubscriptions { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
         callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
     });
+}
+
+Ref<WebSWClientConnection::AddRoutePromise> WebSWClientConnection::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes)
+{
+    struct PromiseConverter {
+        static auto convertError(IPC::Error)
+        {
+            return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::TypeError, "Internal error"_s });
+        }
+    };
+    return WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithPromisedReply<PromiseConverter>(Messages::WebSWServerConnection::AddRoutes { identifier, routes });
 }
 
 } // namespace WebKit

@@ -54,14 +54,13 @@ class ResourceLoadNotifier {
 public:
     explicit ResourceLoadNotifier(LocalFrame&);
 
-    void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(ResourceLoaderIdentifier, DocumentLoader*, const AuthenticationChallenge&);
 
-    void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
-    void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-    void didReceiveData(ResourceLoader*, const SharedBuffer&, int encodedDataLength);
-    void didFinishLoad(ResourceLoader*, const NetworkLoadMetrics&);
-    void didFailToLoad(ResourceLoader*, const ResourceError&);
+    void willSendRequest(ResourceLoader&, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void didReceiveResponse(ResourceLoader&, ResourceLoaderIdentifier, const ResourceResponse&);
+    void didReceiveData(ResourceLoader&, ResourceLoaderIdentifier, const SharedBuffer&, int encodedDataLength);
+    void didFinishLoad(ResourceLoader&, ResourceLoaderIdentifier, const NetworkLoadMetrics&);
+    void didFailToLoad(ResourceLoader&, ResourceLoaderIdentifier, const ResourceError&);
 
     void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, IsMainResourceLoad, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader* = nullptr);

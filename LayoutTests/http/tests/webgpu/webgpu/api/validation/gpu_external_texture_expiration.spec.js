@@ -20,7 +20,7 @@ class GPUExternalTextureExpireTest extends ValidationTest {
     const kWidth = 16;
     const kFormat = 'rgba8unorm';
 
-    const colorAttachment = this.device.createTexture({
+    const colorAttachment = this.createTextureTracked({
       format: kFormat,
       size: { width: kWidth, height: kHeight, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
@@ -225,7 +225,7 @@ fn(async (t) => {
     } else {
       bindGroup = t.device.createBindGroup({
         layout: t.getDefaultBindGroupLayout(),
-        entries: [{ binding: 0, resource: externalTexture }]
+        entries: [{ binding: 0, resource: mayBeTheSameExternalTexture }]
       });
       t.submitCommandBuffer(bindGroup, true);
     }

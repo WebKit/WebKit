@@ -55,8 +55,6 @@ public:
     LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
 
 private:
-    GridSpan gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const;
-    GridSpan gridAxisPositionUsingNextAutoFlow(const RenderBox& item);
     GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item);
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 

@@ -49,9 +49,9 @@ private:
     ~WebDeviceOrientationUpdateProvider();
 
     // WebCore::DeviceOrientationUpdateProvider
-    void startUpdatingDeviceOrientation(WebCore::MotionManagerClient&) final;
+    void startUpdatingDeviceOrientation(WebCore::MotionManagerClient&, const WebCore::SecurityOriginData&) final;
     void stopUpdatingDeviceOrientation(WebCore::MotionManagerClient&) final;
-    void startUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
+    void startUpdatingDeviceMotion(WebCore::MotionManagerClient&, const WebCore::SecurityOriginData&) final;
     void stopUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
     void deviceOrientationChanged(double, double, double, double, double) final;
     void deviceMotionChanged(double, double, double, double, double, double, std::optional<double>, std::optional<double>, std::optional<double>) final;

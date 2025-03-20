@@ -7240,10 +7240,20 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle, AnalyzeCha
             if not results_json:
                 return defer.returnValue(FAILURE)
 
-            unexpected_passes = self.get_unexpected_tests(results_json, 'passes') or ['Empty']
-            unexpected_failures = self.get_unexpected_tests(results_json, 'failures') or ['Empty']
+            unexpected_passes = self.get_unexpected_tests(results_json, 'passes') or []
+            unexpected_failures = self.get_unexpected_tests(results_json, 'failures') or []
 
-            if set(user_added_tests) == set(unexpected_passes) and set(user_removed_tests) == set(unexpected_failures):
+            needs_filter = False
+            for test in unexpected_passes:
+                if test not in user_added_tests:
+                    needs_filter = True
+                    break
+            for test in unexpected_failures:
+                if test not in user_removed_tests or needs_filter:
+                    needs_filter = True
+                    break
+
+            if not needs_filter:
                 yield self._addToLog('stdio', 'Skipping second build since all unexpected results come from user modified expectations.\n')
                 unexpected_results_after_filter = True
             else:
@@ -7316,7 +7326,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle, AnalyzeCha
     @defer.inlineCallbacks
     def filter_results_using_results_db(self, results_json):
         self.unexpected_results_filtered = results_json
-        identifier = self.getProperty('identifier', None)
+        identifier = self.getProperty('identifier', None) or self.getProperty('got_revision', None)
         platform = self.getProperty('platform', None)
         configuration = {}
         if platform:
@@ -7332,6 +7342,9 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle, AnalyzeCha
             if not has_commit:
                 yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
                 return defer.returnValue(False)
+        else:
+            yield self._addToLog(self.results_db_log_name, f"Could not find the commit identifier, falling back to tip-of-tree\n")
+            return defer.returnValue(False)
 
         has_results = yield ResultsDatabase.get_results(self.suite, commit=identifier, configuration=configuration)
         if not has_results:
@@ -7446,7 +7459,7 @@ class FindUnexpectedStaticAnalyzerResultsWithoutChange(FindUnexpectedStaticAnaly
 
         self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new')]
         self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', os.path.join(self.getProperty('builddir'), 'build/baseline')]
-        self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results']  # Only generate results page on the second comparison
+        self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']  # Only generate results page on the second comparison
         if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
             self.command += [
                 '--builder-name', self.getProperty('buildername', ''),
@@ -7487,7 +7500,7 @@ class FindUnexpectedStaticAnalyzerResultsWithoutChange(FindUnexpectedStaticAnaly
             steps_to_add += [GenerateSaferCPPResultsIndex(), DeleteStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()]
             self.build.addStepsAfterCurrentStep(steps_to_add)
         elif has_unexpected_results:
-            self.build.addStepsAfterCurrentStep([ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
+            self.build.addStepsAfterCurrentStep([DeleteStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
 
         self.result_message = self.createResultMessage()
         return defer.returnValue(rc)
@@ -7531,8 +7544,13 @@ class FindUnexpectedStaticAnalyzerResultsWithoutChange(FindUnexpectedStaticAnaly
         filtered_passes = self.get_unexpected_tests(self.unexpected_results_filtered, 'passes') or []
         filtered_failures = self.get_unexpected_tests(self.unexpected_results_filtered, 'failures') or []
         self.setProperty('num_unexpected_issues', 0)
-        self.setProperty('num_failing_files', len(filtered_failures))
-        self.setProperty('num_passing_files', len(filtered_passes))
+        failing_files = ['/'.join(test.split('/')[1:-1]) for test in filtered_failures]
+        passing_files = ['/'.join(test.split('/')[1:-1]) for test in filtered_passes]
+        self.setProperty('num_failing_files', len(set(failing_files)))
+        self.setProperty('num_passing_files', len(set(passing_files)))
+
+        yield self._addToLog('stdio', f'\nSuccessfully filtered results! Updating unexpected_results.json on disk.\n')
+        self.write_unexpected_results_file_to_master()
 
 
 class DownloadUnexpectedResultsFromMaster(transfer.FileDownload):
@@ -7631,17 +7649,18 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
     def run(self):
         commands_for_comment = set()
         num_issues = self.getProperty('num_unexpected_issues', 0)
+        num_failing_files = self.getProperty('num_failing_files', 0)
         self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('change_id')}-{self.getProperty('buildnumber')}"
         unexpected_results_data = self.loadResultsData(os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json'))
         is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes', commands_for_comment)
         is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures', commands_for_comment)
-        if num_issues:
+        if num_issues or num_failing_files:
             if not is_log:
-                pluralSuffix = 's' if num_issues > 1 else ''
+                pluralSuffix = 's' if num_issues > 1 or num_issues == 0 else ''
                 yield self._addToLog('stdio', f'Ignored {num_issues} pre-existing failure{pluralSuffix}')
             self.addURL("View failures", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html")
         self.createComment(commands_for_comment)
-        if self.getProperty('num_failing_files', 0):
+        if num_failing_files:
             return defer.returnValue(FAILURE)
         return defer.returnValue(SUCCESS)
 
@@ -7686,8 +7705,9 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         comment = f'### Safer C++ Build {formatted_build_link} ({commit_url})\n'
 
         if num_failures:
-            pluralSuffix = 's' if num_issues > 1 else ''
-            comment += f":x: Found [{num_issues} new failure{pluralSuffix}]({results_link}). "
+            issue_comment = f" with {num_issues} issue{'s' if num_issues > 1 else ''}" if num_issues else ''
+            pluralSuffix = 's' if num_failures > 1 else ''
+            comment += f":x: Found [{num_failures} failing file{pluralSuffix}{issue_comment}]({results_link}). "
             comment += 'Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n'
         if num_passes:
             pluralSuffix = 's' if num_passes > 1 else ''

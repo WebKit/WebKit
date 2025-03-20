@@ -208,8 +208,7 @@ void PDFScrollingPresentationController::updatePageBackgroundLayers()
         auto destinationRect = pageBoundsRect;
         destinationRect.scale(documentLayout.scale());
 
-        // FIXME: <rdar://144977686> Remove suppression when the false positive in the static analyzer is fixed.
-        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto pageContainerLayer = [&](PDFDocumentLayout::PageIndex pageIndex) {
+        auto pageContainerLayer = [&](PDFDocumentLayout::PageIndex pageIndex) {
             if (pageIndex < pageContainerLayers.size())
                 return pageContainerLayers[pageIndex];
 
@@ -391,6 +390,14 @@ bool PDFScrollingPresentationController::layerNeedsPlatformContext(const Graphic
 {
     return shouldUseInProcessBackingStore() && (layer == m_contentsLayer || pageIndexForPageBackgroundLayer(layer));
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+bool PDFScrollingPresentationController::layerAllowsDynamicContentScaling(const GraphicsLayer*) const
+{
+    // Provide DCS structures explicitly.
+    return false;
+}
+#endif
 
 void PDFScrollingPresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {

@@ -67,11 +67,11 @@ bool ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
 
 void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "sticky node";
+    ts << "sticky node"_s;
     ScrollingTreeNode::dumpProperties(ts, behavior);
-    ts.dumpProperty("sticky constraints", m_constraints);
+    ts.dumpProperty("sticky constraints"_s, m_constraints);
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions)
-        ts.dumpProperty("layer top left", layerTopLeft());
+        ts.dumpProperty("layer top left"_s, layerTopLeft());
 }
 
 FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const

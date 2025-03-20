@@ -55,7 +55,7 @@ CString ExceptionScope::unexpectedExceptionMessage()
 {
     StringPrintStream out;
 
-    out.println("Unexpected exception observed on thread ", Thread::current(), " at:");
+    out.println("Unexpected exception observed on thread ", Thread::currentSingleton(), " at:");
     auto currentStack = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit(), 1);
     out.print(StackTracePrinter { *currentStack, "    " });
 

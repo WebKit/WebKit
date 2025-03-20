@@ -81,10 +81,8 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
     if  (!init.baseURL.isNull()) {
         baseURL = URL(init.baseURL);
 
-        if (!baseURL.isValid()) {
-            // FIXME: Check if empty string should be allowed.
+        if (!baseURL.isValid())
             return Exception { ExceptionCode::TypeError, "Invalid baseURL."_s };
-        }
 
         if (init.protocol.isNull())
             result.protocol = processBaseURLString(baseURL.protocol(), type);
@@ -166,7 +164,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
     }
 
     if (!init.port.isNull()) {
-        auto portResult = canonicalizePort(init.port, init.protocol, type);
+        auto portResult = canonicalizePort(init.port, result.protocol, type);
 
         if (portResult.hasException())
             return portResult.releaseException();

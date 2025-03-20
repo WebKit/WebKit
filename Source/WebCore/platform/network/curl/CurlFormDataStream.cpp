@@ -63,10 +63,7 @@ void CurlFormDataStream::clean()
     if (m_postData)
         m_postData = nullptr;
 
-    if (m_fileHandle != FileSystem::invalidPlatformFileHandle) {
-        FileSystem::closeFile(m_fileHandle);
-        m_fileHandle = FileSystem::invalidPlatformFileHandle;
-    }
+    m_fileHandle = { };
 }
 
 const Vector<uint8_t>* CurlFormDataStream::getPostData()
@@ -137,30 +134,27 @@ std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
 
 std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
 {
-    if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
+    if (!m_fileHandle)
         m_fileHandle = FileSystem::openFile(fileData.filename, FileSystem::FileOpenMode::Read);
 
-    if (!FileSystem::isHandleValid(m_fileHandle)) {
+    if (!m_fileHandle) {
         LOG(Network, "Curl - Failed while trying to open %s for upload\n", fileData.filename.utf8().data());
-        m_fileHandle = FileSystem::invalidPlatformFileHandle;
         return std::nullopt;
     }
 
-    auto readBytes = FileSystem::readFromFile(m_fileHandle, { byteCast<uint8_t>(buffer), size });
-    if (readBytes < 0) {
-        LOG(Network, "Curl - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
-        FileSystem::closeFile(m_fileHandle);
-        m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        return std::nullopt;
-    }
-
+    auto readBytes = m_fileHandle.read({ byteCast<uint8_t>(buffer), size });
     if (!readBytes) {
-        FileSystem::closeFile(m_fileHandle);
-        m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        m_elementPosition++;
+        LOG(Network, "Curl - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
+        m_fileHandle = { };
+        return std::nullopt;
     }
 
-    return readBytes;
+    if (!*readBytes) {
+        m_fileHandle = { };
+        ++m_elementPosition;
+    }
+
+    return *readBytes;
 }
 
 std::optional<size_t> CurlFormDataStream::readFromData(const Vector<uint8_t>& data, char* buffer, size_t size)

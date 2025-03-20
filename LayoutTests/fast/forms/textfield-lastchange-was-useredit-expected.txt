@@ -9,6 +9,7 @@ PASS textField.value = "WebKit"; internals.wasLastChangeUserEdit(textField) is f
 PASS textField.style.display = null; internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("SelectAll", false, null); internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("Delete", false, null); internals.wasLastChangeUserEdit(textField) is true
+PASS dispatchTextEventsInTextField(textField, "foo"); internals.wasLastChangeUserEdit(textField) is false
 
 textarea
 PASS internals.wasLastChangeUserEdit(textField) is false
@@ -22,6 +23,7 @@ PASS document.execCommand("Delete", false, null); internals.wasLastChangeUserEdi
 PASS textField.textContent = "hello\nworld"; internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("InsertText", false, "\nWebKit rocks"); internals.wasLastChangeUserEdit(textField) is true
 PASS textField.innerText = " WebKit "; internals.wasLastChangeUserEdit(textField) is false
+PASS dispatchTextEventsInTextField(textField, "foo"); internals.wasLastChangeUserEdit(textField) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

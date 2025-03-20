@@ -27,6 +27,7 @@
 
 #include "FrameIdentifier.h"
 #include "FrameTree.h"
+#include "FrameTreeSyncData.h"
 #include "OwnerPermissionsPolicyData.h"
 #include "PageIdentifier.h"
 #include <wtf/CheckedRef.h>
@@ -73,10 +74,12 @@ public:
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.
     inline RefPtr<Page> protectedPage() const; // Defined in Page.h.
-    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
+    inline std::optional<PageIdentifier> pageID() const; // Defined in Page.h.
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() { return *m_mainFrame; }
     const Frame& mainFrame() const { return *m_mainFrame; }
+    Ref<Frame> protectedMainFrame() { return mainFrame(); }
+    Ref<const Frame> protectedMainFrame() const { return mainFrame(); }
     bool isMainFrame() const { return this == m_mainFrame.get(); }
     WEBCORE_EXPORT void disownOpener();
     WEBCORE_EXPORT void updateOpener(Frame&, NotifyUIProcess = NotifyUIProcess::Yes);
@@ -128,8 +131,13 @@ public:
 
     void stopForBackForwardCache();
 
+    WEBCORE_EXPORT void updateFrameTreeSyncData(Ref<FrameTreeSyncData>&&);
+
+    virtual bool frameCanCreatePaymentSession() const;
+    FrameTreeSyncData& frameTreeSyncData() { return m_frameTreeSyncData.get(); }
+
 protected:
-    Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
+    Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&&);
     void resetWindowProxy();
 
     virtual void frameWasDisconnectedFromOwner() const { }
@@ -150,6 +158,8 @@ private:
     WeakPtr<Frame> m_opener;
     WeakHashSet<Frame> m_openedFrames;
     std::optional<OwnerPermissionsPolicyData> m_ownerPermisssionsPolicyOverride;
+
+    Ref<FrameTreeSyncData> m_frameTreeSyncData;
 };
 
 } // namespace WebCore

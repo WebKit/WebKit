@@ -1,0 +1,37 @@
+<script>
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.waitUntilDone();
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let module = device.createShaderModule({
+      code: `
+@fragment
+fn fragment0() -> @location(0) vec4u {
+  let i0: vec4f = vec4f(0., 2., 2., 2.);
+  let i1: vec4f = asin(i0); // <-- (0., NaN, NaN, NaN)
+  let i2: vec4u = vec4u(i1);
+  let i3: u32 = pack4xU8(i2);
+  let i4: f32 = bitcast<f32>(i3);
+  let i5: f32 = min(i4, 1);
+  let i6: u32 = u32(i5);
+  return vec4u(i6);
+}
+
+@vertex
+fn vertex0() -> @builtin(position) vec4f {
+  return vec4();
+}
+`,
+    });
+    let pipeline = device.createRenderPipeline({
+      layout: 'auto',
+      fragment: {module, targets: [{format: 'rg16uint'}]},
+      vertex: {module},
+    });
+    await device.queue.onSubmittedWorkDone();
+    console.log("Passed");
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

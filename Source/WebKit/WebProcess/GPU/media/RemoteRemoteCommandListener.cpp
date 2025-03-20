@@ -53,7 +53,7 @@ RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 {
     if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get()) {
         gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), identifier().toUInt64());
-        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(identifier()), 0);
+        gpuProcessConnection->protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(identifier()), 0);
     }
 }
 
@@ -65,7 +65,7 @@ GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), identifier().toUInt64(), *this);
-        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(identifier()), { });
+        gpuProcessConnection->protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(identifier()), { });
     }
     return *gpuProcessConnection;
 }
@@ -95,7 +95,7 @@ void RemoteRemoteCommandListener::updateSupportedCommands()
     m_currentCommands = supportedCommands;
     m_currentSupportSeeking = supportsSeeking();
 
-    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, identifier());
+    ensureGPUProcessConnection().protectedConnection()->send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, identifier());
 }
 
 }

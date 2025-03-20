@@ -158,6 +158,7 @@ public:
     bool hasOpaqueImage(const RenderElement&) const;
     bool hasRepeatXY() const;
     bool clipOccludesNextLayers(bool firstLayer) const;
+    bool hasHDRContent() const;
 
     FillLayerType type() const { return static_cast<FillLayerType>(m_type); }
 

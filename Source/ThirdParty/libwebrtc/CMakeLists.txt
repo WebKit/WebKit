@@ -1936,6 +1936,8 @@ set(CRYPTO_SOURCES_ASM
   Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_x86_64-linux.S
   Source/third_party/boringssl/src/third_party/fiat/asm/fiat_curve25519_adx_mul.S
   Source/third_party/boringssl/src/third_party/fiat/asm/fiat_curve25519_adx_square.S
+  Source/third_party/boringssl/src/third_party/fiat/asm/fiat_p256_adx_sqr.S
+  Source/third_party/boringssl/src/third_party/fiat/asm/fiat_p256_adx_mul.S
 )
 
 perlasm(CRYPTO_SOURCES aarch64 chacha/chacha-armv8 ${CRYPTO_PATH}/chacha/asm/chacha-armv8.pl)
@@ -2057,8 +2059,10 @@ if (APPLE)
         Source/webrtc/rtc_base/system/cocoa_threading.mm
 
         Source/webrtc/sdk/WebKit/WebKitUtilities.mm
+        Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp
         Source/webrtc/sdk/WebKit/WebKitDecoder.mm
         Source/webrtc/sdk/WebKit/WebKitEncoder.mm
+        Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.cpp
 
         Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
         Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm

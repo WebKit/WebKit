@@ -24,6 +24,7 @@
 
 #include "FontCascade.h"
 #include "RenderElement.h"
+#include "RenderSVGInlineText.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include "SVGTextMetrics.h"
@@ -60,12 +61,11 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& 
     return 0;
 }
 
-AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderObject* textRenderer) const
+AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const
 {
-    ASSERT(textRenderer);
-    ASSERT(textRenderer->parent());
+    ASSERT(textRenderer.parent());
 
-    DominantBaseline baseline = textRenderer->style().svgStyle().dominantBaseline();
+    DominantBaseline baseline = textRenderer.style().svgStyle().dominantBaseline();
     if (baseline == DominantBaseline::Auto) {
         if (isVerticalText)
             baseline = DominantBaseline::Central;
@@ -78,9 +78,9 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
         // FIXME: The dominant-baseline and the baseline-table components are set by determining the predominant script of the character data content.
         return AlignmentBaseline::Alphabetic;
     case DominantBaseline::NoChange:
-        return dominantBaselineToAlignmentBaseline(isVerticalText, textRenderer->parent());
+        return dominantBaselineToAlignmentBaseline(isVerticalText, *textRenderer.parent());
     case DominantBaseline::ResetSize:
-        return dominantBaselineToAlignmentBaseline(isVerticalText, textRenderer->parent());
+        return dominantBaselineToAlignmentBaseline(isVerticalText, *textRenderer.parent());
     case DominantBaseline::Ideographic:
         return AlignmentBaseline::Ideographic;
     case DominantBaseline::Alphabetic:
@@ -103,14 +103,14 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
     }
 }
 
-float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderObject& textRenderer) const
+float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const
 {
-    const RenderObject* textRendererParent = textRenderer.parent();
+    auto* textRendererParent = textRenderer.parent();
     ASSERT(textRendererParent);
 
     AlignmentBaseline baseline = textRenderer.style().svgStyle().alignmentBaseline();
     if (baseline == AlignmentBaseline::Baseline) {
-        baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent);
+        baseline = dominantBaselineToAlignmentBaseline(isVerticalText, *textRendererParent);
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }
 

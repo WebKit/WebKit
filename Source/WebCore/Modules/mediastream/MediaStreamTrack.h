@@ -189,9 +189,7 @@ protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-        
-    Ref<MediaStreamTrackPrivate> m_private;
-        
+
 private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
@@ -228,6 +226,7 @@ private:
 
     MediaTrackConstraints m_constraints;
 
+    const Ref<MediaStreamTrackPrivate> m_private;
     String m_mediaStreamId;
     State m_readyState { State::Live };
     bool m_muted { false };

@@ -62,10 +62,12 @@ void ExternalTextureImpl::undestroy()
     wgpuExternalTextureUndestroy(m_backing.get());
 }
 
+#if PLATFORM(COCOA)
 void ExternalTextureImpl::updateExternalTexture(CVPixelBufferRef pixelBuffer)
 {
     wgpuExternalTextureUpdate(m_backing.get(), pixelBuffer);
 }
+#endif
 
 } // namespace WebCore::WebGPU
 

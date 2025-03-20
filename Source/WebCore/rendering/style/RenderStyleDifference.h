@@ -75,7 +75,7 @@ TextStream& operator<<(TextStream& ts, ValueOrUnstreamableMessage<T> item)
         else
             ts << item.value;
     } else
-        ts << "(unstreamable)";
+        ts << "(unstreamable)"_s;
     return ts;
 }
 
@@ -90,7 +90,7 @@ void logIfDifferent(TextStream& ts, ASCIILiteral name, const T& item1, const T& 
         differ = item1 != item2;
 
     if (differ)
-        ts << name << " differs: " << ValueOrUnstreamableMessage(item1) << ", " << ValueOrUnstreamableMessage(item2) << '\n';
+        ts << name << " differs: "_s << ValueOrUnstreamableMessage(item1) << ", "_s << ValueOrUnstreamableMessage(item2) << '\n';
 }
 
 } // namespace WebCore

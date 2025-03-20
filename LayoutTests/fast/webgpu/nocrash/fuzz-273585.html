@@ -3,7 +3,9 @@
   :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
 </style>
 <script>
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 const log = globalThis.$vm?.print ?? console.log;
 
 function gc() {
@@ -20952,6 +20954,8 @@ videoFrame30.close();
       
     }
   }
-  globalThis.testRunner?.notifyDone();
+  console.log('Pass')
+    globalThis.testRunner?.notifyDone();
 };
 </script>
+

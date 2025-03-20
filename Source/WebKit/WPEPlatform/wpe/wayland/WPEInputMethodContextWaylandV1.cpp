@@ -557,8 +557,7 @@ static void wpeIMContextWaylandV1FocusIn(WPEInputMethodContext* context)
     if (global->textInput == nullptr)
         return;
 
-    WPEInputHints hints;
-    g_object_get(context, "input-hints", &hints, nullptr);
+    WPEInputHints hints = wpe_input_method_context_get_input_hints(context);
     if (!(hints & WPE_INPUT_HINT_INHIBIT_OSK)) {
         zwp_text_input_v1_show_input_panel(global->textInput);
         zwp_text_input_v1_activate(global->textInput,
@@ -645,10 +644,11 @@ static void wpe_im_context_wayland_v1_class_init(WPEIMContextWaylandV1Class* kla
     imContextClass->reset = wpeIMContextWaylandV1Reset;
 }
 
-WPEInputMethodContext* wpe_im_context_wayland_v1_new(WPEDisplayWayland* display)
+WPEInputMethodContext* wpe_im_context_wayland_v1_new(WPEDisplayWayland* display, WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY_WAYLAND(display), nullptr);
+    g_return_val_if_fail(WPE_IS_VIEW_WAYLAND(view), nullptr);
 
     textInputV1GetGlobalByDisplay(display); // ensure creation of listener
-    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V1, nullptr));
+    return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V1, "view", view, nullptr));
 }

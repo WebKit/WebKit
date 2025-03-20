@@ -32,6 +32,7 @@
 #import "MouseSupportUIDelegate.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
@@ -126,7 +127,15 @@ struct PointerInfo {
 
 #endif // HAVE(UI_POINTER_INTERACTION)
 
-TEST(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
+class iOSMouseSupport : public testing::Test {
+public:
+    void SetUp() final
+    {
+        TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
+    }
+};
+
+TEST_F(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -149,7 +158,7 @@ TEST(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
+TEST_F(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -166,7 +175,7 @@ TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
+TEST_F(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -190,7 +199,7 @@ TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, TrackButtonMaskFromTouchStart)
+TEST_F(iOSMouseSupport, TrackButtonMaskFromTouchStart)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -218,7 +227,7 @@ TEST(iOSMouseSupport, TrackButtonMaskFromTouchStart)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, MouseTimestampTimebase)
+TEST_F(iOSMouseSupport, MouseTimestampTimebase)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -250,7 +259,7 @@ TEST(iOSMouseSupport, MouseTimestampTimebase)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, EndedTouchesTriggerClick)
+TEST_F(iOSMouseSupport, EndedTouchesTriggerClick)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -272,7 +281,7 @@ TEST(iOSMouseSupport, EndedTouchesTriggerClick)
     EXPECT_TRUE(wasClicked);
 }
 
-TEST(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
+TEST_F(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -294,7 +303,7 @@ TEST(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
     EXPECT_FALSE(wasClicked);
 }
 
-TEST(iOSMouseSupport, MouseDidMoveOverElement)
+TEST_F(iOSMouseSupport, MouseDidMoveOverElement)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -323,7 +332,7 @@ static void handleUpdatedSelection(id, SEL)
     selectionUpdated = true;
 }
 
-TEST(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
+TEST_F(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
 {
     InstanceMethodSwizzler swizzler { UIWKTextInteractionAssistant.class, @selector(selectionChanged), reinterpret_cast<IMP>(handleUpdatedSelection) };
 
@@ -344,7 +353,7 @@ TEST(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
 
 constexpr auto largeResponsiveHelloMarkup = "<meta name='viewport' content='width=device-width'><span style='font-size: 400px;'>Hello</span>";
 
-TEST(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContextMenu)
+TEST_F(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContextMenu)
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration preferences].textInteractionEnabled = NO;
@@ -361,7 +370,7 @@ TEST(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContext
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
-TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
+TEST_F(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView _setEditable:YES];
@@ -377,7 +386,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
     EXPECT_FALSE(CGRectIsEmpty([webView selectionViewRectsInContentCoordinates].firstObject.CGRectValue));
 }
 
-TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
+TEST_F(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
@@ -401,7 +410,7 @@ static void simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint lo
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(iOSMouseSupport, ContextClickAtEndOfSelection)
+TEST_F(iOSMouseSupport, ContextClickAtEndOfSelection)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"try-text-select-with-disabled-text-interaction"];
@@ -450,7 +459,7 @@ TEST(iOSMouseSupport, ContextClickAtEndOfSelection)
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 
-TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
+TEST_F(iOSMouseSupport, WebsiteMouseEventPolicies)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
@@ -496,7 +505,7 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
 
-TEST(iOSMouseSupport, MouseInitiallyDisconnected)
+TEST_F(iOSMouseSupport, MouseInitiallyDisconnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
@@ -531,7 +540,7 @@ TEST(iOSMouseSupport, MouseInitiallyDisconnected)
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
-TEST(iOSMouseSupport, MouseInitiallyConnected)
+TEST_F(iOSMouseSupport, MouseInitiallyConnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
@@ -566,7 +575,7 @@ TEST(iOSMouseSupport, MouseInitiallyConnected)
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
-TEST(iOSMouseSupport, MouseLaterDisconnected)
+TEST_F(iOSMouseSupport, MouseLaterDisconnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
@@ -603,7 +612,7 @@ TEST(iOSMouseSupport, MouseLaterDisconnected)
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
-TEST(iOSMouseSupport, MouseLaterConnected)
+TEST_F(iOSMouseSupport, MouseLaterConnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
@@ -644,7 +653,7 @@ TEST(iOSMouseSupport, MouseLaterConnected)
 
 #if PLATFORM(MACCATALYST)
 
-TEST(iOSMouseSupport, MouseAlwaysConnected)
+TEST_F(iOSMouseSupport, MouseAlwaysConnected)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -673,7 +682,7 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 
 #if HAVE(UI_POINTER_INTERACTION)
 
-TEST(iOSMouseSupport, BasicPointerInteractionRegions)
+TEST_F(iOSMouseSupport, BasicPointerInteractionRegions)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"cursor-styles"];

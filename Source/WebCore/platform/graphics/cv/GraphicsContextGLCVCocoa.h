@@ -32,7 +32,7 @@
 #include <memory>
 #include <wtf/TZoneMalloc.h>
 
-typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 class GraphicsContextGLCocoa;

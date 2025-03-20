@@ -166,11 +166,10 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
         if (!treeElement)
             return;
 
-        if (treeElement instanceof WI.StorageTreeElement || treeElement instanceof WI.FolderTreeElement)
+        if (treeElement instanceof WI.FolderTreeElement || treeElement instanceof WI.IndexedDatabaseHostTreeElement)
             return;
 
-        if (treeElement instanceof WI.IndexedDatabaseHostTreeElement || treeElement instanceof WI.IndexedDatabaseTreeElement ||
-            treeElement instanceof WI.IndexedDatabaseObjectStoreTreeElement || treeElement instanceof WI.IndexedDatabaseObjectStoreIndexTreeElement) {
+        if (treeElement instanceof WI.StorageTreeElement || treeElement instanceof WI.IndexedDatabaseTreeElement || treeElement instanceof WI.IndexedDatabaseObjectStoreTreeElement || treeElement instanceof WI.IndexedDatabaseObjectStoreIndexTreeElement) {
             WI.showRepresentedObject(treeElement.representedObject);
             return;
         }

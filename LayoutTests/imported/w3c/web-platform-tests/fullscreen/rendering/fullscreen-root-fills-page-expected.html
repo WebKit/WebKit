@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="reftest-wait">
+<html>
 <head>
     <style>
         html, body {
@@ -14,16 +14,5 @@
         }
     </style>
 </head>
-
-<body>
-    <script src="/resources/testdriver.js"></script>
-    <script src="/resources/testdriver-vendor.js"></script>
-    <script>
-        document.addEventListener("fullscreenchange", () => {
-            document.documentElement.classList.remove("reftest-wait");
-        });
-        test_driver.bless("fullscreen")
-            .then(() => document.documentElement.requestFullscreen())
-    </script>
-</body>
+<body></body>
 </html>

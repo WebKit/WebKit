@@ -59,7 +59,7 @@ HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
 {
     ASSERT(isMainRunLoop());
     if (!m_hasPopulatedSupportedTypesCacheFromGPUProcess) {
-        auto sendResult = protectedManager()->gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(m_engineIdentifier), 0);
+        auto sendResult = protectedManager()->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(m_engineIdentifier), 0);
         if (sendResult.succeeded()) {
             auto& [types] = sendResult.reply();
             addSupportedTypes(types);
@@ -86,7 +86,7 @@ MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCo
     if (!m_supportsTypeAndCodecsCache)
         m_supportsTypeAndCodecsCache = HashMap<SupportedTypesAndCodecsKey, MediaPlayerEnums::SupportsType> { };
 
-    auto sendResult = protectedManager()->gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), 0);
+    auto sendResult = protectedManager()->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), 0);
     auto [result] = sendResult.takeReplyOr(MediaPlayerEnums::SupportsType::IsNotSupported);
     if (sendResult.succeeded())
         m_supportsTypeAndCodecsCache->add(searchKey, result);

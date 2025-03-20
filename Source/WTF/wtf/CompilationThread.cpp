@@ -33,7 +33,7 @@ namespace WTF {
 
 bool isCompilationThread()
 {
-    return Thread::current().isCompilationThread();
+    return Thread::currentSingleton().isCompilationThread();
 }
 
 } // namespace WTF

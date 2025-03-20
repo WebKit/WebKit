@@ -52,6 +52,7 @@ public:
     virtual bool contains(const String& key) = 0;
 
     virtual StorageType storageType() const = 0;
+    virtual bool isWebKit2StorageAreaImpl() const { return false; }
 
     virtual size_t memoryBytesUsedByCache() = 0;
 

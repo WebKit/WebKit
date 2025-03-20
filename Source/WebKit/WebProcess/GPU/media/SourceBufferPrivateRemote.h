@@ -68,9 +68,9 @@ public:
 
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
 
-    static WorkQueue& queue();
+    static WorkQueue& queueSingleton();
 
-    class MessageReceiver : public IPC::WorkQueueMessageReceiver {
+    class MessageReceiver : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     public:
         static Ref<MessageReceiver> create(SourceBufferPrivateRemote& parent)
         {
@@ -147,14 +147,16 @@ private:
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t) final;
 
     void ensureOnDispatcherSync(Function<void()>&&);
-    void ensureWeakOnDispatcher(Function<void()>&&);
+    void ensureWeakOnDispatcher(Function<void(SourceBufferPrivateRemote&)>&&);
+
+    template<typename T> void sendToProxy(T&& message);
 
     RefPtr<MediaPlayerPrivateRemote> player() const;
 
     template<typename PC = IPC::Connection::NoOpPromiseConverter, typename T>
     auto sendWithPromisedReply(T&& message)
     {
-        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply<PC, T>(std::forward<T>(message), m_remoteSourceBufferIdentifier);
+        return m_gpuProcessConnection.get()->protectedConnection()->sendWithPromisedReply<PC, T>(std::forward<T>(message), m_remoteSourceBufferIdentifier);
     }
 
     friend class MessageReceiver;
@@ -184,6 +186,12 @@ private:
     const uint64_t m_logIdentifier;
 #endif
 };
+
+template<typename T>
+void SourceBufferPrivateRemote::sendToProxy(T&& message)
+{
+    m_gpuProcessConnection.get()->protectedConnection()->send(WTFMove(message), m_remoteSourceBufferIdentifier);
+}
 
 } // namespace WebKit
 

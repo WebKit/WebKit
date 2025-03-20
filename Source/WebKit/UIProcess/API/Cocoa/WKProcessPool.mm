@@ -390,7 +390,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (pid_t)_gpuProcessIdentifier
 {
 #if ENABLE(GPU_PROCESS)
-    auto* gpuProcess = _processPool->gpuProcess();
+    RefPtr gpuProcess = _processPool->gpuProcess();
     return gpuProcess ? gpuProcess->processID() : 0;
 #else
     return 0;
@@ -548,14 +548,14 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 + (BOOL)_isMetalDebugDeviceEnabledInGPUProcessForTesting
 {
-    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+    if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
         return gpuProcess->isMetalDebugDeviceEnabledForTesting();
     return WebKit::GPUProcessProxy::isMetalDebugDeviceEnabledInNewGPUProcessesForTesting();
 }
 
 + (BOOL)_isMetalShaderValidationEnabledInGPUProcessForTesting
 {
-    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+    if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
         return gpuProcess->isMetalShaderValidationEnabledForTesting();
     return WebKit::GPUProcessProxy::isMetalShaderValidationEnabledInNewGPUProcessesForTesting();
 }
@@ -648,7 +648,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 {
     RetainPtr<_WKProcessInfo> result;
 
-    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated()) {
+    if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated()) {
         if (auto taskInfo = gpuProcess->taskInfo())
             result = adoptNS([[_WKProcessInfo alloc] initWithTaskInfo:*taskInfo]);
     }

@@ -77,16 +77,16 @@ struct MockMediaDevice {
     CaptureDevice captureDevice() const
     {
         if (isMicrophone())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId, true, false, true, flags.contains(Flag::Ephemeral) };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId, true, isDefault, true, flags.contains(Flag::Ephemeral) };
 
         if (isSpeaker())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId, true, false, true, flags.contains(Flag::Ephemeral) };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId, true, isDefault, true, flags.contains(Flag::Ephemeral) };
 
         if (isCamera())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId, true, false, true, flags.contains(Flag::Ephemeral) };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId, true, isDefault, true, flags.contains(Flag::Ephemeral) };
 
         ASSERT(isDisplay());
-        return CaptureDevice { persistentId, std::get<MockDisplayProperties>(properties).type, label, emptyString(), true, false, true, flags.contains(Flag::Ephemeral) };
+        return CaptureDevice { persistentId, std::get<MockDisplayProperties>(properties).type, label, emptyString(), true, isDefault, true, flags.contains(Flag::Ephemeral) };
     }
 
     CaptureDevice::DeviceType type() const
@@ -115,6 +115,7 @@ struct MockMediaDevice {
     String persistentId;
     String label;
     Flags flags;
+    bool isDefault;
     std::variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;
 };
 

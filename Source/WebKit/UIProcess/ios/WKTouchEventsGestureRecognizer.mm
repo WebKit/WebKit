@@ -228,8 +228,14 @@ static CGPoint mapRootViewToViewport(CGPoint pointInRootView, WKContentView *con
 {
     RetainPtr webView = [contentView webView];
     CGPoint origin = [webView bounds].origin;
-    auto inset = [webView _computedObscuredInset];
-    auto offsetInRootView = [webView convertPoint:CGPointMake(origin.x + inset.left, origin.y + inset.top) toView:contentView];
+    auto obscuredInsets = [webView _computedObscuredInset];
+    auto contentZoomScale = static_cast<CGFloat>([webView _contentZoomScale]);
+    auto visibleContentInsets = [webView currentlyVisibleContentInsetsWithScale:contentZoomScale obscuredInsets:obscuredInsets];
+    CGPoint offsetInWebView {
+        origin.x + obscuredInsets.left + (visibleContentInsets.left * contentZoomScale),
+        origin.y + obscuredInsets.top + (visibleContentInsets.top * contentZoomScale)
+    };
+    auto offsetInRootView = [webView convertPoint:offsetInWebView toView:contentView];
     return CGPointMake(pointInRootView.x - offsetInRootView.x, pointInRootView.y - offsetInRootView.y);
 }
 

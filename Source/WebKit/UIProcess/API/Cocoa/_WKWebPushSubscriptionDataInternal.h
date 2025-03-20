@@ -26,6 +26,7 @@
 #import "APIWebPushSubscriptionData.h"
 #import "WKObject.h"
 #import "_WKWebPushSubscriptionData.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::WebPushSubscriptionData> {
 
 @interface _WKWebPushSubscriptionData () <WKObject> {
 @package
-    API::ObjectStorage<API::WebPushSubscriptionData> _data;
+    AlignedStorage<API::WebPushSubscriptionData> _data;
 }
 @end

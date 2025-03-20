@@ -348,7 +348,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, state=None, substate=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -440,6 +440,10 @@ class Tracker(GenericTracker):
 
         if source_changes:
             sys.stderr.write('Bugzilla does not support source changes at this time\n')
+            return None
+
+        if state or substate:
+            sys.stderr.write('Bugzilla does not support state at this time\n')
             return None
 
         return issue
@@ -667,20 +671,34 @@ class Tracker(GenericTracker):
             if user_to_cc:
                 keyword_to_add = 'InRadar'
             elif comment_to_make:
-                tracked_bug = issue.references[0] if issue.references else '?'
-                sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
-                    self.radar_importer.name,
-                    tracked_bug,
-                ))
-                response = webkitcorepy.Terminal.choose(
-                    f'Double-check you have the correct bug ({issue.link}).\nWould you like to overwrite {tracked_bug.link} with {radar.link}?',
-                    options=('Yes', 'Skip CC', 'Exit'), default='Exit',
-                )
-                if response == 'Skip CC':
-                    print(f'Skipping CC for {issue.link}')
-                    return None
-                if response == 'No':
-                    raise ValueError('Radar is tracking a different bug')
+                tracked_bug = issue.references[0] if issue.references else None
+                if tracked_bug:
+                    sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
+                        self.radar_importer.name,
+                        tracked_bug,
+                    ))
+                    response = webkitcorepy.Terminal.choose(
+                        f'Double-check you have the correct bug ({issue.link}).\nWould you like to overwrite {tracked_bug.link} with {radar.link}?',
+                        options=('Yes', 'Skip CC', 'Exit'), default='Exit',
+                    )
+                    if response == 'Skip CC':
+                        print(f'Skipping CC for {issue.link}')
+                        return None
+                    if response == 'No':
+                        raise ValueError('Radar is tracking a different bug')
+                else:
+                    sys.stderr.write("{} already CCed but no Radar was imported\n".format(
+                        self.radar_importer.name,
+                    ))
+                    response = webkitcorepy.Terminal.choose(
+                        f'Would you like to CC {radar.link}?',
+                        options=('Yes', 'Skip CC', 'Exit'), default='Exit',
+                    )
+                    if response == 'Skip CC':
+                        print(f'Skipping CC for {issue.link}')
+                        return None
+                    if response == 'No':
+                        raise ValueError("Radar Importer is already CC'd")
                 user_to_cc = True  # Ensure that the user override is respected even if 'InRadar' is applied
 
         did_modify_cc = False

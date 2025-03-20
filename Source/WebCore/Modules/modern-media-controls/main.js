@@ -37,7 +37,8 @@ function createControls(shadowRoot, media, host)
         iconService.shadowRoot = shadowRoot;
         iconService.mediaControlsHost = host;
 
-        shadowRoot.appendChild(document.createElement("style")).textContent = host.shadowRootCSSText;
+        for (let styleSheet of host.shadowRootStyleSheets)
+            shadowRoot.appendChild(document.createElement("style")).textContent = styleSheet;
     }
 
     return new MediaController(shadowRoot, media, host);

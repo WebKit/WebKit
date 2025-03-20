@@ -7,6 +7,6 @@ PASS Dynamically re-attaching
 PASS Dynamically detaching
 PASS Removing/inserting element with attaching timeline
 PASS Ancestor attached element becoming display:none/block
-FAIL A deferred timeline appearing dynamically in the ancestor chain assert_equals: expected "100px" but got "0px"
+PASS A deferred timeline appearing dynamically in the ancestor chain
 PASS Animations prefer non-deferred timelines
 

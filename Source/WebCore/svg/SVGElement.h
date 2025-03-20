@@ -37,8 +37,6 @@
 namespace WebCore {
 
 class AffineTransform;
-class CSSStyleDeclaration;
-class DeprecatedCSSOMValue;
 class Document;
 class SVGDocumentExtensions;
 class SVGElementRareData;

@@ -1,25 +1,22 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="xpath-test-pre.js"></script>
 <style>
 #context {display:none}
 </style>
 </head>
 <body>
-<p>Test that an NCName and * are interpreted as an operator when in
-binary operator context, and as a NameTest otherwise.
 
 <p>See <a href="http://bugs.webkit.org/show_bug.cgi?id=50366">bug 50366</a>:
 XPath lexer misinterprets expression starting with "div".</p>
-
-<div id="console"></div>
 
 <div id="context">
   <div id="two" div="x">2</div>
 </div>
 
 <script>
+description("Test that an NCName and * are interpreted as an operator when in binary operator context, and as a NameTest otherwise.");
 var context = document.getElementById('context');
 var div = document.getElementById('two');
 
@@ -109,6 +106,5 @@ test(xmlDoc2, xmlDoc2, "mod mod mod", 0, null);
 test(xmlDoc2, xmlDoc2, "(mod) mod 5", 3, null);
 test(xmlDoc2, xmlDoc2, "string(mod/@and)", 'x', null);
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

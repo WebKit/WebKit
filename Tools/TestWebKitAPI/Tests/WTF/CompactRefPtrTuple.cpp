@@ -124,6 +124,165 @@ TEST(WTF_CompactRefPtrTuple, Basic)
         EXPECT_EQ(ptr.type(), 0xFFFF);
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    // Fancy constructor
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+}
+
+TEST(WTF_CompactRefPtrTuple, Copy)
+{
+    DerivedRefLogger a("a");
+
+    // Copy constructor
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(ptr);
+
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2 = ptr;
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
+
+    // Copy assignment
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2;
+
+        ptr2 = ptr;
+
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_CompactRefPtrTuple, Move)
+{
+    DerivedRefLogger a("a");
+
+    // Move constructor
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(WTFMove(ptr));
+
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2 = WTFMove(ptr);
+
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    // Move assignment
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2;
+
+        ptr2 = WTFMove(ptr);
+
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xFFFF);
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_CompactRefPtrTuple, Swap)
+{
+    DerivedRefLogger a("a");
+    DerivedRefLogger b("b");
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(&b, 0x5555);
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+
+        EXPECT_EQ(&b, ptr2.pointer());
+        EXPECT_EQ(&b.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0x5555);
+
+        ptr.swap(ptr2);
+
+        EXPECT_EQ(&b, ptr.pointer());
+        EXPECT_EQ(&b.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0x5555);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xffff);
+    }
+    EXPECT_STREQ("ref(a) ref(b) deref(a) deref(b) ", takeLogStr().c_str());
+
+    {
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(&b, 0x5555);
+        EXPECT_EQ(&a, ptr.pointer());
+        EXPECT_EQ(&a.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0xFFFF);
+
+        EXPECT_EQ(&b, ptr2.pointer());
+        EXPECT_EQ(&b.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0x5555);
+
+        std::swap(ptr, ptr2);
+
+        EXPECT_EQ(&b, ptr.pointer());
+        EXPECT_EQ(&b.name, &ptr.pointer()->name);
+        EXPECT_EQ(ptr.type(), 0x5555);
+
+        EXPECT_EQ(&a, ptr2.pointer());
+        EXPECT_EQ(&a.name, &ptr2.pointer()->name);
+        EXPECT_EQ(ptr2.type(), 0xffff);
+    }
+    EXPECT_STREQ("ref(a) ref(b) deref(a) deref(b) ", takeLogStr().c_str());
 }
 
 } // namespace TestWebKitAPI

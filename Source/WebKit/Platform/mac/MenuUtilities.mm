@@ -209,7 +209,7 @@ NSString *symbolNameForAction(const WebCore::ContextMenuAction action, bool useA
         return @"minus.magnifyingglass";
     case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
     case WebCore::ContextMenuItemTagAddHighlightToNewQuickNote:
-        return @"append.page";
+        return @"quicknote";
     case WebCore::ContextMenuItemTagBold:
         return @"bold";
     case WebCore::ContextMenuItemTagCapitalize:
@@ -230,7 +230,7 @@ NSString *symbolNameForAction(const WebCore::ContextMenuAction action, bool useA
     case WebCore::ContextMenuItemTagCopyLinkWithHighlight:
         return @"text.quote";
     case WebCore::ContextMenuItemTagCopySubject:
-        return @"person.fill.viewfinder";
+        return @"circle.dashed.rectangle";
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return @"keyboard.badge.eye";
     case WebCore::ContextMenuItemTagCut:

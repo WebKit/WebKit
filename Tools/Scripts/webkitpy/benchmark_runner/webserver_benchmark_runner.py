@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 import os
@@ -26,15 +25,6 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         result = self._browser_driver.add_additional_results(test_url, self._http_server_driver.fetch_result())
         assert(not self._http_server_driver.get_return_code())
         return result
-
-    def _construct_subtest_url(self, subtests):
-        if not subtests or not isinstance(subtests, collections.abc.Mapping) or 'subtest_url_format' not in self._plan:
-            return ''
-        subtest_url = ''
-        for suite, tests in subtests.items():
-            for test in tests:
-                subtest_url = subtest_url + '&' + self._plan['subtest_url_format'].replace('${SUITE}', suite).replace('${TEST}', test)
-        return subtest_url
 
     def _run_one_test(self, web_root, test_file, iteration):
         enable_profiling = self._profile_output_dir and self._trace_type

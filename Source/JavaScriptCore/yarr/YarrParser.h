@@ -52,13 +52,13 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
     { checker.assertionBOL() } -> std::same_as<void>;
     { checker.assertionEOL() } -> std::same_as<void>;
     { checker.assertionWordBoundary(bool{}) } -> std::same_as<void>;
-    { checker.atomPatternCharacter(char32_t{}) } -> std::same_as<void>;
+    { checker.atomPatternCharacter(char32_t { }, bool { }) } -> std::same_as<void>;
     { checker.atomBuiltInCharacterClass(BuiltInCharacterClassID{}, bool{}) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin(bool{}) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin() } -> std::same_as<void>;
     { checker.atomCharacterClassAtom(UChar{}) } -> std::same_as<void>;
     { checker.atomCharacterClassRange(UChar{}, UChar{}) } -> std::same_as<void>;
-    { checker.atomPatternCharacter(char32_t{}) } -> std::same_as<void>;
+    { checker.atomPatternCharacter(char32_t { }, bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBuiltIn(BuiltInCharacterClassID{}, bool{}) } -> std::same_as<void>;
     { checker.atomClassStringDisjunction(disjunctionStrings) } -> std::same_as<void>;
     { checker.atomCharacterClassSetOp(CharacterClassSetOp{}) } -> std::same_as<void>;
@@ -248,7 +248,7 @@ private:
          * mode we will allow a hypen to be treated as indicating a range (i.e. /[a-z]/
          * is different to /[a\-z]/).
          */
-        void atomPatternCharacter(char32_t ch, bool hyphenIsRange = false)
+        void atomPatternCharacter(char32_t ch, bool hyphenIsRange)
         {
             switch (m_state) {
             case CharacterClassConstructionState::AfterCharacterClass:
@@ -584,7 +584,7 @@ private:
          * mode we will allow a hypen to be treated as indicating a range (i.e. /[a-z]/
          * is different to /[a\-z]/).
          */
-        void atomPatternCharacter(char32_t ch)
+        void atomPatternCharacter(char32_t ch, bool hyphenIsRange)
         {
             bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
             bool processingEscape = m_processingEscape;
@@ -606,7 +606,7 @@ private:
                 // another character or character class will result in syntax error.
                 // A hypen following a character class is itself valid, but only at
                 // the end of a regex.
-                if (unionOpActive && ch == '-') {
+                if (hyphenIsRange && unionOpActive && ch == '-') {
                     m_delegate.atomCharacterClassAtom('-');
                     m_state = ClassSetConstructionState::AfterCharacterClassHyphen;
                     return;
@@ -815,7 +815,7 @@ private:
         {
         }
 
-        void atomPatternCharacter(char32_t ch, bool = false)
+        void atomPatternCharacter(char32_t ch, bool)
         {
             m_stringInProgress.append(ch);
             if (m_stringInProgress.size() > 1)
@@ -892,7 +892,7 @@ private:
      * following methods:
      *
      *   Required methods:
-     *    void atomPatternCharacter(char32_t ch);
+     *    void atomPatternCharacter(char32_t ch, bool hyphenIsRange);
      *
      *   Optional methods based on parseEscapeMode:
      *    void assertionWordBoundary(bool invert);
@@ -918,7 +918,7 @@ private:
         case 'b':
             consume();
             if (parseEscapeMode != ParseEscapeMode::Normal)
-                delegate.atomPatternCharacter('\b');
+                delegate.atomPatternCharacter('\b', /* hyphenIsRange */ false);
             else {
                 delegate.assertionWordBoundary(false);
                 return TokenType::NotAtom;
@@ -930,7 +930,7 @@ private:
                 if (isIdentityEscapeAnError<parseEscapeMode>('B'))
                     break;
 
-                delegate.atomPatternCharacter('B');
+                delegate.atomPatternCharacter('B', /* hyphenIsRange */ false);
             } else {
                 delegate.assertionWordBoundary(true);
                 return TokenType::NotAtom;
@@ -941,7 +941,7 @@ private:
         case 'd':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('d');
+                delegate.atomPatternCharacter('d', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::DigitClassID, false);
@@ -949,7 +949,7 @@ private:
         case 's':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('s');
+                delegate.atomPatternCharacter('s', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::SpaceClassID, false);
@@ -957,7 +957,7 @@ private:
         case 'w':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('w');
+                delegate.atomPatternCharacter('w', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::WordClassID, false);
@@ -965,7 +965,7 @@ private:
         case 'D':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('D');
+                delegate.atomPatternCharacter('D', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::DigitClassID, true);
@@ -973,7 +973,7 @@ private:
         case 'S':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('S');
+                delegate.atomPatternCharacter('S', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::SpaceClassID, true);
@@ -981,7 +981,7 @@ private:
         case 'W':
             consume();
             if (parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                delegate.atomPatternCharacter('W');
+                delegate.atomPatternCharacter('W', /* hyphenIsRange */ false);
                 break;
             }
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::WordClassID, true);
@@ -991,7 +991,7 @@ private:
             consume();
 
             if (!peekIsDigit()) {
-                delegate.atomPatternCharacter(0);
+                delegate.atomPatternCharacter(0, /* hyphenIsRange */ false);
                 break;
             }
 
@@ -1000,7 +1000,7 @@ private:
                 break;
             }
 
-            delegate.atomPatternCharacter(consumeOctal(2));
+            delegate.atomPatternCharacter(consumeOctal(2), /* hyphenIsRange */ false);
             break;
         }
 
@@ -1038,30 +1038,30 @@ private:
                 break;
             }
 
-            delegate.atomPatternCharacter(peek() < '8' ? consumeOctal(3) : consume());
+            delegate.atomPatternCharacter(peek() < '8' ? consumeOctal(3) : consume(), /* hyphenIsRange */ false);
             break;
         }
 
         // ControlEscape
         case 'f':
             consume();
-            delegate.atomPatternCharacter('\f');
+            delegate.atomPatternCharacter('\f', /* hyphenIsRange */ false);
             break;
         case 'n':
             consume();
-            delegate.atomPatternCharacter('\n');
+            delegate.atomPatternCharacter('\n', /* hyphenIsRange */ false);
             break;
         case 'r':
             consume();
-            delegate.atomPatternCharacter('\r');
+            delegate.atomPatternCharacter('\r', /* hyphenIsRange */ false);
             break;
         case 't':
             consume();
-            delegate.atomPatternCharacter('\t');
+            delegate.atomPatternCharacter('\t', /* hyphenIsRange */ false);
             break;
         case 'v':
             consume();
-            delegate.atomPatternCharacter('\v');
+            delegate.atomPatternCharacter('\v', /* hyphenIsRange */ false);
             break;
 
         // ControlLetter
@@ -1072,7 +1072,7 @@ private:
                 char32_t control = consume();
 
                 if (WTF::isASCIIAlpha(control)) {
-                    delegate.atomPatternCharacter(control & 0x1f);
+                    delegate.atomPatternCharacter(control & 0x1f, /* hyphenIsRange */ false);
                     break;
                 }
 
@@ -1083,7 +1083,7 @@ private:
 
                 // https://tc39.es/ecma262/#prod-annexB-ClassControlLetter
                 if (parseEscapeMode != ParseEscapeMode::Normal && (WTF::isASCIIDigit(control) || control == '_')) {
-                    delegate.atomPatternCharacter(control & 0x1f);
+                    delegate.atomPatternCharacter(control & 0x1f, /* hyphenIsRange */ false);
                     break;
                 }
             }
@@ -1094,7 +1094,7 @@ private:
             }
 
             restoreState(state);
-            delegate.atomPatternCharacter('\\');
+            delegate.atomPatternCharacter('\\', /* hyphenIsRange */ false);
             break;
         }
 
@@ -1106,9 +1106,9 @@ private:
                 if (isIdentityEscapeAnError<parseEscapeMode>('x'))
                     break;
 
-                delegate.atomPatternCharacter('x');
+                delegate.atomPatternCharacter('x', /* hyphenIsRange */ false);
             } else
-                delegate.atomPatternCharacter(x);
+                delegate.atomPatternCharacter(x, /* hyphenIsRange */ false);
             break;
         }
 
@@ -1137,7 +1137,7 @@ private:
 
             restoreState(state);
             if (!isIdentityEscapeAnError<parseEscapeMode>('k')) {
-                delegate.atomPatternCharacter('k');
+                delegate.atomPatternCharacter('k', /* hyphenIsRange */ false);
                 m_kIdentityEscapeSeen = true; 
             }
             break;
@@ -1151,7 +1151,7 @@ private:
             if (isLegacyCompilation() || parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
                 if (isIdentityEscapeAnError<parseEscapeMode>(escapeChar))
                     break;
-                delegate.atomPatternCharacter(escapeChar);
+                delegate.atomPatternCharacter(escapeChar, /* hyphenIsRange */ false);
                 break;
             }
 
@@ -1192,7 +1192,7 @@ private:
             if (isIdentityEscapeAnError<parseEscapeMode>(escapeChar))
                 break;
 
-            delegate.atomPatternCharacter(escapeChar);
+            delegate.atomPatternCharacter(escapeChar, /* hyphenIsRange */ false);
             break;
         }
 
@@ -1202,7 +1202,7 @@ private:
             if (hasError(m_errorCode))
                 break;
 
-            delegate.atomPatternCharacter(codePoint == errorCodePoint ? 'u' : codePoint);
+            delegate.atomPatternCharacter(codePoint == errorCodePoint ? 'u' : codePoint, /* hyphenIsRange */ false);
             break;
         }
 
@@ -1212,14 +1212,14 @@ private:
 
             if (ch == '-' && isEitherUnicodeCompilation() && parseEscapeMode != ParseEscapeMode::Normal) {
                 // \- is allowed for ClassEscape with unicode flag.
-                delegate.atomPatternCharacter(consume());
+                delegate.atomPatternCharacter(consume(), /* hyphenIsRange */ false);
                 break;
             }
 
             if (isIdentityEscapeAnError<parseEscapeMode>(ch))
                 break;
 
-            delegate.atomPatternCharacter(consume());
+            delegate.atomPatternCharacter(consume(), /* hyphenIsRange */ false);
         }
         
         return TokenType::Atom;
@@ -1328,7 +1328,7 @@ private:
                 break;
 
             default:
-                characterClassConstructor.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>(), true);
+                characterClassConstructor.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>(), /* hyphenIsRange */ true);
             }
 
             if (hasError(m_errorCode))
@@ -1360,7 +1360,7 @@ private:
             if (ch == errorCodePoint)
                 return;
 
-            classSetConstructor.atomPatternCharacter(static_cast<char32_t>(ch));
+            classSetConstructor.atomPatternCharacter(static_cast<char32_t>(ch), /* hyphenIsRange */ true);
         };
 
         while (!atEndOfPattern()) {
@@ -1492,7 +1492,7 @@ private:
                 if (ch == errorCodePoint)
                     return;
 
-                stringDisjunctionDelegate.atomPatternCharacter(static_cast<char32_t>(ch));
+                stringDisjunctionDelegate.atomPatternCharacter(static_cast<char32_t>(ch), /* hyphenIsRange */ false);
             }
             }
 
@@ -1765,7 +1765,7 @@ private:
                     break;
                 }
 
-                m_delegate.atomPatternCharacter(consume());
+                m_delegate.atomPatternCharacter(consume(), /* hyphenIsRange */ false);
                 lastTokenType = TokenType::Atom;
                 break;
 
@@ -1827,7 +1827,7 @@ private:
             }
 
             default:
-                m_delegate.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>());
+                m_delegate.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>(), /* hyphenIsRange */ false);
                 lastTokenType = TokenType::Atom;
             }
 

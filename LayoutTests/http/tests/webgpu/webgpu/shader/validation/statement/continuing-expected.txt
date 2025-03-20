@@ -31,7 +31,7 @@ FAIL :placement:stmt="continuing_semicolon" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     9:43: Not a valid statement
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :placement:stmt="continuing_functionn_call"
 PASS :placement:stmt="continuing_let"

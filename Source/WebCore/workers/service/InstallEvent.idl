@@ -31,5 +31,5 @@
 ]
 interface InstallEvent : ExtendableEvent {
     constructor([AtomString] DOMString type, optional ExtendableEventInit eventInitDict = {});
-    [CallWith=CurrentScriptExecutionContext] Promise<undefined> addRoutes((RouterRule or sequence<RouterRule>) rules);
+    [CallWith=CurrentGlobalObject] Promise<undefined> addRoutes((RouterRule or sequence<RouterRule>) rules);
 };

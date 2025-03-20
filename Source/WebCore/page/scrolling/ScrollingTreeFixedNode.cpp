@@ -114,9 +114,9 @@ FloatPoint ScrollingTreeFixedNode::computeLayerPosition() const
 
 void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "fixed node";
+    ts << "fixed node"_s;
     ScrollingTreeNode::dumpProperties(ts, behavior);
-    ts.dumpProperty("fixed constraints", m_constraints);
+    ts.dumpProperty("fixed constraints"_s, m_constraints);
 }
 
 } // namespace WebCore

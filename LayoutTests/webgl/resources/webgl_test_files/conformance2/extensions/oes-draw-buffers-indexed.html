@@ -316,10 +316,11 @@ function runInvalidEnumsTest() {
     shouldBeNull("gl.getIndexedParameter(0x80CA, 0)");  // BLEND_DST_ALPHA
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_DST_ALPHA');
     shouldBeNull("gl.getIndexedParameter(0x0C23, 0)");  // COLOR_WRITEMASK
-    wtu.glErrorShouldBe(gl, [gl.INVALID_OPERATION, gl.INVALID_ENUM], 'invalid operations or invalid enums for COLOR_WRITEMASK');
+    wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'COLOR_WRITEMASK');
 }
 
 function testInvalidValues() {
+    debug("Testing invalid index values for the new entrypoints");
     const numDrawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
     if (!numDrawBuffers) throw new Error('!numDrawBuffers');
     wtu.shouldGenerateGLError(gl, gl.INVALID_VALUE, `ext.enableiOES(gl.BLEND, -1)`);
@@ -349,6 +350,39 @@ function testInvalidValues() {
     wtu.shouldGenerateGLError(gl, gl.INVALID_VALUE, `ext.colorMaskiOES(-1, 1,1,1,1)`);
     wtu.shouldGenerateGLError(gl, gl.INVALID_VALUE, `ext.colorMaskiOES(${numDrawBuffers}, 1,1,1,1)`);
     wtu.shouldGenerateGLError(gl, 0, `ext.colorMaskiOES(${numDrawBuffers-1}, 1,1,1,1)`);
+
+    debug("Testing invalid index values for getIndexedParameter with new parameters");
+    wtu.glErrorShouldBe(gl, 0, 'No error');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_EQUATION_RGB, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_EQUATION_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_EQUATION_ALPHA, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_EQUATION_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_SRC_RGB, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_SRC_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_SRC_ALPHA, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_SRC_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_DST_RGB, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_DST_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_DST_ALPHA, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_DST_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.COLOR_WRITEMASK, -1)`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'COLOR_WRITEMASK');
+
+    wtu.glErrorShouldBe(gl, 0, 'No error');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_EQUATION_RGB, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_EQUATION_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_EQUATION_ALPHA, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_EQUATION_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_SRC_RGB, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_SRC_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_SRC_ALPHA, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_SRC_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_DST_RGB, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_DST_RGB');
+    shouldBeNull(`gl.getIndexedParameter(gl.BLEND_DST_ALPHA, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'BLEND_DST_ALPHA');
+    shouldBeNull(`gl.getIndexedParameter(gl.COLOR_WRITEMASK, ${numDrawBuffers})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, 'COLOR_WRITEMASK');
 }
 
 function* range(n) {

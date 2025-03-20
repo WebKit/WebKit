@@ -2238,7 +2238,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                     CRASH();
                 }
 
-                jit.purifyNaN(m_scratchFPR);
+                jit.purifyNaN(m_scratchFPR, m_scratchFPR);
                 jit.boxDouble(m_scratchFPR, valueRegs);
             }
         }
@@ -4240,6 +4240,15 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(StructureStubInfo& stubInfo, JS
         return false;
 
     switch (getter->intrinsic()) {
+    case DataViewByteLengthIntrinsic: {
+        if (structure->typeInfo().type() != DataViewType)
+            return false;
+#if USE(JSVALUE32_64)
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
+            return false;
+#endif
+        return true;
+    }
     case TypedArrayByteOffsetIntrinsic:
     case TypedArrayByteLengthIntrinsic:
     case TypedArrayLengthIntrinsic: {
@@ -4309,8 +4318,16 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
         return;
     }
 
+    case DataViewByteLengthIntrinsic:
     case TypedArrayByteLengthIntrinsic: {
         TypedArrayType type = typedArrayType(accessCase.structure()->typeInfo().type());
+        bool isDataView = accessCase.intrinsic() == DataViewByteLengthIntrinsic;
+
+        CCallHelpers::JumpList failAndIgnore;
+        if (isDataView) {
+            ASSERT(type == TypeDataView);
+            failAndIgnore.append(jit.branchTestPtr(MacroAssembler::Zero, MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector())));
+        }
 
 #if USE(JSVALUE64)
         if (isResizableOrGrowableSharedTypedArrayIncludingDataView(accessCase.structure()->classInfoForCells())) {
@@ -4319,7 +4336,12 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
 
             ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-            jit.loadTypedArrayByteLength(baseGPR, valueGPR, m_scratchGPR, scratch2GPR, typedArrayType(accessCase.structure()->typeInfo().type()));
+            if (isDataView) {
+                auto [outOfBounds, doneCases] = jit.loadDataViewByteLength(baseGPR, valueGPR, m_scratchGPR, scratch2GPR, type);
+                failAndIgnore.append(outOfBounds);
+                doneCases.link(&jit);
+            } else
+                jit.loadTypedArrayByteLength(baseGPR, valueGPR, m_scratchGPR, scratch2GPR, typedArrayType(accessCase.structure()->typeInfo().type()));
 #if USE(LARGE_TYPED_ARRAYS)
             jit.boxInt52(valueGPR, valueGPR, m_scratchGPR, m_scratchFPR);
 #else
@@ -4327,6 +4349,13 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
 #endif
             allocator.restoreReusedRegistersByPopping(jit, preservedState);
             succeed();
+
+            if (allocator.didReuseRegisters() && !failAndIgnore.empty()) {
+                failAndIgnore.link(&jit);
+                allocator.restoreReusedRegistersByPopping(jit, preservedState);
+                m_failAndIgnore.append(jit.jump());
+            } else
+                m_failAndIgnore.append(failAndIgnore);
             return;
         }
 #endif
@@ -4345,6 +4374,7 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
         jit.boxInt32(valueGPR, valueRegs);
 #endif
         succeed();
+        m_failAndIgnore.append(failAndIgnore);
         return;
     }
 

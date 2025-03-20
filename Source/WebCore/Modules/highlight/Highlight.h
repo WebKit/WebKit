@@ -33,9 +33,7 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
 class DOMSetAdapter;
-class PropertySetCSSStyleDeclaration;
 
 class HighlightRange : public RefCountedAndCanMakeWeakPtr<HighlightRange> {
 public:

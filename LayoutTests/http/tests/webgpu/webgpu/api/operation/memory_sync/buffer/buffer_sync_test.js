@@ -1,6 +1,6 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { assert, unreachable } from '../../../../../common/util/util.js';import { GPUTest } from '../../../../gpu_test.js';import { checkElementsEqualEither } from '../../../../util/check_contents.js';
+**/import { assert, unreachable } from '../../../../../common/util/util.js';import { AllFeaturesMaxLimitsGPUTest } from '../../../../gpu_test.js';import { checkElementsEqualEither } from '../../../../util/check_contents.js';
 
 
 export const kAllWriteOps = ['storage', 'b2b-copy', 't2b-copy', 'write-buffer'];
@@ -127,6 +127,21 @@ context)
   return true;
 }
 
+function readOpUsesStorageBufferInFragmentShader(readOp) {
+  return (
+    readOp === 'storage-read' ||
+    readOp === 'input-vertex' ||
+    readOp === 'input-index' ||
+    readOp === 'input-indirect' ||
+    readOp === 'input-indirect-index' ||
+    readOp === 'constant-uniform');
+
+}
+
+function writeOpUsesStorageBufferInFragmentShader(writeOp) {
+  return writeOp === 'storage' || writeOp === 'write-buffer';
+}
+
 const kDummyVertexShader = `
 @vertex fn vert_main() -> @builtin(position) vec4<f32> {
   return vec4<f32>(0.5, 0.5, 0.0, 1.0);
@@ -135,7 +150,7 @@ const kDummyVertexShader = `
 
 // Note: If it would be useful to have any of these helpers be separate from the fixture,
 // they can be refactored into standalone functions.
-export class BufferSyncTest extends GPUTest {
+export class BufferSyncTest extends AllFeaturesMaxLimitsGPUTest {
   // Vertex and index buffers used in read render pass
 
 
@@ -144,6 +159,40 @@ export class BufferSyncTest extends GPUTest {
   // There can be at most 2 write op
   tmpValueBuffers = [undefined, undefined];
   tmpValueTextures = [undefined, undefined];
+
+  skipIfNoSupportForStorageBuffersInFragmentStage() {
+    if (this.isCompatibility) {
+      this.skipIf(
+        !(this.device.limits.maxStorageBuffersInFragmentStage >= 2),
+        `maxStorageBuffersInFragmentStage(${this.device.limits.maxStorageBuffersInFragmentStage}) < 2`
+      );
+    }
+  }
+
+  skipIfReadOpsOrWriteOpsUsesStorageBufferInFragmentStageAndNoSupportStorageBuffersInFragmentShaders(
+  readOp,
+  writeOp)
+  {
+    if (this.isCompatibility) {
+      const readOps = Array.isArray(readOp) ? readOp : [readOp];
+      const writeOps = Array.isArray(writeOp) ? writeOp : [writeOp];
+      const readOpsUseStorageBuffersInFragmentStage = readOps.reduce(
+        (uses, op) => uses || readOpUsesStorageBufferInFragmentShader(op),
+        false
+      );
+      const writeOpsUseStorageBuffersInFragmentStage = writeOps.reduce(
+        (uses, op) => uses || writeOpUsesStorageBufferInFragmentShader(op),
+        false
+      );
+      const usesStorageBuffersInFragmentStage =
+      readOpsUseStorageBuffersInFragmentStage || writeOpsUseStorageBuffersInFragmentStage;
+      this.skipIf(
+        usesStorageBuffersInFragmentStage &&
+        !(this.device.limits.maxStorageBuffersInFragmentStage >= 2),
+        `maxStorageBuffersInFragmentStage(${this.device.limits.maxStorageBuffersInFragmentStage}) < 2`
+      );
+    }
+  }
 
   // These intermediate buffers/textures are created before any read/write op
   // to avoid extra memory synchronization between ops introduced by await on buffer/texture creations.
@@ -221,39 +270,35 @@ export class BufferSyncTest extends GPUTest {
         break;
     }
 
-    const dstBuffer = this.trackForCleanup(
-      this.device.createBuffer({
-        size: Uint32Array.BYTES_PER_ELEMENT,
-        usage:
-        GPUBufferUsage.COPY_SRC |
-        GPUBufferUsage.COPY_DST |
-        GPUBufferUsage.STORAGE |
-        GPUBufferUsage.VERTEX |
-        GPUBufferUsage.INDEX |
-        GPUBufferUsage.INDIRECT |
-        GPUBufferUsage.UNIFORM
-      })
-    );
+    const dstBuffer = this.createBufferTracked({
+      size: Uint32Array.BYTES_PER_ELEMENT,
+      usage:
+      GPUBufferUsage.COPY_SRC |
+      GPUBufferUsage.COPY_DST |
+      GPUBufferUsage.STORAGE |
+      GPUBufferUsage.VERTEX |
+      GPUBufferUsage.INDEX |
+      GPUBufferUsage.INDIRECT |
+      GPUBufferUsage.UNIFORM
+    });
 
     return { srcBuffer, dstBuffer };
   }
 
   // Create a buffer with 1 uint32 element, and initialize it to a specified value.
   async createBufferWithValue(initValue) {
-    const buffer = this.trackForCleanup(
-      this.device.createBuffer({
-        mappedAtCreation: true,
-        size: Uint32Array.BYTES_PER_ELEMENT,
-        usage:
-        GPUBufferUsage.COPY_SRC |
-        GPUBufferUsage.COPY_DST |
-        GPUBufferUsage.STORAGE |
-        GPUBufferUsage.VERTEX |
-        GPUBufferUsage.INDEX |
-        GPUBufferUsage.INDIRECT |
-        GPUBufferUsage.UNIFORM
-      })
-    );
+    const buffer = this.createBufferTracked({
+      mappedAtCreation: true,
+      size: Uint32Array.BYTES_PER_ELEMENT,
+      usage:
+      GPUBufferUsage.COPY_SRC |
+      GPUBufferUsage.COPY_DST |
+      GPUBufferUsage.STORAGE |
+      GPUBufferUsage.VERTEX |
+      GPUBufferUsage.INDEX |
+      GPUBufferUsage.INDIRECT |
+      GPUBufferUsage.UNIFORM
+    });
     new Uint32Array(buffer.getMappedRange()).fill(initValue);
     buffer.unmap();
     await this.queue.onSubmittedWorkDone();
@@ -262,20 +307,18 @@ export class BufferSyncTest extends GPUTest {
 
   // Create a buffer, and initialize it to the specified values.
   async createBufferWithValues(initValues) {
-    const buffer = this.trackForCleanup(
-      this.device.createBuffer({
-        mappedAtCreation: true,
-        size: Uint32Array.BYTES_PER_ELEMENT * initValues.length,
-        usage:
-        GPUBufferUsage.COPY_SRC |
-        GPUBufferUsage.COPY_DST |
-        GPUBufferUsage.STORAGE |
-        GPUBufferUsage.VERTEX |
-        GPUBufferUsage.INDEX |
-        GPUBufferUsage.INDIRECT |
-        GPUBufferUsage.UNIFORM
-      })
-    );
+    const buffer = this.createBufferTracked({
+      mappedAtCreation: true,
+      size: Uint32Array.BYTES_PER_ELEMENT * initValues.length,
+      usage:
+      GPUBufferUsage.COPY_SRC |
+      GPUBufferUsage.COPY_DST |
+      GPUBufferUsage.STORAGE |
+      GPUBufferUsage.VERTEX |
+      GPUBufferUsage.INDEX |
+      GPUBufferUsage.INDIRECT |
+      GPUBufferUsage.UNIFORM
+    });
     const bufferView = new Uint32Array(buffer.getMappedRange());
     bufferView.set(initValues);
     buffer.unmap();
@@ -287,13 +330,11 @@ export class BufferSyncTest extends GPUTest {
   async createTextureWithValue(initValue) {
     // This is not hot in profiles; optimize if this gets used more heavily.
     const data = new Uint32Array(1).fill(initValue);
-    const texture = this.trackForCleanup(
-      this.device.createTexture({
-        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
-        format: 'r32uint',
-        usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST
-      })
-    );
+    const texture = this.createTextureTracked({
+      size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+      format: 'r32uint',
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST
+    });
     this.device.queue.writeTexture(
       { texture, mipLevel: 0, origin: { x: 0, y: 0, z: 0 } },
       data,
@@ -379,13 +420,11 @@ export class BufferSyncTest extends GPUTest {
   }
 
   beginSimpleRenderPass(encoder) {
-    const view = this.trackForCleanup(
-      this.device.createTexture({
-        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
-        format: 'rgba8unorm',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT
-      })
-    ).createView();
+    const view = this.createTextureTracked({
+      size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+      format: 'rgba8unorm',
+      usage: GPUTextureUsage.RENDER_ATTACHMENT
+    }).createView();
     return encoder.beginRenderPass({
       colorAttachments: [
       {
@@ -544,7 +583,7 @@ export class BufferSyncTest extends GPUTest {
       vertex: `
       struct VertexOutput {
         @builtin(position) position : vec4<f32>,
-        @location(0) @interpolate(flat) data : u32,
+        @location(0) @interpolate(flat, either) data : u32,
       };
 
       @vertex fn vert_main(@location(0) input: u32) -> VertexOutput {
@@ -561,7 +600,7 @@ export class BufferSyncTest extends GPUTest {
 
       @group(0) @binding(0) var<storage, read_write> data : Data;
 
-      @fragment fn frag_main(@location(0) @interpolate(flat) input : u32) -> @location(0) vec4<f32> {
+      @fragment fn frag_main(@location(0) @interpolate(flat, either) input : u32) -> @location(0) vec4<f32> {
         data.a = input;
         return vec4<f32>();  // result does't matter
       }
@@ -806,13 +845,11 @@ export class BufferSyncTest extends GPUTest {
 
   // Read and Write texture via BufferToTexture copy.
   encodeReadByB2TCopy(encoder, srcBuffer, dstBuffer) {
-    const tmpTexture = this.trackForCleanup(
-      this.device.createTexture({
-        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
-        format: 'r32uint',
-        usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST
-      })
-    );
+    const tmpTexture = this.createTextureTracked({
+      size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+      format: 'r32uint',
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST
+    });
 
     // The b2t copy is just encoded into command encoder, it doesn't write immediately.
     encoder.copyBufferToTexture(

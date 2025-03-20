@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="text" id="input" value="Hello world!" />
+
+<script>
+var output = "This test ensures when we have a stale offset passed into the word methdods, we don't crash.\n\n";
+
+var input, finalMarkerRange;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    input = accessibilityController.accessibleElementById("input");
+    const inputMarkerRange = input.textMarkerRangeForElement(input);
+    const startOfInputRange = input.startTextMarkerForTextMarkerRange(inputMarkerRange);
+    const endOfInputRange = input.endTextMarkerForTextMarkerRange(inputMarkerRange);
+
+    setTimeout(async function() {
+        // Remove the '!' from the text.
+        input.replaceTextInRange("", 11, 1);
+
+        await waitFor(() => input.stringValue.length == 20);
+        // We shouldn't crash here.
+        input.previousWordStartTextMarkerForTextMarker(endOfInputRange);
+        finalMarkerRange = input.textMarkerRangeForMarkers(startOfInputRange, endOfInputRange);
+        output += expect("input.stringForTextMarkerRange(finalMarkerRange).length > 0", "true");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

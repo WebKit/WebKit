@@ -98,6 +98,9 @@ InlineIterator::TextBoxIterator TextBoxPainter::makeIterator() const
 
 void TextBoxPainter::paint()
 {
+    if (m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeText))
+        return;
+
     if (m_paintInfo.phase == PaintPhase::Selection && !m_haveSelection)
         return;
 
@@ -1060,11 +1063,49 @@ void TextBoxPainter::paintPlatformDocumentMarkers()
 
 #if ENABLE(WRITING_TOOLS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/TextBoxPainterAdditions.cpp>
-#else
-static void drawUnifiedTextReplacementUnderline(GraphicsContext&, const FloatRect&, IntSize) { }
-#endif
+constexpr Seconds writingToolsAnimationLoop = 10000_ms;
+static void drawWritingToolsUnderline(GraphicsContext& context, const FloatRect& rect, IntSize frameSize)
+{
+    auto radius = rect.height() / 2.0;
+    auto minX = rect.x();
+    auto maxX = rect.maxX();
+    auto minY = rect.y();
+    auto maxY = rect.maxY();
+    auto midY = (minY + maxY) / 2.0;
+
+    auto frameX = frameSize.width();
+    auto frameY = frameSize.height();
+
+    constexpr auto redColor = SRGBA<uint8_t> { 227, 100, 136 };
+    constexpr auto yellowColor = SRGBA<uint8_t> { 242, 225, 162 };
+    constexpr auto purpleColor = SRGBA<uint8_t> { 154, 109, 209 };
+
+    auto animationProgress = (MonotonicTime::now() % writingToolsAnimationLoop).value() / 10;
+
+    auto xOffset = frameX * fmod(animationProgress + midY / frameY, 1.0);
+    constexpr std::array colorList { purpleColor, redColor, yellowColor, redColor, purpleColor, purpleColor, redColor, yellowColor, redColor, purpleColor };
+
+    Ref gradient = Gradient::create(Gradient::LinearData { FloatPoint(0 - xOffset, 0), FloatPoint(frameX * 2 - xOffset, frameY) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+
+    auto colorStop = 0.f;
+    auto colorIncrement = 1.0 / colorList.size();
+    for (auto color : colorList) {
+        gradient->addColorStop({ colorStop, color });
+        colorStop += colorIncrement;
+    }
+
+    context.save();
+    context.setFillGradient(WTFMove(gradient));
+
+    Path path;
+    path.moveTo(FloatPoint(minX + radius, maxY));
+    path.addArc(FloatPoint(minX + radius, midY), radius, piOverTwoDouble, 3 * piOverTwoDouble, RotationDirection::Clockwise);
+    path.addLineTo(FloatPoint(maxX - radius, minY));
+    path.addArc(FloatPoint(maxX - radius, midY), radius, 3 * piOverTwoDouble, piOverTwoDouble, RotationDirection::Clockwise);
+
+    context.fillPath(path);
+    context.restore();
+}
 
 #endif // ENABLE(WRITING_TOOLS)
 
@@ -1079,7 +1120,7 @@ void TextBoxPainter::paintPlatformDocumentMarker(const MarkedText& markedText)
 
 #if ENABLE(WRITING_TOOLS)
     if (markedText.type == MarkedText::Type::WritingToolsTextSuggestion) {
-        drawUnifiedTextReplacementUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
+        drawWritingToolsUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
         return;
     }
 #endif

@@ -27,13 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Glyph_h
-#define Glyph_h
+#pragma once
 
 namespace WebCore {
 
 typedef unsigned short Glyph;
 
 } // namespace WebCore
-
-#endif // Glyph_h

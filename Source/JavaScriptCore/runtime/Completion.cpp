@@ -53,7 +53,7 @@ bool checkSyntax(JSGlobalObject* globalObject, const SourceCode& source, JSValue
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
 
     ParserError error;
     if (checkSyntaxInternal(vm, source, error))
@@ -67,7 +67,7 @@ bool checkSyntax(JSGlobalObject* globalObject, const SourceCode& source, JSValue
 bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     return checkSyntaxInternal(vm, source, error);
 }
 
@@ -75,7 +75,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parseRootNode<ModuleProgramNode>(
         vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
         StrictModeLexicallyScopedFeature, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, error);
@@ -87,10 +87,10 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     return !!moduleAnalyzer.analyze(*moduleProgramNode);
 }
 
-RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
+RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, FileSystem::FileHandle& fileHandle, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
 
     LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
     JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
@@ -103,13 +103,13 @@ RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source,
     if (!unlinkedCodeBlock)
         return nullptr;
 
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, lexicallyScopedFeatures, scriptMode, fd, error, { });
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, lexicallyScopedFeatures, scriptMode, fileHandle, error, { });
 }
 
-RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
+RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, FileSystem::FileHandle& fileHandle, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
 
     LexicallyScopedFeatures lexicallyScopedFeatures = StrictModeLexicallyScopedFeature;
     JSParserScriptMode scriptMode = JSParserScriptMode::Module;
@@ -121,7 +121,7 @@ RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, 
         error = parserError;
     if (!unlinkedCodeBlock)
         return nullptr;
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, lexicallyScopedFeatures, scriptMode, fd, error, { });
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, lexicallyScopedFeatures, scriptMode, fileHandle, error, { });
 }
 
 JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)
@@ -129,7 +129,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     if (!thisValue || thisValue.isUndefinedOrNull())
@@ -188,7 +188,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, Symbol* m
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     return globalObject->moduleLoader()->loadAndEvaluateModule(globalObject, moduleId, parameters, scriptFetcher);
@@ -198,7 +198,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Str
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     return globalObject->moduleLoader()->loadAndEvaluateModule(globalObject, identifierToJSValue(vm, Identifier::fromString(vm, moduleName)), parameters, scriptFetcher);
@@ -209,7 +209,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Sou
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     Symbol* key = createSymbolForEntryPointModule(vm);
@@ -224,7 +224,7 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const Identifier& mo
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     return globalObject->moduleLoader()->loadModule(globalObject, identifierToJSValue(vm, moduleKey), parameters, scriptFetcher);
@@ -235,7 +235,7 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const SourceCode& so
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     Symbol* key = createSymbolForEntryPointModule(vm);
@@ -251,7 +251,7 @@ JSValue linkAndEvaluateModule(JSGlobalObject* globalObject, const Identifier& mo
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     return globalObject->moduleLoader()->linkAndEvaluateModule(globalObject, identifierToJSValue(vm, moduleKey), scriptFetcher);
@@ -261,7 +261,7 @@ JSInternalPromise* importModule(JSGlobalObject* globalObject, const Identifier& 
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
+    RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     return globalObject->moduleLoader()->requestImportModule(globalObject, moduleName, referrer, parameters, scriptFetcher);

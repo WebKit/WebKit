@@ -31,12 +31,13 @@
 #include "B3UpsilonValue.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/IndexMap.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
 class PhiChildren {
-    WTF_MAKE_TZONE_ALLOCATED(PhiChildren);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(PhiChildren);
 public:
     PhiChildren(Procedure&);
     ~PhiChildren();

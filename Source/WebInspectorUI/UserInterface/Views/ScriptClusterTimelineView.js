@@ -25,11 +25,11 @@
 
 WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.ClusterContentView
 {
-    constructor(timeline, extraArguments)
+    constructor(timeline)
     {
-        super(timeline);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Script, timeline);
 
-        console.assert(timeline.type === WI.TimelineRecord.Type.Script);
+        super(timeline);
 
         this._currentContentViewSetting = new WI.Setting("script-cluster-timeline-view-current-view", WI.ScriptClusterTimelineView.EventsIdentifier);
 
@@ -37,8 +37,8 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         {
             const showSelectorArrows = true;
             let pathComponent = new WI.HierarchicalPathComponent(displayName, className, identifier, false, showSelectorArrows);
-            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
-            pathComponent.comparisonData = timeline;
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._handleViewPathComponentSelected, this);
+            pathComponent.comparisonData = this.representedObject;
             return pathComponent;
         }
 
@@ -48,11 +48,20 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         this._eventsPathComponent.nextSibling = this._profilePathComponent;
         this._profilePathComponent.previousSibling = this._eventsPathComponent;
 
-        // FIXME: We should be able to create these lazily.
-        this._eventsContentView = new WI.ScriptDetailsTimelineView(this.representedObject, extraArguments);
-        this._profileContentView = new WI.ScriptProfileTimelineView(this.representedObject, extraArguments);
+        let targets = this.representedObject.targets;
 
-        this._showContentViewForIdentifier(this._currentContentViewSetting.value);
+        this._selectedTarget = null;
+        this._displayedTarget = targets.includes(WI.mainTarget) ? WI.mainTarget : (targets.firstValue || WI.assumingMainTarget());
+
+        this._pathComponentForTarget = new Map(targets.map((target) => [target, this._createTargetPathComponent(target)]));
+        this._sortTargetPathComponents();
+
+        this._contentViewsForTarget = new Map;
+
+        this._previousContentView = null;
+        this._updateCurrentContentView();
+
+        this.representedObject.addEventListener(WI.ScriptTimeline.Event.TargetAdded, this._handleTargetAdded, this);
 
         this.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
     }
@@ -70,28 +79,38 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
     set endTime(x) { this._contentViewContainer.currentContentView.endTime = x; }
     get currentTime() { return this._contentViewContainer.currentContentView.currentTime; }
     set currentTime(x) { this._contentViewContainer.currentContentView.currentTime = x; }
-    selectRecord(record) { this._contentViewContainer.currentContentView.selectRecord(record); }
     updateFilter(filters) { return this._contentViewContainer.currentContentView.updateFilter(filters); }
     filterDidChange() { return this._contentViewContainer.currentContentView.filterDidChange(); }
     matchDataGridNodeAgainstCustomFilters(node) { return this._contentViewContainer.currentContentView.matchDataGridNodeAgainstCustomFilters(node); }
 
+    selectRecord(record)
+    {
+        if (record) {
+            this._selectedTarget = this._displayedTarget = record.target;
+            this._currentContentViewSetting.value = WI.ScriptClusterTimelineView.EventsIdentifier;
+            this._updateCurrentContentView();
+        }
+        this._contentViewContainer.currentContentView.selectRecord(record);
+    }
+
     reset()
     {
-        this._eventsContentView.reset();
-        this._profileContentView.reset();
+        this._selectedTarget = null;
+        this._displayedTarget = WI.assumingMainTarget();
+
+        this._pathComponentForTarget.clear();
+
+        for (let contentViews of this._contentViewsForTarget.values()) {
+            for (let contentView of contentViews.values())
+                contentView.reset();
+        }
+        this._contentViewsForTarget.clear();
+
+        this._previousContentView = null;
+        this._updateCurrentContentView();
     }
 
     // Public
-
-    get eventsContentView()
-    {
-        return this._eventsContentView;
-    }
-
-    get profileContentView()
-    {
-        return this._profileContentView;
-    }
 
     get selectionPathComponents()
     {
@@ -99,7 +118,19 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         if (!currentContentView)
             return [];
 
-        let components = [this._pathComponentForContentView(currentContentView)];
+        let components = [];
+
+        if (this._pathComponentForTarget.size > 1)
+            components.push(this._pathComponentForTarget.get(this._displayedTarget))
+
+        switch (this._currentContentViewSetting.value) {
+        case WI.ScriptClusterTimelineView.EventsIdentifier:
+            components.push(this._eventsPathComponent);
+            break;
+        case WI.ScriptClusterTimelineView.ProfileIdentifier:
+            components.push(this._profilePathComponent);
+            break;
+        }
 
         let subComponents = currentContentView.selectionPathComponents;
         if (subComponents)
@@ -110,78 +141,111 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
 
     saveToCookie(cookie)
     {
-        cookie[WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
+        cookie[WI.ScriptClusterTimelineView.TargetIdentifierCookieKey] = this._displayedTarget.identifier;
+        cookie[WI.ScriptClusterTimelineView.ViewIdentifierCookieKey] = this._currentContentViewSetting.value;
     }
 
     restoreFromCookie(cookie)
     {
-        this._showContentViewForIdentifier(cookie[WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey]);
+        this._displayedTarget = WI.targetManager.targetForIdentifier(cookie[WI.ScriptClusterTimelineView.TargetIdentifierCookieKey]);
+        this._currentContentViewSetting.value = cookie[WI.ScriptClusterTimelineView.ViewIdentifierCookieKey];
+        this._updateCurrentContentView();
     }
 
-    showEvents()
+    closed()
     {
-        return this._showContentViewForIdentifier(WI.ScriptClusterTimelineView.EventsIdentifier);
-    }
+        this.representedObject.removeEventListener(WI.ScriptTimeline.Event.TargetAdded, this._handleTargetAdded, this);
 
-    showProfile()
-    {
-        return this._showContentViewForIdentifier(WI.ScriptClusterTimelineView.ProfileIdentifier);
+        super.closed();
     }
 
     // Private
 
-    _pathComponentForContentView(contentView)
+    _updateCurrentContentView()
     {
-        console.assert(contentView);
-        if (!contentView)
-            return null;
-        if (contentView === this._eventsContentView)
-            return this._eventsPathComponent;
-        if (contentView === this._profileContentView)
-            return this._profilePathComponent;
-        console.error("Unknown contentView.");
-        return null;
+        let contentViews = this._contentViewsForTarget.getOrInitialize(this._displayedTarget, () => new Map);
+        let contentViewToShow = contentViews.getOrInitialize(this._currentContentViewSetting.value, (contentViewIdentifier) => {
+            switch (contentViewIdentifier) {
+            case WI.ScriptClusterTimelineView.EventsIdentifier:
+                return new WI.ScriptDetailsTimelineView(this._displayedTarget, this.representedObject);
+            case WI.ScriptClusterTimelineView.ProfileIdentifier:
+                return new WI.ScriptProfileTimelineView(this._displayedTarget, this.representedObject);
+            }
+            console.assert(false, "not reached");
+        });
+        this.contentViewContainer.showContentView(contentViewToShow);
     }
 
-    _identifierForContentView(contentView)
+    _createTargetPathComponent(target)
     {
-        console.assert(contentView);
-        if (!contentView)
-            return null;
-        if (contentView === this._eventsContentView)
-            return WI.ScriptClusterTimelineView.EventsIdentifier;
-        if (contentView === this._profileContentView)
-            return WI.ScriptClusterTimelineView.ProfileIdentifier;
-        console.error("Unknown contentView.");
-        return null;
+        let className = target.type === WI.TargetType.Worker ? "worker-icon" : "page-icon";
+        const textOnly = false;
+        const showSelectorArrows = true;
+        let pathComponent = new WI.HierarchicalPathComponent(target.displayName, className, target, false, showSelectorArrows);
+        pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._handleTargetPathComponentSelected, this);
+        pathComponent.comparisonData = target;
+        return pathComponent;
     }
 
-    _showContentViewForIdentifier(identifier)
+    _sortTargetPathComponents()
     {
-        let contentViewToShow = null;
+        const rankFunctions = [
+            (representedObject) => representedObject === WI.mainTarget,
+            (representedObject) => representedObject.type === WI.TargetType.Page,
+            (representedObject) => representedObject.type === WI.TargetType.Worker,
+        ];
+        let sortedComponents = Array.from(this._pathComponentForTarget.values()).sort((a, b) => {
+            let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
+            let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
+            if ((aRank >= 0 && bRank < 0) || aRank < bRank)
+                return -1;
+            if ((bRank >= 0 && aRank < 0) || bRank < aRank)
+                return 1;
+            return a.displayName.extendedLocaleCompare(b.displayName);
+        });
+        for (let [a, b] of sortedComponents.adjacencies()) {
+            a.nextSibling = b;
+            b.previousSibling = a;
+        }
+    }
 
-        switch (identifier) {
-        case WI.ScriptClusterTimelineView.EventsIdentifier:
-            contentViewToShow = this.eventsContentView;
-            break;
-        case WI.ScriptClusterTimelineView.ProfileIdentifier:
-            contentViewToShow = this.profileContentView;
-            break;
+    _handleViewPathComponentSelected(event)
+    {
+        let {pathComponent} = event.data;
+
+        this._currentContentViewSetting.value = pathComponent.representedObject;
+        this._updateCurrentContentView();
+    }
+
+    _handleTargetAdded(event)
+    {
+        let {target} = event.data;
+
+        console.assert(!this._pathComponentForTarget.has(target), target, this);
+        this._pathComponentForTarget.set(target, this._createTargetPathComponent(target));
+        this._sortTargetPathComponents();
+
+        console.assert(!this._contentViewsForTarget.has(target), target, this);
+
+        if (!this._selectedTarget) {
+            console.assert(this._pathComponentForTarget.size >= 1, this._pathComponentForTarget);
+            let displayedTarget = this._pathComponentForTarget.has(WI.mainTarget) ? WI.mainTarget : this._pathComponentForTarget.firstKey;
+            if (displayedTarget !== this._displayedTarget) {
+                this._displayedTarget = displayedTarget;
+                this._updateCurrentContentView();
+            }
         }
 
-        if (!contentViewToShow)
-            contentViewToShow = this.eventsContentView;
-
-        console.assert(contentViewToShow);
-
-        this._currentContentViewSetting.value = this._identifierForContentView(contentViewToShow);
-
-        return this.contentViewContainer.showContentView(contentViewToShow);
+        if (this._pathComponentForTarget.size > 1)
+            this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
-    _pathComponentSelected(event)
+    _handleTargetPathComponentSelected(event)
     {
-        this._showContentViewForIdentifier(event.data.pathComponent.representedObject);
+        let {pathComponent} = event.data;
+
+        this._selectedTarget = this._displayedTarget = pathComponent.representedObject;
+        this._updateCurrentContentView();
     }
 
     _scriptClusterViewCurrentContentViewDidChange(event)
@@ -190,16 +254,19 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         if (!currentContentView)
             return;
 
-        let previousContentView = currentContentView === this._eventsContentView ? this._profileContentView : this._eventsContentView;
+        if (this._previousContentView) {
+            currentContentView.zeroTime = this._previousContentView.zeroTime;
+            currentContentView.startTime = this._previousContentView.startTime;
+            currentContentView.endTime = this._previousContentView.endTime;
+            currentContentView.currentTime = this._previousContentView.currentTime;
+        }
 
-        currentContentView.zeroTime = previousContentView.zeroTime;
-        currentContentView.startTime = previousContentView.startTime;
-        currentContentView.endTime = previousContentView.endTime;
-        currentContentView.currentTime = previousContentView.currentTime;
+        this._previousContentView = currentContentView;
     }
 };
 
-WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey = "script-cluster-timeline-view-identifier";
+WI.ScriptClusterTimelineView.TargetIdentifierCookieKey = "script-cluster-timeline-target-identifier";
+WI.ScriptClusterTimelineView.ViewIdentifierCookieKey = "script-cluster-timeline-view-identifier";
 
 WI.ScriptClusterTimelineView.EventsIdentifier = "events";
 WI.ScriptClusterTimelineView.ProfileIdentifier = "profile";

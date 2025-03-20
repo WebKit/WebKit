@@ -173,7 +173,7 @@ final class BrowserViewModel {
 
         switch result {
         case let .success(urls):
-            currentFilePicker!.completion(.ok(urls))
+            currentFilePicker!.completion(.selected(urls))
 
         case .failure:
             currentFilePicker!.completion(.cancel)

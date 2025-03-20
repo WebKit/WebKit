@@ -53,6 +53,7 @@ public:
 
     bool allowInline() const { return m_allowInline && m_hashes.isEmpty() && m_nonces.isEmpty(); }
     bool allowEval() const { return m_allowEval; }
+    bool allowTrustedEval() const { return m_allowTrustedEval; }
     bool allowWasmEval() const { return m_allowWasmEval; }
     bool allowSelf() const { return m_allowSelf; }
     bool isNone() const { return m_isNone; }
@@ -100,6 +101,7 @@ private:
     bool m_allowStar { false };
     bool m_allowInline { false };
     bool m_allowEval { false };
+    bool m_allowTrustedEval { false };
     bool m_allowWasmEval { false };
     bool m_isNone { false };
     bool m_allowNonParserInsertedScripts { false };

@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
+class CSSStyleProperties;
 class CSSKeyframesRule;
 class StyleProperties;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 
 class StyleRuleKeyframe final : public StyleRuleBase {
 public:
@@ -85,7 +85,7 @@ public:
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String& text) { m_keyframe->setKeyText(text); }
 
-    CSSStyleDeclaration& style();
+    CSSStyleProperties& style();
 
 private:
     CSSKeyframeRule(StyleRuleKeyframe&, CSSKeyframesRule* parent);
@@ -93,7 +93,7 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframe; }
 
     Ref<StyleRuleKeyframe> m_keyframe;
-    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    mutable RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
     
     friend class CSSKeyframesRule;
 };

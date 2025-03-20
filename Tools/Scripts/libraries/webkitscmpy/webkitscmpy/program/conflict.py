@@ -55,7 +55,7 @@ class Conflict(Command):
         repo_name = remote.name if '/' not in remote.name else remote.name.split('/', 1)[-1]
         for entry in radar_obj.source_changes:
             repo, action, sha = entry.split(', ')
-            if repo == repo_name:
+            if repo.lower() == repo_name.lower():
                 shas.append(sha)
 
         integration_branches = []

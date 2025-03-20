@@ -420,51 +420,51 @@ bool ScrollingStateFrameScrollingNode::isMainFrame() const
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Frame scrolling node";
+    ts << "Frame scrolling node"_s;
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
     
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerIDs) {
-        ts.dumpProperty("root contents layer ID", m_rootContentsLayer.layerID());
+        ts.dumpProperty("root contents layer ID"_s, m_rootContentsLayer.layerID());
         if (m_counterScrollingLayer.layerID())
-            ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());
+            ts.dumpProperty("counter scrolling layer ID"_s, m_counterScrollingLayer.layerID());
         if (m_insetClipLayer.layerID())
-            ts.dumpProperty("inset clip layer ID", m_insetClipLayer.layerID());
+            ts.dumpProperty("inset clip layer ID"_s, m_insetClipLayer.layerID());
         if (m_contentShadowLayer.layerID())
-            ts.dumpProperty("content shadow layer ID", m_contentShadowLayer.layerID());
+            ts.dumpProperty("content shadow layer ID"_s, m_contentShadowLayer.layerID());
         if (m_headerLayer.layerID())
-            ts.dumpProperty("header layer ID", m_headerLayer.layerID());
+            ts.dumpProperty("header layer ID"_s, m_headerLayer.layerID());
         if (m_footerLayer.layerID())
-            ts.dumpProperty("footer layer ID", m_footerLayer.layerID());
+            ts.dumpProperty("footer layer ID"_s, m_footerLayer.layerID());
     }
 
     if (m_frameScaleFactor != 1)
-        ts.dumpProperty("frame scale factor", m_frameScaleFactor);
+        ts.dumpProperty("frame scale factor"_s, m_frameScaleFactor);
     if (m_obscuredContentInsets.top())
-        ts.dumpProperty("top content inset", m_obscuredContentInsets.top());
+        ts.dumpProperty("top content inset"_s, m_obscuredContentInsets.top());
     if (m_obscuredContentInsets.bottom())
-        ts.dumpProperty("bottom content inset", m_obscuredContentInsets.bottom());
+        ts.dumpProperty("bottom content inset"_s, m_obscuredContentInsets.bottom());
     if (m_obscuredContentInsets.left())
-        ts.dumpProperty("left content inset", m_obscuredContentInsets.left());
+        ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
     if (m_obscuredContentInsets.right())
-        ts.dumpProperty("right content inset", m_obscuredContentInsets.right());
+        ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
     if (m_headerHeight)
-        ts.dumpProperty("header height", m_headerHeight);
+        ts.dumpProperty("header height"_s, m_headerHeight);
     if (m_footerHeight)
-        ts.dumpProperty("footer height", m_footerHeight);
+        ts.dumpProperty("footer height"_s, m_footerHeight);
     
-    ts.dumpProperty("layout viewport", m_layoutViewport);
-    ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
-    ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
+    ts.dumpProperty("layout viewport"_s, m_layoutViewport);
+    ts.dumpProperty("min layout viewport origin"_s, m_minLayoutViewportOrigin);
+    ts.dumpProperty("max layout viewport origin"_s, m_maxLayoutViewportOrigin);
     
     if (m_overrideVisualViewportSize)
-        ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
+        ts.dumpProperty("override visual viewport size"_s, m_overrideVisualViewportSize.value());
 
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
         TextStream::GroupScope scope(ts);
-        ts << "asynchronous event dispatch region";
+        ts << "asynchronous event dispatch region"_s;
         for (auto rect : m_eventTrackingRegions.asynchronousDispatchRegion.rects()) {
-            ts << "\n";
+            ts << '\n';
             ts << indent << rect;
         }
     }
@@ -476,18 +476,18 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<
         for (const auto& name : eventRegionNames) {
             const auto& region = synchronousDispatchRegionMap.get(name);
             TextStream::GroupScope scope(ts);
-            ts << "synchronous event dispatch region for event " << EventTrackingRegions::eventName(name);
+            ts << "synchronous event dispatch region for event "_s << EventTrackingRegions::eventName(name);
             for (auto rect : region.rects()) {
-                ts << "\n";
+                ts << '\n';
                 ts << indent << rect;
             }
         }
     }
 
-    ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
+    ts.dumpProperty("behavior for fixed"_s, m_behaviorForFixed);
 
     if (m_visualViewportIsSmallerThanLayoutViewport)
-        ts.dumpProperty("visual viewport smaller than layout viewport", m_visualViewportIsSmallerThanLayoutViewport);
+        ts.dumpProperty("visual viewport smaller than layout viewport"_s, m_visualViewportIsSmallerThanLayoutViewport);
 }
 
 } // namespace WebCore

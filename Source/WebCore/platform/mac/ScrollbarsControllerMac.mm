@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMac);
 static ScrollbarThemeMac* macScrollbarTheme()
 {
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
-    return !scrollbarTheme.isMockTheme() ? static_cast<ScrollbarThemeMac*>(&scrollbarTheme) : nullptr;
+    return !scrollbarTheme.isMockTheme() ? downcast<ScrollbarThemeMac>(&scrollbarTheme) : nullptr;
 }
 
 static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
@@ -64,7 +64,7 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 } // namespace WebCore
 
 @interface WebScrollerImpPairDelegate : NSObject <NSScrollerImpPairDelegate> {
-    WebCore::ScrollableArea* _scrollableArea;
+    WeakPtr<WebCore::ScrollableArea> _scrollableArea;
 }
 - (id)initWithScrollableArea:(WebCore::ScrollableArea*)scrollableArea;
 
@@ -90,45 +90,49 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 - (NSRect)contentAreaRectForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollableArea)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea)
         return NSZeroRect;
 
-    WebCore::IntSize contentsSize = _scrollableArea->contentsSize();
+    WebCore::IntSize contentsSize = scrollableArea->contentsSize();
     return NSMakeRect(0, 0, contentsSize.width(), contentsSize.height());
 }
 
 - (BOOL)inLiveResizeForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollableArea)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea)
         return NO;
 
-    return _scrollableArea->inLiveResize();
+    return scrollableArea->inLiveResize();
 }
 
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollableArea)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea)
         return NSZeroPoint;
 
     // It's OK that this position isn't relative to this scroller (which might be an overflow scroller).
     // AppKit just takes the result and passes it back to -scrollerImpPair:convertContentPoint:toScrollerImp:.
-    return _scrollableArea->lastKnownMousePositionInView();
+    return scrollableArea->lastKnownMousePositionInView();
 }
 
 - (NSPoint)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(NSScrollerImp *)scrollerImp
 {
     UNUSED_PARAM(scrollerImpPair);
 
-    if (!_scrollableArea || !scrollerImp)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea || !scrollerImp)
         return NSZeroPoint;
 
     WebCore::Scrollbar* scrollbar = 0;
     if ([scrollerImp isHorizontal])
-        scrollbar = _scrollableArea->horizontalScrollbar();
+        scrollbar = scrollableArea->horizontalScrollbar();
     else
-        scrollbar = _scrollableArea->verticalScrollbar();
+        scrollbar = scrollableArea->verticalScrollbar();
 
     // It is possible to have a null scrollbar here since it is possible for this delegate
     // method to be called between the moment when a scrollbar has been set to 0 and the
@@ -148,23 +152,25 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
     UNUSED_PARAM(scrollerImpPair);
     UNUSED_PARAM(rect);
 
-    if (!_scrollableArea)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea)
         return;
 
     if ([scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    _scrollableArea->scrollbarsController().contentAreaWillPaint();
+    scrollableArea->scrollbarsController().contentAreaWillPaint();
 }
 
 - (void)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle
 {
-    if (!_scrollableArea)
+    CheckedPtr scrollableArea = _scrollableArea.get();
+    if (!scrollableArea)
         return;
 
     [scrollerImpPair setScrollerStyle:newRecommendedScrollerStyle];
 
-    static_cast<WebCore::ScrollbarsControllerMac&>(_scrollableArea->scrollbarsController()).updateScrollerStyle();
+    static_cast<WebCore::ScrollbarsControllerMac&>(scrollableArea->scrollbarsController()).updateScrollerStyle();
 }
 
 @end
@@ -180,10 +186,10 @@ enum FeatureToAnimate {
 static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 {
     switch (feature) {
-    case ThumbAlpha: ts << "ThumbAlpha" ; break;
-    case TrackAlpha: ts << "TrackAlpha" ; break;
-    case UIStateTransition: ts << "UIStateTransition" ; break;
-    case ExpansionTransition: ts << "ExpansionTransition" ; break;
+    case ThumbAlpha: ts << "ThumbAlpha"_s ; break;
+    case TrackAlpha: ts << "TrackAlpha"_s ; break;
+    case UIStateTransition: ts << "UIStateTransition"_s ; break;
+    case ExpansionTransition: ts << "ExpansionTransition"_s ; break;
     }
     return ts;
 }

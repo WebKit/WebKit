@@ -33,6 +33,7 @@
 
 #include "CaretRectComputation.h"
 #include "InlineRunAndOffset.h"
+#include "NodeInlines.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {

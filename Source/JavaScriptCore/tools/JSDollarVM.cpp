@@ -3057,7 +3057,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 
     size_t desiredStackSize = arg1.asNumber();
 
-    const StackBounds& bounds = Thread::current().stack();
+    const StackBounds& bounds = Thread::currentSingleton().stack();
     uint8_t* currentStackPosition = std::bit_cast<uint8_t*>(currentStackPointer());
     uint8_t* end = std::bit_cast<uint8_t*>(bounds.end());
     uint8_t* desiredStart = end + desiredStackSize;

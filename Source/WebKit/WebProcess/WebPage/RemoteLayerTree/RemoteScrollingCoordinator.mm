@@ -59,17 +59,21 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinator);
 RemoteScrollingCoordinator::RemoteScrollingCoordinator(WebPage* page)
     : AsyncScrollingCoordinator(page->corePage())
     , m_webPage(page)
+    , m_pageIdentifier(page->identifier())
 {
-    WebProcess::singleton().addMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_pageIdentifier, *this);
 }
 
 RemoteScrollingCoordinator::~RemoteScrollingCoordinator()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->identifier());
+    WebProcess::singleton().removeMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_pageIdentifier);
 }
 
 void RemoteScrollingCoordinator::scheduleTreeStateCommit()
 {
+    if (!m_webPage)
+        return;
+
     m_webPage->drawingArea()->triggerRenderingUpdate();
 }
 

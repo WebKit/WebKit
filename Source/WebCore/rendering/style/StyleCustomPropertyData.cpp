@@ -175,7 +175,7 @@ AtomString StyleCustomPropertyData::findKeyAtIndex(unsigned index) const
 void StyleCustomPropertyData::dumpDifferences(TextStream& ts, const StyleCustomPropertyData& other) const
 {
     if (*this != other)
-        ts << "custom properies differ\n";
+        ts << "custom properies differ\n"_s;
 }
 #endif // !LOG_DISABLED
 

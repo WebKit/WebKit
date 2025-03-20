@@ -79,7 +79,7 @@ static std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBacke
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_pc_backend_debug, "webkitwebrtcpeerconnection", 0, "WebKit WebRTC PeerConnection");
     });
-    if (!isGStreamerPluginAvailable("webrtc")) {
+    if (!isGStreamerPluginAvailable("webrtc"_s)) {
         WTFLogAlways("GstWebRTC plugin not found. Make sure to install gst-plugins-bad >= 1.20 with the webrtc plugin enabled.");
         return nullptr;
     }

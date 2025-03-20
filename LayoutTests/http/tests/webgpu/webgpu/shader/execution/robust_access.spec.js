@@ -8,11 +8,11 @@ TODO: add tests to check that textureLoad operations stay in-bounds.
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { assert } from '../../../common/util/util.js';
 import { Float16Array } from '../../../external/petamoriken/float16/float16.js';
-import { GPUTest } from '../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../gpu_test.js';
 import { align } from '../../util/math.js';
 import { generateTypes, supportedScalarTypes, supportsAtomics } from '../types.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 const kMaxU32 = 0xffff_ffff;
 const kMaxI32 = 0x7fff_ffff;
@@ -36,9 +36,9 @@ dynamicOffsets)
   assert(stage === GPUShaderStage.COMPUTE, 'Only know how to deal with compute for now');
 
   // Contains just zero (for now).
-  const constantsBuffer = t.device.createBuffer({ size: 4, usage: GPUBufferUsage.UNIFORM });
+  const constantsBuffer = t.createBufferTracked({ size: 4, usage: GPUBufferUsage.UNIFORM });
 
-  const resultBuffer = t.device.createBuffer({
+  const resultBuffer = t.createBufferTracked({
     size: 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE
   });
@@ -177,11 +177,6 @@ expand('baseType', supportedScalarTypes).
 beginSubcases().
 expandWithParams(generateTypes)
 ).
-beforeAllSubcases((t) => {
-  if (t.params.baseType === 'f16') {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn(async (t) => {
   const {
     addressSpace,
@@ -195,16 +190,12 @@ fn(async (t) => {
     shadowingMode,
     _kTypeInfo
   } = t.params;
+  if (baseType === 'f16') {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
 
   assert(_kTypeInfo !== undefined, 'not an indexable type');
   assert('arrayLength' in _kTypeInfo);
-
-  if (baseType === 'f16' && addressSpace === 'uniform' && containerType === 'array') {
-    // Array elements must be aligned to 16 bytes, but the logic in generateTypes
-    // creates an array of vec4 of the baseType. But for f16 that's only 8 bytes.
-    // We would need to write more complex logic for that.
-    t.skip('Test logic does not handle array of f16 in the uniform address space');
-  }
 
   let usesCanary = false;
   let globalSource = '';
@@ -330,21 +321,21 @@ struct TestData {
     let index = (${indexToTest})${exprIndexAddon};`;
         const exprZeroElement = `${_kTypeInfo.elementBaseType}()`;
         const exprElement = `s.data[index]`;
-
+        const suffices = _kTypeInfo.accessSuffixes ?? [''];
         switch (access) {
           case 'read':
             {
-              let exprLoadElement = isAtomic ? `atomicLoad(&${exprElement})` : exprElement;
-              if (addressSpace === 'uniform' && containerType === 'array') {
-                // Scalar types will be wrapped in a vec4 to satisfy array element size
-                // requirements for the uniform address space, so we need an additional index
-                // accessor expression.
-                exprLoadElement += '[0]';
+              const exprLoadElement = isAtomic ? `atomicLoad(&${exprElement})` : exprElement;
+              let conditions = suffices.map((x) => `${exprLoadElement}${x} != ${exprZeroElement}`);
+              if (containerType === 'matrix') {
+                // The comparison is a vector bool result.
+                // Convert that to a scalar bool.
+                conditions = conditions.map((c) => `any(${c})`);
               }
-              let condition = `${exprLoadElement} != ${exprZeroElement}`;
-              if (containerType === 'matrix') condition = `any(${condition})`;
-              testFunctionSource += `
-    if (${condition}) { return ${nextErrorReturnValue()}; }`;
+              conditions.forEach((c) => {
+                testFunctionSource += `
+    if (${c}) { return ${nextErrorReturnValue()}; }`;
+              });
             }
             break;
 
@@ -353,8 +344,10 @@ struct TestData {
               testFunctionSource += `
     atomicStore(&s.data[index], ${exprZeroElement});`;
             } else {
-              testFunctionSource += `
-    s.data[index] = ${exprZeroElement};`;
+              suffices.forEach((x) => {
+                testFunctionSource += `
+    s.data[index]${x} = ${exprZeroElement};`;
+              });
             }
             break;
         }

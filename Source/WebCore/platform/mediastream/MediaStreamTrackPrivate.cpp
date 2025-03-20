@@ -327,7 +327,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& trackLogger
     , m_settings(m_sourceObserver->source().settings())
     , m_capabilities(m_sourceObserver->source().capabilities())
 #if ASSERT_ENABLED
-    , m_creationThreadId(isMainThread() ? 0 : Thread::current().uid())
+    , m_creationThreadId(isMainThread() ? 0 : Thread::currentSingleton().uid())
 #endif
 {
     UNUSED_PARAM(trackLogger);
@@ -361,7 +361,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Uni
     , m_settings(WTFMove(dataHolder->settings))
     , m_capabilities(WTFMove(dataHolder->capabilities))
 #if ASSERT_ENABLED
-    , m_creationThreadId(isMainThread() ? 0 : Thread::current().uid())
+    , m_creationThreadId(isMainThread() ? 0 : Thread::currentSingleton().uid())
 #endif
 {
 }
@@ -383,7 +383,7 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 #if ASSERT_ENABLED
 bool MediaStreamTrackPrivate::isOnCreationThread()
 {
-    return m_creationThreadId ? m_creationThreadId == Thread::current().uid() : isMainThread();
+    return m_creationThreadId ? m_creationThreadId == Thread::currentSingleton().uid() : isMainThread();
 }
 #endif
 

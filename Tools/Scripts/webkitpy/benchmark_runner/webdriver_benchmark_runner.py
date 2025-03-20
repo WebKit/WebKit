@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 
@@ -13,16 +12,6 @@ class WebDriverBenchmarkRunner(BenchmarkRunner):
     def _get_result(self, driver):
         result = driver.execute_script("return window.webdriver_results")
         return result
-
-    def _construct_subtest_url(self, subtests):
-        print(subtests)
-        if not subtests or not isinstance(subtests, collections.Mapping) or 'subtest_url_format' not in self._plan:
-            return ''
-        subtest_url = ''
-        for suite, tests in subtests.items():
-            for test in tests:
-                subtest_url = subtest_url + '&' + self._plan['subtest_url_format'].replace('${SUITE}', suite).replace('${TEST}', test)
-        return subtest_url
 
     def _run_one_test(self, web_root, test_file, iteration):
         from selenium.webdriver.support.ui import WebDriverWait

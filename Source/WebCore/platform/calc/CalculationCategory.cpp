@@ -34,17 +34,17 @@ namespace Calculation {
 TextStream& operator<<(TextStream& ts, Category category)
 {
     switch (category) {
-    case Category::Integer: ts << "integer"; break;
-    case Category::Number: ts << "number"; break;
-    case Category::Percentage: ts << "percentage"; break;
-    case Category::Length: ts << "length"; break;
-    case Category::Angle: ts << "angle"; break;
-    case Category::AnglePercentage: ts << "angle-percentage"; break;
-    case Category::Time: ts << "time"; break;
-    case Category::Frequency: ts << "frequency"; break;
-    case Category::Resolution: ts << "resolution"; break;
-    case Category::Flex: ts << "flex"; break;
-    case Category::LengthPercentage: ts << "length-percentage"; break;
+    case Category::Integer: ts << "integer"_s; break;
+    case Category::Number: ts << "number"_s; break;
+    case Category::Percentage: ts << "percentage"_s; break;
+    case Category::Length: ts << "length"_s; break;
+    case Category::Angle: ts << "angle"_s; break;
+    case Category::AnglePercentage: ts << "angle-percentage"_s; break;
+    case Category::Time: ts << "time"_s; break;
+    case Category::Frequency: ts << "frequency"_s; break;
+    case Category::Resolution: ts << "resolution"_s; break;
+    case Category::Flex: ts << "flex"_s; break;
+    case Category::LengthPercentage: ts << "length-percentage"_s; break;
     }
 
     return ts;

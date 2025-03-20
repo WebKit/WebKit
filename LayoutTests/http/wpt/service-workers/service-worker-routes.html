@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+
+promise_test(async test => {
+    let registration = await navigator.serviceWorker.getRegistration("1");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("service-worker-add-routes-worker.js", { scope: "1" });
+    const worker = registration.installing;
+    await waitForState(worker, "installing");
+
+    worker.postMessage(257);
+    const result = await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data));
+    worker.postMessage("finish");
+
+    assert_equals(result, "TypeError: Too many routes are registered");
+    await waitForState(worker, "redundant");
+}, "Try to register too many routes in one call");
+
+promise_test(async test => {
+    let registration = await navigator.serviceWorker.getRegistration("2");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("service-worker-add-routes-worker.js", { scope: "2" });
+    const worker = registration.installing;
+    await waitForState(worker, "installing");
+
+    let counter = 0;
+    let result;
+    for (; counter < 1024; counter++) {
+       worker.postMessage(1);
+       result = await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data));
+       if (result != "OK")
+           break;
+    }
+    worker.postMessage("finish");
+
+    assert_equals(result, "TypeError: Too many routes are registered");
+    assert_equals(counter, 256);
+    // FIXME: We should check that worker state goes to "redundant".
+    // await waitForState(worker, "redundant");
+}, "Try to register too many routes incrementally");
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration("3");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("service-worker-add-routes-too-late-worker.js", { scope : "3" });
+    const worker = registration.installing;
+
+    await waitForState(worker, "activated");
+
+    worker.postMessage("addRoutes");
+    assert_equals(await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data)), "OK");
+}, "add route when not installing");
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration("4");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("service-worker-add-routes-delay-install-worker.js", { scope : "4" });
+    const worker = registration.installing;
+
+    await waitForState(worker, "activated");
+    worker.postMessage("getResult");
+    assert_equals(await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data)), "OK");
+}, "add route extend installation of service worker");
+</script>
+</body>
+</html>

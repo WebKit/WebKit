@@ -51,7 +51,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WorkQueue& MediaSourcePrivateRemote::queue()
+WorkQueue& MediaSourcePrivateRemote::queueSingleton()
 {
     static std::once_flag onceKey;
     static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
@@ -70,14 +70,14 @@ Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnect
 
 void MediaSourcePrivateRemote::ensureOnDispatcherSync(Function<void()>&& function) const
 {
-    if (queue().isCurrent())
+    if (queueSingleton().isCurrent())
         function();
     else
-        queue().dispatchSync(WTFMove(function));
+        queueSingleton().dispatchSync(WTFMove(function));
 }
 
 MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
-    : MediaSourcePrivate(client, queue())
+    : MediaSourcePrivate(client, queueSingleton())
     , m_gpuProcessConnection(gpuProcessConnection)
     , m_receiver(MessageReceiver::create(*this))
     , m_identifier(identifier)
@@ -90,7 +90,7 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    gpuProcessConnection.connection().addWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), queue(), m_receiver, m_identifier.toUInt64());
+    gpuProcessConnection.connection().addWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_identifier.toUInt64());
 
 #if !RELEASE_LOG_DISABLED
     client.setLogIdentifier(m_logIdentifier);
@@ -270,10 +270,10 @@ RefPtr<MediaSourcePrivateClient> MediaSourcePrivateRemote::MessageReceiver::clie
 
 void MediaSourcePrivateRemote::MessageReceiver::proxyWaitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(MediaTimePromise::Result&&)>&& completionHandler)
 {
-    assertIsCurrent(MediaSourcePrivateRemote::queue());
+    assertIsCurrent(MediaSourcePrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->waitForTarget(target)->whenSettled(MediaSourcePrivateRemote::queue(), WTFMove(completionHandler));
+        client->waitForTarget(target)->whenSettled(MediaSourcePrivateRemote::queueSingleton(), WTFMove(completionHandler));
         return;
     }
     completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));
@@ -281,10 +281,10 @@ void MediaSourcePrivateRemote::MessageReceiver::proxyWaitForTarget(const WebCore
 
 void MediaSourcePrivateRemote::MessageReceiver::proxySeekToTime(const MediaTime& time, CompletionHandler<void(MediaPromise::Result&&)>&& completionHandler)
 {
-    assertIsCurrent(MediaSourcePrivateRemote::queue());
+    assertIsCurrent(MediaSourcePrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->seekToTime(time)->whenSettled(MediaSourcePrivateRemote::queue(), WTFMove(completionHandler));
+        client->seekToTime(time)->whenSettled(MediaSourcePrivateRemote::queueSingleton(), WTFMove(completionHandler));
         return;
     }
     completionHandler(makeUnexpected(PlatformMediaError::SourceRemoved));

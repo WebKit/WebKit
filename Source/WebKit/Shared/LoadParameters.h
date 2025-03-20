@@ -87,6 +87,7 @@ struct LoadParameters {
 #endif
     bool isRequestFromClientOrUserInput { false };
     bool isPerformingHTTPFallback { false };
+    bool isHandledByAboutSchemeHandler { false };
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };

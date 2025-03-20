@@ -29,6 +29,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSWebAssemblyArray.h"
+#include "JSWebAssemblyStruct.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/text/MakeString.h>
@@ -63,6 +65,40 @@ String makeString(const Name& characters)
 {
     return WTF::makeString(characters);
 }
+
+#if ASSERT_ENABLED
+void validateWasmValue(uint64_t wasmValue, Type expectedType)
+{
+    // FIXME: Add more validations
+    auto value = std::bit_cast<JSValue>(wasmValue);
+    if (isRefType(expectedType)) {
+        if (value.isNull()) {
+            ASSERT(expectedType.isNullable());
+            return;
+        }
+
+        if (!isExternref(expectedType) && !isI31ref(expectedType))
+            ASSERT(value.isCell());
+
+        if (isStructref(expectedType))
+            ASSERT(jsDynamicCast<JSWebAssemblyStruct*>(value));
+
+        if (isArrayref(expectedType))
+            ASSERT(jsDynamicCast<JSWebAssemblyArray*>(value));
+
+        if (isRefWithTypeIndex(expectedType)) {
+            RefPtr<const RTT> expectedRTT = Wasm::TypeInformation::getCanonicalRTT(expectedType.index);
+            if (expectedRTT->kind() == RTTKind::Function) {
+                ASSERT(jsDynamicCast<JSFunction*>(value));
+                return;
+            }
+            auto objectPtr = jsCast<WebAssemblyGCObjectBase*>(value);
+            auto objectRTT = objectPtr->rtt();
+            ASSERT(objectRTT->isSubRTT(*expectedRTT.get()));
+        }
+    }
+}
+#endif
 
 } } // namespace JSC::Wasm
 

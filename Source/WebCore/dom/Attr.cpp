@@ -20,10 +20,12 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "Attr.h"
 
 #include "AttributeChangeInvalidation.h"
+#include "CSSStyleProperties.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ElementInlines.h"
@@ -114,7 +116,7 @@ Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomEl
     return adoptRef(*new Attr(document, qualifiedName(), value()));
 }
 
-CSSStyleDeclaration* Attr::style()
+CSSStyleProperties* Attr::style()
 {
     // This is not part of the DOM API, and therefore not available to webpages. However, WebKit SPI
     // lets clients use this via the Objective-C and JavaScript bindings.
@@ -124,7 +126,7 @@ CSSStyleDeclaration* Attr::style()
     Ref style = MutableStyleProperties::create();
     m_style = style.copyRef();
     styledElement->collectPresentationalHintsForAttribute(qualifiedName(), value(), style);
-    return &style->ensureCSSStyleDeclaration();
+    return &style->ensureCSSStyleProperties();
 }
 
 AtomString Attr::value() const

@@ -1,3 +1,430 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS :vertex_returns_position:case="bare_position"
+PASS :vertex_returns_position:case="nested_position"
+PASS :vertex_returns_position:case="no_bare_position"
+PASS :vertex_returns_position:case="no_nested_position"
+FAIL :entry_point_call_target:stage="%40fragment";entry_point="with" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn bar()  {
+
+    }
+
+    fn foo() {
+      bar();
+    }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :entry_point_call_target:stage="%40fragment";entry_point="without"
+FAIL :entry_point_call_target:stage="%40vertex";entry_point="with" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn bar() -> @builtin(position) vec4f {
+      return vec4f();
+    }
+
+    fn foo() {
+      let tmp = bar();
+    }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :entry_point_call_target:stage="%40vertex";entry_point="without"
+FAIL :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entry_point="with" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1,1,1)
+    fn bar()  {
+
+    }
+
+    fn foo() {
+      bar();
+    }
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entry_point="without"
+PASS :function_return_types:case="u32"
+PASS :function_return_types:case="i32"
+PASS :function_return_types:case="f32"
+PASS :function_return_types:case="bool"
+PASS :function_return_types:case="f16"
+PASS :function_return_types:case="vec2"
+PASS :function_return_types:case="vec3"
+PASS :function_return_types:case="vec4"
+PASS :function_return_types:case="mat2x2"
+PASS :function_return_types:case="mat2x3"
+PASS :function_return_types:case="mat2x4"
+PASS :function_return_types:case="mat3x2"
+PASS :function_return_types:case="mat3x3"
+PASS :function_return_types:case="mat3x4"
+PASS :function_return_types:case="mat4x2"
+PASS :function_return_types:case="mat4x3"
+PASS :function_return_types:case="mat4x4"
+PASS :function_return_types:case="array1"
+PASS :function_return_types:case="array2"
+PASS :function_return_types:case="array3"
+PASS :function_return_types:case="array4"
+PASS :function_return_types:case="array5"
+PASS :function_return_types:case="struct1"
+PASS :function_return_types:case="struct2"
+PASS :function_return_types:case="runtime_array"
+PASS :function_return_types:case="runtime_struct"
+PASS :function_return_types:case="override_array"
+PASS :function_return_types:case="atomic_u32"
+PASS :function_return_types:case="atomic_struct"
+PASS :function_return_types:case="texture_sample"
+PASS :function_return_types:case="texture_depth"
+PASS :function_return_types:case="texture_multisampled"
+PASS :function_return_types:case="texture_storage"
+PASS :function_return_types:case="sampler"
+PASS :function_return_types:case="sampler_comparison"
+PASS :function_return_types:case="ptr"
+PASS :function_parameter_types:case="u32"
+PASS :function_parameter_types:case="i32"
+PASS :function_parameter_types:case="f32"
+PASS :function_parameter_types:case="bool"
+PASS :function_parameter_types:case="f16"
+PASS :function_parameter_types:case="vec2"
+PASS :function_parameter_types:case="vec3"
+PASS :function_parameter_types:case="vec4"
+PASS :function_parameter_types:case="mat2x2"
+PASS :function_parameter_types:case="mat2x3"
+PASS :function_parameter_types:case="mat2x4"
+PASS :function_parameter_types:case="mat3x2"
+PASS :function_parameter_types:case="mat3x3"
+PASS :function_parameter_types:case="mat3x4"
+PASS :function_parameter_types:case="mat4x2"
+PASS :function_parameter_types:case="mat4x3"
+PASS :function_parameter_types:case="mat4x4"
+PASS :function_parameter_types:case="array1"
+PASS :function_parameter_types:case="array2"
+PASS :function_parameter_types:case="array3"
+PASS :function_parameter_types:case="array4"
+PASS :function_parameter_types:case="array5"
+PASS :function_parameter_types:case="struct1"
+PASS :function_parameter_types:case="struct2"
+PASS :function_parameter_types:case="runtime_array"
+PASS :function_parameter_types:case="runtime_struct"
+PASS :function_parameter_types:case="override_array"
+PASS :function_parameter_types:case="atomic_u32"
+PASS :function_parameter_types:case="atomic_struct"
+PASS :function_parameter_types:case="texture_sample"
+PASS :function_parameter_types:case="texture_depth"
+PASS :function_parameter_types:case="texture_multisampled"
+PASS :function_parameter_types:case="texture_storage"
+PASS :function_parameter_types:case="sampler"
+PASS :function_parameter_types:case="sampler_comparison"
+PASS :function_parameter_types:case="ptr1"
+PASS :function_parameter_types:case="ptr2"
+PASS :function_parameter_types:case="ptr3"
+PASS :function_parameter_types:case="ptr4"
+PASS :function_parameter_types:case="ptr5"
+PASS :function_parameter_types:case="ptr6"
+PASS :function_parameter_types:case="ptr7"
+PASS :function_parameter_types:case="ptr8"
+PASS :function_parameter_types:case="ptr9"
+PASS :function_parameter_types:case="ptr10"
+PASS :function_parameter_types:case="ptr11"
+PASS :function_parameter_types:case="ptr12"
+PASS :function_parameter_types:case="ptrWorkgroupAtomic"
+PASS :function_parameter_types:case="ptrWorkgroupNestedAtomic"
+PASS :function_parameter_types:case="invalid_ptr1"
+PASS :function_parameter_types:case="invalid_ptr2"
+PASS :function_parameter_types:case="invalid_ptr3"
+PASS :function_parameter_types:case="invalid_ptr4"
+PASS :function_parameter_types:case="invalid_ptr5"
+PASS :function_parameter_types:case="invalid_ptr6"
+PASS :function_parameter_types:case="invalid_ptr7"
+FAIL :function_parameter_types:case="invalid_ptr8" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+
+    struct runtime_array_struct {
+      arr : array<u32>
+    }
+
+    struct constructible {
+      a : i32,
+      b : u32,
+      c : f32,
+      d : bool,
+    }
+
+    struct host_shareable {
+      a : i32,
+      b : u32,
+      c : f32,
+    }
+
+    struct struct_with_array {
+      a : array<constructible, 4>
+    }
+
+
+
+    fn foo(param : ptr<function, texture_external>) {
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:313:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :function_parameter_matching:decl="u32"
+PASS :function_parameter_matching:decl="i32"
+PASS :function_parameter_matching:decl="f32"
+PASS :function_parameter_matching:decl="bool"
+PASS :function_parameter_matching:decl="f16"
+PASS :function_parameter_matching:decl="vec2"
+PASS :function_parameter_matching:decl="vec3"
+PASS :function_parameter_matching:decl="vec4"
+PASS :function_parameter_matching:decl="mat2x2"
+PASS :function_parameter_matching:decl="mat2x3"
+PASS :function_parameter_matching:decl="mat2x4"
+PASS :function_parameter_matching:decl="mat3x2"
+PASS :function_parameter_matching:decl="mat3x3"
+PASS :function_parameter_matching:decl="mat3x4"
+PASS :function_parameter_matching:decl="mat4x2"
+PASS :function_parameter_matching:decl="mat4x3"
+PASS :function_parameter_matching:decl="mat4x4"
+PASS :function_parameter_matching:decl="array1"
+PASS :function_parameter_matching:decl="array2"
+PASS :function_parameter_matching:decl="array3"
+PASS :function_parameter_matching:decl="array4"
+PASS :function_parameter_matching:decl="array5"
+PASS :function_parameter_matching:decl="struct1"
+PASS :function_parameter_matching:decl="struct2"
+PASS :function_parameter_matching:decl="texture_sample"
+PASS :function_parameter_matching:decl="texture_depth"
+PASS :function_parameter_matching:decl="texture_multisampled"
+PASS :function_parameter_matching:decl="texture_storage"
+PASS :function_parameter_matching:decl="sampler"
+PASS :function_parameter_matching:decl="sampler_comparison"
+PASS :function_parameter_matching:decl="ptr1"
+PASS :function_parameter_matching:decl="ptr2"
+PASS :function_parameter_matching:decl="ptr3"
+PASS :function_parameter_matching:decl="ptr4"
+PASS :function_parameter_matching:decl="ptr5"
+PASS :function_parameter_matching:decl="ptr6"
+PASS :function_parameter_matching:decl="ptr7"
+PASS :function_parameter_matching:decl="ptr8"
+PASS :function_parameter_matching:decl="ptr9"
+PASS :function_parameter_matching:decl="ptr10"
+PASS :function_parameter_matching:decl="ptr11"
+PASS :function_parameter_matching:decl="ptr12"
+PASS :function_parameter_matching:decl="ptrWorkgroupAtomic"
+PASS :function_parameter_matching:decl="ptrWorkgroupNestedAtomic"
+PASS :no_direct_recursion:
+PASS :no_indirect_recursion:
+PASS :param_names_must_differ:p1="a";p2="a"
+PASS :param_names_must_differ:p1="a";p2="b"
+PASS :param_names_must_differ:p1="a";p2="c"
+PASS :param_names_must_differ:p1="b";p2="a"
+PASS :param_names_must_differ:p1="b";p2="b"
+PASS :param_names_must_differ:p1="b";p2="c"
+PASS :param_names_must_differ:p1="c";p2="a"
+PASS :param_names_must_differ:p1="c";p2="b"
+PASS :param_names_must_differ:p1="c";p2="c"
+PASS :param_scope_is_function_body:use="body"
+PASS :param_scope_is_function_body:use="var"
+PASS :param_scope_is_function_body:use="const"
+PASS :param_scope_is_function_body:use="override"
+PASS :param_scope_is_function_body:use="function"
+PASS :param_number_matches_call:num_args=0;num_params=0
+PASS :param_number_matches_call:num_args=0;num_params=1
+PASS :param_number_matches_call:num_args=0;num_params=2
+PASS :param_number_matches_call:num_args=0;num_params=3
+PASS :param_number_matches_call:num_args=0;num_params=4
+PASS :param_number_matches_call:num_args=0;num_params=255
+PASS :param_number_matches_call:num_args=1;num_params=0
+PASS :param_number_matches_call:num_args=1;num_params=1
+PASS :param_number_matches_call:num_args=1;num_params=2
+PASS :param_number_matches_call:num_args=1;num_params=3
+PASS :param_number_matches_call:num_args=1;num_params=4
+PASS :param_number_matches_call:num_args=1;num_params=255
+PASS :param_number_matches_call:num_args=2;num_params=0
+PASS :param_number_matches_call:num_args=2;num_params=1
+PASS :param_number_matches_call:num_args=2;num_params=2
+PASS :param_number_matches_call:num_args=2;num_params=3
+PASS :param_number_matches_call:num_args=2;num_params=4
+PASS :param_number_matches_call:num_args=2;num_params=255
+PASS :param_number_matches_call:num_args=3;num_params=0
+PASS :param_number_matches_call:num_args=3;num_params=1
+PASS :param_number_matches_call:num_args=3;num_params=2
+PASS :param_number_matches_call:num_args=3;num_params=3
+PASS :param_number_matches_call:num_args=3;num_params=4
+PASS :param_number_matches_call:num_args=3;num_params=255
+PASS :param_number_matches_call:num_args=4;num_params=0
+PASS :param_number_matches_call:num_args=4;num_params=1
+PASS :param_number_matches_call:num_args=4;num_params=2
+PASS :param_number_matches_call:num_args=4;num_params=3
+PASS :param_number_matches_call:num_args=4;num_params=4
+PASS :param_number_matches_call:num_args=4;num_params=255
+PASS :param_number_matches_call:num_args=255;num_params=0
+PASS :param_number_matches_call:num_args=255;num_params=1
+PASS :param_number_matches_call:num_args=255;num_params=2
+PASS :param_number_matches_call:num_args=255;num_params=3
+PASS :param_number_matches_call:num_args=255;num_params=4
+PASS :param_number_matches_call:num_args=255;num_params=255
+PASS :call_arg_types_match_1_param:p1_type="u32"
+PASS :call_arg_types_match_1_param:p1_type="i32"
+PASS :call_arg_types_match_1_param:p1_type="f32"
+PASS :call_arg_types_match_2_params:p1_type="u32";p2_type="u32"
+PASS :call_arg_types_match_2_params:p1_type="u32";p2_type="i32"
+PASS :call_arg_types_match_2_params:p1_type="u32";p2_type="f32"
+PASS :call_arg_types_match_2_params:p1_type="i32";p2_type="u32"
+PASS :call_arg_types_match_2_params:p1_type="i32";p2_type="i32"
+PASS :call_arg_types_match_2_params:p1_type="i32";p2_type="f32"
+PASS :call_arg_types_match_2_params:p1_type="f32";p2_type="u32"
+PASS :call_arg_types_match_2_params:p1_type="f32";p2_type="i32"
+PASS :call_arg_types_match_2_params:p1_type="f32";p2_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="u32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="u32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="u32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="i32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="i32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="i32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="f32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="f32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="u32";p2_type="f32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="u32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="u32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="u32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="i32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="i32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="i32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="f32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="f32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="i32";p2_type="f32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="u32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="u32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="u32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="i32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="i32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="i32";p3_type="f32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="f32";p3_type="u32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="f32";p3_type="i32"
+PASS :call_arg_types_match_3_params:p1_type="f32";p2_type="f32";p3_type="f32"
+PASS :param_name_can_shadow_function_name:
+PASS :param_name_can_shadow_alias:
+PASS :param_name_can_shadow_global:
+PASS :param_comma_placement:param_1=true;param_2=true;comma=true
+PASS :param_comma_placement:param_1=true;param_2=true;comma=false
+PASS :param_comma_placement:param_1=true;param_2=false;comma=true
+PASS :param_comma_placement:param_1=true;param_2=false;comma=false
+PASS :param_comma_placement:param_1=false;param_2=true;comma=true
+PASS :param_comma_placement:param_1=false;param_2=true;comma=false
+PASS :param_comma_placement:param_1=false;param_2=false;comma=true
+PASS :param_comma_placement:param_1=false;param_2=false;comma=false
+PASS :param_type_can_be_alias:
+PASS :function_name_required:name=true
+PASS :function_name_required:name=false
+PASS :param_type_required:ty=true;colon=true
+PASS :param_type_required:ty=true;colon=false
+PASS :param_type_required:ty=false;colon=true
+PASS :param_type_required:ty=false;colon=false
+PASS :body_required:body="braces"
+PASS :body_required:body="semi"
+PASS :body_required:body=""
+PASS :parens_required:parens=true;param=true
+PASS :parens_required:parens=true;param=false
+PASS :parens_required:parens=false;param=true
+PASS :parens_required:parens=false;param=false
+PASS :non_module_scoped_function:loc="inner"
+PASS :non_module_scoped_function:loc="outer"
+PASS :function_attributes:case="align";placement="func"
+PASS :function_attributes:case="align";placement="param"
+PASS :function_attributes:case="align";placement="ret"
+PASS :function_attributes:case="binding";placement="func"
+PASS :function_attributes:case="binding";placement="param"
+PASS :function_attributes:case="binding";placement="ret"
+PASS :function_attributes:case="builtin";placement="func"
+PASS :function_attributes:case="builtin";placement="param"
+PASS :function_attributes:case="builtin";placement="ret"
+PASS :function_attributes:case="compute";placement="func"
+PASS :function_attributes:case="compute";placement="param"
+PASS :function_attributes:case="compute";placement="ret"
+PASS :function_attributes:case="const";placement="func"
+PASS :function_attributes:case="const";placement="param"
+PASS :function_attributes:case="const";placement="ret"
+FAIL :function_attributes:case="diagnostic";placement="func" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    2:1: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+    @diagnostic(off, derivative_uniformity)
+    fn b( foo: i32) ->  i32{
+      return 1;
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:0: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :function_attributes:case="diagnostic";placement="param"
+PASS :function_attributes:case="diagnostic";placement="ret"
+PASS :function_attributes:case="fragment";placement="func"
+PASS :function_attributes:case="fragment";placement="param"
+PASS :function_attributes:case="fragment";placement="ret"
+PASS :function_attributes:case="group";placement="func"
+PASS :function_attributes:case="group";placement="param"
+PASS :function_attributes:case="group";placement="ret"
+PASS :function_attributes:case="id";placement="func"
+PASS :function_attributes:case="id";placement="param"
+PASS :function_attributes:case="id";placement="ret"
+PASS :function_attributes:case="interpolate";placement="func"
+PASS :function_attributes:case="interpolate";placement="param"
+PASS :function_attributes:case="interpolate";placement="ret"
+PASS :function_attributes:case="invariant";placement="func"
+PASS :function_attributes:case="invariant";placement="param"
+PASS :function_attributes:case="invariant";placement="ret"
+PASS :function_attributes:case="location";placement="func"
+PASS :function_attributes:case="location";placement="param"
+PASS :function_attributes:case="location";placement="ret"
+PASS :function_attributes:case="must_use";placement="func"
+PASS :function_attributes:case="must_use";placement="param"
+PASS :function_attributes:case="must_use";placement="ret"
+PASS :function_attributes:case="size";placement="func"
+PASS :function_attributes:case="size";placement="param"
+PASS :function_attributes:case="size";placement="ret"
+PASS :function_attributes:case="vertex";placement="func"
+PASS :function_attributes:case="vertex";placement="param"
+PASS :function_attributes:case="vertex";placement="ret"
+PASS :function_attributes:case="workgroup_size";placement="func"
+PASS :function_attributes:case="workgroup_size";placement="param"
+PASS :function_attributes:case="workgroup_size";placement="ret"
+PASS :must_use_requires_return:ret=true
+PASS :must_use_requires_return:ret=false
+PASS :overload:overload=true
+PASS :overload:overload=false
 

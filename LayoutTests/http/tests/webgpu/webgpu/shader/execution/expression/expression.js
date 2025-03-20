@@ -413,7 +413,7 @@ batch_size)
     };
     const checkBatch = await submitBatch(t, shaderBuilder, shaderBuilderParams, pipelineCache);
     checkBatch();
-    void t.queue.onSubmittedWorkDone().finally(batchFinishedCallback);
+    await t.queue.onSubmittedWorkDone();
   };
 
   const pendingBatches = [];
@@ -430,7 +430,17 @@ batch_size)
     }
     batchesInFlight += 1;
 
-    pendingBatches.push(processBatch(batchCases));
+    pendingBatches.push(
+      processBatch(batchCases).
+      catch((err) => {
+        if (err instanceof GPUPipelineError) {
+          t.fail(`Pipeline Creation Error, ${err.reason}: ${err.message}`);
+        } else {
+          throw err;
+        }
+      }).
+      finally(batchFinishedCallback)
+    );
   }
 
   await Promise.all(pendingBatches);
@@ -456,7 +466,7 @@ pipelineCache)
   // Construct a buffer to hold the results of the expression tests
   const outputStride = structStride([resultType], 'storage_rw');
   const outputBufferSize = align(cases.length * outputStride, 4);
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: outputBufferSize,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
   });
@@ -866,6 +876,17 @@ ${body}
       //////////////////////////////////////////////////////////////////////////
       // Runtime eval
       //////////////////////////////////////////////////////////////////////////
+      let operation = '';
+      if (inputSource === 'storage_rw' && objectEquals(resultType, storageType(resultType))) {
+        operation = `
+        outputs[i].value = ${storageType(resultType)}(inputs[i].lhs);
+        outputs[i].value ${op} ${rhsType}(inputs[i].rhs);`;
+      } else {
+        operation = `
+        var ret = ${lhsType}(inputs[i].lhs);
+        ret ${op} ${rhsType}(inputs[i].rhs);
+        outputs[i].value = ${storageType(resultType)}(ret);`;
+      }
       return `
 ${wgslHeader(parameterTypes, resultType)}
 ${wgslOutputs(resultType, cases.length)}
@@ -879,9 +900,7 @@ ${wgslInputVar(inputSource, cases.length)}
 @compute @workgroup_size(1)
 fn main() {
   for (var i = 0; i < ${cases.length}; i++) {
-    var ret = ${lhsType}(inputs[i].lhs);
-    ret ${op} ${rhsType}(inputs[i].rhs);
-    outputs[i].value = ${storageType(resultType)}(ret);
+    ${operation}
   }
 }
 `;

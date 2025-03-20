@@ -29,7 +29,6 @@
 #if ENABLE(DATA_DETECTION)
 
 #import "Attr.h"
-#import "CSSStyleDeclaration.h"
 #import "ColorConversion.h"
 #import "ColorSerialization.h"
 #import "CommonAtomStrings.h"

@@ -25,36 +25,6 @@ test/built-ins/Iterator/concat/fresh-iterator-result.js:
 test/built-ins/Iterator/concat/next-method-returns-throwing-value.js:
   default: 'Test262Error: '
   strict mode: 'Test262Error: '
-test/built-ins/Iterator/prototype/drop/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/every/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/filter/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/find/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/flatMap/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/forEach/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/map/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/reduce/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/some/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/Iterator/prototype/take/argument-validation-failure-closes-underlying.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
 test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Actual [a, name] and expected [name, a] should have the same contents. '
   strict mode: 'Test262Error: Actual [a, name] and expected [name, a] should have the same contents. '
@@ -97,24 +67,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.match/get-flags-err.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.match/get-unicode-error.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/Symbol.replace/flags-tostring-error.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/compare-no-precision-loss.js:
   default: 'Test262Error: Expected SameValue(«0», «0») to be false'
   strict mode: 'Test262Error: Expected SameValue(«0», «0») to be false'
@@ -1147,9 +1099,6 @@ test/intl402/DateTimeFormat/timezone-legacy-non-iana.js:
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«"Asia/Calcutta"», «"Asia/Kolkata"») to be true'
   strict mode: 'Test262Error: Expected SameValue(«"Asia/Calcutta"», «"Asia/Kolkata"») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-timezone.js:
-  default: 'Test262Error: Expected SameValue(«"und-u-tz-utcw05"», «"und-u-tz-papty"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"und-u-tz-utcw05"», «"und-u-tz-papty"») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«"fr-Cyrl-FR-gaulish-u-nu-latn"», «"fr-Cyrl-FR-u-nu-latn"») to be true'
   strict mode: 'Test262Error: Expected SameValue(«"fr-Cyrl-FR-gaulish-u-nu-latn"», «"fr-Cyrl-FR-u-nu-latn"») to be true'
@@ -1360,3 +1309,137 @@ test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopa
   default: "ReferenceError: Can't find variable: binding"
 test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js:
   default: 'Test262Error: Actual [has:p, get:Symbol(Symbol.unscopables), get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] and expected [has:p, get:Symbol(Symbol.unscopables), has:p, get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] should have the same contents. '
+test/staging/sm/Array/change-array-by-copy-errors-from-correct-realm.js:
+  default: "Test262Error: toSpliced - adding elements would exceed max array length didn't throw RangeError from other realm Expected SameValue(«false», «true») to be true"
+test/staging/sm/ArrayBuffer/slice-species.js:
+  default: 'Test262Error: Expected SameValue(«function ArrayBuffer() {'
+test/staging/sm/Date/makeday-year-month-is-infinity.js:
+  default: 'Test262Error: Expected SameValue(«-62167219200000», «NaN») to be true'
+test/staging/sm/Date/non-iso.js:
+  default: 'Test262Error: Expected SameValue(«NaN», «857811661010») to be true'
+test/staging/sm/Date/to-temporal-instant.js:
+  default: "TypeError: min.toZonedDateTimeISO is not a function. (In 'min.toZonedDateTimeISO('UTC')', 'min.toZonedDateTimeISO' is undefined)"
+test/staging/sm/Date/two-digit-years.js:
+  default: 'Test262Error: Expected SameValue(«923641200000», «NaN») to be true'
+test/staging/sm/Function/arguments-parameter-shadowing.js:
+  default: 'Test262Error: Expected SameValue(«true», «false») to be true'
+test/staging/sm/Function/function-bind.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/staging/sm/Function/function-name-assignment.js:
+  default: 'Test262Error: Expected SameValue(«"inParen"», «""») to be true'
+test/staging/sm/Function/function-toString-builtin-name.js:
+  default: 'Test262Error: Incorrect match for undefined Expected SameValue(«"fn"», «undefined») to be true'
+test/staging/sm/Iterator/prototype/every/check-fn-after-getting-iterator.js:
+  default: 'Test262Error: Actual [get: every, get: return] and expected [get: every] should have the same contents. '
+test/staging/sm/Iterator/prototype/find/check-fn-after-getting-iterator.js:
+  default: 'Test262Error: Actual [get: find, get: return] and expected [get: find] should have the same contents. '
+test/staging/sm/Iterator/prototype/forEach/check-fn-after-getting-iterator.js:
+  default: 'Test262Error: Actual [get: forEach, get: return] and expected [get: forEach] should have the same contents. '
+test/staging/sm/Iterator/prototype/reduce/check-fn-after-getting-iterator.js:
+  default: 'Test262Error: Actual [get: reduce, get: return] and expected [get: reduce] should have the same contents. '
+test/staging/sm/Iterator/prototype/some/check-fn-after-getting-iterator.js:
+  default: 'Test262Error: Actual [get: some, get: return] and expected [get: some] should have the same contents. '
+test/staging/sm/Proxy/revoked-get-function-realm-typeerror.js:
+  default: 'Error: Assertion failed: expected exception TypeError, no exception thrown'
+test/staging/sm/RegExp/lastIndex-search.js:
+  default: 'Error: Assertion failed: expected exception TypeError, no exception thrown'
+test/staging/sm/RegExp/match-local-tolength-recompilation.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/staging/sm/RegExp/replace-local-tolength-recompilation.js:
+  default: 'Test262Error: Expected SameValue(«"b"», «"pass"») to be true'
+test/staging/sm/RegExp/replace-sticky-lastIndex.js:
+  default: 'Test262Error: Expected SameValue(«"b"», «"a"») to be true'
+test/staging/sm/RegExp/replace-sticky.js:
+  default: 'Test262Error: Expected SameValue(«"ABCDEabcdeabcdefghij"», «"abcdeABCDEabcdefghij"») to be true'
+test/staging/sm/RegExp/split-limit.js:
+  default: 'Test262Error: Expected SameValue(«3», «1») to be true'
+test/staging/sm/RegExp/split-trace.js:
+  default: 'Test262Error: Expected SameValue(«"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"», «"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"») to be true'
+test/staging/sm/RegExp/unicode-braced.js:
+  default: 'SyntaxError: Invalid regular expression: regular expression too large'
+test/staging/sm/RegExp/unicode-class-braced.js:
+  default: 'SyntaxError: Invalid regular expression: regular expression too large'
+test/staging/sm/RegExp/unicode-class-lead-trail.js:
+  default: "Test262Error: Actual argument shouldn't be nullish. "
+test/staging/sm/RegExp/unicode-class-negated.js:
+  default: 'Test262Error: Actual [�] and expected [�] should have the same contents. '
+test/staging/sm/RegExp/unicode-everything.js:
+  default: "Test262Error: Actual argument shouldn't be nullish. "
+test/staging/sm/RegExp/unicode-lead-trail.js:
+  default: "Test262Error: Actual argument shouldn't be nullish. "
+test/staging/sm/RegExp/unicode-raw.js:
+  default: 'Test262Error: Expected SameValue(«🐸», «null») to be true'
+test/staging/sm/String/string-code-point-upper-lower-mapping.js:
+  default: 'Test262Error: Expected SameValue(«68976», «68944») to be true'
+test/staging/sm/String/string-upper-lower-mapping.js:
+  default: 'Test262Error: Expected SameValue(«"ƛ"», «"Ƛ"») to be true'
+test/staging/sm/Symbol/enumeration-order.js:
+  default: 'Test262Error: Expected ["string", "symbol", "string", "symbol", "symbol", "string"] to be structurally equal to ["string", "string", "string", "symbol", "symbol", "symbol"]. '
+test/staging/sm/TypedArray/constructor-buffer-sequence.js:
+  default: 'Error: Assertion failed: expected exception ExpectedError, got Error: Poisoned Value'
+test/staging/sm/TypedArray/iterator-next-with-detached.js:
+  default: 'TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds'
+test/staging/sm/TypedArray/set-with-receiver.js:
+  default: 'Test262Error: Expected SameValue(«47», «0») to be true'
+test/staging/sm/TypedArray/slice-memcpy.js:
+  default: 'Test262Error: Actual [1, 2, 1, 2, 3, 4] and expected [1, 2, 1, 2, 1, 2] should have the same contents. '
+test/staging/sm/TypedArray/subarray.js:
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+test/staging/sm/async-functions/await-error.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/staging/sm/class/defaultConstructorDerivedSpread.js:
+  default: 'Error: unexpected call'
+test/staging/sm/class/superPropOrdering.js:
+  default: 'Error: Assertion failed: expected exception TypeError, no exception thrown'
+test/staging/sm/eval/redeclared-arguments-in-param-expression-eval.js:
+  default: 'Test262Error: Expected SameValue(«true», «false») to be true'
+test/staging/sm/expressions/exponentiation-unparenthesised-unary.js:
+  default: 'Error: Assertion failed: expected exception SyntaxError, no exception thrown - AsyncFunction:await a ** 0'
+test/staging/sm/expressions/object-literal-computed-property-evaluation.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «"abc"») to be true'
+test/staging/sm/expressions/short-circuit-compound-assignment-anon-fns.js:
+  default: 'Test262Error: Expected SameValue(«"a"», «""») to be true'
+test/staging/sm/expressions/short-circuit-compound-assignment-const.js:
+  default: 'Test262Error: Expected SameValue(«true», «function fn() {'
+test/staging/sm/extensions/function-caller-skips-eval-frames.js:
+  default: 'Test262Error: Expected SameValue(«null», «function nest() { return eval("innermost();"); }») to be true'
+test/staging/sm/extensions/inc-dec-functioncall.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/staging/sm/extensions/new-cross-compartment.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/staging/sm/extensions/regress-469625-01.js:
+  default: "Test262Error: TM: Array prototype and expression closures Expected SameValue(«\"TypeError: [].__proto__ is not a function\"», «\"TypeError: [].__proto__ is not a function. (In '[].__proto__()', '[].__proto__' is an instance of Array)\"») to be true"
+test/staging/sm/fields/await-identifier-module-2.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/staging/sm/generators/delegating-yield-1.js:
+  default: 'Test262Error: Expected [Object {value: 1}, Object {value: 34, done: true}] to be structurally equal to [Object {value: 1, done: false}, Object {value: 34, done: true}]. '
+test/staging/sm/generators/delegating-yield-3.js:
+  default: 'Test262Error: Expected SameValue(«true», «undefined») to be true'
+test/staging/sm/generators/delegating-yield-5.js:
+  default: 'Test262Error: Expected [Object {value: 1}, Object {value: 34, done: true}] to be structurally equal to [Object {value: 1, done: false}, Object {value: 34, done: true}]. '
+test/staging/sm/generators/delegating-yield-6.js:
+  default: 'Test262Error: Expected SameValue(«"indvndvndvndvndvndv"», «"indndndndndndv"») to be true'
+test/staging/sm/generators/delegating-yield-7.js:
+  default: 'Test262Error: Expected [Object {value: 1}, Object {value: 34, done: true}] to be structurally equal to [Object {value: 1, done: false}, Object {value: 34, done: true}]. '
+test/staging/sm/generators/syntax.js:
+  default: "Error: Assertion failed: expected SyntaxError, but no exception thrown - function* yield() { 'use strict'; (yield 3) + (yield 4); }"
+test/staging/sm/lexical-environment/block-scoped-functions-annex-b-label.js:
+  default: "TypeError: f1 is not a function. (In 'f1()', 'f1' is undefined)"
+test/staging/sm/lexical-environment/block-scoped-functions-deprecated-redecl.js:
+  default: 'Test262Error: Expected SameValue(«3», «4») to be true'
+test/staging/sm/lexical-environment/for-loop.js:
+  default: "Test262Error: unexpected error for `for (const [z]; ; ) ;`: got Error: didn't throw Expected SameValue(«false», «true») to be true"
+test/staging/sm/misc/future-reserved-words.js:
+  default: 'Test262Error: Implement FutureReservedWords per-spec: implements: function argument retroactively strict Expected SameValue(«"no error"», «"SyntaxError"») to be true'
+test/staging/sm/module/await-restricted-nested.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/staging/sm/module/module-export-name-star.js:
+  module: "ReferenceError: Can't find variable: y"
+test/staging/sm/object/defineProperties-order.js:
+  default: 'Test262Error: Expected SameValue(«"ownKeys,getOwnPropertyDescriptor,getOwnPropertyDescriptor,get,get"», «"ownKeys,getOwnPropertyDescriptor,get,getOwnPropertyDescriptor,get"») to be true'
+test/staging/sm/regress/regress-609617.js:
+  default: 'Error: Assertion failed: expected exception 2, got ReferenceError: Postfix ++ operator applied to value that is not a reference.'
+test/staging/sm/statements/for-of-iterator-close.js:
+  default: 'Error: Assertion failed: expected exception in lhs, got ReferenceError: Left side of for-of statement is not a reference.'
+test/staging/sm/syntax/syntax-parsed-arrow-then-directive.js:
+  default: "Test262Error: stack should contain 'http://example.com/foo.js': block, semi Expected SameValue(«false», «true») to be true"

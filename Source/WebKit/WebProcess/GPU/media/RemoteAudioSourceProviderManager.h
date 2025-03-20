@@ -41,7 +41,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProvider;
 
-class RemoteAudioSourceProviderManager : public IPC::WorkQueueMessageReceiver {
+class RemoteAudioSourceProviderManager : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
 public:
     static Ref<RemoteAudioSourceProviderManager> create() { return adoptRef(*new RemoteAudioSourceProviderManager()); }
     ~RemoteAudioSourceProviderManager();
@@ -57,9 +57,9 @@ private:
 
     // Messages
     void audioStorageChanged(WebCore::MediaPlayerIdentifier, ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
-    void audioSamplesAvailable(WebCore::MediaPlayerIdentifier, uint64_t startFrame, uint64_t numberOfFrames);
+    void audioSamplesAvailable(WebCore::MediaPlayerIdentifier, uint64_t startFrame, uint64_t numberOfFrames, bool needsFlush);
 
-    void setConnection(IPC::Connection*);
+    void setConnection(RefPtr<IPC::Connection>&&);
 
     class RemoteAudio {
         WTF_MAKE_TZONE_ALLOCATED(RemoteAudio);
@@ -67,16 +67,16 @@ private:
         explicit RemoteAudio(Ref<RemoteAudioSourceProvider>&&);
 
         void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
-        void audioSamplesAvailable(uint64_t startFrame, uint64_t numberOfFrames);
+        void audioSamplesAvailable(uint64_t startFrame, uint64_t numberOfFrames, bool needsFlush);
 
     private:
-        Ref<RemoteAudioSourceProvider> m_provider;
+        const Ref<RemoteAudioSourceProvider> m_provider;
         std::optional<WebCore::CAAudioStreamDescription> m_description;
         std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     };
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;
 
     // background thread member

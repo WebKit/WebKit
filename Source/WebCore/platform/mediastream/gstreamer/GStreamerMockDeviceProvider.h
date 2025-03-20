@@ -47,4 +47,10 @@ struct _GStreamerMockDeviceProviderClass {
 
 GType webkit_mock_device_provider_get_type(void);
 
+namespace WebCore {
+class CaptureDevice;
+};
+
+void webkitGstMockDeviceProviderSwitchDefaultDevice(const WebCore::CaptureDevice&, const WebCore::CaptureDevice&);
+
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

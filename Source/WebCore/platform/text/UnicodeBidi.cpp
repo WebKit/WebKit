@@ -37,12 +37,12 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, UnicodeBidi value)
 {
     switch (value) {
-    case UnicodeBidi::Normal: ts << "Normal"; break;
-    case UnicodeBidi::Embed: ts << "Embed"; break;
-    case UnicodeBidi::Override: ts << "Override"; break;
-    case UnicodeBidi::Isolate: ts << "Isolate"; break;
-    case UnicodeBidi::Plaintext: ts << "Plaintext"; break;
-    case UnicodeBidi::IsolateOverride: ts << "IsolateOverride"; break;
+    case UnicodeBidi::Normal: ts << "Normal"_s; break;
+    case UnicodeBidi::Embed: ts << "Embed"_s; break;
+    case UnicodeBidi::Override: ts << "Override"_s; break;
+    case UnicodeBidi::Isolate: ts << "Isolate"_s; break;
+    case UnicodeBidi::Plaintext: ts << "Plaintext"_s; break;
+    case UnicodeBidi::IsolateOverride: ts << "IsolateOverride"_s; break;
     }
     return ts;
 }

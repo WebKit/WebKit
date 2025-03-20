@@ -235,10 +235,14 @@ void MarkedSpace::registerPreciseAllocation(PreciseAllocation* allocation, bool 
     ASSERT(allocation->isNewlyAllocated());
     ASSERT(!allocation->isMarked());
     m_preciseAllocations.append(allocation);
-    if (isNewAllocation)
-        m_capacity += allocation->cellSize();
     if (auto* set = preciseAllocationSet())
         set->add(allocation->cell());
+    if (isNewAllocation) {
+        // Existing code's ordering is calling `didAllocate` and increasing capacity.
+        size_t size = allocation->cellSize();
+        heap().didAllocate(size);
+        m_capacity += size;
+    }
 }
 
 void MarkedSpace::sweepPreciseAllocations()

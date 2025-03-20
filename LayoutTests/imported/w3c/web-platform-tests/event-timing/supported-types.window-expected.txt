@@ -1,0 +1,3 @@
+
+FAIL supportedEntryTypes contains 'event' and 'first-input'. assert_implements: Event Timing is not supported. undefined
+

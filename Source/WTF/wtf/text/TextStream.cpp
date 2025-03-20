@@ -184,18 +184,18 @@ void TextStream::startGroup()
     TextStream& ts = *this;
 
     if (m_multiLineMode) {
-        ts << "\n";
+        ts << '\n';
         ts.writeIndent();
-        ts << "(";
+        ts << '(';
         ts.increaseIndent();
     } else
-        ts << " (";
+        ts << " ("_s;
 }
 
 void TextStream::endGroup()
 {
     TextStream& ts = *this;
-    ts << ")";
+    ts << ')';
     if (m_multiLineMode)
         ts.decreaseIndent();
 }
@@ -204,10 +204,10 @@ void TextStream::nextLine()
 {
     TextStream& ts = *this;
     if (m_multiLineMode) {
-        ts << "\n";
+        ts << '\n';
         ts.writeIndent();
     } else
-        ts << " ";
+        ts << ' ';
 }
 
 void TextStream::writeIndent()
@@ -219,7 +219,7 @@ void TextStream::writeIndent()
 void writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i < indent; ++i)
-        ts << "  ";
+        ts << "  "_s;
 }
 
 } // namespace WTF

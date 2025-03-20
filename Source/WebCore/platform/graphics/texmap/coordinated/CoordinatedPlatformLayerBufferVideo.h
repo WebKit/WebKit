@@ -48,7 +48,9 @@ private:
 #if USE(GBM)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>);
 #endif
+#if USE(GSTREAMER_GL)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstBuffer*, GstVideoInfo*);
+#endif
 
     GstVideoFrame m_videoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;

@@ -31,6 +31,7 @@
 #import "APISerializedScriptValue.h"
 #import "InspectorExtensionDelegate.h"
 #import "InspectorExtensionTypes.h"
+#import "JavaScriptEvaluationResult.h"
 #import "WKError.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/ExceptionDetails.h>
@@ -92,14 +93,13 @@
             return;
         }
         
-        auto valueOrException = result.value();
+        auto& valueOrException = result.value();
         if (!valueOrException) {
             capturedBlock(nsErrorFromExceptionDetails(valueOrException.error()).get(), nil);
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation());
-        capturedBlock(nil, body);
+        capturedBlock(nil, valueOrException->toID().get());
     });
 }
 
@@ -111,14 +111,13 @@
             return;
         }
         
-        auto valueOrException = result.value();
+        auto& valueOrException = result.value();
         if (!valueOrException) {
             capturedBlock(nsErrorFromExceptionDetails(valueOrException.error()).get(), nil);
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation());
-        capturedBlock(nil, body);
+        capturedBlock(nil, valueOrException->toID().get());
     });
 }
 

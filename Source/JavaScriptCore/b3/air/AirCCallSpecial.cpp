@@ -33,7 +33,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CCallSpecial);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(CCallSpecial);
 
 CCallSpecial::CCallSpecial(bool isSIMDContext)
     : m_isSIMDContext(isSIMDContext)

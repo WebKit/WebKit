@@ -79,6 +79,11 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
     evaluateInPage(expression, callback, options = {})
     {
+        if (arguments.length === 2 && typeof callback !== "function") {
+            options = callback;
+            callback = undefined;
+        }
+
         let remoteObjectOnly = !!options.remoteObjectOnly;
         let target = WI.assumingMainTarget();
 

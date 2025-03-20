@@ -150,7 +150,7 @@
     if (!self)
         return nil;
 
-    page.get().setUseFixedLayout(false);
+    Ref { page.get() }->setUseFixedLayout(false);
 
     return self;
 }
@@ -170,7 +170,7 @@
     if (!self)
         return nil;
 
-    page.get().setUseFixedLayout(true);
+    Ref { page.get() }->setUseFixedLayout(true);
 
     return self;
 }
@@ -190,7 +190,7 @@
     if (!self)
         return nil;
 
-    page.get().setUseFixedLayout(true);
+    Ref { page.get() }->setUseFixedLayout(true);
 
     return self;
 }
@@ -230,7 +230,7 @@
     if (!self)
         return nil;
 
-    _page->setShouldScaleViewToFitDocument(true);
+    Ref { *_page }->setShouldScaleViewToFitDocument(true);
 
     return self;
 }
@@ -241,8 +241,9 @@
 
 - (void)willChangeLayoutStrategy
 {
-    _page->setShouldScaleViewToFitDocument(false);
-    _page->scaleView(1);
+    RefPtr page = _page.get();
+    page->setShouldScaleViewToFitDocument(false);
+    page->scaleView(1);
 }
 
 @end

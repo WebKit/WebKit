@@ -294,6 +294,13 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
 }
 #endif
 
+bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
+{
+    if (!otherElement)
+        return false;
+    return platformUIElement() == otherElement->platformUIElement();
+}
+
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

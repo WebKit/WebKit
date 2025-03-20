@@ -240,8 +240,8 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
 {
     absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
     if (node.document().isImageDocument()) {
-        if (HTMLImageElement* imageElement = static_cast<ImageDocument&>(node.document()).imageElement()) {
-            if (&node != imageElement) {
+        if (RefPtr imageElement = downcast<ImageDocument>(node.document()).imageElement()) {
+            if (&node != imageElement.get()) {
                 absoluteBoundingRect = imageElement->absoluteBoundingRect(&isReplaced);
                 FloatPoint newOrigin = origin;
                 if (origin.x() < absoluteBoundingRect.x() || origin.x() > absoluteBoundingRect.maxX())

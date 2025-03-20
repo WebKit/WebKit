@@ -596,18 +596,18 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
 {
     auto regionName = interactionRegion.type == InteractionRegion::Type::Interaction
-        ? "interaction"
-        : (interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "guard");
+        ? "interaction"_s
+        : (interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion"_s : "guard"_s);
     ts.dumpProperty(regionName, interactionRegion.rectInLayerCoordinates);
     if (interactionRegion.contentHint != InteractionRegion::ContentHint::Default)
-        ts.dumpProperty("content hint", "photo");
+        ts.dumpProperty("content hint"_s, "photo"_s);
     auto radius = interactionRegion.cornerRadius;
     if (radius > 0) {
         if (interactionRegion.maskedCorners.isEmpty())
-            ts.dumpProperty("cornerRadius", radius);
+            ts.dumpProperty("cornerRadius"_s, radius);
         else  {
             auto mask = interactionRegion.maskedCorners;
-            ts.dumpProperty("cornerRadius", makeString(
+            ts.dumpProperty("cornerRadius"_s, makeString(
                 mask.contains(InteractionRegion::CornerMask::MinXMinYCorner) ? radius : 0, ' ',
                 mask.contains(InteractionRegion::CornerMask::MaxXMinYCorner) ? radius : 0, ' ',
                 mask.contains(InteractionRegion::CornerMask::MaxXMaxYCorner) ? radius : 0, ' ',
@@ -616,10 +616,10 @@ TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegio
         }
     }
     if (interactionRegion.clipPath)
-        ts.dumpProperty("clipPath", interactionRegion.clipPath.value());
+        ts.dumpProperty("clipPath"_s, interactionRegion.clipPath.value());
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
     if (!interactionRegion.text.isEmpty())
-        ts.dumpProperty("text", interactionRegion.text);
+        ts.dumpProperty("text"_s, interactionRegion.text);
 #endif
     return ts;
 }

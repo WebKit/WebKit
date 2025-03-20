@@ -22,10 +22,10 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-@_spi(Private) import WebKit
+import WebKit
 
 @MainActor
-final class DialogPresenter: DialogPresenting {
+final class DialogPresenter: WebPage.DialogPresenting {
     struct Dialog: Hashable, Identifiable, Sendable {
         enum Configuration: Sendable {
             case alert(String, @Sendable () -> Void)

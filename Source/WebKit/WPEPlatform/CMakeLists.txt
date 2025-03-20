@@ -35,6 +35,7 @@ set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevel.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEVersion.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessible.cpp
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEEnumTypes.cpp
 )
 
@@ -59,6 +60,7 @@ set(WPEPlatform_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPESettings.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevel.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessible.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wpe-platform.h
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEConfig.h
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEEnumTypes.h
@@ -109,6 +111,24 @@ if (USE_GBM)
     list(APPEND WPEPlatform_LIBRARIES GBM::GBM)
 elseif (USE_LIBDRM)
     list(APPEND WPEPlatform_LIBRARIES LibDRM::LibDRM)
+endif ()
+
+if (USE_ATK)
+    list(APPEND WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES
+        ${ATK_INCLUDE_DIRS}
+    )
+
+    list(APPEND WPEPlatform_LIBRARIES
+        ATK::Bridge
+        ${ATK_LIBRARIES}
+    )
+
+    list(APPEND WPEPlatform_SOURCES
+        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEAccessibilityAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEApplicationAccessibleAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevelAccessibleAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessibleAtk.cpp
+    )
 endif ()
 
 if (NOT USE_SYSTEM_MALLOC)

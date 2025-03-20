@@ -43,7 +43,7 @@ private:
     void historyItemChanged(const WebCore::HistoryItem&) final;
     void clearChildren(const WebCore::HistoryItem&) const final;
 
-    const WeakRef<WebPage> m_page;
+    const WeakPtr<WebPage> m_page;
     bool m_shouldIgnoreChanges { false };
 };
 

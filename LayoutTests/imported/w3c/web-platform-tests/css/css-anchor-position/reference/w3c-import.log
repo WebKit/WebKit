@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-in-css-min-max-function-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-name-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-position-circular-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-002-ref.html

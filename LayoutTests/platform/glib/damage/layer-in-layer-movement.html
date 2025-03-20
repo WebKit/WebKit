@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .layer {
+          position: fixed;
+          left: 10px;
+          top: 10px;
+          width: 50px;
+          height: 50px;
+          background-color: green;
+      }
+      .innerLayer {
+          position: relative;
+          left: 10px;
+          top: 10px;
+          width: 50px;
+          height: 50px;
+          background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layer">
+      <div class="innerLayer"></div>
+    </div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var layer = document.getElementsByClassName("layer")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Move outer layer.
+              layer.style.left = "70px";
+              layer.style.top = "70px";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[10, 10, 60, 60], [70, 70, 60, 60]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

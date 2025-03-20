@@ -127,11 +127,11 @@ enum class AXProperty : uint16_t {
     DocumentLinks,
     DocumentURI,
     EmbeddedImageDescription,
-    EmitTextAfterBehavior,
     ExpandedTextValue,
     ExtendedDescription,
 #if PLATFORM(COCOA)
     Font,
+    FontOrientation,
 #endif
     TextColor,
     HasApplePDFAnnotationAttribute,
@@ -278,6 +278,7 @@ enum class AXProperty : uint16_t {
     // synthesize it on-the-fly using AXProperty::TextRuns.
     TextContent,
 #endif // !ENABLE(AX_THREAD_TEXT_APIS)
+    TextEmissionBehavior,
     TextInputMarkedTextMarkerRange,
 #if ENABLE(AX_THREAD_TEXT_APIS)
     TextRuns,
@@ -305,6 +306,7 @@ using AXPropertyValueVariant = std::variant<std::nullptr_t, Markable<AXID>, Stri
 #endif // PLATFORM(COCOA)
 #if ENABLE(AX_THREAD_TEXT_APIS)
     , RetainPtr<CTFontRef>
+    , FontOrientation
     , AXTextRuns
     , TextEmissionBehavior
     , AXTextRunLineID
@@ -406,9 +408,9 @@ public:
     void addUnconnectedNode(Ref<AccessibilityObject>);
     bool isUnconnectedNode(std::optional<AXID> axID) const { return axID && m_unconnectedNodes.contains(*axID); }
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
-    void removeNode(const AccessibilityObject&);
+    void removeNode(AXID, std::optional<AXID> /* parentID */);
     // Removes the given node and all its descendants from m_nodeMap.
-    void removeSubtreeFromNodeMap(std::optional<AXID>, AccessibilityObject*);
+    void removeSubtreeFromNodeMap(std::optional<AXID>, std::optional<AXID> /* parentID */);
 
     void objectBecameIgnored(const AccessibilityObject& object)
     {
@@ -468,6 +470,9 @@ public:
     void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
     void updateRelations(const UncheckedKeyHashMap<AXID, AXRelations>&);
 
+    AXCoreObject::AccessibilityChildrenVector sortedLiveRegions();
+    AXCoreObject::AccessibilityChildrenVector sortedNonRootWebAreas();
+
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     // During layout tests, it is called on the main thread.
     void applyPendingChanges();
@@ -482,7 +487,14 @@ public:
     AXTextMarkerRange selectedTextMarkerRange();
     void setSelectedTextMarkerRange(AXTextMarkerRange&&);
 
+    void sortedLiveRegionsDidChange(Vector<AXID>);
+    void sortedNonRootWebAreasDidChange(Vector<AXID>);
+
+    void setInitialSortedLiveRegions(Vector<AXID>);
+    void setInitialSortedNonRootWebAreas(Vector<AXID>);
+
     void queueNodeUpdate(AXID, const NodeUpdateOptions&);
+    void queueNodeRemoval(const AccessibilityObject&);
     void processQueuedNodeUpdates();
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -589,9 +601,15 @@ private:
     UncheckedKeyHashMap<AXID, AXID> m_pendingParentUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Markable<AXID> m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
+    std::optional<Vector<AXID>> m_pendingSortedLiveRegionIDs WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    std::optional<Vector<AXID>> m_pendingSortedNonRootWebAreaIDs WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Markable<AXID> m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
     std::atomic<double> m_processingProgress { 1 };
+
+    // Only accessed on the accessibility thread.
+    Vector<AXID> m_sortedLiveRegionIDs;
+    Vector<AXID> m_sortedNonRootWebAreaIDs;
 
     // Relationships between objects.
     UncheckedKeyHashMap<AXID, AXRelations> m_relations WTF_GUARDED_BY_LOCK(m_changeLogLock);
@@ -605,6 +623,8 @@ private:
     ListHashSet<AXID> m_needsUpdateChildren;
     ListHashSet<AXID> m_needsUpdateNode;
     UncheckedKeyHashMap<AXID, AXPropertySet> m_needsPropertyUpdates;
+    // The key is the ID of the node being removed. The value is the ID of the parent in the core tree (if it exists).
+    UncheckedKeyHashMap<AXID, std::optional<AXID>> m_needsNodeRemoval;
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

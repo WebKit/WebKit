@@ -36,6 +36,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "LocalDOMWindow.h"
 #include "NodeIterator.h"
+#include "NodeInlines.h"
 #include "ReportingScope.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
@@ -159,7 +160,7 @@ inline bool Document::hasMutationObserversOfType(MutationObserverOptionType type
 
 inline ClientOrigin Document::clientOrigin() const { return { topOrigin().data(), securityOrigin().data() }; }
 
-inline bool Document::isSameOriginAsTopDocument() const { return protectedSecurityOrigin()->isSameOriginAs(topOrigin()); }
+inline bool Document::isSameOriginAsTopDocument() const { return protectedSecurityOrigin()->isSameOriginAs(protectedTopOrigin()); }
 
 inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
 {
@@ -175,38 +176,12 @@ inline const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
     return url;
 }
 
-// These functions are here because they require the Document class definition and we want to inline them.
-
-inline ScriptExecutionContext* Node::scriptExecutionContext() const
-{
-    return &document().contextDocument();
-}
-
-inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() const
-{
-    return scriptExecutionContext();
-}
-
 inline bool Document::hasBrowsingContext() const
 {
     return !!frame();
 }
 
-inline WebCoreOpaqueRoot Node::opaqueRoot() const
-{
-    // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return WebCoreOpaqueRoot { &document() };
-    return traverseToOpaqueRoot();
-}
-
 inline bool Document::wasLastFocusByClick() const { return m_latestFocusTrigger == FocusTrigger::Click; }
-
-inline Ref<Document> Node::protectedDocument() const
-{
-    return document();
-}
 
 inline RefPtr<LocalDOMWindow> Document::protectedWindow() const
 {

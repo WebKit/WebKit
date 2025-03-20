@@ -467,9 +467,9 @@ void AffineTransform::recompose(const DecomposedType& decomp)
 TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
 {
     if (transform.isIdentity())
-        ts << "identity";
+        ts << "identity"_s;
     else
-        ts << "{m=(("
+        ts << "{m=(("_s
         << transform.a() << "," << transform.b()
         << ")("
         << transform.c() << "," << transform.d()

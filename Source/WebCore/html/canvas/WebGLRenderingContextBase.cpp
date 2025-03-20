@@ -5168,7 +5168,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(ASCIILiteral functionName, GC
 void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 {
     // It is safe to capture |this| because we keep the canvas element alive and it owns |this|.
-    canvasBase().queueTaskKeepingObjectAlive(TaskSource::WebGL, [this] {
+    canvasBase().queueTaskKeepingObjectAlive(TaskSource::WebGL, [this](auto&) {
         if (isContextStopped())
             return;
         if (!isContextLost())

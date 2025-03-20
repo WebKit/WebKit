@@ -29,24 +29,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
-import base64
 import codecs
 import getpass
 import logging
 import os
 import os.path
 import re
-import stat
-import sys
 import subprocess
 import tempfile
 import time
-import urllib
 import shutil
 import unittest
-
-from datetime import date
-from webkitcorepy import Version
 
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
@@ -54,11 +47,10 @@ from webkitpy.common.net.bugzilla import Attachment  # FIXME: This should not be
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.checkout.scm.git import Git, AmbiguousCommitError
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 
-from webkitpy.test.markers import slow, xfail
+from webkitpy.test.markers import xfail
 
 from webkitcorepy import OutputCapture
 

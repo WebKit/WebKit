@@ -159,10 +159,14 @@ bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
     return addResult.iterator->value;
 }
 
-WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
+WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display, WPEView* view)
 {
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : wpeInputMethodContextNoneNew();
+
+    auto* inputMethodContext = wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display, view) : nullptr;
+    if (!inputMethodContext)
+        inputMethodContext = wpeInputMethodContextNoneNew(view);
+    return inputMethodContext;
 }
 
 /**

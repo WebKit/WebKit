@@ -34,12 +34,12 @@ messages -> RemoteDisplayListRecorder Stream {
     Rotate(float angle) StreamBatched
     Scale(WebCore::FloatSize scale) StreamBatched
     SetCTM(WebCore::AffineTransform ctm) StreamBatched
-    ConcatenateCTM(WebCore::AffineTransform ctm) StreamBatched
-    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor fillColorItem) StreamBatched
-    SetInlineStroke(WebCore::DisplayList::SetInlineStroke strokeItem) StreamBatched
+    ConcatCTM(WebCore::AffineTransform ctm) StreamBatched
+    SetInlineFillColor(struct WebCore::PackedColor::RGBA fillColor) StreamBatched;
+    SetInlineStroke(std::optional<WebCore::PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness) StreamBatched;
     SetState(WebCore::DisplayList::SetState item) StreamBatched
     SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
-    SetLineDash(WebCore::DisplayList::SetLineDash item) StreamBatched
+    SetLineDash(WebCore::DashArray dashArray, float dashOffset) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
     ClearDropShadow()
@@ -51,7 +51,7 @@ messages -> RemoteDisplayListRecorder Stream {
     ClipOutToPath(WebCore::Path path)
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
     ResetClip()
-    DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::GlyphBufferAdvance> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
@@ -63,7 +63,7 @@ messages -> RemoteDisplayListRecorder Stream {
     EndTransparencyLayer()
     DrawRect(WebCore::FloatRect rect, float borderThickness)
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)
-    DrawLinesForText(WebCore::DisplayList::DrawLinesForText item)
+    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle)
     DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style)
     DrawEllipse(WebCore::FloatRect rect)
     DrawPath(WebCore::Path path)
@@ -71,8 +71,8 @@ messages -> RemoteDisplayListRecorder Stream {
     DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
     FillRect(WebCore::FloatRect rect, WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect)
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
-    FillRectWithGradient(WebCore::DisplayList::FillRectWithGradient item)
-    FillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform item)
+    FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient)
+    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect)
     FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
     FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
     FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)
@@ -89,7 +89,7 @@ messages -> RemoteDisplayListRecorder Stream {
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
-    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStroke strokeItem) StreamBatched
+    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, std::optional<WebCore::PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
     StrokeClosedArc(struct WebCore::PathClosedArc closedArc) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched

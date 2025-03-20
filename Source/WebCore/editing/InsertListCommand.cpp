@@ -27,6 +27,7 @@
 #include "config.h"
 #include "InsertListCommand.h"
 
+#include "BoundaryPointInlines.h"
 #include "Document.h"
 #include "Editing.h"
 #include "ElementTraversal.h"
@@ -34,6 +35,7 @@
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
 #include "HTMLUListElement.h"
+#include "PositionInlines.h"
 #include "Range.h"
 #include "VisibleUnits.h"
 

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+var output = "This test ensures we can access content inside a deep DOM without crashing.\n\n";
+
+let container = document.body;
+// 509 because the maximum allowed depth is 512. The containing body and html elements bring us from 509 to 511, and
+// we want a button all the way in the deepest part of the tree as the 512th layer.
+for (let i = 0; i < 509; i++) {
+    const div = document.createElement("div");
+    container.appendChild(div);
+    container = div;
+}
+
+container.setAttribute("role", "presentation");
+let button = document.createElement("button");
+button.innerText = "Press";
+container.appendChild(button);
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    setTimeout(async function() {
+        output += await expectAsync("webArea.childAtIndex(0)?.role.toLowerCase().includes('button')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

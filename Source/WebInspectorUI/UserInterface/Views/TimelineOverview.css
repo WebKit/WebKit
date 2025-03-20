@@ -194,7 +194,9 @@ body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clam
 }
 
 .timeline-overview > .graphs-container > .timeline-overview-graph {
-    height: 36px;
+    height: var(--timeline-overview-graph-height);
+
+    --timeline-overview-graph-height: 36px;
 }
 
 .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
@@ -203,7 +205,9 @@ body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clam
 }
 
 .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child) {
-    border-top: 1px solid hsla(0, 0%, var(--foreground-lightness), 0.09);
+    border-top: var(--timeline-overview-graph-border-top-height) solid hsla(0, 0%, var(--foreground-lightness), 0.09);
+
+    --timeline-overview-graph-border-top-height: 1px;
 }
 
 .timeline-overview:not(.has-scrollbar) > .scroll-container {

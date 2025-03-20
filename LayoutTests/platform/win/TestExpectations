@@ -530,6 +530,9 @@ ietestcenter/css3/multicolumn/column-width-applies-to-013.htm [ ImageOnlyFailure
 ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure ]
 imported/blink/fast/css/case-sensitive-003.xhtml [ ImageOnlyFailure ]
 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-anchors-visible-non-intervening-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-remove-anchors-visible.html [ ImageOnlyFailure ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Following tests are labeled "Skip" because not working well and causes crash or timeout
@@ -1082,6 +1085,10 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-change
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-animatable-interface.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-display-none.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html [ ImageOnlyFailure ]
+
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-ignored.html [ Skip ]
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html [ Skip ]
 
@@ -1317,9 +1324,30 @@ fast/dom/Window/window-focus-self.html [ Failure ]
 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
 fast/dom/Window/window-resize.html [ Failure ]
 
+webkit.org/b/290021 fast/dom/move-embedded-during-update.html [ Skip ] # Pass Timeout
+
 webkit.org/b/288006 http/tests/dom/noreferrer-window-not-targetable.html [ Failure Pass ]
 webkit.org/b/288006 http/tests/dom/noopener-window-not-targetable.html [ Failure Pass ]
 
+fast/shadow-dom/css-scoping-host-and-slotted-context-invalidation.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/css-scoping-slot-with-id.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/css-scoping-slotted-invalidation.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ] # Timeout
+fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ] # Timeout
+fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ] # Timeout
+fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html [ Skip ] # Timeout
+fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Skip ] # Failure
+fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html [ Skip ] # Failure
+fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Skip ] # Failure
+fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html [ Skip ] # Failure
+fast/shadow-dom/hover-over-nested-slotted-content.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/imperative-slot-update-1.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/mutating-stylesheet-in-shadow-tree.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/shadow-host-animation.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/shadow-host-move-to-different-document.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/shadow-host-transition.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/shadow-host-with-before-after.html [ Skip ] # ImageOnlyFailure
+fast/shadow-dom/shadow-layout-after-toggling-display-slot-parent.html [ Skip ] # ImageOnlyFailure
  
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Editing
@@ -1891,6 +1919,9 @@ webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-001.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-002.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-003.html [ Skip ]
 
 # Failing with non-English keyboard
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
@@ -2005,7 +2036,6 @@ fast/ruby [ Skip ]
 fast/screen-orientation [ Skip ]
 fast/scrolling [ Skip ]
 fast/selectors [ Skip ]
-fast/shadow-dom [ Skip ]
 fast/shapes [ Skip ]
 fast/sub-pixel [ Skip ]
 fast/table [ Skip ]
@@ -2032,7 +2062,6 @@ http/wpt/cross-origin-resource-policy [ Skip ]
 http/wpt/crypto [ Skip ]
 http/wpt/entries-api [ Skip ]
 http/wpt/geometry [ Skip ]
-http/wpt/identity [ Skip ]
 
 http/wpt/loading/redirect-headers.html [ Skip ] # Failure
 
@@ -2069,7 +2098,6 @@ imported/w3c/web-platform-tests/console [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
-imported/w3c/web-platform-tests/digital-credentials [ Skip ]
 imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 imported/w3c/web-platform-tests/css/compositing [ Skip ]
@@ -2285,7 +2313,6 @@ imported/w3c/web-platform-tests/subresource-integrity [ Skip ]
 imported/w3c/web-platform-tests/svg [ Skip ]
 imported/w3c/web-platform-tests/uievents [ Skip ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests [ Skip ]
-imported/w3c/web-platform-tests/url [ Skip ]
 imported/w3c/web-platform-tests/user-timing [ Skip ]
 imported/w3c/web-platform-tests/visual-viewport [ Skip ]
 imported/w3c/web-platform-tests/wasm/jsapi [ Skip ]
@@ -2379,6 +2406,7 @@ fast/events/keydown-numpad-keys.html [ Failure ]
 fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
+fast/events/popup-blocking-timers5.html [ Pass Failure ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ] # Timeout
 fast/events/shadow-event-path-2.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
@@ -3644,7 +3672,7 @@ fast/html/details-replace-summary-child.html [ Skip ]
 fast/html/details-replace-text.html [ Skip ]
 fast/html/details-writing-mode-mixed.html [ Skip ]
 fast/html/details-writing-mode.html [ Skip ]
-fast/html/font-weight-bold-for-b-and-strong.html [ Skip ]
+fast/html/font-weight-bolder-for-b-and-strong.html [ Skip ]
 fast/html/link-rel-stylesheet.html [ Skip ]
 fast/html/listing.html [ Skip ]
 fast/images/pdf-as-background.html [ Skip ]
@@ -4282,6 +4310,7 @@ fast/constructors/event-source-caching.html [ Failure ]
 fast/events/5056619.html [ Failure ]
 fast/events/keydown-leftright-keys.html [ Failure ]
 fast/events/mouse-cursor-change.html [ Failure ]
+fast/events/mouse-cursor-change-02.html [ Failure ]
 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
@@ -4297,9 +4326,6 @@ fast/text/web-font-load-fallback-during-loading-no-multiple.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
-
-# Failing after ICU 76.1. Needs to rebaseline.
-imported/w3c/web-platform-tests/url/toascii.window.html [ Failure ]
 
 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
@@ -4474,5 +4500,3 @@ fast/box-shadow/shadow-repaint.html [ Skip ] # Failure
 fast/css/highlight-text-repaint.html [ Skip ] # Failure
 fast/css/text-underline-offset-repaint.html [ Skip ] # Failure
 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Skip ] # Failure
-
-webkit.org/b/285033 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Failure ]

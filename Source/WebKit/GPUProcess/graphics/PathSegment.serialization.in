@@ -86,6 +86,12 @@ header: <WebCore/PathSegmentData.h>
     WebCore::PathRoundedRect::Strategy strategy;
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathContinuousRoundedRect {
+    WebCore::FloatRect rect;
+    float cornerWidth;
+    float cornerHeight;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataLine {
     WebCore::FloatPoint start;
     WebCore::FloatPoint end;
@@ -119,4 +125,4 @@ header: <WebCore/PathSegment.h>
     WebCore::PathSegment::Data data();
 };
 
-using WebCore::PathSegment::Data = std::variant<WebCore::PathMoveTo, WebCore::PathLineTo, WebCore::PathQuadCurveTo, WebCore::PathBezierCurveTo, WebCore::PathArcTo, WebCore::PathArc, WebCore::PathClosedArc, WebCore::PathEllipse, WebCore::PathEllipseInRect, WebCore::PathRect, WebCore::PathRoundedRect, WebCore::PathDataLine, WebCore::PathDataQuadCurve, WebCore::PathDataBezierCurve, WebCore::PathDataArc, WebCore::PathCloseSubpath>;
+using WebCore::PathSegment::Data = std::variant<WebCore::PathMoveTo, WebCore::PathLineTo, WebCore::PathQuadCurveTo, WebCore::PathBezierCurveTo, WebCore::PathArcTo, WebCore::PathArc, WebCore::PathClosedArc, WebCore::PathEllipse, WebCore::PathEllipseInRect, WebCore::PathRect, WebCore::PathRoundedRect, WebCore::PathContinuousRoundedRect, WebCore::PathDataLine, WebCore::PathDataQuadCurve, WebCore::PathDataBezierCurve, WebCore::PathDataArc, WebCore::PathCloseSubpath>;

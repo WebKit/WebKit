@@ -131,15 +131,6 @@ combine('use_struct', [true, false]).
 combine('type', new Set([...kValidLocationTypes, ...kInvalidLocationTypes])).
 beginSubcases()
 ).
-beforeAllSubcases((t) => {
-  if (
-  t.params.type === 'f16' ||
-  (t.params.type.startsWith('mat') || t.params.type.startsWith('vec')) &&
-  t.params.type.endsWith('h'))
-  {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   let code = '';
 
@@ -163,7 +154,7 @@ fn((t) => {
   }
 
   code += generateShader({
-    attribute: '@location(0) @interpolate(flat)',
+    attribute: '@location(0) @interpolate(flat, either)',
     type: t.params.type,
     stage: 'fragment',
     io: 'in',
@@ -371,9 +362,6 @@ override y = 8;
 g.test('location_fp16').
 desc(`Test validation of location with fp16`).
 params((u) => u.combine('ext', ['', 'h'])).
-beforeAllSubcases((t) => {
-  t.selectDeviceOrSkipTestCase('shader-f16');
-}).
 fn((t) => {
   const code = `
 

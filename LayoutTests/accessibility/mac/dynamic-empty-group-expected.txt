@@ -1,0 +1,9 @@
+This test ensures we report or don't report the AXEmptyGroup subrole after dynamic page changes.
+
+PASS: accessibilityController.accessibleElementById('target').subrole === 'AXSubrole: AXEmptyGroup'
+PASS: accessibilityController.accessibleElementById('target').subrole === 'AXSubrole: AXApplicationGroup'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press

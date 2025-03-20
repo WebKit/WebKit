@@ -233,7 +233,7 @@ extern "C" UGPRPair SYSV_ABI llint_trace_operand(CallFrame* callFrame, const JSI
     LLINT_BEGIN();
     dataLogF(
         "<%p> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d\n",
-        &Thread::current(),
+        &Thread::currentSingleton(),
         callFrame->codeBlock(),
         globalObject,
         static_cast<intptr_t>(callFrame->codeBlock()->bytecodeOffset(pc)),
@@ -259,7 +259,7 @@ extern "C" UGPRPair SYSV_ABI llint_trace_value(CallFrame* callFrame, const JSIns
     u.asValue = JSValue::encode(value);
     dataLogF(
         "<%p> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %08x:%08x: %s\n",
-        &Thread::current(),
+        &Thread::currentSingleton(),
         callFrame->codeBlock(),
         callFrame,
         static_cast<intptr_t>(callFrame->codeBlock()->bytecodeOffset(pc)),
@@ -278,7 +278,7 @@ LLINT_SLOW_PATH_DECL(trace_prologue)
         LLINT_END_IMPL();
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    dataLogF("<%p> %p / %p: in prologue of ", &Thread::current(), codeBlock, callFrame);
+    dataLogF("<%p> %p / %p: in prologue of ", &Thread::currentSingleton(), codeBlock, callFrame);
     dataLog(codeBlock, "\n");
     LLINT_END_IMPL();
 }
@@ -291,7 +291,7 @@ static void traceFunctionPrologue(CallFrame* callFrame, const char* comment, Cod
     JSFunction* callee = jsCast<JSFunction*>(callFrame->jsCallee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = executable->codeBlockFor(kind);
-    dataLogF("<%p> %p / %p: in %s of ", &Thread::current(), codeBlock, callFrame, comment);
+    dataLogF("<%p> %p / %p: in %s of ", &Thread::currentSingleton(), codeBlock, callFrame, comment);
     dataLog(codeBlock);
     dataLogF(" function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
         callee, executable, codeBlock->numVars(), codeBlock->numParameters(), codeBlock->numCalleeLocals(), callFrame->callerFrame());
@@ -329,7 +329,7 @@ LLINT_SLOW_PATH_DECL(trace)
     CodeBlock* codeBlock = callFrame->codeBlock();
     OpcodeID opcodeID = pc->opcodeID();
     dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
-            &Thread::current(),
+            &Thread::currentSingleton(),
             codeBlock,
             callFrame,
             static_cast<intptr_t>(codeBlock->bytecodeOffset(pc)),
@@ -655,10 +655,10 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
     LLINT_RETURN(constructArrayWithSizeQuirk(globalObject, &metadata.m_arrayAllocationProfile, getOperand(callFrame, bytecode.m_length)));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
+LLINT_SLOW_PATH_DECL(slow_path_new_reg_exp)
 {
     LLINT_BEGIN();
-    auto bytecode = pc->as<OpNewRegexp>();
+    auto bytecode = pc->as<OpNewRegExp>();
     RegExp* regExp = jsCast<RegExp*>(getOperand(callFrame, bytecode.m_regexp));
     static constexpr bool areLegacyFeaturesEnabled = true;
     LLINT_RETURN(RegExpObject::create(vm, globalObject->regExpStructure(), regExp, areLegacyFeaturesEnabled));

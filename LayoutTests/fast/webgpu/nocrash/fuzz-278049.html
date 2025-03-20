@@ -43,8 +43,12 @@ async function run() {
     renderBundleEncoder.setIndexBuffer(buffer, 'uint32', 3_668);
     renderBundleEncoder.setPipeline(renderPipeline2);
     await device.queue.onSubmittedWorkDone();
+    console.log('Pass')
     globalThis.testRunner?.notifyDone();
 }
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 run();
 </script>
+

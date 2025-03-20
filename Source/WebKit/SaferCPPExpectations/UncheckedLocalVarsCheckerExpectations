@@ -1,14 +1,7 @@
-UIProcess/API/C/WKContext.cpp
-UIProcess/API/C/WKPage.cpp
-UIProcess/API/Cocoa/WKProcessPool.mm
-UIProcess/API/Cocoa/WKWebViewTesting.mm
-UIProcess/mac/DisplayCaptureSessionManager.mm
-UIProcess/mac/WebViewImpl.mm
 WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
 WebProcess/Plugins/PDF/PDFPluginBase.mm
-WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm

@@ -1,0 +1,16 @@
+<h1>Unregister Service Worker</h1>
+
+<script>
+    async function unregisterAllServiceWorkers() {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        if (!registrations) return false;
+
+        for (const registration of registrations) {
+            const success = await registration.unregister();
+            console.log('Service Worker unregistered:', success, registration);
+        }
+        return true;
+    }
+
+    unregisterAllServiceWorkers().then(result => window.parent.postMessage(result, '*'));
+</script>

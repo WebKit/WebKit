@@ -36,11 +36,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimation);
 TextStream& operator<<(TextStream& ts, ScrollAnimation::Type animationType)
 {
     switch (animationType) {
-    case ScrollAnimation::Type::Smooth: ts << "smooth"; break;
-    case ScrollAnimation::Type::Kinetic: ts << "kinetic"; break;
-    case ScrollAnimation::Type::Momentum: ts << "momentum"; break;
-    case ScrollAnimation::Type::RubberBand: ts << "rubber-band"; break;
-    case ScrollAnimation::Type::Keyboard: ts << "keyboard"; break;
+    case ScrollAnimation::Type::Smooth: ts << "smooth"_s; break;
+    case ScrollAnimation::Type::Kinetic: ts << "kinetic"_s; break;
+    case ScrollAnimation::Type::Momentum: ts << "momentum"_s; break;
+    case ScrollAnimation::Type::RubberBand: ts << "rubber-band"_s; break;
+    case ScrollAnimation::Type::Keyboard: ts << "keyboard"_s; break;
     }
     return ts;
 }

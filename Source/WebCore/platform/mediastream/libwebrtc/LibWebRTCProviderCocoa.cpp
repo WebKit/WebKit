@@ -38,6 +38,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
+#include <webrtc/webkit_sdk/WebKit/WebKitVP9Decoder.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -54,12 +55,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProviderCocoa);
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<LibWebRTCProviderCocoa>();
-}
-
-void WebRTCProvider::setH264HardwareEncoderAllowed(bool allowed)
-{
-    if (webRTCAvailable())
-        webrtc::setH264HardwareEncoderAllowed(allowed);
 }
 
 LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa()
@@ -106,6 +101,12 @@ bool WebRTCProvider::webRTCAvailable()
 #else
     return !!webrtc::CreatePeerConnectionFactory;
 #endif
+}
+
+void LibWebRTCProvider::registerWebKitVP9Decoder()
+{
+    if (webRTCAvailable())
+        webrtc::registerWebKitVP9Decoder();
 }
 
 } // namespace WebCore

@@ -72,7 +72,7 @@ void JSRunLoopTimer::Manager::timerDidFire()
     {
         Locker locker { m_lock };
         if (!m_mapping.isEmpty()) {
-            RunLoop* currentRunLoop = &RunLoop::current();
+            RunLoop* currentRunLoop = &RunLoop::currentSingleton();
             MonotonicTime now = MonotonicTime::now();
             for (auto& entry : m_mapping) {
                 PerVMData& data = *entry.value;
@@ -109,7 +109,7 @@ void JSRunLoopTimer::Manager::timerDidFire()
         timer->timerDidFire();
 }
 
-JSRunLoopTimer::Manager& JSRunLoopTimer::Manager::shared()
+JSRunLoopTimer::Manager& JSRunLoopTimer::Manager::singleton()
 {
     static Manager* manager;
     static std::once_flag once;
@@ -245,7 +245,7 @@ JSRunLoopTimer::~JSRunLoopTimer() = default;
 
 std::optional<Seconds> JSRunLoopTimer::timeUntilFire()
 {
-    return Manager::shared().timeUntilFire(*this);
+    return Manager::singleton().timeUntilFire(*this);
 }
 
 void JSRunLoopTimer::setTimeUntilFire(Seconds intervalInSeconds)
@@ -253,7 +253,7 @@ void JSRunLoopTimer::setTimeUntilFire(Seconds intervalInSeconds)
     {
         Locker locker { m_lock };
         m_isScheduled = true;
-        Manager::shared().scheduleTimer(*this, intervalInSeconds);
+        Manager::singleton().scheduleTimer(*this, intervalInSeconds);
     }
 
     Locker locker { m_timerCallbacksLock };
@@ -265,7 +265,7 @@ void JSRunLoopTimer::cancelTimer()
 {
     Locker locker { m_lock };
     m_isScheduled = false;
-    Manager::shared().cancelTimer(*this);
+    Manager::singleton().cancelTimer(*this);
 }
 
 void JSRunLoopTimer::addTimerSetNotification(TimerNotificationCallback callback)

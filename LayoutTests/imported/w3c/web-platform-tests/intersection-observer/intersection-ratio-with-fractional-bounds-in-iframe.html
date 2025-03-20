@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body">
+<body>
 <script>
     const asyncTest = async_test("intersectionRatio in iframe should be 1 for totally visible target with fractional bounds");
     const onIframeObserved = (event) => {
@@ -27,6 +27,6 @@
     };
     window.document.addEventListener("iframeObserved", onIframeObserved, false);
 </script>
-    <iframe class="iframe-container" src="./resources/intersection-ratio-with-fractional-bounds-in-iframe-content.html"></iframe>
+<iframe class="iframe-container" src="./resources/intersection-ratio-with-fractional-bounds-in-iframe-content.html"></iframe>
 </body>
 </html>

@@ -1,0 +1,11 @@
+
+FAIL Main resource load matched with the condition assert_equals: expected 0 but got 1
+FAIL Main resource load matched with the ignore case condition assert_equals: expected 0 but got 1
+PASS Main resource load matched without the ignore case condition
+PASS Main resource load not matched with the condition
+FAIL Main resource load matched with the cache source assert_equals: expected 0 but got 1
+FAIL Main resource fallback to the network when there is no cache entry assert_equals: expected 0 but got 1
+FAIL Main resource load matched with the cache source, with specifying the cache name assert_equals: expected 0 but got 1
+FAIL Main resource load should not match the condition with not assert_equals: expected 1 but got 0
+PASS Main resource load should match the condition without not
+

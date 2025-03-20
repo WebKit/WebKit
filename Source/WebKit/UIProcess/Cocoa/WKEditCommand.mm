@@ -52,13 +52,13 @@
 - (void)undoEditing:(id)sender
 {
     ASSERT([sender isKindOfClass:WKEditCommand.class]);
-    [sender command].unapply();
+    Ref { [sender command] }->unapply();
 }
 
 - (void)redoEditing:(id)sender
 {
     ASSERT([sender isKindOfClass:WKEditCommand.class]);
-    [sender command].reapply();
+    Ref { [sender command] }->reapply();
 }
 
 @end

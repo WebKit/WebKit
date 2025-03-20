@@ -526,6 +526,30 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Programmatic scroll</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5055</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>y offset</string>
+                     <key>Arg2</key>
+                     <string>Is main frame</string>
+                 </dict>
+                 <key>ArgValueTypes</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Int32</string>
+                     <key>Arg2</key>
+                     <string>Int32</string>
+                 </dict> 
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

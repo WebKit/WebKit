@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ FixedContainerEdgeSamplingEnabled=true useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui;
+        }
+
+        header {
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: tomato;
+        }
+
+        img {
+            margin-top: 1px;
+            width: 280px;
+            height: 40px;
+            border-radius: 6px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            color: white;
+            font-size: 20px;
+            line-height: 100px;
+            background: lightgray;
+            text-align: center;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.ensurePresentationUpdate();
+        colors = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colors.top", "rgb(255, 99, 71)");
+        shouldBeNull("colors.left");
+        shouldBeNull("colors.right");
+        shouldBeEqualToString("colors.bottom", "rgb(211, 211, 211)");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<header>
+    <img src="../images/resources/animated-red-green-blue-repeat-1.png" />
+</header>
+<div class="tall"></div>
+<pre id="console"></pre>
+<pre id="description"></pre>
+<footer>Bottom bar</footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf-8">
+
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #container {
+            font-size: 16px;
+            width: 310px;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            description("When selecting multi-column content and others, the highlight box should not extend to the unselected column.");
+
+            var outside = document.getElementById("outside");
+            var inside = document.getElementById("inside");
+            await UIHelper.longPressElement(inside);
+            await UIHelper.waitForSelectionToAppear();
+
+            getSelection().setBaseAndExtent(inside, 0, outside, 1);
+            await UIHelper.ensurePresentationUpdate();
+
+            selectionRects = await UIHelper.getUISelectionViewRects();
+
+            if (selectionRects.length != 4) {
+                testFailed(`The value of selectionRects.length should be 4, but got ${selectionRects.length}`);
+                finishJSTest();
+                return;
+            }
+            testPassed(`selectionRects.length is ${selectionRects.length}`);
+
+            shouldBeGreaterThan("150", "selectionRects[0].width");
+            // The highlight box does not extend to unselected column.
+            shouldBe("selectionRects[1].width", "150");
+            shouldBe("selectionRects[2].width", "310");
+            shouldBeGreaterThan("310", "selectionRects[3].width");
+
+            finishJSTest();
+        });
+    </script>
+</head>
+
+<body>
+    <div id="container">
+        <div style="column-count: 2; column-gap: 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit. Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula.
+            <span id="inside">Here is the selected content at the end of multi-column.</span>
+        </div>
+        <p id="outside">Here is the selected content outside of the multi-column element.</p>
+    </div>
+</body>
+
+</html>

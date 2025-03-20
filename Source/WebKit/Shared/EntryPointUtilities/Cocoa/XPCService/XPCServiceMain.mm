@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
+#import <wtf/darwin/XPCExtras.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
-#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/MakeString.h>
 
 #if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
@@ -113,7 +113,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 }
 static void checkFrameworkVersion(xpc_object_t message)
 {
-    auto uiProcessWebKitBundleVersion = xpc_dictionary_get_wtfstring(message, "WebKitBundleVersion"_s);
+    auto uiProcessWebKitBundleVersion = xpcDictionaryGetString(message, "WebKitBundleVersion"_s);
     auto webkitBundleVersion = ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION);
     if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
         auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
@@ -154,7 +154,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
         handleXPCExitMessage(event);
 #endif
 
-        String messageName = xpc_dictionary_get_wtfstring(event, "message-name"_s);
+        String messageName = xpcDictionaryGetString(event, "message-name"_s);
         if (!messageName) {
             RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'message-name' is not present in the XPC dictionary");
             return;
@@ -169,7 +169,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 Vector<String> newLanguages;
                 @autoreleasepool {
                     xpc_array_apply(languages, makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
-                        newLanguages.append(String::fromUTF8(xpc_string_get_string_ptr(value)));
+                        newLanguages.append(xpcStringGetString(value));
                         return true;
                     }).get());
                 }
@@ -185,12 +185,12 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 #if PLATFORM(IOS_FAMILY)
             auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
             xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
-                setenv(key, xpc_string_get_string_ptr(value), 1);
+                setenv(key, xpc_string_get_string_ptr(value), 1);  // NOLINT
                 return true;
             });
 #endif
 
-            String serviceName = xpc_dictionary_get_wtfstring(event, "service-name"_s);
+            String serviceName = xpcDictionaryGetString(event, "service-name"_s);
             if (!serviceName) {
                 RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'service-name' is not present in the XPC dictionary");
                 return;

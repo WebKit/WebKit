@@ -5,15 +5,19 @@ Tests for capability checking for features enabling optional texture formats.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { getGPU } from '../../../../../common/util/navigator_gpu.js';
 import { assert } from '../../../../../common/util/util.js';
-import { kAllTextureFormats, kTextureFormatInfo } from '../../../../format_info.js';
+import { kCanvasTextureFormats } from '../../../../capability_info.js';
+import {
+  getBlockInfoForTextureFormat,
+  getRequiredFeatureForTextureFormat,
+  isDepthOrStencilTextureFormat,
+  isTextureFormatPossiblyStorageReadable,
+  isTextureFormatPossiblyUsableAsColorRenderAttachment,
+  kOptionalTextureFormats } from
+'../../../../format_info.js';
 import { kAllCanvasTypes, createCanvas } from '../../../../util/create_elements.js';
-import { ValidationTest } from '../../validation_test.js';
+import { UniqueFeaturesAndLimitsValidationTest } from '../../validation_test.js';
 
-export const g = makeTestGroup(ValidationTest);
-
-const kOptionalTextureFormats = kAllTextureFormats.filter(
-  (t) => kTextureFormatInfo[t].feature !== undefined
-);
+export const g = makeTestGroup(UniqueFeaturesAndLimitsValidationTest);
 
 g.test('texture_descriptor').
 desc(
@@ -28,17 +32,16 @@ u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', 
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
+  const formatInfo = getBlockInfoForTextureFormat(format);
   t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
-    t.device.createTexture({
+    t.createTextureTracked({
       format,
       size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
       usage: GPUTextureUsage.TEXTURE_BINDING
@@ -59,17 +62,16 @@ u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', 
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
+  const formatInfo = getBlockInfoForTextureFormat(format);
   t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
-    t.device.createTexture({
+    t.createTextureTracked({
       format,
       size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
       usage: GPUTextureUsage.TEXTURE_BINDING,
@@ -91,9 +93,8 @@ u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', 
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
@@ -106,8 +107,8 @@ fn((t) => {
   // has a chance to validate that the view and texture formats aren't compatible.
   const textureFormat = enable_required_feature ? format : 'rgba8unorm';
 
-  const formatInfo = kTextureFormatInfo[format];
-  const testTexture = t.device.createTexture({
+  const formatInfo = getBlockInfoForTextureFormat(format);
+  const testTexture = t.createTextureTracked({
     format: textureFormat,
     size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
     usage: GPUTextureUsage.TEXTURE_BINDING
@@ -143,9 +144,8 @@ combine('enable_required_feature', [true, false])
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
@@ -161,15 +161,15 @@ fn((t) => {
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST
   };
 
-  if (enable_required_feature) {
-    t.expectValidationError(() => {
-      ctx.configure(canvasConf);
-    });
-  } else {
-    t.shouldThrow('TypeError', () => {
-      ctx.configure(canvasConf);
-    });
-  }
+  const expectedError =
+  enable_required_feature &&
+  kCanvasTextureFormats.includes(format) ?
+  false :
+  'TypeError';
+
+  t.shouldThrow(expectedError, () => {
+    ctx.configure(canvasConf);
+  });
 });
 
 g.test('canvas_configuration_view_formats').
@@ -234,19 +234,19 @@ desc(
 params((u) =>
 u.
 combine('format', kOptionalTextureFormats).
-filter((t) => !!kTextureFormatInfo[t.format].color?.storage).
+filter((t) => isTextureFormatPossiblyStorageReadable(t.format)).
 combine('enable_required_feature', [true, false])
 ).
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
   const { format, enable_required_feature } = t.params;
+  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
 
   t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
     t.device.createBindGroupLayout({
@@ -276,19 +276,19 @@ params((u) =>
 u.
 combine('isAsync', [false, true]).
 combine('format', kOptionalTextureFormats).
-filter((t) => !!kTextureFormatInfo[t.format].colorRender).
+filter((t) => isTextureFormatPossiblyUsableAsColorRenderAttachment(t.format)).
 combine('enable_required_feature', [true, false])
 ).
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
   const { isAsync, format, enable_required_feature } = t.params;
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
 
   t.doCreateRenderPipelineTest(
     isAsync,
@@ -332,15 +332,14 @@ params((u) =>
 u.
 combine('isAsync', [false, true]).
 combine('format', kOptionalTextureFormats).
-filter((t) => !!(kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)).
+filter((t) => isDepthOrStencilTextureFormat(t.format)).
 combine('enable_required_feature', [true, false])
 ).
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
@@ -394,19 +393,19 @@ desc(
 params((u) =>
 u.
 combine('format', kOptionalTextureFormats).
-filter((t) => !!kTextureFormatInfo[t.format].colorRender).
+filter((t) => isTextureFormatPossiblyUsableAsColorRenderAttachment(t.format)).
 combine('enable_required_feature', [true, false])
 ).
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {
   const { format, enable_required_feature } = t.params;
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
 
   t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
     t.device.createRenderBundleEncoder({
@@ -425,15 +424,14 @@ desc(
 params((u) =>
 u.
 combine('format', kOptionalTextureFormats).
-filter((t) => !!(kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)).
+filter((t) => isDepthOrStencilTextureFormat(t.format)).
 combine('enable_required_feature', [true, false])
 ).
 beforeAllSubcases((t) => {
   const { format, enable_required_feature } = t.params;
 
-  const formatInfo = kTextureFormatInfo[format];
   if (enable_required_feature) {
-    t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    t.selectDeviceOrSkipTestCase(getRequiredFeatureForTextureFormat(format));
   }
 }).
 fn((t) => {

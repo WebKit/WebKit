@@ -32,6 +32,7 @@
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
@@ -2653,7 +2654,7 @@ TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
 
 TEST(WKAttachmentTestsIOS, InsertPastedMapItemAsAttachment)
 {
-    UIApplicationInitialize();
+    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().get() ];
     auto webView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(webView.get());

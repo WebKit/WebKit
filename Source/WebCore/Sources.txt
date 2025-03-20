@@ -140,6 +140,7 @@ Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
 Modules/filesystemaccess/FileSystemDirectoryHandle.cpp
 Modules/filesystemaccess/FileSystemFileHandle.cpp
 Modules/filesystemaccess/FileSystemHandle.cpp
+Modules/filesystemaccess/FileSystemStorageConnection.cpp
 Modules/filesystemaccess/FileSystemSyncAccessHandle.cpp
 Modules/filesystemaccess/FileSystemWritableFileStream.cpp
 Modules/filesystemaccess/FileSystemWritableFileStreamSink.cpp
@@ -544,6 +545,7 @@ Modules/webxr/XRLayerEvent.cpp
 Modules/webxr/XRProjectionLayer.cpp
 Modules/webxr/XRReferenceSpaceEvent.cpp
 Modules/webxr/XRSessionEvent.cpp
+Modules/webxr/XRSubImage.cpp
 Modules/webxr/XRWebGLBinding.cpp
 Modules/webxr/XRWebGLSubImage.cpp
 accessibility/AXCoreObject.cpp
@@ -600,7 +602,6 @@ animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
 animation/CSSAnimation.cpp
 animation/CSSAnimationEvent.cpp
-animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
@@ -668,7 +669,6 @@ bindings/js/JSDOMGlobalObject.cpp
 bindings/js/JSDOMGuardedObject.cpp
 bindings/js/JSDOMIterator.cpp
 bindings/js/JSDOMMapLike.cpp
-bindings/js/JSDOMMicrotask.cpp
 bindings/js/JSDOMPromise.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMQuadCustom.cpp
@@ -857,7 +857,6 @@ crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 css/CSSAppleColorFilterPropertyValue.cpp
-css/CSSAspectRatioValue.cpp
 css/CSSAttrValue.cpp
 css/CSSBackgroundRepeatValue.cpp
 css/CSSBasicShapeValue.cpp
@@ -885,19 +884,18 @@ css/CSSEasingFunctionValue.cpp
 css/CSSFilterImageValue.cpp
 css/CSSFilterPropertyValue.cpp
 css/CSSFontFace.cpp
+css/CSSFontFaceDescriptors.cpp
 css/CSSFontFaceRule.cpp
 css/CSSFontFaceSet.cpp
 css/CSSFontFaceSource.cpp
 css/CSSFontFaceSrcValue.cpp
 css/CSSFontFeatureValue.cpp
 css/CSSFontFeatureValuesRule.cpp
-css/CSSFontPaletteValuesOverrideColorsValue.cpp
 css/CSSFontPaletteValuesRule.cpp
 css/CSSFontSelector.cpp
 css/CSSFontStyleRangeValue.cpp
 css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
-css/CSSFontVariantAlternatesValue.cpp
 css/CSSFontVariationValue.cpp
 css/CSSFunctionValue.cpp
 css/CSSGradientValue.cpp
@@ -932,6 +930,7 @@ css/CSSProperty.cpp
 css/CSSPropertyRule.cpp
 css/CSSPropertySourceData.cpp
 css/CSSQuadValue.cpp
+css/CSSRatioValue.cpp
 css/CSSRayValue.cpp
 css/CSSRectValue.cpp
 css/CSSReflectValue.cpp
@@ -945,6 +944,7 @@ css/CSSSelector.cpp
 css/CSSSelectorList.cpp
 css/CSSStartingStyleRule.cpp
 css/CSSStyleDeclaration.cpp
+css/CSSStyleProperties.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
 css/CSSStyleSheetObservableArray.cpp
@@ -987,7 +987,6 @@ css/MediaQueryListEvent.cpp
 css/MediaQueryMatcher.cpp
 css/MediaQueryParserContext.cpp
 css/MutableStyleProperties.cpp
-css/PropertySetCSSStyleDeclaration.cpp
 css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
@@ -1038,8 +1037,6 @@ css/parser/CSSPropertyParserConsumer+Box.cpp
 css/parser/CSSPropertyParserConsumer+Color.cpp
 css/parser/CSSPropertyParserConsumer+ColorAdjust.cpp
 css/parser/CSSPropertyParserConsumer+ColorInterpolationMethod.cpp
-css/parser/CSSPropertyParserConsumer+Conditional.cpp
-css/parser/CSSPropertyParserConsumer+Contain.cpp
 css/parser/CSSPropertyParserConsumer+Content.cpp
 css/parser/CSSPropertyParserConsumer+CounterStyles.cpp
 css/parser/CSSPropertyParserConsumer+Display.cpp
@@ -1061,22 +1058,18 @@ css/parser/CSSPropertyParserConsumer+Number.cpp
 css/parser/CSSPropertyParserConsumer+Overflow.cpp
 css/parser/CSSPropertyParserConsumer+Page.cpp
 css/parser/CSSPropertyParserConsumer+Percentage.cpp
-css/parser/CSSPropertyParserConsumer+PointerEvents.cpp
 css/parser/CSSPropertyParserConsumer+Position.cpp
 css/parser/CSSPropertyParserConsumer+PositionTry.cpp
 css/parser/CSSPropertyParserConsumer+Primitives.cpp
+css/parser/CSSPropertyParserConsumer+Ratio.cpp
 css/parser/CSSPropertyParserConsumer+Resolution.cpp
-css/parser/CSSPropertyParserConsumer+Ruby.cpp
 css/parser/CSSPropertyParserConsumer+SVG.cpp
 css/parser/CSSPropertyParserConsumer+ScrollSnap.cpp
 css/parser/CSSPropertyParserConsumer+Scrollbars.cpp
 css/parser/CSSPropertyParserConsumer+Shapes.cpp
-css/parser/CSSPropertyParserConsumer+Sizing.cpp
-css/parser/CSSPropertyParserConsumer+Speech.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 css/parser/CSSPropertyParserConsumer+Symbol.cpp
 css/parser/CSSPropertyParserConsumer+Syntax.cpp
-css/parser/CSSPropertyParserConsumer+Text.cpp
 css/parser/CSSPropertyParserConsumer+TextDecoration.cpp
 css/parser/CSSPropertyParserConsumer+Time.cpp
 css/parser/CSSPropertyParserConsumer+Timeline.cpp
@@ -1084,6 +1077,7 @@ css/parser/CSSPropertyParserConsumer+Transform.cpp
 css/parser/CSSPropertyParserConsumer+Transitions.cpp
 css/parser/CSSPropertyParserConsumer+UI.cpp
 css/parser/CSSPropertyParserConsumer+URL.cpp
+css/parser/CSSPropertyParserConsumer+UnicodeRange.cpp
 css/parser/CSSPropertyParserConsumer+ViewTransition.cpp
 css/parser/CSSPropertyParserConsumer+WillChange.cpp
 css/parser/CSSSelectorParser.cpp
@@ -1153,7 +1147,7 @@ css/typedom/transform/CSSTranslate.cpp
 css/values/CSSSerializationContext.cpp
 css/values/CSSValueAggregates.cpp
 css/values/CSSValueTypes.cpp
-css/values/backgrounds/CSSBorderRadius.cpp
+css/values/borders/CSSBorderRadius.cpp
 css/values/color-adjust/CSSColorScheme.cpp
 css/values/color/CSSColor.cpp
 css/values/color/CSSColorLayers.cpp
@@ -1276,7 +1270,6 @@ dom/FragmentDirectiveGenerator.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/FragmentDirectiveParser.cpp
 dom/FragmentDirectiveUtilities.cpp
-dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
 dom/HashChangeEvent.cpp
 dom/IdTargetObserver.cpp
@@ -2287,7 +2280,6 @@ platform/DragData.cpp
 platform/DragImage.cpp
 platform/EventTrackingRegions.cpp
 platform/FileChooser.cpp
-platform/FileHandle.cpp
 platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/FrameRateMonitor.cpp
@@ -2555,6 +2547,7 @@ platform/graphics/PixelBuffer.cpp
 platform/graphics/PixelBufferConversion.cpp
 platform/graphics/PixelBufferFormat.cpp
 platform/graphics/PixelFormat.cpp
+platform/graphics/PlatformDynamicRangeLimit.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/PositionedGlyphs.cpp
 platform/graphics/Region.cpp
@@ -2829,6 +2822,7 @@ rendering/MotionPath.cpp
 rendering/OrderIterator.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp
+rendering/PositionedLayoutConstraints.cpp
 rendering/ReferencedSVGResources.cpp
 rendering/RegionContext.cpp
 rendering/RenderAttachment.cpp
@@ -2958,6 +2952,8 @@ rendering/style/NinePieceImage.cpp
 rendering/style/OffsetRotation.cpp
 rendering/style/QuotesData.cpp
 rendering/style/PositionArea.cpp
+rendering/style/PositionTryFallback.cpp
+rendering/style/PositionTryOrder.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp
 rendering/style/SVGRenderStyle.cpp
@@ -3129,6 +3125,7 @@ style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
 style/StyleChange.cpp
 style/StyleFontSizeFunctions.cpp
+style/StyleInterpolation.cpp
 style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
@@ -3144,8 +3141,9 @@ style/StyleUpdate.cpp
 style/Styleable.cpp
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
-style/values/backgrounds/StyleBorderRadius.cpp
-style/values/backgrounds/StyleBoxShadow.cpp
+style/values/borders/StyleBorderRadius.cpp
+style/values/borders/StyleBoxShadow.cpp
+style/values/borders/StyleCornerShapeValue.cpp
 style/values/color-adjust/StyleColorScheme.cpp
 style/values/color/StyleColor.cpp
 style/values/color/StyleColorLayers.cpp
@@ -3377,6 +3375,7 @@ workers/service/ServiceWorkerRegistration.cpp
 workers/service/ServiceWorkerRegistrationData.cpp
 workers/service/ServiceWorkerRegistrationKey.cpp
 workers/service/ServiceWorkerRegistrationOptions.cpp
+workers/service/ServiceWorkerRoute.cpp
 workers/service/ServiceWorkerWindowClient.cpp
 workers/service/WorkerSWClientConnection.cpp
 workers/service/background-fetch/BackgroundFetch.cpp
@@ -3457,6 +3456,7 @@ DocumentSyncData.cpp
 EventFactory.cpp
 EventNames.cpp
 EventTargetFactory.cpp
+FrameTreeSyncData.cpp
 HTMLElementFactory.cpp
 HTMLEntityTable.cpp
 JSHTMLElementWrapperFactory.cpp
@@ -3466,6 +3466,7 @@ MathMLElementFactory.cpp
 ProcessSyncClient.cpp
 SVGElementFactory.cpp
 StyleBuilderGenerated.cpp
+StyleInterpolationWrapperMap.cpp
 StylePropertyShorthandFunctions.cpp
 UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp
@@ -3494,6 +3495,7 @@ JSAnimationFrameRatePreset.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
 JSAnimationTimeline.cpp
+JSAllAcceptedCredentialsOptions.cpp
 JSAttestationConveyancePreference.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp
@@ -3577,6 +3579,7 @@ JSCSSAnimationEvent.cpp
 JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
+JSCSSFontFaceDescriptors.cpp
 JSCSSFontFaceRule.cpp
 JSCSSFontFeatureValuesRule.cpp
 JSCSSFontPaletteValuesRule.cpp
@@ -3596,9 +3599,10 @@ JSCSSPositionTryRule.cpp
 JSCSSPropertyRule.cpp
 JSCSSRule.cpp
 JSCSSRuleList.cpp
-JSCSSStyleDeclaration.cpp
 JSCSSScopeRule.cpp
 JSCSSStartingStyleRule.cpp
+JSCSSStyleDeclaration.cpp
+JSCSSStyleProperties.cpp
 JSCSSStyleRule.cpp
 JSCSSStyleSheet.cpp
 JSCSSSupportsRule.cpp
@@ -3705,6 +3709,7 @@ JSCustomEffectCallback.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSCustomStateSet.cpp
+JSCurrentUserDetailsOptions.cpp
 JSDOMApplicationCache.cpp
 JSDOMAudioSession.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
@@ -4775,6 +4780,7 @@ JSURLSearchParams.cpp
 JSUserActivation.cpp
 JSUndoItem.cpp
 JSUndoManager.cpp
+JSUnknownCredentialOptions.cpp
 JSUserMessageHandler.cpp
 JSUserMessageHandlersNamespace.cpp
 JSUserVerificationRequirement.cpp

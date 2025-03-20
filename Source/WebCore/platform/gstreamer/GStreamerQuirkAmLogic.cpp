@@ -42,7 +42,7 @@ GstElement* GStreamerQuirkAmLogic::createWebAudioSink()
     // that causes resource acquisition in some cases interrupting any playback already running.
     // On Amlogic we need to set direct-mode=false prop before changing state to READY
     // but this is not possible with autoaudiosink.
-    auto sink = makeGStreamerElement("amlhalasink", nullptr);
+    auto sink = makeGStreamerElement("amlhalasink"_s);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "amlhalasink should be available in the system but it is not");
     g_object_set(sink, "direct-mode", FALSE, nullptr);
     return sink;
@@ -50,12 +50,12 @@ GstElement* GStreamerQuirkAmLogic::createWebAudioSink()
 
 void GStreamerQuirkAmLogic::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    if (gstObjectHasProperty(element, "disable-xrun")) {
+    if (gstObjectHasProperty(element, "disable-xrun"_s)) {
         GST_INFO("Set property disable-xrun to TRUE");
         g_object_set(element, "disable-xrun", TRUE, nullptr);
     }
 
-    if (characteristics.contains(ElementRuntimeCharacteristics::HasVideo) && gstObjectHasProperty(element, "wait-video")) {
+    if (characteristics.contains(ElementRuntimeCharacteristics::HasVideo) && gstObjectHasProperty(element, "wait-video"_s)) {
         GST_INFO("Set property wait-video to TRUE");
         g_object_set(element, "wait-video", TRUE, nullptr);
     }

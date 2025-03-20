@@ -84,12 +84,12 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
 
 void PerspectiveTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(";
+    ts << type() << '(';
     if (!m_p)
-        ts << "none";
+        ts << "none"_s;
     else
         ts << m_p;
-    ts << ")";
+    ts << ')';
 }
 
 } // namespace WebCore

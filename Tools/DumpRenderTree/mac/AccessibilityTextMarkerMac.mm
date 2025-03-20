@@ -38,7 +38,7 @@ AccessibilityTextMarker::AccessibilityTextMarker(id marker)
 }
 
 AccessibilityTextMarker::AccessibilityTextMarker(const AccessibilityTextMarker& marker)
-    : m_textMarker(marker.platformTextMarker())
+    : m_textMarker(marker.m_textMarker)
 {
 }
 

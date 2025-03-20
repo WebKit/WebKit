@@ -29,6 +29,7 @@
 
 #import "APIHitTestResult.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -40,7 +41,7 @@ template<> struct WrapperTraits<API::HitTestResult> {
 
 @interface _WKHitTestResult () <WKObject> {
 @package
-    API::ObjectStorage<API::HitTestResult> _hitTestResult;
+    AlignedStorage<API::HitTestResult> _hitTestResult;
 }
 @end
 

@@ -244,7 +244,7 @@ void JSGlobalObjectInspectorController::frontendInitialized()
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (m_isAutomaticInspection)
-        m_globalObject.inspectorDebuggable().unpauseForInitializedInspector();
+        m_globalObject.inspectorDebuggable().unpauseForResolvedAutomaticInspection();
 #endif
 }
 

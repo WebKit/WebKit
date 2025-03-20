@@ -61,7 +61,7 @@ expected)
     inputUsage === 'uniform' ? GPUBufferUsage.UNIFORM : GPUBufferUsage.STORAGE
   );
 
-  const outputBuffer = t.device.createBuffer({
+  const outputBuffer = t.createBufferTracked({
     size: expected.buffer.byteLength,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });

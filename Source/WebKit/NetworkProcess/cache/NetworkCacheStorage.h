@@ -179,7 +179,6 @@ private:
     void removeFromPendingWriteOperations(const Key&);
 
     ConcurrentWorkQueue& ioQueue() { return m_ioQueue.get(); }
-    Ref<ConcurrentWorkQueue> protectedIOQueue() { return ioQueue(); }
     ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
@@ -226,9 +225,9 @@ private:
     HashMap<WriteOperationIdentifier, std::unique_ptr<WriteOperation>> m_activeWriteOperations;
     WebCore::Timer m_writeOperationDispatchTimer;
 
-    Ref<ConcurrentWorkQueue> m_ioQueue;
-    Ref<ConcurrentWorkQueue> m_backgroundIOQueue;
-    Ref<WorkQueue> m_serialBackgroundIOQueue;
+    const Ref<ConcurrentWorkQueue> m_ioQueue;
+    const Ref<ConcurrentWorkQueue> m_backgroundIOQueue;
+    const Ref<WorkQueue> m_serialBackgroundIOQueue;
 
     BlobStorage m_blobStorage;
 

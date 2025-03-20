@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "AddEventListenerOptions.h"
+#import "DocumentFullscreen.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
@@ -76,12 +77,15 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
     if (!m_isListening)
         return;
     m_isListening = false;
-    if (!m_videoElement)
-        return;
-    for (auto& eventName : observedEventNames())
-        m_videoElement->removeEventListener(eventName, m_videoListener, false);
-    for (auto& eventName : documentObservedEventNames())
-        m_videoElement->document().removeEventListener(eventName, m_videoListener, false);
+    if (m_videoElement) {
+        m_videoElement->removeClient(*this);
+        for (auto& eventName : observedEventNames())
+            m_videoElement->removeEventListener(eventName, m_videoListener, false);
+    }
+    if (RefPtr document = m_document.get()) {
+        for (auto& eventName : documentObservedEventNames())
+            document->removeEventListener(eventName, m_videoListener, false);
+    }
 }
 
 void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -101,6 +105,8 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (m_videoElement) {
+        m_videoElement->addClient(*this);
+        m_document = m_videoElement->document();
         for (auto& eventName : observedEventNames())
             m_videoElement->addEventListener(eventName, m_videoListener, false);
         m_isListening = true;
@@ -127,6 +133,11 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
     if (all || eventName == eventNames().visibilitychangeEvent)
         documentVisibilityChanged();
 
+#if ENABLE(FULLSCREEN_API)
+    if (all || eventName == eventNames().fullscreenchangeEvent)
+        documentFullscreenChanged();
+#endif
+
     if (all
         || eventName == eventNames().loadedmetadataEvent || eventName == eventNames().loadstartEvent) {
         setPlayerIdentifier([&]() -> std::optional<MediaPlayerIdentifier> {
@@ -146,6 +157,10 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             return std::nullopt;
         }());
     }
+
+    // FIXME: We should only tag a media element as having been interacting with if those events were trigger by a user gesture.
+    if (eventName == eventNames().playEvent || eventName == eventNames().pauseEvent)
+        videoInteractedWith();
 }
 
 void VideoPresentationModelVideoElement::documentVisibilityChanged()
@@ -164,6 +179,50 @@ void VideoPresentationModelVideoElement::documentVisibilityChanged()
 
     for (auto& client : copyToVector(m_clients))
         client->documentVisibilityChanged(m_documentIsVisible);
+}
+
+#if ENABLE(FULLSCREEN_API)
+void VideoPresentationModelVideoElement::documentFullscreenChanged()
+{
+    RefPtr videoElement = m_videoElement;
+
+    if (!videoElement)
+        return;
+
+    bool isChildOfElementFullscreen = [&] {
+        auto* fullscreen = videoElement->document().fullscreenIfExists();
+        if (!fullscreen)
+            return false;
+        RefPtr fullscreenElement = fullscreen->protectedFullscreenElement();
+        if (!fullscreenElement)
+            return false;
+        ContainerNode* ancestor = videoElement->parentNode();
+        while (ancestor && ancestor != fullscreenElement)
+            ancestor = ancestor->parentNode();
+        return !!ancestor;
+    }();
+
+    if (std::exchange(m_isChildOfElementFullscreen, isChildOfElementFullscreen) == isChildOfElementFullscreen)
+        return;
+
+    for (auto& client : copyToVector(m_clients))
+        client->isChildOfElementFullscreenChanged(m_isChildOfElementFullscreen);
+}
+#endif
+
+void VideoPresentationModelVideoElement::videoInteractedWith()
+{
+    RefPtr videoElement = m_videoElement;
+
+    if (!videoElement)
+        return;
+
+    CheckedPtr mediaSession = videoElement->mediaSessionIfExists();
+    if (!mediaSession || (!mediaSession->mostRecentUserInteractionTime() && mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange)))
+        return;
+
+    for (auto& client : copyToVector(m_clients))
+        client->hasBeenInteractedWith();
 }
 
 void VideoPresentationModelVideoElement::willExitFullscreen()
@@ -271,13 +330,13 @@ void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::Video
 
 std::span<const AtomString> VideoPresentationModelVideoElement::observedEventNames()
 {
-    static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent };
+    static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent, eventNames().playEvent, eventNames().pauseEvent };
     return names.get();
 }
 
 std::span<const AtomString> VideoPresentationModelVideoElement::documentObservedEventNames()
 {
-    static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent };
+    static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent, eventNames().fullscreenchangeEvent };
     return names.get();
 }
 
@@ -402,6 +461,12 @@ void VideoPresentationModelVideoElement::setTextTrackRepresentationBounds(const 
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, bounds.size());
     videoElement->setTextTrackRepresentataionBounds(bounds);
+}
+
+void VideoPresentationModelVideoElement::audioSessionCategoryChanged(AudioSessionCategory category, AudioSessionMode mode, RouteSharingPolicy policy)
+{
+    for (auto& client : copyToVector(m_clients))
+        client->audioSessionCategoryChanged(category, mode, policy);
 }
 
 #if !RELEASE_LOG_DISABLED

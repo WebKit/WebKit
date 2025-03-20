@@ -719,18 +719,18 @@ void PluginView::handleEvent(Event& event)
         } else if (currentEvent->type() == WebEventType::MouseUp)
             frame->checkedEventHandler()->setCapturingMouseEventsElement(nullptr);
 
-        didHandleEvent = protectedPlugin()->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleMouseEvent(downcast<WebMouseEvent>(*currentEvent));
     } else if ((event.type() == eventNames().wheelEvent || event.type() == eventNames().mousewheelEvent) && currentEvent->type() == WebEventType::Wheel)
-        didHandleEvent = protectedPlugin()->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleWheelEvent(downcast<WebWheelEvent>(*currentEvent));
     else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEventType::MouseMove)
-        didHandleEvent = protectedPlugin()->handleMouseEnterEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleMouseEnterEvent(downcast<WebMouseEvent>(*currentEvent));
     else if (event.type() == eventNames().mouseoutEvent && currentEvent->type() == WebEventType::MouseMove)
-        didHandleEvent = protectedPlugin()->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleMouseLeaveEvent(downcast<WebMouseEvent>(*currentEvent));
     else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEventType::MouseDown)
-        didHandleEvent = protectedPlugin()->handleContextMenuEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleContextMenuEvent(downcast<WebMouseEvent>(*currentEvent));
     else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEventType::KeyDown)
         || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEventType::KeyUp))
-        didHandleEvent = protectedPlugin()->handleKeyboardEvent(static_cast<const WebKeyboardEvent&>(*currentEvent));
+        didHandleEvent = protectedPlugin()->handleKeyboardEvent(downcast<WebKeyboardEvent>(*currentEvent));
 
     if (didHandleEvent)
         event.setDefaultHandled();
@@ -903,6 +903,14 @@ void PluginView::viewGeometryDidChange()
     }();
 
     protectedPlugin()->geometryDidChange(size(), pluginToRootViewTransform);
+}
+
+void PluginView::frameViewLayoutOrVisualViewportChanged(const IntRect& unobscuredContentRect)
+{
+    if (!m_isInitialized || !parent())
+        return;
+
+    protectedPlugin()->frameViewLayoutOrVisualViewportChanged(unobscuredContentRect);
 }
 
 void PluginView::viewVisibilityDidChange()
@@ -1133,7 +1141,7 @@ PDFPluginIdentifier PluginView::pdfPluginIdentifier() const
     return protectedPlugin()->identifier();
 }
 
-void PluginView::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
+void PluginView::openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     protectedPlugin()->openWithPreview(WTFMove(completionHandler));
 }

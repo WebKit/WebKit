@@ -83,7 +83,7 @@ void WorkerOrWorkletThread::dispatch(Function<void()>&& func)
 
 bool WorkerOrWorkletThread::isCurrent() const
 {
-    return thread() ? thread()->uid() == Thread::current().uid() : false;
+    return thread() ? thread()->uid() == Thread::currentSingleton().uid() : false;
 }
 
 void WorkerOrWorkletThread::startRunningDebuggerTasks()

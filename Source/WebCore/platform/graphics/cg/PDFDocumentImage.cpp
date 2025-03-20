@@ -266,10 +266,10 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 void PDFDocumentImage::dump(TextStream& ts) const
 {
     Image::dump(ts);
-    ts.dumpProperty("page-count", pageCount());
-    ts.dumpProperty("crop-box", m_cropBox);
+    ts.dumpProperty("page-count"_s, pageCount());
+    ts.dumpProperty("crop-box"_s, m_cropBox);
     if (m_rotationDegrees)
-        ts.dumpProperty("rotation", m_rotationDegrees);
+        ts.dumpProperty("rotation"_s, m_rotationDegrees);
 }
 
 }

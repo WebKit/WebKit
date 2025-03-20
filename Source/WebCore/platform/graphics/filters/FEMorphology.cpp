@@ -100,13 +100,13 @@ static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type
 {
     switch (type) {
     case MorphologyOperatorType::Unknown:
-        ts << "UNKNOWN";
+        ts << "UNKNOWN"_s;
         break;
     case MorphologyOperatorType::Erode:
-        ts << "ERODE";
+        ts << "ERODE"_s;
         break;
     case MorphologyOperatorType::Dilate:
-        ts << "DILATE";
+        ts << "DILATE"_s;
         break;
     }
     return ts;
@@ -114,13 +114,13 @@ static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type
 
 TextStream& FEMorphology::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feMorphology";
+    ts << indent << "[feMorphology"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " operator=\"" << morphologyOperator() << "\"";
-    ts << " radius=\"" << radiusX() << ", " << radiusY() << "\"";
+    ts << " operator=\""_s << morphologyOperator() << '"';
+    ts << " radius=\""_s << radiusX() << ", "_s << radiusY() << '"';
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

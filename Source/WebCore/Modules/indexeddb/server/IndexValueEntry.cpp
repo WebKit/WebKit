@@ -77,6 +77,14 @@ bool IndexValueEntry::removeKey(const IDBKeyData& key)
     return m_orderedKeys->erase(key);
 }
 
+bool IndexValueEntry::contains(const IDBKeyData& key)
+{
+    if (m_unique)
+        return m_key && *m_key == key;
+
+    return m_orderedKeys && m_orderedKeys->count(key);
+}
+
 const IDBKeyData* IndexValueEntry::getLowest() const
 {
     if (m_unique)
@@ -226,6 +234,19 @@ IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, Cu
     return { *this, iterator };
 }
 
+Vector<IDBKeyData> IndexValueEntry::keys() const
+{
+    Vector<IDBKeyData> result;
+    if (m_unique) {
+        if (m_key)
+            result.append(*m_key);
+    } else if (m_orderedKeys) {
+        for (auto& key : *m_orderedKeys)
+            result.append(key);
+    }
+
+    return result;
+}
 
 } // namespace IDBServer
 } // namespace WebCore

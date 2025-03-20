@@ -35,7 +35,11 @@
 OBJC_CLASS NSCoder;
 OBJC_CLASS NSNumber;
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(WEBCONTENTRESTRICTIONS)
+OBJC_CLASS WCRBrowserEngineClient;
+#endif
+
+#if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
@@ -50,6 +54,9 @@ public:
 
     ContentFilterUnblockHandler() = default;
     WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction);
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    ContentFilterUnblockHandler(const URL& evaluatedURL);
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
@@ -57,6 +64,9 @@ public:
     WEBCORE_EXPORT ContentFilterUnblockHandler(
         String&& unblockURLHost,
         URL&& unreachableURL,
+#if HAVE(WEBCONTENTRESTRICTIONS)
+        std::optional<URL>&& evaluatedURL,
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
         Vector<uint8_t>&& webFilterEvaluatorData,
 #endif
@@ -72,6 +82,9 @@ public:
     const URL& unreachableURL() const { return m_unreachableURL; }
     void setUnreachableURL(const URL& url) { m_unreachableURL = url; }
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    std::optional<URL> evaluatedURL() const { return m_evaluatedURL; }
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     WEBCORE_EXPORT Vector<uint8_t> webFilterEvaluatorData() const;
 #endif
@@ -87,6 +100,10 @@ private:
     String m_unblockURLHost;
     URL m_unreachableURL;
     UnblockRequesterFunction m_unblockRequester;
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    std::optional<URL> m_evaluatedURL;
+    mutable RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
+#endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
 #endif

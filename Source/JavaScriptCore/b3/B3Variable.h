@@ -33,6 +33,7 @@
 #include "B3Width.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
@@ -41,7 +42,7 @@ class Procedure;
 
 class Variable {
     WTF_MAKE_NONCOPYABLE(Variable);
-    WTF_MAKE_TZONE_ALLOCATED(Variable);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Variable);
 
 public:
     ~Variable();

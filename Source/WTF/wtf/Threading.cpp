@@ -149,7 +149,7 @@ uint32_t ThreadLike::currentSequence()
     if (uint32_t uid = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(dispatch_get_specific(&s_uid))))
         return uid;
 #endif
-    return Thread::current().uid();
+    return Thread::currentSingleton().uid();
 }
 
 struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> {
@@ -264,7 +264,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 #endif
     }
 
-    ASSERT(!Thread::current().stack().isEmpty());
+    ASSERT(!Thread::currentSingleton().stack().isEmpty());
     function();
 }
 
@@ -389,26 +389,26 @@ unsigned Thread::numberOfThreadGroups()
 
 bool Thread::exchangeIsCompilationThread(bool newValue)
 {
-    Ref thread = Thread::current();
-    bool oldValue = thread->m_isCompilationThread;
-    thread->m_isCompilationThread = newValue;
+    auto& thread = Thread::currentSingleton();
+    bool oldValue = thread.m_isCompilationThread;
+    thread.m_isCompilationThread = newValue;
     return oldValue;
 }
 
 void Thread::registerGCThread(GCThreadType gcThreadType)
 {
-    Thread::current().m_gcThreadType = static_cast<unsigned>(gcThreadType);
+    Thread::currentSingleton().m_gcThreadType = static_cast<unsigned>(gcThreadType);
 }
 
 bool Thread::mayBeGCThread()
 {
     // TODO: FIX THIS
-    return Thread::current().gcThreadType() != GCThreadType::None || Thread::current().m_isCompilationThread;
+    return Thread::currentSingleton().gcThreadType() != GCThreadType::None || Thread::currentSingleton().m_isCompilationThread;
 }
 
 void Thread::registerJSThread(Thread& thread)
 {
-    ASSERT(&thread == &Thread::current());
+    ASSERT(&thread == &Thread::currentSingleton());
     thread.m_isJSThread = true;
 }
 
@@ -422,7 +422,7 @@ void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
     // We don't allow to make the main thread real time. This is used by secondary processes to match the
     // UI process, but in linux the UI process is not real time.
     if (!isMainThread())
-        RealTimeThreads::singleton().registerThread(current());
+        RealTimeThreads::singleton().registerThread(currentSingleton());
     UNUSED_PARAM(relativePriority);
 #else
     UNUSED_PARAM(relativePriority);

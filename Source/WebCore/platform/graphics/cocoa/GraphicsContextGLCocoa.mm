@@ -601,7 +601,7 @@ void GraphicsContextGLCocoa::bindExternalImage(GCGLenum target, GCGLExternalImag
 bool GraphicsContextGLCocoa::addFoveation(IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight)
 {
     m_rasterizationRateMap[PlatformXR::Layout::Shared] = newRasterizationRateMap(m_displayObj, physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamplesLeft, horizontalSamplesRight);
-    return m_rasterizationRateMap[PlatformXR::Layout::Shared];
+    return !!m_rasterizationRateMap[PlatformXR::Layout::Shared];
 }
 
 void GraphicsContextGLCocoa::enableFoveation(PlatformGLObject rbo)

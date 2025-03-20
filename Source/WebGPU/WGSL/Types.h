@@ -286,6 +286,7 @@ struct Type : public std::variant<
     void dump(PrintStream&) const;
     String toString() const;
     unsigned size() const;
+    std::optional<unsigned> maybeSize() const;
     unsigned alignment() const;
     Packing packing() const;
     bool isConstructible() const;

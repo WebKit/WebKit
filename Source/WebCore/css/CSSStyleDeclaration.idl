@@ -23,6 +23,7 @@
 typedef USVString CSSOMString;
 
 [
+    CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
     JSCustomHeader,
@@ -39,7 +40,6 @@ typedef USVString CSSOMString;
     [CEReactions=Needed] undefined setProperty(CSSOMString property, [LegacyNullToEmptyString] CSSOMString value, optional [LegacyNullToEmptyString] CSSOMString priority = "");
     [CEReactions=Needed] CSSOMString removeProperty(CSSOMString property);
     readonly attribute CSSRule? parentRule;
-    [CEReactions=Needed] attribute [LegacyNullToEmptyString] CSSOMString cssFloat;
 
     // Non-standard.
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);

@@ -155,13 +155,15 @@ public:
 
     PDFPluginIdentifier pdfPluginIdentifier() const;
 
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
+    void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 
     void focusPluginElement();
 
     bool pluginHandlesPageScaleFactor() const;
 
     WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const;
+
+    void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect& unobscuredContentRect);
 
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
@@ -263,7 +265,7 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PluginView) \
-    static bool isType(const WebCore::PluginViewBase& view) { return view.isPluginView(); } \
+    static bool isType(const WebCore::Widget& widget) { return widget.isPluginView(); } \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

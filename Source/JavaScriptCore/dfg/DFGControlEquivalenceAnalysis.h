@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 class ControlEquivalenceAnalysis {
     WTF_MAKE_NONCOPYABLE(ControlEquivalenceAnalysis);
-    WTF_MAKE_TZONE_ALLOCATED(ControlEquivalenceAnalysis);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(ControlEquivalenceAnalysis);
 public:
     ControlEquivalenceAnalysis(Graph& graph)
         : m_dominators(graph.ensureSSADominators())

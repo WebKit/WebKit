@@ -103,7 +103,6 @@ protected:
 
     void forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();
-    void continueStartProducingData();
 
     virtual void cleanupAudioUnit() = 0;
     virtual OSStatus startInternal() = 0;
@@ -147,6 +146,9 @@ private:
     // RealtimeMediaSourceCenterObserver
     void devicesChanged() final;
     void deviceWillBeRemoved(const String&) final { }
+
+    void continueStartProducingData();
+    void continueStopProducingData();
 
     bool m_enableEchoCancellation { true };
     double m_volume { 1 };

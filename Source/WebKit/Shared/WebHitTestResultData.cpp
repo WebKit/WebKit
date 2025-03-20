@@ -147,7 +147,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     if (!includeImage)
         return;
 
-    if (Image* image = hitTestResult.image()) {
+    if (RefPtr image = hitTestResult.image()) {
         RefPtr<FragmentedSharedBuffer> buffer = image->data();
         if (buffer)
             imageSharedMemory = WebCore::SharedMemory::copyBuffer(*buffer);
@@ -157,7 +157,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
         if (auto renderer = dynamicDowncast<RenderImage>(target->renderer())) {
             imageBitmap = createShareableBitmap(*renderer);
             if (auto* cachedImage = renderer->cachedImage()) {
-                if (auto* image = cachedImage->image())
+                if (RefPtr image = cachedImage->image())
                     sourceImageMIMEType = image->mimeType();
             }
 
@@ -245,8 +245,8 @@ IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCor
 std::optional<WebCore::SharedMemory::Handle> WebHitTestResultData::getImageSharedMemoryHandle() const
 {
     std::optional<WebCore::SharedMemory::Handle> imageHandle = std::nullopt;
-    if (imageSharedMemory && !imageSharedMemory->span().empty()) {
-        if (auto handle = imageSharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly))
+    if (RefPtr memory = imageSharedMemory; memory && !memory->span().empty()) {
+        if (auto handle = memory->createHandle(WebCore::SharedMemory::Protection::ReadOnly))
             imageHandle = WTFMove(*handle);
     }
     return imageHandle;

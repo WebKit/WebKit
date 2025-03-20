@@ -55,6 +55,7 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ArchiveResource.h>
+#import <WebCore/CSSStyleProperties.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
@@ -258,7 +259,7 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const std::optional<SimpleRange>& range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldApplyStyle:kit(&style.mutableCopy()->ensureCSSStyleDeclaration())
+        shouldApplyStyle:kit(&style.mutableCopy()->ensureCSSStyleProperties())
         toElementsInDOMRange:kit(range)];
 }
 

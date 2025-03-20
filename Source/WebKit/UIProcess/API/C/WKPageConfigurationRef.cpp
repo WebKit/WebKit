@@ -43,7 +43,7 @@ WKTypeID WKPageConfigurationGetTypeID()
 
 WKPageConfigurationRef WKPageConfigurationCreate()
 {
-    return toAPI(&API::PageConfiguration::create().leakRef());
+    return toAPILeakingRef(API::PageConfiguration::create());
 }
 
 WKContextRef WKPageConfigurationGetContext(WKPageConfigurationRef configuration)
@@ -118,6 +118,11 @@ void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef configurati
 void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration, bool allowTestOnlyIPC)
 {
     toImpl(configuration)->setAllowTestOnlyIPC(allowTestOnlyIPC);
+}
+
+void WKPageConfigurationSetShouldSendConsoleLogsToUIProcessForTesting(WKPageConfigurationRef configuration, bool should)
+{
+    toImpl(configuration)->setShouldSendConsoleLogsToUIProcessForTesting(should);
 }
 
 void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort)

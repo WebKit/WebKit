@@ -64,16 +64,12 @@ public:
 
     virtual void closeFullScreenManager() = 0;
     virtual bool isFullScreen() = 0;
-#if PLATFORM(IOS_FAMILY)
     virtual void enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool)>&&) = 0;
-#else
-    virtual void enterFullScreen(CompletionHandler<void(bool)>&&) = 0;
-#endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual void updateImageSource() = 0;
 #endif
     virtual void exitFullScreen(CompletionHandler<void()>&&) = 0;
-    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&&) = 0;
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) = 0;
 
     virtual bool lockFullscreenOrientation(WebCore::ScreenOrientationType) { return false; }
@@ -105,6 +101,9 @@ public:
     void detachFromClient();
     void attachToNewClient(WebFullScreenManagerProxyClient&);
 
+    void enterFullScreenForOwnerElementsInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+    void exitFullScreenInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+
     enum class FullscreenState : uint8_t {
         NotInFullscreen,
         EnteringFullscreen,
@@ -112,8 +111,6 @@ public:
         ExitingFullscreen,
     };
     FullscreenState fullscreenState() const { return m_fullscreenState; }
-    void willEnterFullScreen(CompletionHandler<void(bool)>&&);
-    void didEnterFullScreen();
     void setAnimatingFullScreen(bool);
     void requestRestoreFullScreen(CompletionHandler<void(bool)>&&);
     void requestExitFullScreen();
@@ -128,13 +125,14 @@ public:
 private:
     WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
 
-    void enterFullScreen(IPC::Connection&, bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&&, CompletionHandler<void(bool)>&&);
+    Awaitable<bool> enterFullScreen(IPC::Connection&, WebCore::FrameIdentifier, bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails);
+    void didEnterFullScreen(CompletionHandler<void(bool)>&&);
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource(FullScreenMediaDetails&&);
 #endif
-    void exitFullScreen(CompletionHandler<void()>&&);
-    void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
-    void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&);
+    Awaitable<void> exitFullScreen();
+    Awaitable<bool> beganEnterFullScreen(WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
+    Awaitable<void> beganExitFullScreen(WebCore::FrameIdentifier, WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
     void callCloseCompletionHandlers();
     template<typename M> void sendToWebProcess(M&&);
 

@@ -347,6 +347,286 @@ PASS :depth_write,frag_depth:isAsync=true;format="depth32float"
 PASS :depth_write,frag_depth:isAsync=true;format="depth24plus"
 PASS :depth_write,frag_depth:isAsync=true;format="depth24plus-stencil8"
 PASS :depth_write,frag_depth:isAsync=true;format="depth32float-stencil8"
+FAIL :depth_bias:isAsync=false;topology="point-list" assert_unreached:
+  - INFO: subcase:
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - VALIDATION FAILED: subcase: depthBias=-1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBias=1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasClamp=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasClamp=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+FAIL :depth_bias:isAsync=false;topology="line-list" assert_unreached:
+  - INFO: subcase:
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - VALIDATION FAILED: subcase: depthBias=-1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBias=1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasClamp=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasClamp=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+FAIL :depth_bias:isAsync=false;topology="line-strip" assert_unreached:
+  - INFO: subcase:
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - VALIDATION FAILED: subcase: depthBias=-1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBias=1
+    Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1310:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:401:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasSlopeScale=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: depthBiasClamp=-1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - VALIDATION FAILED: subcase: depthBiasClamp=1
+    Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+PASS :depth_bias:isAsync=false;topology="triangle-list"
+PASS :depth_bias:isAsync=false;topology="triangle-strip"
+FAIL :depth_bias:isAsync=true;topology="point-list" assert_unreached:
+  - EXPECTATION FAILED: subcase: depthBias=-1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBias=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - INFO: subcase:
+    OK
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+FAIL :depth_bias:isAsync=true;topology="line-list" assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXPECTATION FAILED: subcase: depthBias=-1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBias=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+FAIL :depth_bias:isAsync=true;topology="line-strip" assert_unreached:
+  - EXPECTATION FAILED: subcase: depthBias=-1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBias=1
+    DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:297:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:397:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.spec.js:254:31
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - INFO: subcase:
+    OK
+  - INFO: subcase: depthBias=-1
+    OK
+  - INFO: subcase: depthBias=0
+    OK
+  - INFO: subcase: depthBias=1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=-1
+    OK
+  - INFO: subcase: depthBiasSlopeScale=0
+    OK
+  - EXPECTATION FAILED: subcase: depthBiasSlopeScale=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=-1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: depthBiasClamp=1
+    DID NOT REJECT
+      at (elided: only 2 shown)
+  - INFO: subcase: depthBiasSlopeScale=1
+    OK
+  - INFO: subcase: depthBiasClamp=-1
+    OK
+  - INFO: subcase: depthBiasClamp=0
+    OK
+  - INFO: subcase: depthBiasClamp=1
+    OK
+ Reached unreachable code
+PASS :depth_bias:isAsync=true;topology="triangle-list"
+PASS :depth_bias:isAsync=true;topology="triangle-strip"
 PASS :stencil_test:isAsync=false;format="stencil8";face="front";compare="_undef_"
 PASS :stencil_test:isAsync=false;format="stencil8";face="front";compare="never"
 PASS :stencil_test:isAsync=false;format="stencil8";face="front";compare="less"

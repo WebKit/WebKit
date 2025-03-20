@@ -52,14 +52,16 @@ void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)
 {
     if (m_shouldIgnoreChanges)
         return;
-    m_page->send(Messages::WebPageProxy::BackForwardUpdateItem(toFrameState(item)));
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::BackForwardUpdateItem(toFrameState(item)));
 }
 
 void WebHistoryItemClient::clearChildren(const WebCore::HistoryItem& item) const
 {
     if (m_shouldIgnoreChanges)
         return;
-    m_page->send(Messages::WebPageProxy::BackForwardClearChildren(item.itemID(), item.frameItemID()));
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::BackForwardClearChildren(item.itemID(), item.frameItemID()));
 }
 
 }

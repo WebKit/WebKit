@@ -43,7 +43,7 @@
 #include "PathTraversalState.h"
 #include "QuotesData.h"
 #include "RenderBlock.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "RenderStyleDifference.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
@@ -206,7 +206,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.printColorAdjust = static_cast<unsigned>(initialPrintColorAdjust());
     m_inheritedFlags.pointerEvents = static_cast<unsigned>(initialPointerEvents());
     m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
-    m_inheritedFlags.insideDefaultButton = false;
 #if ENABLE(TEXT_AUTOSIZING)
     m_inheritedFlags.autosizeStatus = 0;
 #endif
@@ -921,7 +920,11 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.overflowContinue != second.overflowContinue)
         return true;
 
-    if (first.positionArea != second.positionArea)
+    // CSS Anchor Positioning.
+    if (first.anchorScope != second.anchorScope || first.positionArea != second.positionArea)
+        return true;
+
+    if (first.fieldSizing != second.fieldSizing)
         return true;
 
     return false;
@@ -1277,6 +1280,7 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
         || first.accentColor != second.accentColor
+        || first.insideDefaultButton != second.insideDefaultButton
 #if ENABLE(DARK_MODE_CSS)
         || first.colorScheme != second.colorScheme
 #endif
@@ -1342,8 +1346,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 
     if (m_inheritedFlags.visibility != other.m_inheritedFlags.visibility
         || m_inheritedFlags.printColorAdjust != other.m_inheritedFlags.printColorAdjust
-        || m_inheritedFlags.insideLink != other.m_inheritedFlags.insideLink
-        || m_inheritedFlags.insideDefaultButton != other.m_inheritedFlags.insideDefaultButton)
+        || m_inheritedFlags.insideLink != other.m_inheritedFlags.insideLink)
         return true;
 
 
@@ -1584,7 +1587,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // cursorVisibility
         // boxDirection
         // rtlOrdering
-        // insideDefaultButton
         // autosizeStatus
         // hasExplicitlySetColor
     };
@@ -1747,6 +1749,15 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
                 changingProperties.m_properties.set(CSSPropertyBorderBottomLeftRadius);
             if (first.border.bottomRightRadius() != second.border.bottomRightRadius())
                 changingProperties.m_properties.set(CSSPropertyBorderBottomRightRadius);
+
+            if (first.border.topLeftCornerShape() != second.border.topLeftCornerShape())
+                changingProperties.m_properties.set(CSSPropertyCornerTopLeftShape);
+            if (first.border.topRightCornerShape() != second.border.topRightCornerShape())
+                changingProperties.m_properties.set(CSSPropertyCornerTopRightShape);
+            if (first.border.bottomLeftCornerShape() != second.border.bottomLeftCornerShape())
+                changingProperties.m_properties.set(CSSPropertyCornerBottomLeftShape);
+            if (first.border.bottomRightCornerShape() != second.border.bottomRightCornerShape())
+                changingProperties.m_properties.set(CSSPropertyCornerBottomRightShape);
         }
 
         // Non animated styles are followings.
@@ -1987,6 +1998,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyContentVisibility);
         if (first.anchorNames != second.anchorNames)
             changingProperties.m_properties.set(CSSPropertyAnchorName);
+        if (first.anchorScope != second.anchorScope)
+            changingProperties.m_properties.set(CSSPropertyAnchorScope);
         if (first.positionAnchor != second.positionAnchor)
             changingProperties.m_properties.set(CSSPropertyPositionAnchor);
         if (first.positionArea != second.positionArea)
@@ -1995,6 +2008,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyPositionTryFallbacks);
         if (first.positionTryOrder != second.positionTryOrder)
             changingProperties.m_properties.set(CSSPropertyPositionTryOrder);
+        if (first.positionVisibility != second.positionVisibility)
+            changingProperties.m_properties.set(CSSPropertyPositionVisibility);
         if (first.scrollSnapAlign != second.scrollSnapAlign)
             changingProperties.m_properties.set(CSSPropertyScrollSnapAlign);
         if (first.scrollSnapStop != second.scrollSnapStop)
@@ -2206,6 +2221,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // lineAlign
         // cursorData
         // textEmphasisCustomMark
+        // insideDefaultButton
     };
 
     if (m_inheritedFlags != other.m_inheritedFlags)
@@ -2531,16 +2547,6 @@ void RenderStyle::setBoxShadow(std::unique_ptr<ShadowData> shadowData, bool add)
     rareData.boxShadow = WTFMove(shadowData);
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData::Radii& radii, const LayoutSize& size)
-{
-    return {
-        sizeForLengthSize(radii.topLeft, size),
-        sizeForLengthSize(radii.topRight, size),
-        sizeForLengthSize(radii.bottomLeft, size),
-        sizeForLengthSize(radii.bottomRight, size)
-    };
-}
-
 StyleImage* RenderStyle::listStyleImage() const
 {
     return m_rareInheritedData->listStyleImage.get();
@@ -2590,44 +2596,6 @@ void RenderStyle::setHorizontalBorderSpacing(float v)
 void RenderStyle::setVerticalBorderSpacing(float v)
 {
     SET_VAR(m_inheritedData, verticalBorderSpacing, v);
-}
-
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, RectEdges<bool> closedEdges) const
-{
-    LayoutUnit leftWidth { closedEdges.left() ? borderLeftWidth() : 0 };
-    LayoutUnit rightWidth { closedEdges.right() ? borderRightWidth() : 0 };
-    LayoutUnit topWidth { closedEdges.top() ? borderTopWidth() : 0 };
-    LayoutUnit bottomWidth { closedEdges.bottom() ? borderBottomWidth() : 0 };
-    return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, closedEdges);
-}
-
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
-    LayoutUnit leftWidth, LayoutUnit rightWidth, RectEdges<bool> closedEdges) const
-{
-    auto radii = hasBorderRadius() ? std::make_optional(m_nonInheritedData->surroundData->border.m_radii) : std::nullopt;
-    return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, radii, closedEdges);
-}
-
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
-    LayoutUnit leftWidth, LayoutUnit rightWidth, std::optional<BorderData::Radii> radii, RectEdges<bool> closedEdges)
-{
-    auto width = std::max(0_lu, borderRect.width() - leftWidth - rightWidth);
-    auto height = std::max(0_lu, borderRect.height() - topWidth - bottomWidth);
-    auto roundedRect = RoundedRect {
-        borderRect.x() + leftWidth,
-        borderRect.y() + topWidth,
-        width,
-        height
-    };
-    if (radii) {
-        auto adjustedRadii = calcRadiiFor(*radii, borderRect.size());
-        adjustedRadii.scale(calcBorderRadiiConstraintScaleFor(borderRect, adjustedRadii));
-        adjustedRadii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
-        roundedRect.setRadiiForEdges(adjustedRadii, closedEdges);
-    }
-    if (!roundedRect.isRenderable())
-        roundedRect.adjustRadii();
-    return roundedRect;
 }
 
 bool RenderStyle::hasEntirelyFixedBackground() const
@@ -3352,6 +3320,64 @@ void RenderStyle::setMarginAfter(Length&& margin)
     }
 }
 
+void RenderStyle::setPaddingStart(Length&& margin)
+{
+    if (writingMode().isHorizontal()) {
+        if (writingMode().isInlineLeftToRight())
+            setPaddingLeft(WTFMove(margin));
+        else
+            setPaddingRight(WTFMove(margin));
+    } else {
+        if (writingMode().isInlineTopToBottom())
+            setPaddingTop(WTFMove(margin));
+        else
+            setPaddingBottom(WTFMove(margin));
+    }
+}
+
+void RenderStyle::setPaddingEnd(Length&& margin)
+{
+    if (writingMode().isHorizontal()) {
+        if (writingMode().isInlineLeftToRight())
+            setPaddingRight(WTFMove(margin));
+        else
+            setPaddingLeft(WTFMove(margin));
+    } else {
+        if (writingMode().isInlineTopToBottom())
+            setPaddingBottom(WTFMove(margin));
+        else
+            setPaddingTop(WTFMove(margin));
+    }
+}
+
+void RenderStyle::setPaddingBefore(Length&& margin)
+{
+    switch (writingMode().blockDirection()) {
+    case FlowDirection::TopToBottom:
+        return setPaddingTop(WTFMove(margin));
+    case FlowDirection::BottomToTop:
+        return setPaddingBottom(WTFMove(margin));
+    case FlowDirection::LeftToRight:
+        return setPaddingLeft(WTFMove(margin));
+    case FlowDirection::RightToLeft:
+        return setPaddingRight(WTFMove(margin));
+    }
+}
+
+void RenderStyle::setPaddingAfter(Length&& margin)
+{
+    switch (writingMode().blockDirection()) {
+    case FlowDirection::TopToBottom:
+        return setPaddingBottom(WTFMove(margin));
+    case FlowDirection::BottomToTop:
+        return setPaddingTop(WTFMove(margin));
+    case FlowDirection::LeftToRight:
+        return setPaddingRight(WTFMove(margin));
+    case FlowDirection::RightToLeft:
+        return setPaddingLeft(WTFMove(margin));
+    }
+}
+
 TextEmphasisMark RenderStyle::textEmphasisMark() const
 {
     auto mark = static_cast<TextEmphasisMark>(m_rareInheritedData->textEmphasisMark);
@@ -3413,7 +3439,7 @@ void RenderStyle::setBorderImageSliceFill(bool fill)
     m_nonInheritedData.access().surroundData.access().border.m_image.setFill(fill);
 }
 
-void RenderStyle::setBorderImageSlices(LengthBox&& slices)
+void RenderStyle::setBorderImageSlice(LengthBox&& slices)
 {
     if (m_nonInheritedData->surroundData->border.m_image.imageSlices() == slices)
         return;
@@ -3469,7 +3495,7 @@ void RenderStyle::setMaskBorderSliceFill(bool fill)
     m_nonInheritedData.access().rareData.access().maskBorder.setFill(fill);
 }
 
-void RenderStyle::setMaskBorderSlices(LengthBox&& slices)
+void RenderStyle::setMaskBorderSlice(LengthBox&& slices)
 {
     if (m_nonInheritedData->rareData->maskBorder.imageSlices() == slices)
         return;
@@ -3895,7 +3921,7 @@ Color RenderStyle::computedStrokeColor() const
     return visitedDependentColor(usedStrokeColorProperty());
 }
 
-UsedClear RenderStyle::usedClear(const RenderObject& renderer)
+UsedClear RenderStyle::usedClear(const RenderElement& renderer)
 {
     auto computedClear = renderer.style().clear();
     auto writingMode = renderer.containingBlock()->writingMode();
@@ -3917,7 +3943,7 @@ UsedClear RenderStyle::usedClear(const RenderObject& renderer)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
+UsedFloat RenderStyle::usedFloat(const RenderElement& renderer)
 {
     auto computedFloat = renderer.style().floating();
     auto writingMode = renderer.containingBlock()->writingMode();
@@ -3949,12 +3975,12 @@ UserSelect RenderStyle::usedUserSelect() const
     return value;
 }
 
-const Vector<PositionTryFallback>& RenderStyle::positionTryFallbacks() const
+const Vector<Style::PositionTryFallback>& RenderStyle::positionTryFallbacks() const
 {
     return m_nonInheritedData->rareData->positionTryFallbacks;
 }
 
-void RenderStyle::setPositionTryFallbacks(const Vector<PositionTryFallback>& fallbacks)
+void RenderStyle::setPositionTryFallbacks(const Vector<Style::PositionTryFallback>& fallbacks)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, positionTryFallbacks, fallbacks);
 }
@@ -4065,7 +4091,6 @@ void RenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const Inherite
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColor);
     LOG_IF_DIFFERENT_WITH_CAST(PrintColorAdjust, printColorAdjust);
     LOG_IF_DIFFERENT_WITH_CAST(InsideLink, insideLink);
-    LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
 
 #if ENABLE(TEXT_AUTOSIZING)
     LOG_IF_DIFFERENT_WITH_CAST(unsigned, autosizeStatus);

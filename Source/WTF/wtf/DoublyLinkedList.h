@@ -84,6 +84,8 @@ public:
     void remove(T*);
     void append(DoublyLinkedList<T>&);
 
+    DoublyLinkedList<T> splitAt(size_t);
+
 private:
     T* m_head;
     T* m_tail;
@@ -158,6 +160,29 @@ template<typename T> inline void DoublyLinkedList<T>::append(T* node)
     node->setPrev(m_tail);
     node->setNext(0);
     m_tail = node;
+}
+
+template<typename T> inline DoublyLinkedList<T> DoublyLinkedList<T>::splitAt(size_t toKeep)
+{
+    auto* p = head();
+
+    if (!p || !p->next())
+        return { };
+    for (size_t i = 1; i < toKeep; i++) {
+        p = p->next();
+        if (!p->next())
+            return { };
+    }
+
+    DoublyLinkedList<T> newList { };
+    newList.m_head = p->next();
+    newList.m_tail = m_tail;
+    newList.m_head->setPrev(0);
+
+    m_tail = p;
+    m_tail->setNext(0);
+
+    return newList;
 }
 
 template<typename T> inline void DoublyLinkedList<T>::remove(T* node)

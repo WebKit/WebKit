@@ -1,0 +1,5 @@
+
+PASS shadowRootCustomElementRegistry reflects as string
+PASS Serializing a ShadowRoot with a null registry
+PASS Serializing a ShadowRoot with a registry that differs from its host
+

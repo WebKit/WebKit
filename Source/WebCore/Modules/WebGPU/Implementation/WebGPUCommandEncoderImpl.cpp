@@ -111,8 +111,8 @@ RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDe
     WGPURenderPassDescriptor backingDescriptor {
         .nextInChain = descriptor.maxDrawCount ? &maxDrawCount.chain : nullptr,
         .label = label.data(),
-        .colorAttachmentCount = static_cast<uint32_t>(colorAttachments.size()),
-        .colorAttachments = colorAttachments.data(),
+        .colorAttachmentCount = colorAttachments.size(),
+        .colorAttachments = colorAttachments.size() ? colorAttachments.data() : nullptr,
         .depthStencilAttachment = depthStencilAttachment ? &depthStencilAttachment.value() : nullptr,
         .occlusionQuerySet = descriptor.occlusionQuerySet ? convertToBackingContext->convertToBacking(*descriptor.protectedOcclusionQuerySet()) : nullptr,
         .timestampWrites = timestampWrites.querySet ? &timestampWrites : nullptr

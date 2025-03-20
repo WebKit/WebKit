@@ -1,0 +1,4 @@
+
+PASS Main resource matched the rule with fetch-event source
+PASS Subresource load matched the rule fetch-event source
+

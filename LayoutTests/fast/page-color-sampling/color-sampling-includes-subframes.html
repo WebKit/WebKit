@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ FixedContainerEdgeSamplingEnabled=true useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui;
+        }
+
+        header {
+            text-align: center;
+            position: fixed;
+            top: 0px;
+            left: 0;
+            font-size: 32px;
+            width: 100%;
+            height: 250px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 250px;
+        }
+
+        .tall {
+            width: 10px;
+            height: 2000px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        let frame = document.querySelector("iframe");
+        await UIHelper.callFunctionAndWaitForEvent(() => {
+            frame.srcdoc = `
+                <body style='margin: 0; width: 100%; height: 100%; background: rgb(255, 100, 0);'>
+                    <p>Hello world</p>
+                </body>`;
+        }, frame, "load");
+
+        testPassed("Loaded iframe");
+
+        await UIHelper.ensurePresentationUpdate();
+        color = await UIHelper.fixedContainerEdgeColors();
+
+        shouldBeEqualToString("color.top", "rgb(255, 100, 0)");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<header><iframe frameborder="0"></iframe></header>
+<div class="tall"></div>
+</body>
+</html>

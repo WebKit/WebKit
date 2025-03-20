@@ -358,7 +358,7 @@ StringView filenameFromHTTPContentDisposition(StringView value)
         return value;
     }
 
-    return String();
+    return { };
 }
 
 String extractMIMETypeFromMediaType(const String& mediaType)

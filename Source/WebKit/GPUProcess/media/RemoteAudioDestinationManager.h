@@ -39,6 +39,7 @@
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/AudioOutputUnitAdaptor.h>
 #include "SharedCARingBuffer.h"
 #endif
 
@@ -79,6 +80,9 @@ private:
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
 #if PLATFORM(COCOA)
     void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, ConsumerSharedCARingBuffer::Handle&&);
+#endif
+#if PLATFORM(IOS_FAMILY)
+    void setSceneIdentifier(RemoteAudioDestinationIdentifier, String&&);
 #endif
 
     HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;

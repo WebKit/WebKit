@@ -77,6 +77,7 @@ public:
     void synchronousRemoveAllContentRuleLists();
     void invalidateContentRuleListVersion(const WTF::String& identifier);
     void corruptContentRuleListHeader(const WTF::String& identifier, bool usingCurrentVersion);
+    void corruptContentRuleListActionsMatchingEverything(const WTF::String& identifier);
     void invalidateContentRuleListHeader(const WTF::String& identifier);
     void getContentRuleListSource(WTF::String&& identifier, CompletionHandler<void(WTF::String)>);
 
@@ -102,6 +103,8 @@ inline std::error_code make_error_code(ContentRuleListStore::Error error)
 }
 
 } // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(ContentRuleListStore);
 
 namespace std {
 template<> struct is_error_code_enum<API::ContentRuleListStore::Error> : public true_type { };

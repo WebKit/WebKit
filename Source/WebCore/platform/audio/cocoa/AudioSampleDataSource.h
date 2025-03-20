@@ -56,7 +56,8 @@ public:
     OSStatus setInputFormat(const CAAudioStreamDescription&);
     OSStatus setOutputFormat(const CAAudioStreamDescription&);
 
-    void pushSamples(const MediaTime&, const PlatformAudioData&, size_t);
+    enum class NeedsFlush : bool { No, Yes };
+    void pushSamples(const MediaTime&, const PlatformAudioData&, size_t, NeedsFlush = NeedsFlush::No);
     void pushSamples(const AudioStreamBasicDescription&, CMSampleBufferRef);
 
     enum PullMode { Copy, Mix };
@@ -89,7 +90,7 @@ private:
 
     OSStatus setupConverter();
 
-    void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
+    void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount, NeedsFlush);
     bool pullSamplesInternal(AudioBufferList&, size_t sampleCount, uint64_t timeStamp, PullMode);
 
     std::optional<CAAudioStreamDescription> m_inputDescription;
@@ -121,6 +122,10 @@ private:
     float m_volume { 1.0 };
     bool m_muted { false };
     bool m_shouldComputeOutputSampleOffset { true };
+
+    uint64_t m_readCount { 0 };
+    enum { NoSeek = std::numeric_limits<uint64_t>::max() };
+    std::atomic<uint64_t> m_seekTo { NoSeek };
 
     bool m_isInNeedOfMoreData { false };
 #if !RELEASE_LOG_DISABLED

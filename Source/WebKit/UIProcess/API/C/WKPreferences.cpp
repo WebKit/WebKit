@@ -42,20 +42,17 @@ WKTypeID WKPreferencesGetTypeID()
 
 WKPreferencesRef WKPreferencesCreate()
 {
-    auto preferences = WebPreferences::createWithLegacyDefaults(String(), "WebKit2."_s, "WebKit2."_s);
-    return toAPI(&preferences.leakRef());
+    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(String(), "WebKit2."_s, "WebKit2."_s));
 }
 
 WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
-    auto preferences = WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2."_s, "WebKit2."_s);
-    return toAPI(&preferences.leakRef());
+    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2."_s, "WebKit2."_s));
 }
 
 WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
 {
-    auto preferences = toImpl(preferencesRef)->copy();
-    return toAPI(&preferences.leakRef());
+    return toAPILeakingRef(toImpl(preferencesRef)->copy());
 }
 
 void WKPreferencesStartBatchingUpdates(WKPreferencesRef preferencesRef)
@@ -71,7 +68,7 @@ void WKPreferencesEndBatchingUpdates(WKPreferencesRef preferencesRef)
 WKArrayRef WKPreferencesCopyExperimentalFeatures(WKPreferencesRef preferencesRef)
 {
     auto experimentalFeatures = toImpl(preferencesRef)->experimentalFeatures();
-    return toAPI(&API::Array::create(WTFMove(experimentalFeatures)).leakRef());
+    return toAPILeakingRef(API::Array::create(WTFMove(experimentalFeatures)));
 }
 
 void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)
@@ -87,7 +84,7 @@ void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef preferencesRef, 
 WKArrayRef WKPreferencesCopyInternalDebugFeatures(WKPreferencesRef preferencesRef)
 {
     auto internalDebugFeatures = toImpl(preferencesRef)->internalDebugFeatures();
-    return toAPI(&API::Array::create(WTFMove(internalDebugFeatures)).leakRef());
+    return toAPILeakingRef(API::Array::create(WTFMove(internalDebugFeatures)));
 }
 
 void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef preferencesRef)

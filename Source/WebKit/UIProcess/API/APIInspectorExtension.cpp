@@ -30,6 +30,7 @@
 
 #include "APISerializedScriptValue.h"
 #include "InspectorExtensionTypes.h"
+#include "JavaScriptEvaluationResult.h"
 #include "WebInspectorUIExtensionControllerProxy.h"
 #include <WebCore/ExceptionDetails.h>
 #include <wtf/UniqueRef.h>
@@ -54,54 +55,59 @@ void InspectorExtension::setClient(UniqueRef<InspectorExtensionClient>&& client)
 
 void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
 {
-    if (!m_extensionControllerProxy) {
+    RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
+    if (!extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
-    m_extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
+    extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
 }
 
 void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
-    if (!m_extensionControllerProxy) {
+    RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
+    if (!extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
-    m_extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
+    extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
 }
 
 void InspectorExtension::navigateTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& sourceURL, WTF::CompletionHandler<void(const std::optional<Inspector::ExtensionError>)>&& completionHandler)
 {
-    if (!m_extensionControllerProxy) {
+    RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
+    if (!extensionControllerProxy) {
         completionHandler(Inspector::ExtensionError::ContextDestroyed);
         return;
     }
 
-    m_extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTFMove(completionHandler));
+    extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTFMove(completionHandler));
 }
 
 void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&& completionHandler)
 {
-    if (!m_extensionControllerProxy) {
+    RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
+    if (!extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
-    m_extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTFMove(completionHandler));
+    extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTFMove(completionHandler));
 }
 
 // For testing.
 
 void InspectorExtension::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
-    if (!m_extensionControllerProxy) {
+    RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
+    if (!extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
-    m_extensionControllerProxy->evaluateScriptInExtensionTab(extensionTabID, scriptSource, WTFMove(completionHandler));
+    extensionControllerProxy->evaluateScriptInExtensionTab(extensionTabID, scriptSource, WTFMove(completionHandler));
 }
 
 } // namespace API

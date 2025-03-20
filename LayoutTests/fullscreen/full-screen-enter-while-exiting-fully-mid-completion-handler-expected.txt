@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Fullscreen request aborted by a request to exit fullscreen.
+Enter fullscreen with target1
+RUN(target1.requestFullscreen())
+EVENT(fullscreenchange)
+Fully exit fullscreen with target1
+RUN(document.webkitCancelFullScreen())
+Attempt to enter fullscreen with target2
+RUN(target2.requestFullscreen())
+EVENT(fullscreenerror)
+RUN(target2.requestFullscreen())
+EVENT(fullscreenchange)
+END OF TEST
+

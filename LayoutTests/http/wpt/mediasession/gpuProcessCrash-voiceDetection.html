@@ -1,0 +1,63 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<video id=video autoplay playsinline></video>
+<script>
+var voiceActivityCount = 0;
+function detectVoiceActivity()
+{
+    voiceActivityCount = 0;
+    return navigator.mediaSession.setActionHandler("voiceactivity", () => voiceActivityCount++);
+}
+
+function validateVoiceActivityCount(testName, counter, initialVoiceActivityCount)
+{
+    if (!initialVoiceActivityCount)
+        initialVoiceActivityCount = voiceActivityCount;
+    else if (voiceActivityCount > initialVoiceActivityCount)
+        return Promise.resolve();
+
+    if (!counter)
+        counter = 0;
+    else if (counter > 50)
+        return Promise.reject("validateVoiceActivityCount timed out - " + testName);
+
+    return new Promise(resolve => setTimeout(resolve, 100)).then(() => {
+        return validateVoiceActivityCount(testName, ++counter, initialVoiceActivityCount);
+    });
+}
+
+function setMicrophoneActive(value)
+{
+    if (!window.internals)
+        return Promise.reject("no internals");
+    let resolve, reject;
+    let promise = new Promise((res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setMicrophoneActive(value).then(resolve, reject);
+    });
+    return promise;
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    video.srcObject = stream;
+    await video.play();
+
+    await detectVoiceActivity();
+    await setMicrophoneActive(false);
+    await validateVoiceActivityCount("first test");
+
+    if (window.testRunner)
+       testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    await validateVoiceActivityCount("second test");
+});
+</script>
+</body>
+</html>

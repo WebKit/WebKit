@@ -45,10 +45,8 @@ static uint32_t generateTileID()
 
 CoordinatedBackingStoreProxy::Update::~Update() = default;
 
-void CoordinatedBackingStoreProxy::Update::appendUpdate(float scale, Vector<uint32_t>&& tilesToCreate, Vector<TileUpdate>&& tilesToUpdate, Vector<uint32_t>&& tilesToRemove)
+void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tilesToCreate, Vector<TileUpdate>&& tilesToUpdate, Vector<uint32_t>&& tilesToRemove)
 {
-    m_scale = scale;
-
     // Remove any creations or updates previously registered for tiles that are going to be removed now.
     if (!m_tilesToCreate.isEmpty() || !m_tilesToUpdate.isEmpty()) {
         Vector<uint32_t, 8> createdTilesRemoved;
@@ -100,25 +98,35 @@ CoordinatedBackingStoreProxy::CoordinatedBackingStoreProxy(float contentsScale, 
 
 CoordinatedBackingStoreProxy::~CoordinatedBackingStoreProxy() = default;
 
-bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
+void CoordinatedBackingStoreProxy::reset()
 {
-    if (m_contentsScale == contentsScale)
-        return false;
-
-    m_contentsScale = contentsScale;
     m_coverAreaMultiplier = 2;
     m_pendingTileCreation = false;
     m_contentsRect = { };
     m_visibleRect = { };
     m_coverRect = { };
     m_keepRect = { };
+
+    Vector<uint32_t> tilesToRemove;
+    for (const auto& tile : m_tiles.values())
+        tilesToRemove.append(tile.id);
     m_tiles.clear();
 
     {
         Locker locker { m_update.lock };
         m_update.pending = Update();
+        if (!tilesToRemove.isEmpty())
+            m_update.pending.appendUpdate({ }, { }, WTFMove(tilesToRemove));
     }
+}
 
+bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
+{
+    if (m_contentsScale == contentsScale)
+        return false;
+
+    m_contentsScale = contentsScale;
+    reset();
     return true;
 }
 
@@ -180,7 +188,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     result.add(UpdateResult::TilesChanged);
     {
         Locker locker { m_update.lock };
-        m_update.pending.appendUpdate(m_contentsScale, WTFMove(tilesToCreate), WTFMove(tilesToUpdate), WTFMove(tilesToRemove));
+        m_update.pending.appendUpdate(WTFMove(tilesToCreate), WTFMove(tilesToUpdate), WTFMove(tilesToRemove));
     }
     return result;
 }
@@ -194,6 +202,8 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
 
         // Only iterate on the part of the rect that we know we might have tiles.
         IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
+        if (coveredDirtyRect.isEmpty())
+            continue;
         forEachTilePositionInRect(coveredDirtyRect, [&](IntPoint&& position) {
             auto it = m_tiles.find(position);
             if (it == m_tiles.end())

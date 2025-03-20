@@ -167,6 +167,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
+// FIXME: rdar://125926932 (Enable the WKWebExtensionDataRecord.RemoveDataRecords test (272236))
 TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -211,6 +212,7 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
     TestWebKitAPI::Util::run(&removalComplete);
 }
 
+// FIXME: rdar://125926932 (Enable the WKWebExtensionDataRecord.RemoveDataRecords test (272236))
 TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
 {
     auto *backgroundScriptOne = Util::constructScript(@[

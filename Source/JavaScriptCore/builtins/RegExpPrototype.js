@@ -75,13 +75,32 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     if (regexpExec !== @regExpBuiltinExec)
         return true;
 
+    var regexpFlags = @tryGetById(regexp, "flags");
+    if (regexpFlags !== @regExpProtoFlagsGetter)
+        return true;
+
+    // These are accessed by the builtin flags getter.
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
+        return true;
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
+        return true;
+    var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
+    if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
+        return true;
+    var regexpMultiline = @tryGetById(regexp, "multiline");
+    if (regexpMultiline !== @regExpProtoMultilineGetter)
+        return true;
+    var regexpSticky = @tryGetById(regexp, "sticky");
+    if (regexpSticky !== @regExpProtoStickyGetter)
+        return true;
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
         return true;
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
-
     var regexpUnicodeSets = @tryGetById(regexp, "unicodeSets");
     if (regexpUnicodeSets !== @regExpProtoUnicodeSetsGetter)
         return true;
@@ -94,10 +113,13 @@ function matchSlow(regexp, str)
 {
     "use strict";
 
-    if (!regexp.global)
+    var flags = @toString(regexp.flags);
+    var global = @stringIncludesInternal.@call(flags, "g");
+
+    if (!global)
         return @regExpExec(regexp, str);
     
-    var unicode = regexp.unicode;
+    var unicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
     regexp.lastIndex = 0;
     var resultList = [];
 
@@ -282,11 +304,12 @@ function replace(strArg, replace)
     if (!functionalReplace)
         replace = @toString(replace);
 
-    var global = regexp.global;
+    var flags = @toString(regexp.flags);
+    var global = @stringIncludesInternal.@call(flags, "g");
     var unicode = false;
 
     if (global) {
-        unicode = regexp.unicode;
+        unicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
         regexp.lastIndex = 0;
     }
 
@@ -606,33 +629,3 @@ function split(string, limit)
     return result;
 }
 
-// ES 21.2.5.13 RegExp.prototype.test(string)
-@intrinsic=RegExpTestIntrinsic
-function test(strArg)
-{
-    "use strict";
-
-    var regexp = this;
-
-    // Check for observable side effects and call the fast path if there aren't any.
-    if (@isRegExpObject(regexp)
-        && @tryGetById(regexp, "exec") === @regExpBuiltinExec
-        && typeof regexp.lastIndex === "number")
-        return @regExpTestFast.@call(regexp, strArg);
-
-    // 1. Let R be the this value.
-    // 2. If Type(R) is not Object, throw a TypeError exception.
-    if (!@isObject(regexp))
-        @throwTypeError("RegExp.prototype.test requires that |this| be an Object");
-
-    // 3. Let string be ? ToString(S).
-    var str = @toString(strArg);
-
-    // 4. Let match be ? RegExpExec(R, string).
-    var match = @regExpExec(regexp, str);
-
-    // 5. If match is not null, return true; else return false.
-    if (match !== null)
-        return true;
-    return false;
-}

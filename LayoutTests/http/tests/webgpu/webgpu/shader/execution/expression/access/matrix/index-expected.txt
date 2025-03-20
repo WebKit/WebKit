@@ -323,4 +323,13 @@ PASS :abstract_float_element:indexType="u32";columns=3;rows=4
 PASS :abstract_float_element:indexType="u32";columns=4;rows=2
 PASS :abstract_float_element:indexType="u32";columns=4;rows=3
 PASS :abstract_float_element:indexType="u32";columns=4;rows=4
+PASS :non_const_index:columns=2;rows=2
+PASS :non_const_index:columns=2;rows=3
+PASS :non_const_index:columns=2;rows=4
+PASS :non_const_index:columns=3;rows=2
+PASS :non_const_index:columns=3;rows=3
+PASS :non_const_index:columns=3;rows=4
+PASS :non_const_index:columns=4;rows=2
+PASS :non_const_index:columns=4;rows=3
+PASS :non_const_index:columns=4;rows=4
 

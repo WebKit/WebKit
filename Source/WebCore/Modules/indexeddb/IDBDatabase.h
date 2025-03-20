@@ -87,6 +87,7 @@ public:
 
     IDBDatabaseInfo& info() { return m_info; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
+    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier() const;
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);

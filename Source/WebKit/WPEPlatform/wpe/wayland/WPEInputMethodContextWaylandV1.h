@@ -35,7 +35,8 @@ G_BEGIN_DECLS
 #define WPE_TYPE_IM_CONTEXT_WAYLAND_V1 (wpe_im_context_wayland_v1_get_type())
 G_DECLARE_FINAL_TYPE (WPEIMContextWaylandV1, wpe_im_context_wayland_v1, WPE, IM_CONTEXT_WAYLAND_V1, WPEInputMethodContext)
 
-WPEInputMethodContext   *wpe_im_context_wayland_v1_new (WPEDisplayWayland *display);
+WPEInputMethodContext *wpe_im_context_wayland_v1_new (WPEDisplayWayland *display,
+                                                      WPEView           *view);
 
 G_END_DECLS
 

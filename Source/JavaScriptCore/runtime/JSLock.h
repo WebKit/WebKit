@@ -92,7 +92,7 @@ public:
             return m_ownerThread;
         return std::nullopt;
     }
-    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread.get() == &Thread::current(); }
+    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread.get() == &Thread::currentSingleton(); }
 
     void willDestroyVM(VM*);
 

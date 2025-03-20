@@ -1,0 +1,4 @@
+
+PASS Test no initial scroll margin intersection
+FAIL Test scroll margin intersection after scrolling assert_approx_equals: intersectionRatio expected 0.2 +/- 0.001 but got 0
+

@@ -214,8 +214,8 @@ TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresent
     
     if (representation == FilterRepresentation::Debugging) {
         TextStream::IndentScope indentScope(ts);
-        ts.dumpProperty("operating colorspace", operatingColorSpace());
-        ts << "\n" << indent;
+        ts.dumpProperty("operating colorspace"_s, operatingColorSpace());
+        ts << '\n' << indent;
     }
     return ts;
 }

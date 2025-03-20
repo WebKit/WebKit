@@ -261,16 +261,16 @@ static TextStream& operator<<(TextStream& ts, CandidateExaminationResult result)
 {
     switch (result) {
     case CandidateExaminationResult::Exclude:
-        ts << "Exclude";
+        ts << "Exclude"_s;
         break;
     case CandidateExaminationResult::Select:
-        ts << "Select";
+        ts << "Select"_s;
         break;
     case CandidateExaminationResult::Descend:
-        ts << "Descend";
+        ts << "Descend"_s;
         break;
     case CandidateExaminationResult::Skip:
-        ts << "Skip";
+        ts << "Skip"_s;
         break;
     }
     return ts;

@@ -47,7 +47,8 @@ public:
     virtual ~GStreamerAudioCaptureSource();
 
     // GStreamerCapturerObserver
-    void captureEnded()final;
+    void captureEnded() final;
+    void captureDeviceUpdated(const GStreamerCaptureDevice&) final;
 
 protected:
     GStreamerAudioCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);

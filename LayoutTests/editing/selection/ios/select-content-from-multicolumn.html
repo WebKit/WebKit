@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf-8">
+
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #container {
+        font-size: 16px;
+        width: 310px;
+    }
+</style>
+<script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("When selecting content crossing multi columns, the highlight box of each column should not be coalesced.");
+
+        var content = document.getElementById("content");
+        await UIHelper.longPressElement(content);
+        await UIHelper.waitForSelectionToAppear();
+        getSelection().selectAllChildren(content);
+        await UIHelper.waitForSelectionToAppear();
+        selectionRects = await UIHelper.getUISelectionViewRects();
+
+        if (selectionRects.length != 4) {
+            testFailed(`selectionRects.length should be 4, but got ${selectionRects.length}`);
+            finishJSTest();
+            return;
+        }
+        testPassed(`selectionRects.length is ${selectionRects.length}`);
+
+        // The highlight box does not extend to unselected content: "Start.".
+        shouldBeGreaterThan("150", "selectionRects[0].width");
+        shouldBe("selectionRects[1].width", "150");
+        shouldBe("selectionRects[2].width", "150");
+        // The highlight box does not extend to unselected content: "End."
+        shouldBeGreaterThan("150", "selectionRects[3].width");
+
+        firstColumnRight = selectionRects[0].left + selectionRects[0].width;
+        secondColumnLeft = selectionRects[3].left;
+        shouldBeGreaterThan("secondColumnLeft", "firstColumnRight");
+
+        finishJSTest();
+    });
+</script>
+</head>
+
+<body>
+    <div id="container">
+        <div style="column-count: 2; column-gap: 10px;">Start. <span id="content">Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit. Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula.</span> End.</div>
+    </div>
+</body>
+</html>

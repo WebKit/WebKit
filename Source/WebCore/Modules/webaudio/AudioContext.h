@@ -101,6 +101,10 @@ public:
 
     void defaultDestinationWillBecomeConnected();
 
+#if PLATFORM(IOS_FAMILY)
+    const String& sceneIdentifier() const final;
+#endif
+
 private:
     AudioContext(Document&, const AudioContextOptions&);
 
@@ -124,6 +128,9 @@ private:
     // MediaProducer
     MediaProducerMediaStateFlags mediaState() const final;
     void pageMutedStateDidChange() final;
+#if PLATFORM(IOS_FAMILY)
+    void sceneIdentifierDidChange() final;
+#endif
 
     // PlatformMediaSessionClient
     PlatformMediaSession::MediaType mediaType() const final { return isSuspended() || isStopped() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }

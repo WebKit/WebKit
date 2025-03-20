@@ -117,7 +117,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::TagName, TagName::attachment);
 
         setProperty(AXProperty::TextRuns, object.textRuns());
-        setProperty(AXProperty::EmitTextAfterBehavior, object.emitTextAfterBehavior());
+        setProperty(AXProperty::TextEmissionBehavior, object.textEmissionBehavior());
         if (roleValue() == AccessibilityRole::ListMarker) {
             setProperty(AXProperty::ListMarkerText, object.listMarkerText().isolatedCopy());
             setProperty(AXProperty::ListMarkerLineID, object.listMarkerLineID());
@@ -630,6 +630,7 @@ void AXIsolatedObject::setProperty(AXProperty propertyName, AXPropertyValueVaria
 #if ENABLE(AX_THREAD_TEXT_APIS)
         [](AXTextRuns& runs) { return !runs.size(); },
         [](RetainPtr<CTFontRef>& typedValue) { return !typedValue; },
+        [](FontOrientation typedValue) { return typedValue == FontOrientation::Horizontal; },
         [](TextEmissionBehavior typedValue) { return typedValue == TextEmissionBehavior::None; },
         [](AXTextRunLineID typedValue) { return !typedValue; },
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
@@ -686,30 +687,16 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
 #elif USE(ATSPI)
     ASSERT(!isMainThread());
 #endif
-    RefPtr<AXIsolatedObject> protectedThis;
-    if (updateChildrenIfNeeded) {
-        // updateBackingStore can delete `this`, so protect it until the end of this function.
-        protectedThis = this;
-        updateBackingStore();
-
-        if (m_childrenDirty) {
-            m_children = WTF::compactMap(m_childrenIDs, [&](auto& childID) -> std::optional<Ref<AXCoreObject>> {
-                if (RefPtr child = tree()->objectForID(childID))
-                    return child.releaseNonNull();
-                return std::nullopt;
-            });
-            m_childrenDirty = false;
-        }
+    if (updateChildrenIfNeeded && m_childrenDirty) {
+        m_children = WTF::compactMap(m_childrenIDs, [&](auto& childID) -> std::optional<Ref<AXCoreObject>> {
+            if (RefPtr child = tree()->objectForID(childID))
+                return child.releaseNonNull();
+            return std::nullopt;
+        });
+        m_childrenDirty = false;
         ASSERT(m_children.size() == m_childrenIDs.size());
     }
     return m_children;
-}
-
-void AXIsolatedObject::updateChildrenIfNecessary()
-{
-    // FIXME: this is a no-op for isolated objects and should be removed from
-    // the public interface. It is used in the mac implementation of
-    // [WebAccessibilityObjectWrapper accessibilityHitTest].
 }
 
 void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& selectedChildren)

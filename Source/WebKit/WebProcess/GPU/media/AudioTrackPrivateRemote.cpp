@@ -55,7 +55,7 @@ void AudioTrackPrivateRemote::setEnabled(bool enabled)
         return;
 
     if (enabled != this->enabled())
-        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_id, enabled), m_playerIdentifier);
+        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_id, enabled), m_playerIdentifier);
 
     AudioTrackPrivate::setEnabled(enabled);
 }

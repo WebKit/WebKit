@@ -26,6 +26,7 @@
 #import "APIWebPushDaemonConnection.h"
 #import "WKObject.h"
 #import "_WKWebPushDaemonConnection.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -37,6 +38,6 @@ template<> struct WrapperTraits<API::WebPushDaemonConnection> {
 
 @interface _WKWebPushDaemonConnection () <WKObject> {
 @package
-    API::ObjectStorage<API::WebPushDaemonConnection> _connection;
+    AlignedStorage<API::WebPushDaemonConnection> _connection;
 }
 @end

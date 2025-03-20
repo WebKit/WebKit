@@ -31,10 +31,10 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Color.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "ShorthandSerializer.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
@@ -391,19 +391,19 @@ Ref<MutableStyleProperties> StyleProperties::copyProperties(std::span<const CSSP
     return MutableStyleProperties::create(WTFMove(vector));
 }
 
-PropertySetCSSStyleDeclaration* MutableStyleProperties::cssStyleDeclaration()
+CSSStyleProperties* MutableStyleProperties::cssStyleProperties()
 {
     return m_cssomWrapper.get();
 }
 
-CSSStyleDeclaration& MutableStyleProperties::ensureCSSStyleDeclaration()
+CSSStyleProperties& MutableStyleProperties::ensureCSSStyleProperties()
 {
     if (m_cssomWrapper) {
-        ASSERT(!static_cast<CSSStyleDeclaration*>(m_cssomWrapper.get())->parentRule());
+        ASSERT(!static_cast<CSSStyleProperties*>(m_cssomWrapper.get())->parentRule());
         ASSERT(!m_cssomWrapper->parentElement());
         return *m_cssomWrapper;
     }
-    m_cssomWrapper = makeUniqueWithoutRefCountedCheck<PropertySetCSSStyleDeclaration>(*this);
+    m_cssomWrapper = makeUniqueWithoutRefCountedCheck<PropertySetCSSStyleProperties>(*this);
     return *m_cssomWrapper;
 }
 

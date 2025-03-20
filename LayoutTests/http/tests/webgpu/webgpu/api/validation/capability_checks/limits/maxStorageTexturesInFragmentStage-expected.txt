@@ -1,0 +1,397 @@
+
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";access="write-only";order="shiftByHalf"
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="forward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="backward" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:124:13
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.spec.js:108:16
+ Reached unreachable code
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";access="write-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-only";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="read-write";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";access="write-only";order="shiftByHalf"
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=true
+FAIL :auto_upgrades_per_stage,maxStorageTexturesPerShaderStage: assert_unreached:
+  - EXPECTATION FAILED: maximumLimit(4294967295) is <= adapter.limits.maxStorageTexturesPerShaderStage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1296:15
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1291:15
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+  - EXPECTATION FAILED: device.limits.maxStorageTexturesPerShaderStage(4) is >= adapter.limits.maxStorageTexturesInFragmentStage(4294967295)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1314:15
+ Reached unreachable code
+FAIL :auto_upgraded_from_per_stage,maxStorageTexturesPerShaderStage: assert_unreached:
+  - EXPECTATION FAILED: maxStorageTexturesInFragmentStage(4) === 44
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1340:13
+ Reached unreachable code
+

@@ -36,6 +36,7 @@
 #include "CSSPropertyParserConsumer+Lists.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+String.h"
+#include "CSSPropertyParsing.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -83,7 +84,7 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, const CS
     if (consumeCommaIncludingWhitespace(args)) {
         if (args.peek().id() == CSSValueNone || args.peek().type() == StringToken)
             return nullptr;
-        listStyleType = consumeListStyleType(args, context);
+        listStyleType = CSSPropertyParsing::consumeListStyleType(args, context);
         if (!listStyleType)
             return nullptr;
     }
@@ -158,7 +159,6 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
 
     return CSSValueList::createSpaceSeparated(WTFMove(visibleContent));
 }
-
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -34,7 +34,6 @@
 #import "SandboxUtilities.h"
 #import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
-#import <WebCore/FileHandle.h>
 #import <WebCore/SystemVersion.h>
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
@@ -195,15 +194,14 @@ static OSStatus enableSandboxStyleFileQuarantine()
 #if USE(CACHE_COMPILED_SANDBOX)
 static std::optional<Vector<uint8_t>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
 {
-    FileHandle file = shouldLock ? FileHandle(path, FileSystem::FileOpenMode::Read, lockMode) : FileHandle(path, FileSystem::FileOpenMode::Read);
-    file.open();
-    if (!file)
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read, FileSystem::FileAccessPermission::All, lockMode);
+    if (!fileHandle)
         return std::nullopt;
 
     std::array<uint8_t, 4096> chunk;
     Vector<uint8_t> contents;
     contents.reserveInitialCapacity(chunk.size());
-    while (size_t bytesRead = file.read(chunk))
+    while (auto bytesRead = fileHandle.read(chunk).value_or(0))
         contents.append(std::span { chunk }.first(bytesRead));
     contents.shrinkToFit();
 
@@ -380,8 +378,8 @@ static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<ui
     // To avoid locking, write the sandbox data to a temporary path including the current process' PID
     // then rename it to the final cache path.
     auto temporaryPath = makeString(info.filePath, '-', getpid());
-    FileHandle file { temporaryPath, FileSystem::FileOpenMode::Truncate };
-    if (file.write(cacheFile.span()) != safeCast<int>(cacheFile.size())) {
+    auto fileHandle = FileSystem::openFile(temporaryPath, FileSystem::FileOpenMode::Truncate);
+    if (fileHandle.write(cacheFile.span()) != cacheFile.size()) {
         FileSystem::deleteFile(temporaryPath);
         return false;
     }

@@ -279,6 +279,28 @@ class TestGitHub(unittest.TestCase):
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
 
+    def test_set_state(self):
+        with OutputCapture() as captured, mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).state, None)
+            self.assertFalse(tracker.issue(1).set_state(state='Analyze'))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'GitHub does not support state at this time\n',
+        )
+
+    def test_set_substate(self):
+        with OutputCapture() as captured, mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).substate, None)
+            self.assertFalse(tracker.issue(1).set_state(state='Analyze', substate='Fix'))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'GitHub does not support state at this time\n',
+        )
+
     def test_duplicate(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
             GITHUB_EXAMPLE_COM_USERNAME='tcontributor',

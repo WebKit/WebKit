@@ -1,6 +1,6 @@
 
 PASS #host is initially left: 999999px
 PASS #slotted is initially left: 999999px
-FAIL #host with inserted @position-try applied assert_equals: expected 100 but got 999999
-FAIL #slotted with inserted @position-try applied assert_equals: expected 100 but got 999999
+PASS #host with inserted @position-try applied
+PASS #slotted with inserted @position-try applied
 

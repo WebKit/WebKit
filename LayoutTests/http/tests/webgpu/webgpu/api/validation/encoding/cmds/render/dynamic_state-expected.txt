@@ -1,6 +1,71 @@
 
-PASS :setViewport,x_y_width_height_nonnegative:
-PASS :setViewport,xy_rect_contained_in_attachment:
+PASS :setViewport,width_height_nonnegative:
+FAIL :setViewport,exceeds_attachment_size: assert_unreached:
+  - INFO: subcase: attachmentWidth=3;attachmentHeight=3
+    OK
+  - INFO: subcase: attachmentWidth=1024;attachmentHeight=1024
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.finish: encoder state is 'Locked', expected 'Open'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :setViewport,xy_rect_contained_in_bounds: assert_unreached:
+  - INFO: subcase: dimension=0;om=0;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=-1;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=-2;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=1;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=0;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=0;od=1;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=1;od=0;sd=-1
+    OK
+  - INFO: subcase: dimension=1;om=0;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=-1;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=-2;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=1;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=0;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=0;od=1;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=1;od=0;sd=-1
+    OK
+  - INFO: subcase: dimension=0;om=-2;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=1;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=0;om=1;od=1;sd=-1
+    OK
+  - INFO: subcase: dimension=0;om=1;od="negative";sd=0
+    OK
+  - INFO: subcase: dimension=0;om=0;od=0;sd=1
+    OK
+  - INFO: subcase: dimension=0;om=0;od=0;sd="positive"
+    OK
+  - INFO: subcase: dimension=1;om=-2;od=-1;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=1;od=0;sd=0
+    OK
+  - INFO: subcase: dimension=1;om=1;od=1;sd=-1
+    OK
+  - INFO: subcase: dimension=1;om=1;od="negative";sd=0
+    OK
+  - INFO: subcase: dimension=1;om=0;od=0;sd=1
+    OK
+  - INFO: subcase: dimension=1;om=0;od=0;sd="positive"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.finish: encoder state is 'Locked', expected 'Open'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :setViewport,depth_rangeAndOrder:
 PASS :setScissorRect,x_y_width_height_nonnegative:
 PASS :setScissorRect,xy_rect_contained_in_attachment:

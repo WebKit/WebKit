@@ -63,7 +63,7 @@ static bool shouldRemoveFragmentIdentifier(const String& mediaType)
 #endif
 }
 
-static WorkQueue& decodeQueue()
+static WorkQueue& decodeQueueSingleton()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("org.webkit.DataURLDecoder"_s, WorkQueue::QOS::UserInitiated));
     return queue.get();
@@ -177,7 +177,7 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, ShouldValida
 {
     ASSERT(url.protocolIsData());
 
-    decodeQueue().dispatch([decodeTask = createDecodeTask(url, scheduleContext, shouldValidatePadding, WTFMove(completionHandler))]() mutable {
+    decodeQueueSingleton().dispatch([decodeTask = createDecodeTask(url, scheduleContext, shouldValidatePadding, WTFMove(completionHandler))]() mutable {
         auto result = decodeSynchronously(*decodeTask);
 
 #if USE(COCOA_EVENT_LOOP)

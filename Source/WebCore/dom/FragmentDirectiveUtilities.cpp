@@ -35,11 +35,11 @@ namespace WebCore {
 namespace FragmentDirectiveUtilities {
 
 // https://wicg.github.io/scroll-to-text-fragment/#nearest-block-ancestor
-Node& nearestBlockAncestor(Node& node)
+ContainerNode& nearestBlockAncestor(Node& node)
 {
     for (RefPtr currentNode = &node; currentNode; currentNode = currentNode->parentNode()) {
-        if (!currentNode->isTextNode() && currentNode->renderer() && currentNode->renderer()->style().isDisplayBlockLevel())
-            return *currentNode;
+        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().isDisplayBlockLevel())
+            return downcast<ContainerNode>(*currentNode);
     }
     return node.document();
 }

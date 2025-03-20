@@ -170,6 +170,8 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
     tree->setSelectedTextMarkerRange(document->selection().selection());
+    tree->setInitialSortedLiveRegions(axIDs(axObjectCache.sortedLiveRegions()));
+    tree->setInitialSortedNonRootWebAreas(axIDs(axObjectCache.sortedNonRootWebAreas()));
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
     const auto relations = axObjectCache.relations();
@@ -1002,7 +1004,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     // What is left in oldChildrenIDs are the IDs that are no longer children of axAncestor.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
     for (auto& axID : oldChildrenIDs)
-        removeSubtreeFromNodeMap(axID, axAncestor);
+        removeSubtreeFromNodeMap(axID, axAncestor->objectID());
 
     auto unconditionallyUpdate = [] (AccessibilityRole role) {
         // These are the roles that should be updated even if AX children don't change. This is necessary because
@@ -1070,6 +1072,32 @@ OptionSet<ActivityState> AXIsolatedTree::lockedPageActivityState() const
 {
     ASSERT(s_storeLock.isLocked());
     return m_pageActivityState;
+}
+
+AXCoreObject::AccessibilityChildrenVector AXIsolatedTree::sortedLiveRegions()
+{
+    ASSERT(!isMainThread());
+    return objectsForIDs(m_sortedLiveRegionIDs);
+}
+
+AXCoreObject::AccessibilityChildrenVector AXIsolatedTree::sortedNonRootWebAreas()
+{
+    ASSERT(!isMainThread());
+    return objectsForIDs(m_sortedNonRootWebAreaIDs);
+}
+
+void AXIsolatedTree::setInitialSortedLiveRegions(Vector<AXID> liveRegionIDs)
+{
+    ASSERT(isMainThread());
+
+    m_sortedLiveRegionIDs = WTFMove(liveRegionIDs);
+}
+
+void AXIsolatedTree::setInitialSortedNonRootWebAreas(Vector<AXID> webAreaIDs)
+{
+    ASSERT(isMainThread());
+
+    m_sortedNonRootWebAreaIDs = WTFMove(webAreaIDs);
 }
 
 std::optional<AXID> AXIsolatedTree::focusedNodeID()
@@ -1182,27 +1210,18 @@ void AXIsolatedTree::updateRootScreenRelativePosition()
         updateNodeProperties(*axRoot, { AXProperty::ScreenRelativePosition });
 }
 
-void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
+void AXIsolatedTree::removeNode(AXID axID, std::optional<AXID> parentID)
 {
     AXTRACE("AXIsolatedTree::removeNode"_s);
-    AXLOG(makeString("objectID "_s, axObject.objectID().loggingString()));
+    AXLOG(makeString("objectID "_s, axID.loggingString()));
     ASSERT(isMainThread());
 
-    auto labeledObjectIDs = axObjectCache() ? axObjectCache()->relatedObjectIDsFor(axObject, AXRelationType::LabelFor, AXObjectCache::UpdateRelations::No) : std::nullopt;
-    if (labeledObjectIDs) {
-        // Update the labeled objects since axObject is one of their labels and it is being removed.
-        for (AXID labeledObjectID : *labeledObjectIDs) {
-            // The label/title of an isolated object is computed based on its AccessibilityText property, thus update it.
-            queueNodeUpdate(labeledObjectID, { AXProperty::AccessibilityText });
-        }
-    }
-
-    m_unresolvedPendingAppends.remove(axObject.objectID());
-    removeSubtreeFromNodeMap(axObject.objectID(), axObject.parentInCoreTree());
-    queueRemovals({ axObject.objectID() });
+    m_unresolvedPendingAppends.remove(axID);
+    removeSubtreeFromNodeMap(axID, parentID);
+    queueRemovals({ axID });
 }
 
-void AXIsolatedTree::removeSubtreeFromNodeMap(std::optional<AXID> objectID, AccessibilityObject* axParent)
+void AXIsolatedTree::removeSubtreeFromNodeMap(std::optional<AXID> objectID, std::optional<AXID> axParentID)
 {
     AXTRACE("AXIsolatedTree::removeSubtreeFromNodeMap"_s);
     AXLOG(makeString("Removing subtree for objectID "_s,  objectID ? objectID->loggingString() : ""_str));
@@ -1219,9 +1238,10 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(std::optional<AXID> objectID, Acce
         return;
     }
 
-    auto axParentID = axParent ? std::optional { axParent->objectID() } : std::nullopt;
-    auto actualParentID = m_nodeMap.get(*objectID).parentID;
-    if (axParentID != actualParentID) {
+    Markable<AXID> actualParentID = m_nodeMap.get(*objectID).parentID;
+    // If the axParentID and actualParentID differ in whether they are null, or if the values differ, break early.
+    // If both are null, we are likely at the parent.
+    if (static_cast<bool>(axParentID) != static_cast<bool>(actualParentID) || axParentID != actualParentID) {
         AXLOG(makeString("Tried to remove object ID "_s, objectID->loggingString(), " from a different parent "_s, axParentID ? axParentID->loggingString() : ""_str, ", actual parent "_s, actualParentID ? actualParentID->loggingString() : ""_str, ", bailing out."_s));
         return;
     }
@@ -1357,6 +1377,28 @@ void AXIsolatedTree::applyPendingChanges()
         }
     }
     m_pendingPropertyChanges.clear();
+
+    if (m_pendingSortedLiveRegionIDs)
+        m_sortedLiveRegionIDs = std::exchange(m_pendingSortedLiveRegionIDs, std::nullopt).value();
+
+    if (m_pendingSortedNonRootWebAreaIDs)
+        m_sortedNonRootWebAreaIDs = std::exchange(m_pendingSortedNonRootWebAreaIDs, std::nullopt).value();
+}
+
+void AXIsolatedTree::sortedLiveRegionsDidChange(Vector<AXID> liveRegionIDs)
+{
+    ASSERT(isMainThread());
+
+    Locker locker { m_changeLogLock };
+    m_pendingSortedLiveRegionIDs = WTFMove(liveRegionIDs);
+}
+
+void AXIsolatedTree::sortedNonRootWebAreasDidChange(Vector<AXID> webAreaIDs)
+{
+    ASSERT(isMainThread());
+
+    Locker locker { m_changeLogLock };
+    m_pendingSortedNonRootWebAreaIDs = WTFMove(webAreaIDs);
 }
 
 AXTreePtr findAXTree(Function<bool(AXTreePtr)>&& match)
@@ -1411,6 +1453,27 @@ void AXIsolatedTree::queueNodeUpdate(AXID objectID, const NodeUpdateOptions& opt
         cache->startUpdateTreeSnapshotTimer();
 }
 
+void AXIsolatedTree::queueNodeRemoval(const AccessibilityObject& axObject)
+{
+    ASSERT(isMainThread());
+
+    std::optional labeledObjectIDs = axObjectCache() ? axObjectCache()->relatedObjectIDsFor(axObject, AXRelationType::LabelFor, AXObjectCache::UpdateRelations::No) : std::nullopt;
+    if (labeledObjectIDs) {
+        // Update the labeled objects since axObject is one of their labels and it is being removed.
+        for (AXID labeledObjectID : *labeledObjectIDs) {
+            // The label/title of an isolated object is computed based on its AccessibilityText property, thus update it.
+            queueNodeUpdate(labeledObjectID, { AXProperty::AccessibilityText });
+        }
+    }
+
+    auto* parent = axObject.parentInCoreTree();
+    std::optional<AXID> parentID = parent ? std::optional { parent->objectID() } : std::nullopt;
+
+    m_needsNodeRemoval.add(axObject.objectID(), parentID);
+    if (auto* cache = axObjectCache())
+        cache->startUpdateTreeSnapshotTimer();
+}
+
 void AXIsolatedTree::processQueuedNodeUpdates()
 {
     ASSERT(isMainThread());
@@ -1418,6 +1481,10 @@ void AXIsolatedTree::processQueuedNodeUpdates()
     WeakPtr cache = axObjectCache();
     if (!cache)
         return;
+
+    for (const auto& nodeIDs : m_needsNodeRemoval)
+        removeNode(nodeIDs.key, nodeIDs.value);
+    m_needsNodeRemoval.clear();
 
     for (AXID nodeID : m_needsUpdateChildren) {
         if (!cache)

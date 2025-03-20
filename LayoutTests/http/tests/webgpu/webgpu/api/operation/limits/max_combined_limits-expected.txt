@@ -1,0 +1,17 @@
+
+FAIL :max_storage_buffer_texture_frag_outputs:format="r8uint" assert_unreached:
+  - EXCEPTION: RangeError: Out of memory
+    range@http://127.0.0.1:8000/webgpu/common/util/util.js:238:23
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/limits/max_combined_limits.spec.js:46:8
+ Reached unreachable code
+FAIL :max_storage_buffer_texture_frag_outputs:format="rgba8uint" assert_unreached:
+  - EXCEPTION: RangeError: Out of memory
+    range@http://127.0.0.1:8000/webgpu/common/util/util.js:238:23
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/limits/max_combined_limits.spec.js:46:8
+ Reached unreachable code
+FAIL :max_storage_buffer_texture_frag_outputs:format="rgba32uint" assert_unreached:
+  - EXCEPTION: RangeError: Out of memory
+    range@http://127.0.0.1:8000/webgpu/common/util/util.js:238:23
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/limits/max_combined_limits.spec.js:46:8
+ Reached unreachable code
+

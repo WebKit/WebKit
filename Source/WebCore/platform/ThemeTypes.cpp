@@ -33,8 +33,8 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, SelectionPart selectionPart)
 {
     switch (selectionPart) {
-    case SelectionPart::Background: ts << "selection-background"; break;
-    case SelectionPart::Foreground: ts << "selection-foreground"; break;
+    case SelectionPart::Background: ts << "selection-background"_s; break;
+    case SelectionPart::Foreground: ts << "selection-foreground"_s; break;
     }
     return ts;
 }
@@ -42,15 +42,15 @@ TextStream& operator<<(TextStream& ts, SelectionPart selectionPart)
 TextStream& operator<<(TextStream& ts, ThemeFont themeFont)
 {
     switch (themeFont) {
-    case ThemeFont::CaptionFont: ts << "caption-font"; break;
-    case ThemeFont::IconFont: ts << "icon-font"; break;
-    case ThemeFont::MenuFont: ts << "menu-font"; break;
-    case ThemeFont::MessageBoxFont: ts << "messagebox-font"; break;
-    case ThemeFont::SmallCaptionFont: ts << "small-caption-font"; break;
-    case ThemeFont::StatusBarFont: ts << "statusbar-font"; break;
-    case ThemeFont::MiniControlFont: ts << "minicontrol-font"; break;
-    case ThemeFont::SmallControlFont: ts << "small-control-font"; break;
-    case ThemeFont::ControlFont: ts << "control-font"; break;
+    case ThemeFont::CaptionFont: ts << "caption-font"_s; break;
+    case ThemeFont::IconFont: ts << "icon-font"_s; break;
+    case ThemeFont::MenuFont: ts << "menu-font"_s; break;
+    case ThemeFont::MessageBoxFont: ts << "messagebox-font"_s; break;
+    case ThemeFont::SmallCaptionFont: ts << "small-caption-font"_s; break;
+    case ThemeFont::StatusBarFont: ts << "statusbar-font"_s; break;
+    case ThemeFont::MiniControlFont: ts << "minicontrol-font"_s; break;
+    case ThemeFont::SmallControlFont: ts << "small-control-font"_s; break;
+    case ThemeFont::ControlFont: ts << "control-font"_s; break;
     }
     return ts;
 }
@@ -58,42 +58,42 @@ TextStream& operator<<(TextStream& ts, ThemeFont themeFont)
 TextStream& operator<<(TextStream& ts, ThemeColor themeColor)
 {
     switch (themeColor) {
-    case ThemeColor::ActiveBorderColor: ts << "active-border-color"; break;
-    case ThemeColor::ActiveCaptionColor: ts << "active-caption-color"; break;
-    case ThemeColor::ActiveTextColor: ts << "active-text-color"; break;
-    case ThemeColor::AppWorkspaceColor: ts << "app-workspace-color"; break;
-    case ThemeColor::BackgroundColor: ts << "background-color"; break;
-    case ThemeColor::ButtonFaceColor: ts << "button-face-color"; break;
-    case ThemeColor::ButtonHighlightColor: ts << "button-highlight-color"; break;
-    case ThemeColor::ButtonShadowColor: ts << "button-shadow-color"; break;
-    case ThemeColor::ButtonTextColor: ts << "button-text-color"; break;
-    case ThemeColor::CanvasColor: ts << "canvas-color"; break;
-    case ThemeColor::CanvasTextColor: ts << "canvas-text-color"; break;
-    case ThemeColor::CaptionTextColor: ts << "caption-text-color"; break;
-    case ThemeColor::FieldColor: ts << "field-color"; break;
-    case ThemeColor::FieldTextColor: ts << "field-text-color"; break;
-    case ThemeColor::GrayTextColor: ts << "gray-text-color"; break;
-    case ThemeColor::HighlightColor: ts << "highlight-color"; break;
-    case ThemeColor::HighlightTextColor: ts << "highlight-text-color"; break;
-    case ThemeColor::InactiveBorderColor: ts << "inactive-border-color"; break;
-    case ThemeColor::InactiveCaptionColor: ts << "inactive-caption-color"; break;
-    case ThemeColor::InactiveCaptionTextColor: ts << "inactive-caption-text-color"; break;
-    case ThemeColor::InfoBackgroundColor: ts << "info-background-color"; break;
-    case ThemeColor::InfoTextColor: ts << "info-text-color"; break;
-    case ThemeColor::LinkTextColor: ts << "link-text-color"; break;
-    case ThemeColor::MatchColor: ts << "match-color"; break;
-    case ThemeColor::MenuTextColor: ts << "menu-text-color"; break;
-    case ThemeColor::ScrollbarColor: ts << "scrollbar-color"; break;
-    case ThemeColor::ThreeDDarkShadowColor: ts << "threeD-dark-shadow-color"; break;
-    case ThemeColor::ThreeDFaceColor: ts << "threeD-face-color"; break;
-    case ThemeColor::ThreeDHighlightColor: ts << "threeD-highlight-color"; break;
-    case ThemeColor::ThreeDLightShadowColor: ts << "threeD-light-shadow-color"; break;
-    case ThemeColor::ThreeDShadowColor: ts << "threeD-shadow-color"; break;
-    case ThemeColor::VisitedTextColor: ts << "visited-text-color"; break;
-    case ThemeColor::WindowColor: ts << "window-color"; break;
-    case ThemeColor::WindowFrameColor: ts << "window-frame-color"; break;
-    case ThemeColor::WindowTextColor: ts << "window-text-color"; break;
-    case ThemeColor::FocusRingColor: ts << "focus-ring-color"; break;
+    case ThemeColor::ActiveBorderColor: ts << "active-border-color"_s; break;
+    case ThemeColor::ActiveCaptionColor: ts << "active-caption-color"_s; break;
+    case ThemeColor::ActiveTextColor: ts << "active-text-color"_s; break;
+    case ThemeColor::AppWorkspaceColor: ts << "app-workspace-color"_s; break;
+    case ThemeColor::BackgroundColor: ts << "background-color"_s; break;
+    case ThemeColor::ButtonFaceColor: ts << "button-face-color"_s; break;
+    case ThemeColor::ButtonHighlightColor: ts << "button-highlight-color"_s; break;
+    case ThemeColor::ButtonShadowColor: ts << "button-shadow-color"_s; break;
+    case ThemeColor::ButtonTextColor: ts << "button-text-color"_s; break;
+    case ThemeColor::CanvasColor: ts << "canvas-color"_s; break;
+    case ThemeColor::CanvasTextColor: ts << "canvas-text-color"_s; break;
+    case ThemeColor::CaptionTextColor: ts << "caption-text-color"_s; break;
+    case ThemeColor::FieldColor: ts << "field-color"_s; break;
+    case ThemeColor::FieldTextColor: ts << "field-text-color"_s; break;
+    case ThemeColor::GrayTextColor: ts << "gray-text-color"_s; break;
+    case ThemeColor::HighlightColor: ts << "highlight-color"_s; break;
+    case ThemeColor::HighlightTextColor: ts << "highlight-text-color"_s; break;
+    case ThemeColor::InactiveBorderColor: ts << "inactive-border-color"_s; break;
+    case ThemeColor::InactiveCaptionColor: ts << "inactive-caption-color"_s; break;
+    case ThemeColor::InactiveCaptionTextColor: ts << "inactive-caption-text-color"_s; break;
+    case ThemeColor::InfoBackgroundColor: ts << "info-background-color"_s; break;
+    case ThemeColor::InfoTextColor: ts << "info-text-color"_s; break;
+    case ThemeColor::LinkTextColor: ts << "link-text-color"_s; break;
+    case ThemeColor::MatchColor: ts << "match-color"_s; break;
+    case ThemeColor::MenuTextColor: ts << "menu-text-color"_s; break;
+    case ThemeColor::ScrollbarColor: ts << "scrollbar-color"_s; break;
+    case ThemeColor::ThreeDDarkShadowColor: ts << "threeD-dark-shadow-color"_s; break;
+    case ThemeColor::ThreeDFaceColor: ts << "threeD-face-color"_s; break;
+    case ThemeColor::ThreeDHighlightColor: ts << "threeD-highlight-color"_s; break;
+    case ThemeColor::ThreeDLightShadowColor: ts << "threeD-light-shadow-color"_s; break;
+    case ThemeColor::ThreeDShadowColor: ts << "threeD-shadow-color"_s; break;
+    case ThemeColor::VisitedTextColor: ts << "visited-text-color"_s; break;
+    case ThemeColor::WindowColor: ts << "window-color"_s; break;
+    case ThemeColor::WindowFrameColor: ts << "window-frame-color"_s; break;
+    case ThemeColor::WindowTextColor: ts << "window-text-color"_s; break;
+    case ThemeColor::FocusRingColor: ts << "focus-ring-color"_s; break;
     }
     return ts;
 }

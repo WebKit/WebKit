@@ -1,0 +1,170 @@
+
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:102:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00 00 00 00
+       failed ->     xx xx xx xx
+     expected ==     66 33 33 99
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00 00 00 00
+       failed ->     xx    xx xx
+     expected ==     99 00 33 99
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00 00 00 00
+       failed ->     xx xx    xx
+     expected ==     99 33 00 99
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,rendering:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00 00 00 00
+       failed ->     xx xx xx xx
+     expected ==     33 33 33 99
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXCEPTION: TypeError: Type error
+    createPipelineLayout@[native code]
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/pipeline/pipeline_layout_created_with_null_bind_group_layout.spec.js:290:55
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=0 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000009
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=1 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000008
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=2 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000007
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :pipeline_layout_with_null_bind_group_layout,compute:emptyBindGroupLayoutType="Empty";emptyBindGroupLayoutIndex=3 assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000006
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: entries.size()(0) > otherEntries.size()(1)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+

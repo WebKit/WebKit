@@ -59,7 +59,7 @@ struct JSGlobalObject::GlobalPropertyInfo {
         , value(v)
         , attributes(a)
     {
-        ASSERT(Thread::current().stack().contains(this));
+        ASSERT(Thread::currentSingleton().stack().contains(this));
     }
 
     const Identifier identifier;
@@ -237,7 +237,13 @@ inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunction() co
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunctionConcurrently() const { return performProxyObjectSetByValSloppyFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunction() const { return m_performProxyObjectSetByValStrictFunction.get(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunctionConcurrently() const { return performProxyObjectSetByValStrictFunction(); }
+inline GetterSetter* JSGlobalObject::regExpProtoFlagsGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoFlagsGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoDotAllGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoDotAllGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoHasIndicesGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoHasIndicesGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoIgnoreCaseGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoIgnoreCaseGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoMultilineGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoMultilineGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoStickyGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoStickyGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
 
@@ -433,6 +439,18 @@ inline Structure* JSGlobalObject::arrayBufferStructure(ArrayBufferSharingMode sh
         return m_arrayBufferStructure.get(this);
     case ArrayBufferSharingMode::Shared:
         return m_sharedArrayBufferStructure.get(this);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+inline Structure* JSGlobalObject::arrayBufferStructureConcurrently(ArrayBufferSharingMode sharingMode) const
+{
+    switch (sharingMode) {
+    case ArrayBufferSharingMode::Default:
+        return m_arrayBufferStructure.getConcurrently();
+    case ArrayBufferSharingMode::Shared:
+        return m_sharedArrayBufferStructure.getConcurrently();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

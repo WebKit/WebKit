@@ -29,7 +29,7 @@
 #include "RenderVideo.h"
 
 #include "Document.h"
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"

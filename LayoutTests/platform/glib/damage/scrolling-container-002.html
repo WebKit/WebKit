@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .container {
+          position: fixed;
+          top: 17px;
+          left: 17px;
+          width: 100px;
+          height: 100px;
+          overflow: hidden;
+          background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="containee"></div>
+    </div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var containee = document.getElementsByClassName("containee")[0];
+      for (let i = 0; i < 100; i++)
+          containee.innerHTML += 'Line ' + i + '<br>';
+
+      var container = document.getElementsByClassName("container")[0];
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              container.scroll(0, 100);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[17, 17, 100, 100]]);
+          },
+          () => {
+              container.scroll(0, 999999);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[17, 17, 100, 100]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

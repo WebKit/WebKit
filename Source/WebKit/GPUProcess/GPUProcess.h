@@ -207,7 +207,7 @@ private:
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
+    void triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
     void setShouldListenToVoiceActivity(bool);
 #endif
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -285,6 +285,7 @@ private:
 #endif
 #if ENABLE(VP9) && PLATFORM(COCOA)
     bool m_haveEnabledVP9Decoder { false };
+    bool m_haveEnabledSWVP9Decoder { false };
 #endif
 
 };

@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=InvokerAttributesEnabled,
+    EnabledBySetting=CommandAttributesEnabled,
     Exposed=Window
 ] interface CommandEvent : Event {
     constructor([AtomString] DOMString type, optional CommandEventInit eventInitDict);

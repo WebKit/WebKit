@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/intersection-observer/resources/v2-midframe.sub.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Intersection observer V2 test with nested cross-origin iframes. Test timed out
+

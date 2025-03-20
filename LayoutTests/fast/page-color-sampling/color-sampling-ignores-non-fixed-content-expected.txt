@@ -1,0 +1,6 @@
+PASS colorBeforeFading.top is "rgba(255, 100, 0, 0.8)"
+PASS colorAfterFading.top is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

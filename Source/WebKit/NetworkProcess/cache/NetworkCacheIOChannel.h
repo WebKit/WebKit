@@ -65,7 +65,7 @@ private:
     GRefPtr<GOutputStream> m_outputStream WTF_GUARDED_BY_LOCK(m_lock);
     WorkQueue::QOS m_qos WTF_GUARDED_BY_LOCK(m_lock);
 #else // !PLATFORM(COCOA) && !USE(GLIB)
-    FileSystem::PlatformFileHandle m_fileDescriptor WTF_GUARDED_BY_LOCK(m_lock) { FileSystem::invalidPlatformFileHandle };
+    FileSystem::FileHandle m_fileDescriptor WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 };
 

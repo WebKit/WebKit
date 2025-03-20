@@ -44,7 +44,7 @@ SwapBuffersDisplayRequirement ImageBufferSet::swapBuffersForDisplay(bool hasEmpt
     auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
-    if (!m_frontBuffer || m_frontBuffer->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
+    if (!m_frontBuffer || Ref { *m_frontBuffer }->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
         displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
     else if (!hasEmptyDirtyRegion)
         displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
@@ -55,20 +55,20 @@ SwapBuffersDisplayRequirement ImageBufferSet::swapBuffersForDisplay(bool hasEmpt
     if (!supportsPartialRepaint)
         displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
 
-    if (!m_backBuffer || m_backBuffer->isInUse()) {
+    if (!m_backBuffer || Ref { *m_backBuffer }->isInUse()) {
         m_previouslyPaintedRect = std::nullopt;
         std::swap(m_backBuffer, m_secondaryBackBuffer);
 
         // When pulling the secondary back buffer out of hibernation (to become
         // the new front buffer), if it is somehow still in use (e.g. we got
         // three swaps ahead of the render server), just give up and discard it.
-        if (m_backBuffer && m_backBuffer->isInUse())
+        if (m_backBuffer && Ref { *m_backBuffer }->isInUse())
             m_backBuffer = nullptr;
     }
 
     std::swap(m_frontBuffer, m_backBuffer);
 
-    if (m_frontBuffer && m_frontBuffer->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
+    if (m_frontBuffer && Ref { *m_frontBuffer }->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
         m_previouslyPaintedRect = std::nullopt;
 
     return displayRequirement;
@@ -102,23 +102,24 @@ ImageBufferSet::PaintRectList ImageBufferSet::computePaintingRects(const Region&
 
 void ImageBufferSet::prepareBufferForDisplay(const FloatRect& layerBounds, const Region& dirtyRegion, const PaintRectList& paintingRects, bool requiresClearedPixels)
 {
-    if (!m_frontBuffer) {
+    RefPtr frontBuffer = m_frontBuffer;
+    if (!frontBuffer) {
         m_previouslyPaintedRect = std::nullopt;
         return;
     }
 
-    GraphicsContext& context = m_frontBuffer->context();
+    GraphicsContext& context = frontBuffer->context();
     context.resetClip();
 
     WebCore::FloatRect copyRect;
-    if (m_backBuffer) {
+    if (RefPtr backBuffer = m_backBuffer) {
         WebCore::IntRect enclosingCopyRect { m_previouslyPaintedRect ? *m_previouslyPaintedRect : enclosingIntRect(layerBounds) };
         if (!dirtyRegion.contains(enclosingCopyRect)) {
             WebCore::Region copyRegion(enclosingCopyRect);
             copyRegion.subtract(dirtyRegion);
             copyRect = intersection(copyRegion.bounds(), layerBounds);
             if (!copyRect.isEmpty())
-                m_frontBuffer->context().drawImageBuffer(*m_backBuffer, copyRect, copyRect, { WebCore::CompositeOperator::Copy });
+                frontBuffer->context().drawImageBuffer(*backBuffer, copyRect, copyRect, { WebCore::CompositeOperator::Copy });
         }
     }
 

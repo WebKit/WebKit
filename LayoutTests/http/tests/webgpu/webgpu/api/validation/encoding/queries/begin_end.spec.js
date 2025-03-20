@@ -3,11 +3,11 @@
 **/export const description = `
 Validation for encoding begin/endable queries.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
-import { ValidationTest } from '../../validation_test.js';
+import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
 
 import { beginRenderPassWithQuerySet, createQuerySetWithType } from './common.js';
 
-export const g = makeTestGroup(ValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
 
 g.test('occlusion_query,begin_end_balance').
 desc(

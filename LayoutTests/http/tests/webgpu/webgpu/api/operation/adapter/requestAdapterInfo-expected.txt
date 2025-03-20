@@ -1,4 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Query `webgpu:api,operation,adapter,requestAdapterInfo:*` does not match any cases
 
-PASS :adapter_info:
-PASS :adapter_info_with_hints:
+Harness Error (FAIL), message = Unhandled rejection: Query `webgpu:api,operation,adapter,requestAdapterInfo:*` does not match any cases
+
 

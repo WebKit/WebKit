@@ -97,11 +97,11 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& v
     // FIXME: add remaining values;
     switch (value.type()) {
     case TextSpacingTrim::TrimType::Auto:
-        return ts << "auto";
+        return ts << "auto"_s;
     case TextSpacingTrim::TrimType::SpaceAll:
-        return ts << "space-all";
+        return ts << "space-all"_s;
     case TextSpacingTrim::TrimType::TrimAll:
-        return ts << "trim-all";
+        return ts << "trim-all"_s;
     }
     return ts;
 }
@@ -141,15 +141,15 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& val
 {
     // FIXME: add remaining values;
     if (value.isAuto())
-        return ts << "auto";
+        return ts << "auto"_s;
     if (value.isNoAutospace())
-        return ts << "no-autospace";
+        return ts << "no-autospace"_s;
     if (value.isNormal())
-        return ts << "normal";
+        return ts << "normal"_s;
     if (value.hasIdeographAlpha())
-        ts << "ideograph-alpha";
+        ts << "ideograph-alpha"_s;
     if (value.hasIdeographNumeric())
-        ts << "ideograph-numeric";
+        ts << "ideograph-numeric"_s;
     return ts;
 }
 

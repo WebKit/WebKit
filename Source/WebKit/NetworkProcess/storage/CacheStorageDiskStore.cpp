@@ -531,12 +531,12 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
             auto recordBlobData = recordBlobDatas[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
-                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), recordBlobData) == -1) {
+                if (!FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), recordBlobData)) {
                     result = false;
                     continue;
                 }
             }
-            if (FileSystem::overwriteEntireFile(recordFile, recordData) == -1)
+            if (!FileSystem::overwriteEntireFile(recordFile, recordData))
                 result = false;
         }
 

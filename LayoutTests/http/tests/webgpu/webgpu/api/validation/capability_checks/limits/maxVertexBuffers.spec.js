@@ -18,7 +18,8 @@
     vertex: {
       module,
       buffers
-    }
+    },
+    depthStencil: { format: 'depth32float', depthWriteEnabled: true, depthCompare: 'always' }
   };
 }
 
@@ -55,10 +56,10 @@ fn(async (t) => {
   await t.testDeviceWithRequestedMaximumLimits(
     limitTest,
     testValueName,
-    async ({ device, testValue, shouldError, actualLimit }) => {
+    async ({ testValue, shouldError, actualLimit }) => {
       const lastIndex = testValue - 1;
 
-      const buffer = device.createBuffer({
+      const buffer = t.createBufferTracked({
         size: 16,
         usage: GPUBufferUsage.VERTEX
       });

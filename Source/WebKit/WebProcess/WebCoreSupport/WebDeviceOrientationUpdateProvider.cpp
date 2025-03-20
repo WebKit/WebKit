@@ -50,10 +50,11 @@ WebDeviceOrientationUpdateProvider::~WebDeviceOrientationUpdateProvider()
     WebProcess::singleton().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProvider::messageReceiverName(), m_pageIdentifier);
 }
 
-void WebDeviceOrientationUpdateProvider::startUpdatingDeviceOrientation(WebCore::MotionManagerClient& client)
+void WebDeviceOrientationUpdateProvider::startUpdatingDeviceOrientation(WebCore::MotionManagerClient& client, const WebCore::SecurityOriginData& origin)
 {
     if (m_deviceOrientationClients.isEmptyIgnoringNullReferences() && m_page)
-        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceOrientation());
+        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceOrientation(origin));
+
     m_deviceOrientationClients.add(client);
 }
 
@@ -66,10 +67,11 @@ void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceOrientation(WebCore::
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceOrientation());
 }
 
-void WebDeviceOrientationUpdateProvider::startUpdatingDeviceMotion(WebCore::MotionManagerClient& client)
+void WebDeviceOrientationUpdateProvider::startUpdatingDeviceMotion(WebCore::MotionManagerClient& client, const WebCore::SecurityOriginData& origin)
 {
     if (m_deviceMotionClients.isEmptyIgnoringNullReferences() && m_page)
-        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceMotion());
+        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceMotion(origin));
+
     m_deviceMotionClients.add(client);
 }
 
@@ -77,6 +79,7 @@ void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceMotion(WebCore::Motio
 {
     if (m_deviceMotionClients.isEmptyIgnoringNullReferences())
         return;
+
     m_deviceMotionClients.remove(client);
     if (m_deviceMotionClients.isEmptyIgnoringNullReferences() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceMotion());

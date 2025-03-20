@@ -102,7 +102,7 @@ private:
 
     const Ref<Device> m_device;
     Ref<Texture> m_parentTexture;
-    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
+    mutable Vector<uint64_t> m_commandEncoders;
 } SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView);
 
 } // namespace WebGPU

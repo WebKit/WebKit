@@ -99,7 +99,7 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedI
         return;
     }
 
-    RELEASE_ASSERT_WITH_MESSAGE(selectedIndex == -1 || static_cast<unsigned>(selectedIndex) < items.size(), "Invalid selectedIndex (%d) for popup menu with %lu items", selectedIndex, items.size());
+    RELEASE_ASSERT_WITH_MESSAGE(selectedIndex == -1 || static_cast<unsigned>(selectedIndex) < items.size(), "Invalid selectedIndex (%d) for popup menu with %zu items", selectedIndex, items.size());
 
     m_page->setActivePopupMenu(this);
 

@@ -309,7 +309,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             _private->cachedSubframeArchives = adoptNS([[NSArray alloc] init]);
         else {
             _private->cachedSubframeArchives = createNSArray(coreArchive->subframeArchives(), [] (auto& archive) {
-                return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:static_cast<LegacyWebArchive*>(archive.ptr())]);
+                return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:downcast<LegacyWebArchive>(archive.ptr())]);
             });
         }
     }

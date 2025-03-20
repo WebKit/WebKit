@@ -27,9 +27,10 @@
 #import "WKNSArray.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKNSArray {
-    API::ObjectStorage<API::Array> _array;
+    AlignedStorage<API::Array> _array;
 }
 
 - (void)dealloc

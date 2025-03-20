@@ -58,7 +58,7 @@ public:
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
-
+    std::optional<WebCore::DynamicContentScalingDisplayList> displayList() const;
 protected:
     unsigned bytesPerRow() const final;
     String debugDescription() const final;

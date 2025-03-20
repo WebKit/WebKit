@@ -27,6 +27,7 @@
 
 #import "APIWebsiteDataRecord.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 #import <wtf/OptionSet.h>
 
 namespace WebKit {
@@ -154,6 +155,6 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
 
 @interface WKWebsiteDataRecord () <WKObject> {
 @package
-    API::ObjectStorage<API::WebsiteDataRecord> _websiteDataRecord;
+    AlignedStorage<API::WebsiteDataRecord> _websiteDataRecord;
 }
 @end

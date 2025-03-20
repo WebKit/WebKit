@@ -6,6 +6,7 @@
 <script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
+<canvas id=canvas width=640 height=480></canvas>
 <script>
 
 async function createWorker(script)
@@ -43,6 +44,44 @@ promise_test(async test => {
     assert_equals(result.value.codedWidth, 640);
     assert_equals(result.value.codedHeight, 480);
 }, "Transfer MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor");
+
+promise_test(async test => {
+    const stream = canvas.captureStream();
+
+    const context = canvas.getContext('2d');
+    const timer = setInterval(() => {
+        context.fillStyle = "#ff0000";
+        context.fillRect(0, 0, 640, 480);
+    }, 50);
+    test.add_cleanup(() => clearInterval(timer));
+
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const processor = new MediaStreamTrackProcessor({ track: event.data.track });
+            const data = await processor.readable.getReader().read();
+            self.postMessage(data);
+            data.value.close();
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const track = stream.getVideoTracks()[0];
+    worker.postMessage({ track }, [track]);
+
+    const result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_false(result.done);
+
+    test.add_cleanup(() => result.value.close());
+    assert_equals(result.value.codedWidth, 640);
+    assert_equals(result.value.codedHeight, 480);
+    assert_equals(result.value.format, "BGRA");
+
+   const buffer = new Uint8Array(canvas.width * canvas.height * 4);
+   await result.value.copyTo(buffer);
+   assert_equals(buffer[0], 0, "b");
+   assert_equals(buffer[1], 0, "g");
+   assert_equals(buffer[2], 255, "r");
+   assert_equals(buffer[3], 255, "a");
+}, "Transfer canvas MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor");
 
 promise_test(async test => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

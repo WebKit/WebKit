@@ -47,4 +47,4 @@ RetainPtr<id> CoreIPCPKSecureElementPass::toID() const
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
+#endif // USE(PASSKIT)

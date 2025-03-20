@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="100" height="100" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+
+      const mergingThreshold = 8 * 4;
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Draw few enough rects to avoid merging.
+              for (let i = 0; i < mergingThreshold; i++) {
+                  ctx.fillRect(1 + (i % 25) * 4, 1 + Math.floor(i / 25) * 4, 1, 1);
+              }
+          },
+          () => {
+              // Excpect the same rects yet with 1px margin each.
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              var expectedRects = [];
+              for (let i = 0; i < mergingThreshold; i++) {
+                  expectedRects.push([(i % 25) * 4, Math.floor(i / 25) * 4, 3, 3]);
+              }
+              assertRectsEq(damage.rects, expectedRects);
+          },
+          () => {
+              // Draw enough rects to trigger merging.
+              for (let i = 0; i <= mergingThreshold; i++) {
+                  ctx.fillRect(1 + (i % 25) * 4, 1 + Math.floor(i / 25) * 4, 1, 1);
+              }
+          },
+          () => {
+              // Expect the single damage rectangle being a minimum bounding rectangle containg
+              // all the small rects (taking 1px margin for each into account).
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[0, 0, 99, 7]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

@@ -300,9 +300,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             if (snapshot.imported)
                 return WI.UIString("Imported Snapshot \u2014 %s").format(snapshot.title || snapshot.identifier);
             let title = snapshot.title ? WI.UIString("%d \u2014 \u201C%s\u201D", "Label for JavaScript heap snapshot identifier and user provided name.").format(snapshot.identifier, snapshot.title) : snapshot.identifier;
-            if (snapshot.target.type === WI.TargetType.Worker)
-                return WI.UIString("Worker \u201C%s\u201D Snapshot %s").format(snapshot.target.displayName, title);
-            return WI.UIString("Page Snapshot %s").format(title);
+            return WI.UIString("%s Snapshot %s", "Label for JavaScript heap snapshot context name and identifier.").format(snapshot.target.displayName, title);
         }
         case WI.TimelineRecord.Type.Media:
             // Since the `displayName` can be specific to an `animation-name`/`transition-property`,

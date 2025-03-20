@@ -100,7 +100,7 @@ private:
     RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
     WGPURenderBundleEncoderDescriptor m_descriptor;
-    Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    const Vector<WGPUTextureFormat> m_descriptorColorFormats;
     HashSet<RefPtr<const BindGroup>> m_bindGroups;
 
     NSString* m_lastErrorString { nil };

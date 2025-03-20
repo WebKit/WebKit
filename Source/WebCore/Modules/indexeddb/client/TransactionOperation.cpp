@@ -27,6 +27,7 @@
 #include "TransactionOperation.h"
 
 #include "IDBCursor.h"
+#include "IDBDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -35,6 +36,14 @@ namespace IDBClient {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperation);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperationImpl);
+
+TransactionOperation::TransactionOperation(IDBTransaction& transaction)
+    : m_transaction(transaction)
+    , m_identifier(transaction.connectionProxy())
+    , m_operationID(transaction.generateOperationID())
+    , m_scriptExecutionContextIdentifier(transaction.protectedDatabase()->scriptExecutionContextIdentifier())
+{
+}
 
 TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBRequest& request)
     : TransactionOperation(transaction)

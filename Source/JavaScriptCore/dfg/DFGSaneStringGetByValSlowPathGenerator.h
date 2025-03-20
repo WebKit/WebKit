@@ -35,7 +35,7 @@
 namespace JSC { namespace DFG {
 
 class SaneStringGetByValSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::Jump> {
-    WTF_MAKE_TZONE_ALLOCATED(SaneStringGetByValSlowPathGenerator);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SaneStringGetByValSlowPathGenerator);
 public:
     SaneStringGetByValSlowPathGenerator(
         const MacroAssembler::Jump& from, SpeculativeJIT* jit, JSValueRegs resultRegs, JITCompiler::LinkableConstant globalObject, GPRReg baseReg, GPRReg propertyReg)

@@ -171,9 +171,7 @@ void ViewPlatform::enterFullScreen()
 void ViewPlatform::didEnterFullScreen()
 {
     ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
-
-    if (auto* fullScreenManagerProxy = page().fullScreenManager())
-        fullScreenManagerProxy->didEnterFullScreen();
+    // FIXME: Call CompletionHandler from PageClientImpl::beganEnterFullScreen here.
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
 }
 

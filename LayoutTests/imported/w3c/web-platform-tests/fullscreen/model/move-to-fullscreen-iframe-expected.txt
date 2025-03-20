@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Moving fullscreen document's body into a fullscreen iframe Test timed out
+PASS Moving fullscreen document's body into a fullscreen iframe
 

@@ -37,6 +37,11 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticNodeList);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticWrapperNodeList);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticElementList);
 
+StaticNodeList::StaticNodeList(Vector<Ref<Node>>&& nodes)
+    : m_nodes(WTFMove(nodes))
+{
+}
+
 unsigned StaticNodeList::length() const
 {
     return m_nodes.size();

@@ -40,6 +40,7 @@
 #import "Utilities.h"
 #import "WebPushDaemonConnectionConfiguration.h"
 #import <WebCore/PushSubscriptionIdentifier.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -61,7 +62,7 @@
 #import <wtf/UUID.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/SpanCocoa.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/darwin/XPCExtras.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
 
@@ -291,7 +292,7 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
             return completionHandler(nullptr);
         }
 
-        auto data = xpc_dictionary_get_data_span(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto data = xpcDictionaryGetData(reply, WebKit::WebPushD::protocolEncodedMessageKey);
         auto decoder = IPC::Decoder::create(data, { });
         ASSERT(decoder);
 
@@ -1787,6 +1788,43 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCancelledOnShowingNotificatio
             ASSERT_TRUE(v->expectDecryptedMessage(@"null data", message.get()));
         }
 
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        ASSERT_TRUE(v->hasPushSubscription());
+    }
+}
+
+TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerIgnoredForInspectedContexts)
+{
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+
+    auto setServiceWorkerIsBeingInspected = [&](const String& originString) {
+        __block bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetServiceWorkerIsBeingInspected(URL(originString), true), ^() {
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+    };
+
+    for (auto& v : webViews()) {
+        v->subscribe();
+        v->disableShowNotifications();
+    }
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+        setServiceWorkerIsBeingInspected(v->origin());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+
+            // _processPushMessage should return false since we disabled showing notifications above.
+            ASSERT_FALSE(v->expectDecryptedMessage(@"null data", message.get()));
+        }
+
+        // Should still be subscribed since we don't enforce the silent push timer while being inspected.
         [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
         ASSERT_TRUE(v->hasPushSubscription());
     }

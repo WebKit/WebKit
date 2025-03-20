@@ -180,7 +180,10 @@ RefPtr<CSSValue> CSSCounterStyleRule::cssValueFromText(CSSPropertyID propertyID,
 {
     auto tokenizer = CSSTokenizer(valueText);
     auto tokenRange = tokenizer.tokenRange();
-    return CSSPropertyParser::parseCounterStyleDescriptor(propertyID, tokenRange, parserContext());
+    auto result = CSSPropertyParser::parseCounterStyleDescriptor(propertyID, tokenRange, parserContext());
+    if (!result || !tokenRange.atEnd())
+        return nullptr;
+    return result;
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#dom-csscounterstylerule-name

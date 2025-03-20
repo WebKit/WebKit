@@ -30,7 +30,7 @@
 #include "VideoCodecType.h"
 #include <wtf/UniqueRef.h>
 
-typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
 
 namespace webrtc {

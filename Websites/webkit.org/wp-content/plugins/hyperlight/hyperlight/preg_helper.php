@@ -115,10 +115,9 @@ function preg_merge($glue, array $expressions, array $names = array()) {
             /x';
             $sub_expr = preg_replace_callback(
                 $backref_expr,
-                create_function(
-                    '$m',
-                    'return $m[1] . "\\\\" . ((int)$m[2] + ' . $capture_count . ');'
-                ),
+                function($m) {
+                    return $m[1] . "\\\\" . ((int)$m[2] + $capture_count);
+                },
                 $sub_expr
             );
             $capture_count += $number_of_captures;

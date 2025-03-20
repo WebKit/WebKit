@@ -192,55 +192,9 @@ inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet
     ASSERT(!isTextNode());
 }
 
-inline unsigned Node::countChildNodes() const
-{
-    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
-    return containerNode ? containerNode->countChildNodes() : 0;
-}
-
-inline Node* Node::traverseToChildAt(unsigned index) const
-{
-    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
-    return containerNode ? containerNode->traverseToChildAt(index) : nullptr;
-}
-
-inline Node* Node::firstChild() const
-{
-    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
-    return containerNode ? containerNode->firstChild() : nullptr;
-}
-
-inline RefPtr<Node> Node::protectedFirstChild() const
-{
-    return firstChild();
-}
-
-inline Node* Node::lastChild() const
-{
-    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
-    return containerNode ? containerNode->lastChild() : nullptr;
-}
-
-inline RefPtr<Node> Node::protectedLastChild() const
-{
-    return lastChild();
-}
-
-inline bool Node::hasChildNodes() const
-{
-    return firstChild();
-}
-
 inline ContainerNode& TreeScope::rootNode() const
 {
     return m_rootNode.get();
-}
-
-inline Node& Node::rootNode() const
-{
-    if (isInTreeScope())
-        return treeScope().rootNode();
-    return traverseToRootNode();
 }
 
 inline ContainerNode& ContainerNode::rootNode() const
@@ -248,24 +202,6 @@ inline ContainerNode& ContainerNode::rootNode() const
     if (isInTreeScope())
         return treeScope().rootNode();
     return traverseToRootNode();
-}
-
-inline void collectChildNodes(Node& node, NodeVector& children)
-{
-    for (SUPPRESS_UNCOUNTED_LOCAL Node* child = node.firstChild(); child; child = child->nextSibling())
-        children.append(*child);
-}
-
-inline void Node::setParentNode(ContainerNode* parent)
-{
-    ASSERT(isMainThread());
-    m_parentNode = parent;
-    m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
-}
-
-inline RefPtr<ContainerNode> Node::protectedParentNode() const
-{
-    return parentNode();
 }
 
 } // namespace WebCore

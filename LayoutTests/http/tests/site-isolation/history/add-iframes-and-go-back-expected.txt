@@ -1,0 +1,10 @@
+Verifies that using history.back() while recursively creating iframes does not increase history.length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS history.length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

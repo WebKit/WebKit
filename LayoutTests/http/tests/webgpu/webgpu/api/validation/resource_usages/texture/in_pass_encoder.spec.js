@@ -9,8 +9,10 @@ import { GPUConst } from '../../../../constants.js';
 import {
   kDepthStencilFormats,
   kDepthStencilFormatResolvedAspect,
-  kTextureFormatInfo } from
+  kTextureFormatInfo,
+  isMultisampledTextureFormatDeprecated } from
 '../../../../format_info.js';
+import { MaxLimitsTestMixin } from '../../../../gpu_test.js';
 import { ValidationTest } from '../../validation_test.js';
 
 
@@ -29,7 +31,7 @@ const kTextureBindingTypes = [
 
 const SIZE = 32;
 class TextureUsageTracking extends ValidationTest {
-  createTexture(
+  createTestTexture(
   options =
 
 
@@ -50,7 +52,7 @@ class TextureUsageTracking extends ValidationTest {
       usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING
     } = options;
 
-    return this.device.createTexture({
+    return this.createTextureTracked({
       size: { width, height, depthOrArrayLayers: arrayLayerCount },
       mipLevelCount,
       sampleCount,
@@ -147,7 +149,7 @@ class TextureUsageTracking extends ValidationTest {
    * Create two bind groups with one texture view.
    */
   makeTwoBindGroupsWithOneTextureView(usage1, usage2) {
-    const view = this.createTexture({
+    const view = this.createTestTexture({
       usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING
     }).createView();
     const bindGroupLayouts = [
@@ -194,7 +196,7 @@ class TextureUsageTracking extends ValidationTest {
     const encoder = this.device.createCommandEncoder();
     const pass = compute ?
     encoder.beginComputePass() :
-    this.beginSimpleRenderPass(encoder, this.createTexture().createView());
+    this.beginSimpleRenderPass(encoder, this.createTestTexture().createView());
 
     // Create pipeline. Note that bindings unused in pipeline should be validated too.
     const pipelineLayout = this.device.createPipelineLayout({
@@ -236,9 +238,37 @@ class TextureUsageTracking extends ValidationTest {
     pass.setPipeline(pipeline);
     pass.dispatchWorkgroups(1);
   }
+
+  skipIfNeedStorageTexturesByVisibilityAndNoStorageTextures(visibility) {
+    if (!this.isCompatibility) {
+      return;
+    }
+
+    this.skipIf(
+      (visibility & GPUConst.ShaderStage.VERTEX) !== 0 &&
+      !(this.device.limits.maxStorageTexturesInVertexStage >= 2),
+      `maxStorageTexturesInVertexStage(${this.device.limits.maxStorageTexturesInVertexStage}) < 2`
+    );
+
+    this.skipIf(
+      (visibility & GPUConst.ShaderStage.FRAGMENT) !== 0 &&
+      !(this.device.limits.maxStorageTexturesInFragmentStage >= 2),
+      `maxStorageTexturesInFragmentStage(${this.device.limits.maxStorageTexturesInFragmentStage}) < 2`
+    );
+  }
+
+  skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(s, visibility) {
+    if (
+    s === 'readonly-storage-texture' ||
+    s === 'writeonly-storage-texture' ||
+    s === 'readwrite-storage-texture')
+    {
+      this.skipIfNeedStorageTexturesByVisibilityAndNoStorageTextures(visibility);
+    }
+  }
 }
 
-export const g = makeTestGroup(TextureUsageTracking);
+export const g = makeTestGroup(MaxLimitsTestMixin(TextureUsageTracking));
 
 const BASE_LEVEL = 1;
 const TOTAL_LEVELS = 6;
@@ -489,7 +519,7 @@ fn((t) => {
     'multiple views of the same texture in a single draw/dispatch are not supported in compat, nor are sub ranges of layers'
   );
 
-  const texture = t.createTexture({
+  const texture = t.createTestTexture({
     arrayLayerCount: TOTAL_LAYERS,
     mipLevelCount: TOTAL_LEVELS,
     usage:
@@ -553,7 +583,7 @@ fn((t) => {
     encoder.beginComputePass() :
     t.beginSimpleRenderPass(
       encoder,
-      type1 === 'render-target' ? view1 : t.createTexture().createView()
+      type1 === 'render-target' ? view1 : t.createTestTexture().createView()
     );
 
     const bgls = [];
@@ -721,7 +751,7 @@ fn((t) => {
 
   t.skipIf(t.isCompatibility, 'sub ranges of layers are not supported in compat mode');
 
-  const texture = t.createTexture({
+  const texture = t.createTestTexture({
     arrayLayerCount: TOTAL_LAYERS,
     mipLevelCount: TOTAL_LEVELS,
     format
@@ -759,7 +789,7 @@ fn((t) => {
   encoder.beginRenderPass({
     colorAttachments: [
     {
-      view: t.createTexture({ width: size, height: size }).createView(),
+      view: t.createTestTexture({ width: size, height: size }).createView(),
       clearValue: { r: 0.0, g: 1.0, b: 0.0, a: 1.0 },
       loadOp: 'clear',
       storeOp: 'store'
@@ -866,9 +896,11 @@ fn((t) => {
     secondUseConflicts
   } = t.params;
 
+  t.skipIfNeedStorageTexturesByVisibilityAndNoStorageTextures(readVisibility | writeVisibility);
+
   const usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING;
-  const view = t.createTexture({ usage }).createView();
-  const view2 = secondUseConflicts ? view : t.createTexture({ usage }).createView();
+  const view = t.createTestTexture({ usage }).createView();
+  const view2 = secondUseConflicts ? view : t.createTestTexture({ usage }).createView();
 
   const bgl = t.device.createBindGroupLayout({
     entries: [
@@ -901,7 +933,7 @@ fn((t) => {
     );
     pass.end();
   } else {
-    const pass = t.beginSimpleRenderPass(encoder, t.createTexture().createView());
+    const pass = t.beginSimpleRenderPass(encoder, t.createTestTexture().createView());
     pass.setBindGroup(0, bindGroup);
     pass.end();
   }
@@ -939,13 +971,15 @@ combine('readEntry', [
 fn((t) => {
   const { readVisibility, readEntry, secondUseConflicts } = t.params;
 
+  t.skipIfNeedStorageTexturesByVisibilityAndNoStorageTextures(readVisibility);
+
   const usage =
   GPUTextureUsage.TEXTURE_BINDING |
   GPUTextureUsage.RENDER_ATTACHMENT |
   GPUTextureUsage.STORAGE_BINDING;
 
-  const view = t.createTexture({ usage }).createView();
-  const view2 = secondUseConflicts ? view : t.createTexture({ usage }).createView();
+  const view = t.createTestTexture({ usage }).createView();
+  const view2 = secondUseConflicts ? view : t.createTestTexture({ usage }).createView();
   const bgl = t.device.createBindGroupLayout({
     entries: [{ binding: 0, visibility: readVisibility, ...readEntry }]
   });
@@ -991,9 +1025,13 @@ combine('entry', [
 fn((t) => {
   const { compute, callDrawOrDispatch, entry } = t.params;
 
-  const sampledView = t.createTexture().createView();
+  t.skipIfNeedStorageTexturesByVisibilityAndNoStorageTextures(GPUShaderStage.FRAGMENT);
+
+  const sampledView = t.createTestTexture().createView();
   const sampledStorageView = t.
-  createTexture({ usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING }).
+  createTestTexture({
+    usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING
+  }).
   createView();
 
   // Create bindGroup0. It has two bindings. These two bindings use different views/subresources.
@@ -1027,7 +1065,7 @@ fn((t) => {
   const encoder = t.device.createCommandEncoder();
   const pass = compute ?
   encoder.beginComputePass() :
-  t.beginSimpleRenderPass(encoder, t.createTexture().createView());
+  t.beginSimpleRenderPass(encoder, t.createTestTexture().createView());
 
   // Set bindGroup0 and bindGroup1. bindGroup0 is replaced by bindGroup1 in the current pass.
   // But bindings in bindGroup0 should be validated too.
@@ -1117,13 +1155,19 @@ fn((t) => {
   const { binding0InBundle, binding1InBundle, type0, type1, _usage0, _usage1, _sampleCount } =
   t.params;
 
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(type0, GPUShaderStage.FRAGMENT);
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(type1, GPUShaderStage.FRAGMENT);
+  t.skipIf(
+    _sampleCount > 1 && !isMultisampledTextureFormatDeprecated('r32float', t.isCompatibility)
+  );
+
   // Two bindings are attached to the same texture view.
   const usage =
   _sampleCount === 4 ?
   GPUTextureUsage[_usage0] | GPUTextureUsage[_usage1] | GPUTextureUsage.RENDER_ATTACHMENT :
   GPUTextureUsage[_usage0] | GPUTextureUsage[_usage1];
   const view = t.
-  createTexture({
+  createTestTexture({
     usage,
     sampleCount: _sampleCount
   }).
@@ -1150,7 +1194,9 @@ fn((t) => {
   // As a result, only one binding's type is 'render-target' at most.
   const pass = t.beginSimpleRenderPass(
     encoder,
-    type0 === 'render-target' || type1 === 'render-target' ? view : t.createTexture().createView()
+    type0 === 'render-target' || type1 === 'render-target' ?
+    view :
+    t.createTestTexture().createView()
   );
 
   const bindingsInBundle = [binding0InBundle, binding1InBundle];
@@ -1233,8 +1279,19 @@ fn((t) => {
     t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures');
   }
 
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(
+    readOnlyUsage,
+    GPUShaderStage.FRAGMENT
+  );
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(
+    writableUsage,
+    GPUShaderStage.FRAGMENT
+  );
+
   const view = t.
-  createTexture({ usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING }).
+  createTestTexture({
+    usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING
+  }).
   createView();
   const bindGroup0 = t.createBindGroup(0, view, readOnlyUsage, '2d', {
     sampleType: 'unfilterable-float',
@@ -1302,7 +1359,7 @@ fn((t) => {
   encoder.beginRenderPass({
     colorAttachments: [
     {
-      view: t.createTexture().createView(),
+      view: t.createTestTexture().createView(),
       clearValue: { r: 0.0, g: 1.0, b: 0.0, a: 1.0 },
       loadOp: 'clear',
       storeOp: 'store'
@@ -1364,6 +1421,9 @@ expand('setBindGroup1', (p) => p.dispatch ? [true] : [false, true])
 fn((t) => {
   const { dispatch, usage1, usage2, setBindGroup0, setBindGroup1 } = t.params;
 
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage1, GPUShaderStage.FRAGMENT);
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage2, GPUShaderStage.FRAGMENT);
+
   const { bindGroup0, bindGroup1, encoder, pass, pipeline } = t.testValidationScope(
     true,
     usage1,
@@ -1381,7 +1441,7 @@ fn((t) => {
       break;
     case 'indirect':
       {
-        const indirectBuffer = t.device.createBuffer({ size: 4, usage: GPUBufferUsage.INDIRECT });
+        const indirectBuffer = t.createBufferTracked({ size: 4, usage: GPUBufferUsage.INDIRECT });
         pass.dispatchWorkgroupsIndirect(indirectBuffer, 0);
       }
       break;
@@ -1422,6 +1482,9 @@ expandWithParams(
 fn((t) => {
   const { setBindGroup0, setBindGroup1, usage1, usage2 } = t.params;
 
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage1, GPUShaderStage.FRAGMENT);
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage2, GPUShaderStage.FRAGMENT);
+
   const { bindGroup0, bindGroup1, encoder, pass } = t.testValidationScope(false, usage1, usage2);
   assert(pass instanceof GPURenderPassEncoder);
 
@@ -1456,6 +1519,9 @@ u.combine('splitPass', [false, true]).expandWithParams(
 ).
 fn((t) => {
   const { splitPass, usage1, usage2 } = t.params;
+
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage1, GPUShaderStage.FRAGMENT);
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage2, GPUShaderStage.FRAGMENT);
 
   const { bindGroupLayouts, bindGroups } = t.makeTwoBindGroupsWithOneTextureView(usage1, usage2);
 
@@ -1514,6 +1580,9 @@ expandWithParams(
 fn((t) => {
   const { splitPass, draw, usage1, usage2 } = t.params;
 
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage1, GPUShaderStage.FRAGMENT);
+  t.skipIfNeedStorageTexturesByResourceTypeAndNoStorageTextures(usage2, GPUShaderStage.FRAGMENT);
+
   const { bindGroupLayouts, bindGroups } = t.makeTwoBindGroupsWithOneTextureView(usage1, usage2);
 
   const encoder = t.device.createCommandEncoder();
@@ -1531,7 +1600,7 @@ fn((t) => {
     'r32float'
   );
 
-  const attachment = t.createTexture().createView();
+  const attachment = t.createTestTexture().createView();
 
   let pass = t.beginSimpleRenderPass(encoder, attachment);
   pass.setPipeline(pipelineUsingBG0);

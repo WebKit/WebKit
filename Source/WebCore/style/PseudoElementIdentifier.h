@@ -48,9 +48,9 @@ inline void add(Hasher& hasher, const PseudoElementIdentifier& pseudoElementIden
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdentifier& pseudoElementIdentifier)
 {
-    ts << "::" << pseudoElementIdentifier.pseudoId;
+    ts << "::"_s << pseudoElementIdentifier.pseudoId;
     if (!pseudoElementIdentifier.nameArgument.isNull())
-        ts << "(" << pseudoElementIdentifier.nameArgument << ")";
+        ts << '(' << pseudoElementIdentifier.nameArgument << ')';
     return ts;
 }
 

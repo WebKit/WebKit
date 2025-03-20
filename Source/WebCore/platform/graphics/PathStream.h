@@ -56,6 +56,7 @@ public:
     void add(PathEllipseInRect) final;
     void add(PathRect) final;
     void add(PathRoundedRect) final;
+    void add(PathContinuousRoundedRect) final;
     void add(PathCloseSubpath) final;
 
     const Vector<PathSegment>& segments() const { return m_segments; }
@@ -93,6 +94,7 @@ private:
     std::optional<PathDataLine> singleDataLine() const final;
     std::optional<PathRect> singleRect() const final;
     std::optional<PathRoundedRect> singleRoundedRect() const final;
+    std::optional<PathContinuousRoundedRect> singleContinuousRoundedRect() const final;
     std::optional<PathArc> singleArc() const final;
     std::optional<PathClosedArc> singleClosedArc() const final;
     std::optional<PathDataQuadCurve> singleQuadCurve() const final;

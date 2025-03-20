@@ -105,6 +105,11 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
     m_scroller = scroller;
 }
 
+Element* ScrollTimeline::bindingsSource() const
+{
+    return source();
+}
+
 Element* ScrollTimeline::source() const
 {
     auto source = m_source.styleable();
@@ -235,7 +240,7 @@ void ScrollTimeline::cacheCurrentTime()
         RefPtr source = this->source();
         if (!source)
             return { };
-        auto* sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
+        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
         if (!sourceScrollableArea)
             return { };
         auto scrollDirection = resolvedScrollDirection();
@@ -360,9 +365,9 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 TextStream& operator<<(TextStream& ts, Scroller scroller)
 {
     switch (scroller) {
-    case Scroller::Nearest: ts << "nearest"; break;
-    case Scroller::Root: ts << "root"; break;
-    case Scroller::Self: ts << "self"; break;
+    case Scroller::Nearest: ts << "nearest"_s; break;
+    case Scroller::Root: ts << "root"_s; break;
+    case Scroller::Self: ts << "self"_s; break;
     }
     return ts;
 }

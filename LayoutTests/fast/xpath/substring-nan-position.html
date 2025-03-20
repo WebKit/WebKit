@@ -1,14 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
-<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=41862">bug 41862</a>:
-XPath substring function is broken when passing NaN as the position parameter.</p>
-<div id="console"></div>
 
 <script>
+    description("Test for bug 41862 (http://bugs.webkit.org/show_bug.cgi?id=41862): XPath substring function is broken when passing NaN as the position parameter.");
     shouldBe("document.evaluate(\"substring('12345', number(\'NaN\'))\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
     shouldBe("document.evaluate(\"substring('12345', number(\'NaN\'), 3)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
 
@@ -18,6 +16,5 @@ XPath substring function is broken when passing NaN as the position parameter.</
     shouldBe("document.evaluate(\"substring('12345', number(\'NaN\'), number(\'NaN\'))\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

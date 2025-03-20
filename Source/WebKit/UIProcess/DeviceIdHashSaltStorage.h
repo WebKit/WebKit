@@ -32,11 +32,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
-class DeviceIdHashSaltStorage : public ThreadSafeRefCounted<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
+class DeviceIdHashSaltStorage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
 public:
     static Ref<DeviceIdHashSaltStorage> create(const String& deviceIdHashSaltStorageDirectory);
     ~DeviceIdHashSaltStorage();
@@ -76,7 +77,7 @@ private:
     void completePendingHandler(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void completeDeviceIdHashSaltForOriginCall(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, CompletionHandler<void(String&&)>&&);
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     HashMap<String, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
     bool m_isLoaded { false };
     bool m_isClosed { false };

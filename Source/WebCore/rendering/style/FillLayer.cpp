@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FillLayer.h"
 
+#include "CachedImage.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -396,38 +397,50 @@ bool FillLayer::hasImageWithAttachment(FillAttachment attachment) const
     return false;
 }
 
+bool FillLayer::hasHDRContent() const
+{
+    for (auto* layer = this; layer; layer = layer->m_next.get()) {
+        auto image = layer->image();
+        if (auto* cachedImage = image ? image->cachedImage() : nullptr) {
+            if (cachedImage->hasHDRContent())
+                return true;
+        }
+    }
+    return false;
+}
+
 TextStream& operator<<(TextStream& ts, FillSize fillSize)
 {
-    return ts << fillSize.type << " " << fillSize.size;
+    return ts << fillSize.type << ' ' << fillSize.size;
 }
 
 TextStream& operator<<(TextStream& ts, FillRepeatXY repeat)
 {
-    return ts << repeat.x << " " << repeat.y;
+    return ts << repeat.x << ' ' << repeat.y;
 }
 
 TextStream& operator<<(TextStream& ts, const FillLayer& layer)
 {
     TextStream::GroupScope scope(ts);
-    ts << "fill-layer";
+    ts << "fill-layer"_s;
 
     ts.startGroup();
-    ts << "position " << layer.xPosition() << " " << layer.yPosition();
+    ts << "position "_s << layer.xPosition() << ' ' << layer.yPosition();
     ts.endGroup();
 
-    ts.dumpProperty("size", layer.size());
+    ts.dumpProperty("size"_s, layer.size());
 
     ts.startGroup();
-    ts << "background-origin " << layer.backgroundXOrigin() << " " << layer.backgroundYOrigin();
+    ts << "background-origin "_s << layer.backgroundXOrigin() << ' ' << layer.backgroundYOrigin();
     ts.endGroup();
 
-    ts.dumpProperty("repeat", layer.repeat());
-    ts.dumpProperty("clip", layer.clip());
-    ts.dumpProperty("origin", layer.origin());
+    ts.dumpProperty("repeat"_s, layer.repeat());
+    ts.dumpProperty("clip"_s, layer.clip());
+    ts.dumpProperty("origin"_s, layer.origin());
 
-    ts.dumpProperty("composite", layer.composite());
-    ts.dumpProperty("blend-mode", layer.blendMode());
-    ts.dumpProperty("mask-mode", layer.maskMode());
+    ts.dumpProperty("composite"_s, layer.composite());
+    ts.dumpProperty("blend-mode"_s, layer.blendMode());
+    ts.dumpProperty("mask-mode"_s, layer.maskMode());
 
     if (layer.next())
         ts << *layer.next();

@@ -74,7 +74,7 @@ messages -> WebExtensionContext {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools APIs
     [Validator=isDevToolsMessageAllowed] DevToolsPanelsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String title, String iconPath, String pagePath) -> (Expected<Inspector::ExtensionTabID, WebKit::WebExtensionError> result)
-    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebKit::WebExtensionError> result)
+    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (Expected<Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
     [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<bool> ignoreCache)
 #endif
 

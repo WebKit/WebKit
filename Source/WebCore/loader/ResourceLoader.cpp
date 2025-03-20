@@ -90,7 +90,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 ResourceLoader::ResourceLoader(LocalFrame& frame, ResourceLoaderOptions options)
     : m_frame { &frame }
     , m_documentLoader { frame.loader().activeDocumentLoader() }
-    , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading() }
+    , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page() && frame.page()->defersLoading() }
     , m_options { options }
 {
 }
@@ -483,7 +483,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 #endif
 
         if (frameLoader)
-            frameLoader->notifier().willSendRequest(this, request, redirectResponse);
+            frameLoader->notifier().willSendRequest(*this, *m_identifier, request, redirectResponse);
     } else if (RefPtr frame = m_frame.get())
         InspectorInstrumentation::willSendRequest(frame.get(), *m_identifier, frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
 
@@ -627,8 +627,8 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
     m_response = r;
 
     RefPtr frameLoader = this->frameLoader();
-    if (frameLoader && m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
-        frameLoader->notifier().didReceiveResponse(this, m_response);
+    if (frameLoader && m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier)
+        frameLoader->notifier().didReceiveResponse(*this, *m_identifier, m_response);
 }
 
 void ResourceLoader::didReceiveData(const SharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
@@ -655,8 +655,8 @@ void ResourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, long
     // Could be an issue with a giant local file.
     RefPtr frame = m_frame.get();
     RefPtr frameLoader = this->frameLoader();
-    if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && frame && frameLoader)
-        frameLoader->notifier().didReceiveData(this, buffer.makeContiguous(), static_cast<int>(encodedDataLength));
+    if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && frame && frameLoader && m_identifier)
+        frameLoader->notifier().didReceiveData(*this, *m_identifier, buffer.makeContiguous(), static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
@@ -686,8 +686,8 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
         return;
     m_notifiedLoadComplete = true;
     RefPtr frameLoader = this->frameLoader();
-    if (frameLoader && m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
-        frameLoader->notifier().didFinishLoad(this, networkLoadMetrics);
+    if (frameLoader && m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier)
+        frameLoader->notifier().didFinishLoad(*this, *m_identifier, networkLoadMetrics);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -713,7 +713,7 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier) {
         if (RefPtr frameLoader = this->frameLoader())
-            frameLoader->notifier().didFailToLoad(this, error);
+            frameLoader->notifier().didFailToLoad(*this, *m_identifier, error);
     }
 }
 
@@ -905,9 +905,9 @@ void ResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, c
     Ref protectedThis { *this };
 
     if (m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
-        if (isAllowedToAskUserForCredentials()) {
+        if (isAllowedToAskUserForCredentials() && m_identifier) {
             if (RefPtr frameLoader = this->frameLoader())
-                frameLoader->notifier().didReceiveAuthenticationChallenge(this, challenge);
+                frameLoader->notifier().didReceiveAuthenticationChallenge(*m_identifier, documentLoader(), challenge);
             return;
         }
         didBlockAuthenticationChallenge();

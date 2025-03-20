@@ -172,21 +172,22 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
             Locker locker { m_targetMutex };
             target = m_target.get();
         }
+
         if (!target || !target->remoteControlAllowed()) {
             RemoteInspector::singleton().setupFailed(targetIdentifier);
             Locker locker { m_targetMutex };
             m_target = nullptr;
-        } else if (auto* inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target.get())) {
-            inspectionTarget->connect(*this, isAutomaticInspection, automaticallyPause);
-            m_connected = true;
-
-            RemoteInspector::singleton().updateTargetListing(targetIdentifier);
-        } else if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(target.get())) {
-            automationTarget->connect(*this);
-            m_connected = true;
-
-            RemoteInspector::singleton().updateTargetListing(targetIdentifier);
+            return;
         }
+
+        if (auto* inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target.get()))
+            inspectionTarget->connect(*this, isAutomaticInspection, automaticallyPause);
+        else if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(target.get()))
+            automationTarget->connect(*this);
+
+        m_connected = true;
+        RemoteInspector::singleton().updateTargetListing(targetIdentifier);
+        RemoteInspector::singleton().setupCompleted(targetIdentifier);
     });
 
     return true;
@@ -215,9 +216,10 @@ void RemoteConnectionToTarget::close()
                 target->disconnect(*this);
 
             m_target = nullptr;
-            if (targetIdentifier)
-                RemoteInspector::singleton().updateTargetListing(targetIdentifier);
         }
+
+        if (targetIdentifier)
+            RemoteInspector::singleton().updateTargetListing(targetIdentifier);
     });
 }
 

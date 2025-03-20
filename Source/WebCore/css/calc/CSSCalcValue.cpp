@@ -320,17 +320,17 @@ Ref<CalculationValue> CSSCalcValue::createCalculationValue(NoConversionDataRequi
 
 void CSSCalcValue::dump(TextStream& ts) const
 {
-    ts << indent << "(" << "CSSCalcValue";
+    ts << indent << '(' << "CSSCalcValue"_s;
 
     TextStream multilineStream;
     multilineStream.setIndent(ts.indent() + 2);
 
-    multilineStream.dumpProperty("minimum value", m_range.min);
-    multilineStream.dumpProperty("maximum value", m_range.max);
-    multilineStream.dumpProperty("expression", customCSSText(CSS::defaultSerializationContext()));
+    multilineStream.dumpProperty("minimum value"_s, m_range.min);
+    multilineStream.dumpProperty("maximum value"_s, m_range.max);
+    multilineStream.dumpProperty("expression"_s, customCSSText(CSS::defaultSerializationContext()));
 
     ts << multilineStream.release();
-    ts << ")\n";
+    ts << ")\n"_s;
 }
 
 TextStream& operator<<(TextStream& ts, const CSSCalcValue& value)

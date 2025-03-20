@@ -77,13 +77,13 @@ bool AnimationList::operator==(const AnimationList& other) const
 
 TextStream& operator<<(TextStream& ts, const AnimationList& animationList)
 {
-    ts << "[";
+    ts << '[';
     for (size_t i = 0; i < animationList.size(); ++i) {
         if (i > 0)
-            ts << ", ";
+            ts << ", "_s;
         ts << animationList.animation(i);
     }
-    ts << "]";
+    ts << ']';
     return ts;
 }
 

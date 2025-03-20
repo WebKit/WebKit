@@ -91,10 +91,9 @@ namespace {
 class RemoteImageBufferSetProxyFlusher final : public ThreadSafeImageBufferSetFlusher {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlusher);
 public:
-    RemoteImageBufferSetProxyFlusher(RemoteImageBufferSetIdentifier identifier, Ref<RemoteImageBufferSetProxyFlushFence> flushState, unsigned generation)
+    RemoteImageBufferSetProxyFlusher(RemoteImageBufferSetIdentifier identifier, Ref<RemoteImageBufferSetProxyFlushFence> flushState, unsigned)
         : m_identifier(identifier)
         , m_flushState(WTFMove(flushState))
-        , m_generation(generation)
     { }
 
     bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
@@ -111,7 +110,6 @@ public:
 private:
     RemoteImageBufferSetIdentifier m_identifier;
     Ref<RemoteImageBufferSetProxyFlushFence> m_flushState;
-    unsigned m_generation;
 };
 
 }

@@ -37,6 +37,15 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+#include <gst/video/video-info-dma.h>
+#endif
+
+#if USE(GSTREAMER_GL)
+#include <gst/allocators/gstdmabuf.h>
+#include <gst/gl/gl.h>
+#endif
+
 #if USE(CAIRO)
 #include <cairo.h>
 #elif USE(SKIA)
@@ -61,17 +70,34 @@ static void ensureVideoFrameDebugCategoryInitialized()
     });
 }
 
+VideoFrameGStreamer::Info VideoFrameGStreamer::infoFromCaps(const GRefPtr<GstCaps>& caps)
+{
+    GstVideoInfo videoInfo;
+    gst_video_info_from_caps(&videoInfo, caps.get());
+
+    std::optional<DMABufFormat> dmabufFormat;
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+    if (gst_video_is_dma_drm_caps(caps.get())) {
+        GstVideoInfoDmaDrm drmVideoInfo;
+        if (!gst_video_info_dma_drm_from_caps(&drmVideoInfo, caps.get()))
+            return { videoInfo, std::nullopt };
+
+        if (!gst_video_info_dma_drm_to_video_info(&drmVideoInfo, &videoInfo))
+            return { videoInfo, std::nullopt };
+
+        dmabufFormat = { drmVideoInfo.drm_fourcc, drmVideoInfo.drm_modifier };
+    }
+#endif
+    return { videoInfo, dmabufFormat };
+}
+
 RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
 {
     return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(pixelBuffer), VideoFrame::Rotation::None, MediaTime::invalidTime(), { }, 1, false, { }, WTFMove(colorSpace));
 }
 
-static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sample)
+static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sample, const GstVideoInfo& videoInfo)
 {
-    GstVideoInfo videoInfo;
-    if (!gst_video_info_from_caps(&videoInfo, gst_sample_get_caps(sample.get())))
-        return nullptr;
-
     // These caps must match the internal format of a cairo surface with CAIRO_FORMAT_ARGB32,
     // so we don't need to perform color conversions when painting the video frame.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
@@ -155,9 +181,10 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height, 1, offsets, strides);
 
     auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, gst_video_format_to_string(format), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+    auto info = VideoFrameGStreamer::infoFromCaps(caps);
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     IntSize presentationSize { width, height };
-    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize);
+    return VideoFrameGStreamer::create(WTFMove(sample), WTFMove(info), presentationSize);
 }
 
 static void copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
@@ -198,7 +225,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     IntSize presentationSize { static_cast<int>(width), static_cast<int>(height) };
-    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize);
+    return VideoFrameGStreamer::create(WTFMove(sample), { { info } }, presentationSize);
 }
 
 #define CREATE_RGBA_FRAME(format)                                       \
@@ -211,7 +238,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));               \
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr)); \
     IntSize presentationSize { static_cast<int>(width), static_cast<int>(height) }; \
-    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize)
+    return VideoFrameGStreamer::create(WTFMove(sample), { { info } }, presentationSize)
 
 RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
@@ -251,7 +278,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     IntSize presentationSize { static_cast<int>(width), static_cast<int>(height) };
-    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
+    return VideoFrameGStreamer::create(WTFMove(sample), { { info } }, presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
 }
 
 RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, const ComputedPlaneLayout& planeA, PlatformVideoColorSpace&& colorSpace)
@@ -275,7 +302,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     IntSize presentationSize { static_cast<int>(width), static_cast<int>(height) };
-    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
+    return VideoFrameGStreamer::create(WTFMove(sample), { { info } }, presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
 }
 
 static inline void setBufferFields(GstBuffer* buffer, const MediaTime& presentationTime, double frameRate)
@@ -294,22 +321,20 @@ static MediaTime presentationTimeFromSample(const GRefPtr<GstSample>& sample)
     return MediaTime::invalidTime();
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, std::optional<PlatformVideoColorSpace>&& colorSpace)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample, std::optional<Info>&& info, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, std::optional<PlatformVideoColorSpace>&& colorSpace)
 {
+    auto caps = gst_sample_get_caps(sample.get());
     PlatformVideoColorSpace platformColorSpace;
     if (colorSpace)
         platformColorSpace = *colorSpace;
-    else {
-        auto* caps = gst_sample_get_caps(sample.get());
-        if (doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX))
-            platformColorSpace = videoColorSpaceFromCaps(caps);
-    }
+    else if (doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX))
+        platformColorSpace = videoColorSpaceFromCaps(caps);
 
     MediaTime timeStamp = presentationTime;
     if (presentationTime.isInvalid())
         timeStamp = presentationTimeFromSample(sample);
 
-    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), presentationSize, timeStamp, videoRotation, videoMirrored, WTFMove(metadata), WTFMove(platformColorSpace)));
+    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), WTFMove(info), presentationSize, timeStamp, videoRotation, videoMirrored, WTFMove(metadata), WTFMove(platformColorSpace)));
 }
 
 Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, Rotation videoRotation)
@@ -321,7 +346,9 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<
     MediaTime timeStamp = presentationTime;
     if (presentationTime.isInvalid())
         timeStamp = presentationTimeFromSample(sample);
-    return adoptRef(*new VideoFrameGStreamer(sample, IntSize(*presentationSize), timeStamp, videoRotation, WTFMove(colorSpace)));
+
+    auto info = infoFromCaps(GRefPtr(caps));
+    return adoptRef(*new VideoFrameGStreamer(sample, WTFMove(info), IntSize(*presentationSize), timeStamp, videoRotation, WTFMove(colorSpace)));
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, Rotation videoRotation, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)
@@ -366,6 +393,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
 
     GRefPtr<GstSample> sample;
+    Info info;
 
     // Optionally resize the video frame to fit destinationSize. This code path is used mostly by
     // the mock realtime video source when the gUM constraints specifically required exact width
@@ -387,6 +415,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         if (!sample)
             return nullptr;
 
+        info = infoFromCaps(outputCaps);
         GRefPtr buffer = gst_sample_get_buffer(sample.get());
         auto outputBuffer = webkitGstBufferSetVideoFrameTimeMetadata(WTFMove(buffer), WTFMove(metadata));
         gst_buffer_add_video_meta(outputBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
@@ -398,18 +427,26 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         gst_buffer_add_video_meta(outputBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
         setBufferFields(outputBuffer.get(), presentationTime, frameRate);
         sample = adoptGRef(gst_sample_new(outputBuffer.get(), caps.get(), nullptr, nullptr));
+        info = infoFromCaps(caps);
     }
 
-    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), IntSize(width, height), presentationTime, videoRotation, videoMirrored, { }, WTFMove(colorSpace)));
+    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), WTFMove(info), IntSize(width, height), presentationTime, videoRotation, videoMirrored, { }, WTFMove(colorSpace)));
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)
+VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, std::optional<Info>&& info, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)
     : VideoFrame(presentationTime, videoMirrored, videoRotation, WTFMove(colorSpace))
     , m_sample(WTFMove(sample))
     , m_presentationSize(presentationSize)
 {
     ensureVideoFrameDebugCategoryInitialized();
     ASSERT(m_sample);
+
+    if (info)
+        m_info = WTFMove(*info);
+    else
+        m_info = infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
+
+    setMemoryTypeFromCaps();
 
     if (!metadata)
         return;
@@ -421,12 +458,14 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const IntS
     gst_sample_set_buffer(m_sample.get(), modifiedBuffer.get());
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, PlatformVideoColorSpace&& colorSpace)
+VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, Info&& info, const IntSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, PlatformVideoColorSpace&& colorSpace)
     : VideoFrame(presentationTime, false, videoRotation, WTFMove(colorSpace))
     , m_sample(sample)
+    , m_info(WTFMove(info))
     , m_presentationSize(presentationSize)
 {
     ensureVideoFrameDebugCategoryInitialized();
+    setMemoryTypeFromCaps();
 }
 
 void VideoFrameGStreamer::setFrameRate(double frameRate)
@@ -578,7 +617,8 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
 
 void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, ImageOrientation destinationImageOrientation, bool shouldDiscardAlpha)
 {
-    auto image = convertSampleToImage(downcast<VideoFrameGStreamer>(*this).sample());
+    auto& gstFrame = downcast<VideoFrameGStreamer>(*this);
+    auto image = convertSampleToImage(gstFrame.sample(), gstFrame.info());
     if (!image)
         return;
 
@@ -590,17 +630,6 @@ void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, Im
     if (!bitmapImage)
         return;
     context.drawImage(*bitmapImage.get(), destination, source, { compositeOperator, destinationImageOrientation });
-}
-
-uint32_t VideoFrameGStreamer::pixelFormat() const
-{
-    if (m_cachedVideoFormat != GST_VIDEO_FORMAT_UNKNOWN)
-        return m_cachedVideoFormat;
-
-    GstVideoInfo inputInfo;
-    gst_video_info_from_caps(&inputInfo, gst_sample_get_caps(m_sample.get()));
-    m_cachedVideoFormat = GST_VIDEO_INFO_FORMAT(&inputInfo);
-    return m_cachedVideoFormat;
 }
 
 GRefPtr<GstSample> VideoFrameGStreamer::resizedSample(const IntSize& destinationSize)
@@ -636,17 +665,41 @@ GRefPtr<GstSample> VideoFrameGStreamer::downloadSample(std::optional<GstVideoFor
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
 {
-    return VideoFrameGStreamer::create(resizedSample(destinationSize), destinationSize, presentationTime(), rotation(), isMirrored());
+    return VideoFrameGStreamer::create(resizedSample(destinationSize), std::nullopt, destinationSize, presentationTime(), rotation(), isMirrored());
 }
 
 RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
 {
-    return convertSampleToImage(m_sample);
+    return convertSampleToImage(m_sample, m_info.info);
 }
 
 Ref<VideoFrame> VideoFrameGStreamer::clone()
 {
     return createWrappedSample(m_sample, presentationTime(), rotation());
+}
+
+void VideoFrameGStreamer::setMemoryTypeFromCaps()
+{
+    auto features = gst_caps_get_features(gst_sample_get_caps(m_sample.get()), 0);
+    if (!features) {
+        m_memoryType = MemoryType::System;
+        return;
+    }
+
+#if USE(GSTREAMER_GL)
+#if USE(GBM)
+    if (gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_DMABUF)) {
+        m_memoryType = MemoryType::DMABuf;
+        return;
+    }
+#endif // USE(GBM)
+    if (gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_GL_MEMORY)) {
+        m_memoryType = MemoryType::GL;
+        return;
+    }
+#else
+    m_memoryType = MemoryType::Unsupported;
+#endif // USE(GSTREAMER_GL)
 }
 
 #undef GST_CAT_DEFAULT

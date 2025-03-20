@@ -27,12 +27,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/WorkerGlobalScope-importScripts.https.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/WorkerGlobalScope-worker-constructor.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/WorkerGlobalScope-worker-constructor.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/attributes.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-eval-function-constructor-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-eval-function-constructor-worker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-eval-function-constructor.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval-worker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/create-trusted-type-policies.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/csp-violations.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/event-handler-attributes.mjs
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/frame-without-trusted-types.html
@@ -43,6 +45,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/send-plain-string-to-trusted-type-sink.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/set-inner-html.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/trusted-types-reporting-for-DOMWindowTimers-setTimeout-setInterval.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/trusted-types-reporting-for-setTimeout-setInterval-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/trusted-types-reporting-for-setTimeout-setInterval-worker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/worker.https.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/worker.js

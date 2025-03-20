@@ -1168,9 +1168,7 @@ void RenderTable::recalcSections() const
     m_hasCellColspanThatDeterminesTableWidth = hasCellColspanThatDeterminesTableWidth();
 
     // We need to get valid pointers to caption, head, foot and first body again
-    RenderObject* nextSibling;
-    for (RenderObject* child = firstChild(); child; child = nextSibling) {
-        nextSibling = child->nextSibling();
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         switch (child->style().display()) {
         case DisplayType::TableColumn:
         case DisplayType::TableColumnGroup:

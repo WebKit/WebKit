@@ -49,6 +49,8 @@ public:
     virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
     virtual void serviceStatusUpdated(WebAuthenticationStatus) = 0;
 
+    virtual bool isAuthenticatorManager() const { return false; }
+
 protected:
     AuthenticatorTransportServiceObserver() = default;
 };

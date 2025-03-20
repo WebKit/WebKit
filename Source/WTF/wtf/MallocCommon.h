@@ -181,14 +181,14 @@ using WTF::ForbidMallocUseForCurrentThreadScope;
 
 #define WTF_MAKE_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER(classname, alloc) \
 public: \
-    WTF_MAKE_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname, alloc) \
+    WTF_MAKE_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname, alloc, alloc) \
 private: \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER(classname, alloc) \
 private: \
 public: \
-    WTF_MAKE_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname, alloc) \
+    WTF_MAKE_CONFIGURABLE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname, alloc, alloc) \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_CONFIGURABLE_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \

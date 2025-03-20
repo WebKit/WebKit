@@ -31,7 +31,7 @@ let getProxyNullExec = new Proxy({
 
 resetTracking();
 RegExp.prototype[Symbol.replace].call(getProxyNullExec);
-assert('get == "global,exec"');
+assert('get == "flags,exec"');
 
 let getSetProxyNullExec = new Proxy(
     {
@@ -54,12 +54,12 @@ let getSetProxyNullExec = new Proxy(
         }
     });
 
-getSetProxyNullExec.global = true;
+getSetProxyNullExec.flags = "g";
 
 resetTracking();
 RegExp.prototype[Symbol.replace].call(getSetProxyNullExec);
-assert('get == "global,unicode,exec"');
-assert('getSet == "global,unicode,lastIndex,exec"');
+assert('get == "flags,exec"');
+assert('getSet == "flags,lastIndex,exec"');
 
 let regExpGlobal_comma = new RegExp(",", "g");
 let getSetProxyMatches_comma = new Proxy(
@@ -83,12 +83,12 @@ let getSetProxyMatches_comma = new Proxy(
         }
     });
 
-getSetProxyMatches_comma.global = true;
+getSetProxyMatches_comma.flags = "g";
 resetTracking();
 let replaceResult = RegExp.prototype[Symbol.replace].call(getSetProxyMatches_comma, "John,,Doe,121 Main St.,Anytown", ":");
 assert('replaceResult == "John::Doe:121 Main St.:Anytown"');
-assert('get == "global,unicode,exec,exec,exec,exec,exec"');
-assert('getSet == "global,unicode,lastIndex,exec,exec,exec,exec,exec"');
+assert('get == "flags,exec,exec,exec,exec,exec"');
+assert('getSet == "flags,lastIndex,exec,exec,exec,exec,exec"');
 
 let regExp_phoneNumber = new RegExp("(\\d{3})(\\d{3})(\\d{4})", "");
 let getSetProxyReplace_phoneNumber = new Proxy(
@@ -119,8 +119,8 @@ let getSetProxyReplace_phoneNumber = new Proxy(
 resetTracking();
 replaceResult = RegExp.prototype[Symbol.replace].call(getSetProxyReplace_phoneNumber, "8005551212", "$1-$2-$3");
 assert('replaceResult == "800-555-1212"');
-assert('get == "global,exec"');
-assert('getSet == "global,exec"');
+assert('get == "flags,exec"');
+assert('getSet == "flags,exec"');
 
 let regExpGlobalUnicode_digit_nonGreedy = new RegExp("\\d{0,1}", "gu");
 let getSetProxyReplaceUnicode_digit_nonGreedy = new Proxy(
@@ -148,11 +148,10 @@ let getSetProxyReplaceUnicode_digit_nonGreedy = new Proxy(
         }
     });
 
-getSetProxyReplaceUnicode_digit_nonGreedy.global = true;
-getSetProxyReplaceUnicode_digit_nonGreedy.unicode = true;
+getSetProxyReplaceUnicode_digit_nonGreedy.flags = "gu";
 
 resetTracking();
 replaceResult = RegExp.prototype[Symbol.replace].call(getSetProxyReplaceUnicode_digit_nonGreedy, "12X3\u{10400}4", "[$&]");
 assert('replaceResult == "[1][2][]X[3][]\u{10400}[4][]"');
-assert('get == "global,unicode,exec,exec,exec,lastIndex,exec,exec,lastIndex,exec,exec,lastIndex,exec"');
-assert('getSet == "global,unicode,lastIndex,exec,exec,exec,lastIndex,lastIndex,exec,exec,lastIndex,lastIndex,exec,exec,lastIndex,lastIndex,exec"');
+assert('get == "flags,exec,exec,exec,lastIndex,exec,exec,lastIndex,exec,exec,lastIndex,exec"');
+assert('getSet == "flags,lastIndex,exec,exec,exec,lastIndex,lastIndex,exec,exec,lastIndex,lastIndex,exec,exec,lastIndex,lastIndex,exec"');

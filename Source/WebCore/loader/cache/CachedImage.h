@@ -97,10 +97,7 @@ public:
     LayoutSize unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType = UsedSize) const;
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    Headroom headroom() const;
-#if HAVE(SUPPORT_HDR_DISPLAY)
-    bool isHDR() const { return headroom() > Headroom::None; }
-#endif
+    bool hasHDRContent() const;
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
@@ -175,6 +172,7 @@ private:
         bool canDestroyDecodedData(const Image&) const final;
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
+        void imageContentChanged(const Image&) final;
         void scheduleRenderingUpdate(const Image&) final;
 
         bool allowsAnimation(const Image&) const final;
@@ -189,6 +187,7 @@ private:
     bool canDestroyDecodedData(const Image&) const;
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
+    void imageContentChanged(const Image&);
     void scheduleRenderingUpdate(const Image&);
 
     void updateBufferInternal(const FragmentedSharedBuffer&);

@@ -27,6 +27,7 @@
 
 #import "APIContentRuleListStore.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::ContentRuleListStore> {
 
 @interface WKContentRuleListStore () <WKObject> {
 @package
-    API::ObjectStorage<API::ContentRuleListStore> _contentRuleListStore;
+    AlignedStorage<API::ContentRuleListStore> _contentRuleListStore;
 }
 @end

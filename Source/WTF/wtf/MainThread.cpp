@@ -55,7 +55,7 @@ void initializeMainThread()
 #if !USE(WEB_THREAD)
 bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 {
-    return &thread == &Thread::current();
+    return &thread == &Thread::currentSingleton();
 }
 #endif
 

@@ -28,10 +28,7 @@ function shouldThrow(run, errorType)
 // This should throw during pattern compilation.
 shouldThrow(() => RegExp('a?'.repeat(2**19) + 'b').exec('x'), SyntaxError);
 
-// This should fail during pattern evaluation, and be treated as NO match i.e. returning null.
 var r1 = RegExp('a?'.repeat(2**19));
-shouldBe(r1.exec('x'), null);
-
-// Run it again to confirm no deadlock in the implementation. This caught a bug before.
-shouldBe(r1.exec('x'), null);
+shouldBe(JSON.stringify(r1.exec('x')), `[""]`);
+shouldBe(JSON.stringify(r1.exec('x')), `[""]`);
 

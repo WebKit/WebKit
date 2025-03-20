@@ -117,6 +117,8 @@ private:
 
     static const AtomString& textTrackCueContainerScrollingClass();
 
+    RefPtr<Document> protectedDocument() const;
+
     String m_id;
     String m_settings;
 
@@ -130,8 +132,8 @@ private:
 
     // The cue container is the container that is scrolled up to obtain the
     // effect of scrolling cues when this is enabled for the regions.
-    RefPtr<HTMLDivElement> m_cueContainer;
-    RefPtr<HTMLDivElement> m_regionDisplayTree;
+    const RefPtr<HTMLDivElement> m_cueContainer;
+    const RefPtr<HTMLDivElement> m_regionDisplayTree;
 
     // Keep track of the current numeric value of the css "top" property.
     double m_currentTop { 0 };

@@ -30,16 +30,26 @@
 
 namespace WebCore {
 
+SVGAnimatedProperty::SVGAnimatedProperty(SVGElement* contextElement)
+    : m_contextElement(contextElement)
+{
+}
+
+SVGElement* SVGAnimatedProperty::contextElement() const
+{
+    return m_contextElement.get();
+}
+
 SVGPropertyOwner* SVGAnimatedProperty::owner() const
 {
-    return m_contextElement;
+    return m_contextElement.get();
 }
 
 void SVGAnimatedProperty::commitPropertyChange(SVGProperty*)
 {
     if (!m_contextElement)
         return;
-    RefPtr protectedContextElement = m_contextElement;
+    RefPtr protectedContextElement = m_contextElement.get();
     protectedContextElement->commitPropertyChange(*this);
 }
 

@@ -36,8 +36,16 @@ std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::cr
     return std::unique_ptr<ImageBufferDisplayListBackend>(new ImageBufferDisplayListBackend(parameters));
 }
 
-ImageBufferDisplayListBackend::ImageBufferDisplayListBackend(const Parameters& parameters)
+
+std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, RenderingPurpose purpose, RefPtr<ControlFactory>&& controlFactory)
+{
+    Parameters parameters { ImageBuffer::calculateBackendSize(size, resolutionScale), resolutionScale, colorSpace, pixelFormat, purpose };
+    return std::unique_ptr<ImageBufferDisplayListBackend>(new ImageBufferDisplayListBackend(parameters, WTFMove(controlFactory)));
+}
+
+ImageBufferDisplayListBackend::ImageBufferDisplayListBackend(const Parameters& parameters, RefPtr<ControlFactory>&& controlFactory)
     : ImageBufferBackend(parameters)
+    , m_controlFactory(WTFMove(controlFactory))
     , m_drawingContext(parameters.backendSize)
 {
 }
@@ -54,7 +62,7 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
         return nullptr;
 
     auto& context = buffer->context();
-    m_drawingContext.replayDisplayList(context);
+    m_drawingContext.replayDisplayList(context, m_controlFactory.get());
 
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
 }
@@ -66,7 +74,7 @@ RefPtr<SharedBuffer> ImageBufferDisplayListBackend::sinkIntoPDFDocument()
         return nullptr;
 
     auto& context = buffer->context();
-    m_drawingContext.replayDisplayList(context);
+    m_drawingContext.replayDisplayList(context, m_controlFactory.get());
 
     return ImageBuffer::sinkIntoPDFDocument(WTFMove(buffer));
 }

@@ -34,6 +34,7 @@
 #import <JavaScriptCore/JSValue.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace API {
 
@@ -43,6 +44,8 @@ class SharedJSContext {
 public:
     static SharedJSContext& singleton()
     {
+        ASSERT(isInWebProcess());
+
         static MainThreadNeverDestroyed<SharedJSContext> sharedContext;
         return sharedContext.get();
     }
@@ -99,79 +102,9 @@ private:
     MonotonicTime m_lastUseTime;
 };
 
-id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue)
+JSRetainPtr<JSGlobalContextRef> SerializedScriptValue::deserializationContext()
 {
-    ASSERT(RunLoop::isMain());
-    RetainPtr context = SharedJSContext::singleton().ensureContext();
-    JSRetainPtr globalContextRef = [context JSGlobalContextRef];
-
-    JSValueRef valueRef = serializedScriptValue.deserialize(globalContextRef.get(), nullptr);
-    if (!valueRef)
-        return nil;
-
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
-    return value.toObject;
-}
-
-static bool validateObject(id argument)
-{
-    if ([argument isKindOfClass:[NSString class]] || [argument isKindOfClass:[NSNumber class]] || [argument isKindOfClass:[NSDate class]] || [argument isKindOfClass:[NSNull class]])
-        return true;
-
-    if ([argument isKindOfClass:[NSArray class]]) {
-        __block BOOL valid = true;
-
-        [argument enumerateObjectsUsingBlock:^(id object, NSUInteger, BOOL *stop) {
-            if (!validateObject(object)) {
-                valid = false;
-                *stop = YES;
-            }
-        }];
-
-        return valid;
-    }
-
-    if ([argument isKindOfClass:[NSDictionary class]]) {
-        __block bool valid = true;
-
-        [argument enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
-            if (!validateObject(key) || !validateObject(value)) {
-                valid = false;
-                *stop = YES;
-            }
-        }];
-
-        return valid;
-    }
-
-    return false;
-}
-
-static RefPtr<WebCore::SerializedScriptValue> coreValueFromNSObject(id object)
-{
-    if (object && !validateObject(object))
-        return nullptr;
-
-    ASSERT(RunLoop::isMain());
-    RetainPtr context = SharedJSContext::singleton().ensureContext();
-    JSValue *value = [JSValue valueWithObject:object inContext:context.get()];
-    if (!value)
-        return nullptr;
-
-    JSRetainPtr globalContextRef = [context JSGlobalContextRef];
-    auto globalObject = toJS(globalContextRef.get());
-    ASSERT(globalObject);
-    JSC::JSLockHolder lock(globalObject);
-
-    return WebCore::SerializedScriptValue::create(*globalObject, toJS(globalObject, [value JSValueRef]));
-}
-
-RefPtr<SerializedScriptValue> SerializedScriptValue::createFromNSObject(id object)
-{
-    auto coreValue = coreValueFromNSObject(object);
-    if (!coreValue)
-        return nullptr;
-    return create(coreValue.releaseNonNull());
+    return [SharedJSContext::singleton().ensureContext() JSGlobalContextRef];
 }
 
 } // API

@@ -355,13 +355,13 @@ public:
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
-                    arrayObject->set(i, args[i].getVector());
+                    arrayObject->set(arrayObject->vm(), i, args[i].getVector());
             } else {
                 result = createNewArray(typeIndex, args.size(), { });
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
-                    arrayObject->set(i, args[i].getValue());
+                    arrayObject->set(arrayObject->vm(), i, args[i].getValue());
             }
         }
 

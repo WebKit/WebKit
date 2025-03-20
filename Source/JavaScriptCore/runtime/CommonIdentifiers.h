@@ -103,6 +103,7 @@
     macro(constructor) \
     macro(count) \
     macro(counters) \
+    macro(copyWithin) \
     macro(dateStyle) \
     macro(day) \
     macro(days) \
@@ -161,6 +162,7 @@
     macro(id) \
     macro(ignoreCase) \
     macro(ignorePunctuation) \
+    macro(includes) \
     macro(index) \
     macro(indices) \
     macro(inferredName) \

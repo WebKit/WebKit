@@ -140,7 +140,7 @@ public:
 
     bool isControlledByOffscreen() const;
 
-    void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
+    void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
     void dispatchEvent(Event&) final;
 
     // ActiveDOMObject.

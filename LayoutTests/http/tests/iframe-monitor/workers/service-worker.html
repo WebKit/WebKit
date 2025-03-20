@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/monitor-setup.js"></script>
+</head>
+
+<body>
+    <script>
+
+        description("Test iframe is unloaded if it uses service worker to download content.");
+        window.jsTestIsAsync = true;
+
+        onload = afterSetup(async () => {
+            const base = 'http://localhost:8080/iframe-monitor/resources';
+
+            let ack = 0;
+            window.addEventListener('message', (e) => {
+                if (e.data) {
+                    ack++;
+                } else {
+                    finishJSTest();
+                }
+            });
+
+            document.querySelector('#stage').innerHTML = `
+                <iframe name="frame1" src="${base}/--eligible--/service-worker.html"></iframe>
+            `;
+
+            while (ack < 1)
+                await pause(10);
+
+            console.log('Send message to iframe1 to start fetching via service worker.');
+            const frame1 = document.querySelector('iframe[name=frame1]');
+            frame1.contentWindow.postMessage(20 * 1024, '*');
+
+            await waitUntilUnload('frame1');
+
+            shouldNotBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+
+            document.querySelector('#stage').innerHTML = `<iframe src="${base}/--eligible--/unregister-service-worker.html"></iframe>`;
+
+            finishJSTest();
+        });
+
+    </script>
+
+    <div id="stage"></div>
+</body>
+
+</html>

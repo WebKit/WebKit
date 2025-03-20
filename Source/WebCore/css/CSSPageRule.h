@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,22 +21,22 @@
 
 #pragma once
 
-#include "CSSGroupingRule.h"
+#include "CSSRule.h"
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
+class CSSStyleProperties;
 class CSSStyleSheet;
 class StyleRulePage;
-class StyleRuleCSSStyleDeclaration;
+class StyleRuleCSSStyleProperties;
 
-class CSSPageRule final : public CSSGroupingRule {
+class CSSPageRule final : public CSSRule {
 public:
     static Ref<CSSPageRule> create(StyleRulePage& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSPageRule(rule, sheet)); }
 
     virtual ~CSSPageRule();
 
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleProperties& style();
 
     WEBCORE_EXPORT String selectorText() const;
     WEBCORE_EXPORT void setSelectorText(const String&);
@@ -49,7 +49,7 @@ private:
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRulePage> m_pageRule;
-    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    mutable RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

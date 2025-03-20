@@ -29,9 +29,9 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
 #include "CSSValuePool.h"
 #include "ImmutableStyleProperties.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 
@@ -342,10 +342,10 @@ CSSProperty* MutableStyleProperties::findCustomCSSPropertyWithName(const String&
     return &m_propertyVector.at(foundPropertyIndex);
 }
 
-CSSStyleDeclaration& MutableStyleProperties::ensureInlineCSSStyleDeclaration(StyledElement& parentElement)
+CSSStyleProperties& MutableStyleProperties::ensureInlineCSSStyleProperties(StyledElement& parentElement)
 {
     if (!m_cssomWrapper)
-        m_cssomWrapper = makeUniqueWithoutRefCountedCheck<InlineCSSStyleDeclaration>(*this, parentElement);
+        m_cssomWrapper = makeUniqueWithoutRefCountedCheck<InlineCSSStyleProperties>(*this, parentElement);
     ASSERT(m_cssomWrapper->parentElement() == &parentElement);
     return *m_cssomWrapper;
 }

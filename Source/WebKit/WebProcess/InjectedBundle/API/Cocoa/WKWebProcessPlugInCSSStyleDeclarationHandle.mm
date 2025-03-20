@@ -28,9 +28,10 @@
 
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/AlignedStorage.h>
 
 @implementation WKWebProcessPlugInCSSStyleDeclarationHandle {
-    API::ObjectStorage<WebKit::InjectedBundleCSSStyleDeclarationHandle> _cssStyleDeclarationHandle;
+    AlignedStorage<WebKit::InjectedBundleCSSStyleDeclarationHandle> _cssStyleDeclarationHandle;
 }
 
 - (void)dealloc

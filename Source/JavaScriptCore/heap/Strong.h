@@ -32,6 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "Handle.h"
 #include "HandleSet.h"
 #include "Heap.h"
+#include "InitializeThreading.h"
 #include "JSLock.h"
 #include "StrongForward.h"
 #include <wtf/RefTrackerMixin.h>
@@ -40,12 +41,8 @@ namespace JSC {
 
 class VM;
 
-#if ENABLE(REFTRACKER)
-void initializeSystemForStrongRefTracker();
-#endif
-
 REFTRACKER_DECL(StrongRefTracker, {
-    initializeSystemForStrongRefTracker();
+    JSC::initialize();
 });
 
 // A strongly referenced handle that prevents the object it points to from being garbage collected.

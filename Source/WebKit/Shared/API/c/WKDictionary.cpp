@@ -43,14 +43,14 @@ WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* rawKeys, const W
     API::Dictionary::MapType map;
     map.reserveInitialCapacity(numberOfValues);
     for (size_t i = 0; i < numberOfValues; ++i)
-        map.add(WebKit::toImpl(keys[i])->string(), WebKit::toImpl(values[i]));
+        map.add(WebKit::toProtectedImpl(keys[i])->string(), WebKit::toImpl(values[i]));
 
-    return WebKit::toAPI(&API::Dictionary::create(WTFMove(map)).leakRef());
+    return WebKit::toAPILeakingRef(API::Dictionary::create(WTFMove(map)));
 }
 
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)
 {
-    return WebKit::toAPI(WebKit::toImpl(dictionaryRef)->get(WebKit::toImpl(key)->string()));
+    return WebKit::toAPI(WebKit::toProtectedImpl(dictionaryRef)->getProtected(WebKit::toProtectedImpl(key)->string()).get());
 }
 
 size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
@@ -60,5 +60,5 @@ size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
 
 WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(dictionaryRef)->keys().leakRef());
+    return WebKit::toAPILeakingRef(WebKit::toProtectedImpl(dictionaryRef)->keys());
 }

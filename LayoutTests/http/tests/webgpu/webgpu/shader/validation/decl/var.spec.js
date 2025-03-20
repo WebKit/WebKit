@@ -225,12 +225,10 @@ combine('kind', [
 ).
 combine('via_alias', [false, true])
 ).
-beforeAllSubcases((t) => {
-  if (kTypes[t.params.type].requiresF16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
+  if (kTypes[t.params.type].requiresF16) {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const type = kTypes[t.params.type];
   const isAtomic = t.params.type.indexOf('atomic') > -1;
 
@@ -296,12 +294,10 @@ combine('type', keysOf(kTypes)).
 combine('kind', ['comment', 'var']).
 combine('via_alias', [false, true])
 ).
-beforeAllSubcases((t) => {
-  if (kTypes[t.params.type].requiresF16) {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
+  if (kTypes[t.params.type].requiresF16) {
+    t.skipIfDeviceDoesNotHaveFeature('shader-f16');
+  }
   const type = kTypes[t.params.type];
 
   let decl = '<>';
@@ -749,7 +745,8 @@ combine('suffix', [',storage', ',read', ',', ''])
 fn((t) => {
   const prog = `@group(0) @binding(0)
                   var<${t.params.prefix}${t.params.accessMode}${t.params.suffix}> x: i32;`;
-  const ok = t.params.prefix === 'storage,' && t.params.suffix === '';
+  const ok =
+  t.params.prefix === 'storage,' && (t.params.suffix === '' || t.params.suffix === ',');
   t.expectCompileResult(ok, prog);
 });
 

@@ -32,6 +32,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/Text.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // Classes to instantiate.
 #import "WKDOMElement.h"
@@ -101,32 +102,32 @@ WKDOMNode *toWKDOMNode(WebCore::Node* impl)
 
 WebCore::Element* toWebCoreElement(WKDOMElement *wrapper)
 {
-    return wrapper ? reinterpret_cast<WebCore::Element*>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Element>(wrapper->_impl.get()) : 0;
 }
 
 WKDOMElement *toWKDOMElement(WebCore::Element* impl)
 {
-    return static_cast<WKDOMElement*>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
+    return checked_objc_cast<WKDOMElement>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
 }
 
 WebCore::Document* toWebCoreDocument(WKDOMDocument *wrapper)
 {
-    return wrapper ? reinterpret_cast<WebCore::Document*>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Document>(wrapper->_impl.get()) : 0;
 }
 
 WKDOMDocument *toWKDOMDocument(WebCore::Document* impl)
 {
-    return static_cast<WKDOMDocument*>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
+    return checked_objc_cast<WKDOMDocument>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
 }
 
 WebCore::Text* toWebCoreText(WKDOMText *wrapper)
 {
-    return wrapper ? reinterpret_cast<WebCore::Text*>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Text>(wrapper->_impl.get()) : 0;
 }
 
 WKDOMText *toWKDOMText(WebCore::Text* impl)
 {
-    return static_cast<WKDOMText*>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
+    return checked_objc_cast<WKDOMText>(toWKDOMNode(static_cast<WebCore::Node*>(impl)));
 }
 
 // -- Range. --

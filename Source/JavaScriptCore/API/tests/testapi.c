@@ -78,6 +78,7 @@ void testObjectiveCAPI(const char*);
 #endif
 
 void configureJSCForTesting(void);
+int testLaunchJSCFromNonMainThread(const char* filter);
 int testCAPIViaCpp(const char* filter);
 
 bool assertTrue(bool value, const char* message);
@@ -1590,6 +1591,9 @@ int main(int argc, char* argv[])
 #endif
 
     const char* filter = argc > 1 ? argv[1] : NULL;
+    // This test needs to run before anything else.
+    failed += testLaunchJSCFromNonMainThread(filter);
+
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI(filter);
 #endif

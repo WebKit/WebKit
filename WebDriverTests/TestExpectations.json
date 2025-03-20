@@ -1502,6 +1502,32 @@
         "subtests": {
             "test_capability_default_value[setWindowRect-True]": {
                 "expected": {"wpe": {"status": ["SKIP"]}}
+            },
+            "test_capability_user_agent": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180410"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/classic/new_session/unhandled_prompt_behavior.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/289307"}},
+        "subtests": {
+            "test_unhandled_prompt_behavior_as_string_default": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unhandled_prompt_behavior_as_string[accept]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unhandled_prompt_behavior_as_string[accept and notify]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unhandled_prompt_behavior_as_string[dismiss]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unhandled_prompt_behavior_as_string[dismiss and notify]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unhandled_prompt_behavior_as_string[ignore]": {
+                "expected": {"all": {"status": ["PASS"]}}
             }
         }
     },

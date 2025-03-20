@@ -31,16 +31,16 @@
 
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
-    return const_cast<WKMutableDictionaryRef>(WebKit::toAPI(&API::Dictionary::create().leakRef()));
+    return const_cast<WKMutableDictionaryRef>(WebKit::toAPILeakingRef(API::Dictionary::create()));
 }
 
 WKMutableDictionaryRef WKMutableDictionaryCreateWithCapacity(size_t capacity)
 {
-    return const_cast<WKMutableDictionaryRef>(WebKit::toAPI(&API::Dictionary::createWithCapacity(capacity).leakRef()));
+    return const_cast<WKMutableDictionaryRef>(WebKit::toAPILeakingRef(API::Dictionary::createWithCapacity(capacity)));
 }
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
-    return WebKit::toImpl(dictionaryRef)->set(WebKit::toImpl(keyRef)->string(), WebKit::toImpl(itemRef));
+    return WebKit::toProtectedImpl(dictionaryRef)->set(WebKit::toProtectedImpl(keyRef)->string(), WebKit::toImpl(itemRef));
 }
 

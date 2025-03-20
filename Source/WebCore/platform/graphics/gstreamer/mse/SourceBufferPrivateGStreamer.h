@@ -50,6 +50,8 @@
 namespace WebCore {
 
 using TrackID = uint64_t;
+typedef MediaSourcePrivateGStreamer::StreamType StreamType;
+typedef MediaSourcePrivateGStreamer::RegisteredTrack RegisteredTrack;
 
 class AppendPipeline;
 class MediaSourcePrivateGStreamer;
@@ -81,8 +83,8 @@ public:
 
     ContentType type() const { return m_type; }
 
-    std::optional<TrackID> tryRegisterTrackId(TrackID);
-    bool tryUnregisterTrackId(TrackID);
+    RegisteredTrack registerTrack(TrackID, StreamType);
+    void unregisterTrack(TrackID);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

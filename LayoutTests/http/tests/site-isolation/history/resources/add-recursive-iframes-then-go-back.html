@@ -1,0 +1,16 @@
+<script>
+onload = () => {
+    setInterval(() => {
+        const iframe = document.createElement('iframe');
+        iframe.src = 'http://localhost:8000/site-isolation/resources/recursive-create-remote-iframe.html#1';
+        document.body.appendChild(iframe);
+    }, 10);
+
+    onmessage = () => {
+        onmessage = null;
+        setTimeout(() => {
+            history.back();
+        }, 50);
+    }
+}
+</script>

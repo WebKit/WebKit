@@ -399,40 +399,25 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
     m_scriptMessageHandlers.clear();
 }
 
-void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> dataReference, CompletionHandler<void(std::span<const uint8_t>, const String&)>&& reply)
+void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& reply)
 {
     auto page = WebProcessProxy::webPage(pageProxyID);
-    if (!page) {
-        reply({ }, { });
-        return;
-    }
+    if (!page)
+        return reply(makeUnexpected(String()));
 
-    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID)) {
-        reply({ }, { });
-        return;
-    }
+    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
+        return reply(makeUnexpected(String()));
 
     RefPtr<WebScriptMessageHandler> handler = m_scriptMessageHandlers.get(messageHandlerID);
-    if (!handler) {
-        reply({ }, { });
-        return;
-    }
+    if (!handler)
+        return reply(makeUnexpected(String()));
 
     if (!handler->client().supportsAsyncReply()) {
-        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->protectedWorld(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }));
-        reply({ }, { });
-        return;
+        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->protectedWorld(), WTFMove(message));
+        return reply(makeUnexpected(String()));
     }
 
-    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->protectedWorld(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
-        if (errorMessage.isNull()) {
-            ASSERT(value);
-            reply({ value->internalRepresentation().wireBytes() }, { });
-            return;
-        }
-
-        reply({ }, errorMessage);
-    });
+    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->protectedWorld(), WTFMove(message), WTFMove(reply));
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

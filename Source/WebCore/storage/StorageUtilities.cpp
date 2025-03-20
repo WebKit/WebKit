@@ -48,15 +48,7 @@ std::optional<ClientOrigin> readOriginFromFile(const String& filePath)
     if (filePath.isEmpty() || !FileSystem::fileExists(filePath))
         return std::nullopt;
 
-    auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Read);
-    auto closeFile = makeScopeExit([&] {
-        FileSystem::closeFile(originFileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(originFileHandle))
-        return std::nullopt;
-
-    auto originContent = FileSystem::readEntireFile(originFileHandle);
+    auto originContent = FileSystem::readEntireFile(filePath);
     if (!originContent)
         return std::nullopt;
 
@@ -73,18 +65,15 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
 
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
     auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
-    auto closeFile = makeScopeExit([&] {
-        FileSystem::closeFile(originFileHandle);
-    });
 
-    if (!FileSystem::isHandleValid(originFileHandle)) {
+    if (!originFileHandle) {
         LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8().data());
         return false;
     }
 
     WTF::Persistence::Encoder encoder;
     encoder << origin;
-    FileSystem::writeToFile(originFileHandle, encoder.span());
+    originFileHandle.write(encoder.span());
     return true;
 }
 

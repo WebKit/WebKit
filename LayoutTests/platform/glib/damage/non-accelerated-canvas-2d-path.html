@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill the path.
+              ctx.fillStyle = "green";
+              var path = new Path2D;
+              path.moveTo(25, 10);
+              path.lineTo(40, 25);
+              path.lineTo(25, 40);
+              path.lineTo(10, 25);
+              path.lineTo(25, 10);
+              ctx.fill(path);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[9, 9, 32, 32]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

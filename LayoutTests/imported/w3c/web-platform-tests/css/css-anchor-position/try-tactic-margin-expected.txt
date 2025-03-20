@@ -1,10 +1,10 @@
 
-FAIL CSS Anchor Positioning: try-tactic (margin) assert_equals: offsetLeft expected 45 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 1 assert_equals: offsetLeft expected 45 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 2 assert_equals: offsetLeft expected 325 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 3 assert_equals: offsetLeft expected 325 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 4 assert_equals: offsetLeft expected 25 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 5 assert_equals: offsetLeft expected 335 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 6 assert_equals: offsetLeft expected 25 but got 99999
-FAIL CSS Anchor Positioning: try-tactic (margin) 7 assert_equals: offsetLeft expected 335 but got 99999
+PASS --pf
+PASS --pf flip-block
+PASS --pf flip-inline
+PASS --pf flip-block flip-inline
+PASS --pf flip-start
+PASS --pf flip-block flip-start
+PASS --pf flip-inline flip-start
+PASS --pf flip-block flip-inline flip-start
 

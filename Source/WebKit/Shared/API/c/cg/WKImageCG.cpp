@@ -37,7 +37,7 @@
 
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
-    WebKit::WebImage* webImage = WebKit::toImpl(imageRef);
+    RefPtr webImage = WebKit::toImpl(imageRef);
     if (!webImage)
         return nullptr;
 
@@ -54,9 +54,9 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     if (!imageRef)
         return nullptr;
     
-    auto nativeImage = WebCore::NativeImage::create(imageRef);
+    RefPtr nativeImage = WebCore::NativeImage::create(imageRef);
     WebCore::IntSize imageSize = nativeImage->size();
-    auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
+    Ref webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
     if (!webImage->context())
         return nullptr;
     auto& graphicsContext = *webImage->context();
@@ -65,7 +65,7 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 
     graphicsContext.clearRect(rect);
     graphicsContext.drawNativeImage(*nativeImage, rect, rect);
-    return toAPI(webImage.leakRef());
+    return toAPILeakingRef(WTFMove(webImage));
 }
 
 WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef)

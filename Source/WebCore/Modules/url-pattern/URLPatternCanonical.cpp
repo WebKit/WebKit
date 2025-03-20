@@ -26,11 +26,11 @@
 #include "config.h"
 #include "URLPatternCanonical.h"
 
+#include "URLDecomposition.h"
 #include "URLPattern.h"
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -124,17 +124,8 @@ ExceptionOr<String> canonicalizeHostname(StringView value, BaseURLStringType val
     if (valueType == BaseURLStringType::Pattern)
         return value.toString();
 
-    // URL::setHost is not fully validating forbidden host code points, so we do it before, except for IPv6 addresses.
-    if (value[0] == '[') {
-        if (value[value.length() - 1] != ']')
-            return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL host string - bad IPv6."_s };
-    } else if (value[0] != '[' && value.find(WTF::isForbiddenHostCodePoint) != notFound)
-        return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL host string - forbidden code point."_s };
-
     URL dummyURL(dummyURLCharacters);
-    dummyURL.setHost(value);
-
-    if (!dummyURL.isValid())
+    if (!dummyURL.setHost(value))
         return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL host string."_s };
 
     return dummyURL.host().toString();
@@ -160,7 +151,7 @@ ExceptionOr<String> canonicalizeIPv6Hostname(StringView value, BaseURLStringType
 }
 
 // https://urlpattern.spec.whatwg.org/#canonicalize-a-port, combined with https://urlpattern.spec.whatwg.org/#process-port-for-init
-ExceptionOr<String> canonicalizePort(StringView portValue, const std::optional<StringView> protocolValue, BaseURLStringType portValueType)
+ExceptionOr<String> canonicalizePort(StringView portValue, StringView protocolValue, BaseURLStringType portValueType)
 {
     if (portValue.isEmpty())
         return portValue.toString();
@@ -168,25 +159,15 @@ ExceptionOr<String> canonicalizePort(StringView portValue, const std::optional<S
     if (portValueType == BaseURLStringType::Pattern)
         return portValue.toString();
 
-    auto parsedPort = parseInteger<uint16_t>(portValue, 10, WTF::ParseIntegerWhitespacePolicy::Disallow);
-    if (!parsedPort)
+    auto maybePort = URLDecomposition::parsePort(portValue, protocolValue);
+    if (!maybePort)
         return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL port string."_s };
 
-    URL dummyURL(dummyURLCharacters);
+    auto maybePortNumber = *maybePort;
+    if (!maybePortNumber)
+        return String { emptyString() };
 
-    if (protocolValue) {
-        if (isDefaultPortForProtocol(*parsedPort, *protocolValue))
-            return String { emptyString() };
-
-        dummyURL.setProtocol(*protocolValue);
-    }
-
-    dummyURL.setPort(*parsedPort);
-
-    if (!dummyURL.isValid())
-        return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL port string."_s };
-
-    return String::number(*dummyURL.port());
+    return String::number(*maybePortNumber);
 }
 
 // https://urlpattern.spec.whatwg.org/#canonicalize-an-opaque-pathname

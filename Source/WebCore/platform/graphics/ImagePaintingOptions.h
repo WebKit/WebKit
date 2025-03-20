@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
 #include "ImageTypes.h"
+#include "PlatformDynamicRangeLimit.h"
 #include <initializer_list>
 #include <wtf/Forward.h>
 
@@ -47,7 +48,8 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, StrictImageClamping>
 #endif
         || std::is_same_v<Type, ShowDebugBackground>
-        || std::is_same_v<Type, Headroom>;
+        || std::is_same_v<Type, Headroom>
+        || std::is_same_v<Type, PlatformDynamicRangeLimit>;
 
     // This is a single-argument initializer to support pattern of
     // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
@@ -96,6 +98,7 @@ struct ImagePaintingOptions {
 #endif
     ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
     Headroom headroom() const { return m_headroom; }
+    PlatformDynamicRangeLimit dynamicRangeLimit() const { return m_dynamicRangeLimit; }
 
 private:
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
@@ -110,6 +113,7 @@ private:
 #endif
     void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
     void setOption(Headroom headroom) { m_headroom = headroom; }
+    void setOption(PlatformDynamicRangeLimit dynamicRangeLimit) { m_dynamicRangeLimit = dynamicRangeLimit; }
 
     BlendMode m_blendMode : 5 { BlendMode::Normal };
     DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };
@@ -122,6 +126,7 @@ private:
 #endif
     ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
     Headroom m_headroom { Headroom::FromImage };
+    PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ImagePaintingOptions);

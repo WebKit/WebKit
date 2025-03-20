@@ -1,0 +1,120 @@
+/* stylelint-disable */
+.animated-icon {
+    --animated-icon-background: #333;
+    --animated-icon-color: #ccc;
+    --animated-icon-hover: #fff;
+    --animated-icon-width: 32px;
+    --animated-icon-height: 4px;
+    --animated-icon-width-half: calc(var(--animated-icon-width) / 2);
+    --animated-icon-height-half: calc(var(--animated-icon-height) / 2);
+    --animated-icon-height-half-negative: calc(var(--animated-icon-height-half) * -1);
+    --animated-icon-center: calc(var(--animated-icon-width-half) - var(--animated-icon-height-half));
+    --animated-icon-center-negative: calc(var(--animated-icon-center) * -1);
+    --animated-icon-bar-spacing: calc(((var(--animated-icon-width) - 3 * var(--animated-icon-height)) / 4) + var(--animated-icon-height));
+    --animated-icon-bar-spacing-negative: calc(var(--animated-icon-bar-spacing) * -1);
+
+    --language-direction-adjustment: 1;
+
+    width: var(--animated-icon-width);
+    height: var(--animated-icon-width);
+    background-color: var(--animated-icon-background);
+}
+
+html[dir="rtl"] .animated-icon {
+    --language-direction-adjustment: -1;
+}
+
+.animated-icon-inner {
+    display: block;
+    position: absolute;
+    transform-origin: calc(var(--animated-icon-width-half) * var(--language-direction-adjustment)) var(--animated-icon-height-half);
+    transform: translate(0, var(--animated-icon-center)) rotate(0deg);
+    transition: all 0.3s ease;
+}
+
+.animated-icon-inner span {
+    width: var(--animated-icon-width);
+    height: var(--animated-icon-height);
+    display: block;
+    background-color: var(--animated-icon-color);
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+.animated-icon:hover .animated-icon-inner span {
+    background-color: var(--animated-icon-hover);
+}
+
+/* close icon */
+.close-icon .animated-icon-inner span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.close-icon .animated-icon-inner span:nth-child(2) {
+    transform: rotate(-45deg);
+}
+
+.close-icon.hover:hover .animated-icon-inner {
+    transform: translate(0, var(--animated-icon-center)) rotate(90deg);
+}
+
+/* hamburger icon */
+.hamburger-icon .animated-icon-inner {
+    transform: translate(calc(var(--animated-icon-center) * var(--language-direction-adjustment)), var(--animated-icon-center)) rotate(0deg);
+}
+
+.hamburger-icon .animated-icon-inner span {
+    left: var(--animated-icon-center-negative);
+}
+
+.hamburger-icon .animated-icon-inner span:nth-child(1) {
+    transform: translate(0, var(--animated-icon-bar-spacing-negative));
+}
+
+.hamburger-icon .animated-icon-inner span:nth-child(3) {
+    transform: translate(0, var(--animated-icon-bar-spacing));
+}
+
+.hamburger-icon.hover:hover .animated-icon-inner span:nth-child(2) {
+    transform: scale(0);
+}
+
+.hamburger-icon.hover:hover .animated-icon-inner span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.hamburger-icon.hover:hover .animated-icon-inner span:nth-child(3) {
+    transform: rotate(-45deg);
+}
+
+/* arrow icon */
+.arrow-icon .animated-icon-inner span {
+    width: calc(var(--animated-icon-width) / 2);
+}
+
+.arrow-icon .animated-icon-inner span:nth-child(1) {
+    transform: translate(calc(var(--animated-icon-height-half) * var(--language-direction-adjustment)), 0) rotate(35deg);
+}
+
+.arrow-icon .animated-icon-inner span:nth-child(2) {
+    transform: translate(calc(var(--animated-icon-center) * var(--language-direction-adjustment)), 0) rotate(145deg);
+}
+
+.arrow-icon.hover:hover .animated-icon-inner span:nth-child(1) {
+    transform: translate(calc(var(--animated-icon-height-half) * var(--language-direction-adjustment)), 0) rotate(-35deg);
+}
+
+.arrow-icon.hover:hover .animated-icon-inner span:nth-child(2) {
+    transform: translate(calc(var(--animated-icon-center) * var(--language-direction-adjustment)), 0) rotate(215deg);
+}
+/* stylelint-enable */
+
+.hamburger-icon .animated-icon-inner span {
+    inset-inline-start: var(--animated-icon-center-negative);
+}
+
+/** RTL ICONS START **/
+html[dir="rtl"] .arrow-icon {
+    transform: rotate(180deg);
+}
+/** RTL ICONS END **/

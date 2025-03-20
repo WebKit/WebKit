@@ -183,6 +183,12 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::caLayerTreeAsText() const
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _caLayerTreeAsText]));
 }
 
+JSObjectRef UIScriptControllerCocoa::propertiesOfLayerWithID(uint64_t layerID) const
+{
+    RetainPtr jsValue = [JSValue valueWithObject:[webView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]];
+    return JSValueToObject(m_context->jsContext(), [jsValue JSValueRef], nullptr);
+}
+
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::firstRedoLabel() const
 {
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName));

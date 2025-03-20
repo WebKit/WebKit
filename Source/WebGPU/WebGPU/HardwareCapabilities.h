@@ -46,6 +46,7 @@ struct HardwareCapabilities {
         // as all hardware can render to this format. It's unclear whether this should
         // apply to _all_ PresentationContexts or just PresentationContextCoreAnimation.
         bool canPresentRGB10A2PixelFormats { false };
+        bool supportsResidencySets { false };
     } baseCapabilities;
 };
 

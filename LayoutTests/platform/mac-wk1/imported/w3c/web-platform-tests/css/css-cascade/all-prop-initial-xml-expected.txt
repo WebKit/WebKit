@@ -8,6 +8,7 @@ PASS align-items
 PASS align-self
 PASS alignment-baseline
 PASS anchor-name
+PASS anchor-scope
 PASS animation-composition
 PASS animation-delay
 PASS animation-direction
@@ -113,6 +114,14 @@ PASS container-type
 PASS content
 PASS content-visibility
 PASS continue
+PASS corner-bottom-left-shape
+PASS corner-bottom-right-shape
+PASS corner-end-end-shape
+PASS corner-end-start-shape
+PASS corner-start-end-shape
+PASS corner-start-start-shape
+PASS corner-top-left-shape
+PASS corner-top-right-shape
 PASS counter-increment
 PASS counter-reset
 PASS counter-set
@@ -220,7 +229,6 @@ PASS mask-origin
 PASS mask-repeat
 PASS mask-size
 PASS mask-type
-PASS masonry-auto-flow
 PASS math-style
 PASS max-block-size
 PASS max-height
@@ -273,6 +281,7 @@ PASS position-anchor
 PASS position-area
 PASS position-try-fallbacks
 PASS position-try-order
+PASS position-visibility
 PASS print-color-adjust
 PASS quotes
 PASS r

@@ -48,8 +48,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/darwin/XPCExtras.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
-#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -128,7 +128,7 @@ static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, Pro
 
 bool ProcessLauncher::hasExtensionsInAppBundle()
 {
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS)
     static bool hasExtensions = false;
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
@@ -425,7 +425,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     }
     
     auto sdkBehaviors = sdkAlignedBehaviors();
-    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviors.storage().data(), sdkBehaviors.storageLengthInBytes());
+    auto sdkBehaviorBytes = sdkBehaviors.storageBytes();
+    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
@@ -449,7 +450,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", logName.data(), xpc_dictionary_get_wtfstring(event, xpcErrorDescriptionKey).utf8().data());
+            LOG_ERROR("Error while launching %s: %s", logName.data(), xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8().data());
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
 
@@ -508,7 +509,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         // launching and we already took care of cleaning things up.
         if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
-            ASSERT(xpc_dictionary_get_wtfstring(reply, "message-name"_s) == "process-finished-launching"_s);
+            ASSERT(xpcDictionaryGetString(reply, "message-name"_s) == "process-finished-launching"_s);
 
 #if ASSERT_ENABLED
             mach_port_urefs_t sendRightCount = 0;

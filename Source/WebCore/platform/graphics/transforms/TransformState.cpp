@@ -297,18 +297,18 @@ TextStream& operator<<(TextStream& ts, const TransformState& state)
     TextStream multilineStream;
     multilineStream.setIndent(ts.indent() + 2);
 
-    multilineStream.dumpProperty("last planar point", state.lastPlanarPoint());
-    multilineStream.dumpProperty("last planar quad", state.lastPlanarQuad());
+    multilineStream.dumpProperty("last planar point"_s, state.lastPlanarPoint());
+    multilineStream.dumpProperty("last planar quad"_s, state.lastPlanarQuad());
 
     if (state.lastPlanarSecondaryQuad())
-        multilineStream.dumpProperty("last planar secondary quad", *state.lastPlanarSecondaryQuad());
+        multilineStream.dumpProperty("last planar secondary quad"_s, *state.lastPlanarSecondaryQuad());
 
     if (state.accumulatedTransform())
-        multilineStream.dumpProperty("accumulated transform", ValueOrNull(state.accumulatedTransform()));
+        multilineStream.dumpProperty("accumulated transform"_s, ValueOrNull(state.accumulatedTransform()));
 
     {
         TextStream::GroupScope scope(ts);
-        ts << "TransformState " << multilineStream.release();
+        ts << "TransformState "_s << multilineStream.release();
     }
     return ts;
 }

@@ -1,0 +1,440 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function encodeInitIdentifierValues(values) {
+    return values.map(
+        value => ({
+            type: 'uint64_t',
+            value
+        })
+    )
+}
+
+function extractResult(results, path) {
+    if (path.length != 1) {
+        // TODO: Handle me.
+        return null;
+    }
+
+    return [results[path[0]]];
+}
+
+async function main() {
+    const executor = new Executor();
+    const instance = executor.createInstance();
+    const res_0 = encodeInitIdentifierValues(instance.getInitIdentifierValues());
+
+    let ref_105553176631104 = extractResult(res_0, [0]);
+    if (ref_105553176631104 !== null) {
+        instance.sendMessage(
+            [
+                // Reference
+                ...ref_105553176631104
+            ][0].value,
+            IPC.messages.RemoteDisplayListRecorder_ApplyStrokePattern.name,
+            [
+            ]
+        );
+    }
+    let ref_105553176631152 = extractResult(res_0, [0]);
+    if (ref_105553176631152 !== null) {
+        instance.sendMessage(
+            [
+                // Reference
+                ...ref_105553176631152
+            ][0].value,
+            IPC.messages.RemoteDisplayListRecorder_ApplyStrokePattern.name,
+            [
+            ]
+        );
+    }
+    let ref_105553176631200 = extractResult(res_0, [0]);
+    if (ref_105553176631200 !== null) {
+        instance.sendMessage(
+            [
+                // Reference
+                ...ref_105553176631200
+            ][0].value,
+            IPC.messages.RemoteDisplayListRecorder_DrawControlPart.name,
+            [
+                ...[
+                    // WebCore_ControlPart
+                    ...[
+                        // Variant
+                        { type: 'uint8_t', value: 11 },
+                        ...[
+                            // WebCore_SliderTrackPart
+                            ...[
+                                // WebCore_StyleAppearance
+                                { type: 'uint8_t', value: 32 },
+
+                            ],
+                            ...[
+                                // WebCore_IntSize
+                                ...[
+                                    // Uint32
+                                    { type: 'uint32_t', value: 2090473888 },
+                                ],
+                                ...[
+                                    // Uint32
+                                    { type: 'uint32_t', value: 1 },
+                                ],
+
+                            ],
+                            ...[
+                                // WebCore_IntRect
+                                ...[
+                                    // WebCore_IntPoint
+                                    ...[
+                                        // Uint32
+                                        { type: 'uint32_t', value: 7 },
+                                    ],
+                                    ...[
+                                        // Uint32
+                                        { type: 'uint32_t', value: 80 },
+                                    ],
+
+                                ],
+                                ...[
+                                    // WebCore_IntSize
+                                    ...[
+                                        // Uint32
+                                        { type: 'uint32_t', value: 0 },
+                                    ],
+                                    ...[
+                                        // Uint32
+                                        { type: 'uint32_t', value: 4294967295 },
+                                    ],
+
+                                ],
+
+                            ],
+                            ...[
+                                // Vector
+                                { type: 'uint64_t', value: 6n },
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 4372995238176751616n },
+                                ],
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 4607030527622052749n },
+                                ],
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 4601965128799571566n },
+                                ],
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 0n },
+                                ],
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 9218868437227405312n },
+                                ],
+                                ...[
+                                    // Double
+                                    { type: 'uint64_t', value: 4589351039511918400n },
+                                ],
+
+                            ],
+                            ...[
+                                // Double
+                                { type: 'uint64_t', value: 9223372036854775808n },
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+                ...[
+                    // WebCore_FloatRoundedRect
+                    ...[
+                        // WebCore_FloatRect
+                        ...[
+                            // WebCore_FloatPoint
+                            ...[
+                                // Float
+                                { type: 'uint32_t', value: 1049840290 },
+                            ],
+                            ...[
+                                // Float
+                                { type: 'uint32_t', value: 1063082614 },
+                            ],
+
+                        ],
+                        ...[
+                            // WebCore_FloatSize
+                            ...[
+                                // Float
+                                { type: 'uint32_t', value: 0 },
+                            ],
+                            ...[
+                                // Float
+                                { type: 'uint32_t', value: 1058549156 },
+                            ],
+
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_FloatSize
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 2143289344 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1058717513 },
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_FloatSize
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1064873178 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 2147483649 },
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_FloatSize
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1047496617 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1053203151 },
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_FloatSize
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1059692613 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 3212836864 },
+                        ],
+
+                    ],
+
+                ],
+                ...[
+                    // Float
+                    { type: 'uint32_t', value: 3213412298 },
+                ],
+                ...[
+                    // WebCore_ControlStyle
+                    ...[
+                        // OptionSet
+                        { type: 'uint32_t', value: 217416 },
+                    ],
+                    ...[
+                        // Float
+                        { type: 'uint32_t', value: 0 },
+                    ],
+                    ...[
+                        // Float
+                        { type: 'uint32_t', value: 1 },
+                    ],
+                    ...[
+                        // WebCore_Color
+                        ...[
+                            // Optional
+                            { type: 'uint8_t', value: 0 },
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_Color
+                        ...[
+                            // Optional
+                            { type: 'uint8_t', value: 1 },
+                            ...[
+                                // WebCore_ColorDataForIPC
+                                ...[
+                                    // Bool
+                                    { type: 'uint8_t', value: 1 },
+                                ],
+                                ...[
+                                    // Bool
+                                    { type: 'uint8_t', value: 0 },
+                                ],
+                                ...[
+                                    // Variant
+                                    { type: 'uint8_t', value: 1 },
+                                    ...[
+                                        // WebCore_OutOfLineColorDataForIPC
+                                        ...[
+                                            // WebCore_ColorSpace
+                                            { type: 'uint8_t', value: 7 },
+
+                                        ],
+                                        ...[
+                                            // Float
+                                            { type: 'uint32_t', value: 1065353216 },
+                                        ],
+                                        ...[
+                                            // Float
+                                            { type: 'uint32_t', value: 1023704047 },
+                                        ],
+                                        ...[
+                                            // Float
+                                            { type: 'uint32_t', value: 1057794742 },
+                                        ],
+                                        ...[
+                                            // Float
+                                            { type: 'uint32_t', value: 1065278937 },
+                                        ],
+
+                                    ],
+
+                                ],
+
+                            ]
+                        ],
+
+                    ],
+                    ...[
+                        // WebCore_FloatBoxExtent
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1062469516 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1061554313 },
+                        ],
+                        ...[
+                            // Float
+                            { type: 'uint32_t', value: 1046855384 },
+                        ],
+
+                    ],
+
+                ],
+            ]
+        );
+    }
+    let ref_105553176631440 = extractResult(res_0, [0]);
+    let ref_105553176631488 = [
+        // WebCore_FloatPoint
+        ...[
+            // Float
+            { type: 'uint32_t', value: 1049840290 },
+        ],
+        ...[
+            // Float
+            { type: 'uint32_t', value: 1063082614 },
+        ],
+
+    ];
+    if (ref_105553176631440 !== null&&ref_105553176631488 !== null) {
+        instance.sendMessage(
+            [
+                // Reference
+                ...ref_105553176631440
+            ][0].value,
+            IPC.messages.RemoteDisplayListRecorder_StrokeArc.name,
+            [
+                ...[
+                    // WebCore_PathArc
+                    ...[
+                        // Reference
+                        ...ref_105553176631488
+                    ],
+                    ...[
+                        // Float
+                        { type: 'uint32_t', value: 2147483649 },
+                    ],
+                    ...[
+                        // Float
+                        { type: 'uint32_t', value: 1062469516 },
+                    ],
+                    ...[
+                        // Float
+                        { type: 'uint32_t', value: 0 },
+                    ],
+                    ...[
+                        // WebCore_RotationDirection
+                        { type: 'uint8_t', value: 0 },
+
+                    ],
+
+                ],
+            ]
+        );
+    }
+    let ref_105553176631584 = extractResult(res_0, [0]);
+    if (ref_105553176631584 !== null) {
+        instance.sendMessage(
+            [
+                // Reference
+                ...ref_105553176631584
+            ][0].value,
+            IPC.messages.RemoteDisplayListRecorder_ClipPath.name,
+            [
+                ...[
+                    // WebCore_Path
+                    ...[
+                        // Vector
+                        { type: 'uint64_t', value: 0n },
+
+                    ],
+
+                ],
+                ...[
+                    // WebCore_WindRule
+                    { type: 'uint8_t', value: 1 },
+
+                ],
+            ]
+        );
+    }
+
+
+    instance.destroy();
+    executor.destroy();
+}
+if (window.IPC)
+    globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+
+</script>
+<script type="module">
+
+import Executor from './executor.js';
+
+window.Executor = Executor;
+
+setTimeout(() => {
+    main().catch(e => {
+        console.log(e);
+        console.log(e.stack);
+    }).finally(() => {
+        globalThis.testRunner?.notifyDone();
+    });
+}, 100);
+
+</script>
+<body>
+    <p>Test Pass if there is no crash</p>
+</body>
+</head>
+</html>

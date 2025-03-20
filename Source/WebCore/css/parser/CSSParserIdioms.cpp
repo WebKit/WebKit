@@ -47,6 +47,7 @@ bool isColorKeywordAllowedInMode(CSSValueID id, CSSParserMode mode)
 #endif
 #if PLATFORM(MAC)
     case CSSValueAppleSystemOpaqueFill:
+    case CSSValueAppleSystemOpaqueSecondaryFill:
 #endif
     case CSSValueInternalDocumentTextColor:
         return isUASheetBehavior(mode);

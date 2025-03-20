@@ -108,10 +108,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSliderContainer);
 RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     ASSERT(element()->shadowHost());
-    auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*protectedElement()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
 
-    if (input.renderer()->isRenderSlider() && !isVertical && input.hasDataList()) {
+    if (input->renderer()->isRenderSlider() && !isVertical && input->hasDataList()) {
         int offsetFromCenter = theme().sliderTickOffsetFromTrackCenter();
         LayoutUnit trackHeight;
         if (offsetFromCenter < 0)
@@ -134,10 +134,10 @@ RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeig
 void RenderSliderContainer::layout()
 {
     ASSERT(element()->shadowHost());
-    auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*protectedElement()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
     mutableStyle().setFlexDirection(isVertical && writingMode().isHorizontal() ? FlexDirection::Column : FlexDirection::Row);
-    TextDirection oldTextDirection = writingMode().computedTextDirection();
+    auto oldTextDirection = writingMode().computedTextDirection();
     if (isVertical) {
         // FIXME: Work around rounding issues in RTL vertical sliders. We want them to
         // render identically to LTR vertical sliders. We can remove this work around when
@@ -145,8 +145,8 @@ void RenderSliderContainer::layout()
         mutableStyle().setDirection(TextDirection::LTR);
     }
 
-    RenderBox* thumb = input.sliderThumbElement() ? input.sliderThumbElement()->renderBox() : nullptr;
-    RenderBox* track = input.sliderTrackElement() ? input.sliderTrackElement()->renderBox() : nullptr;
+    CheckedPtr thumb = input->sliderThumbElement() ? input->protectedSliderThumbElement()->renderBox() : nullptr;
+    CheckedPtr track = input->sliderTrackElement() ? input->protectedSliderTrackElement()->renderBox() : nullptr;
     // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
     // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
     if (track)
@@ -211,13 +211,13 @@ void SliderThumbElement::setPositionFromValue()
 
 bool SliderThumbElement::isDisabledFormControl() const
 {
-    auto input = hostInput();
+    RefPtr input = hostInput();
     return !input || input->isDisabledFormControl();
 }
 
 bool SliderThumbElement::matchesReadWritePseudoClass() const
 {
-    auto input = hostInput();
+    RefPtr input = hostInput();
     return input && input->matchesReadWritePseudoClass();
 }
 
@@ -230,20 +230,20 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 {
-    auto input = hostInput();
+    RefPtr input = hostInput();
     if (!input)
         return;
 
-    auto* inputRenderer = input->renderBox();
+    CheckedPtr inputRenderer = input->renderBox();
     if (!inputRenderer)
         return;
 
-    auto* thumbRenderer = renderBox();
+    CheckedPtr thumbRenderer = renderBox();
     if (!thumbRenderer)
         return;
 
     ASSERT(input->sliderTrackElement());
-    auto* trackRenderer = input->sliderTrackElement()->renderBox();
+    CheckedPtr trackRenderer = input->protectedSliderTrackElement()->renderBox();
     if (!trackRenderer)
         return;
 
@@ -253,7 +253,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     bool isInlineFlipped = thumbRenderer->writingMode().isInlineFlipped() || (isVertical && thumbRenderer->writingMode().isHorizontal());
 
     auto offset = inputRenderer->absoluteToLocal(absolutePoint, UseTransforms);
-    auto trackBoundingBox = trackRenderer->localToContainerQuad(FloatRect { { }, trackRenderer->size() }, inputRenderer).enclosingBoundingBox();
+    auto trackBoundingBox = trackRenderer->localToContainerQuad(FloatRect { { }, trackRenderer->size() }, inputRenderer.get()).enclosingBoundingBox();
 
     LayoutUnit trackLength;
     LayoutUnit position;
@@ -266,6 +266,10 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         position = offset.x() - thumbRenderer->width() / 2 - trackBoundingBox.x();
         position -= !isInlineFlipped ? thumbRenderer->marginLeft() : thumbRenderer->marginRight();
     }
+
+    inputRenderer = nullptr;
+    thumbRenderer = nullptr;
+    trackRenderer = nullptr;
 
     position = std::max<LayoutUnit>(0, std::min(position, trackLength));
     auto ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
@@ -324,7 +328,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 
     // FIXME: Should handle this readonly/disabled check in more general way.
     // Missing this kind of check is likely to occur elsewhere if adding it in each shadow element.
-    auto input = hostInput();
+    RefPtr input = hostInput();
     if (!input || input->isDisabledFormControl()) {
         HTMLDivElement::defaultEventHandler(event);
         return;
@@ -354,7 +358,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 
 bool SliderThumbElement::willRespondToMouseMoveEvents() const
 {
-    const auto input = hostInput();
+    RefPtr input = hostInput();
     if (input && !input->isDisabledFormControl() && m_inDragMode)
         return true;
 
@@ -363,7 +367,7 @@ bool SliderThumbElement::willRespondToMouseMoveEvents() const
 
 bool SliderThumbElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    const auto input = hostInput();
+    RefPtr input = hostInput();
     if (input && !input->isDisabledFormControl())
         return true;
 
@@ -469,8 +473,7 @@ void SliderThumbElement::handleTouchEndAndCancel(TouchEvent& touchEvent)
 
     clearExclusiveTouchIdentifier();
 
-    auto input = hostInput();
-    if (input)
+    if (RefPtr input = hostInput())
         input->dispatchFormControlChangeEvent();
     stopDragging();
 }
@@ -483,7 +486,7 @@ void SliderThumbElement::didAttachRenderers()
 
 void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
 {
-    auto input = hostInput();
+    RefPtr input = hostInput();
     ASSERT(input);
     if (!input->isMutable()) {
         clearExclusiveTouchIdentifier();

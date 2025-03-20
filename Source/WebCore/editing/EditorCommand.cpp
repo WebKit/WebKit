@@ -532,9 +532,9 @@ static bool executeInsertTab(LocalFrame& frame, Event* event, EditorCommandSourc
     return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event);
 }
 
-static bool executeInsertText(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
+static bool executeInsertText(LocalFrame& frame, Event* event, EditorCommandSource, const String& value)
 {
-    TypingCommand::insertText(*frame.document(), value, { });
+    TypingCommand::insertText(*frame.document(), value, event, { });
     return true;
 }
 

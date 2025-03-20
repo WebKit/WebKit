@@ -49,12 +49,13 @@ public:
 
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 
-    WebCore::AuthenticatorAssertionResponse* response() { return m_response.ptr(); }
+    WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
+    Ref<WebCore::AuthenticatorAssertionResponse> protectedResponse() { return m_response; }
 
 private:
     WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&&);
 
-    Ref<WebCore::AuthenticatorAssertionResponse> m_response;
+    const Ref<WebCore::AuthenticatorAssertionResponse> m_response;
 };
 
 } // namespace API

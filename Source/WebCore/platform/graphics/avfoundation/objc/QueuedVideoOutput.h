@@ -42,7 +42,7 @@ OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS WebQueuedVideoOutputDelegate;
 
-typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 

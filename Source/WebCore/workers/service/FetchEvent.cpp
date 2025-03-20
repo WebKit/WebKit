@@ -170,6 +170,8 @@ FetchEvent::PreloadResponsePromise& FetchEvent::preloadResponse(ScriptExecutionC
 
 void FetchEvent::navigationPreloadIsReady(ResourceResponse&& response)
 {
+    ASSERT(!response.isRedirected());
+
     auto* globalObject = m_handled->globalObject();
     auto* context = globalObject ? globalObject->scriptExecutionContext() : nullptr;
     if (!context)

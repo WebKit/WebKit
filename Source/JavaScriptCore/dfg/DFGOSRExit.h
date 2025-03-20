@@ -137,7 +137,7 @@ private:
 };
 
 struct SpeculationFailureDebugInfo {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(SpeculationFailureDebugInfo);
+    WTF_MAKE_STRUCT_SEQUESTERED_ARENA_ALLOCATED(SpeculationFailureDebugInfo);
     CodeBlock* codeBlock;
     ExitKind kind;
     uint32_t exitIndex;

@@ -37,7 +37,9 @@
 #include <wtf/text/AtomString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
-typedef struct __CVBuffer *CVPixelBufferRef;
+#if PLATFORM(COCOA)
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
+#endif
 typedef struct _GstSample GstSample;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 

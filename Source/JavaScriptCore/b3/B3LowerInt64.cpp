@@ -29,18 +29,27 @@
 #if USE(JSVALUE32_64) && ENABLE(B3_JIT)
 #include "AirCCallingConvention.h"
 #include "B3BasicBlock.h"
+#include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3ExtractValue.h"
 #include "B3InsertionSet.h"
 #include "B3InsertionSetInlines.h"
+#include "B3AtomicValue.h"
+#include "B3CCallValue.h"
+#include "B3CheckValue.h"
 #include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
+#include "B3PatchpointValue.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
 #include "B3StackmapGenerationParams.h"
+#include "B3UpsilonValue.h"
 #include "B3Value.h"
+#include "B3ValueInlines.h"
 #include "B3Variable.h"
+#include "B3VariableValue.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC {

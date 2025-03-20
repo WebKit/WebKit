@@ -422,6 +422,10 @@ CGStyleRef CGStyleCreateGaussianBlur(const CGGaussianBlurStyle*);
 CGStyleRef CGStyleCreateColorMatrix(const CGColorMatrixStyle*);
 #endif
 
+#if HAVE(CG_PATH_CONTINUOUS_ROUNDED_RECT)
+void CGPathAddContinuousRoundedRect(CGMutablePathRef, const CGAffineTransform*, CGRect, CGFloat, CGFloat);
+#endif
+
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(MAC)

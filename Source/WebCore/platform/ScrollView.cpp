@@ -309,10 +309,10 @@ IntSize ScrollView::sizeForUnobscuredContent(VisibleContentRectIncludesScrollbar
         return platformVisibleContentSize(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
     auto obscuredContentInsets = this->obscuredContentInsets();
-    IntSize visibleContentSize = sizeForVisibleContent(scrollbarInclusion);
-    visibleContentSize.setWidth(visibleContentSize.width() - obscuredContentInsets.left());
-    visibleContentSize.setHeight(visibleContentSize.height() - obscuredContentInsets.top());
-    return visibleContentSize;
+    return sizeForVisibleContent(scrollbarInclusion) - roundedIntSize(FloatSize {
+        obscuredContentInsets.left() + obscuredContentInsets.right(),
+        obscuredContentInsets.top() + obscuredContentInsets.bottom()
+    });
 }
 
 IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior visibleContentRectBehavior) const
@@ -743,14 +743,16 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 
     SetForScope inUpdateScrollbarsScope(m_inUpdateScrollbars, true, false);
 
+    auto contentInsets = this->obscuredContentInsets();
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         IntRect oldRect(m_horizontalScrollbar->frameRect());
-        IntRect hBarRect(shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
-            height() - m_horizontalScrollbar->height(),
-            width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0),
-            m_horizontalScrollbar->height());
-        m_horizontalScrollbar->setFrameRect(hBarRect);
+        m_horizontalScrollbar->setFrameRect(roundedIntRect({
+            contentInsets.left() + (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f),
+            static_cast<float>(height() - m_horizontalScrollbar->height()),
+            width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f) - contentInsets.left() - contentInsets.right(),
+            static_cast<float>(m_horizontalScrollbar->height())
+        }));
         if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
             m_horizontalScrollbar->invalidate();
 
@@ -763,14 +765,13 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     } 
 
     if (m_verticalScrollbar) {
-        auto obscuredContentInsets = this->obscuredContentInsets();
         int clientHeight = visibleHeight();
         IntRect oldRect(m_verticalScrollbar->frameRect());
         m_verticalScrollbar->setFrameRect(roundedIntRect({
-            obscuredContentInsets.left() + (shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width()),
-            obscuredContentInsets.top(),
+            shouldPlaceVerticalScrollbarOnLeft() ? 0.f : width() - m_verticalScrollbar->width(),
+            contentInsets.top(),
             static_cast<float>(m_verticalScrollbar->width()),
-            height() - obscuredContentInsets.top() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0)
+            height() - contentInsets.top() - contentInsets.bottom() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0)
         }));
         if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();

@@ -148,6 +148,9 @@ public:
     bool usesFtoi() const { return m_usesFtoi; }
     void setUsesFtoi() { m_usesFtoi = true; }
 
+    bool usesInsertBits() const { return m_usesInsertBits; }
+    void setUsesInsertBits() { m_usesInsertBits = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -286,6 +289,12 @@ public:
         result.iterator->value.append(WTFMove(validator));
     }
 
+    template<typename Validator>
+    void addOverrideValidation(Validator&& validator)
+    {
+        m_finalOverrideValidations.append(WTFMove(validator));
+    }
+
     std::optional<Error> validateOverrides(const HashMap<String, ConstantValue>&);
 
 private:
@@ -315,6 +324,7 @@ private:
     bool m_usesPackedVec3 { false };
     bool m_usesMin { false };
     bool m_usesFtoi { false };
+    bool m_usesInsertBits { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
@@ -326,6 +336,7 @@ private:
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
     HashMap<const AST::Expression*, Vector<Function<std::optional<String>(const ConstantValue&)>>> m_overrideValidations;
+    Vector<Function<std::optional<Error>()>> m_finalOverrideValidations;
 };
 
 } // namespace WGSL

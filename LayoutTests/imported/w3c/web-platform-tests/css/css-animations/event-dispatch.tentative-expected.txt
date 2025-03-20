@@ -27,4 +27,8 @@ PASS Call Animation.cancel after restarting animation immediately.
 PASS Set timeline and play transition after clearing the timeline.
 PASS Set null target effect after canceling the animation.
 PASS Cancel the animation after clearing the target effect.
+PASS Replacing a running animation should get animationcancel earlier than animationstart
+PASS The cancel event should be fired before the new start event if both have the same position in the animation list
+FAIL The cancel event with an earlier position in animation list should be fired earlier assert_equals: expected "anim" but got "anim2"
+FAIL The order of the cancel events follows the relative positions in the animation list at the point when they were cancelled assert_equals: expected "anim2" but got "anim"
 

@@ -70,6 +70,7 @@ public:
     WEBCORE_EXPORT void addRect(const FloatRect&);
     WEBCORE_EXPORT void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy = PathRoundedRect::Strategy::PreferNative);
     void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, PathRoundedRect::Strategy = PathRoundedRect::Strategy::PreferNative);
+    void addContinuousRoundedRect(const FloatRect&, float cornerWidth, float cornerHeight);
     void addRoundedRect(const RoundedRect&);
 
     WEBCORE_EXPORT void closeSubpath();
@@ -89,6 +90,7 @@ public:
     std::optional<PathDataLine> singleDataLine() const;
     std::optional<PathRect> singleRect() const;
     std::optional<PathRoundedRect> singleRoundedRect() const;
+    std::optional<PathContinuousRoundedRect> singleContinuousRoundedRect() const;
     std::optional<PathArc> singleArc() const;
     std::optional<PathClosedArc> singleClosedArc() const;
     std::optional<PathDataQuadCurve> singleQuadCurve() const;

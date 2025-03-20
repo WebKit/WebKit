@@ -33,10 +33,12 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/FetchingWorkerIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <wtf/Seconds.h>
 
@@ -85,7 +87,7 @@ public:
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
         , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning>
         , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
-        , std::optional<WebCore::SharedWorkerIdentifier>
+        , WebCore::FetchingWorkerIdentifier
 #if ENABLE(CONTENT_EXTENSIONS)
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
@@ -136,7 +138,7 @@ public:
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
-    std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier;
+    WebCore::FetchingWorkerIdentifier workerIdentifier;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

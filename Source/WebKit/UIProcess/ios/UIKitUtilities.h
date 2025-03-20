@@ -28,7 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIKit.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/Forward.h>
 
 @interface UIScrollView (WebKitInternal)
 @property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
@@ -53,6 +53,7 @@
 @end
 
 @interface UIView (WebKitInternal)
+- (void)_wk_collectDescendantsIncludingSelf:(Vector<RetainPtr<UIView>>&)descendants matching:(NS_NOESCAPE BOOL(^)(UIView *))block;
 - (BOOL)_wk_isAncestorOf:(UIView *)view;
 @property (nonatomic, readonly) UIScrollView *_wk_parentScrollView;
 @property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;

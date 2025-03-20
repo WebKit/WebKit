@@ -126,3 +126,7 @@ private:
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebBackForwardListItem)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BackForwardListItem; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -25,38 +25,13 @@
 
 #pragma once
 
-#if (_LIBCPP_VERSION >= 14000) && !defined(_LIBCPP_HAS_NO_CXX20_COROUTINES)
-#import <coroutine>
-#else
-// FIXME: Remove this once all supported toolchains have non-experimental coroutine support.
-#import <experimental/coroutine>
-namespace std {
-using std::experimental::coroutine_handle;
-using std::experimental::suspend_never;
-using std::experimental::suspend_always;
-}
-#endif
+#import <wtf/CoroutineUtilities.h>
 
 namespace TestWebKitAPI {
 
-template<typename PromiseType>
-struct CoroutineHandle {
-    CoroutineHandle(std::coroutine_handle<PromiseType>&& handle)
-        : handle(WTFMove(handle)) { }
-    CoroutineHandle(const CoroutineHandle&) = delete;
-    CoroutineHandle(CoroutineHandle&& other)
-        : handle(std::exchange(other.handle, nullptr)) { }
-    ~CoroutineHandle()
-    {
-        if (handle)
-            handle.destroy();
-    }
-    std::coroutine_handle<PromiseType> handle;
-};
-
-struct Task {
+struct ConnectionTask {
     struct promise_type {
-        Task get_return_object() { return { std::coroutine_handle<promise_type>::from_promise(*this) }; }
+        ConnectionTask get_return_object() { return { std::coroutine_handle<promise_type>::from_promise(*this) }; }
         std::suspend_never initial_suspend() { return { }; }
         std::suspend_always final_suspend() noexcept { return { }; }
         void unhandled_exception() { }

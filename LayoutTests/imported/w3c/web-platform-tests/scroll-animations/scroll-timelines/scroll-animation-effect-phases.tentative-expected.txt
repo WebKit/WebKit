@@ -22,7 +22,7 @@ PASS Current times and effect phase at timeline boundary when delay = 250 and en
 PASS Current times and effect phase at timeline start when delay = -125 and endDelay = -125 |
 PASS Current times and effect phase in active range when delay = -125 and endDelay = -125 |
 PASS Current times and effect phase at timeline end when delay = -125 and endDelay = -125 |
-FAIL Playback rate affects whether active phase boundary is inclusive. assert_not_equals: Animation effect is in active phase when current time is 100%. got disallowed value null
+PASS Playback rate affects whether active phase boundary is inclusive.
 PASS Verify that (play -> pause -> play) doesn't change phase/progress.
 PASS Pause in before phase, scroll timeline into active phase, animation should remain in the before phase
 PASS Pause in before phase, set animation current time to be in active range, animation should become active. Scrolling should have no effect.

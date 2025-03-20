@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver observing an SVG element changing position
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.right expected 108 +/- 0 but got 8
+FAIL Move SVG element up assert_equals: entries.length expected 2 but got 1
+

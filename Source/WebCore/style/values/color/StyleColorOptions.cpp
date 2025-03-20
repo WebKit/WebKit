@@ -33,10 +33,10 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, StyleColorOptions colorOptions)
 {
     switch (colorOptions) {
-    case StyleColorOptions::ForVisitedLink: ts << "ForVisitedLink"; break;
-    case StyleColorOptions::UseSystemAppearance: ts << "UseSystemAppearance"; break;
-    case StyleColorOptions::UseDarkAppearance: ts << "UseDarkAppearance"; break;
-    case StyleColorOptions::UseElevatedUserInterfaceLevel: ts << "UseElevatedUserInterfaceLevel"; break;
+    case StyleColorOptions::ForVisitedLink: ts << "ForVisitedLink"_s; break;
+    case StyleColorOptions::UseSystemAppearance: ts << "UseSystemAppearance"_s; break;
+    case StyleColorOptions::UseDarkAppearance: ts << "UseDarkAppearance"_s; break;
+    case StyleColorOptions::UseElevatedUserInterfaceLevel: ts << "UseElevatedUserInterfaceLevel"_s; break;
     }
     return ts;
 }

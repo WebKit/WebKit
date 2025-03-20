@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
+#include "DisallowMacroScratchRegisterUsage.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "OperationResult.h"
@@ -88,6 +89,43 @@ public:
         poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
     }
 
+    enum class ShuffleStatus : uint8_t {
+        ToMove,
+        BeingMoved,
+        Moved
+    };
+
+    template<typename RegType, size_t N, typename RegPair = std::pair<RegType, RegType>>
+    void emitShuffleMove(Vector<RegPair, N>& moves, Vector<ShuffleStatus, N>& status, unsigned index, RegType scratch)
+    {
+        status[index] = ShuffleStatus::BeingMoved;
+        for (unsigned i = 0; i < moves.size(); i ++) {
+            if (moves[i].first == moves[index].second) {
+                ASSERT(i != index);
+                switch (status[i]) {
+                case ShuffleStatus::ToMove:
+                    emitShuffleMove(moves, status, i, scratch);
+                    break;
+                case ShuffleStatus::BeingMoved: {
+                    if constexpr (std::is_same_v<RegType, FPRegisterID>)
+                        moveDouble(moves[i].first, scratch);
+                    else
+                        move(moves[i].first, scratch);
+                    moves[i].first = scratch;
+                    break;
+                }
+                case ShuffleStatus::Moved:
+                    break;
+                }
+            }
+        }
+        if constexpr (std::is_same_v<RegType, FPRegisterID>)
+            moveDouble(moves[index].first, moves[index].second);
+        else
+            move(moves[index].first, moves[index].second);
+        status[index] = ShuffleStatus::Moved;
+    }
+
     template<typename RegType, unsigned NumberOfRegisters>
     ALWAYS_INLINE void shuffleRegisters(std::array<RegType, NumberOfRegisters> sources, std::array<RegType, NumberOfRegisters> destinations)
     {
@@ -113,83 +151,22 @@ public:
             UNUSED_PARAM(destinations);
         }
 
-#if ASSERT_ENABLED
-        auto numUniqueSources = [&] () -> unsigned {
-            RegisterSetBuilder set;
-            for (auto& pair : pairs) {
-                RegType source = pair.first;
-                set.add(source, IgnoreVectors);
-            }
-            return set.numberOfSetRegisters();
-        };
+        Vector<ShuffleStatus, NumberOfRegisters> status;
+        status.fill(ShuffleStatus::ToMove, pairs.size());
 
-        auto numUniqueDests = [&] () -> unsigned {
-            RegisterSetBuilder set;
-            for (auto& pair : pairs) {
-                RegType dest = pair.second;
-                set.add(dest, IgnoreVectors);
-            }
-            return set.numberOfSetRegisters();
-        };
-#endif
+        RELEASE_ASSERT(m_allowScratchRegister); // We absolutely need one for the recursive shuffle algorithm.
+        auto scratch = scratchRegister();
 
-        while (!pairs.isEmpty()) {
-            RegisterSet freeDestinations;
-            for (auto& pair : pairs) {
-                RegType dest = pair.second;
-                freeDestinations.add(dest, IgnoreVectors);
-            }
-            for (auto& pair : pairs) {
-                RegType source = pair.first;
-                freeDestinations.remove(source);
-            }
-
-            if (freeDestinations.numberOfSetRegisters()) {
-                bool madeMove = false;
-                for (unsigned i = 0; i < pairs.size(); i++) {
-                    auto [source, dest] = pairs[i];
-                    if (freeDestinations.contains(dest, IgnoreVectors)) {
-                        // This means that this setup function cannot handle SIMD vectors as a part of parameters.
-                        // Now, this is guaranteed that we ensure FP parameter is always `double`.
-                        if constexpr (std::is_same_v<RegType, FPRReg>)
-                            moveDouble(source, dest);
-                        else
-                            move(source, dest);
-                        pairs.remove(i);
-                        madeMove = true;
-                        break;
-                    }
-                }
-                ASSERT_UNUSED(madeMove, madeMove);
-                continue;
-            }
-
-            ASSERT(numUniqueDests() == numUniqueSources());
-            ASSERT(numUniqueDests() == pairs.size());
-            // The set of source and destination registers are equivalent sets. This means we don't have
-            // any free destination registers that won't also clobber a source. We get around this by
-            // exchanging registers.
-
-            auto [source, dest] = pairs.first();
-            if constexpr (std::is_same_v<RegType, FPRReg>)
-                swapDouble(source, dest);
-            else
-                swap(source, dest);
-            pairs.remove(0);
-
-            RegType newSource = source;
-            for (auto& pair : pairs) {
-                RegType source = pair.first;
-                if (source == dest) {
-                    pair.first = newSource;
-                    break;
+        {
+            DisallowMacroScratchRegisterUsage disallowScratch(*this);
+            for (size_t i = 0; i < pairs.size(); i ++) {
+                if (status[i] == ShuffleStatus::ToMove) {
+                    if constexpr (std::is_same_v<RegType, RegisterID>)
+                        emitShuffleMove(pairs, status, i, scratch);
+                    else
+                        emitShuffleMove(pairs, status, i, fpTempRegister);
                 }
             }
-
-            // We may have introduced pairs that have the same source and destination. Remove those now.
-            pairs.removeAllMatching([](const auto& pair) {
-                return pair.first == pair.second;
-            });
         }
     }
 

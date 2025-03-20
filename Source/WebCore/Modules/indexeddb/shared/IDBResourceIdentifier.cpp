@@ -48,7 +48,7 @@ static uint64_t nextServerResourceNumber()
 
 IDBResourceIdentifier::IDBResourceIdentifier() = default;
 
-IDBResourceIdentifier::IDBResourceIdentifier(std::optional<IDBConnectionIdentifier> connectionIdentifier, uint64_t resourceIdentifier)
+IDBResourceIdentifier::IDBResourceIdentifier(std::optional<IDBConnectionIdentifier> connectionIdentifier, std::optional<IDBResourceObjectIdentifier> resourceIdentifier)
     : m_idbConnectionIdentifier(connectionIdentifier)
     , m_resourceNumber(resourceIdentifier)
 {
@@ -56,7 +56,7 @@ IDBResourceIdentifier::IDBResourceIdentifier(std::optional<IDBConnectionIdentifi
 
 IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionProxy& connectionProxy)
     : m_idbConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
-    , m_resourceNumber(nextClientResourceNumber())
+    , m_resourceNumber(IDBResourceObjectIdentifier { nextClientResourceNumber() })
 {
 }
 
@@ -68,7 +68,7 @@ IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionProxy
 
 IDBResourceIdentifier::IDBResourceIdentifier(const IDBServer::IDBConnectionToClient& connection)
     : m_idbConnectionIdentifier(connection.identifier())
-    , m_resourceNumber(nextServerResourceNumber())
+    , m_resourceNumber(IDBResourceObjectIdentifier { nextServerResourceNumber() })
 {
 }
 
@@ -77,13 +77,10 @@ IDBResourceIdentifier IDBResourceIdentifier::isolatedCopy() const
     return IDBResourceIdentifier(m_idbConnectionIdentifier, m_resourceNumber);
 }
 
-#if !LOG_DISABLED
-
 String IDBResourceIdentifier::loggingString() const
 {
-    return makeString('<', m_idbConnectionIdentifier ? m_idbConnectionIdentifier->toUInt64() : 0, ", "_s, m_resourceNumber, '>');
+    uint64_t resourceNumber = m_resourceNumber ? m_resourceNumber->toUInt64() : 0;
+    return makeString('<', m_idbConnectionIdentifier ? m_idbConnectionIdentifier->toUInt64() : 0, ", "_s, resourceNumber, '>');
 }
-
-#endif
 
 } // namespace WebCore

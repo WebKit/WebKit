@@ -149,6 +149,8 @@ extension WKSLinearMediaPresentationState: CustomStringConvertible {
             return "fullscreen"
         case .exitingFullscreen:
             return "exitingFullscreen"
+        case .external:
+            return "external"
         @unknown default:
             fatalError()
         }

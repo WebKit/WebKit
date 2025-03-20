@@ -155,7 +155,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewBoundFunction:
     case NewStringObject:
     case NewInternalFieldObject:
-    case NewRegexp:
+    case NewRegExp:
     case NewMap:
     case NewSet:
     case NewArrayWithConstantSize:
@@ -171,6 +171,14 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ReallocatePropertyStorage:
         result = ExitsForExceptions;
         break;
+
+    case NewRegExpUntyped: {
+        if (node->child1().useKind() == StringUse && node->child2().useKind() == StringUse) {
+            result = ExitsForExceptions; // SyntaxError can happen.
+            break;
+        }
+        return Exits;
+    }
 
     case SetRegExpObjectLastIndex:
         if (node->ignoreLastIndexIsWritable())

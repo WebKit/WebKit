@@ -8,4 +8,13 @@ PASS importNode should clone an element originating from a scoped registry using
 PASS importNode should clone a template content using the global registry by default
 PASS importNode should clone a template content using a specified scoped registry
 PASS importNode should clone a template content with a nested template element using a scoped registry
+PASS importNode: don't pass options argument
+PASS importNode: pass options argument with value false
+PASS importNode: pass options argument with value true
+PASS importNode: pass options argument with value undefined
+PASS importNode: pass options argument with value { }
+PASS importNode: pass options argument with value { selfOnly: false }
+PASS importNode: pass options argument with value { selfOnly: true }
+PASS importNode: pass options argument with value { customElementRegistry: scopedRegistry }
+PASS importNode: pass options argument with value { customElementRegistry: null }
 

@@ -86,29 +86,47 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     });
 }
 
-// FIXME: Remove after Safari has adopted new methods.
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
-{
-    return [self _initWithAppExtensionBundle:appExtensionBundle error:error];
-}
-
 - (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
-    return [self _initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
-}
-
-// FIXME: Remove after Safari has adopted new methods.
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
-{
-    return [self _initWithResourceBaseURL:resourceBaseURL error:error];
+    return [self initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
 }
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
-    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+    return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
 }
 
-- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+- (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle resourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+{
+    return [self initWithManifestDictionary:manifest resources:nil];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+{
+    return [self initWithManifestDictionary:manifest resources:resources];
+}
+
+- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+{
+    return [self initWithResources:resources];
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
 {
     NSParameterAssert(appExtensionBundle || resourceBaseURL);
 
@@ -138,14 +156,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return self;
 }
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+- (instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
     NSParameterAssert([manifest isKindOfClass:NSDictionary.class]);
 
-    return [self _initWithManifestDictionary:manifest resources:nil];
+    return [self initWithManifestDictionary:manifest resources:nil];
 }
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
     NSParameterAssert([manifest isKindOfClass:NSDictionary.class]);
 
@@ -157,7 +175,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return self;
 }
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)initWithResources:(NSDictionary<NSString *, id> *)resources
 {
     NSParameterAssert([resources isKindOfClass:NSDictionary.class]);
 
@@ -349,44 +367,64 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
+- (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
-    return [self _initWithAppExtensionBundle:bundle error:error];
-}
-
-- (instancetype)_initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
-{
-    return [self _initWithAppExtensionBundle:bundle resourceBaseURL:nil error:error];
-}
-
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
-{
-    return [self _initWithResourceBaseURL:resourceBaseURL error:error];
+    return [self initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
 }
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
-    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+    return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
 }
 
-- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)bundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+- (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle resourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+{
+    return [self initWithManifestDictionary:manifest resources:nil];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+{
+    return [self initWithManifestDictionary:manifest resources:resources];
+}
+
+- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+{
+    return [self initWithResources:resources];
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:bundle resourceBaseURL:nil error:error];
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)initWithAppExtensionBundle:(nullable NSBundle *)bundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
 {
     if (error)
         *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return nil;
 }
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+- (instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
-    return [self _initWithManifestDictionary:manifest resources:nil];
+    return [self initWithManifestDictionary:manifest resources:nil];
 }
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
     return nil;
 }
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)initWithResources:(NSDictionary<NSString *, id> *)resources
 {
     return nil;
 }

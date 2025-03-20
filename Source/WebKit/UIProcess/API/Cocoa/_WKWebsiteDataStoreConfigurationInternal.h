@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebsiteDataStoreConfiguration.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<WebsiteDataStoreConfiguration> {
 
 @interface _WKWebsiteDataStoreConfiguration () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebsiteDataStoreConfiguration> _configuration;
+    AlignedStorage<WebKit::WebsiteDataStoreConfiguration> _configuration;
 }
 @end

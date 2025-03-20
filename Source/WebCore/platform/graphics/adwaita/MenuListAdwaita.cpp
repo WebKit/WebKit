@@ -49,12 +49,21 @@ void MenuListAdwaita::draw(GraphicsContext& graphicsContext, const FloatRoundedR
 
     auto zoomedArrowSize = menuListButtonArrowSize * style.zoomFactor;
     FloatRect fieldRect = borderRect.rect();
-    fieldRect.inflate(menuListButtonBorderSize);
-    if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
-        fieldRect.move(menuListButtonPadding, 0);
-    else
-        fieldRect.move(fieldRect.width() - (zoomedArrowSize + menuListButtonPadding), 0);
-    fieldRect.setWidth(zoomedArrowSize);
+    auto borderWidth = fieldRect.width();
+    auto borderHeight = fieldRect.height();
+    fieldRect.setSize({ zoomedArrowSize, zoomedArrowSize });
+
+    if (!style.states.contains(ControlStyle::State::VerticalWritingMode)) {
+        auto centerY = (borderHeight / 2) - (zoomedArrowSize / 2);
+
+        if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
+            fieldRect.move(menuListButtonPadding, centerY);
+        else
+            fieldRect.move(borderWidth - (zoomedArrowSize + menuListButtonPadding), centerY);
+    } else {
+        auto centerX = (borderWidth / 2) - (zoomedArrowSize / 2);
+        fieldRect.move(centerX, borderHeight - (zoomedArrowSize + menuListButtonPadding));
+    }
     Adwaita::paintArrow(graphicsContext, fieldRect, Adwaita::ArrowDirection::Down, style.states.contains(ControlStyle::State::DarkAppearance));
 
     if (style.states.contains(ControlStyle::State::Focused))

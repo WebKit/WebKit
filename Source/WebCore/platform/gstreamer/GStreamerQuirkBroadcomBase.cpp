@@ -157,7 +157,7 @@ void GStreamerQuirkBroadcomBase::setupBufferingPercentageCorrection(MediaPlayerP
 
                 // The multiqueue reference is useless if we can't access its stats (on older GStreamer versions).
                 if (peerElement && !g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstMultiQueue")
-                    && gstObjectHasProperty(peerElement.get(), "stats"))
+                    && gstObjectHasProperty(peerElement.get(), "stats"_s))
                     state.m_multiqueue = peerElement;
                 break;
             }

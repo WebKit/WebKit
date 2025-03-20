@@ -77,6 +77,8 @@ localizedStrings["%s Event Dispatched"] = "%s Event Dispatched";
 localizedStrings["%s Prototype"] = "%s Prototype";
 /* Format string for the suggested filename when saving the content for a request local override. */
 localizedStrings["%s Request Data @ Local Override Request Content View"] = "%s Request Data";
+/* Label for JavaScript heap snapshot context name and identifier. */
+localizedStrings["%s Snapshot %s"] = "%s Snapshot %s";
 localizedStrings["%s \u2013 %s"] = "%s \u2013 %s";
 localizedStrings["%s \u2013 %s (%s)"] = "%s \u2013 %s (%s)";
 localizedStrings["%s \u2014 %s"] = "%s \u2014 %s";
@@ -446,7 +448,6 @@ localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Console:"] = "Console:";
 localizedStrings["Containing"] = "Containing";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
-localizedStrings["Context"] = "Context";
 /* Property value for `font-variant-ligatures: contextual`. */
 localizedStrings["Contextual Alternates @ Font Details Sidebar Property Value"] = "Contextual Alternates";
 localizedStrings["Continuation Frame"] = "Continuation Frame";
@@ -991,6 +992,7 @@ localizedStrings["Ligatures @ Font Details Sidebar Property"] = "Ligatures";
 localizedStrings["Light @ Settings General Appearance"] = "Light";
 /* Label for the light color scheme preference. */
 localizedStrings["Light @ User Preferences Overrides"] = "Light";
+localizedStrings["Limit number of resources in navigation sidebar"] = "Limit number of resources in navigation sidebar";
 localizedStrings["Limit syntax highlighting on long lines of code"] = "Limit syntax highlighting on long lines of code";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
@@ -1247,7 +1249,6 @@ localizedStrings["Page Overlay Options @ Layout Panel Grid Section Header"] = "P
 localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
 /* Heading for list of flex container nodes */
 localizedStrings["Page Overlays for Flex containers @ Layout Sidebar Section Header"] = "Flexbox Overlays";
-localizedStrings["Page Snapshot %s"] = "Page Snapshot %s";
 localizedStrings["Page navigated at %s"] = "Page navigated at %s";
 localizedStrings["Page reloaded at %s"] = "Page reloaded at %s";
 /* Paint (render) phase timeline records */
@@ -1986,8 +1987,6 @@ localizedStrings["With Object Properties"] = "With Object Properties";
 localizedStrings["Worker"] = "Worker";
 localizedStrings["Worker Thread"] = "Worker Thread";
 localizedStrings["Worker Threads"] = "Worker Threads";
-localizedStrings["Worker \u201C%s\u201D"] = "Worker \u201C%s\u201D";
-localizedStrings["Worker \u201C%s\u201D Snapshot %s"] = "Worker \u201C%s\u201D Snapshot %s";
 localizedStrings["Worker: %s"] = "Worker: %s";
 /* Title for list of JavaScript web worker execution contexts */
 localizedStrings["Workers @ Execution Context Picker"] = "Workers";

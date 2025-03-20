@@ -54,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showBanner;
 - (void)hideBanner;
 - (void)videoControlsManagerDidChange;
+- (void)videosInElementFullscreenChanged;
 - (void)setAnimatingViewAlpha:(CGFloat)alpha;
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
 - (void)resetSupportedOrientations;

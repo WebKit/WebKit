@@ -50,6 +50,7 @@
 #include <wpe/WPEToplevel.h>
 #include <wpe/WPEVersion.h>
 #include <wpe/WPEView.h>
+#include <wpe/WPEViewAccessible.h>
 
 #undef __WPE_PLATFORM_H_INSIDE__
 

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSStyleDeclaration.h"
+#include "CSSStyleProperties.h"
 #include "ComputedStyleExtractor.h"
 #include "PseudoElementIdentifier.h"
 #include "RenderStyleConstants.h"
@@ -34,7 +34,7 @@ namespace WebCore {
 class Element;
 class MutableStyleProperties;
 
-class CSSComputedStyleDeclaration final : public CSSStyleDeclaration, public RefCounted<CSSComputedStyleDeclaration> {
+class CSSComputedStyleDeclaration final : public CSSStyleProperties, public RefCounted<CSSComputedStyleDeclaration> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
     void ref() const final { RefCounted::ref(); }

@@ -16,6 +16,10 @@ PASS align-self (type: discrete) has testInterpolation function
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
+PASS anchor-scope (type: discrete) has testInterpolation function
+PASS anchor-scope uses discrete animation when animating between "none" and "all" with linear easing
+PASS anchor-scope uses discrete animation when animating between "none" and "all" with effect easing
+PASS anchor-scope uses discrete animation when animating between "none" and "all" with keyframe easing
 PASS appearance (type: discrete) has testInterpolation function
 PASS appearance uses discrete animation when animating between "auto" and "none" with linear easing
 PASS appearance uses discrete animation when animating between "auto" and "none" with effect easing

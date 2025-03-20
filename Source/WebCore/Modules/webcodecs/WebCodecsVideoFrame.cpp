@@ -284,16 +284,19 @@ static std::optional<Exception> validateI420Sizes(const WebCodecsVideoFrame::Buf
 // https://w3c.github.io/webcodecs/#dom-videoframe-videoframe-data-init
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, BufferSource&& data, BufferInit&& init)
 {
+    ASSERT(init.format);
+    auto pixelFormat = init.format.value_or(VideoPixelFormat::I420);
+
     if (!isValidVideoFrameBufferInit(init))
         return Exception { ExceptionCode::TypeError, "buffer init is not valid"_s };
 
     DOMRectInit defaultRect { 0, 0, static_cast<double>(init.codedWidth), static_cast<double>(init.codedHeight) };
-    auto parsedRectOrExtension = parseVisibleRect(defaultRect, init.visibleRect, init.codedWidth, init.codedHeight, init.format);
+    auto parsedRectOrExtension = parseVisibleRect(defaultRect, init.visibleRect, init.codedWidth, init.codedHeight, pixelFormat);
     if (parsedRectOrExtension.hasException())
         return parsedRectOrExtension.releaseException();
 
     auto parsedRect = parsedRectOrExtension.releaseReturnValue();
-    auto layoutOrException = computeLayoutAndAllocationSize(defaultRect, init.layout, init.format);
+    auto layoutOrException = computeLayoutAndAllocationSize(defaultRect, init.layout, pixelFormat);
     if (layoutOrException.hasException())
         return layoutOrException.releaseException();
     
@@ -301,23 +304,23 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (data.length() < layout.allocationSize)
         return Exception { ExceptionCode::TypeError, makeString("Data is too small "_s, data.length(), " / "_s, layout.allocationSize) };
 
-    auto colorSpace = videoFramePickColorSpace(init.colorSpace, init.format);
+    auto colorSpace = videoFramePickColorSpace(init.colorSpace, pixelFormat);
     RefPtr<VideoFrame> videoFrame;
-    if (init.format == VideoPixelFormat::NV12) {
+    if (pixelFormat == VideoPixelFormat::NV12) {
         if (init.codedWidth % 2 || init.codedHeight % 2)
             return Exception { ExceptionCode::TypeError, "coded width or height is odd"_s };
         if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
             return Exception { ExceptionCode::TypeError, "visible x or y is odd"_s };
         videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], WTFMove(colorSpace));
-    } else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
+    } else if (pixelFormat == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
         videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTFMove(colorSpace));
-    else if (init.format == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
+    else if (pixelFormat == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
         videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTFMove(colorSpace));
-    else if (init.format == VideoPixelFormat::I420) {
+    else if (pixelFormat == VideoPixelFormat::I420) {
         if (auto exception = validateI420Sizes(init))
             return WTFMove(*exception);
         videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], WTFMove(colorSpace));
-    } else if (init.format == VideoPixelFormat::I420A) {
+    } else if (pixelFormat == VideoPixelFormat::I420A) {
         if (auto exception = validateI420Sizes(init))
             return WTFMove(*exception);
         videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], layout.computedLayouts[3], WTFMove(colorSpace));
@@ -416,7 +419,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     auto codedWidth = internalVideoFrame->presentationSize().width();
     auto codedHeight = internalVideoFrame->presentationSize().height();
     auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
-    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
+    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame(context));
@@ -445,7 +448,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     auto codedWidth = image->size().width();
     auto codedHeight = image->size().height();
     auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
-    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
+    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame(context));

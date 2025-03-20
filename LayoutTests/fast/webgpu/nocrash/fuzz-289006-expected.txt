@@ -1,0 +1,271 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({powerPreference: 'low-power'});
+let adapter1 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+    'float32-blendable',
+    'timestamp-query',
+  ],
+});
+// START
+device1 = await adapter1.requestDevice();
+texture14 = device1.createTexture({
+  size : {width : 308, depthOrArrayLayers : 218},
+  format : 'rg16uint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT});
+try {
+} catch {
+}
+device0;
+commandEncoder59 = device1.createCommandEncoder();
+shaderModule7 = device1.createShaderModule({
+  code : ` ;
+              fn unconst_f32(v: f32) -> f32 {
+           return v;
+           }
+              @group(0) @binding(8) var<storage> buffer56: array<array<vec2h, 10>>;
+              struct FragmentOutput7 {
+             @location(6) @interpolate(flat) f0: vec2u,   @location(0) f1: vec4u,   @builtin(sample_mask) f2: u32,   @location(5) @interpolate(flat) f3: vec4u,   @location(2) f4: vec4i,   @location(1) @interpolate(flat) f5: i32}
+              struct T0 {
+             @size(28) f0: array<array<array<atomic<u32>, 1>, 1>, 1>}
+              @group(0) @binding(111) var<storage> buffer58: array<array<array<array<f16, 1>, 1>, 7>>;
+              @group(0) @binding(191) var<storage, read_write> buffer60: array<array<array<array<f32, 1>, 7>, 1>>;
+              @group(0) @binding(188) var<storage, read_write> buffer59: array<array<vec4i, 28>>;
+              fn unconst_bool(v: bool) -> bool {
+           return v;
+           }
+              struct FragmentOutput6 {
+             @location(0) @interpolate(flat) f0: vec4u}
+              fn unconst_f16(v: f16) -> f16 {
+           return v;
+           }
+              fn unconst_i32(v: i32) -> i32 {
+           return v;
+           }
+              fn unconst_u32(v: u32) -> u32 {
+           return v;
+           }
+              fn fn1() -> array<u32, 2> {
+             var out: array<u32, 2>;
+             let ptr18: ptr<storage, f16, > = &(buffer57)[arrayLength(&(buffer57))][unconst_u32(30221999)][unconst_u32(1100705597)][u32()];
+             let ptr19: ptr<storage, vec4i, read_write> = &(buffer59)[arrayLength(&(buffer59))][27];
+             var vf80vec2h = refract(vec2h(), vec2h(), (20198.1));
+             let ptr20: ptr<storage, vec4i, read_write> = &buffer59[(1633043599)][unconst_u32(91930923)];
+             let ptr21: ptr<storage, array<array<f16, 1>, 1>, > = &(buffer58)[(40880375)][unconst_u32(74202901)];
+             let ptr22: ptr<storage, f16, > = &buffer57[arrayLength(&buffer57)][63][u32()][unconst_u32(4058169518)];
+             let ptr23: ptr<storage, f16, > = &(buffer57)[(408558659)][unconst_u32(706860134)][0][unconst_u32(2163297479)];
+             return out;
+           }
+              struct T1 {
+             f0: array<array<vec2i, 1>, 1>,   @size(130) f1: array<mat4x2f, 1>}
+              @group(0) @binding(32) var<storage> buffer57: array<array<array<array<f16, 1>, 1>, 64>>;
+              fn fragment8() -> FragmentOutput6 {
+             var out: FragmentOutput6;
+             return out;
+           }
+              @fragment fn fragment9() -> FragmentOutput7 {
+             var out: FragmentOutput7;
+             loop {
+          out.f3 -= unpack4xU8(u32((buffer60)[arrayLength(&(buffer60))][0][unconst_u32(1404039194)][unconst_u32(1655860897)]));
+          out.f4 += vec4i(i32((buffer60)[arrayLength(&(buffer60))][0][6][unconst_u32(474175340)]));
+          out.f5 |= i32(any((vec3f(unconst_f32(0.04563e17), unconst_f32(0.1369), unconst_f32(0.03429)) < vec3f(unconst_f32(0.1016e-16), unconst_f32(0.02238), unconst_f32(0.1160e-7)))));
+          break;
+          _ = buffer60;
+        }
+             out.f1 |= vec4u(u32(buffer60[arrayLength(&buffer60)][0][6][0]));
+             return out;
+             _ = buffer60;
+           }
+             `});
+textureView65 =
+    texture14.createView({dimension : '2d', baseArrayLayer : 103});
+
+renderPassEncoder28 = commandEncoder59.beginRenderPass({
+  colorAttachments : [ {
+    view : textureView65,
+    clearValue : {
+      r : 859.3,
+      g : 98.05,
+      b : 132.0,
+      a : 702.9},
+    loadOp : 'clear',
+    storeOp : 'discard'} ],
+  maxDrawCount : 15405703});
+buffer70 = device1.createBuffer({
+  size : 224,
+  usage :
+      GPUBufferUsage.STORAGE | GPUBufferUsage});
+buffer77 = device1.createBuffer({
+  size : 120,
+  usage : GPUBufferUsage.INDEX |
+              GPUBufferUsage,
+  mappedAtCreation : false});
+
+shaderModule11 = device1.createShaderModule({
+  code : ` ;
+              fn unconst_f32(v: f32) -> f32 {
+           return v;
+           }
+              @group(0) @binding(188) var<storage> buffer87: array<vec4h, >;
+              fn unconst_bool(v: bool) -> bool {
+           return v;
+           }
+              @group(0) @binding(5) var st10: texture_storage_2d<r32float, read_write>;
+              @group(0) @binding(111) var<storage> buffer86: array<array<array<array<array<array<array<f16, 1>, 1>, 7>, 1>, 1>, 1>>;
+              fn unconst_u32(v: u32) -> u32 {
+           return v;
+           }
+              struct VertexOutput11 {
+             @location(5) f35: f16,   @location(7) @interpolate(linear) f36: f32,   @location(0) @interpolate(perspective) f37: f16,   @builtin(position) f38: vec4f,   @location(9) f39: i32,   @location(4) f40: vec2i,   @location(11) @interpolate(flat) f41: vec2f}
+              fn unconst_i32(v: i32) -> i32 {
+           return v;
+           }
+              fn unconst_f16(v: f16) -> f16 {
+           return v;
+           }
+              struct S11 {
+             @builtin(vertex_index) f0: u32}
+              struct FragmentOutput11 {
+             @location(6) @interpolate(perspective, centroid) f0: f32,   @location(0) @interpolate(flat) f1: vec4i}
+              @vertex @must_use fn vertex14(@location(0) @interpolate(flat) a0: vec2i, @location(5) a1: vec2h, @location(9) a2: vec2h, a3: S11) -> VertexOutput11 {
+             var out: VertexOutput11;
+             for (var it8=u32((buffer86)[arrayLength(&(buffer86))][unconst_u32(28672841)][unconst_u32(805888299)][unconst_u32(1413253923)][6][unconst_u32(964607084)][unconst_u32(426085716)]);
+           it8<(u32(buffer86[arrayLength(&buffer86)][0][0][unconst_u32(288038932)][unconst_u32(48187348)][0][0]) & 0xfff);
+           it8++) {
+          {
+         _ = buffer86;
+       }
+          _ = buffer86;
+        }
+             loop {
+          break;
+          _ = buffer86;
+        }
+             out.f40 = vec2i(i32((buffer86)[unconst_u32(831688443)][unconst_u32(279628494)][0][0][6][0][0]));
+             out.f41 = vec2f(f32((buffer86)[arrayLength(&(buffer86))][unconst_u32(762061320)][0][unconst_u32(631824276)][unconst_u32(599598769)][0][unconst_u32(29329967)]));
+             switch i32((buffer86)[arrayLength(&(buffer86))][0][unconst_u32(526200765)][u32(buffer86[arrayLength(&buffer86)][0][0][unconst_u32(204872099)][6][unconst_u32(550924213)][0])][unconst_u32(810762253)][0][0]) {
+           default {
+         out.f39 += i32((buffer86)[unconst_u32(210670006)][unconst_u32(362118)][0][0][unconst_u32(677919998)][0][0]);
+         out.f38 = vec4f(f32(buffer86[arrayLength(&buffer86)][0][0][0][unconst_u32(551692493)][0][0]));
+         _ = buffer86;
+       }
+          }
+             return out;
+             _ = buffer86;
+           }
+              @compute @workgroup_size(211) fn compute8() {
+             for (var it9=u32();
+           it9<(bitcast<u32>(insertBits((685493525), i32(), (188521742), (649498363))) );
+           ) {
+    }
+           }
+             `});
+pipeline16 = device1.createRenderPipeline({
+  layout : 'auto',
+  fragment : {
+    module : shaderModule7,
+    entryPoint : 'fragment9',
+    targets : [ {
+      format : 'rg16uint',
+      writeMask : GPUColorWrite.ALPHA | GPUColorWrite.GREEN | GPUColorWrite.RED
+    } ]},
+  vertex : {
+    module : shaderModule11,
+    constants : {},
+    buffers : [
+      {
+        arrayStride : 8,
+        attributes : [
+          {format : 'sint16x2', offset : 0, shaderLocation : 0},
+          {format : 'snorm8x4', offset : 0, shaderLocation : 5},
+          {format : 'float16x2', offset : 0, shaderLocation : 9}]}]},
+  primitive : {topology : 'point-list', frontFace : 'cw', cullMode : 'front'}});
+autogeneratedBindGroupLayout3 = pipeline16.getBindGroupLayout(0);
+bindGroup32 = device1.createBindGroup({
+  layout : autogeneratedBindGroupLayout3,
+  entries : [ {binding : 111, resource : {buffer : buffer70}} ]});
+buffer123 = device1.createBuffer(
+    {size : 86, usage : GPUBufferUsage.VERTEX});
+try {
+  renderPassEncoder28.setPipeline(pipeline16)} catch {
+}
+buffer141 = device1.createBuffer(
+    {size : 176, usage : GPUBufferUsage.INDIRECT});
+try {
+  renderPassEncoder28.setBindGroup(0, bindGroup32, new Uint32Array(1289), 75,
+                                   0);
+  renderPassEncoder28.setIndexBuffer(buffer77, 'uint32', )} catch {
+}
+try {
+  renderPassEncoder28.setVertexBuffer(0, buffer123, )} catch {
+}
+  try {
+      renderPassEncoder28.drawIndexedIndirect(buffer141, 20)
+  } catch {
+}
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

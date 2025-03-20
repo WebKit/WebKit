@@ -1,9 +1,16 @@
 
-PASS :all:
-PASS :three_quarters:
-PASS :function_call:
-PASS :loop:
-PASS :continuing:
-PASS :uniform_read_loop:
-PASS :derivatives:
+PASS :all:useStorageBuffers=false
+PASS :all:useStorageBuffers=true
+PASS :three_quarters:useStorageBuffers=false
+PASS :three_quarters:useStorageBuffers=true
+PASS :function_call:useStorageBuffers=false
+PASS :function_call:useStorageBuffers=true
+PASS :loop:useStorageBuffers=false
+PASS :loop:useStorageBuffers=true
+PASS :continuing:useStorageBuffers=false
+PASS :continuing:useStorageBuffers=true
+PASS :uniform_read_loop:useStorageBuffers=false
+PASS :uniform_read_loop:useStorageBuffers=true
+PASS :derivatives:useStorageBuffers=false
+PASS :derivatives:useStorageBuffers=true
 

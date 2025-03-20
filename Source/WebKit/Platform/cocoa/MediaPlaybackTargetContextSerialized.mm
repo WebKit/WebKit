@@ -23,15 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaPlaybackTargetContextSerialized.h"
+#import "config.h"
+#import "MediaPlaybackTargetContextSerialized.h"
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "WKKeyedCoder.h"
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 
-#include <pal/spi/cocoa/AVFoundationSPI.h>
-#include <pal/cocoa/AVFoundationSoftLink.h>
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#else
+#import "WKKeyedCoder.h"
+#endif
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 using namespace WebCore;
 
@@ -45,20 +49,40 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const
     , m_targetType(is<MediaPlaybackTargetContextSerialized>(context) ? downcast<MediaPlaybackTargetContextSerialized>(context).targetType() : context.type())
 {
     if (is<MediaPlaybackTargetContextCocoa>(context)) {
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+        m_context = CoreIPCAVOutputContext { downcast<MediaPlaybackTargetContextCocoa>(context).outputContext().get() };
+#else
         auto archiver = adoptNS([WKKeyedCoder new]);
         [downcast<MediaPlaybackTargetContextCocoa>(context).outputContext() encodeWithCoder:archiver.get()];
         auto dictionary = [archiver accumulatedDictionary];
         m_contextID = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"];
         m_contextType = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"];
+#endif
     } else if (is<MediaPlaybackTargetContextMock>(context))
         m_state = downcast<MediaPlaybackTargetContextMock>(context).state();
     else if (is<MediaPlaybackTargetContextSerialized>(context)) {
         m_state = downcast<MediaPlaybackTargetContextSerialized>(context).m_state;
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+        m_context = downcast<MediaPlaybackTargetContextSerialized>(context).m_context;
+#else
         m_contextID = downcast<MediaPlaybackTargetContextSerialized>(context).m_contextID;
         m_contextType = downcast<MediaPlaybackTargetContextSerialized>(context).m_contextType;
+#endif
     }
 }
 
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetContextType targetType, MediaPlaybackTargetContextMockState state, CoreIPCAVOutputContext&& context)
+    : MediaPlaybackTargetContext(MediaPlaybackTargetContextType::Serialized)
+    , m_deviceName(WTFMove(deviceName))
+    , m_hasActiveRoute(hasActiveRoute)
+    , m_supportsRemoteVideoPlayback(supportsRemoteVideoPlayback)
+    , m_targetType(targetType)
+    , m_state(state)
+    , m_context(WTFMove(context))
+{
+}
+#else
 MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetContextType targetType, MediaPlaybackTargetContextMockState state, String&& contextID, String&& contextType)
     : MediaPlaybackTargetContext(MediaPlaybackTargetContextType::Serialized)
     , m_deviceName(WTFMove(deviceName))
@@ -70,6 +94,7 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(Strin
     , m_contextType(WTFMove(contextType))
 {
 }
+#endif
 
 std::variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> MediaPlaybackTargetContextSerialized::platformContext() const
 {
@@ -78,6 +103,9 @@ std::variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> Me
 
     ASSERT(m_targetType == MediaPlaybackTargetContextType::AVOutputContext);
 
+#if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
+    return MediaPlaybackTargetContextCocoa(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
+#else
     auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
     propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID;
     propertyList[@"AVOutputContextSerializationKeyContextType"] = m_contextType;
@@ -86,6 +114,7 @@ std::variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> Me
     // std::variant construction in older clang gives either an error, a vtable linkage error unless we construct it this way.
     std::variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> variant { std::in_place_type<MediaPlaybackTargetContextCocoa>, WTFMove(outputContext) };
     return variant;
+#endif
 }
 
 } // namespace WebKit

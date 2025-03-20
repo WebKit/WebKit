@@ -150,12 +150,78 @@ PASS :wr:boundary="queue-op";readOp="input-indirect";readContext="render-pass-en
 PASS :wr:boundary="queue-op";readOp="input-indirect";readContext="render-bundle-encoder";writeOp="write-buffer";writeContext="queue"
 PASS :wr:boundary="queue-op";readOp="input-indirect";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="queue-op";readOp="input-indirect";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="write-buffer";writeContext="queue"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="write-buffer";writeContext="queue"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder"
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="write-buffer";writeContext="queue" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="write-buffer";writeContext="queue" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
 PASS :wr:boundary="queue-op";readOp="constant-uniform";readContext="render-pass-encoder";writeOp="write-buffer";writeContext="queue"
 PASS :wr:boundary="queue-op";readOp="constant-uniform";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="queue-op";readOp="constant-uniform";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder"
@@ -196,10 +262,54 @@ PASS :wr:boundary="command-buffer";readOp="input-indirect";readContext="render-p
 PASS :wr:boundary="command-buffer";readOp="input-indirect";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="command-buffer";readOp="input-indirect";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="command-buffer";readOp="input-indirect";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder"
-PASS :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder"
+FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
+FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="render-bundle-encoder";writeOp="t2b-copy";writeContext="command-encoder" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 00000000
+       failed ->           xx
+     expected ==     00000001
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.spec.js:135:15
+ Reached unreachable code
 PASS :wr:boundary="command-buffer";readOp="constant-uniform";readContext="render-pass-encoder";writeOp="b2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="command-buffer";readOp="constant-uniform";readContext="render-pass-encoder";writeOp="t2b-copy";writeContext="command-encoder"
 PASS :wr:boundary="command-buffer";readOp="constant-uniform";readContext="render-bundle-encoder";writeOp="b2b-copy";writeContext="command-encoder"

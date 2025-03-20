@@ -27,6 +27,7 @@
 
 #include "Element.h"
 #include "ElementIteratorAssertions.h"
+#include "NodeInlines.h"
 #include "Text.h"
 #include <wtf/Vector.h>
 

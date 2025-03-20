@@ -173,12 +173,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     //    OSR at this time.
     
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
-        JSValue value;
-        if (!argument)
-            value = callFrame->thisValue();
-        else
-            value = callFrame->argument(argument - 1);
-        
+        JSValue value = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
         if (!entry->m_expectedValues.argument(argument).validateOSREntryValue(value, FlushedJSValue)) {
             dataLogLnIf(Options::verboseOSR(),
                 "    OSR failed because argument ", argument, " is ", value,
@@ -190,36 +185,36 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         int localOffset = virtualRegisterForLocal(local).offset();
         JSValue value = callFrame->registers()[localOffset].asanUnsafeJSValue();
+        auto& abstractValue = entry->m_expectedValues.local(local);
         FlushFormat format = FlushedJSValue;
 
         if (entry->m_localsForcedAnyInt.get(local)) {
             if (!value.isAnyInt()) {
-                dataLogLnIf(Options::verboseOSR(),
-                    "    OSR failed because variable ", localOffset, " is ",
-                    value, ", expected ",
-                    "machine int.");
+                dataLogLnIf(Options::verboseOSR(), "    OSR failed because variable ", localOffset, " is ", value, ", expected machine int.");
                 return nullptr;
             }
             value = jsDoubleNumber(value.asAnyInt());
             format = FlushedInt52;
-        }
-
-        if (entry->m_localsForcedDouble.get(local)) {
+        } else if (entry->m_localsForcedDouble.get(local)) {
             if (!value.isNumber()) {
-                dataLogLnIf(Options::verboseOSR(),
-                    "    OSR failed because variable ", localOffset, " is ",
-                    value, ", expected number.");
+                dataLogLnIf(Options::verboseOSR(), "    OSR failed because variable ", localOffset, " is ", value, ", expected number.");
                 return nullptr;
             }
             value = jsDoubleNumber(value.asNumber());
             format = FlushedDouble;
+        } else {
+            if (value.isDouble() && abstractValue.isType(SpecInt32Only)) {
+                if (!value.isInt32AsAnyInt()) {
+                    dataLogLnIf(Options::verboseOSR(), "    OSR failed because variable ", localOffset, " is ", value, ", expected int32.");
+                    return nullptr;
+                }
+                value = jsNumber(value.asInt32AsAnyInt());
+            }
         }
 
-        if (!entry->m_expectedValues.local(local).validateOSREntryValue(value, format)) {
+        if (!abstractValue.validateOSREntryValue(value, format)) {
             dataLogLnIf(Options::verboseOSR(),
-                "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
-                value, ", expected ",
-                entry->m_expectedValues.local(local), ".");
+                "    OSR failed because variable ", VirtualRegister(localOffset), " is ", value, ", with format ", format, ", expected ", entry->m_expectedValues.local(local), ".");
             return nullptr;
         }
     }
@@ -264,20 +259,27 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     for (int index = -CallFrame::headerSizeInRegisters; index < static_cast<int>(baselineFrameSize); ++index) {
         VirtualRegister reg(-1 - index);
+        JSValue value = callFrame->registers()[reg.offset()].asanUnsafeJSValue();
         
         if (reg.isLocal()) {
             if (entry->m_localsForcedDouble.get(reg.toLocal())) {
-                *std::bit_cast<double*>(pivot + index) = callFrame->registers()[reg.offset()].asanUnsafeJSValue().asNumber();
+                *std::bit_cast<double*>(pivot + index) = value.asNumber();
                 continue;
             }
             
             if (entry->m_localsForcedAnyInt.get(reg.toLocal())) {
-                *std::bit_cast<int64_t*>(pivot + index) = callFrame->registers()[reg.offset()].asanUnsafeJSValue().asAnyInt() << JSValue::int52ShiftAmount;
+                *std::bit_cast<int64_t*>(pivot + index) = value.asAnyInt() << JSValue::int52ShiftAmount;
+                continue;
+            }
+
+            auto& abstractValue = entry->m_expectedValues.local(reg.toLocal());
+            if (value.isDouble() && abstractValue.isType(SpecInt32Only)) {
+                pivot[index] = jsNumber(value.asInt32AsAnyInt());
                 continue;
             }
         }
         
-        pivot[index] = callFrame->registers()[reg.offset()].asanUnsafeJSValue();
+        pivot[index] = value;
     }
     
     // 4) Reshuffle those registers that need reshuffling.

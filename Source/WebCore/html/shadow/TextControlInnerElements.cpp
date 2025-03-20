@@ -87,6 +87,14 @@ static inline bool isStrongPasswordTextField(const Element* element)
     return inputElement && inputElement->hasAutofillStrongPasswordButton();
 }
 
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+static inline bool isNumberInput(const Element* element)
+{
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->isNumberField();
+}
+#endif
+
 std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
 {
     auto elementStyle = resolveStyle(resolutionContext);
@@ -95,6 +103,12 @@ std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyl
         elementStyle.style->setOverflowX(Overflow::Hidden);
         elementStyle.style->setOverflowY(Overflow::Hidden);
     }
+
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (isNumberInput(shadowHost()) && shadowHost()->document().settings().vectorBasedControlsOnMacEnabled())
+        elementStyle.style->setAlignItems(StyleSelfAlignmentData(ItemPosition::Stretch));
+#endif
+
     return elementStyle;
 }
 

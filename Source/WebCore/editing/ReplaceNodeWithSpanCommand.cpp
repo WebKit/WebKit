@@ -33,6 +33,7 @@
 
 #include "Editing.h"
 #include "HTMLSpanElement.h"
+#include "NodeInlines.h"
 
 namespace WebCore {
 

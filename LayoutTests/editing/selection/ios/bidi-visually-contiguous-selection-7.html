@@ -30,23 +30,7 @@ jsTestIsAsync = true;
 addEventListener("load", async () => {
     description("Verifies that the selection remains visually consistent when selecting the entire first line in the paragraph below. To manually run the test, select the text highlighted in red, from right to left");
 
-    lineBounds = (() => {
-        const range = document.createRange();
-        range.selectNodeContents(document.querySelector("p[dir='rtl']"));
-        const clientRects = range.getClientRects();
-        const firstRect = clientRects[0];
-        const secondRect = clientRects[1];
-        const x = Math.min(firstRect.left, secondRect.left);
-        const y = Math.min(firstRect.top, secondRect.top);
-        const maxX = Math.max(firstRect.left + firstRect.width, secondRect.left + secondRect.width);
-        const maxY = Math.max(firstRect.top + firstRect.height, secondRect.top + secondRect.height);
-        return {
-            top: Math.round(y),
-            left: Math.round(x),
-            width: Math.round(maxX - x),
-            height: Math.round(maxY - y)
-        };
-    })();
+    lineBounds = UIHelper.computeLineBounds(document.querySelector("p[dir='rtl']"), 0, 1);
 
     let overlay = document.querySelector("div.overlay");
     overlay.style.top = `${lineBounds.top}px`;

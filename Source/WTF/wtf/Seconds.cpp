@@ -105,7 +105,7 @@ void Seconds::dump(PrintStream& out) const
 
 TextStream& operator<<(TextStream& ts, Seconds seconds)
 {
-    ts << seconds.value() << "s";
+    ts << seconds.value() << 's';
     return ts;
 }
 

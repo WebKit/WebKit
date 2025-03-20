@@ -26,14 +26,16 @@
 #import "config.h"
 #import "WKNSNumber.h"
 
+#import <wtf/AlignedStorage.h>
+
 using namespace WebKit;
 
 @implementation WKNSNumber {
     union {
-        API::ObjectStorage<API::Boolean> _boolean;
-        API::ObjectStorage<API::Double> _double;
-        API::ObjectStorage<API::UInt64> _uint64;
-        API::ObjectStorage<API::Int64> _int64;
+        AlignedStorage<API::Boolean> _boolean;
+        AlignedStorage<API::Double> _double;
+        AlignedStorage<API::UInt64> _uint64;
+        AlignedStorage<API::Int64> _int64;
     } _number;
 }
 

@@ -45,7 +45,7 @@ public:
     DeviceOrientationClientIOS(RefPtr<DeviceOrientationUpdateProvider>&&);
     ~DeviceOrientationClientIOS() override;
     void setController(DeviceOrientationController*) override;
-    void startUpdating() override;
+    void startUpdating(const SecurityOriginData&) override;
     void stopUpdating() override;
     DeviceOrientationData* lastOrientation() const override;
     void deviceOrientationControllerDestroyed() override;

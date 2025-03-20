@@ -27,10 +27,10 @@ namespace WebCore {
 
 class Quad final : public RectBase {
 public:
-    Quad(Ref<CSSPrimitiveValue> value)
+    Quad(Ref<CSSValue> value)
         : RectBase(WTFMove(value))
     { }
-    Quad(Ref<CSSPrimitiveValue> top, Ref<CSSPrimitiveValue> right, Ref<CSSPrimitiveValue> bottom, Ref<CSSPrimitiveValue> left)
+    Quad(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left)
         : RectBase(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left))
     { }
 

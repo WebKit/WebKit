@@ -1,0 +1,14 @@
+
+
+PASS commandForElement reflects invokee HTML element
+PASS commandForElement reflects set value
+PASS commandForElement reflects set value across shadow root into light dom
+PASS commandForElement does not reflect set value inside shadowroot
+PASS commandForElement throws error on assignment of non Element
+PASS command reflects '' when attribute empty, setAttribute version
+PASS command reflects correctly for invalid
+PASS command reflects '' when attribute empty, IDL version
+PASS command reflects correctly for invalid when array
+PASS command reflects '' when attribute set to []
+PASS command reflects correctly for invalid when object
+

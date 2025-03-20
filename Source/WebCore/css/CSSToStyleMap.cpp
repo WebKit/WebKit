@@ -599,10 +599,15 @@ void CSSToStyleMap::mapNinePieceImageSlice(const CSSBorderImageSliceValue& value
 {
     // Set up a length box to represent our image slices.
     auto& conversionData = m_builderState.cssToLengthConversionData();
-    auto side = [&](const CSSPrimitiveValue& value) -> Length {
-        if (value.isPercentage())
-            return { value.resolveAsPercentage(conversionData), LengthType::Percent };
-        return { value.resolveAsNumber<int>(conversionData), LengthType::Fixed };
+    auto side = [&](const CSSValue& value) -> Length {
+        RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value);
+        if (!primitive) {
+            m_builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return { };
+        }
+        if (primitive->isPercentage())
+            return { primitive->resolveAsPercentage(conversionData), LengthType::Percent };
+        return { primitive->resolveAsNumber<int>(conversionData), LengthType::Fixed };
     };
     auto& slices = value.slices();
     image.setImageSlices({

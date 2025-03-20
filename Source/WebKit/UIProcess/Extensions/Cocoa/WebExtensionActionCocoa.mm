@@ -104,13 +104,19 @@ using namespace WebKit;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    if (!_webExtensionAction || !_webExtensionAction->extensionContext()) {
+    if (!_webExtensionAction) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    }
+
+    RefPtr extensionContext = _webExtensionAction->extensionContext();
+    if (!extensionContext) {
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
 
     NSURL *targetURL = navigationAction.request.URL;
-    bool isURLForThisExtension = _webExtensionAction->extensionContext()->isURLForThisExtension(targetURL);
+    bool isURLForThisExtension = extensionContext->isURLForThisExtension(targetURL);
 
     // New window or main frame navigation to an external URL opens in a new tab.
     if (!navigationAction.targetFrame || (navigationAction.targetFrame.isMainFrame && !isURLForThisExtension)) {
@@ -125,7 +131,7 @@ using namespace WebKit;
         tabParameters.index = currentTab ? std::optional(currentTab->index() + 1) : std::nullopt;
         tabParameters.active = true;
 
-        _webExtensionAction->extensionContext()->openNewTab(tabParameters, [](auto newTab) {
+        extensionContext->openNewTab(tabParameters, [](auto newTab) {
             // Nothing to do.
         });
 
@@ -153,13 +159,17 @@ using namespace WebKit;
     // configured for HTTP-family URLs, and vice versa, making it imposible to
     // use the configuration for a new tab.
 
-    if (!_webExtensionAction || !_webExtensionAction->extensionContext())
+    if (!_webExtensionAction)
+        return nil;
+
+    RefPtr extensionContext = _webExtensionAction->extensionContext();
+    if (!extensionContext)
         return nil;
 
     WebExtensionTabParameters tabParameters;
     tabParameters.url = navigationAction.request.URL;
 
-    if (_webExtensionAction->extensionContext()->canOpenNewWindow()) {
+    if (extensionContext->canOpenNewWindow()) {
         WebExtensionWindowParameters windowParameters;
         windowParameters.focused = true;
         windowParameters.tabs = { WTFMove(tabParameters) };
@@ -176,7 +186,7 @@ using namespace WebKit;
 
         windowParameters.frame = frame;
 
-        _webExtensionAction->extensionContext()->openNewWindow(windowParameters, [](auto newWindow) {
+        extensionContext->openNewWindow(windowParameters, [](auto newWindow) {
             // Nothing to do.
         });
 
@@ -192,7 +202,7 @@ using namespace WebKit;
     tabParameters.index = currentTab ? std::optional(currentTab->index() + 1) : std::nullopt;
     tabParameters.active = true;
 
-    _webExtensionAction->extensionContext()->openNewTab(tabParameters, [](auto newTab) {
+    extensionContext->openNewTab(tabParameters, [](auto newTab) {
         // Nothing to do.
     });
 
@@ -201,46 +211,42 @@ using namespace WebKit;
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
-    if (!_webExtensionAction)
-        return;
-
-    _webExtensionAction->closePopup();
+    if (RefPtr webExtensionAction = _webExtensionAction.get())
+        webExtensionAction->closePopup();
 }
 
 - (void)webViewDidClose:(WKWebView *)webView
 {
-    if (!_webExtensionAction)
-        return;
-
-    _webExtensionAction->closePopup();
+    if (RefPtr webExtensionAction = _webExtensionAction.get())
+        webExtensionAction->closePopup();
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    if (!_webExtensionAction)
+    RefPtr webExtensionAction = _webExtensionAction.get();
+    if (!webExtensionAction)
         return;
 
     RELEASE_LOG_ERROR(Extensions, "Popup provisional load failed: %{public}@", privacyPreservingDescription(error));
 
-    _webExtensionAction->closePopup();
+    webExtensionAction->closePopup();
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    if (!_webExtensionAction)
+    RefPtr webExtensionAction = _webExtensionAction.get();
+    if (!webExtensionAction)
         return;
 
     RELEASE_LOG_ERROR(Extensions, "Popup load failed: %{public}@", privacyPreservingDescription(error));
 
-    _webExtensionAction->closePopup();
+    webExtensionAction->closePopup();
 }
 
 - (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation
 {
-    if (!_webExtensionAction)
-        return;
-
-    _webExtensionAction->popupDidFinishDocumentLoad();
+    if (RefPtr webExtensionAction = _webExtensionAction.get())
+        webExtensionAction->popupDidFinishDocumentLoad();
 }
 
 #if PLATFORM(MAC)
@@ -346,7 +352,8 @@ static void* kvoContext = &kvoContext;
 
 - (void)_contentSizeHasStabilized
 {
-    if (!_webExtensionAction || self.loading)
+    RefPtr webExtensionAction = _webExtensionAction.get();
+    if (!webExtensionAction || self.loading)
         return;
 
     auto contentSize = self.contentSize;
@@ -355,7 +362,7 @@ static void* kvoContext = &kvoContext;
 
     _contentSizeHasStabilized = YES;
 
-    _webExtensionAction->popupSizeDidChange();
+    webExtensionAction->popupSizeDidChange();
 }
 
 @end
@@ -387,7 +394,7 @@ static void* kvoContext = &kvoContext;
     self.popoverPresentationController.delegate = self;
 
     UINavigationItem *navigationItem = self.navigationItem;
-    navigationItem.title = extensionContext->extension().displayName();
+    navigationItem.title = extensionContext->protectedExtension()->displayName();
     navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_dismissPopup)];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(_viewControllerDismissalTransitionDidEnd:) name:UIPresentationControllerDismissalTransitionDidEndNotification object:nil];
@@ -426,14 +433,15 @@ static void* kvoContext = &kvoContext;
 
 - (void)_viewControllerDismissalTransitionDidEnd:(NSNotification *)notification
 {
-    if (!_webExtensionAction || !objectForKey<NSNumber>(notification.userInfo, UIPresentationControllerDismissalTransitionDidEndCompletedKey).boolValue)
+    RefPtr webExtensionAction = _webExtensionAction.get();
+    if (!webExtensionAction || !objectForKey<NSNumber>(notification.userInfo, UIPresentationControllerDismissalTransitionDidEndCompletedKey).boolValue)
         return;
 
     auto *dismissedViewController = dynamic_objc_cast<UIViewController>(notification.object);
     if (dismissedViewController != self && dismissedViewController != self.navigationController)
         return;
 
-    _webExtensionAction->closePopup();
+    webExtensionAction->closePopup();
 }
 
 - (void)_updatePopoverContentSize
@@ -554,10 +562,8 @@ static void* kvoContext = &kvoContext;
 {
     ASSERT([self isEqual:notification.object]);
 
-    if (!_webExtensionAction)
-        return;
-
-    _webExtensionAction->closePopup();
+    if (RefPtr webExtensionAction = _webExtensionAction.get())
+        webExtensionAction->closePopup();
 }
 
 - (void)_otherPopoverWillShow:(NSNotification *)notification
@@ -700,16 +706,17 @@ void WebExtensionAction::propertiesDidChange()
 
 WebExtensionAction* WebExtensionAction::fallbackAction() const
 {
-    if (!extensionContext())
+    RefPtr extensionContext = this->extensionContext();
+    if (!extensionContext)
         return nullptr;
 
     // Tab actions whose tab references have not dropped fallback to the window action.
     if (RefPtr tab = this->tab())
-        return extensionContext()->getAction(tab->window().get()).ptr();
+        return extensionContext->getAction(tab->window().get()).ptr();
 
     // Window actions and tab actions whose tab references have dropped fallback to the default action.
     if (m_window.has_value() || m_tab.has_value())
-        return &extensionContext()->defaultAction();
+        return &extensionContext->defaultAction();
 
     // Default actions have no fallback.
     return nullptr;
@@ -717,7 +724,8 @@ WebExtensionAction* WebExtensionAction::fallbackAction() const
 
 RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
 {
-    if (!extensionContext())
+    RefPtr extensionContext = this->extensionContext();
+    if (!extensionContext)
         return nil;
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -738,14 +746,14 @@ RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIconVariants) {
-            result = extensionContext()->extension().bestIconVariant(m_customIconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-                extensionContext()->recordError(::WebKit::wrapper(error));
+            result = extensionContext->protectedExtension()->bestIconVariant(m_customIconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+                extensionContext->recordError(::WebKit::wrapper(error));
             });
         } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIcons) {
-            result = extensionContext()->extension().bestIcon(m_customIcons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-                extensionContext()->recordError(::WebKit::wrapper(error));
+            result = extensionContext->protectedExtension()->bestIcon(m_customIcons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+                extensionContext->recordError(::WebKit::wrapper(error));
             });
         }
 
@@ -766,7 +774,7 @@ RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
         return fallback->icon(idealSize);
 
     // Default
-    return extensionContext()->extension().actionIcon(WebCore::FloatSize(idealSize));
+    return extensionContext->protectedExtension()->actionIcon(WebCore::FloatSize(idealSize));
 }
 
 void WebExtensionAction::setIcons(RefPtr<JSON::Object> icons)
@@ -806,7 +814,8 @@ void WebExtensionAction::clearIconCache()
 
 String WebExtensionAction::popupPath() const
 {
-    if (!extensionContext())
+    RefPtr extensionContext = this->extensionContext();
+    if (!extensionContext)
         return emptyString();
 
     if (!m_customPopupPath.isNull())
@@ -816,7 +825,7 @@ String WebExtensionAction::popupPath() const
         return fallback->popupPath();
 
     // Default
-    return extensionContext()->extension().actionPopupPath();
+    return extensionContext->protectedExtension()->actionPopupPath();
 }
 
 void WebExtensionAction::setPopupPath(String path)
@@ -836,9 +845,10 @@ void WebExtensionAction::setPopupPath(String path)
 
 NSString *WebExtensionAction::popupWebViewInspectionName()
 {
-    if (m_popupWebViewInspectionName.isEmpty())
-        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", extensionContext()->extension().displayShortName().createCFString().get());
-
+    if (m_popupWebViewInspectionName.isEmpty()) {
+        if (RefPtr extensionContext = this->extensionContext())
+            m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", extensionContext->protectedExtension()->displayShortName().createCFString().get());
+    }
     return m_popupWebViewInspectionName;
 }
 
@@ -959,13 +969,17 @@ void WebExtensionAction::detectPopoverColorScheme()
 
 WKWebView *WebExtensionAction::popupWebView()
 {
-    if (!presentsPopup() || !extensionContext())
+    if (!presentsPopup())
+        return nil;
+
+    RefPtr extensionContext = this->extensionContext();
+    if (!extensionContext)
         return nil;
 
     if (m_popupWebView)
         return m_popupWebView.get();
 
-    auto *webViewConfiguration = extensionContext()->webViewConfiguration(WebExtensionContext::WebViewPurpose::Popup);
+    auto *webViewConfiguration = extensionContext->webViewConfiguration(WebExtensionContext::WebViewPurpose::Popup);
     webViewConfiguration.suppressesIncrementalRendering = YES;
 
     m_popupWebViewDelegate = [[_WKWebExtensionActionWebViewDelegate alloc] initWithWebExtensionAction:*this];
@@ -973,8 +987,8 @@ WKWebView *WebExtensionAction::popupWebView()
     m_popupWebView = [[_WKWebExtensionActionWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionAction:*this];
     m_popupWebView.get().navigationDelegate = m_popupWebViewDelegate.get();
     m_popupWebView.get().UIDelegate = m_popupWebViewDelegate.get();
-    m_popupWebView.get().inspectable = extensionContext()->isInspectable();
-    m_popupWebView.get().accessibilityLabel = extensionContext()->extension().displayName();
+    m_popupWebView.get().inspectable = extensionContext->isInspectable();
+    m_popupWebView.get().accessibilityLabel = extensionContext->protectedExtension()->displayName();
     m_popupWebView.get()._remoteInspectionNameOverride = popupWebViewInspectionName();
 
 #if PLATFORM(MAC)
@@ -992,9 +1006,9 @@ WKWebView *WebExtensionAction::popupWebView()
     [m_popupWebView _overrideViewportWithArguments:@{ @"width": @"device-width", @"initial-scale": @"1", @"minimum-scale": @"1", @"maximum-scale": @"1", @"user-scalable": @"no" }];
 #endif
 
-    extensionContext()->addPopupPage(*m_popupWebView.get()._page.get(), *this);
+    extensionContext->addPopupPage(Ref { *m_popupWebView.get()._page.get() }, *this);
 
-    auto url = URL { extensionContext()->baseURL(), popupPath() };
+    auto url = URL { extensionContext->baseURL(), popupPath() };
     [m_popupWebView loadRequest:[NSURLRequest requestWithURL:url]];
 
     return m_popupWebView.get();
@@ -1155,24 +1169,26 @@ void WebExtensionAction::closePopup()
 
 String WebExtensionAction::label(FallbackWhenEmpty fallback) const
 {
-    if (!extensionContext())
+    RefPtr extensionContext = this->extensionContext();
+    if (!extensionContext)
         return emptyString();
 
     if (!m_customLabel.isNull()) {
         if (!m_customLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
             return m_customLabel;
 
-        return extensionContext()->extension().displayName();
+        return extensionContext->protectedExtension()->displayName();
     }
 
     if (RefPtr fallback = fallbackAction())
         return fallback->label();
 
     // Default
-    if (auto defaultLabel = extensionContext()->extension().displayActionLabel(); !defaultLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
+    Ref extension = extensionContext->extension();
+    if (auto defaultLabel = extension->displayActionLabel(); !defaultLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
-    return extensionContext()->extension().displayName();
+    return extension->displayName();
 }
 
 void WebExtensionAction::setLabel(String label)

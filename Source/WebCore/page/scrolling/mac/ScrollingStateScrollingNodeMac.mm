@@ -40,7 +40,7 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verti
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
     if (scrollbarTheme.isMockTheme())
         return;
-    ScrollbarThemeMac& macTheme = static_cast<ScrollbarThemeMac&>(scrollbarTheme);
+    ScrollbarThemeMac& macTheme = downcast<ScrollbarThemeMac>(scrollbarTheme);
 
     NSScrollerImp *verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
         ? macTheme.scrollerImpForScrollbar(*verticalScrollbar) : nullptr;

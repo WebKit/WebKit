@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
 #include "CSSStyleSheet.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValuePool.h"
@@ -44,7 +45,6 @@
 #include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "MutableStyleProperties.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "ScriptableDocumentParser.h"
 #include "StylePropertyMap.h"
 #include "StylePropertyShorthand.h"
@@ -71,9 +71,9 @@ void StyledElement::synchronizeStyleAttributeInternalImpl()
 
 StyledElement::~StyledElement() = default;
 
-CSSStyleDeclaration& StyledElement::cssomStyle()
+CSSStyleProperties& StyledElement::cssomStyle()
 {
-    return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(*this);
+    return ensureMutableInlineStyle().ensureInlineCSSStyleProperties(*this);
 }
 
 StylePropertyMap& StyledElement::ensureAttributeStyleMap()
@@ -111,11 +111,11 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
     }
 }
 
-PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()
+CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
 {
     if (!inlineStyle() || !inlineStyle()->hasCSSOMWrapper())
         return 0;
-    PropertySetCSSStyleDeclaration* cssomWrapper = ensureMutableInlineStyle().cssStyleDeclaration();
+    auto* cssomWrapper = ensureMutableInlineStyle().cssStyleProperties();
     ASSERT(cssomWrapper && cssomWrapper->parentElement() == this);
     return cssomWrapper;
 }

@@ -513,10 +513,15 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             registry.registerFromStylesheet(styleRuleProperty->descriptor());
             continue;
         }
-        if (auto* styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get())) {
-            if (m_ruleSet)
-                m_ruleSet->setViewTransitionRule(*styleRuleViewTransition);
+        if (auto* styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get()))
+            m_ruleSet->setViewTransitionRule(*styleRuleViewTransition);
+
+        if (auto* positionTryRule = dynamicDowncast<StyleRulePositionTry>(rule.get())) {
+            // "If multiple @position-try rules are declared with the same name, the last one in document order wins."
+            // https://drafts.csswg.org/css-anchor-position-1/#fallback-rule
+            m_ruleSet->m_positionTryRules.set(positionTryRule->name(), positionTryRule);
         }
+
     }
 }
 

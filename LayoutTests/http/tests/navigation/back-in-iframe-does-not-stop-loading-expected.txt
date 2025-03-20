@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Received event: fetch completed
+This checks that history.back() in an iframe does not stop outstanding network requests.
+
+

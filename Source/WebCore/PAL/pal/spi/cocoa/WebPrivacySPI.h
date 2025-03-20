@@ -163,16 +163,20 @@ typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedO
 @end
 #endif
 
-#if !defined(HAS_WEB_PRIVACY_RESOURCE_MONITOR_URLS_API)
 @class WKContentRuleList;
 @class WKContentRuleListStore;
 
-typedef void (^WPRuleListPreparationCompletionHandler)(WKContentRuleList *, bool, NSError *);
+typedef void (^WKWPResourcesPrepareCompletionHandler)(WKContentRuleList *, bool, NSError *);
 
 @interface WPResources (Staging_141646051)
-- (void)prepareResouceMonitorRulesForStore:(WKContentRuleListStore *)store completionHandler:(WPRuleListPreparationCompletionHandler)completionHandler;
+- (void)prepareResouceMonitorRulesForStore:(WKContentRuleListStore *)store completionHandler:(WKWPResourcesPrepareCompletionHandler)completionHandler;
 @end
-#endif
+
+typedef void (^WKWPResourcesGetSourceCompletionHandler)(NSString *, NSError *);
+
+@interface WPResources (Staging_146076707)
+- (void)requestResouceMonitorRulesSource:(WPResourceRequestOptions *)options completionHandler:(WKWPResourcesGetSourceCompletionHandler)completion;
+@end
 
 WTF_EXTERN_C_BEGIN
 

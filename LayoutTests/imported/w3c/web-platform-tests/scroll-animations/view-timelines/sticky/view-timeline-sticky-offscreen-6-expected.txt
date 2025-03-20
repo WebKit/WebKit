@@ -1,4 +1,4 @@
 Subject
 
-FAIL View timeline target > viewport, bottom-sticky during entry and top-sticky during exit. assert_equals: Effect at the midpoint of the active range: entry 0% to entry 100% expected "0.5" but got "0.473333"
+PASS View timeline target > viewport, bottom-sticky during entry and top-sticky during exit.
 

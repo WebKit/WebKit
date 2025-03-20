@@ -126,17 +126,20 @@ class Popen(PopenBase):
                  restore_signals=True, start_new_session=False,
                  pass_fds=(), encoding=None, errors=None, text=None):
 
-        super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
-
-        if pass_fds and not close_fds:
-            log.warn("pass_fds overriding close_fds.")
-
+        str_args = []
         for arg in args:
             if not isinstance(arg, (str, bytes, os.PathLike)):
                 raise TypeError(
                     'expected {}, {} or os.PathLike object, not {}',
                     str, bytes, type(arg),
                 )
+            str_args.append(str(arg))
+        args = str_args
+
+        super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
+
+        if pass_fds and not close_fds:
+            log.warn("pass_fds overriding close_fds.")
 
         self.args = args
         self.encoding = encoding

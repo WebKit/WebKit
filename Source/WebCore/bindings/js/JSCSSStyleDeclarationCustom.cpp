@@ -26,8 +26,12 @@
 #include "config.h"
 #include "JSCSSStyleDeclaration.h"
 
+#include "CSSFontFaceDescriptors.h"
+#include "CSSStyleProperties.h"
 #include "DOMWrapperWorld.h"
+#include "JSCSSFontFaceDescriptors.h"
 #include "JSCSSRuleCustom.h"
+#include "JSCSSStyleProperties.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDeprecatedCSSOMValue.h"
@@ -59,5 +63,21 @@ void JSCSSStyleDeclaration::visitAdditionalChildren(Visitor& visitor)
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSStyleDeclaration);
+
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSStyleDeclaration>&& declaration)
+{
+    switch (declaration->styleDeclarationType()) {
+    case StyleDeclarationType::Style:
+        return createWrapper<CSSStyleProperties>(globalObject, WTFMove(declaration));
+    case StyleDeclarationType::FontFace:
+        return createWrapper<CSSFontFaceDescriptors>(globalObject, WTFMove(declaration));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSStyleDeclaration& object)
+{
+    return wrap(lexicalGlobalObject, globalObject, object);
+}
 
 } // namespace WebCore

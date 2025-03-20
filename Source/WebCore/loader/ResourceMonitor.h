@@ -38,28 +38,42 @@ class LocalFrame;
 class ResourceMonitor final : public RefCountedAndCanMakeWeakPtr<ResourceMonitor> {
 public:
     using Eligibility = ResourceMonitorEligibility;
+    enum class UsageLevel : uint8_t {
+        Empty = 0,
+        Low = 20,
+        Medium = 60,
+        High = 80,
+        Critical = 100,
+    };
 
     static Ref<ResourceMonitor> create(LocalFrame&);
+    WEBCORE_EXPORT ~ResourceMonitor();
 
     Eligibility eligibility() const { return m_eligibility; }
     void setEligibility(Eligibility);
     bool isEligible() const { return eligibility() == Eligibility::Eligible; }
 
     void setDocumentURL(URL&&);
-    void didReceiveResponse(const URL&, OptionSet<ContentExtensions::ResourceType>);
     WEBCORE_EXPORT void addNetworkUsage(size_t);
+    size_t networkUsageThreshold() const { return m_networkUsageThreshold; }
+    WEBCORE_EXPORT UsageLevel networkUsageLevel() const;
+
+    void updateNetworkUsageThreshold(size_t);
 
 private:
     explicit ResourceMonitor(LocalFrame&);
 
+    void didReceiveResponse(const URL&, OptionSet<ContentExtensions::ResourceType>);
+    void continueAfterDidReceiveEligibility(Eligibility, const URL&, OptionSet<ContentExtensions::ResourceType>);
     void checkNetworkUsageExcessIfNecessary();
     ResourceMonitor* parentResourceMonitorIfExists() const;
 
     WeakPtr<LocalFrame> m_frame;
     URL m_frameURL;
+    size_t m_networkUsageThreshold;
+    CheckedSize m_networkUsage;
     Eligibility m_eligibility { Eligibility::Unsure };
     bool m_networkUsageExceed { false };
-    CheckedSize m_networkUsage;
 };
 
 } // namespace WebCore

@@ -83,10 +83,10 @@ static HTMLElement* invokerForOpenPopover(const Node* candidatePopover)
 
 static Element* openPopoverForInvoker(const Node* candidateInvoker)
 {
-    RefPtr invoker = dynamicDowncast<HTMLFormControlElement>(candidateInvoker);
+    RefPtr invoker = dynamicDowncast<HTMLElement>(candidateInvoker);
     if (!invoker)
         return nullptr;
-    RefPtr popover = invoker->popoverTargetElement();
+    RefPtr popover = invoker->invokedPopover();
     if (popover && popover->isPopoverShowing() && popover->popoverData()->invoker() == invoker)
         return popover.get();
     return nullptr;

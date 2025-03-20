@@ -38,15 +38,15 @@ namespace WebCore {
 
 constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
 
-AudioDestinationResampler::AudioDestinationResampler(AudioIOCallback& callback, unsigned numberOfOutputChannels, float inputSampleRate, float outputSampleRate)
-    : AudioDestination(callback, inputSampleRate)
-    , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
-    , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
-    , m_fifo(numberOfOutputChannels, fifoSize)
+AudioDestinationResampler::AudioDestinationResampler(const CreationOptions& options, float outputSampleRate)
+    : AudioDestination(options)
+    , m_outputBus(AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
+    , m_renderBus(AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
+    , m_fifo(options.numberOfOutputChannels, fifoSize)
 {
-    if (inputSampleRate != outputSampleRate) {
-        double scaleFactor = static_cast<double>(inputSampleRate) / outputSampleRate;
-        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize, [this](AudioBus* bus, size_t framesToProcess) {
+    if (options.sampleRate != outputSampleRate) {
+        double scaleFactor = static_cast<double>(options.sampleRate) / outputSampleRate;
+        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, options.numberOfOutputChannels, AudioUtilities::renderQuantumSize, [this](AudioBus* bus, size_t framesToProcess) {
             ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
             callRenderCallback(nullptr, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
         });

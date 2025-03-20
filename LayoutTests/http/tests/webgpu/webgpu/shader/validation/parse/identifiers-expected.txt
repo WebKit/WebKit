@@ -19,6 +19,21 @@ PASS :module_var_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :module_var_name:ident="array"
 PASS :module_var_name:ident="atomic"
 PASS :module_var_name:ident="bool"
+FAIL :module_var_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:14: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    var<private> binding_array : i32;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:13: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :module_var_name:ident="bf16"
 PASS :module_var_name:ident="bitcast"
 PASS :module_var_name:ident="f32"
@@ -120,7 +135,6 @@ PASS :module_var_name:ident="attribute"
 PASS :module_var_name:ident="auto"
 PASS :module_var_name:ident="await"
 PASS :module_var_name:ident="become"
-PASS :module_var_name:ident="binding_array"
 PASS :module_var_name:ident="cast"
 PASS :module_var_name:ident="catch"
 PASS :module_var_name:ident="class"
@@ -186,6 +200,36 @@ PASS :module_var_name:ident="nil"
 PASS :module_var_name:ident="noexcept"
 PASS :module_var_name:ident="noinline"
 PASS :module_var_name:ident="nointerpolation"
+FAIL :module_var_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    var<private> non_coherent : i32;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :module_var_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    var<private> noncoherent : i32;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :module_var_name:ident="noperspective"
 PASS :module_var_name:ident="null"
 PASS :module_var_name:ident="nullptr"
@@ -271,6 +315,21 @@ PASS :module_const_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :module_const_name:ident="array"
 PASS :module_const_name:ident="atomic"
 PASS :module_const_name:ident="bool"
+FAIL :module_const_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:7: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    const binding_array : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:6: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :module_const_name:ident="bf16"
 PASS :module_const_name:ident="bitcast"
 PASS :module_const_name:ident="f32"
@@ -372,7 +431,6 @@ PASS :module_const_name:ident="attribute"
 PASS :module_const_name:ident="auto"
 PASS :module_const_name:ident="await"
 PASS :module_const_name:ident="become"
-PASS :module_const_name:ident="binding_array"
 PASS :module_const_name:ident="cast"
 PASS :module_const_name:ident="catch"
 PASS :module_const_name:ident="class"
@@ -438,6 +496,36 @@ PASS :module_const_name:ident="nil"
 PASS :module_const_name:ident="noexcept"
 PASS :module_const_name:ident="noinline"
 PASS :module_const_name:ident="nointerpolation"
+FAIL :module_const_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    const non_coherent : i32 = 0;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :module_const_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    const noncoherent : i32 = 0;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :module_const_name:ident="noperspective"
 PASS :module_const_name:ident="null"
 PASS :module_const_name:ident="nullptr"
@@ -523,6 +611,21 @@ PASS :override_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :override_name:ident="array"
 PASS :override_name:ident="atomic"
 PASS :override_name:ident="bool"
+FAIL :override_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:10: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    override binding_array : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:9: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :override_name:ident="bf16"
 PASS :override_name:ident="bitcast"
 PASS :override_name:ident="f32"
@@ -624,7 +727,6 @@ PASS :override_name:ident="attribute"
 PASS :override_name:ident="auto"
 PASS :override_name:ident="await"
 PASS :override_name:ident="become"
-PASS :override_name:ident="binding_array"
 PASS :override_name:ident="cast"
 PASS :override_name:ident="catch"
 PASS :override_name:ident="class"
@@ -690,6 +792,36 @@ PASS :override_name:ident="nil"
 PASS :override_name:ident="noexcept"
 PASS :override_name:ident="noinline"
 PASS :override_name:ident="nointerpolation"
+FAIL :override_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    override non_coherent : i32 = 0;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :override_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    override noncoherent : i32 = 0;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :override_name:ident="noperspective"
 PASS :override_name:ident="null"
 PASS :override_name:ident="nullptr"
@@ -775,6 +907,21 @@ PASS :function_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :function_name:ident="array"
 PASS :function_name:ident="atomic"
 PASS :function_name:ident="bool"
+FAIL :function_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:4: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    fn binding_array() {}
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:3: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :function_name:ident="bf16"
 PASS :function_name:ident="bitcast"
 PASS :function_name:ident="f32"
@@ -876,7 +1023,6 @@ PASS :function_name:ident="attribute"
 PASS :function_name:ident="auto"
 PASS :function_name:ident="await"
 PASS :function_name:ident="become"
-PASS :function_name:ident="binding_array"
 PASS :function_name:ident="cast"
 PASS :function_name:ident="catch"
 PASS :function_name:ident="class"
@@ -942,6 +1088,36 @@ PASS :function_name:ident="nil"
 PASS :function_name:ident="noexcept"
 PASS :function_name:ident="noinline"
 PASS :function_name:ident="nointerpolation"
+FAIL :function_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn non_coherent() {}
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :function_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn noncoherent() {}
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :function_name:ident="noperspective"
 PASS :function_name:ident="null"
 PASS :function_name:ident="nullptr"
@@ -1027,6 +1203,21 @@ PASS :struct_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :struct_name:ident="array"
 PASS :struct_name:ident="atomic"
 PASS :struct_name:ident="bool"
+FAIL :struct_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:8: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    struct binding_array { i : i32 }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:7: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :struct_name:ident="bf16"
 PASS :struct_name:ident="bitcast"
 PASS :struct_name:ident="f32"
@@ -1128,7 +1319,6 @@ PASS :struct_name:ident="attribute"
 PASS :struct_name:ident="auto"
 PASS :struct_name:ident="await"
 PASS :struct_name:ident="become"
-PASS :struct_name:ident="binding_array"
 PASS :struct_name:ident="cast"
 PASS :struct_name:ident="catch"
 PASS :struct_name:ident="class"
@@ -1194,6 +1384,36 @@ PASS :struct_name:ident="nil"
 PASS :struct_name:ident="noexcept"
 PASS :struct_name:ident="noinline"
 PASS :struct_name:ident="nointerpolation"
+FAIL :struct_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct non_coherent { i : i32 }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :struct_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    struct noncoherent { i : i32 }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :struct_name:ident="noperspective"
 PASS :struct_name:ident="null"
 PASS :struct_name:ident="nullptr"
@@ -1279,6 +1499,21 @@ PASS :alias_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :alias_name:ident="array"
 PASS :alias_name:ident="atomic"
 PASS :alias_name:ident="bool"
+FAIL :alias_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:7: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    alias binding_array = i32;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:6: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :alias_name:ident="bf16"
 PASS :alias_name:ident="bitcast"
 PASS :alias_name:ident="f32"
@@ -1380,7 +1615,6 @@ PASS :alias_name:ident="attribute"
 PASS :alias_name:ident="auto"
 PASS :alias_name:ident="await"
 PASS :alias_name:ident="become"
-PASS :alias_name:ident="binding_array"
 PASS :alias_name:ident="cast"
 PASS :alias_name:ident="catch"
 PASS :alias_name:ident="class"
@@ -1446,6 +1680,36 @@ PASS :alias_name:ident="nil"
 PASS :alias_name:ident="noexcept"
 PASS :alias_name:ident="noinline"
 PASS :alias_name:ident="nointerpolation"
+FAIL :alias_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    alias non_coherent = i32;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :alias_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    alias noncoherent = i32;
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :alias_name:ident="noperspective"
 PASS :alias_name:ident="null"
 PASS :alias_name:ident="nullptr"
@@ -1531,6 +1795,21 @@ PASS :function_param_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :function_param_name:ident="array"
 PASS :function_param_name:ident="atomic"
 PASS :function_param_name:ident="bool"
+FAIL :function_param_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    fn F(binding_array : i32) {}
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :function_param_name:ident="bf16"
 PASS :function_param_name:ident="bitcast"
 PASS :function_param_name:ident="f32"
@@ -1632,7 +1911,6 @@ PASS :function_param_name:ident="attribute"
 PASS :function_param_name:ident="auto"
 PASS :function_param_name:ident="await"
 PASS :function_param_name:ident="become"
-PASS :function_param_name:ident="binding_array"
 PASS :function_param_name:ident="cast"
 PASS :function_param_name:ident="catch"
 PASS :function_param_name:ident="class"
@@ -1698,6 +1976,36 @@ PASS :function_param_name:ident="nil"
 PASS :function_param_name:ident="noexcept"
 PASS :function_param_name:ident="noinline"
 PASS :function_param_name:ident="nointerpolation"
+FAIL :function_param_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F(non_coherent : i32) {}
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :function_param_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F(noncoherent : i32) {}
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :function_param_name:ident="noperspective"
 PASS :function_param_name:ident="null"
 PASS :function_param_name:ident="nullptr"
@@ -1783,6 +2091,23 @@ PASS :function_const_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :function_const_name:ident="array"
 PASS :function_const_name:ident="atomic"
 PASS :function_const_name:ident="bool"
+FAIL :function_const_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    2:9: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    fn F() {
+      const binding_array = 1;
+    }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:8: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :function_const_name:ident="bf16"
 PASS :function_const_name:ident="bitcast"
 PASS :function_const_name:ident="f32"
@@ -1884,7 +2209,6 @@ PASS :function_const_name:ident="attribute"
 PASS :function_const_name:ident="auto"
 PASS :function_const_name:ident="await"
 PASS :function_const_name:ident="become"
-PASS :function_const_name:ident="binding_array"
 PASS :function_const_name:ident="cast"
 PASS :function_const_name:ident="catch"
 PASS :function_const_name:ident="class"
@@ -1950,6 +2274,40 @@ PASS :function_const_name:ident="nil"
 PASS :function_const_name:ident="noexcept"
 PASS :function_const_name:ident="noinline"
 PASS :function_const_name:ident="nointerpolation"
+FAIL :function_const_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      const non_coherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :function_const_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      const noncoherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :function_const_name:ident="noperspective"
 PASS :function_const_name:ident="null"
 PASS :function_const_name:ident="nullptr"
@@ -2035,6 +2393,23 @@ PASS :function_let_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :function_let_name:ident="array"
 PASS :function_let_name:ident="atomic"
 PASS :function_let_name:ident="bool"
+FAIL :function_let_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    2:7: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    fn F() {
+      let binding_array = 1;
+    }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:6: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :function_let_name:ident="bf16"
 PASS :function_let_name:ident="bitcast"
 PASS :function_let_name:ident="f32"
@@ -2136,7 +2511,6 @@ PASS :function_let_name:ident="attribute"
 PASS :function_let_name:ident="auto"
 PASS :function_let_name:ident="await"
 PASS :function_let_name:ident="become"
-PASS :function_let_name:ident="binding_array"
 PASS :function_let_name:ident="cast"
 PASS :function_let_name:ident="catch"
 PASS :function_let_name:ident="class"
@@ -2202,6 +2576,40 @@ PASS :function_let_name:ident="nil"
 PASS :function_let_name:ident="noexcept"
 PASS :function_let_name:ident="noinline"
 PASS :function_let_name:ident="nointerpolation"
+FAIL :function_let_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      let non_coherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :function_let_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      let noncoherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :function_let_name:ident="noperspective"
 PASS :function_let_name:ident="null"
 PASS :function_let_name:ident="nullptr"
@@ -2287,6 +2695,23 @@ PASS :function_var_name:ident="%D6%83%D5%AB%D6%80%D5%B8%D6%82%D5%A6"
 PASS :function_var_name:ident="array"
 PASS :function_var_name:ident="atomic"
 PASS :function_var_name:ident="bool"
+FAIL :function_var_name:ident="binding_array" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    2:7: error: Expected a Identifier, but got a ReservedWord
+
+    ---- shader ----
+    fn F() {
+      var binding_array = 1;
+    }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    2:6: Expected a Identifier, but got a ReservedWord
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :function_var_name:ident="bf16"
 PASS :function_var_name:ident="bitcast"
 PASS :function_var_name:ident="f32"
@@ -2388,7 +2813,6 @@ PASS :function_var_name:ident="attribute"
 PASS :function_var_name:ident="auto"
 PASS :function_var_name:ident="await"
 PASS :function_var_name:ident="become"
-PASS :function_var_name:ident="binding_array"
 PASS :function_var_name:ident="cast"
 PASS :function_var_name:ident="catch"
 PASS :function_var_name:ident="class"
@@ -2454,6 +2878,40 @@ PASS :function_var_name:ident="nil"
 PASS :function_var_name:ident="noexcept"
 PASS :function_var_name:ident="noinline"
 PASS :function_var_name:ident="nointerpolation"
+FAIL :function_var_name:ident="non_coherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      var non_coherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :function_var_name:ident="noncoherent" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    fn F() {
+      var noncoherent = 1;
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
 PASS :function_var_name:ident="noperspective"
 PASS :function_var_name:ident="null"
 PASS :function_var_name:ident="nullptr"

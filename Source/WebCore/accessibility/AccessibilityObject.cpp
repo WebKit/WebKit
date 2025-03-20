@@ -44,7 +44,7 @@
 #include "CustomElementDefaultARIA.h"
 #include "DOMTokenList.h"
 #include "DocumentInlines.h"
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "ElementIterator.h"
@@ -76,6 +76,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "PositionInlines.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderImage.h"
@@ -633,6 +634,18 @@ static bool isTableComponent(AXCoreObject& axObject)
 
 void AccessibilityObject::insertChild(AccessibilityObject& child, unsigned index, DescendIfIgnored descendIfIgnored)
 {
+    auto owners = child.owners();
+    if (owners.size()) {
+        size_t indexOfThis = owners.findIf([this] (const Ref<AXCoreObject>& object) {
+            return object.ptr() == this;
+        });
+
+        if (indexOfThis == notFound) {
+            // The child is aria-owned, and not by us, so we shouldn't insert it.
+            return;
+        }
+    }
+
     // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
     // or its visibility has changed. In the latter case, this child may have a stale child cached.
     // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
@@ -1774,7 +1787,7 @@ static RenderListItem* renderListItemContainer(Node* node)
 }
 
 // Returns the text representing a list marker taking into account the position of the text in the line of text.
-static StringView lineStartListMarkerText(RenderListItem* listItem, const VisiblePosition& startVisiblePosition, std::optional<StringView> markerText = std::nullopt)
+static StringView lineStartListMarkerText(const RenderListItem* listItem, const VisiblePosition& startVisiblePosition, std::optional<StringView> markerText = std::nullopt)
 {
     if (!listItem)
         return { };
@@ -1785,7 +1798,7 @@ static StringView lineStartListMarkerText(RenderListItem* listItem, const Visibl
         return { };
 
     // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
-    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(&listItem->element())))
+    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(listItem->element())))
         return { };
     return *markerText;
 }
@@ -2832,7 +2845,7 @@ void AccessibilityObject::updateRole()
     m_role = determineAccessibilityRole();
     if (previousRole != m_role) {
         if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(*this);
+            cache->handleRoleChanged(*this, previousRole);
     }
 }
 
@@ -3138,6 +3151,11 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     return document ? document->axObjectCache() : nullptr;
 }
 
+CommandType AccessibilityObject::commandType() const
+{
+    return CommandType::Invalid;
+}
+
 AccessibilityObject* AccessibilityObject::focusedUIElement() const
 {
     auto* page = this->page();
@@ -3245,7 +3263,7 @@ bool AccessibilityObject::supportsRangeValue() const
         || (isSplitter() && canSetFocusAttribute())
         || hasAttachmentTag();
 }
-    
+
 bool AccessibilityObject::supportsHasPopup() const
 {
     return hasAttribute(aria_haspopupAttr) || isComboBox();
@@ -3340,8 +3358,27 @@ bool AccessibilityObject::supportsPressed() const
 
 bool AccessibilityObject::supportsExpanded() const
 {
-    // If this object can toggle an HTML popover, it supports the reporting of its expanded state (which is based on the expanded / collapsed state of that popover).
-    if (popoverTargetElement())
+    // commandfor attribute takes precedence over popovertarget attribute.
+    if (RefPtr targetElement = commandForElement()) {
+        // If the target element is a popover then check command is popover related.
+        if (targetElement->popoverState() != PopoverState::None) {
+            switch (commandType()) {
+            // Expose an expanded state if the command is valid for a popover.
+            case CommandType::ShowPopover:
+            case CommandType::HidePopover:
+            case CommandType::TogglePopover:
+                return true;
+            case CommandType::Invalid:
+            case CommandType::Custom:
+            case CommandType::ShowModal:
+            case CommandType::Close:
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    } else if (popoverTargetElement())
         return true;
 
     if (is<HTMLDetailsElement>(node()))
@@ -3400,6 +3437,8 @@ bool AccessibilityObject::isExpanded() const
     }
 
     if (supportsExpanded()) {
+        if (RefPtr commandForElement = this->commandForElement())
+            return commandForElement->isPopoverShowing();
         if (RefPtr popoverTargetElement = this->popoverTargetElement())
             return popoverTargetElement->isPopoverShowing();
         return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);

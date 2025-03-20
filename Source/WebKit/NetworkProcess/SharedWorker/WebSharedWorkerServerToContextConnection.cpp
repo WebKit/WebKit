@@ -220,6 +220,14 @@ void WebSharedWorkerServerToContextConnection::idleTerminationTimerFired()
     connectionIsNoLongerNeeded();
 }
 
+std::optional<SharedPreferencesForWebProcess> WebSharedWorkerServerToContextConnection::sharedPreferencesForWebProcess() const
+{
+    if (auto connectionToWebProcess = m_connection.get())
+        return connectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
+
 #undef CONTEXT_CONNECTION_RELEASE_LOG
 
 } // namespace WebKit

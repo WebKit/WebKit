@@ -41,7 +41,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+ColorAdjust.h"
 #include "CSSSerializationContext.h"
-#include "CSSStyleDeclaration.h"
+#include "CSSStyleProperties.h"
 #include "CSSStyleSheet.h"
 #include "CSSViewTransitionRule.h"
 #include "CachedCSSStyleSheet.h"
@@ -76,6 +76,7 @@
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -100,7 +101,6 @@
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "FrameLoader.h"
-#include "FullscreenManager.h"
 #include "GCReachableRef.h"
 #include "GPUCanvasContext.h"
 #include "GenericCachedHTMLCollection.h"
@@ -328,6 +328,7 @@
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
@@ -413,7 +414,7 @@
 #include "HTMLVideoElement.h"
 #endif
 
-#define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->object().toUInt64() : 0, this == &topDocument(), ##__VA_ARGS__)
+#define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->object().toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 #define DOCUMENT_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->object().toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 
 namespace WebCore {
@@ -460,10 +461,15 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
-            if (box->style().containIntrinsicLogicalWidthHasAuto())
-                target->setLastRememberedLogicalWidth(LayoutUnit(contentBoxSize->inlineSize()));
-            if (box->style().containIntrinsicLogicalHeightHasAuto())
-                target->setLastRememberedLogicalHeight(LayoutUnit(contentBoxSize->blockSize()));
+            if (box->style().containIntrinsicLogicalWidthHasAuto()) {
+                auto adjustedWidth = LayoutUnit { applyZoom(contentBoxSize->inlineSize(), box->style()) };
+                target->setLastRememberedLogicalWidth(adjustedWidth);
+            }
+
+            if (box->style().containIntrinsicLogicalHeightHasAuto()) {
+                auto adjustedHeight = LayoutUnit { applyZoom(contentBoxSize->blockSize(), box->style()) };
+                target->setLastRememberedLogicalHeight(adjustedHeight);
+            }
         }
     }
 }
@@ -680,7 +686,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     ASSERT(!m_scriptRunner);
     ASSERT(!m_moduleLoader);
 #if ENABLE(FULLSCREEN_API)
-    ASSERT(!m_fullscreenManager);
+    ASSERT(!m_fullscreen);
 #endif
     ASSERT(!m_fontSelector);
     ASSERT(!m_fontLoader);
@@ -717,6 +723,7 @@ void Document::populateDocumentSyncDataForNewlyConstructedDocument(ProcessSyncDa
     case ProcessSyncDataType::HasInjectedUserScript:
     case ProcessSyncDataType::IsAutofocusProcessed:
     case ProcessSyncDataType::UserDidInteractWithPage:
+    case ProcessSyncDataType::FrameCanCreatePaymentSession:
         break;
     }
 }
@@ -862,10 +869,6 @@ void Document::removedLastRef()
         m_focusNavigationStartingNode = nullptr;
         m_userActionElements.clear();
         m_asyncNodeDeletionQueue.deleteNodesNow();
-#if ENABLE(FULLSCREEN_API)
-        if (CheckedPtr fullscreenManager = m_fullscreenManager.get())
-            m_fullscreenManager->clear();
-#endif
         m_associatedFormControls.clear();
         m_pendingRenderTreeUpdate = { };
 
@@ -916,8 +919,8 @@ void Document::commonTeardown()
     stopActiveDOMObjects();
 
 #if ENABLE(FULLSCREEN_API)
-    if (CheckedPtr fullscreenManager = m_fullscreenManager.get())
-        fullscreenManager->emptyEventQueue();
+    if (RefPtr fullscreen = m_fullscreen.get())
+        fullscreen->clearPendingEvents();
 #endif
 
     if (CheckedPtr svgExtensions = svgExtensionsIfExists())
@@ -1014,11 +1017,11 @@ VisitedLinkState& Document::ensureVisitedLinkState()
 }
 
 #if ENABLE(FULLSCREEN_API)
-FullscreenManager& Document::ensureFullscreenManager()
+DocumentFullscreen& Document::ensureFullscreen()
 {
     ASSERT(m_constructionDidFinish);
-    lazyInitialize(m_fullscreenManager, makeUnique<FullscreenManager>(*this));
-    return *m_fullscreenManager;
+    lazyInitialize(m_fullscreen, makeUniqueWithoutRefCountedCheck<DocumentFullscreen>(*this));
+    return *m_fullscreen;
 }
 #endif
 
@@ -1493,53 +1496,56 @@ static inline bool isValidHTMLElementName(const QualifiedName& name)
 }
 
 template<typename NameType>
-static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(TreeScope& treeScope, Document& document, const NameType& name, CustomElementRegistry* registry)
+static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& document, const NameType& name, CustomElementRegistry* registry)
 {
+    RefPtr element = HTMLElementFactory::createKnownElement(name, document);
+    if (LIKELY(element))
+        return Ref<Element> { element.releaseNonNull() };
+
+    if (!registry)
+        registry = document.customElementRegistry();
+
+    if (registry) {
+        if (RefPtr elementInterface = registry->findInterface(name))
+            return elementInterface->constructElementWithFallback(document, *registry, name);
+    }
+
+    if (UNLIKELY(!isValidHTMLElementName(name)))
+        return Exception { ExceptionCode::InvalidCharacterError };
+
+    return Ref<Element> { createUpgradeCandidateElement(document, registry, name) };
+}
+
+ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name, std::optional<std::variant<String, ElementCreationOptions>>&& argument)
+{
+    Ref document = *this;
+    RefPtr<CustomElementRegistry> registry;
+    if (UNLIKELY(argument)) {
+        if (auto* options = std::get_if<ElementCreationOptions>(&*argument))
+            registry = options->customElementRegistry;
+    }
+
     auto result = [&]() -> ExceptionOr<Ref<Element>> {
-        RefPtr element = HTMLElementFactory::createKnownElement(name, document);
-        if (LIKELY(element))
-            return Ref<Element> { element.releaseNonNull() };
+        if (document->isHTMLDocument())
+            return createHTMLElementWithNameValidation(document, name.convertToASCIILowercase(), registry.get());
 
-        if (!registry)
-            registry = treeScope.customElementRegistry();
+        if (document->isXHTMLDocument())
+            return createHTMLElementWithNameValidation(document, name, registry.get());
 
-        if (UNLIKELY(registry)) {
-            if (RefPtr elementInterface = registry->findInterface(name))
-                return elementInterface->constructElementWithFallback(document, *registry, name);
-        }
+        if (!document->isValidName(name))
+            return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '"_s, name, '\'') };
 
-        if (UNLIKELY(!isValidHTMLElementName(name)))
-            return Exception { ExceptionCode::InvalidCharacterError };
-
-        return Ref<Element> { createUpgradeCandidateElement(document, registry, name) };
+        return createElement(QualifiedName(nullAtom(), name, nullAtom()), false);
     }();
 
+    if (result.hasException())
+        return result;
     if (UNLIKELY(registry && registry->isScoped())) {
-        if (result.hasException())
-            return result;
         Ref element = result.releaseReturnValue();
         CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
         return element;
     }
-
     return result;
-
-}
-
-ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name, const ElementCreationOptions& options)
-{
-    auto& document = documentScope();
-    RefPtr registry = options.customElements;
-    if (document.isHTMLDocument())
-        return createHTMLElementWithNameValidation(*this, document, name.convertToASCIILowercase(), registry.get());
-
-    if (document.isXHTMLDocument())
-        return createHTMLElementWithNameValidation(*this, document, name, registry.get());
-
-    if (!document.isValidName(name))
-        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '"_s, name, '\'') };
-
-    return createElement(QualifiedName(nullAtom(), name, nullAtom()), false);
 }
 
 ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name)
@@ -1589,25 +1595,22 @@ Ref<Text> Document::createEditingTextNode(String&& text)
     return Text::createEditingText(*this, WTFMove(text));
 }
 
-Ref<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
+Ref<CSSStyleProperties> Document::createCSSStyleDeclaration()
 {
     Ref propertySet = MutableStyleProperties::create();
-    return propertySet->ensureCSSStyleDeclaration();
+    return propertySet->ensureCSSStyleProperties();
 }
 
-ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, std::optional<std::variant<bool, ImportNodeOptions>>&& argument)
+ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, std::variant<bool, ImportNodeOptions>&& argument)
 {
-    bool deep = false;
+    bool subtree = false;
     RefPtr<CustomElementRegistry> registry;
-    if (argument) {
-        auto argumentValue = argument.value();
-        if (std::holds_alternative<ImportNodeOptions>(argumentValue)) {
-            auto options = std::get<ImportNodeOptions>(argumentValue);
-            deep = options.deep;
-            registry = WTFMove(options.customElements);
-        } else if (std::get<bool>(argumentValue))
-            deep = true;
-    }
+    if (std::holds_alternative<ImportNodeOptions>(argument)) {
+        auto options = std::get<ImportNodeOptions>(argument);
+        subtree = !options.selfOnly;
+        registry = WTFMove(options.customElementRegistry);
+    } else if (std::get<bool>(argument))
+        subtree = true;
     if (!registry)
         registry = customElementRegistry();
     switch (nodeToImport.nodeType()) {
@@ -1620,7 +1623,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, std::optional<st
     case Node::CDATA_SECTION_NODE:
     case Node::PROCESSING_INSTRUCTION_NODE:
     case Node::COMMENT_NODE:
-        return nodeToImport.cloneNodeInternal(*this, deep ? Node::CloningOperation::Everything : Node::CloningOperation::OnlySelf, registry.get());
+        return nodeToImport.cloneNodeInternal(*this, subtree ? Node::CloningOperation::Everything : Node::CloningOperation::OnlySelf, registry.get());
 
     case Node::ATTRIBUTE_NODE: {
         auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
@@ -1770,6 +1773,13 @@ static inline bool operator<(char32_t a, const UnicodeCodePointRange& b)
     return a < b.minimum;
 }
 
+RefPtr<CustomElementRegistry> Document::customElementRegistryForBindings()
+{
+    if (RefPtr window = document().domWindow())
+        return &window->ensureCustomElementRegistry();
+    return nullptr;
+}
+
 static inline bool isPotentialCustomElementNameCharacter(char32_t character)
 {
     static const UnicodeCodePointRange ranges[] = {
@@ -1916,9 +1926,15 @@ void Document::setActiveCustomElementRegistry(CustomElementRegistry* registry)
     m_activeCustomElementRegistry = registry;
 }
 
-ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
+ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName, std::optional<std::variant<String, ElementCreationOptions>>&& argument)
 {
-    Ref document = documentScope();
+    Ref document = *this;
+    RefPtr<CustomElementRegistry> registry;
+    if (UNLIKELY(argument)) {
+        if (auto* options = std::get_if<ElementCreationOptions>(&*argument))
+            registry = options->customElementRegistry;
+    }
+
     auto opportunisticallyMatchedBuiltinElement = ([&]() -> RefPtr<Element> {
         if (namespaceURI == xhtmlNamespaceURI)
             return HTMLElementFactory::createKnownElement(qualifiedName, document, nullptr, /* createdByParser */ false);
@@ -1931,20 +1947,36 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
         return nullptr;
     })();
 
-    if (LIKELY(opportunisticallyMatchedBuiltinElement))
-        return opportunisticallyMatchedBuiltinElement.releaseNonNull();
+    auto result = [&]() -> ExceptionOr<Ref<Element>> {
+        if (LIKELY(opportunisticallyMatchedBuiltinElement))
+            return opportunisticallyMatchedBuiltinElement.releaseNonNull();
 
-    auto parseResult = Document::parseQualifiedName(namespaceURI, qualifiedName);
-    if (parseResult.hasException())
-        return parseResult.releaseException();
-    QualifiedName parsedName { parseResult.releaseReturnValue() };
-    if (!Document::hasValidNamespaceForElements(parsedName))
-        return Exception { ExceptionCode::NamespaceError };
+        auto parseResult = Document::parseQualifiedName(namespaceURI, qualifiedName);
+        if (parseResult.hasException())
+            return parseResult.releaseException();
+        QualifiedName parsedName { parseResult.releaseReturnValue() };
+        if (!Document::hasValidNamespaceForElements(parsedName))
+            return Exception { ExceptionCode::NamespaceError };
 
-    if (parsedName.namespaceURI() == xhtmlNamespaceURI)
-        return createHTMLElementWithNameValidation(*this, documentScope(), parsedName, nullptr);
+        if (parsedName.namespaceURI() == xhtmlNamespaceURI)
+            return createHTMLElementWithNameValidation(document, parsedName, registry.get());
 
-    return createElement(parsedName, false, nullptr);
+        return createElement(parsedName, false);
+    }();
+
+    if (result.hasException())
+        return result;
+    if (UNLIKELY(registry && registry->isScoped())) {
+        Ref element = result.releaseReturnValue();
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
+        return element;
+    }
+    return result;
+}
+
+ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
+{
+    return createElementNS(namespaceURI, qualifiedName, { });
 }
 
 DocumentEventTiming* Document::documentEventTimingFromNavigationTiming()
@@ -2752,37 +2784,38 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
-        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
-        auto styleUpdate = resolver.resolve();
+        {
+            Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
+            auto styleUpdate = resolver.resolve();
 
-        while (resolver.hasUnresolvedQueryContainers() || resolver.hasUnresolvedAnchorPositionedElements()) {
-            if (styleUpdate) {
-                SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, resolver.hasUnresolvedQueryContainers());
-                SetForScope resolvingAnchorPositionedElementsScope(m_isResolvingAnchorPositionedElements, resolver.hasUnresolvedAnchorPositionedElements());
+            while (resolver.needsInterleavedLayout()) {
+                if (styleUpdate) {
+                    SetForScope interleavedLayoutScope(m_isInStyleInterleavedLayout, true);
 
-                updateRenderTree(WTFMove(styleUpdate));
+                    updateRenderTree(WTFMove(styleUpdate));
 
-                if (frameView->layoutContext().needsLayout())
-                    frameView->layoutContext().layout();
+                    if (frameView->layoutContext().needsLayout())
+                        frameView->layoutContext().interleavedLayout();
+                }
+
+                styleUpdate = resolver.resolve();
             }
 
-            styleUpdate = resolver.resolve();
-        }
+            m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
 
-        m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
+            setHasValidStyle();
+            clearChildNeedsStyleRecalc();
+            unscheduleStyleRecalc();
 
-        setHasValidStyle();
-        clearChildNeedsStyleRecalc();
-        unscheduleStyleRecalc();
+            m_inStyleRecalc = false;
 
-        m_inStyleRecalc = false;
+            if (RefPtr fontLoader = m_fontLoader.get())
+                fontLoader->loadPendingFonts();
 
-        if (RefPtr fontLoader = m_fontLoader.get())
-            fontLoader->loadPendingFonts();
-
-        if (styleUpdate) {
-            updateRenderTree(WTFMove(styleUpdate));
-            frameView->styleAndRenderTreeDidChange();
+            if (styleUpdate) {
+                updateRenderTree(WTFMove(styleUpdate));
+                frameView->styleAndRenderTreeDidChange();
+            }
         }
 
         updatedCompositingLayers = frameView->layoutContext().updateCompositingLayersAfterStyleChange();
@@ -2968,7 +3001,8 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
         if (RefPtr frameView = view())
             frameView->updateScrollAnchoringPositionForScrollableAreas();
     }
-
+    if (RefPtr frame = this->frame())
+        frame->eventHandler().scheduleCursorUpdate();
     m_ignorePendingStylesheets = oldIgnore;
     return result;
 }
@@ -3005,13 +3039,13 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     return WTFMove(elementStyle.style);
 }
 
-bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck)
+bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck, OptionSet<LayoutOptions> layoutOptions)
 {
     ASSERT(isMainThread());
 
     // If the stylesheets haven't loaded, just give up and do a full layout ignoring pending stylesheets.
     if (!haveStylesheetsLoaded()) {
-        updateLayoutIgnorePendingStylesheets();
+        updateLayoutIgnorePendingStylesheets(layoutOptions);
         return true;
     }
 
@@ -3028,7 +3062,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
     // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full layout.
     if (RefPtr owner = ownerElement()) {
         if (owner->protectedDocument()->updateLayoutIfDimensionsOutOfDate(*owner)) {
-            updateLayout({ }, &element);
+            updateLayout(layoutOptions, &element);
             return true;
         }
     }
@@ -3037,19 +3071,41 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     updateStyleIfNeeded();
 
+    if (layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
+        if (CheckedPtr renderer = element.renderer(); renderer &&  renderer->style().hasSkippedContent()) {
+            if (auto wasSkippedDuringLastLayout = renderer->wasSkippedDuringLastLayoutDueToContentVisibility()) {
+                if (*wasSkippedDuringLastLayout)
+                    renderer->setNeedsLayout();
+            }
+        }
+    }
+
     if (!element.renderer() || !frameView->layoutContext().needsLayout()) {
         // Tree is clean, we don't need to walk the ancestor chain to figure out whether we have a sufficiently clean subtree.
         return false;
     }
 
-    // If the renderer needs layout for any reason, give up.
+    // If the renderer needs layout for any reason other than simplified (updating overflow), give up.
     // Also, turn off this optimization for input elements with shadow content.
-    bool requireFullLayout = element.renderer()->needsLayout() || is<HTMLInputElement>(element);
+    bool requireFullLayout = is<HTMLInputElement>(element);
+    {
+        CheckedPtr renderer = element.renderer();
+        if (renderer->selfNeedsLayout() || renderer->normalChildNeedsLayout() || renderer->posChildNeedsLayout() || renderer->needsPositionedMovementLayout())
+            requireFullLayout = true;
+        if (renderer->needsSimplifiedNormalFlowLayout()) {
+            if (!dimensionsCheck.contains(DimensionsCheck::IgnoreOverflow))
+                requireFullLayout = true;
+            else if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer); !dimensionsCheck.contains(DimensionsCheck::IgnoreOverflow) || !block || !block->canPerformSimplifiedLayout())
+                requireFullLayout = true;
+        }
+    }
+
     if (!requireFullLayout) {
         CheckedPtr<RenderBox> previousBox;
         CheckedPtr<RenderBox> currentBox;
 
         CheckedPtr renderer = element.renderer();
+
         bool hasSpecifiedLogicalHeight = renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
         bool isVertical = !renderer->isHorizontalWritingMode();
         bool checkingLogicalWidth = (dimensionsCheck.contains(DimensionsCheck::Width) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Height) && isVertical);
@@ -3068,6 +3124,11 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
             previousBox = std::exchange(currentBox, WTFMove(currentRendererBox));
 
             if (currentBox->style().containerType() != ContainerType::Normal) {
+                requireFullLayout = true;
+                break;
+            }
+
+            if (dimensionsCheck.containsAny({ DimensionsCheck::Left, DimensionsCheck::Top }) && (currentBox->needsPositionedMovementLayout() || currentBox->normalChildNeedsLayout())) {
                 requireFullLayout = true;
                 break;
             }
@@ -3109,7 +3170,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
-        updateLayout({ }, &element);
+        updateLayout(layoutOptions, &element);
 
     return requireFullLayout;
 }
@@ -3206,6 +3267,11 @@ void Document::createRenderTree()
     renderView->setIsInWindow(true);
 
     resolveStyle(ResolveStyleType::Rebuild);
+
+#if PLATFORM(MAC)
+    if (CheckedPtr cache = existingAXObjectCache())
+        cache->onDocumentRenderTreeCreation(*this);
+#endif // PLATFORM(MAC)
 }
 
 void Document::didBecomeCurrentDocumentInFrame()
@@ -3479,10 +3545,11 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
         return;
     m_areDeviceMotionAndOrientationUpdatesSuspended = false;
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    auto origin = securityOrigin().data();
     if (m_deviceMotionController)
-        m_deviceMotionController->resumeUpdates();
+        m_deviceMotionController->resumeUpdates(origin);
     if (m_deviceOrientationController)
-        m_deviceOrientationController->resumeUpdates();
+        m_deviceOrientationController->resumeUpdates(origin);
 #endif
 }
 
@@ -4534,7 +4601,7 @@ void Document::disableWebAssembly(const String& errorMessage)
     frame->checkedScript()->setWebAssemblyEnabled(false, errorMessage);
 }
 
-void Document::setRequiresTrustedTypes(bool required)
+void Document::setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement enforcement)
 {
     if (!settings().trustedTypesEnabled())
         return;
@@ -4543,8 +4610,8 @@ void Document::setRequiresTrustedTypes(bool required)
     if (!frame)
         return;
 
-    frame->checkedScript()->setRequiresTrustedTypes(required);
-    m_requiresTrustedTypes = required;
+    frame->checkedScript()->setTrustedTypesEnforcement(enforcement);
+    m_requiresTrustedTypes = enforcement != JSC::TrustedTypesEnforcement::None;
 }
 
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
@@ -5579,6 +5646,14 @@ void Document::visibilityAdjustmentStateDidChange()
     for (auto& audioProducer : m_audioProducers)
         audioProducer.visibilityAdjustmentStateDidChange();
 }
+
+#if PLATFORM(IOS_FAMILY)
+void Document::sceneIdentifierDidChange()
+{
+    for (auto& audioProducer : m_audioProducers)
+        audioProducer.sceneIdentifierDidChange();
+}
+#endif
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(MEDIA_SESSION)
 static bool hasRealtimeMediaSource(const UncheckedKeyHashSet<Ref<RealtimeMediaSource>>& sources, NOESCAPE const Function<bool(const RealtimeMediaSource&)>& filterSource)
@@ -7362,7 +7437,14 @@ void Document::updateTextTrackRepresentationImageIfNeeded()
         mediaElement->updateTextTrackRepresentationImageIfNeeded();
 }
 
-#endif
+void Document::shouldSuppressHDRDidChange()
+{
+    forEachMediaElement([](HTMLMediaElement& element) {
+        element.shouldSuppressHDRDidChange();
+    });
+}
+
+#endif // ENABLE(VIDEO)
 
 void Document::setShouldCreateRenderers(bool f)
 {
@@ -7630,6 +7712,22 @@ bool Document::hasSVGRootNode() const
 {
     return documentElement() && documentElement()->hasTagName(SVGNames::svgTag);
 }
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+bool Document::drawsHDRContent() const
+{
+    if (!(settings().supportHDRDisplayEnabled() || settings().canvasPixelFormatEnabled()))
+        return false;
+
+    if (!hasHDRContent())
+        return false;
+
+    if (RefPtr frameView = view())
+        return screenSupportsHighDynamicRange(frameView.get());
+
+    return false;
+}
+#endif
 
 template <CollectionType collectionType>
 Ref<HTMLCollection> Document::ensureCachedCollection()
@@ -8385,7 +8483,7 @@ std::variant<Document::SkipTransition, Vector<AtomString>> Document::resolveView
     if (hidden())
         return SkipTransition { };
 
-    auto rule = styleScope().resolver().viewTransitionRule();
+    RefPtr rule = styleScope().protectedResolver()->viewTransitionRule();
     if (rule && rule->computedNavigation() == ViewTransitionNavigation::Auto)
         return rule->types();
     return SkipTransition { };
@@ -8524,28 +8622,28 @@ void Document::addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatia
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-FullscreenManager& Document::fullscreenManager()
+DocumentFullscreen& Document::fullscreen()
 {
-    if (!m_fullscreenManager)
-        return ensureFullscreenManager();
-    return *m_fullscreenManager;
+    if (!m_fullscreen)
+        return ensureFullscreen();
+    return *m_fullscreen;
 }
 
-const FullscreenManager& Document::fullscreenManager() const
+const DocumentFullscreen& Document::fullscreen() const
 {
-    if (!m_fullscreenManager)
-        return const_cast<Document&>(*this).ensureFullscreenManager();
-    return *m_fullscreenManager;
+    if (!m_fullscreen)
+        return const_cast<Document&>(*this).ensureFullscreen();
+    return *m_fullscreen;
 }
 
-CheckedRef<FullscreenManager> Document::checkedFullscreenManager()
+Ref<DocumentFullscreen> Document::protectedFullscreen()
 {
-    return fullscreenManager();
+    return fullscreen();
 }
 
-CheckedRef<const FullscreenManager> Document::checkedFullscreenManager() const
+Ref<const DocumentFullscreen> Document::protectedFullscreen() const
 {
-    return fullscreenManager();
+    return fullscreen();
 }
 #endif
 
@@ -9049,8 +9147,8 @@ Element* eventTargetElementForDocument(Document* document)
     if (!document)
         return nullptr;
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
-    if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isFullscreen() && is<HTMLVideoElement>(fullscreenManager->fullscreenElement()))
-        return fullscreenManager->fullscreenElement();
+    if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->isFullscreen() && is<HTMLVideoElement>(documentFullscreen->fullscreenElement()))
+        return documentFullscreen->fullscreenElement();
 #endif
     Element* element = document->focusedElement();
     if (!element) {
@@ -9413,7 +9511,7 @@ OptionSet<StyleColorOptions> Document::styleColorOptions(const RenderStyle* styl
     return options;
 }
 
-CompositeOperator Document::compositeOperatorForBackgroundColor(const Color& color, const RenderObject& renderer) const
+CompositeOperator Document::compositeOperatorForBackgroundColor(const Color& color, const RenderElement& renderer) const
 {
     if (LIKELY(!settings().punchOutWhiteBackgroundsInDarkMode() || !Color::isWhiteColor(color) || !renderer.useDarkAppearance()))
         return CompositeOperator::SourceOver;
@@ -9474,14 +9572,6 @@ void Document::didLoadResourceSynchronously(const URL& url)
 
     if (RefPtr page = this->page())
         page->cookieJar().clearCacheForHost(url.host().toString());
-}
-
-std::optional<Vector<uint8_t>> Document::wrapCryptoKey(const Vector<uint8_t>& key)
-{
-    RefPtr page = this->page();
-    if (!page)
-        return std::nullopt;
-    return page->cryptoClient().wrapCryptoKey(key);
 }
 
 std::optional<Vector<uint8_t>> Document::serializeAndWrapCryptoKey(CryptoKeyData&& keyData)
@@ -9665,7 +9755,10 @@ void Document::applyQuickLookSandbox()
     // The sandbox directive is only allowed if the policy is from an HTTP header.
     checkedContentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
 
-    disableSandboxFlags(SandboxFlag::Navigation);
+    SandboxFlags sandboxFlagsToDisable { SandboxFlag::Navigation };
+    if (isPluginDocument())
+        sandboxFlagsToDisable.add(SandboxFlag::Plugins);
+    disableSandboxFlags(sandboxFlagsToDisable);
 
     setReferrerPolicy(ReferrerPolicy::NoReferrer);
 }
@@ -9690,10 +9783,21 @@ void Document::applyContentDispositionAttachmentSandbox()
     ASSERT(shouldEnforceContentDispositionAttachmentSandbox());
 
     setReferrerPolicy(ReferrerPolicy::NoReferrer);
-    if (!isMediaDocument())
-        enforceSandboxFlags(SandboxFlags::all());
-    else
-        enforceSandboxFlags(SandboxFlag::Origin);
+
+    auto sandboxFlags = [this] -> SandboxFlags {
+        if (isMediaDocument())
+            return SandboxFlag::Origin;
+        if (isPluginDocument()) {
+            // This reads counterintuitively, but for PluginDocuments, we want all other
+            // sandbox restrictions to still apply, inspite of the fact that the sandbox
+            // should _not_ restrict plugin instantiation in configurations where we want
+            // to display inline attachments despite the Content-Disposition header.
+            return SandboxFlags::all() - SandboxFlag::Plugins;
+        }
+        return SandboxFlags::all();
+    }();
+
+    enforceSandboxFlags(sandboxFlags);
 }
 
 void Document::addDynamicMediaQueryDependentImage(HTMLImageElement& element)
@@ -9752,8 +9856,6 @@ void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionO
         return;
     }
 
-    LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - notifying observers");
-
     Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
     for (auto& weakObserver : intersectionObservers) {
@@ -9765,6 +9867,9 @@ void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionO
         if (needNotify == IntersectionObserver::NeedNotify::Yes)
             intersectionObserversWithPendingNotifications.append(observer);
     }
+
+    if (intersectionObserversWithPendingNotifications.size())
+        LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - notifying observers");
 
     for (auto& weakObserver : intersectionObserversWithPendingNotifications) {
         if (RefPtr observer = weakObserver.get())
@@ -9805,7 +9910,7 @@ bool Document::hasResizeObservers()
 
 size_t Document::gatherResizeObservations(size_t deeperThan)
 {
-    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " gatherResizeObservations");
+    LOG_WITH_STREAM(ResizeObserver, stream << *this << " gatherResizeObservations");
     size_t minDepth = ResizeObserver::maxElementDepth();
     for (auto& weakObserver : m_resizeObservers) {
         RefPtr observer = weakObserver.get();
@@ -9822,13 +9927,13 @@ size_t Document::gatherResizeObservationsForContainIntrinsicSize()
     if (!m_resizeObserverForContainIntrinsicSize)
         return ResizeObserver::maxElementDepth();
 
-    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " gatherResizeObservationsForContainIntrinsicSize");
+    LOG_WITH_STREAM(ResizeObserver, stream << *this << " gatherResizeObservationsForContainIntrinsicSize");
     return m_resizeObserverForContainIntrinsicSize->gatherObservations(0);
 }
 
 void Document::deliverResizeObservations()
 {
-    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " deliverResizeObservations");
+    LOG_WITH_STREAM(ResizeObserver, stream << *this << " deliverResizeObservations");
     if (m_resizeObserverForContainIntrinsicSize)
         m_resizeObserverForContainIntrinsicSize->deliverObservations();
 
@@ -10944,10 +11049,10 @@ TextStream& operator<<(TextStream& ts, const Document& document)
 TextStream& operator<<(TextStream& ts, const Document::VisualUpdatesPreventedReason& reason)
 {
     switch (reason) {
-    case Document::VisualUpdatesPreventedReason::Client: ts << "Client"; break;
-    case Document::VisualUpdatesPreventedReason::ReadyState: ts << "ReadyState"; break;
-    case Document::VisualUpdatesPreventedReason::Suspension: ts << "Suspension"; break;
-    case Document::VisualUpdatesPreventedReason::RenderBlocking: ts << "RenderBlocking"; break;
+    case Document::VisualUpdatesPreventedReason::Client: ts << "Client"_s; break;
+    case Document::VisualUpdatesPreventedReason::ReadyState: ts << "ReadyState"_s; break;
+    case Document::VisualUpdatesPreventedReason::Suspension: ts << "Suspension"_s; break;
+    case Document::VisualUpdatesPreventedReason::RenderBlocking: ts << "RenderBlocking"_s; break;
     }
     return ts;
 }
@@ -11147,8 +11252,8 @@ ViewTransition* Document::activeViewTransition() const
 
 bool Document::activeViewTransitionCapturedDocumentElement() const
 {
-    if (m_activeViewTransition)
-        return m_activeViewTransition->documentElementIsCaptured();
+    if (RefPtr activeViewTransition = m_activeViewTransition)
+        return activeViewTransition->documentElementIsCaptured();
     return false;
 }
 
@@ -11156,9 +11261,9 @@ void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 {
     std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionInvalidation;
     std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionTypeInvalidation;
-    if (documentElement()) {
-        activeViewTransitionInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
-        activeViewTransitionTypeInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
+    if (RefPtr documentElement = this->documentElement()) {
+        activeViewTransitionInvalidation.emplace(*documentElement, CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
+        activeViewTransitionTypeInvalidation.emplace(*documentElement, CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
     }
 
     clearRenderingIsSuppressedForViewTransition();
@@ -11331,8 +11436,10 @@ ResourceMonitor& Document::resourceMonitor()
 {
     ASSERT(!frame()->isMainFrame());
 
-    if (!m_resourceMonitor)
+    if (!m_resourceMonitor) {
         m_resourceMonitor = ResourceMonitor::create(*frame());
+        DOCUMENT_RELEASE_LOG(ResourceMonitoring, "ResourceMonitor is created for the document.");
+    }
     return *m_resourceMonitor.get();
 }
 

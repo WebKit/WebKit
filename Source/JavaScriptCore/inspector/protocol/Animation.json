@@ -32,7 +32,6 @@
                 { "name": "name", "type": "string", "optional": true, "description": "Equal to `Animation.prototype.get id`." },
                 { "name": "cssAnimationName", "type": "string", "optional": true, "description": "Equal to the corresponding `animation-name` CSS property. Should not be provided if `transitionProperty` is also provided." },
                 { "name": "cssTransitionProperty", "type": "string", "optional": true, "description": "Equal to the corresponding `transition-property` CSS property. Should not be provided if `animationName` is also provided." },
-                { "name": "effect", "$ref": "Effect", "optional": true },
                 { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Backtrace that was captured when this `WebAnimation` was created." }
             ]
         },
@@ -80,6 +79,16 @@
         {
             "name": "disable",
             "description": "Disables Canvas domain events."
+        },
+        {
+            "name": "requestEffect",
+            "description": "Gets the `Effect` for the animation with the given `AnimationId`.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" }
+            ],
+            "returns": [
+                { "name": "effect", "$ref": "Effect", "optional": true, "description": "This is omitted when there is no effect." }
+            ]
         },
         {
             "name": "requestEffectTarget",
@@ -131,8 +140,7 @@
             "name": "effectChanged",
             "description": "Dispatched whenever the effect of any animation is changed in any way.",
             "parameters": [
-                { "name": "animationId", "$ref": "AnimationId" },
-                { "name": "effect", "$ref": "Effect", "optional": true, "description": "This is omitted when the effect is removed without a replacement." }
+                { "name": "animationId", "$ref": "AnimationId" }
             ]
         },
         {

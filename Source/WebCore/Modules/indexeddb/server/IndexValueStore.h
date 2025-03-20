@@ -55,11 +55,15 @@ public:
     uint64_t countForKey(const IDBKeyData&) const;
     IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
     bool contains(const IDBKeyData&) const;
+    std::optional<Vector<IDBKeyData>> valueKeys(const IDBKeyData&) const;
+    Vector<IDBKeyData> allKeys() const;
 
     IDBError addRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
     void removeRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
+    void removeRecord(const IDBKeyData& indexKey);
 
     void removeEntriesWithValueKey(MemoryIndex&, const IDBKeyData& valueKey);
+    Vector<IDBKeyData> findKeysWithValueKey(const IDBKeyData& valueKey);
 
     class Iterator {
         friend class IndexValueStore;

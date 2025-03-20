@@ -706,7 +706,7 @@ void TileController::willRevalidateTiles(TileGrid& tileGrid, TileRevalidationTyp
         m_client->willRevalidateTiles(*this, tileGrid.identifier(), revalidationType);
 }
 
-void TileController::didRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType, const UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay)
+void TileController::didRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType, const HashSet<TileIndex>& tilesNeedingDisplay)
 {
     m_boundsAtLastRevalidate = bounds();
 
@@ -896,6 +896,16 @@ void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
     if (m_shouldAllowScrollPerformanceLogging == AllowScrollPerformanceLogging::Yes)
         owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<DynamicContentScalingDisplayList> TileController::dynamicContentScalingDisplayListForTile(const TileGrid& tileGrid, TileIndex index)
+{
+    if (!m_client)
+        return std::nullopt;
+    return m_client->dynamicContentScalingDisplayListForTile(*this, tileGrid.identifier(), index);
+}
+#endif
+
 
 } // namespace WebCore
 

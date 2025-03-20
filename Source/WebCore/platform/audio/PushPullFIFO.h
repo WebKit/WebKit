@@ -67,7 +67,7 @@ private:
     // The size of the FIFO.
     const size_t m_fifoLength = 0;
 
-    RefPtr<AudioBus> m_fifoBus;
+    const RefPtr<AudioBus> m_fifoBus;
 
     // The number of frames in the FIFO actually available for pulling.
     size_t m_framesAvailable { 0 };

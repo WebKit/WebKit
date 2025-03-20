@@ -4,8 +4,11 @@
 copyExternalImageToTexture from HTMLImageElement source.
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { raceWithRejectOnTimeout } from '../../../common/util/util.js';
-import { kTextureFormatInfo, kValidTextureFormatsForCopyE2T } from '../../format_info.js';
-import { CopyToTextureUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
+import {
+  getBaseFormatForRegularTextureFormat,
+  kValidTextureFormatsForCopyE2T } from
+'../../format_info.js';
+import { TextureUploadingUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
 
 import { kTestColorsOpaque, makeTestColorsTexelView } from './util.js';
 
@@ -21,7 +24,7 @@ async function decodeImageFromCanvas(canvas) {
   return image;
 }
 
-export const g = makeTestGroup(CopyToTextureUtils);
+export const g = makeTestGroup(TextureUploadingUtils);
 
 g.test('from_image').
 desc(
@@ -35,10 +38,10 @@ desc(
   Then call copyExternalImageToTexture() to do a full copy to the 0 mipLevel
   of dst texture, and read the contents out to compare with the HTMLImageElement contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped.
 
   The tests covers:
@@ -46,7 +49,7 @@ desc(
   - Valid dstColorFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcDoFlipYDuringCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcDoFlipYDuringCopy' in cases)
 
   And the expected results are all passed.
   `
@@ -61,11 +64,11 @@ combine('width', [1, 2, 4, 15, 255, 256]).
 combine('height', [1, 2, 4, 15, 255, 256])
 ).
 beforeAllSubcases((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
   if (typeof HTMLImageElement === 'undefined') t.skip('HTMLImageElement not available');
 }).
 fn(async (t) => {
   const { width, height, dstColorFormat, dstPremultiplied, srcDoFlipYDuringCopy } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
 
   const imageCanvas = document.createElement('canvas');
   imageCanvas.width = width;
@@ -101,14 +104,14 @@ fn(async (t) => {
 
   const image = await decodeImageFromCanvas(imageCanvas);
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: { width, height },
     format: dstColorFormat,
     usage:
     GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
 
-  const expFormat = kTextureFormatInfo[dstColorFormat].baseFormat ?? dstColorFormat;
+  const expFormat = getBaseFormatForRegularTextureFormat(dstColorFormat) ?? dstColorFormat;
   const flipSrcBeforeCopy = false;
   const texelViewExpected = t.getExpectedDstPixelsFromSrcPixels({
     srcPixels: imageData.data,
@@ -186,7 +189,7 @@ fn(async (t) => {
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVR42mP8nzaTAQQYYQwALssD/5ca+r8AAAAASUVORK5CYII=';
   await raceWithRejectOnTimeout(image.decode(), 5000, 'decode image timeout');
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: { width: kImageWidth, height: kImageHeight },
     format: kColorFormat,
     usage:
@@ -214,9 +217,6 @@ fn(async (t) => {
   t.expectSinglePixelComparisonsAreOkInTexture({ texture: dst }, [
   { coord: { x: kImageWidth * 0.3, y: kImageHeight * 0.3 }, exp: expectedPixels }]
   );
-
-  // Track created texture.
-  t.trackForCleanup(dst);
 });
 
 g.test('copy_subrect_from_2D_Canvas').
@@ -232,10 +232,10 @@ desc(
   rect info list, to the 0 mipLevel of dst texture, and read the contents out to compare
   with the HTMLImageElement contents.
 
-  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUImageCopyTextureTagged'
+  Do premultiply alpha during copy if 'premultipliedAlpha' in 'GPUCopyExternalImageDestInfo'
   is set to 'true' and do unpremultiply alpha if it is set to 'false'.
 
-  If 'flipY' in 'GPUImageCopyExternalImage' is set to 'true', copy will ensure the result
+  If 'flipY' in 'GPUCopyExternalImageSourceInfo' is set to 'true', copy will ensure the result
   is flipped, and origin is top-left consistantly.
 
   The tests covers:
@@ -243,7 +243,7 @@ desc(
   - Valid dstColorFormat of copyExternalImageToTexture()
   - Valid source image alphaMode
   - Valid dest alphaMode
-  - Valid 'flipY' config in 'GPUImageCopyExternalImage' (named 'srcDoFlipYDuringCopy' in cases)
+  - Valid 'flipY' config in 'GPUCopyExternalImageSourceInfo' (named 'srcDoFlipYDuringCopy' in cases)
   - Valid subrect copies.
 
   And the expected results are all passed.
@@ -299,7 +299,7 @@ fn(async (t) => {
 
   const image = await decodeImageFromCanvas(imageCanvas);
 
-  const dst = t.device.createTexture({
+  const dst = t.createTextureTracked({
     size: dstSize,
     format: kColorFormat,
     usage:

@@ -39,6 +39,7 @@ enum class FileSystemStorageError : uint8_t {
     InvalidState,
     MissingArgument,
     TypeMismatch,
+    QuotaError,
     Unknown
 };
 
@@ -63,6 +64,8 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
         return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Required argument is missing"_s };
     case FileSystemStorageError::TypeMismatch:
         return WebCore::Exception { WebCore::ExceptionCode::TypeMismatchError, "File type is incompatible with handle type"_s };
+    case FileSystemStorageError::QuotaError:
+        return WebCore::Exception { WebCore::ExceptionCode::QuotaExceededError, "Requested space above quota"_s };
     case FileSystemStorageError::Unknown:
         break;
     }

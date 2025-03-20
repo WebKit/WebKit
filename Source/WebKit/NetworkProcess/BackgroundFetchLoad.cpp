@@ -95,9 +95,14 @@ void BackgroundFetchLoad::abort()
     m_task = nullptr;
 }
 
+RefPtr<WebCore::BackgroundFetchRecordLoaderClient> BackgroundFetchLoad::protectedClient() const
+{
+    return m_client.get();
+}
+
 void BackgroundFetchLoad::didFinish(const ResourceError& error, const ResourceResponse& response)
 {
-    m_client->didFinish(error);
+    protectedClient()->didFinish(error);
 }
 
 void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
@@ -175,13 +180,13 @@ void BackgroundFetchLoad::didReceiveResponse(ResourceResponse&& response, Negoti
     if (!weakThis)
         return;
 
-    m_client->didReceiveResponse(WTFMove(response));
+    protectedClient()->didReceiveResponse(WTFMove(response));
 }
 
 void BackgroundFetchLoad::didReceiveData(const SharedBuffer& data)
 {
     BGLOAD_RELEASE_LOG("didReceiveData");
-    m_client->didReceiveResponseBodyChunk(data);
+    protectedClient()->didReceiveResponseBodyChunk(data);
 }
 
 void BackgroundFetchLoad::didCompleteWithError(const ResourceError& error, const NetworkLoadMetrics&)
@@ -196,7 +201,7 @@ void BackgroundFetchLoad::didCompleteWithError(const ResourceError& error, const
 
 void BackgroundFetchLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
 {
-    m_client->didSendData(totalBytesSent);
+    protectedClient()->didSendData(totalBytesSent);
 }
 
 void BackgroundFetchLoad::wasBlocked()

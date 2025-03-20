@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebURLSchemeTask.h"
+#import <wtf/AlignedStorage.h>
 
 @interface WKURLSchemeTaskImpl : NSObject <WKURLSchemeTaskPrivate>
 @end
@@ -41,6 +42,6 @@ template<> struct WrapperTraits<WebURLSchemeTask> {
 
 @interface WKURLSchemeTaskImpl () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebURLSchemeTask> _urlSchemeTask;
+    AlignedStorage<WebKit::WebURLSchemeTask> _urlSchemeTask;
 }
 @end

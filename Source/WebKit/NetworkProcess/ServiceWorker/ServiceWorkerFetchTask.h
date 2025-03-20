@@ -120,7 +120,7 @@ private:
 
     void workerClosed();
 
-    template<typename Message> bool sendToServiceWorker(Message&&);
+    RefPtr<IPC::Connection> serviceWorkerConnection();
     template<typename Message> bool sendToClient(Message&&);
 
     RefPtr<NetworkResourceLoader> protectedLoader() const;

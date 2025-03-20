@@ -71,6 +71,7 @@ public:
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
 
     JSValue *addTest(JSContextRef, JSValue *testFunction);
+    JSValue *runTests(JSContextRef, NSArray *testFunctions);
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onMessage;
@@ -88,6 +89,7 @@ private:
     bool m_runningTest { false };
     bool m_hitAssertion { false };
 
+    JSValue *addTest(JSContextRef, JSValue *testFunction, String callingAPIName);
     void assertEquals(JSContextRef, bool result, NSString *expectedString, NSString *actualString, NSString *message);
     void startNextTest();
     void recordAssertionIfNeeded(bool result)

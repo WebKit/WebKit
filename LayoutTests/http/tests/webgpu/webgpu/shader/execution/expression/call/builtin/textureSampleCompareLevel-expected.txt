@@ -1,12 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-PASS :stage:stage="fragment"
-PASS :stage:stage="vertex"
-PASS :stage:stage="compute"
-PASS :control_flow:stage="fragment"
-PASS :control_flow:stage="vertex"
-PASS :control_flow:stage="compute"
-PASS :2d_coords:
-PASS :3d_coords:
-PASS :arrayed_2d_coords:
-PASS :arrayed_3d_coords:
 

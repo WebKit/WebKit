@@ -193,16 +193,21 @@ private:
     Markable<WebCore::RenderingResourceIdentifier> m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);
 };
 
+} // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::GraphicsLayerCARemoteAsyncContentsDisplayDelegate)
+static bool isType(const WebCore::GraphicsLayerAsyncContentsDisplayDelegate& delegate) { return delegate.isGraphicsLayerCARemoteAsyncContentsDisplayDelegate(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WebKit {
+
 RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
     RefPtr protectedContext = m_context.get();
     if (!protectedContext || !protectedContext->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
         return nullptr;
 
-    RefPtr<GraphicsLayerCARemoteAsyncContentsDisplayDelegate> delegate;
-    if (existing && existing->isGraphicsLayerCARemoteAsyncContentsDisplayDelegate())
-        delegate = static_cast<GraphicsLayerCARemoteAsyncContentsDisplayDelegate*>(existing);
-
+    RefPtr delegate = dynamicDowncast<GraphicsLayerCARemoteAsyncContentsDisplayDelegate>(existing);
     if (!delegate) {
         ASSERT(!existing);
         delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), *protectedContext->drawingAreaIdentifier()));

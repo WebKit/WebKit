@@ -42,31 +42,33 @@ WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, const String& 
     , m_label(label)
     , m_page(page)
 {
-    m_page->addEditCommand(*this);
+    page.addEditCommand(*this);
 }
 
 WebEditCommandProxy::~WebEditCommandProxy()
 {
-    if (m_page)
-        m_page->removeEditCommand(*this);
+    if (RefPtr page = m_page.get())
+        page->removeEditCommand(*this);
 }
 
 void WebEditCommandProxy::unapply()
 {
-    if (!m_page || !m_page->hasRunningProcess())
+    RefPtr page = m_page.get();
+    if (!page || !page->hasRunningProcess())
         return;
 
-    m_page->legacyMainFrameProcess().send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(*this, UndoOrRedo::Redo);
+    page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::UnapplyEditCommand(m_commandID), page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    page->registerEditCommand(*this, UndoOrRedo::Redo);
 }
 
 void WebEditCommandProxy::reapply()
 {
-    if (!m_page || !m_page->hasRunningProcess())
+    RefPtr page = m_page.get();
+    if (!page || !page->hasRunningProcess())
         return;
 
-    m_page->legacyMainFrameProcess().send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(*this, UndoOrRedo::Undo);
+    page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::ReapplyEditCommand(m_commandID), page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    page->registerEditCommand(*this, UndoOrRedo::Undo);
 }
 
 } // namespace WebKit

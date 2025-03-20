@@ -24,6 +24,7 @@
 #include "PropertyAllowlist.h"
 #include "SelectorFilter.h"
 #include "StyleRule.h"
+#include <wtf/CompactRefPtrTuple.h>
 
 namespace WebCore {
 namespace Style {
@@ -46,18 +47,18 @@ public:
 
     unsigned position() const { return m_position; }
 
-    const StyleRule& styleRule() const { return *m_styleRule; }
+    const StyleRule& styleRule() const { return *m_styleRuleWithSelectorIndex.pointer(); }
 
     const CSSSelector* selector() const
     { 
-        return m_styleRule->selectorList().selectorAt(m_selectorIndex);
+        return styleRule().selectorList().selectorAt(selectorIndex());
     }
 
 #if ENABLE(CSS_SELECTOR_JIT)
-    CompiledSelector& compiledSelector() const { return m_styleRule->compiledSelectorForListIndex(m_selectorListIndex); }
+    CompiledSelector& compiledSelector() const { return styleRule().compiledSelectorForListIndex(m_selectorListIndex); }
 #endif
     
-    unsigned selectorIndex() const { return m_selectorIndex; }
+    unsigned selectorIndex() const { return m_styleRuleWithSelectorIndex.type(); }
     unsigned selectorListIndex() const { return m_selectorListIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
@@ -74,9 +75,8 @@ public:
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 
 private:
-    RefPtr<const StyleRule> m_styleRule;
     // Keep in sync with RuleFeature's selectorIndex and selectorListIndex size.
-    unsigned m_selectorIndex : 16;
+    CompactRefPtrTuple<const StyleRule, uint16_t> m_styleRuleWithSelectorIndex;
     unsigned m_selectorListIndex : 16;
     // If we have more rules than 2^bitcount here we'll get confused about rule order.
     unsigned m_position : 21;

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill the text.
+              ctx.font = "6px serif";
+              ctx.fillText("Hello world", 10, 40);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              if (assert(damage.rects.length == 1, "Expected exactly one rect")) {
+                  // Checking only X coord not to make test case too sensitive.
+                  assertGt(damage.rects[0][0], 0, "The damage rect's X coord is incorrect");
+              }
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

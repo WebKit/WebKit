@@ -46,7 +46,7 @@ namespace DFG {
 class Graph;
 
 class Disassembler {
-    WTF_MAKE_TZONE_ALLOCATED(Disassembler);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(Disassembler);
 public:
     Disassembler(Graph&);
     

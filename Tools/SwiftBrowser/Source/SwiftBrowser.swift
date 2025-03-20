@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import SwiftUI
-@_spi(Private) import WebKit
+import WebKit
 
 @main
 struct SwiftBrowserApp: App {

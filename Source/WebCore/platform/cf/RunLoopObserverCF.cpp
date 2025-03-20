@@ -99,7 +99,7 @@ void RunLoopObserver::invalidate()
 
 bool RunLoopObserver::isScheduled() const
 {
-    return m_runLoopObserver;
+    return !!m_runLoopObserver;
 }
 
 } // namespace WebCore

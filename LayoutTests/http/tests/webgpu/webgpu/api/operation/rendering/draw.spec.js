@@ -11,10 +11,10 @@ import {
 
 
 '../../../../common/util/util.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 
 
-class DrawTest extends TextureTestMixin(GPUTest) {
+class DrawTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
   checkTriangleDraw(opts)
 
 
@@ -39,6 +39,8 @@ class DrawTest extends TextureTestMixin(GPUTest) {
       baseVertex: opts.baseVertex ?? 0
     };
 
+    const haveStorageBuffersInFragmentStage =
+    !this.isCompatibility || this.device.limits.maxStorageBuffersInFragmentStage > 0;
     const renderTargetSize = [72, 36];
 
     // The test will split up the render target into a grid where triangles of
@@ -61,7 +63,7 @@ class DrawTest extends TextureTestMixin(GPUTest) {
     1.0, 1.0];
 
 
-    const renderTarget = this.device.createTexture({
+    const renderTarget = this.createTextureTracked({
       size: renderTargetSize,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
       format: 'rgba8unorm'
@@ -101,7 +103,7 @@ struct Output {
 @group(0) @binding(0) var<storage, read_write> output : Output;
 
 @fragment fn frag_main() -> @location(0) vec4<f32> {
-  output.value = 1u;
+  ${haveStorageBuffersInFragmentStage ? 'output.value = 1u;' : ''}
   return vec4<f32>(0.0, 1.0, 0.0, 1.0);
 }
 `
@@ -136,12 +138,15 @@ struct Output {
       }
     });
 
-    const resultBuffer = this.device.createBuffer({
+    const resultBuffer = haveStorageBuffersInFragmentStage ?
+    this.createBufferTracked({
       size: Uint32Array.BYTES_PER_ELEMENT,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
-    });
+    }) :
+    null;
 
-    const resultBindGroup = this.device.createBindGroup({
+    const resultBindGroup = haveStorageBuffersInFragmentStage ?
+    this.device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
       entries: [
       {
@@ -151,7 +156,8 @@ struct Output {
         }
       }]
 
-    });
+    }) :
+    null;
 
     const commandEncoder = this.device.createCommandEncoder();
     const renderPass = commandEncoder.beginRenderPass({
@@ -279,7 +285,9 @@ struct Output {
 
     const didDraw = defaulted.count && defaulted.instanceCount;
 
-    this.expectGPUBufferValuesEqual(resultBuffer, new Uint32Array([didDraw ? 1 : 0]));
+    if (resultBuffer) {
+      this.expectGPUBufferValuesEqual(resultBuffer, new Uint32Array([didDraw ? 1 : 0]));
+    }
 
     const baseVertexCount = defaulted.baseVertex ?? 0;
     const pixelComparisons = [];
@@ -321,7 +329,7 @@ Increasing the |first| param should skip some of the beginning triangles on the 
 Increasing the |first_instance| param should skip of the beginning triangles on the vertical axis.
 The vertex buffer contains two sets of disjoint triangles, and base_vertex is used to select the second set.
 The test checks that the center of all of the expected triangles is drawn, and the others are empty.
-The fragment shader also writes out to a storage buffer. If the draw is zero-sized, check that no value is written.
+The fragment shader also writes out to a storage buffer if it can. If the draw is zero-sized, check that no value is written.
 
 Params:
   - first= {0, 3} - either the firstVertex or firstIndex
@@ -347,12 +355,10 @@ combine('vertex_buffer_offset', [0, 32]).
 expand('index_buffer_offset', (p) => p.indexed ? [0, 16] : [undefined]).
 expand('base_vertex', (p) => p.indexed ? [0, 9] : [undefined])
 ).
-beforeAllSubcases((t) => {
-  if (t.params.first_instance > 0 && t.params.indirect) {
-    t.selectDeviceOrSkipTestCase('indirect-first-instance');
-  }
-}).
 fn((t) => {
+  if (t.params.first_instance > 0 && t.params.indirect) {
+    t.skipIfDeviceDoesNotHaveFeature('indirect-first-instance');
+  }
   t.checkTriangleDraw({
     firstIndex: t.params.first,
     count: t.params.count,
@@ -428,6 +434,13 @@ unless((p) => p.vertex_attribute_count < p.vertex_buffer_count).
 unless((p) => p.step_mode === 'mixed' && p.vertex_buffer_count <= 1)
 ).
 fn((t) => {
+  // MAINTENANCE_TODO: refactor this test so it doesn't need a storage buffer OR
+  // consider removing it. It's possible the tests in src/webgpu/api/operation/vertex_state/correctness.spec.ts
+  // already test this.
+  t.skipIf(
+    t.isCompatibility && !(t.device.limits.maxStorageBuffersInFragmentStage > 0),
+    `maxStorageBuffersInFragmentStage(${t.device.limits.maxStorageBuffersInFragmentStage}) is 0`
+  );
   const vertexCount = 4;
   const instanceCount = 4;
 
@@ -579,14 +592,14 @@ fn((t) => {
   // The remaining 3 vertex attributes
   if (numAttributes === 16) {
     accumulateVariableDeclarationsInVertexShader = `
-        @location(13) @interpolate(flat) outAttrib13 : vec4<${wgslFormat}>,
+        @location(13) @interpolate(flat, either) outAttrib13 : vec4<${wgslFormat}>,
       `;
     accumulateVariableAssignmentsInVertexShader = `
       output.outAttrib13 =
           vec4<${wgslFormat}>(input.attrib12, input.attrib13, input.attrib14, input.attrib15);
       `;
     accumulateVariableDeclarationsInFragmentShader = `
-      @location(13) @interpolate(flat) attrib13 : vec4<${wgslFormat}>,
+      @location(13) @interpolate(flat, either) attrib13 : vec4<${wgslFormat}>,
       `;
     accumulateVariableAssignmentsInFragmentShader = `
       outBuffer.primitives[input.primitiveId].attrib12 = input.attrib13.x;
@@ -596,14 +609,14 @@ fn((t) => {
       `;
   } else if (numAttributes === 14) {
     accumulateVariableDeclarationsInVertexShader = `
-        @location(13) @interpolate(flat) outAttrib13 : vec4<${wgslFormat}>,
+        @location(13) @interpolate(flat, either) outAttrib13 : vec4<${wgslFormat}>,
       `;
     accumulateVariableAssignmentsInVertexShader = `
       output.outAttrib13 =
           vec4<${wgslFormat}>(input.attrib12, input.attrib13, 0, 0);
       `;
     accumulateVariableDeclarationsInFragmentShader = `
-      @location(13) @interpolate(flat) attrib13 : vec4<${wgslFormat}>,
+      @location(13) @interpolate(flat, either) attrib13 : vec4<${wgslFormat}>,
       `;
     accumulateVariableAssignmentsInFragmentShader = `
       outBuffer.primitives[input.primitiveId].attrib12 = input.attrib13.x;
@@ -625,9 +638,9 @@ ${vertexInputShaderLocations.map((i) => `  @location(${i}) attrib${i} : ${wgslFo
 struct Outputs {
   @builtin(position) Position : vec4<f32>,
 ${interStageScalarShaderLocations.
-        map((i) => `  @location(${i}) @interpolate(flat) outAttrib${i} : ${wgslFormat},`).
+        map((i) => `  @location(${i}) @interpolate(flat, either) outAttrib${i} : ${wgslFormat},`).
         join('\n')}
-  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32,
+  @location(${interStageScalarShaderLocations.length}) @interpolate(flat, either) primitiveId : u32,
 ${accumulateVariableDeclarationsInVertexShader}
 };
 
@@ -650,9 +663,9 @@ ${accumulateVariableAssignmentsInVertexShader}
         code: `
 struct Inputs {
 ${interStageScalarShaderLocations.
-        map((i) => `  @location(${i}) @interpolate(flat) attrib${i} : ${wgslFormat},`).
+        map((i) => `  @location(${i}) @interpolate(flat, either) attrib${i} : ${wgslFormat},`).
         join('\n')}
-  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32,
+  @location(${interStageScalarShaderLocations.length}) @interpolate(flat, either) primitiveId : u32,
 ${accumulateVariableDeclarationsInFragmentShader}
 };
 
@@ -685,7 +698,7 @@ ${accumulateVariableAssignmentsInFragmentShader}
     }
   });
 
-  const resultBuffer = t.device.createBuffer({
+  const resultBuffer = t.createBufferTracked({
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     size: vertexCount * instanceCount * vertexInputShaderLocations.length * 4
   });
@@ -708,8 +721,8 @@ ${accumulateVariableAssignmentsInFragmentShader}
     {
       // Dummy render attachment - not used (WebGPU doesn't allow using a render pass with no
       // attachments)
-      view: t.device.
-      createTexture({
+      view: t.
+      createTextureTracked({
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
         size: [1],
         format: 'rgba8unorm'

@@ -33,6 +33,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInterchange.h"
 #include "LocalFrame.h"
+#include "PositionInlines.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 

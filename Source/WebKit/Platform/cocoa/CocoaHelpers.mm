@@ -405,7 +405,7 @@ NSURL *ensureDirectoryExists(NSURL *directory)
 {
     ASSERT(directory.isFileURL);
     if (!FileSystem::makeAllDirectories(directory.path)) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", (NSString *)directory);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", directory.absoluteString);
         return nil;
     }
 

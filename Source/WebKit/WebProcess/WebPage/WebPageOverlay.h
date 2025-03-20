@@ -70,6 +70,8 @@ public:
         virtual void dataDetectorsDidHideUI(WebPageOverlay&) { }
 #endif
 
+        virtual bool isPageOverlayClientImpl() const { return false; }
+
         virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& /* value */) { return false; }
         virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& /* value */) { return false; }
         virtual Vector<String> copyAccessibilityAttributeNames(WebPageOverlay&, bool /* parameterizedNames */) { return Vector<String>(); }
@@ -117,3 +119,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPageOverlay)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BundlePageOverlay; }
+SPECIALIZE_TYPE_TRAITS_END()

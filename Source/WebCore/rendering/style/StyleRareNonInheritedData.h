@@ -219,9 +219,10 @@ public:
     AtomString pseudoElementNameArgument;
 
     Vector<Style::ScopedName> anchorNames;
+    NameScope anchorScope;
     std::optional<Style::ScopedName> positionAnchor;
     std::optional<PositionArea> positionArea;
-    Vector<PositionTryFallback> positionTryFallbacks;
+    Vector<Style::PositionTryFallback> positionTryFallbacks;
 
     std::optional<Length> blockStepSize;
     unsigned blockStepAlign : 2; // BlockStepAlign
@@ -270,6 +271,7 @@ public:
     bool hasClip : 1;
 
     unsigned positionTryOrder : 3; // Style::PositionTryOrder; 5 values so 3 bits.
+    unsigned positionVisibility : 3; // OptionSet<PositionVisibilty>
 
     unsigned fieldSizing : 1; // FieldSizing
 
@@ -280,6 +282,8 @@ public:
 #endif
 
     unsigned scrollbarWidth : 2; // ScrollbarWidth
+
+    unsigned usesAnchorFunctions : 1;
 
 private:
     StyleRareNonInheritedData();

@@ -229,6 +229,9 @@ public:
 
     ~ScopedWebGLRestoreTexture()
     {
+        if (!m_context->graphicsContextGL() || m_context->m_textureUnits.size() <= m_context->m_activeTextureUnit)
+            return;
+
         auto& textureUnit = m_context->m_textureUnits[m_context->m_activeTextureUnit];
         PlatformGLObject texture = 0;
         switch (m_target) {

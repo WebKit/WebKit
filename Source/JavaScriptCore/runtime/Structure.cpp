@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "PropertyTable.h"
+#include "WebAssemblyGCStructure.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
@@ -186,6 +187,13 @@ void Structure::validateFlags()
 inline void Structure::validateFlags() { }
 #endif
 
+Structure::Structure(VM& vm, StructureVariant variant, JSGlobalObject* globalObject, const TypeInfo& typeInfo, const ClassInfo* classInfo)
+    : Structure(vm, globalObject, jsNull(), typeInfo, classInfo, NonArray, 0)
+{
+    m_structureVariant = variant;
+    ASSERT(this->variant() == StructureVariant::WebAssemblyGC);
+}
+
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
     , m_blob(indexingType, typeInfo)
@@ -283,16 +291,18 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
 #endif
 }
 
-Structure::Structure(VM& vm, Structure* previous)
+Structure::Structure(VM& vm, StructureVariant variant, Structure* previous)
     : JSCell(vm, vm.structureStructure.get())
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_bitField(0)
+    , m_structureVariant(variant)
     , m_propertyHash(previous->m_propertyHash)
     , m_seenProperties(previous->m_seenProperties)
     , m_prototype(previous->m_prototype.get(), WriteBarrierEarlyInit)
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(IsWatched)
 {
+    ASSERT(this->variant() != StructureVariant::WebAssemblyGC);
     setDictionaryKind(previous->dictionaryKind());
     setIsPinnedPropertyTable(false);
     setHasBeenFlattenedBefore(previous->hasBeenFlattenedBefore());
@@ -346,6 +356,13 @@ Structure::~Structure()
 
     if (isBrandedStructure())
         static_cast<BrandedStructure*>(this)->destruct();
+
+#if ENABLE(WEBASSEMBLY)
+    if (variant() == StructureVariant::WebAssemblyGC)
+        static_cast<WebAssemblyGCStructure*>(this)->destruct();
+#else
+    ASSERT(variant() != StructureVariant::WebAssemblyGC);
+#endif
 }
 
 void Structure::destroy(JSCell* cell)

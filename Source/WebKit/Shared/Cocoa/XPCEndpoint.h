@@ -29,7 +29,7 @@
 
 #include <WebKit/WKBase.h>
 #include <wtf/OSObjectPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/darwin/XPCExtras.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {

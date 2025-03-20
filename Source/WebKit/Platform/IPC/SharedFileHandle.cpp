@@ -30,10 +30,8 @@ namespace IPC {
 
 #if !PLATFORM(COCOA)
 
-std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle handle)
+std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::FileHandle&&)
 {
-    FileSystem::closeFile(handle);
-
     return std::nullopt;
 }
 

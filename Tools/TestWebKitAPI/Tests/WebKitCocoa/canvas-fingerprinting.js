@@ -92,15 +92,15 @@ function fullTextCanvasImageData() {
     return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
-function initialCanvasImageDataAsObject(imageData, length) {
+function initialCanvasImageDataAsArray(imageData, length) {
     if (length < 0)
-        return {};
+        return [];
     if (length > imageData.data.length)
         length = imageData.data.length;
-    let obj = {};
+    let array = [];
     for (let i = 0; i < length; ++i)
-      obj[i] = imageData.data[i];
-    return obj;
+        array.push(imageData.data[i]);
+    return array;
 }
 
 function isHorizontalLinearGradientCanvasGradient() {
@@ -128,20 +128,20 @@ function isVerticalLinearGradientCanvasGradient() {
     return true;
 }
 
-function initialTextCanvasImageDataAsObject(length) {
-    return initialCanvasImageDataAsObject(fullTextCanvasImageData(), length);
+function initialTextCanvasImageDataAsArray(length) {
+    return initialCanvasImageDataAsArray(fullTextCanvasImageData(), length);
 }
 
-function initialHorizontalLinearGradientCanvasImageDataAsObject(length) {
-    return initialCanvasImageDataAsObject(fullHorizontalLinearGradientCanvasImageData(), length);
+function initialHorizontalLinearGradientCanvasImageDataAsArray(length) {
+    return initialCanvasImageDataAsArray(fullHorizontalLinearGradientCanvasImageData(), length);
 }
 
-function initialVerticalLinearGradientCanvasImageDataAsObject(length) {
-    return initialCanvasImageDataAsObject(fullVerticalLinearGradientCanvasImageData(), length);
+function initialVerticalLinearGradientCanvasImageDataAsArray(length) {
+    return initialCanvasImageDataAsArray(fullVerticalLinearGradientCanvasImageData(), length);
 }
 
-function initialRadialGradientCanvasImageDataAsObject(length) {
-    return initialCanvasImageDataAsObject(fullRadialGradientCanvasImageData(), length);
+function initialRadialGradientCanvasImageDataAsArray(length) {
+    return initialCanvasImageDataAsArray(fullRadialGradientCanvasImageData(), length);
 }
 
 async function fullCanvasHash(data) {

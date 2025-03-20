@@ -27,20 +27,16 @@
 #include "ResourceMonitorChecker.h"
 
 #include "Logging.h"
+#include "ResourceMonitor.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - ResourceMonitorChecker::" fmt, this, ##__VA_ARGS__)
+#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceMonitoring, "ResourceMonitorChecker::" fmt, ##__VA_ARGS__)
 
 namespace WebCore {
-
-static size_t networkUsageThresholdWithRandomNoise(size_t threshold, double randomness)
-{
-    return static_cast<size_t>(threshold * (1 + randomness * cryptographicallyRandomUnitInterval()));
-}
 
 ResourceMonitorChecker& ResourceMonitorChecker::singleton()
 {
@@ -50,13 +46,12 @@ ResourceMonitorChecker& ResourceMonitorChecker::singleton()
 
 ResourceMonitorChecker::ResourceMonitorChecker()
     : m_workQueue { WorkQueue::create("ResourceMonitorChecker Work Queue"_s) }
-    , m_networkUsageThreshold { networkUsageThresholdWithRandomNoise(networkUsageThreshold, networkUsageThresholdRandomness) }
 {
     protectedWorkQueue()->dispatchAfter(ruleListPreparationTimeout, [this] mutable {
         if (m_ruleList)
             return;
 
-        RESOURCEMONITOR_RELEASE_LOG("did not receive rule list in time, using default eligibility");
+        RESOURCEMONITOR_RELEASE_LOG("ResourceMonitorChecker: Did not receive rule list in time, using default eligibility");
 
         m_ruleListIsPreparing = false;
         finishPendingQueries([](const auto&) {
@@ -95,7 +90,7 @@ ResourceMonitorChecker::Eligibility ResourceMonitorChecker::checkEligibility(con
     ASSERT(m_ruleList);
 
     auto matched = m_ruleList->processContentRuleListsForResourceMonitoring(info.resourceURL, info.mainDocumentURL, info.frameURL, info.type);
-    RESOURCEMONITOR_RELEASE_LOG("The url is %" PUBLIC_LOG_STRING ": %" SENSITIVE_LOG_STRING, (matched ? "eligible" : "not eligible"), info.resourceURL.string().utf8().data());
+    RESOURCEMONITOR_RELEASE_LOG("checkEligibility: The url is %" PUBLIC_LOG_STRING ": %" SENSITIVE_LOG_STRING " (%" PUBLIC_LOG_STRING ")", (matched ? "eligible" : "not eligible"), info.resourceURL.string().utf8().data(), ContentExtensions::resourceTypeToString(info.type).characters());
 
     return matched ? Eligibility::Eligible : Eligibility::NotEligible;
 }
@@ -108,7 +103,7 @@ void ResourceMonitorChecker::setContentRuleList(ContentExtensions::ContentExtens
         m_ruleList = makeUnique<ContentExtensions::ContentExtensionsBackend>(WTFMove(backend));
         m_ruleListIsPreparing = false;
 
-        RESOURCEMONITOR_RELEASE_LOG("content rule list is set");
+        RESOURCEMONITOR_RELEASE_LOG("ContentExtensionsBackend: Content rule list is set");
 
         if (!m_pendingQueries.isEmpty()) {
             finishPendingQueries([this](const auto& info) {
@@ -120,7 +115,7 @@ void ResourceMonitorChecker::setContentRuleList(ContentExtensions::ContentExtens
 
 void ResourceMonitorChecker::finishPendingQueries(Function<Eligibility(const ContentExtensions::ResourceLoadInfo&)> checker)
 {
-    RESOURCEMONITOR_RELEASE_LOG("finish pending queries: count %lu", m_pendingQueries.size());
+    RESOURCEMONITOR_RELEASE_LOG("finishPendingQueries: Finish pending queries: count=%lu", m_pendingQueries.size());
 
     for (auto& pair : m_pendingQueries) {
         auto& [info, completionHandler] = pair;
@@ -134,9 +129,38 @@ void ResourceMonitorChecker::finishPendingQueries(Function<Eligibility(const Con
     m_pendingQueries.clear();
 }
 
+void ResourceMonitorChecker::registerResourceMonitor(ResourceMonitor& resourceMonitor)
+{
+    m_resourceMonitors.add(resourceMonitor);
+}
+
+void ResourceMonitorChecker::unregisterResourceMonitor(ResourceMonitor& resourceMonitor)
+{
+    m_resourceMonitors.remove(resourceMonitor);
+}
+
+size_t ResourceMonitorChecker::networkUsageThreshold() const
+{
+    return m_networkUsageThreshold;
+}
+
+size_t ResourceMonitorChecker::networkUsageThresholdWithNoise() const
+{
+    return static_cast<size_t>(m_networkUsageThreshold * (1 + m_networkUsageThresholdRandomness * cryptographicallyRandomUnitInterval()));
+}
+
 void ResourceMonitorChecker::setNetworkUsageThreshold(size_t threshold, double randomness)
 {
-    m_networkUsageThreshold = networkUsageThresholdWithRandomNoise(threshold, randomness);
+    if (m_networkUsageThreshold == threshold && m_networkUsageThresholdRandomness == randomness)
+        return;
+
+    RESOURCEMONITOR_RELEASE_LOG("setNetworkUsageThreshold: Update network usage threshold: threshold=%zu, randomness=%.3f", threshold, randomness);
+
+    m_networkUsageThreshold = threshold;
+    m_networkUsageThresholdRandomness = randomness;
+
+    for (auto& resourceMonitor : copyToVectorOf<Ref<ResourceMonitor>>(m_resourceMonitors))
+        resourceMonitor->updateNetworkUsageThreshold(networkUsageThresholdWithNoise());
 }
 
 } // namespace WebCore

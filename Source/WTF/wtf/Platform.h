@@ -69,7 +69,9 @@
 
 /* ==== Platform additions: additions to Platform.h from outside the main repository ==== */
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
+/* rdar://147082710: Temporarily work around unavailability of WebKitAdditions
+   when generating platform-enabled-swift-args.resp in installhdrs actions. */
+#if USE(APPLE_INTERNAL_SDK) && !defined(__WK_GENERATING_PLATFORM_ARGS__) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
 #include <WebKitAdditions/AdditionalPlatform.h>
 #endif
 

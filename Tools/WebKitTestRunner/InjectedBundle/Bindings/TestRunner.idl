@@ -76,6 +76,8 @@ interface TestRunner {
     undefined dumpResourceLoadStatistics();
     undefined dumpPrivateClickMeasurement();
 
+    undefined clearStorage();
+
     undefined clearDOMCaches();
     undefined clearDOMCache(DOMString origin);
     boolean hasDOMCache(DOMString origin);
@@ -152,7 +154,7 @@ interface TestRunner {
     attribute double databaseMaxQuota;
 
     // Text search testing.
-    boolean findString(DOMString target, object optionsArray);
+    Promise<boolean> findString(DOMString target, object optionsArray);
     undefined findStringMatchesInPage(DOMString target, object optionsArray);
     undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
@@ -292,8 +294,6 @@ interface TestRunner {
     undefined runUIScript(DOMString script, object callback);
     undefined runUIScriptImmediately(DOMString script, object callback);
 
-    undefined clearTestRunnerCallbacks();
-
     undefined accummulateLogsForChannel(DOMString channel);
 
     // Contextual menu actions
@@ -408,7 +408,7 @@ interface TestRunner {
     undefined setMockCameraOrientation(unsigned long orientation, DOMString persistentId);
     boolean isMockRealtimeMediaSourceCenterEnabled();
     undefined setMockCaptureDevicesInterrupted(boolean isCameraInterrupted, boolean isMicrophoneInterrupted);
-    undefined triggerMockCaptureConfigurationChange(boolean forMicrophone, boolean forDisplay);
+    undefined triggerMockCaptureConfigurationChange(boolean forCamera, boolean forMicrophone, boolean forDisplay);
 
     undefined setCaptureState(boolean cameraState, boolean microphoneState, boolean displayState);
 
@@ -461,6 +461,7 @@ interface TestRunner {
     Promise<undefined> flushConsoleLogs();
     Promise<undefined> updatePresentation();
 
+    undefined scrollDuringEnterFullscreen();
     undefined waitBeforeFinishingFullscreenExit();
     undefined finishFullscreenExit();
     undefined requestExitFullscreenFromUIProcess();

@@ -50,6 +50,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PIP)
 SOFT_LINK_CLASS_OPTIONAL(PIP, PIPViewController)
+SOFT_LINK_CLASS_OPTIONAL(PIP, PIPPrerollAttributes)
 
 @class WebVideoViewContainer;
 
@@ -116,8 +117,11 @@ enum class PIPState {
 // Tracking video playback state
 @property (nonatomic) NSSize videoDimensions;
 @property (nonatomic, getter=isPlaying) BOOL playing;
+#if HAVE(PIP_SKIP_PREROLL)
+@property (nonatomic) BOOL canSkipAd;
+- (void)updateCanSkipAd:(BOOL)canSkipAd;
+#endif
 - (void)updateIsPlaying:(BOOL)isPlaying newPlaybackRate:(float)playbackRate;
-
 // Handling PIP transitions
 @property (nonatomic, getter=isExitingToStandardFullscreen) BOOL exitingToStandardFullscreen;
 
@@ -183,7 +187,27 @@ enum class PIPState {
     [_playerLayer setVideoDimensions:_videoDimensions];
     [_pipViewController setAspectRatio:_videoDimensions];
 }
+#if HAVE(PIP_SKIP_PREROLL)
+- (void)updateCanSkipAd:(BOOL)canSkipAd
+{
+    if (canSkipAd == _canSkipAd)
+        return;
+    _canSkipAd = canSkipAd;
+    [self updatePrerollAttributes];
+}
+- (void)updatePrerollAttributes
+{
+    if (!_pipViewController)
+        return;
 
+    [_pipViewController updatePlaybackStateUsingBlock:^(PIPMutablePlaybackState *playbackState) {
+        if (!_canSkipAd)
+            playbackState.prerollAttributes = nil;
+        else
+            playbackState.prerollAttributes = [getPIPPrerollAttributesClass() prerollAttributesForAdContentWithRequiredLinearPlaybackEndTime:0 preferredTintColor:nil];
+    }];
+}
+#endif
 - (void)setUpPIPForVideoView:(NSView *)videoView withFrame:(NSRect)frame inWindow:(NSWindow *)window
 {
     ASSERT(!_pipViewController);
@@ -232,6 +256,9 @@ enum class PIPState {
     [_videoViewContainerController view].layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
     [_pipViewController presentViewControllerAsPictureInPicture:_videoViewContainerController.get()];
     _pipState = PIPState::EnteringPIP;
+#if HAVE(PIP_SKIP_PREROLL)
+    [self updatePrerollAttributes];
+#endif
 }
 
 - (void)exitPIP
@@ -314,7 +341,18 @@ enum class PIPState {
 
     return NO;
 }
+#if HAVE(PIP_SKIP_PREROLL)
+- (void)pipActionSkipPreroll:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
 
+    if (!_videoPresentationInterfaceMac)
+        return;
+
+    _videoPresentationInterfaceMac->skipAd();
+    [self updateCanSkipAd:NO];
+}
+#endif
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pipDidClose:(PIPViewController *)pip
 {
@@ -433,7 +471,12 @@ void VideoPresentationInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscre
     if (model)
         model->fullscreenModeChanged(m_mode);
 }
-
+#if HAVE(PIP_SKIP_PREROLL)
+void VideoPresentationInterfaceMac::skipAd()
+{
+    m_playbackSessionInterface->skipAd();
+}
+#endif
 void VideoPresentationInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     HTMLMediaElementEnums::VideoFullscreenMode newMode = m_mode & ~mode;
@@ -462,7 +505,12 @@ void VideoPresentationInterfaceMac::ensureControlsManager()
 {
     m_playbackSessionInterface->ensureControlsManager();
 }
-
+#if HAVE(PIP_SKIP_PREROLL)
+void VideoPresentationInterfaceMac::canSkipAdChanged(bool canSkipAd)
+{
+    [videoPresentationInterfaceObjC() updateCanSkipAd:canSkipAd];
+}
+#endif
 WebVideoPresentationInterfaceMacObjC *VideoPresentationInterfaceMac::videoPresentationInterfaceObjC()
 {
     if (!m_webVideoPresentationInterfaceObjC)

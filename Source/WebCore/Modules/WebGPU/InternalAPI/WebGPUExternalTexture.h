@@ -30,7 +30,9 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-using CVPixelBufferRef = struct __CVBuffer*;
+#if PLATFORM(COCOA)
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+#endif
 
 namespace WebCore::WebGPU {
 
@@ -47,7 +49,9 @@ public:
     }
     virtual void destroy() = 0;
     virtual void undestroy() = 0;
+#if PLATFORM(COCOA)
     virtual void updateExternalTexture(CVPixelBufferRef) = 0;
+#endif
 
 protected:
     ExternalTexture() = default;

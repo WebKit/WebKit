@@ -127,7 +127,7 @@ private:
     ReplacementFragment* ensureReplacementFragment();
     bool performTrivialReplace(const ReplacementFragment&);
 
-    void updateDirectionForStartOfInsertedContentIfNeeded();
+    void updateDirectionForStartOfInsertedContentIfNeeded(const InsertedNodes&);
 
     RefPtr<DocumentFragment> protectedDocumentFragment() const { return m_documentFragment; }
 

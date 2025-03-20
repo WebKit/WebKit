@@ -44,9 +44,11 @@
 #include "Logging.h"
 #include "MarkupAccumulator.h"
 #include "MathMLElement.h"
+#include "PositionInlines.h"
 #include "Range.h"
 #include "RenderElement.h"
 #include "StaticRange.h"
+#include "TextEvent.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 
@@ -222,23 +224,28 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
     typingCommand->setEndingSelection(currentSelection);
 }
 
-void TypingCommand::insertText(Ref<Document>&& document, const String& text, OptionSet<Option> options, TextCompositionType composition)
+void TypingCommand::insertText(Ref<Document>&& document, const String& text, Event* triggeringEvent, OptionSet<Option> options, TextCompositionType composition)
 {
     if (!text.isEmpty())
         document->editor().updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]));
     
     auto& selection = document->selection().selection();
-    insertText(WTFMove(document), text, selection, options, composition);
+    insertText(WTFMove(document), text, triggeringEvent, selection, options, composition);
 }
 
 // FIXME: We shouldn't need to take selectionForInsertion. It should be identical to FrameSelection's current selection.
-void TypingCommand::insertText(Ref<Document>&& document, const String& text, const VisibleSelection& selectionForInsertion, OptionSet<Option> options, TextCompositionType compositionType)
+void TypingCommand::insertText(Ref<Document>&& document, const String& text, Event* triggeringEvent, const VisibleSelection& selectionForInsertion, OptionSet<Option> options, TextCompositionType compositionType)
 {
     LOG(Editing, "TypingCommand::insertText (text %s)", text.utf8().data());
 
     VisibleSelection currentSelection = document->selection().selection();
 
     String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, compositionType == TextCompositionType::Pending);
+
+    bool eventWasCreatedFromBindings = [&] {
+        RefPtr textEvent = dynamicDowncast<TextEvent>(triggeringEvent);
+        return textEvent && textEvent->createdFromBindings();
+    }();
 
     // Set the starting and ending selection appropriately if we are using a selection
     // that is different from the current selection.  In the future, we should change EditCommand
@@ -253,6 +260,7 @@ void TypingCommand::insertText(Ref<Document>&& document, const String& text, con
         lastTypingCommand->setCompositionType(compositionType);
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options.contains(Option::RetainAutocorrectionIndicator));
         lastTypingCommand->setShouldPreventSpellChecking(options.contains(Option::PreventSpellChecking));
+        lastTypingCommand->setTriggeringEventWasCreatedFromBindings(eventWasCreatedFromBindings);
 #if HAVE(INLINE_PREDICTIONS)
         if (compositionType != TextCompositionType::None)
             lastTypingCommand->insertText(newText, options.contains(Option::SelectInsertedText));
@@ -263,8 +271,9 @@ void TypingCommand::insertText(Ref<Document>&& document, const String& text, con
     }
 
     RefPtr frame = document->frame();
-    auto cmd = TypingCommand::create(WTFMove(document), Type::InsertText, newText, options, compositionType);
-    applyTextInsertionCommand(frame.get(), cmd.get(), selectionForInsertion, currentSelection);
+    auto command = TypingCommand::create(WTFMove(document), Type::InsertText, newText, options, compositionType);
+    command->setTriggeringEventWasCreatedFromBindings(eventWasCreatedFromBindings);
+    applyTextInsertionCommand(frame.get(), command.get(), selectionForInsertion, currentSelection);
 }
 
 void TypingCommand::insertLineBreak(Ref<Document>&& document, OptionSet<Option> options)
@@ -524,7 +533,7 @@ void TypingCommand::typingAddedToOpenCommand(Type commandTypeForAddedTyping)
 #endif
 }
 
-void TypingCommand::insertText(const String &text, bool selectInsertedText)
+void TypingCommand::insertText(const String& text, bool selectInsertedText)
 {
     // FIXME: Need to implement selectInsertedText for cases where more than one insert is involved.
     // This requires support from insertTextRunWithoutNewlines and insertParagraphSeparator for extending

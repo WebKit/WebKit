@@ -111,7 +111,7 @@ size_t JITCode::size()
 {
     // We don't know the size of FTL code, yet. Make a wild guess. This is mostly used for
     // GC load estimates.
-    return 1000;
+    return m_size;
 }
 
 bool JITCode::contains(void*)

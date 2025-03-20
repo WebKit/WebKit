@@ -299,10 +299,10 @@ Region approximateAsRegion(const FloatRoundedRect& roundedRect, unsigned stepLen
 TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
 {
     ts << roundedRect.rect();
-    ts.dumpProperty("top-left", roundedRect.radii().topLeft());
-    ts.dumpProperty("top-right", roundedRect.radii().topRight());
-    ts.dumpProperty("bottom-left", roundedRect.radii().bottomLeft());
-    ts.dumpProperty("bottom-right", roundedRect.radii().bottomRight());
+    ts.dumpProperty("top-left"_s, roundedRect.radii().topLeft());
+    ts.dumpProperty("top-right"_s, roundedRect.radii().topRight());
+    ts.dumpProperty("bottom-left"_s, roundedRect.radii().bottomLeft());
+    ts.dumpProperty("bottom-right"_s, roundedRect.radii().bottomRight());
     return ts;
 }
 

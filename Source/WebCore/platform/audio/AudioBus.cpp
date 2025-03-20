@@ -530,7 +530,7 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
     }
 
     // First, mix to mono (if necessary) then sample-rate convert.
-    const AudioBus* resamplerSourceBus;
+    RefPtr<const AudioBus> resamplerSourceBus;
     RefPtr<AudioBus> mixedMonoBus;
     if (mixToMono) {
         mixedMonoBus = AudioBus::createByMixingToMono(sourceBus);

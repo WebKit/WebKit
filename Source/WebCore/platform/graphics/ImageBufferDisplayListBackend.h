@@ -33,12 +33,14 @@ namespace WebCore {
 class ImageBufferDisplayListBackend : public ImageBufferBackend {
 public:
     WEBCORE_EXPORT static std::unique_ptr<ImageBufferDisplayListBackend> create(const Parameters&, const ImageBufferCreationContext&);
+    WEBCORE_EXPORT static std::unique_ptr<ImageBufferDisplayListBackend> create(const FloatSize&, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, RenderingPurpose, RefPtr<ControlFactory>&&);
+
     static size_t calculateMemoryCost(const Parameters&) { return 0; }
 
     static constexpr RenderingMode renderingMode = RenderingMode::DisplayList;
 
 private:
-    ImageBufferDisplayListBackend(const Parameters&);
+    ImageBufferDisplayListBackend(const Parameters&, RefPtr<ControlFactory>&& = nullptr);
 
     bool canMapBackingStore() const final { return false; }
     unsigned bytesPerRow() const final { return 0; }
@@ -54,6 +56,7 @@ private:
 
     String debugDescription() const final;
 
+    RefPtr<WebCore::ControlFactory> m_controlFactory;
     DisplayList::DrawingContext m_drawingContext;
 };
 

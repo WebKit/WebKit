@@ -518,7 +518,7 @@
         ],
         "truncated": false
     },
-    "subtest_url_format": "test=${TEST}",
+    "subtest_url_format": "&test=${TEST}",
     "subtests": {
         "": [
             "Air",

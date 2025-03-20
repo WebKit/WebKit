@@ -128,7 +128,7 @@ protected:
 
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
-    void handlePopoverTargetAction(const EventTarget*) const;
+    void handlePopoverTargetAction(const EventTarget*);
 
 private:
     void refFormAssociatedElement() const final { ref(); }

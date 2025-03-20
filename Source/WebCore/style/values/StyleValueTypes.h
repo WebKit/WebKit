@@ -715,5 +715,20 @@ template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
     }
 };
 
+// MARK: - Logging
+
+// Specialization for `VariantLike`.
+template<VariantLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType& value)
+{
+    WTF::switchOn(value, [&](const auto& value) { ts << value; });
+    return ts;
+}
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) TextStream& operator<<(TextStream& ts, const StyleType& value)
+{
+    return ts << get<0>(value);
+}
+
 } // namespace Style
 } // namespace WebCore

@@ -52,7 +52,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
-class RemoteSampleBufferDisplayLayerManager final : public IPC::WorkQueueMessageReceiver {
+class RemoteSampleBufferDisplayLayerManager final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayerManager);
 public:
     static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection, SharedPreferencesForWebProcess& sharedPreferencesForWebProcess)
@@ -63,8 +63,8 @@ public:
     }
     ~RemoteSampleBufferDisplayLayerManager();
 
-    void ref() const final { IPC::WorkQueueMessageReceiver::ref(); }
-    void deref() const final { IPC::WorkQueueMessageReceiver::deref(); }
+    void ref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::ref(); }
+    void deref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::deref(); }
 
     void close();
 

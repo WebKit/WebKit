@@ -45,34 +45,8 @@ PASS :storage_texture_types:access="read";format="rgba8uint";comma=""
 PASS :storage_texture_types:access="read";format="rgba8uint";comma=","
 PASS :storage_texture_types:access="read";format="rgba8sint";comma=""
 PASS :storage_texture_types:access="read";format="rgba8sint";comma=","
-FAIL :storage_texture_types:access="read";format="bgra8unorm";comma="" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, read>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
-FAIL :storage_texture_types:access="read";format="bgra8unorm";comma="," assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, read,>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
+PASS :storage_texture_types:access="read";format="bgra8unorm";comma=""
+PASS :storage_texture_types:access="read";format="bgra8unorm";comma=","
 PASS :storage_texture_types:access="read";format="bgra8unorm-srgb";comma=""
 PASS :storage_texture_types:access="read";format="bgra8unorm-srgb";comma=","
 PASS :storage_texture_types:access="read";format="r16uint";comma=""
@@ -261,34 +235,8 @@ PASS :storage_texture_types:access="write";format="rgba8uint";comma=""
 PASS :storage_texture_types:access="write";format="rgba8uint";comma=","
 PASS :storage_texture_types:access="write";format="rgba8sint";comma=""
 PASS :storage_texture_types:access="write";format="rgba8sint";comma=","
-FAIL :storage_texture_types:access="write";format="bgra8unorm";comma="" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, write>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
-FAIL :storage_texture_types:access="write";format="bgra8unorm";comma="," assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, write,>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
+PASS :storage_texture_types:access="write";format="bgra8unorm";comma=""
+PASS :storage_texture_types:access="write";format="bgra8unorm";comma=","
 PASS :storage_texture_types:access="write";format="bgra8unorm-srgb";comma=""
 PASS :storage_texture_types:access="write";format="bgra8unorm-srgb";comma=","
 PASS :storage_texture_types:access="write";format="r16uint";comma=""
@@ -477,34 +425,8 @@ PASS :storage_texture_types:access="read_write";format="rgba8uint";comma=""
 PASS :storage_texture_types:access="read_write";format="rgba8uint";comma=","
 PASS :storage_texture_types:access="read_write";format="rgba8sint";comma=""
 PASS :storage_texture_types:access="read_write";format="rgba8sint";comma=","
-FAIL :storage_texture_types:access="read_write";format="bgra8unorm";comma="" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, read_write>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
-FAIL :storage_texture_types:access="read_write";format="bgra8unorm";comma="," assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    1:51: error: unresolved identifier 'bgra8unorm'
-    1:23: error: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-
-    ---- shader ----
-    @group(0) @binding(0) var tex: texture_storage_2d<bgra8unorm, read_write,>;
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 2 errors generated while compiling the shader:
-    1:50: unresolved identifier 'bgra8unorm'
-    1:22: module-scope 'var' declarations that are not of texture or sampler types must provide an address space
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
- Reached unreachable code
+PASS :storage_texture_types:access="read_write";format="bgra8unorm";comma=""
+PASS :storage_texture_types:access="read_write";format="bgra8unorm";comma=","
 PASS :storage_texture_types:access="read_write";format="bgra8unorm-srgb";comma=""
 PASS :storage_texture_types:access="read_write";format="bgra8unorm-srgb";comma=","
 PASS :storage_texture_types:access="read_write";format="r16uint";comma=""

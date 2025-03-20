@@ -49,6 +49,7 @@ namespace WebCore {
 
 class IntRect;
 class PlaybackSessionModel;
+class VideoPresentationInterfaceIOS;
 class WebPlaybackSessionChangeObserver;
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
@@ -81,6 +82,7 @@ public:
 
     std::optional<MediaPlayerIdentifier> playerIdentifier() const;
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
+    void setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
 
     virtual void startObservingNowPlayingMetadata();
     virtual void stopObservingNowPlayingMetadata();
@@ -107,6 +109,8 @@ protected:
     uint32_t checkedPtrCountWithoutThreadCheck() const final;
     void incrementCheckedPtrCount() const final;
     void decrementCheckedPtrCount() const final;
+
+    WeakPtr<VideoPresentationInterfaceIOS> m_videoPresentationInterface;
 
 private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;

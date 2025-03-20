@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventRegion.h"
 
+#include "EventTrackingRegions.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"
@@ -403,8 +404,7 @@ EventRegion::EventRegion(Region&& region
     , WebCore::Region nonPassiveWheelEventListenerRegion
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    , TouchEventListenerRegion touchEventListenerRegion
-    , TouchEventListenerRegion nonPassiveTouchEventListenerRegion
+    , EventTrackingRegions touchEventListenerRegion
 #endif
 #if ENABLE(EDITABLE_REGION)
     , std::optional<WebCore::Region> editableRegion
@@ -423,7 +423,6 @@ EventRegion::EventRegion(Region&& region
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
     , m_touchEventListenerRegion(WTFMove(touchEventListenerRegion))
-    , m_nonPassiveTouchEventListenerRegion(WTFMove(nonPassiveTouchEventListenerRegion))
 #endif
 #if ENABLE(EDITABLE_REGION)
     , m_editableRegion(WTFMove(editableRegion))
@@ -578,6 +577,92 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
 }
 #endif
 
+#if ENABLE(TOUCH_EVENT_REGIONS)
+OptionSet<EventListenerRegionType> touchEventTypes =
+{
+    EventListenerRegionType::TouchStart, EventListenerRegionType::NonPassiveTouchStart
+    , EventListenerRegionType::TouchEnd, EventListenerRegionType::NonPassiveTouchEnd
+    , EventListenerRegionType::TouchMove, EventListenerRegionType::NonPassiveTouchMove
+    , EventListenerRegionType::TouchCancel, EventListenerRegionType::NonPassiveTouchCancel
+    , EventListenerRegionType::PointerDown, EventListenerRegionType::NonPassivePointerDown
+    , EventListenerRegionType::PointerEnter, EventListenerRegionType::NonPassivePointerEnter
+    , EventListenerRegionType::PointerLeave, EventListenerRegionType::NonPassivePointerLeave
+    , EventListenerRegionType::PointerMove, EventListenerRegionType::NonPassivePointerMove
+    , EventListenerRegionType::PointerOut, EventListenerRegionType::NonPassivePointerOut
+    , EventListenerRegionType::PointerOver, EventListenerRegionType::NonPassivePointerOver
+    , EventListenerRegionType::PointerUp, EventListenerRegionType::NonPassivePointerUp
+    , EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove
+    , EventListenerRegionType::MouseDown, EventListenerRegionType::NonPassiveMouseDown
+    , EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove
+};
+
+OptionSet<EventListenerRegionType> touchEventNonPassiveTypes =
+{
+    EventListenerRegionType::NonPassiveTouchStart
+    , EventListenerRegionType::NonPassiveTouchEnd
+    , EventListenerRegionType::NonPassiveTouchMove
+    , EventListenerRegionType::NonPassiveTouchCancel
+    , EventListenerRegionType::NonPassivePointerDown
+    , EventListenerRegionType::NonPassivePointerEnter
+    , EventListenerRegionType::NonPassivePointerLeave
+    , EventListenerRegionType::NonPassivePointerMove
+    , EventListenerRegionType::NonPassivePointerOut
+    , EventListenerRegionType::NonPassivePointerOver
+    , EventListenerRegionType::NonPassivePointerUp
+    , EventListenerRegionType::NonPassiveMouseDown
+    , EventListenerRegionType::NonPassiveMouseUp
+    , EventListenerRegionType::NonPassiveMouseMove
+};
+
+static bool isNonPassiveTouchEventType(EventListenerRegionType eventListenerRegionType)
+{
+    return touchEventNonPassiveTypes.contains(eventListenerRegionType);
+}
+
+static bool containsTouchEventType(OptionSet<EventListenerRegionType> eventListenerRegionTypes)
+{
+    return eventListenerRegionTypes.containsAny(touchEventTypes);
+}
+
+static EventTrackingRegionsEventType eventTypeForEventListenerType(EventListenerRegionType eventType)
+{
+    switch (eventType) {
+    case EventListenerRegionType::NonPassiveTouchStart:
+        return EventTrackingRegionsEventType::Touchstart;
+    case EventListenerRegionType::NonPassiveTouchEnd:
+        return EventTrackingRegionsEventType::Touchend;
+    case EventListenerRegionType::NonPassiveTouchMove:
+        return EventTrackingRegionsEventType::Touchmove;
+    case EventListenerRegionType::NonPassiveTouchCancel:
+        return EventTrackingRegionsEventType::Touchforcechange;
+    case EventListenerRegionType::NonPassivePointerDown:
+        return EventTrackingRegionsEventType::Pointerdown;
+    case EventListenerRegionType::NonPassivePointerEnter:
+        return EventTrackingRegionsEventType::Pointerenter;
+    case EventListenerRegionType::NonPassivePointerLeave:
+        return EventTrackingRegionsEventType::Pointerleave;
+    case EventListenerRegionType::NonPassivePointerMove:
+        return EventTrackingRegionsEventType::Pointermove;
+    case EventListenerRegionType::NonPassivePointerOut:
+        return EventTrackingRegionsEventType::Pointerout;
+    case EventListenerRegionType::NonPassivePointerOver:
+        return EventTrackingRegionsEventType::Pointerover;
+    case EventListenerRegionType::NonPassivePointerUp:
+        return EventTrackingRegionsEventType::Pointerup;
+    case EventListenerRegionType::NonPassiveMouseDown:
+        return EventTrackingRegionsEventType::Mousedown;
+    case EventListenerRegionType::NonPassiveMouseUp:
+        return EventTrackingRegionsEventType::Mousemove;
+    case EventListenerRegionType::NonPassiveMouseMove:
+        return EventTrackingRegionsEventType::Mouseup;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return EventTrackingRegionsEventType::Touchend;
+}
+#endif
+
 void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListenerRegionType> eventListenerRegionTypes)
 {
 #if ENABLE(WHEEL_EVENT_REGIONS)
@@ -591,37 +676,14 @@ void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListe
     }
 #endif // ENABLE(WHEEL_EVENT_REGIONS)
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::TouchStart)) {
-        m_touchEventListenerRegion.start.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for touchstart event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveTouchStart)) {
-        m_nonPassiveTouchEventListenerRegion.start.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for active touchstart event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::TouchEnd)) {
-        m_touchEventListenerRegion.end.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for touchend event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveTouchEnd)) {
-        m_nonPassiveTouchEventListenerRegion.end.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for active touchend event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::TouchMove)) {
-        m_touchEventListenerRegion.move.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for touchmove event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveTouchMove)) {
-        m_nonPassiveTouchEventListenerRegion.move.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for active touchmove event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::TouchCancel)) {
-        m_touchEventListenerRegion.cancel.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for touchcancel event listener");
-    }
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveTouchCancel)) {
-        m_nonPassiveTouchEventListenerRegion.cancel.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for active touchcancel event listener");
+    if (containsTouchEventType(eventListenerRegionTypes)) {
+        m_touchEventListenerRegion.asynchronousDispatchRegion.unite(region);
+        for (auto eventType : eventListenerRegionTypes) {
+            if (!isNonPassiveTouchEventType(eventType))
+                continue;
+            m_touchEventListenerRegion.uniteSynchronousRegion(eventTypeForEventListenerType(eventType), region);
+        }
+        LOG_WITH_STREAM(EventRegions, stream << " uniting for touch event listener");
     }
 #endif
 #if !ENABLE(TOUCH_EVENT_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS)
@@ -629,6 +691,13 @@ void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListe
     UNUSED_PARAM(eventListenerRegionTypes);
 #endif
 }
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+TrackingType EventRegion::eventTrackingTypeForPoint(EventTrackingRegionsEventType event, const IntPoint& point) const
+{
+    return m_touchEventListenerRegion.trackingTypeForPoint(event, point);
+}
+#endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<EventListenerRegionType> EventRegion::eventListenerRegionTypesForPoint(const IntPoint& point) const
@@ -638,7 +707,6 @@ OptionSet<EventListenerRegionType> EventRegion::eventListenerRegionTypesForPoint
         regionTypes.add(EventListenerRegionType::Wheel);
     if (m_nonPassiveWheelEventListenerRegion.contains(point))
         regionTypes.add(EventListenerRegionType::NonPassiveWheel);
-
     return regionTypes;
 }
 
@@ -649,16 +717,8 @@ const Region& EventRegion::eventListenerRegionForType(EventListenerRegionType ty
         return m_wheelEventListenerRegion;
     case EventListenerRegionType::NonPassiveWheel:
         return m_nonPassiveWheelEventListenerRegion;
-    case EventListenerRegionType::MouseClick:
-    case EventListenerRegionType::TouchStart:
-    case EventListenerRegionType::NonPassiveTouchStart:
-    case EventListenerRegionType::TouchEnd:
-    case EventListenerRegionType::NonPassiveTouchEnd:
-    case EventListenerRegionType::TouchCancel:
-    case EventListenerRegionType::NonPassiveTouchCancel:
-    case EventListenerRegionType::TouchMove:
-    case EventListenerRegionType::NonPassiveTouchMove:
-        break;
+    default:
+            break;
     }
     ASSERT_NOT_REACHED();
     return m_wheelEventListenerRegion;
@@ -695,53 +755,47 @@ void EventRegion::dump(TextStream& ts) const
 #if ENABLE(TOUCH_ACTION_REGIONS)
     if (!m_touchActionRegions.isEmpty()) {
         TextStream::IndentScope indentScope(ts);
-        ts << indent << "(touch-action\n";
+        ts << indent << "(touch-action\n"_s;
         for (unsigned i = 0; i < m_touchActionRegions.size(); ++i) {
             if (m_touchActionRegions[i].isEmpty())
                 continue;
             TextStream::IndentScope indentScope(ts);
-            ts << indent << "(" << toTouchAction(i);
+            ts << indent << '(' << toTouchAction(i);
             ts << indent << m_touchActionRegions[i];
-            ts << indent << ")\n";
+            ts << indent << ")\n"_s;
         }
-        ts << indent << ")\n";
+        ts << indent << ")\n"_s;
     }
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
     if (!m_wheelEventListenerRegion.isEmpty()) {
-        ts << indent << "(wheel event listener region" << m_wheelEventListenerRegion;
+        ts << indent << "(wheel event listener region"_s << m_wheelEventListenerRegion;
         if (!m_nonPassiveWheelEventListenerRegion.isEmpty()) {
             TextStream::IndentScope indentScope(ts);
-            ts << indent << "(non-passive" << m_nonPassiveWheelEventListenerRegion;
-            ts << indent << ")\n";
+            ts << indent << "(non-passive"_s << m_nonPassiveWheelEventListenerRegion;
+            ts << indent << ")\n"_s;
         }
-        ts << indent << ")\n";
+        ts << indent << ")\n"_s;
     }
 #endif
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    if (!m_touchEventListenerRegion.isEmpty()) {
-        ts << indent << "(touch event listener region:" << m_touchEventListenerRegion;
-        if (!m_nonPassiveTouchEventListenerRegion.isEmpty()) {
-            ts << indent << "(non-passive touch event listener region:" << m_nonPassiveTouchEventListenerRegion;
-            ts << indent << ")\n";
-        }
-        ts << indent << ")\n";
-    }
+    if (!m_touchEventListenerRegion.isEmpty())
+        ts << indent << "(touch event listener region:"_s << m_touchEventListenerRegion << '\n';
 #endif
 
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && !m_editableRegion->isEmpty()) {
-        ts << indent << "(editable region" << *m_editableRegion;
-        ts << indent << ")\n";
+        ts << indent << "(editable region"_s << *m_editableRegion;
+        ts << indent << ")\n"_s;
     }
 #endif
     
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (!m_interactionRegions.isEmpty()) {
-        ts.dumpProperty("interaction regions", m_interactionRegions);
-        ts << "\n";
+        ts.dumpProperty("interaction regions"_s, m_interactionRegions);
+        ts << '\n';
     }
 #endif
 }
@@ -750,13 +804,13 @@ void EventRegion::dump(TextStream& ts) const
 TextStream& operator<<(TextStream& ts, const TouchEventListenerRegion& region)
 {
     if (!region.start.isEmpty())
-        ts << " touchStart: " << region.start;
+        ts << " touchStart: "_s << region.start;
     if (!region.end.isEmpty())
-        ts << " touchEnd: " << region.end;
+        ts << " touchEnd: "_s << region.end;
     if (!region.cancel.isEmpty())
-        ts << " touchCancel: " << region.cancel;
+        ts << " touchCancel: "_s << region.cancel;
     if (!region.move.isEmpty())
-        ts << " touchMove: " << region.move;
+        ts << " touchMove: "_s << region.move;
     return ts;
 }
 #endif
@@ -765,17 +819,17 @@ TextStream& operator<<(TextStream& ts, TouchAction touchAction)
 {
     switch (touchAction) {
     case TouchAction::None:
-        return ts << "none";
+        return ts << "none"_s;
     case TouchAction::Manipulation:
-        return ts << "manipulation";
+        return ts << "manipulation"_s;
     case TouchAction::PanX:
-        return ts << "pan-x";
+        return ts << "pan-x"_s;
     case TouchAction::PanY:
-        return ts << "pan-y";
+        return ts << "pan-y"_s;
     case TouchAction::PinchZoom:
-        return ts << "pinch-zoom";
+        return ts << "pinch-zoom"_s;
     case TouchAction::Auto:
-        return ts << "auto";
+        return ts << "auto"_s;
     }
     ASSERT_NOT_REACHED();
     return ts;

@@ -1,5 +1,6 @@
 
 PASS Transfer MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor
+PASS Transfer canvas MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor
 PASS Transferred audio track get muted/unmuted according page state
 PASS Transferred video track get muted/unmuted according page state
 PASS Page state gets updated when transferred tracks get stopped

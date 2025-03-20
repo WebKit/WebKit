@@ -1,0 +1,7 @@
+
+PASS Initial scroll position
+FAIL Scroll to the bottom assert_equals: anchored y expected 1200 but got 100
+FAIL Scroll to 500 assert_equals: anchored y expected 1200 but got 100
+FAIL Scroll to 195 assert_equals: anchored y expected 1200 but got 100
+FAIL Scroll to 194 assert_equals: anchored y expected 194 but got 100
+

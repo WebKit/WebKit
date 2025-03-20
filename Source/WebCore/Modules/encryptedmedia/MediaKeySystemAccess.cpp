@@ -67,23 +67,19 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
     // When this method is invoked, the user agent must run the following steps:
     // 1. Let promise be a new promise.
     // 2. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, promise = WTFMove(promise)]() mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, promise = WTFMove(promise)](auto& access) mutable {
         // 2.1. Let configuration be the value of this object's configuration value.
         // 2.2. Let use distinctive identifier be true if the value of configuration's distinctiveIdentifier member is "required" and false otherwise.
-        bool useDistinctiveIdentifier = m_configuration->distinctiveIdentifier == MediaKeysRequirement::Required;
+        bool useDistinctiveIdentifier = access.m_configuration->distinctiveIdentifier == MediaKeysRequirement::Required;
 
         // 2.3. Let persistent state allowed be true if the value of configuration's persistentState member is "required" and false otherwise.
-        bool persistentStateAllowed = m_configuration->persistentState == MediaKeysRequirement::Required;
+        bool persistentStateAllowed = access.m_configuration->persistentState == MediaKeysRequirement::Required;
 
         // 2.4. Load and initialize the Key System implementation represented by this object's cdm implementation value if necessary.
-        m_implementation->loadAndInitialize();
+        access.m_implementation->loadAndInitialize();
 
         // 2.5. Let instance be a new instance of the Key System implementation represented by this object's cdm implementation value.
-        auto instance = m_implementation->createInstance();
+        auto instance = access.m_implementation->createInstance();
         if (!instance) {
             promise->reject(ExceptionCode::InvalidStateError);
             return;
@@ -95,7 +91,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
         auto allowDistinctiveIdentifiers = useDistinctiveIdentifier ? CDMInstance::AllowDistinctiveIdentifiers::Yes : CDMInstance::AllowDistinctiveIdentifiers::No;
         auto allowPersistentState = persistentStateAllowed ? CDMInstance::AllowPersistentState::Yes : CDMInstance::AllowPersistentState::No;
 
-        instance->initializeWithConfiguration(*m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTFMove(weakDocument), sessionTypes = m_configuration->sessionTypes, implementation = m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
+        instance->initializeWithConfiguration(*access.m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTFMove(weakDocument), sessionTypes = access.m_configuration->sessionTypes, implementation = access.m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
             if (successValue == CDMInstance::Failed || !weakDocument) {
                 promise->reject(ExceptionCode::NotAllowedError);
                 return;

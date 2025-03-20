@@ -174,6 +174,7 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:0 string LSActivePageUserVisibleOriginsKey
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:1 string LSDisplayName
+        plistbuddy Add :com.apple.private.launchservices.allowedtolaunchasproxy bool YES
         plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitNetworkingSandbox bool YES
@@ -199,6 +200,7 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.mutable-state-flags:9 string BlockIconServicesInWebContentSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:10 string BlockFontServiceInWebContentSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:11 string UnifiedPDFEnabled
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:12 string WebProcessDidNotInjectStoreBundle
     plistbuddy Add :com.apple.private.security.enable-state-flags array
     plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:1 string BlockIOKitInWebContentSandbox
@@ -211,6 +213,7 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.enable-state-flags:8 string BlockIconServicesInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:9 string BlockFontServiceInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:10 string UnifiedPDFEnabled
+    plistbuddy Add :com.apple.private.security.enable-state-flags:11 string WebProcessDidNotInjectStoreBundle
 }
 
 function extract_notification_names() {
@@ -297,6 +300,13 @@ function mac_process_webpushd_entitlements()
     plistbuddy Add :com.apple.private.aps-connection-initiate bool YES
     plistbuddy Add :com.apple.private.launchservices.entitledtoaccessothersessions bool YES
     plistbuddy Add :com.apple.usernotification.notificationschedulerproxy bool YES
+
+    if [[ "${WK_RELOCATABLE_WEBPUSHD}" == NO ]]; then
+        plistbuddy Add :com.apple.security.application-groups array
+        plistbuddy Add :com.apple.security.application-groups:0 string group.com.apple.webkit.webpushd
+        plistbuddy Add :com.apple.private.security.restricted-application-groups array
+        plistbuddy Add :com.apple.private.security.restricted-application-groups:0 string group.com.apple.webkit.webpushd
+    fi
 }
 
 # ========================================

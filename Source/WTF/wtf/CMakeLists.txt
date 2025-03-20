@@ -6,6 +6,7 @@ set(WTF_PUBLIC_HEADERS
     AccessibleAddress.h
     AggregateLogger.h
     Algorithms.h
+    AlignedStorage.h
     AnsiColors.h
     ApproximateTime.h
     ArgumentCoder.h
@@ -58,6 +59,7 @@ set(WTF_PUBLIC_HEADERS
     Condition.h
     ContinuousApproximateTime.h
     ContinuousTime.h
+    CoroutineUtilities.h
     CountingLock.h
     CrossThreadCopier.h
     CrossThreadQueue.h
@@ -87,6 +89,7 @@ set(WTF_PUBLIC_HEADERS
     FastFloat.h
     FastMalloc.h
     FastTLS.h
+    FileHandle.h
     FilePrintStream.h
     FileSystem.h
     FixedBitVector.h
@@ -276,6 +279,9 @@ set(WTF_PUBLIC_HEADERS
     Seconds.h
     SegmentedVector.h
     SentinelLinkedList.h
+    SequesteredAllocator.h
+    SequesteredImmortalHeap.h
+    SequesteredMalloc.h
     SetForScope.h
     SharedTask.h
     SignedPtr.h
@@ -523,6 +529,7 @@ set(WTF_SOURCES
     FastBitVector.cpp
     FastFloat.cpp
     FastMalloc.cpp
+    FileHandle.cpp
     FilePrintStream.cpp
     FileSystem.cpp
     FunctionDispatcher.cpp
@@ -572,6 +579,9 @@ set(WTF_SOURCES
     SafeStrerror.cpp
     Seconds.cpp
     SegmentedVector.cpp
+    SequesteredAllocator.cpp
+    SequesteredImmortalHeap.cpp
+    SequesteredMalloc.cpp
     SixCharacterHash.cpp
     SmallSet.cpp
     StackBounds.cpp
@@ -684,6 +694,7 @@ elseif (APPLE)
 
         darwin/OSLogPrintStream.h
         darwin/WeakLinking.h
+        darwin/XPCExtras.h
 
         spi/cf/CFBundleSPI.h
         spi/cf/CFStringSPI.h

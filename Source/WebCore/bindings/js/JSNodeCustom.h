@@ -28,6 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSNode.h"
+#include "NodeInlines.h"
 #include "WebCoreOpaqueRoot.h"
 
 namespace JSC {

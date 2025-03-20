@@ -41,6 +41,8 @@
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLMediaElement.h>
+#import <WebCore/Navigator.h>
+#import <WebCore/NavigatorMediaSession.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
@@ -318,6 +320,9 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
 
     m_page->videoControlsManagerDidChange();
     m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(*m_controlsManagerContextId, mediaElement.isVideo()));
+#if HAVE(PIP_SKIP_PREROLL)
+    setMediaSessionAndRegisterAsObserver();
+#endif
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()
@@ -577,6 +582,61 @@ void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIden
     legibleMediaSelectionIndexChanged(contextId, model->legibleMediaSelectedIndex());
 }
 
+#if HAVE(PIP_SKIP_PREROLL)
+void PlaybackSessionManager::setMediaSessionAndRegisterAsObserver()
+{
+    if (!m_controlsManagerContextId) {
+        m_mediaSession = nullptr;
+        return;
+    }
+
+    RefPtr mediaElement = ensureModel(*m_controlsManagerContextId)->mediaElement();
+    if (!mediaElement) {
+        m_mediaSession = nullptr;
+        return;
+    }
+
+    RefPtr window = mediaElement->document().domWindow();
+    if (!window) {
+        m_mediaSession = nullptr;
+        return;
+    }
+
+    auto mediaSession = NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator().get());
+    if (!mediaSession) {
+        m_mediaSession = nullptr;
+        return;
+    }
+
+    if (mediaSession.get() != m_mediaSession.get()) {
+        m_mediaSession = mediaSession;
+        m_mediaSession->addObserver(*this);
+        actionHandlersChanged();
+    }
+}
+
+void PlaybackSessionManager::actionHandlersChanged()
+{
+    if (!m_mediaSession)
+        return;
+
+    if (!m_controlsManagerContextId)
+        return;
+
+    bool canSkipAd = m_mediaSession->hasActionHandler(MediaSessionAction::Skipad);
+    if (RefPtr page = m_page.get())
+        page->send(Messages::PlaybackSessionManagerProxy::CanSkipAdChanged(*m_controlsManagerContextId, canSkipAd));
+}
+
+void PlaybackSessionManager::skipAd(PlaybackSessionContextIdentifier contextId)
+{
+    if (!m_mediaSession)
+        return;
+
+    m_mediaSession->callActionHandler({ .action = MediaSessionAction::Skipad });
+}
+#endif
+
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
 {
     if (RefPtr element = ensureModel(contextId)->mediaElement())
@@ -592,6 +652,11 @@ void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdenti
 void PlaybackSessionManager::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     ensureModel(contextId)->enterFullscreen();
+}
+
+void PlaybackSessionManager::setPlayerIdentifierForVideoElement(PlaybackSessionContextIdentifier contextId)
+{
+    ensureModel(contextId)->setPlayerIdentifierForVideoElement();
 }
 
 void PlaybackSessionManager::exitFullscreen(PlaybackSessionContextIdentifier contextId)

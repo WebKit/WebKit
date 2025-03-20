@@ -56,10 +56,10 @@ public:
     explicit ElementAncestorRange(ElementType* first);
     ElementAncestorIterator<ElementType> begin() const;
     static constexpr std::nullptr_t end() { return nullptr; }
-    ElementType* first() const { return m_first; }
+    ElementType* first() const { return m_first.get(); }
 
 private:
-    ElementType* const m_first;
+    RefPtr<ElementType> m_first;
 };
 
 // ElementAncestorIterator

@@ -832,7 +832,7 @@ TEST(WKHTTPCookieStore, WebSocketCookies)
     using namespace TestWebKitAPI;
     bool receivedThirdRequest { false };
     uint16_t serverPort { 0 };
-    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
@@ -872,7 +872,7 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
     using namespace TestWebKitAPI;
     bool receivedWebSocket { false };
     uint16_t serverPort { 0 };
-    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
@@ -929,7 +929,7 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
     using namespace TestWebKitAPI;
     bool receivedWebSocket { false };
     uint16_t serverPort { 0 };
-    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
@@ -978,7 +978,7 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
     using namespace TestWebKitAPI;
     bool receivedWebSocket { false };
     uint16_t serverPort { 0 };
-    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
@@ -1020,7 +1020,7 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
     using namespace TestWebKitAPI;
     bool receivedWebSocket { false };
     uint16_t serverPort { 0 };
-    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);

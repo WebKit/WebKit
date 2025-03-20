@@ -56,7 +56,7 @@ public:
     void sendMessageToFrontend(const String&) override;
 
     // Inspector::BidiBrowsingContextDispatcherHandler methods.
-    void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, Ref<NavigateCallback>&&) override;
+    void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, Inspector::CommandCallbackOf<String, String>&&) override;
 
     // Inspector::BidiBrowserBackendDispatcherHandler methods.
     Inspector::Protocol::ErrorStringOr<void> close() override;

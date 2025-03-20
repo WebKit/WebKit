@@ -38,6 +38,7 @@ namespace WTF {
 
 template<typename T, typename Malloc = FastMalloc> class MallocSpan {
     WTF_MAKE_NONCOPYABLE(MallocSpan);
+    WTF_MAKE_CONFIGURABLE_ALLOCATED(Malloc);
 public:
     MallocSpan() = default;
 

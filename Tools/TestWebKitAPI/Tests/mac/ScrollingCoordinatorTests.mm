@@ -34,6 +34,12 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+@interface WKWebView (Internal)
+
+- (void)_setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;
+
+@end
+
 namespace TestWebKitAPI {
 
 static float waitForScrollEventAndReturnScrollY(WKWebView* webView, const std::function<void(WKWebView*)>& scrollTrigger)
@@ -115,6 +121,36 @@ TEST(ScrollingCoordinatorTests, ScrollingTreeAfterDetachReattach)
         [webView wheelEventAtPoint:eventLocationInWindow wheelDelta:CGSizeMake(0, -101)];
     });
     EXPECT_EQ(scrollY, 301);
+}
+
+TEST(ScrollingCoordinatorTests, SetContentOffset)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView _setContentOffset:CGPointMake(0, 200) animated:NO];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr scrollY = [webView stringByEvaluatingJavaScript:@"window.scrollY"];
+    EXPECT_WK_STREQ("200", scrollY.get());
+}
+
+TEST(ScrollingCoordinatorTests, SetContentOffsetHorizontalRTL)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"rtl-sideways-scrolling"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView _setContentOffset:CGPointMake(0, 0) animated:NO];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr scrollX = [webView stringByEvaluatingJavaScript:@"window.scrollX"];
+    EXPECT_WK_STREQ("-1508", scrollX.get());
 }
 
 } // namespace TestWebKitAPI

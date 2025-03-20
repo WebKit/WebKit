@@ -1,0 +1,1298 @@
+
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="bool";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-int";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="abstract-float";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="f32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="f16";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="i32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="u32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec2%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec3%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%26%26";lhs="vec4%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="bool";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cbool%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-int";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="abstract-float";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="f32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="f16";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-int%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cabstract-float%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cf16%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="i32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Ci32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="u32";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec2%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec3%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="bool"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cbool%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="abstract-int"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="abstract-float"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="f32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="f16"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cabstract-int%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cabstract-float%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cf32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cf16%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="i32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Ci32%3E"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="u32"
+PASS :scalar_vector:op="%7C%7C";lhs="vec4%3Cu32%3E";rhs="vec2%3Cu32%3E"
+PASS :invalid_types:op="%26%26";type="mat2x2f";control=true
+PASS :invalid_types:op="%26%26";type="mat2x2f";control=false
+PASS :invalid_types:op="%26%26";type="array";control=true
+PASS :invalid_types:op="%26%26";type="array";control=false
+PASS :invalid_types:op="%26%26";type="ptr";control=true
+PASS :invalid_types:op="%26%26";type="ptr";control=false
+PASS :invalid_types:op="%26%26";type="atomic";control=true
+PASS :invalid_types:op="%26%26";type="atomic";control=false
+PASS :invalid_types:op="%26%26";type="texture";control=true
+PASS :invalid_types:op="%26%26";type="texture";control=false
+PASS :invalid_types:op="%26%26";type="sampler";control=true
+PASS :invalid_types:op="%26%26";type="sampler";control=false
+PASS :invalid_types:op="%26%26";type="struct";control=true
+PASS :invalid_types:op="%26%26";type="struct";control=false
+PASS :invalid_types:op="%7C%7C";type="mat2x2f";control=true
+PASS :invalid_types:op="%7C%7C";type="mat2x2f";control=false
+PASS :invalid_types:op="%7C%7C";type="array";control=true
+PASS :invalid_types:op="%7C%7C";type="array";control=false
+PASS :invalid_types:op="%7C%7C";type="ptr";control=true
+PASS :invalid_types:op="%7C%7C";type="ptr";control=false
+PASS :invalid_types:op="%7C%7C";type="atomic";control=true
+PASS :invalid_types:op="%7C%7C";type="atomic";control=false
+PASS :invalid_types:op="%7C%7C";type="texture";control=true
+PASS :invalid_types:op="%7C%7C";type="texture";control=false
+PASS :invalid_types:op="%7C%7C";type="sampler";control=true
+PASS :invalid_types:op="%7C%7C";type="sampler";control=false
+PASS :invalid_types:op="%7C%7C";type="struct";control=true
+PASS :invalid_types:op="%7C%7C";type="struct";control=false
+FAIL :invalid_rhs_const:op="%26%26";rhs="overflow";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:22: error: value 2147483648 cannot be represented as 'i32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = false && i32(1<<thirty_one) < 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:21: value 2147483648 cannot be represented as 'i32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%26%26";rhs="overflow";short_circuit=false
+FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_i32";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:25: error: invalid division by zero
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = false && (1 / zero_i32) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:24: invalid division by zero
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%26%26";rhs="div_zero_i32";short_circuit=false
+FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_f32";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:31: error: value Infinity cannot be represented as 'f32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = false && (one_f32 / 0) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:30: value Infinity cannot be represented as 'f32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%26%26";rhs="div_zero_f32";short_circuit=false
+FAIL :invalid_rhs_const:op="%26%26";rhs="builtin";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:22: error: value NaN cannot be represented as 'f32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = false && sqrt(-one_f32) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:21: value NaN cannot be represented as 'f32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%26%26";rhs="builtin";short_circuit=false
+FAIL :invalid_rhs_const:op="%7C%7C";rhs="overflow";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:21: error: value 2147483648 cannot be represented as 'i32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = true || i32(1<<thirty_one) < 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:20: value 2147483648 cannot be represented as 'i32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%7C%7C";rhs="overflow";short_circuit=false
+FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_i32";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:24: error: invalid division by zero
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = true || (1 / zero_i32) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:23: invalid division by zero
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%7C%7C";rhs="div_zero_i32";short_circuit=false
+FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_f32";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:30: error: value Infinity cannot be represented as 'f32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = true || (one_f32 / 0) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:29: value Infinity cannot be represented as 'f32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%7C%7C";rhs="div_zero_f32";short_circuit=false
+FAIL :invalid_rhs_const:op="%7C%7C";rhs="builtin";short_circuit=true assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    8:21: error: value NaN cannot be represented as 'f32'
+
+    ---- shader ----
+
+    const thirty_one = 31u;
+    const zero_i32 = 0i;
+    const one_f32 = 1.0f;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      let foo = true || sqrt(-one_f32) == 0;
+    }
+
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    8:20: value NaN cannot be represented as 'f32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_const:op="%7C%7C";rhs="builtin";short_circuit=false
+PASS :invalid_rhs_fn_override:op="%26%26";rhs="overflow";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%26%26";rhs="overflow";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_i32";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_i32";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_f32";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_f32";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%26%26";rhs="builtin";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%26%26";rhs="builtin";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="overflow";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="overflow";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="builtin";short_circuit=true
+FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="builtin";short_circuit=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :invalid_rhs_override:op="%26%26";rhs="overflow";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%26%26";rhs="overflow";short_circuit=false
+FAIL :invalid_rhs_override:op="%26%26";rhs="div_zero_i32";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%26%26";rhs="div_zero_i32";short_circuit=false
+FAIL :invalid_rhs_override:op="%26%26";rhs="div_zero_f32";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%26%26";rhs="div_zero_f32";short_circuit=false
+FAIL :invalid_rhs_override:op="%26%26";rhs="builtin";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%26%26";rhs="builtin";short_circuit=false
+FAIL :invalid_rhs_override:op="%7C%7C";rhs="overflow";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%7C%7C";rhs="overflow";short_circuit=false
+FAIL :invalid_rhs_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=false
+FAIL :invalid_rhs_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=false
+FAIL :invalid_rhs_override:op="%7C%7C";rhs="builtin";short_circuit=true assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :invalid_rhs_override:op="%7C%7C";rhs="builtin";short_circuit=false
+PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=false;cond_b_val=false
+PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=false;cond_b_val=true
+PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=true;cond_b_val=false
+FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=true;cond_b_val=true assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=false;cond_b_val=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=false;cond_b_val=true assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=true;cond_b_val=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=true;cond_b_val=true
+PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=false;cond_b_val=false
+FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=false;cond_b_val=true assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=true;cond_b_val=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=true;cond_b_val=true assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=false;cond_b_val=false assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=false;cond_b_val=true
+PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=true;cond_b_val=false
+PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=true;cond_b_val=true
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="negative";control=true
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="negative";control=false
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="sqrt_neg1";control=true
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="sqrt_neg1";control=false
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="nested";control=true
+PASS :invalid_array_count_on_rhs:op="%26%26";rhs="nested";control=false
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="negative";control=true
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="negative";control=false
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="sqrt_neg1";control=true
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="sqrt_neg1";control=false
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="nested";control=true
+PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="nested";control=false
+PASS :array_override:op="%26%26";a_val=0;b_val=0
+PASS :array_override:op="%26%26";a_val=0;b_val=1
+PASS :array_override:op="%26%26";a_val=1;b_val=0
+FAIL :array_override:op="%26%26";a_val=1;b_val=1 assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+PASS :array_override:op="%7C%7C";a_val=0;b_val=0
+FAIL :array_override:op="%7C%7C";a_val=0;b_val=1 assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :array_override:op="%7C%7C";a_val=1;b_val=0 assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :array_override:op="%7C%7C";a_val=1;b_val=1 assert_unreached:
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+

@@ -1,0 +1,9 @@
+Verifies that history.back() works when a same-site iframe is navigated cross-site.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

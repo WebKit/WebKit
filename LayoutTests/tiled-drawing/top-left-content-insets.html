@@ -30,12 +30,14 @@ body::-webkit-scrollbar {
     display: none;
 }
 </style>
+<script src="../resources/ui-helper.js"></script>
 <script>
 window.internals?.setUsesOverlayScrollbars(true);
 
 addEventListener("load", async () => {
     window.testRunner?.waitUntilDone();
     await window.testRunner?.setObscuredContentInsets(50, 0, 0, 150);
+    await UIHelper.ensurePresentationUpdate();
     window.testRunner?.notifyDone();
 });
 </script>

@@ -26,14 +26,33 @@
 #pragma once
 
 #include "MessageReceiver.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
 
-class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver> {
+class Connection;
+
+class WorkQueueMessageReceiverBase : public AbstractRefCounted {
+protected:
+    WorkQueueMessageReceiverBase() = default;
 public:
-    void ref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    virtual ~WorkQueueMessageReceiverBase() { }
+private:
+    friend class Connection;
+    virtual void didReceiveMessage(Connection&, Decoder&) { ASSERT_NOT_REACHED(); }
+    virtual void didReceiveMessageWithReplyHandler(Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) { ASSERT_NOT_REACHED(); }
+    virtual bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
+    {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+};
+
+template<WTF::DestructionThread destructionThread>
+class WorkQueueMessageReceiver : public WorkQueueMessageReceiverBase, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver<destructionThread>, destructionThread> {
+public:
+    void ref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver<destructionThread>, destructionThread>::ref(); }
+    void deref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver<destructionThread>, destructionThread>::deref(); }
 };
 
 }

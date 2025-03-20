@@ -1918,8 +1918,7 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
     [manager run];
 }
 
-// rdar://144626088 ([ macOS ] 3x TestWebKitAPI.WKWebExtensionAPIMenus.* (api-tests) are flaky timeouts (287490))
-TEST(WKWebExtensionAPIMenus, DISABLED_MacImageContextMenuItems)
+TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.menus.create({",
@@ -1935,7 +1934,7 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacImageContextMenuItems)
         @"  browser.test.assertEq(info.menuItemId, 'image-menu-item')",
         @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'image')",
-        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.png')",
+        @"  browser.test.assertTrue(info.srcUrl.endsWith('/test.png'))",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
         @"  browser.test.assertEq(info.frameId, 0)",
@@ -1976,7 +1975,8 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacImageContextMenuItems)
     [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='http://example.com/example.png' style='width: 400px; height: 400px'>"_s } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='test.png' style='width: 400px; height: 400px'>"_s } },
+        { "/test.png"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]] },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -2003,8 +2003,7 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacImageContextMenuItems)
     [manager run];
 }
 
-// rdar://144626088 ([ macOS ] 3x TestWebKitAPI.WKWebExtensionAPIMenus.* (api-tests) are flaky timeouts (287490))
-TEST(WKWebExtensionAPIMenus, DISABLED_MacVideoContextMenuItems)
+TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.menus.create({",
@@ -2020,7 +2019,7 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacVideoContextMenuItems)
         @"  browser.test.assertEq(info.menuItemId, 'video-menu-item')",
         @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'video')",
-        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp4')",
+        @"  browser.test.assertTrue(info.srcUrl.endsWith('/test.mp4'))",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
         @"  browser.test.assertEq(info.frameId, 0)",
@@ -2061,7 +2060,8 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacVideoContextMenuItems)
     [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<video src='http://example.com/example.mp4' style='width: 400px; height: 400px' controls></video>"_s } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<video src='test.mp4' style='width: 400px; height: 400px' controls></video>"_s } },
+        { "/test.mp4"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]] },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -2088,8 +2088,7 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacVideoContextMenuItems)
     [manager run];
 }
 
-// rdar://144626088 ([ macOS ] 3x TestWebKitAPI.WKWebExtensionAPIMenus.* (api-tests) are flaky timeouts (287490))
-TEST(WKWebExtensionAPIMenus, DISABLED_MacAudioContextMenuItems)
+TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.menus.create({",
@@ -2105,7 +2104,7 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacAudioContextMenuItems)
         @"  browser.test.assertEq(info.menuItemId, 'audio-menu-item')",
         @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'audio')",
-        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp3')",
+        @"  browser.test.assertTrue(info.srcUrl.endsWith('/test.m4a'))",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
         @"  browser.test.assertEq(info.frameId, 0)",
@@ -2146,7 +2145,8 @@ TEST(WKWebExtensionAPIMenus, DISABLED_MacAudioContextMenuItems)
     [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<audio src='http://example.com/example.mp3' style='width: 400px; height: 400px' controls></audio>"_s } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<audio src='test.m4a' style='width: 400px; height: 400px' controls></audio>"_s } },
+        { "/test.m4a"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"silence-long" withExtension:@"m4a"]] },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();

@@ -253,9 +253,15 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     // FIXME: <https://webkit.org/b/87192> Web Inspector: Expose function scope / closure data
 
-    // FIXME: This should provide better details for JSBoundFunctions.
+    auto* targetFunction = function;
+    while (auto* boundFunction = jsDynamicCast<JSBoundFunction*>(targetFunction)) {
+        auto* nextTargetFunction = jsDynamicCast<JSFunction*>(boundFunction->targetFunction());
+        if (UNLIKELY(!nextTargetFunction))
+            break;
+        targetFunction = nextTargetFunction;
+    }
 
-    const SourceCode* sourceCode = function->sourceCode();
+    const SourceCode* sourceCode = targetFunction->sourceCode();
     if (!sourceCode)
         return jsUndefined();
 

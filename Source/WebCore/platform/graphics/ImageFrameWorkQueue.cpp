@@ -154,7 +154,7 @@ void ImageFrameWorkQueue::dump(TextStream& ts) const
     if (isIdle())
         return;
 
-    ts.dumpProperty("pending-for-decoding", m_decodeQueue.size());
+    ts.dumpProperty("pending-for-decoding"_s, m_decodeQueue.size());
 }
 
 } // namespace WebCore

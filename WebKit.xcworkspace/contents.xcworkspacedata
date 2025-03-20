@@ -41,6 +41,9 @@
       location = "group:Source/ThirdParty/gtest/xcode/gtest.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Source/ThirdParty/gmock/gmock.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Tools/lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj">
    </FileRef>
    <FileRef

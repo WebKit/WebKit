@@ -47,7 +47,7 @@ WK_LIBRARY_INSTALL_PATH = $(WK_LIBRARY_INSTALL_PATH_OVERRIDE_$(WK_USE_OVERRIDE_F
 WK_LIBRARY_INSTALL_PATH_OVERRIDE_NO = /usr/local/lib;
 WK_LIBRARY_INSTALL_PATH_OVERRIDE_YES = /usr/local/lib/safari-sdk;
 
-// INSTALL_PATH_PREFIX adds the system content path as a prefix to products' install paths.
+// INSTALL_PATH_PREFIX adds the OS cryptex path as a prefix to products' install paths.
 // Leave it empty when USE_STAGING_INSTALL_PATH is set, as the effective prefix will
 // be baked into WK_OVERRIDE_FRAMEWORKS_DIR via WK_INSTALL_PATH_PREFIX instead.
 INSTALL_PATH_PREFIX = $(INSTALL_PATH_PREFIX_USE_SYSTEM_CONTENT_PATH_$(USE_SYSTEM_CONTENT_PATH)_$(WK_NOT_$(USE_STAGING_INSTALL_PATH)));

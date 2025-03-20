@@ -49,12 +49,15 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, target, extraDetails} = json;
+        // FIXME: <https://webkit.org/b/287738> support exporting and importing data from worker targets
+        let target = WI.assumingMainTarget();
+
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails} = json;
 
         if (typeof details === "object" && details.__type === "GarbageCollection")
             details = WI.GarbageCollection.fromJSON(details);
 
-        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, {stackTrace, sourceCodeLocation, details, profilePayload, target, extraDetails});
+        return new WI.ScriptTimelineRecord(target, eventType, startTime, endTime, {stackTrace, sourceCodeLocation, details, profilePayload, target, extraDetails});
     }
 
     toJSON()
@@ -62,7 +65,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         // FIXME: stackTrace
         // FIXME: sourceCodeLocation
         // FIXME: profilePayload
-        // FIXME: target
+        // FIXME: <https://webkit.org/b/287738> support exporting and importing data from worker targets
 
         return {
             type: this.type,

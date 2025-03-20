@@ -53,7 +53,6 @@ public:
     virtual ~WebRTCProvider() = default;
 
     static bool webRTCAvailable();
-    static void setH264HardwareEncoderAllowed(bool);
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 

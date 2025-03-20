@@ -208,6 +208,18 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     return result;
 }
 
+bool SVGImage::hasHDRContent() const
+{
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (!m_page)
+        return false;
+
+    if (RefPtr localTopDocument = m_page->localTopDocument())
+        return localTopDocument->hasHDRContent();
+#endif
+    return false;
+}
+
 RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpace)
 {
     return nativeImage(size(), colorSpace);
@@ -481,6 +493,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
             if (RefPtr parentSettings = observer->settings()) {
                 m_page->settings().setLayerBasedSVGEngineEnabled(parentSettings->layerBasedSVGEngineEnabled());
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
+                m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
             }
         }
 

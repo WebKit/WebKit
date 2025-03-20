@@ -29,6 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKBackForwardListItem;
 @class WKDownload;
 @class WKNavigation;
 @class WKNavigationAction;
@@ -187,6 +188,22 @@ WK_SWIFT_UI_ACTOR
  @discussion The download needs its delegate to be set to receive updates about its progress.
 */
 - (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(11.3), ios(14.5));
+
+/*
+ @abstract Called when the webpage initiates a back/forward navigation via JavaScript
+ @param webView The web view invoking the delegate method.
+ @param backForwardListItem The back/forward list item that will be navigated to
+ @param willUseInstantBack Whether or not the navigation will resume a previously suspended webpage that is eligible for Instant Back
+ @param completionHandler The completion handler you must invoke to allow or disallow the navigation
+ @discussion Back/forward navigations - including those triggered by webpage JavaScript - will consult the WebKit client via this delegate.
+ If the `willUseInstantBack` argument is `YES`, then the navigation is to a webpage that is suspended in memory and might be resumed without
+ the normal webpage loading process.
+ Even if the `willUseInstantBack` argument is `YES`, it is possible that the suspended webpage will not be used and the normal loading
+ process will take place.
+ In the case where the normal webpage loading process takes place, additional navigation delegate calls will continue to happen for this
+ navigation starting with `decidePolicyForNavigationAction`
+*/
+- (void)webView:(WKWebView *)webView shouldGoToBackForwardListItem:(WKBackForwardListItem *)backForwardListItem willUseInstantBack:(BOOL)willUseInstantBack completionHandler:(void (^)(BOOL shouldGoToItem))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

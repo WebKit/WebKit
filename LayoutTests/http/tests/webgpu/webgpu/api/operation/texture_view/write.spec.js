@@ -18,15 +18,15 @@ TODO: Write helper for this if not already available (see resource_init, buffer_
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../common/util/util.js';
 import {
-  kRegularTextureFormats,
-  kTextureFormatInfo } from
+  getTextureFormatType,
+  kRegularTextureFormats } from
 
 '../../../format_info.js';
-import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { kFullscreenQuadVertexShaderCode } from '../../../util/shader.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
-export const g = makeTestGroup(TextureTestMixin(GPUTest));
+export const g = makeTestGroup(TextureTestMixin(AllFeaturesMaxLimitsGPUTest));
 
 const kTextureViewWriteMethods = [
 'storage-write-fragment',
@@ -34,6 +34,9 @@ const kTextureViewWriteMethods = [
 'render-pass-store',
 'render-pass-resolve'];
 
+
+
+const kTextureViewUsageMethods = ['inherit', 'minimal'];
 
 
 // Src color values to read from a shader array.
@@ -72,8 +75,8 @@ view,
 format,
 sampleCount)
 {
-  const info = kTextureFormatInfo[format];
-  const isFloatType = info.color.type === 'float' || info.color.type === 'unfilterable-float';
+  const type = getTextureFormatType(format);
+  const isFloatType = type === 'float' || type === 'unfilterable-float';
   const kColors = isFloatType ? kColorsFloat : kColorsInt;
   const expectedTexelView = TexelView.fromTexelsAsColors(
     format,
@@ -83,7 +86,7 @@ sampleCount)
     },
     { clampToFormatRange: true }
   );
-  const vecType = isFloatType ? 'vec4f' : info.color.type === 'sint' ? 'vec4i' : 'vec4u';
+  const vecType = isFloatType ? 'vec4f' : type === 'sint' ? 'vec4i' : 'vec4u';
   const kColorArrayShaderString = `array<${vecType}, ${kColors.length}>(
       ${kColors.map((t) => `${vecType}(${t.R}, ${t.G}, ${t.B}, ${t.A}) `).join(',')}
     )`;
@@ -136,13 +139,11 @@ sampleCount)
         // The size of which equals that of format texture we are testing,
         // so that we have the same number of fragments and texels.
         const kPlaceholderTextureFormat = 'rgba8unorm';
-        const placeholderTexture = t.trackForCleanup(
-          t.device.createTexture({
-            format: kPlaceholderTextureFormat,
-            size: [kTextureSize, kTextureSize],
-            usage: GPUTextureUsage.RENDER_ATTACHMENT
-          })
-        );
+        const placeholderTexture = t.createTextureTracked({
+          format: kPlaceholderTextureFormat,
+          size: [kTextureSize, kTextureSize],
+          usage: GPUTextureUsage.RENDER_ATTACHMENT
+        });
 
         const pipeline = t.device.createRenderPipeline({
           layout: 'auto',
@@ -210,14 +211,12 @@ sampleCount)
         method === 'render-pass-store' ?
         view :
         t.
-        trackForCleanup(
-          t.device.createTexture({
-            format,
-            size: [kTextureSize, kTextureSize],
-            usage: GPUTextureUsage.RENDER_ATTACHMENT,
-            sampleCount: 4
-          })
-        ).
+        createTextureTracked({
+          format,
+          size: [kTextureSize, kTextureSize],
+          usage: GPUTextureUsage.RENDER_ATTACHMENT,
+          sampleCount: 4
+        }).
         createView();
         const resolveView = method === 'render-pass-store' ? undefined : view;
         const multisampleCount = method === 'render-pass-store' ? sampleCount : 4;
@@ -275,6 +274,22 @@ sampleCount)
   return expectedTexelView;
 }
 
+function getTextureViewUsage(
+viewUsageMethod,
+minimalUsageForTest)
+{
+  switch (viewUsageMethod) {
+    case 'inherit':
+      return 0;
+
+    case 'minimal':
+      return minimalUsageForTest;
+
+    default:
+      unreachable();
+  }
+}
+
 g.test('format').
 desc(
   `Views of every allowed format.
@@ -284,6 +299,7 @@ Read values from color array in the shader, and write it to the texture view via
 - x= every texture format
 - x= sampleCount {1, 4} if valid
 - x= every possible view write method (see above)
+- x= inherited or minimal texture view usage
 
 TODO: Test sampleCount > 1 for 'render-pass-store' after extending copySinglePixelTextureToBufferUsingComputePass
       to read multiple pixels from multisampled textures. [1]
@@ -296,12 +312,6 @@ u //
 combine('format', kRegularTextureFormats).
 combine('sampleCount', [1, 4]).
 filter(({ format, method, sampleCount }) => {
-  const info = kTextureFormatInfo[format];
-
-  if (sampleCount > 1 && !info.multisample) {
-    return false;
-  }
-
   // [2]
   if (format === 'rgb10a2uint') {
     return false;
@@ -310,50 +320,65 @@ filter(({ format, method, sampleCount }) => {
   switch (method) {
     case 'storage-write-compute':
     case 'storage-write-fragment':
-      return info.color?.storage && sampleCount === 1;
+      return sampleCount === 1;
+    case 'render-pass-resolve':
+      return sampleCount === 1;
     case 'render-pass-store':
       // [1]
       if (sampleCount > 1) {
         return false;
       }
-      return !!info.colorRender;
-    case 'render-pass-resolve':
-      return !!info.colorRender?.resolve && sampleCount === 1;
+      break;
   }
+
   return true;
-})
+}).
+combine('viewUsageMethod', kTextureViewUsageMethods)
 ).
-beforeAllSubcases((t) => {
-  const { format, method } = t.params;
+fn((t) => {
+  const { format, method, sampleCount, viewUsageMethod } = t.params;
   t.skipIfTextureFormatNotSupported(format);
+  if (sampleCount > 1) {
+    t.skipIfTextureFormatNotMultisampled(format);
+  }
 
   switch (method) {
     case 'storage-write-compute':
     case 'storage-write-fragment':
-      // Still need to filter again for compat mode.
       t.skipIfTextureFormatNotUsableAsStorageTexture(format);
       break;
+    case 'render-pass-store':
+      t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
+      break;
+    case 'render-pass-resolve':
+      // Requires multisample in `writeTextureAndGetExpectedTexelView`
+      t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
+      t.skipIfTextureFormatNotResolvable(format);
+      break;
   }
-}).
-fn((t) => {
-  const { format, method, sampleCount } = t.params;
 
-  const usage =
-  GPUTextureUsage.COPY_SRC | (
-  method.includes('storage') ?
-  GPUTextureUsage.STORAGE_BINDING :
-  GPUTextureUsage.RENDER_ATTACHMENT);
-
-  const texture = t.trackForCleanup(
-    t.device.createTexture({
-      format,
-      usage,
-      size: [kTextureSize, kTextureSize],
-      sampleCount
-    })
+  t.skipIf(
+    t.isCompatibility &&
+    method === 'storage-write-fragment' &&
+    !(t.device.limits.maxStorageBuffersInFragmentStage > 0),
+    `maxStorageBuffersInFragmentStage(${t.device.limits.maxStorageBuffersInFragmentStage}) < 1`
   );
 
-  const view = texture.createView();
+  const textureUsageForMethod = method.includes('storage') ?
+  GPUTextureUsage.STORAGE_BINDING :
+  GPUTextureUsage.RENDER_ATTACHMENT;
+  const usage = GPUTextureUsage.COPY_SRC | textureUsageForMethod;
+
+  const texture = t.createTextureTracked({
+    format,
+    usage,
+    size: [kTextureSize, kTextureSize],
+    sampleCount
+  });
+
+  const view = texture.createView({
+    usage: getTextureViewUsage(viewUsageMethod, textureUsageForMethod)
+  });
   const expectedTexelView = writeTextureAndGetExpectedTexelView(
     t,
     method,

@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=CaretPositionFromPointEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window),
     TaggedWrapper,

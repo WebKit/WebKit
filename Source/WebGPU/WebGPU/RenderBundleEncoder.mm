@@ -217,8 +217,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(std::span { descriptor.colorFormats, descriptor.colorFormatCount }) : Vector<WGPUTextureFormat>())
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 {
-    if (m_descriptorColorFormats.size())
-        m_descriptor.colorFormats = &m_descriptorColorFormats[0];
+    m_descriptor.colorFormats = m_descriptorColorFormats.size() ? &m_descriptorColorFormats[0] : nullptr;
     m_icbArray = [NSMutableArray array];
     m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();
 #if ENABLE(WEBGPU_ALWAYS_USE_ICB_REPLAY)
@@ -265,7 +264,7 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         if (resource.renderStages && mtlResource)
             [renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:resource.usage stages:resource.renderStages];
         ASSERT(resource.entryUsage.hasExactlyOneBitSet());
-        renderPassEncoder->addResourceToActiveResources(resource.resource, mtlResource, resource.entryUsage);
+        renderPassEncoder->addResourceToActiveResources(resource.resource, resource.entryUsage);
         renderPassEncoder->setCommandEncoder(resource.resource);
         return renderPassEncoder->renderCommandEncoder();
     }
@@ -707,7 +706,7 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
             .firstIndex = firstIndex,
             .baseVertex = baseVertex,
             .firstInstance = firstInstance,
-            .primitiveType = m_primitiveType,
+            .primitiveType = static_cast<decltype(IndexData::primitiveType)>(m_primitiveType),
         }
     });
 }

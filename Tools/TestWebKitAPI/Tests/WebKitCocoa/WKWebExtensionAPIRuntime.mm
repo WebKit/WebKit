@@ -923,8 +923,8 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScript)
     [manager run];
 }
 
-// FIXME when rdar://135213974 is resolved.
-#if PLATFORM(IOS)
+// rdar://145509206 https://bugs.webkit.org/show_bug.cgi?id=288410
+#if PLATFORM(IOS) && !defined(NDEBUG)
 TEST(WKWebExtensionAPIRuntime, DISABLED_ConnectFromContentScriptWithImmediateMessage)
 #else
 TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithImmediateMessage)
@@ -940,21 +940,21 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithImmediateMessage)
         @"  browser.test.assertEq(port.error, null, 'Port error should be null')",
 
         @"  port.postMessage('Hello from Background')",
-        @"})"
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
     ]);
 
     auto *contentScript = Util::constructScript(@[
-        @"setTimeout(() => {",
-        @"  const port = browser.runtime.connect({ name: 'testPort' })",
-        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
-        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
+        @"const port = browser.runtime.connect({ name: 'testPort' })",
+        @"browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
 
-        @"  port.onMessage.addListener((message) => {",
-        @"    browser.test.assertEq(message, 'Hello from Background', 'Should receive the correct message content from the background script')",
+        @"port.onMessage.addListener((message) => {",
+        @"  browser.test.assertEq(message, 'Hello from Background', 'Should receive the correct message content from the background script')",
 
-        @"    browser.test.notifyPass()",
-        @"  })",
-        @"}, 1000)"
+        @"  browser.test.notifyPass()",
+        @"})",
     ]);
 
     auto *resources = @{
@@ -966,6 +966,9 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithImmediateMessage)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
@@ -1892,6 +1895,75 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithWrongIdentifier)
     [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromOptionsPage)
+{
+    auto *baseURLString = @"test-extension://76C788B8-3374-400D-8259-40E5B9DF79D3/";
+
+    auto *optionsScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@options.html'", baseURLString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [baseURLString substringToIndex:baseURLString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the options page')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
+
+        @"  sendResponse({ content: 'Received' })",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')"
+    ]);
+
+    auto manager = Util::parseExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+        @"options.html": @"<script type='module' src='options.js'></script>",
+        @"options.js": optionsScript
+    });
+
+    // Set a base URL so it is a known value and not the default random one.
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
+
+    auto *optionsPageURL = manager.get().context.optionsPageURL;
+    EXPECT_NOT_NULL(optionsPageURL);
+
+    auto *defaultTab = manager.get().defaultTab;
+    EXPECT_NOT_NULL(defaultTab);
+
+    [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
+    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
 
     [manager run];
 }

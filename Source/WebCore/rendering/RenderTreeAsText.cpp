@@ -95,38 +95,38 @@ static void printBorderStyle(TextStream& ts, const BorderStyle borderStyle)
 {
     switch (borderStyle) {
     case BorderStyle::None:
-        ts << "none";
+        ts << "none"_s;
         break;
     case BorderStyle::Hidden:
-        ts << "hidden";
+        ts << "hidden"_s;
         break;
     case BorderStyle::Inset:
-        ts << "inset";
+        ts << "inset"_s;
         break;
     case BorderStyle::Groove:
-        ts << "groove";
+        ts << "groove"_s;
         break;
     case BorderStyle::Ridge:
-        ts << "ridge";
+        ts << "ridge"_s;
         break;
     case BorderStyle::Outset:
-        ts << "outset";
+        ts << "outset"_s;
         break;
     case BorderStyle::Dotted:
-        ts << "dotted";
+        ts << "dotted"_s;
         break;
     case BorderStyle::Dashed:
-        ts << "dashed";
+        ts << "dashed"_s;
         break;
     case BorderStyle::Solid:
-        ts << "solid";
+        ts << "solid"_s;
         break;
     case BorderStyle::Double:
-        ts << "double";
+        ts << "double"_s;
         break;
     }
 
-    ts << " ";
+    ts << ' ';
 }
 
 static String getTagName(Node* n)
@@ -190,10 +190,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     ts << o.renderName().characters();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
-        ts << " " << &o;
+        ts << ' ' << &o;
 
     if (o.style().usedZIndex()) // FIXME: This should use !hasAutoUsedZIndex().
-        ts << " zI: " << o.style().usedZIndex();
+        ts << " zI: "_s << o.style().usedZIndex();
 
     if (o.node()) {
         String tagName = getTagName(o.node());
@@ -201,11 +201,11 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (o.isPseudoElement() || (o.parent() && o.parent()->isPseudoElement()))
             tagName = emptyAtom();
         if (!tagName.isEmpty()) {
-            ts << " {" << tagName << "}";
+            ts << " {"_s << tagName << '}';
             // flag empty or unstyled AppleStyleSpan because we never
             // want to leave them in the DOM
             if (isEmptyOrUnstyledAppleStyleSpan(o.node()))
-                ts << " *empty or unstyled AppleStyleSpan*";
+                ts << " *empty or unstyled AppleStyleSpan*"_s;
         }
     }
     
@@ -231,9 +231,9 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
     if (enableSubpixelPrecisionForTextDump)
-        ts << " " << r;
+        ts << ' ' << r;
     else
-        ts << " " << enclosingIntRect(r);
+        ts << ' ' << enclosingIntRect(r);
 
     if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(o)) {
         writeSVGPaintingFeatures(ts, *svgModelObject, behavior);
@@ -247,31 +247,31 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
     if (!is<RenderText>(o)) {
         if (auto* control = dynamicDowncast<RenderFileUploadControl>(o))
-            ts << " " << quoteAndEscapeNonPrintables(control->fileTextValue());
+            ts << ' ' << quoteAndEscapeNonPrintables(control->fileTextValue());
 
         if (o.parent()) {
             Color color = o.style().visitedDependentColor(CSSPropertyColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyColor), color))
-                ts << " [color=" << serializationForRenderTreeAsText(color) << "]";
+                ts << " [color="_s << serializationForRenderTreeAsText(color) << ']';
 
             // Do not dump invalid or transparent backgrounds, since that is the default.
             Color backgroundColor = o.style().visitedDependentColor(CSSPropertyBackgroundColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyBackgroundColor), backgroundColor)
                 && backgroundColor != Color::transparentBlack)
-                ts << " [bgcolor=" << serializationForRenderTreeAsText(backgroundColor) << "]";
+                ts << " [bgcolor="_s << serializationForRenderTreeAsText(backgroundColor) << ']';
             
             Color textFillColor = o.style().visitedDependentColor(CSSPropertyWebkitTextFillColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor), textFillColor)
                 && textFillColor != color && textFillColor != Color::transparentBlack)
-                ts << " [textFillColor=" << serializationForRenderTreeAsText(textFillColor) << "]";
+                ts << " [textFillColor="_s << serializationForRenderTreeAsText(textFillColor) << ']';
 
             Color textStrokeColor = o.style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor), textStrokeColor)
                 && textStrokeColor != color && textStrokeColor != Color::transparentBlack)
-                ts << " [textStrokeColor=" << serializationForRenderTreeAsText(textStrokeColor) << "]";
+                ts << " [textStrokeColor="_s << serializationForRenderTreeAsText(textStrokeColor) << ']';
 
             if (o.parent()->style().textStrokeWidth() != o.style().textStrokeWidth() && o.style().textStrokeWidth() > 0)
-                ts << " [textStrokeWidth=" << o.style().textStrokeWidth() << "]";
+                ts << " [textStrokeWidth="_s << o.style().textStrokeWidth() << ']';
         }
 
         auto* box = dynamicDowncast<RenderBoxModelObject>(o);
@@ -300,16 +300,16 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             }
         }
         if (borderTop || borderRight || borderBottom || borderLeft) {
-            ts << " [border:";
+            ts << " [border:"_s;
 
             auto printBorder = [&ts, &o] (const LayoutUnit& width, const BorderStyle& style, const Style::Color& color) {
                 if (!width)
-                    ts << " none";
+                    ts << " none"_s;
                 else {
-                    ts << " (" << width << "px ";
+                    ts << " ("_s << width << "px "_s;
                     printBorderStyle(ts, style);
                     auto resolvedColor = o.style().colorResolvingCurrentColor(color);
-                    ts << serializationForRenderTreeAsText(resolvedColor) << ")";
+                    ts << serializationForRenderTreeAsText(resolvedColor) << ')';
                 }
 
             };
@@ -331,29 +331,29 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 prevBorder = o.style().borderLeft();
                 printBorder(borderLeft, o.style().borderLeftStyle(), o.style().borderLeftColor());
             }
-            ts << "]";
+            ts << ']';
         }
 
 #if ENABLE(MATHML)
         // We want to show any layout padding, both CSS padding and intrinsic padding, so we can't just check o.style().hasPadding().
         if (o.isRenderMathMLBlock() && (box->paddingTop() || box->paddingRight() || box->paddingBottom() || box->paddingLeft())) {
-            ts << " [";
+            ts << " ["_s;
             LayoutUnit cssTop = box->computedCSSPaddingTop();
             LayoutUnit cssRight = box->computedCSSPaddingRight();
             LayoutUnit cssBottom = box->computedCSSPaddingBottom();
             LayoutUnit cssLeft = box->computedCSSPaddingLeft();
             if (box->paddingTop() != cssTop || box->paddingRight() != cssRight || box->paddingBottom() != cssBottom || box->paddingLeft() != cssLeft) {
-                ts << "intrinsic ";
+                ts << "intrinsic "_s;
                 if (cssTop || cssRight || cssBottom || cssLeft)
-                    ts << "+ CSS ";
+                    ts << "+ CSS "_s;
             }
-            ts << "padding: " << roundToInt(box->paddingTop()) << " " << roundToInt(box->paddingRight()) << " " << roundToInt(box->paddingBottom()) << " " << roundToInt(box->paddingLeft()) << "]";
+            ts << "padding: "_s << roundToInt(box->paddingTop()) << ' ' << roundToInt(box->paddingRight()) << ' ' << roundToInt(box->paddingBottom()) << ' ' << roundToInt(box->paddingLeft()) << ']';
         }
 #endif
     }
 
     if (auto* cell = dynamicDowncast<RenderTableCell>(o))
-        ts << " [r=" << cell->rowIndex() << " c=" << cell->col() << " rs=" << cell->rowSpan() << " cs=" << cell->colSpan() << "]";
+        ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
     if (auto* listMarker = dynamicDowncast<RenderListMarker>(o)) {
         auto text = listMarker->textWithoutSuffix();
@@ -375,7 +375,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                         text = quoteAndEscapeNonPrintables(text);
                 }
             }
-            ts << ": " << text;
+            ts << ": "_s << text;
         }
     }
     
@@ -387,16 +387,16 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
         if (auto* element = dynamicDowncast<Element>(object.node())) {
             if (element->hasID())
-                ts << " id=\"" << element->getIdAttribute() << "\"";
+                ts << " id=\"" << element->getIdAttribute() << '"';
 
             if (element->hasClass()) {
-                ts << " class=\"";
+                ts << " class=\""_s;
                 for (size_t i = 0; i < element->classNames().size(); ++i) {
                     if (i > 0)
-                        ts << " ";
+                        ts << ' ';
                     ts << element->classNames()[i];
                 }
-                ts << "\"";
+                ts << '"';
             }
         }
     }
@@ -404,47 +404,47 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     if (behavior.contains(RenderAsTextFlag::ShowLayoutState)) {
         bool needsLayout = object.selfNeedsLayout() || object.needsPositionedMovementLayout() || object.posChildNeedsLayout() || object.normalChildNeedsLayout();
         if (needsLayout)
-            ts << " (needs layout:";
+            ts << " (needs layout:"_s;
         
         bool havePrevious = false;
         if (object.selfNeedsLayout()) {
-            ts << " self";
+            ts << " self"_s;
             havePrevious = true;
         }
 
         if (object.needsPositionedMovementLayout()) {
             if (havePrevious)
-                ts << ",";
+                ts << ',';
             havePrevious = true;
-            ts << " positioned movement";
+            ts << " positioned movement"_s;
         }
 
         if (object.normalChildNeedsLayout()) {
             if (havePrevious)
-                ts << ",";
+                ts << ',';
             havePrevious = true;
-            ts << " child";
+            ts << " child"_s;
         }
 
         if (object.posChildNeedsLayout()) {
             if (havePrevious)
-                ts << ",";
-            ts << " positioned child";
+                ts << ',';
+            ts << " positioned child"_s;
         }
 
         if (needsLayout)
-            ts << ")";
+            ts << ')';
     }
 
     if (behavior.contains(RenderAsTextFlag::ShowOverflow)) {
         if (auto* box = dynamicDowncast<RenderBox>(object)) {
             if (box->hasRenderOverflow()) {
                 LayoutRect layoutOverflow = box->layoutOverflowRect();
-                ts << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+                ts << " (layout overflow "_s << layoutOverflow.x().toInt() << ',' << layoutOverflow.y().toInt() << ' ' << layoutOverflow.width().toInt() << 'x' << layoutOverflow.height().toInt() << ')';
 
                 if (box->hasVisualOverflow()) {
                     LayoutRect visualOverflow = box->visualOverflowRect();
-                    ts << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+                    ts << " (visual overflow "_s << visualOverflow.x().toInt() << ',' << visualOverflow.y().toInt() << ' ' << visualOverflow.width().toInt() << 'x' << visualOverflow.height().toInt() << ')';
                 }
             }
         }
@@ -452,7 +452,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
         if (auto* renderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(object)) {
             if (renderSVGModelObject->hasVisualOverflow()) {
                 auto visualOverflow = renderSVGModelObject->visualOverflowRectEquivalent();
-                ts << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
+                ts << " (visual overflow "_s << visualOverflow.x() << ',' << visualOverflow.y() << ' ' << visualOverflow.width() << 'x' << visualOverflow.height() << ')';
             }
         }
     }
@@ -470,14 +470,14 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         if (auto* tableCell = dynamicDowncast<RenderTableCell>(*o.containingBlock()))
             y -= floorToInt(tableCell->intrinsicPaddingBefore());
 
-        ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
+        ts << "text run at ("_s << x << ',' << y << ") width "_s << logicalWidth;
         if (!textRun.isLeftToRightDirection())
-            ts << " RTL";
-        ts << ": "
+            ts << " RTL"_s;
+        ts << ": "_s
             << quoteAndEscapeNonPrintables(textRun.originalText());
         if (textRun.hasHyphen())
-            ts << " + hyphen string " << quoteAndEscapeNonPrintables(textRenderer.style().hyphenString().string());
-        ts << "\n";
+            ts << " + hyphen string "_s << quoteAndEscapeNonPrintables(textRenderer.style().hyphenString().string());
+        ts << '\n';
     };
 
 
@@ -517,7 +517,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
     ts << indent;
 
     RenderTreeAsText::writeRenderObject(ts, o, behavior);
-    ts << "\n";
+    ts << '\n';
 
     TextStream::IndentScope indentScope(ts);
 
@@ -555,65 +555,65 @@ template<typename DumpRectType>
 inline void writeLayerUsingGeometryType(TextStream& ts, const RenderLayer& layer, const DumpRectType& layerBounds, const DumpRectType& backgroundClipRect, const DumpRectType& clipRect,
     LayerPaintPhase paintPhase, OptionSet<RenderAsTextFlag> behavior)
 {
-    ts << indent << "layer ";
+    ts << indent << "layer "_s;
     
     if (behavior.contains(RenderAsTextFlag::ShowAddresses)) {
-        ts << &layer << " ";
+        ts << &layer << ' ';
         if (auto* scrollableArea = layer.scrollableArea())
-            ts << "scrollableArea " << scrollableArea << " ";
+            ts << "scrollableArea "_s << scrollableArea << ' ';
     }
 
     ts << layerBounds;
 
     if (!layerBounds.isEmpty()) {
         if (!backgroundClipRect.contains(layerBounds))
-            ts << " backgroundClip " << backgroundClipRect;
+            ts << " backgroundClip "_s << backgroundClipRect;
         if (!clipRect.contains(layerBounds))
-            ts << " clip " << clipRect;
+            ts << " clip "_s << clipRect;
     }
 
     if (layer.renderer().hasNonVisibleOverflow()) {
         if (auto* scrollableArea = layer.scrollableArea()) {
             if (scrollableArea->scrollOffset().x())
-                ts << " scrollX " << scrollableArea->scrollOffset().x();
+                ts << " scrollX "_s << scrollableArea->scrollOffset().x();
             if (scrollableArea->scrollOffset().y())
-                ts << " scrollY " << scrollableArea->scrollOffset().y();
+                ts << " scrollY "_s << scrollableArea->scrollOffset().y();
             if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != scrollableArea->scrollWidth())
-                ts << " scrollWidth " << scrollableArea->scrollWidth();
+                ts << " scrollWidth "_s << scrollableArea->scrollWidth();
             if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != scrollableArea->scrollHeight())
-                ts << " scrollHeight " << scrollableArea->scrollHeight();
+                ts << " scrollHeight "_s << scrollableArea->scrollHeight();
         }
 #if PLATFORM(MAC)
         ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
         if (!scrollbarTheme.isMockTheme() && layer.scrollableArea() && layer.scrollableArea()->hasVerticalScrollbar()) {
-            ScrollbarThemeMac& macTheme = *static_cast<ScrollbarThemeMac*>(&scrollbarTheme);
+            ScrollbarThemeMac& macTheme = *downcast<ScrollbarThemeMac>(&scrollbarTheme);
             if (macTheme.isLayoutDirectionRTL(*layer.scrollableArea()->verticalScrollbar()))
-                ts << " scrollbarHasRTLLayoutDirection";
+                ts << " scrollbarHasRTLLayoutDirection"_s;
         }
 #endif
     }
 
     if (paintPhase == LayerPaintPhaseBackground)
-        ts << " layerType: background only";
+        ts << " layerType: background only"_s;
     else if (paintPhase == LayerPaintPhaseForeground)
-        ts << " layerType: foreground only";
+        ts << " layerType: foreground only"_s;
 
     if (behavior.contains(RenderAsTextFlag::ShowCompositedLayers)) {
         if (layer.isComposited()) {
-            ts << " (composited " << layer.compositor().reasonsForCompositing(layer)
+            ts << " (composited "_s << layer.compositor().reasonsForCompositing(layer)
                 << ", bounds=" << layer.backing()->compositedBounds()
                 << ", drawsContent=" << layer.backing()->graphicsLayer()->drawsContent()
                 << ", paints into ancestor=" << layer.backing()->paintsIntoCompositedAncestor() << ")";
         } else if (layer.paintsIntoProvidedBacking())
-            ts << " (shared backing of " << layer.backingProviderLayer() << ")";
+            ts << " (shared backing of "_s << layer.backingProviderLayer() << ')';
     }
 
     if (layer.isolatesBlending())
-        ts << " isolatesBlending";
+        ts << " isolatesBlending"_s;
     if (layer.hasBlendMode())
-        ts << " blendMode: " << compositeOperatorName(CompositeOperator::SourceOver, layer.blendMode());
+        ts << " blendMode: "_s << compositeOperatorName(CompositeOperator::SourceOver, layer.blendMode());
     
-    ts << "\n";
+    ts << '\n';
 }
 
 static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
@@ -673,7 +673,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         
     if (negativeZOrderLayers.size()) {
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting)) {
-            ts << indent << " negative z-order list (" << negativeZOrderLayers.size() << ")\n";
+            ts << indent << " negative z-order list ("_s << negativeZOrderLayers.size() << ")\n"_s;
             ts.increaseIndent();
         }
         
@@ -695,7 +695,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
                 TextStream::IndentScope indentScope(ts, 2);
                 for (unsigned i = 0; i < layerFragments.size(); ++i) {
                     const auto& fragment = layerFragments[i];
-                    ts << indent << " fragment " << i << ": bounds in layer " << fragment.layerBounds << " fragment bounds " << fragment.boundingBox << "\n";
+                    ts << indent << " fragment "_s << i << ": bounds in layer "_s << fragment.layerBounds << " fragment bounds "_s << fragment.boundingBox << '\n';
                 }
             }
         }
@@ -706,7 +706,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     auto normalFlowLayers = layer.normalFlowLayers();
     if (normalFlowLayers.size()) {
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting)) {
-            ts << indent << " normal flow list (" << normalFlowLayers.size() << ")\n";
+            ts << indent << " normal flow list ("_s << normalFlowLayers.size() << ")\n"_s;
             ts.increaseIndent();
         }
         
@@ -723,7 +723,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
 
         if (layerCount) {
             if (behavior.contains(RenderAsTextFlag::ShowLayerNesting)) {
-                ts << indent << " positive z-order list (" << layerCount << ")\n";
+                ts << indent << " positive z-order list ("_s << layerCount << ")\n"_s;
                 ts.increaseIndent();
             }
 
@@ -774,12 +774,12 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
 
     VisibleSelection selection = frame->selection().selection();
     if (selection.isCaret()) {
-        ts << "caret: position " << selection.start().deprecatedEditingOffset() << " of " << nodePosition(selection.start().deprecatedNode());
+        ts << "caret: position "_s << selection.start().deprecatedEditingOffset() << " of "_s << nodePosition(selection.start().deprecatedNode());
         if (selection.affinity() == Affinity::Upstream)
-            ts << " (upstream affinity)";
-        ts << "\n";
+            ts << " (upstream affinity)"_s;
+        ts << '\n';
     } else if (selection.isRange())
-        ts << "selection start: position " << selection.start().deprecatedEditingOffset() << " of " << nodePosition(selection.start().deprecatedNode()) << "\n"
+        ts << "selection start: position "_s << selection.start().deprecatedEditingOffset() << " of "_s << nodePosition(selection.start().deprecatedNode()) << '\n'
            << "selection end:   position " << selection.end().deprecatedEditingOffset() << " of " << nodePosition(selection.end().deprecatedNode()) << "\n";
 }
 

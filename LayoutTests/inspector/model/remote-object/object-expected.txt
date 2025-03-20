@@ -330,14 +330,14 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
         "_value": "ArrayBuffer"
       },
       {
-        "_name": "byteLength",
-        "_type": "number",
-        "_value": "16"
-      },
-      {
         "_name": "byteOffset",
         "_type": "number",
         "_value": "0"
+      },
+      {
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
       }
     ],
     "_entries": null

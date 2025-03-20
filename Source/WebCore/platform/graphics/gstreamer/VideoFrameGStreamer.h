@@ -24,6 +24,7 @@
 #include "VideoFrame.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include <gst/video/video-format.h>
+#include <gst/video/video-info.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GstSample GstSample;
@@ -34,9 +35,17 @@ class PixelBuffer;
 class IntSize;
 class ImageGStreamer;
 
+using DMABufFormat = std::pair<uint32_t, uint64_t>;
+
 class VideoFrameGStreamer final : public VideoFrame {
 public:
-    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, std::optional<PlatformVideoColorSpace>&& = std::nullopt);
+    struct Info {
+        GstVideoInfo info;
+        std::optional<DMABufFormat> dmaBufFormat { std::nullopt };
+    };
+    static Info infoFromCaps(const GRefPtr<GstCaps>&);
+
+    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, std::optional<Info>&&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, std::optional<PlatformVideoColorSpace>&& = std::nullopt);
 
     static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None);
 
@@ -58,20 +67,39 @@ public:
     RefPtr<ImageGStreamer> convertToImage();
 
     IntSize presentationSize() const final { return m_presentationSize; }
-    uint32_t pixelFormat() const final;
+    uint32_t pixelFormat() const final { return GST_VIDEO_INFO_FORMAT(&m_info.info); }
+
+    enum class MemoryType : uint8_t {
+        Unsupported,
+        System,
+#if USE(GSTREAMER_GL)
+        GL,
+#if USE(GBM)
+        DMABuf
+#endif
+#endif
+    };
+    MemoryType memoryType() const { return m_memoryType; }
+
+    const GstVideoInfo& info() const { return m_info.info; }
+    std::optional<DMABufFormat> dmaBufFormat() const { return m_info.dmaBufFormat; }
 
 private:
-    VideoFrameGStreamer(GRefPtr<GstSample>&&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, PlatformVideoColorSpace&& = { });
-    VideoFrameGStreamer(const GRefPtr<GstSample>&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
+    VideoFrameGStreamer(GRefPtr<GstSample>&&, std::optional<Info>&&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, PlatformVideoColorSpace&& = { });
+    VideoFrameGStreamer(const GRefPtr<GstSample>&, Info&&, const IntSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
 
     bool isGStreamer() const final { return true; }
     Ref<VideoFrame> clone() final;
 
     GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&);
 
+    void setMemoryTypeFromCaps();
+
     GRefPtr<GstSample> m_sample;
+    Info m_info;
+    std::optional<DMABufFormat> m_dmaBufFormat;
     IntSize m_presentationSize;
-    mutable GstVideoFormat m_cachedVideoFormat { GST_VIDEO_FORMAT_UNKNOWN };
+    MemoryType m_memoryType;
 };
 
 } // namespace WebCore

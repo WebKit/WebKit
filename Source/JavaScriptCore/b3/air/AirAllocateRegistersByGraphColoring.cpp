@@ -35,6 +35,7 @@
 #include "AirLiveness.h"
 #include "AirPadInterference.h"
 #include "AirPhaseScope.h"
+#include "AirRegisterAllocatorStats.h"
 #include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
 #include <wtf/HashSet.h>
@@ -1788,10 +1789,16 @@ public:
     {
         padInterference(m_code);
 
+        m_stats[GP].numTmpsIn = m_code.numTmps(GP);
+        m_stats[FP].numTmpsIn = m_code.numTmps(FP);
+
         allocateOnBank<GP>();
         allocateOnBank<FP>();
 
         fixSpillsAfterTerminals(m_code);
+
+        m_stats[GP].numTmpsOut = m_code.numTmps(GP);
+        m_stats[FP].numTmpsOut = m_code.numTmps(FP);
     }
 
 private:
@@ -1944,6 +1951,7 @@ private:
             if (range.last - range.first <= 1 && range.count > range.admitStackCount) {
                 dataLogLnIf(traceDebug, "Add unspillable tmp due to range: ", AbsoluteTmpMapper<bank>::tmpFromAbsoluteIndex(i));
                 unspillableTmps.quickSet(i);
+                m_stats[bank].numUnspillableTmps++;
             }
         }
 
@@ -1951,6 +1959,7 @@ private:
             if (tmp.bank() == bank) {
                 dataLogLnIf(traceDebug, "Add unspillable tmp since it is FastTmp: ", tmp);
                 unspillableTmps.quickSet(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
+                m_stats[bank].numUnspillableTmps++;
             }
         });
 
@@ -2041,6 +2050,7 @@ private:
                 stackSlotMinimumWidth(m_tmpWidth.requiredWidth(tmp)), StackSlotKind::Spill);
             bool isNewTmp = stackSlots.add(tmp, stackSlot).isNewEntry;
             ASSERT_UNUSED(isNewTmp, isNewTmp);
+            m_stats[bank].numSpillStackSlots++;
         }
 
         // Rewrite the program to get rid of the spilled Tmp.
@@ -2161,6 +2171,7 @@ private:
                     RELEASE_ASSERT(instBank == bank);
                     
                     Tmp tmp = m_code.newTmp(bank);
+                    m_stats[bank].numSpillTmps++;
                     dataLogLnIf(traceDebug, "Add unspillable tmp (scratch) since we introduce it during spill: ", tmp);
                     unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
                     inst.args.append(tmp);
@@ -2174,6 +2185,7 @@ private:
                     // late def) doesn't change the padding situation.: the late def would have already
                     // caused it to report hasLateUseOrDef in Inst::needsPadding.
                     insertionSet.insert(instIndex, Nop, inst.origin);
+                    m_stats[bank].numMoveSpillSpillInsts++;
                     continue;
                 }
                 
@@ -2212,6 +2224,7 @@ private:
 
                     auto oldTmp = tmp;
                     auto newTmp = m_code.newTmp(bank);
+                    m_stats[bank].numSpillTmps++;
                     dataLogLnIf(traceDebug, "Add unspillable tmp since we introduce it during spill (2): ", tmp, " -> ", newTmp);
                     tmp = newTmp;
                     unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
@@ -2228,10 +2241,12 @@ private:
                                     int64_t value = m_useCounts.constant<bank>(oldIndex);
                                     if (Arg::isValidImmForm(value) && isValidForm(Move, Arg::Imm, Arg::Tmp)) {
                                         insertionSet.insert(instIndex, Move, inst.origin, Arg::imm(value), tmp);
+                                        m_stats[bank].numRematerializeConst++;
                                         return true;
                                     }
                                     if (isValidForm(Move, Arg::BigImm, Arg::Tmp)) {
                                         insertionSet.insert(instIndex, Move, inst.origin, Arg::bigImm(value), tmp);
+                                        m_stats[bank].numRematerializeConst++;
                                         return true;
                                     }
                                 }
@@ -2239,13 +2254,16 @@ private:
                             return false;
                         };
 
-                        if (!tryRematerialize())
+                        if (!tryRematerialize()) {
                             insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
+                            m_stats[bank].numLoadSpill++;
+                        }
                     }
 
                     if (Arg::isAnyDef(role)) {
                         // FIXME: When nobody is using admitsStack's spill result, we can also skip def.
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
+                        m_stats[bank].numStoreSpill++;
                     }
                 });
             }
@@ -2262,6 +2280,7 @@ private:
     Code& m_code;
     TmpWidth m_tmpWidth;
     UseCounts& m_useCounts;
+    std::array<AirAllocateRegistersStats, numBanks> m_stats = { GP, FP };
 };
 
 } // anonymous namespace

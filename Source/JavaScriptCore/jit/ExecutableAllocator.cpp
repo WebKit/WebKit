@@ -42,6 +42,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RedBlackTree.h>
 #include <wtf/Scope.h>
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -472,7 +473,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 class FixedVMPoolExecutableAllocator final {
     // This does not need to be TZONE_ALLOCATED because it's only used as a singleton
     // and is only allocated once long before any scripts are executed.
-    WTF_MAKE_FAST_ALLOCATED(FixedVMPoolExecutableAllocator);
+    WTF_MAKE_SEQUESTERED_IMMORTAL_ALLOCATED(FixedVMPoolExecutableAllocator);
 
 #if ENABLE(JUMP_ISLANDS)
     class Islands;

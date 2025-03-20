@@ -298,8 +298,8 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem& targetItem)
     if (!currentItem)
         return false;
 
-    // Don't abort the current load if we're navigating within the current document.
-    if (currentItem->shouldDoSameDocumentNavigationTo(targetItem))
+    // Don't abort the current load unless it's associated with a different document.
+    if (currentItem->documentSequenceNumber() == targetItem.documentSequenceNumber())
         return false;
 
     return true;
@@ -309,13 +309,13 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem& targetItem)
 // This includes recursion to handle loading into framesets properly
 void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoadType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
-    LOG(History, "HistoryController %p goToItem %p type=%d", this, &targetItem, static_cast<int>(frameLoadType));
+    RELEASE_LOG(History, "%p - HistoryController::goToItem: item %p, type=%d", this, &targetItem, static_cast<int>(frameLoadType));
 
     RefPtr page = m_frame->page();
     if (!page)
         return;
 
-    auto finishGoToItem = [weakThis = WeakPtr { this }, frameLoadType, shouldTreatAsContinuingLoad, page, isInSwipeAnimation = page->isInSwipeAnimation(), targetItem = Ref { targetItem }] (bool result) {
+    auto finishGoToItem = [weakThis = WeakPtr { this }, frameLoadType, shouldTreatAsContinuingLoad, page, isInSwipeAnimation = page->isInSwipeAnimation(), targetItem = Ref { targetItem }] (ShouldGoToHistoryItem result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -325,7 +325,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoa
 
         protectedThis->m_policyItem = nullptr;
 
-        if (!result)
+        if (result != ShouldGoToHistoryItem::Yes)
             return;
 
         if (protectedThis->m_defersLoading) {
@@ -341,7 +341,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoa
         // as opposed to happening for some/one of the page commits that might happen soon.
         CheckedRef backForward = page->backForward();
         RefPtr currentItem = backForward->currentItem(protectedThis->m_frame->frameID());
-        backForward->setProvisionalItem(targetItem);
+        backForward->setCurrentItem(targetItem);
 
         // First set the provisional item of any frames that are not actually navigating.
         // This must be done before trying to navigate the desired frame, because some
@@ -364,14 +364,14 @@ struct HistoryController::FrameToNavigate {
 
 void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameLoadType frameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker* tracker)
 {
-    LOG(History, "HistoryController %p goToItemForNavigationAPI %p type=%d", this, &targetItem, static_cast<int>(frameLoadType));
+    RELEASE_LOG(History, "%p - HistoryController::goToItemForNavigationAPI: item %p type=%d", this, &targetItem, static_cast<int>(frameLoadType));
 
     Ref frame = m_frame.get();
     RefPtr page = frame->page();
     if (!page)
         return;
 
-    auto finishGoToItem = [weakThis = WeakPtr { this }, frame, frameLoadType, page, isInSwipeAnimation = page->isInSwipeAnimation(), triggeringFrame = Ref { triggeringFrame }, targetItem = Ref { targetItem }, tracker = RefPtr { tracker }] (bool result) {
+    auto finishGoToItem = [weakThis = WeakPtr { this }, frame, frameLoadType, page, isInSwipeAnimation = page->isInSwipeAnimation(), triggeringFrame = Ref { triggeringFrame }, targetItem = Ref { targetItem }, tracker = RefPtr { tracker }] (ShouldGoToHistoryItem result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -381,7 +381,10 @@ void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameL
 
         protectedThis->m_policyItem = nullptr;
 
-        if (!result)
+        // For Navigation API navigations covered by HistoryController:goToItemForNavigationAPI, WebContent processes sometimes
+        // know about an item the UI process doesn't know about. In those cases, policy checks will happen elsewhere, and the
+        // traversal should occur
+        if (result == ShouldGoToHistoryItem::No)
             return;
 
         Vector<FrameToNavigate> framesToNavigate;
@@ -397,7 +400,7 @@ void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameL
         // as opposed to happening for some/one of the page commits that might happen soon
         CheckedRef backForward = page->backForward();
         RefPtr currentItem = backForward->currentItem(frame->frameID());
-        backForward->setProvisionalItem(targetItem);
+        backForward->setCurrentItem(targetItem);
 
         // First set the provisional item of any frames that are not actually navigating.
         // This must be done before trying to navigate the desired frame, because some
@@ -420,7 +423,7 @@ void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameL
     goToItemShared(targetItem, WTFMove(finishGoToItem));
 }
 
-void HistoryController::goToItemShared(HistoryItem& targetItem, CompletionHandler<void(bool)>&& completionHandler)
+void HistoryController::goToItemShared(HistoryItem& targetItem, CompletionHandler<void(ShouldGoToHistoryItem)>&& completionHandler)
 {
     m_policyItem = &targetItem;
 
@@ -432,7 +435,7 @@ void HistoryController::goToItemShared(HistoryItem& targetItem, CompletionHandle
     Ref frame = m_frame.get();
     if (sameDocumentNavigation || !frame->protectedLoader()->protectedClient()->supportsAsyncShouldGoToHistoryItem()) {
         auto isSameDocumentNavigation = sameDocumentNavigation ? IsSameDocumentNavigation::Yes : IsSameDocumentNavigation::No;
-        bool result = frame->protectedLoader()->protectedClient()->shouldGoToHistoryItem(targetItem, isSameDocumentNavigation);
+        auto result = frame->protectedLoader()->protectedClient()->shouldGoToHistoryItem(targetItem, isSameDocumentNavigation);
         completionHandler(result);
         return;
     }
@@ -644,7 +647,6 @@ void HistoryController::updateForCommit()
         ASSERT(m_provisionalItem);
         if (RefPtr provisionalItem = m_provisionalItem) {
             setCurrentItem(provisionalItem.releaseNonNull());
-            commitProvisionalItem();
             m_provisionalItem = nullptr;
         }
 
@@ -691,7 +693,6 @@ void HistoryController::recursiveUpdateForCommit()
         // Now commit the provisional item
         if (RefPtr provisionalItem = m_provisionalItem) {
             setCurrentItem(provisionalItem.releaseNonNull());
-            commitProvisionalItem();
             m_provisionalItem = nullptr;
         }
 
@@ -750,7 +751,6 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     // Commit the provisional item.
     if (RefPtr provisionalItem = m_provisionalItem) {
         setCurrentItem(provisionalItem.releaseNonNull());
-        commitProvisionalItem();
         m_provisionalItem = nullptr;
     }
 
@@ -804,26 +804,6 @@ void HistoryController::clearPreviousItem()
 void HistoryController::setProvisionalItem(RefPtr<HistoryItem>&& item)
 {
     m_provisionalItem = WTFMove(item);
-}
-
-void HistoryController::clearProvisionalItem()
-{
-    RefPtr provisionalItem = m_provisionalItem;
-    if (!provisionalItem)
-        return;
-
-    if (RefPtr page = m_frame->page())
-        page->checkedBackForward()->clearProvisionalItem(*provisionalItem);
-}
-
-void HistoryController::commitProvisionalItem()
-{
-    RefPtr provisionalItem = m_provisionalItem;
-    if (!provisionalItem)
-        return;
-
-    if (RefPtr page = m_frame->page())
-        page->checkedBackForward()->commitProvisionalItem(*provisionalItem);
 }
 
 void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader> documentLoader)
@@ -921,6 +901,8 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
         for (RefPtr child = m_frame->tree().firstLocalDescendant(); child; child = child->tree().nextLocalSibling())
             item->addChildItem(child->loader().protectedHistory()->createItemTree(client, targetFrame, clipAtTarget, itemID));
     }
+
+    // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
     if (m_frame.ptr() == &targetFrame)
         item->setIsTargetItem(true);
     return item;
@@ -1023,6 +1005,10 @@ void HistoryController::updateCurrentItem()
         return;
 
     if (currentItem->url() != documentLoader->url()) {
+        // We ended up on a completely different URL this time, so the HistoryItem
+        // needs to be re-initialized. Preserve the isTargetItem flag as it is a
+        // property of how this HistoryItem was originally created and is not
+        // dependent on the document.
         bool isTargetItem = currentItem->isTargetItem();
         auto uuidIdentifier = currentItem->uuidIdentifier();
         bool sameOrigin = SecurityOrigin::create(currentItem->url())->isSameOriginAs(SecurityOrigin::create(documentLoader->url()));

@@ -51,14 +51,6 @@ combine('compound_assignment', [false, true]).
 beginSubcases().
 combine('op', ['<<', '>>'])
 ).
-beforeAllSubcases((t) => {
-  if (
-  scalarTypeOf(kScalarAndVectorTypes[t.params.lhs]) === Type.f16 ||
-  scalarTypeOf(kScalarAndVectorTypes[t.params.rhs]) === Type.f16)
-  {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  }
-}).
 fn((t) => {
   const lhs = kScalarAndVectorTypes[t.params.lhs];
   const rhs = kScalarAndVectorTypes[t.params.rhs];
@@ -203,7 +195,16 @@ const kLeftShiftCases = [
 // Shift by negative is an error
 { lhs: `1`, rhs: `-1`, pass: false },
 { lhs: `1i`, rhs: `-1`, pass: false },
-{ lhs: `1u`, rhs: `-1`, pass: false }];
+{ lhs: `1u`, rhs: `-1`, pass: false },
+
+// Signed overflow (sign change) for abstract
+{ lhs: `1`, rhs: `63`, pass: false },
+{ lhs: `2`, rhs: `62`, pass: false },
+{
+  lhs: `${0b0100000000000000000000000000000000000000000000000000000000000000}`,
+  rhs: `1u`,
+  pass: false
+}];
 
 
 g.test('shift_left_concrete').
@@ -266,4 +267,62 @@ fn main() {
 }
     `;
   t.expectCompileResult(t.params.case.pass, code);
+});
+
+g.test('shift_left_abstract').
+desc('Validates that the result when the LHS is abstract is also abstract').
+fn((t) => {
+  const wgsl = `
+    const lhs = 0xfffff0000; // too large for 32 bits
+    const res = lhs << 4u;
+    const_assert res == 0xfffff00000;`;
+  t.expectCompileResult(true, wgsl);
+});
+
+g.test('shift_right_abstract').
+desc('Validates that the result when the LHS is abstract is also abstract').
+fn((t) => {
+  const wgsl = `
+    const lhs = 0xfffff0000; // too large for 32 bits
+    const res = lhs >> 1u;
+    const_assert res == 0x7ffff8000;`;
+  t.expectCompileResult(true, wgsl);
+});
+
+g.test('partial_eval_errors').
+desc('Tests partial evaluation errors for left and right shift').
+params((u) =>
+u.
+combine('op', ['<<', '>>']).
+combine('type', ['i32', 'u32']).
+beginSubcases().
+combine('stage', ['shader', 'pipeline']).
+combine('value', [31, 32, 33, 64])
+).
+fn((t) => {
+  const u32 = Type.u32;
+  let rhs = 'o';
+  if (t.params.stage === 'shader') {
+    rhs = `${u32.create(t.params.value).wgsl()}`;
+  }
+  const wgsl = `
+override o = 0u;
+fn foo() -> ${t.params.type} {
+  var v : ${t.params.type} = 0;
+  return v ${t.params.op} ${rhs};
+}`;
+
+  const expect = t.params.value < 32;
+  if (t.params.stage === 'shader') {
+    t.expectCompileResult(expect, wgsl);
+  } else {
+    const constants = {};
+    constants['o'] = t.params.value;
+    t.expectPipelineResult({
+      expectedResult: expect,
+      code: wgsl,
+      constants,
+      reference: ['o', 'foo()']
+    });
+  }
 });

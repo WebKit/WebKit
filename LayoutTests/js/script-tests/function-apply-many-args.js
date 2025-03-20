@@ -1,4 +1,5 @@
 //@ skip if $memoryLimited and $hostOS == "darwin"
+//@ $skipModes << "layout-no-llint".to_sym if $architecture == "arm"
 
 description("Tests that we throw an error when passing a number of arguments beyond a certain threshold.");
 

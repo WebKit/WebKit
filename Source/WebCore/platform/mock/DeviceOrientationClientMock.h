@@ -40,15 +40,14 @@ class DeviceOrientationController;
 // A mock implementation of DeviceOrientationClient used to test the feature in
 // DumpRenderTree. Embedders should should configure the Page object to use this
 // client when running DumpRenderTree.
-class DeviceOrientationClientMock final : public DeviceOrientationClient, public CanMakeCheckedPtr<DeviceOrientationClientMock> {
+class DeviceOrientationClientMock final : public DeviceOrientationClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationClientMock, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClientMock);
 public:
     WEBCORE_EXPORT DeviceOrientationClientMock();
 
     // DeviceOrientationClient
     WEBCORE_EXPORT void setController(DeviceOrientationController*) override;
-    WEBCORE_EXPORT void startUpdating() override;
+    WEBCORE_EXPORT void startUpdating(const SecurityOriginData&) override;
     WEBCORE_EXPORT void stopUpdating() override;
     DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
     void deviceOrientationControllerDestroyed() override { }

@@ -29,9 +29,12 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface WKWebExtension ()
 
-// FIXME: Remove after Safari has adopted new methods.
-- (nullable instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error;
-- (nullable instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error;
+- (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_SWIFT_UNAVAILABLE("Use init(appExtensionBundle:).");
+- (nullable instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_SWIFT_UNAVAILABLE("Use init(resourceBaseURL:).");
+- (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle resourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_SWIFT_UNAVAILABLE("Use init(appExtensionBundle:resourceBaseURL:).");
+- (nullable instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest NS_SWIFT_UNAVAILABLE("Use init(manifestDictionary:).");
+- (nullable instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_SWIFT_UNAVAILABLE("Use init(manifestDictionary:resources:).");
+- (nullable instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_SWIFT_UNAVAILABLE("Use init(resources:).");
 
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
@@ -39,7 +42,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  */
-- (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error;
+- (nullable instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
@@ -48,7 +51,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion The URL must be a file URL that points to either a directory containing a `manifest.json` file or a valid ZIP archive.
  */
-- (nullable instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error;
+- (nullable instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle and resource base URL.
@@ -59,14 +62,14 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @discussion Either the app extension bundle or the resource base URL (which can point to a directory or a valid ZIP archive) must be provided.
  This initializer is useful when the extension resources are in a different location from the app extension bundle used for native messaging.
  */
-- (nullable instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /*!
  @abstract Returns a web extension initialized with a specified manifest dictionary.
  @param manifest The dictionary containing the manifest data for the web extension.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  */
-- (nullable instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
+- (nullable instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
 
 /*!
  @abstract Returns a web extension initialized with a specified manifest dictionary and resources.
@@ -76,7 +79,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @discussion The resources dictionary provides additional data required for the web extension. Paths in resources can
  have subdirectories, such as `_locales/en/messages.json`.
  */
-- (nullable instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
 /*!
  @abstract Returns a web extension initialized with specified resources.
@@ -85,7 +88,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @discussion The resources dictionary must provide at least the `manifest.json` resource.  Paths in resources can
  have subdirectories, such as `_locales/en/messages.json`.
  */
-- (nullable instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
 /*! @abstract A Boolean value indicating whether the extension background content is a service worker. */
 @property (readonly, nonatomic) BOOL _hasServiceWorkerBackgroundContent;

@@ -772,6 +772,23 @@ void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
     }
 }
 
+void MockRealtimeVideoSource::triggerCameraConfigurationChange()
+{
+    for (auto& source : allMockRealtimeVideoSource()) {
+        if (!source.isProducingData() || source.deviceType() != CaptureDevice::DeviceType::Camera)
+            continue;
+
+        std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur = !std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur;
+
+        source.m_currentSettings = { };
+        source.m_capabilities = { };
+
+        source.forEachObserver([](auto& observer) {
+            observer.sourceConfigurationChanged();
+        });
+    }
+}
+
 void MockRealtimeVideoSource::startApplyingConstraints()
 {
     ASSERT(!m_beingConfigured);

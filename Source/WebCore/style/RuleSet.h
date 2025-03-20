@@ -37,6 +37,7 @@ namespace WebCore {
 
 class CSSSelector;
 class StyleSheetContents;
+class StyleRulePositionTry;
 class StyleRuleViewTransition;
 
 namespace MQ {
@@ -132,6 +133,8 @@ public:
 
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
+
+    const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -229,6 +232,9 @@ private:
     // @scope
     Vector<ScopeAndParent> m_scopeRules;
     Vector<ScopeRuleIdentifier> m_scopeRuleIdentifierForRulePosition;
+
+    // @position-try
+    HashMap<AtomString, RefPtr<const StyleRulePositionTry>> m_positionTryRules;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };

@@ -317,217 +317,853 @@ PASS :texture_view_descriptor:format="astc-12x12-unorm";enable_required_feature=
 PASS :texture_view_descriptor:format="astc-12x12-unorm";enable_required_feature=false
 PASS :texture_view_descriptor:format="astc-12x12-unorm-srgb";enable_required_feature=true
 PASS :texture_view_descriptor:format="astc-12x12-unorm-srgb";enable_required_feature=false
-PASS :canvas_configuration:format="depth32float-stencil8";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="depth32float-stencil8";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format depth32float-stencil8 is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="depth32float-stencil8";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="depth32float-stencil8";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="depth32float-stencil8";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format depth32float-stencil8 is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="depth32float-stencil8";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc1-rgba-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc1-rgba-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc1-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc1-rgba-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc1-rgba-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc1-rgba-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc1-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc1-rgba-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc1-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc1-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc1-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc2-rgba-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc2-rgba-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc2-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc2-rgba-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc2-rgba-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc2-rgba-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc2-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc2-rgba-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc2-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc2-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc2-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc3-rgba-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc3-rgba-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc3-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc3-rgba-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc3-rgba-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc3-rgba-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc3-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc3-rgba-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc3-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc3-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc3-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc4-r-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc4-r-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc4-r-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc4-r-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc4-r-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc4-r-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc4-r-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc4-r-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc4-r-snorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc4-r-snorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc4-r-snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc4-r-snorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc4-r-snorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc4-r-snorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc4-r-snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc4-r-snorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc5-rg-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc5-rg-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc5-rg-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc5-rg-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc5-rg-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc5-rg-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc5-rg-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc5-rg-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc5-rg-snorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc5-rg-snorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc5-rg-snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc5-rg-snorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc5-rg-snorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc5-rg-snorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc5-rg-snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc5-rg-snorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc6h-rgb-ufloat is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc6h-rgb-ufloat is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc6h-rgb-ufloat";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc6h-rgb-float";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc6h-rgb-float";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc6h-rgb-float is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc6h-rgb-float";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc6h-rgb-float";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc6h-rgb-float";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc6h-rgb-float is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc6h-rgb-float";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc7-rgba-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc7-rgba-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc7-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc7-rgba-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc7-rgba-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc7-rgba-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc7-rgba-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc7-rgba-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc7-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format bc7-rgba-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="bc7-rgba-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8a1unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8a1unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8a1unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8a1unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgb8a1unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgb8a1unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgba8unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgba8unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgba8unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgba8unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgba8unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgba8unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgba8unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgba8unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgba8unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format etc2-rgba8unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="etc2-rgba8unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-r11unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-r11unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-r11unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-r11unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-r11unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-r11unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-r11unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-r11unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-r11snorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-r11snorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-r11snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-r11snorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-r11snorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-r11snorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-r11snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-r11snorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-rg11unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-rg11unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-rg11unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-rg11unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-rg11unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-rg11unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-rg11unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-rg11unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-rg11snorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-rg11snorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-rg11snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-rg11snorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="eac-rg11snorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="eac-rg11snorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format eac-rg11snorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="eac-rg11snorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-4x4-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-4x4-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-4x4-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-4x4-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-4x4-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-4x4-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-4x4-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-4x4-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-4x4-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-4x4-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-4x4-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x4-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x4-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x4-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x4-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x4-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x4-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x4-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x4-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x4-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x4-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x4-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x5-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x5-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x5-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x5-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x5-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x5-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-5x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-5x5-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x5-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x5-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x5-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x5-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x5-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x5-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x5-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x6-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x6-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x6-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x6-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x6-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x6-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-6x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-6x6-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x5-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x5-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x5-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x5-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x5-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x5-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x5-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x6-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x6-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x6-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x6-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x6-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x6-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x6-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x8-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x8-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x8-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x8-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x8-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x8-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x8-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x8-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x8-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-8x8-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-8x8-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x5-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x5-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x5-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x5-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x5-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x5-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x5-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x5-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x5-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x6-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x6-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x6-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x6-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x6-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x6-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x6-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x6-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x6-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x8-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x8-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x8-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x8-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x8-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x8-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x8-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x8-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x8-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x8-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x8-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x10-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x10-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x10-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x10-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x10-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x10-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x10-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x10-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x10-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-10x10-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-10x10-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x10-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x10-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x10-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x10-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x10-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x10-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x10-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x10-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x10-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x10-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x10-unorm-srgb";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x12-unorm";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x12-unorm";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x12-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x12-unorm";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x12-unorm";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x12-unorm";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x12-unorm is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x12-unorm";canvasType="offscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="onscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="onscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x12-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="onscreen";enable_required_feature=false
-PASS :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="offscreen";enable_required_feature=true
+FAIL :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="offscreen";enable_required_feature=true assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Requested texture format astc-12x12-unorm-srgb is not a valid context format
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :canvas_configuration:format="astc-12x12-unorm-srgb";canvasType="offscreen";enable_required_feature=false
 PASS :canvas_configuration_view_formats:viewFormats=["depth32float-stencil8"];canvasType="onscreen";enable_required_feature=true
 PASS :canvas_configuration_view_formats:viewFormats=["depth32float-stencil8"];canvasType="onscreen";enable_required_feature=false

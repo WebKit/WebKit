@@ -2106,4 +2106,14 @@ PASS e.style['position-area'] = "self-block-start self-block-start" should not s
 PASS e.style['position-area'] = "self-block-end self-block-end" should not set the property value
 PASS e.style['position-area'] = "span-self-block-start span-self-block-start" should not set the property value
 PASS e.style['position-area'] = "span-self-block-end span-self-block-end" should not set the property value
+PASS e.style['position-area'] = "foobar" should not set the property value
+PASS e.style['position-area'] = "visible" should not set the property value
+PASS e.style['position-area'] = "hidden" should not set the property value
+PASS e.style['position-area'] = "start foobar" should not set the property value
+PASS e.style['position-area'] = "end visible" should not set the property value
+PASS e.style['position-area'] = "block-start hidden" should not set the property value
+PASS e.style['position-area'] = "hidden inline-end" should not set the property value
+PASS e.style['position-area'] = "foo bar" should not set the property value
+PASS e.style['position-area'] = "visible hidden" should not set the property value
+PASS e.style['position-area'] = "hidden visible" should not set the property value
 

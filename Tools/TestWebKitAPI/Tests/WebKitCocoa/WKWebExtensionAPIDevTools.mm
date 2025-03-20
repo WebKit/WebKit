@@ -85,7 +85,7 @@ TEST(WKWebExtensionAPIDevTools, Basics)
     [manager run];
 }
 
-// FIX-ME: rdar://137268889
+// FIXME: rdar://137268889 (4x TestWebKitAPI.WKWebExtensionAPIDevTools* (api-tests) are near constant timeouts)
 TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
 {
     TestWebKitAPI::HTTPServer server({
@@ -155,7 +155,7 @@ TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
     [manager runUntilTestMessage:@"Panel Hidden"];
 }
 
-// FIX-ME: rdar://137268889
+// FIXME: rdar://137268889 (4x TestWebKitAPI.WKWebExtensionAPIDevTools* (api-tests) are near constant timeouts)
 TEST(WKWebExtensionAPIDevTools, DISABLED_InspectedWindowEval)
 {
     TestWebKitAPI::HTTPServer server({
@@ -238,7 +238,7 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReload)
     EXPECT_TRUE(server.totalRequests() == 1lu || server.totalRequests() == 2lu);
 }
 
-// FIX-ME: rdar://137268889
+// FIXME: rdar://137268889 (4x TestWebKitAPI.WKWebExtensionAPIDevTools* (api-tests) are near constant timeouts)
 TEST(WKWebExtensionAPIDevTools, DISABLED_InspectedWindowReloadIgnoringCache)
 {
     TestWebKitAPI::HTTPServer server({
@@ -487,7 +487,8 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToDevToolsBackground)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIDevTools, PortMessagePassingToBackground)
+// FIXME: rdar://137268889 (4x TestWebKitAPI.WKWebExtensionAPIDevTools* (api-tests) are near constant timeouts)
+TEST(WKWebExtensionAPIDevTools, DISABLED_PortMessagePassingToBackground)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },

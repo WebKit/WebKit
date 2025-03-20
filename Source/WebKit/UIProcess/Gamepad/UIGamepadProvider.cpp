@@ -114,8 +114,8 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Event
 
     scheduleGamepadStateSync();
 
-    for (auto& pool : m_processPoolsUsingGamepads)
-        pool.gamepadConnected(*m_gamepads[gamepad.index()], eventVisibility);
+    for (Ref pool : m_processPoolsUsingGamepads)
+        pool->gamepadConnected(*m_gamepads[gamepad.index()], eventVisibility);
 }
 
 void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
@@ -127,8 +127,8 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 
     scheduleGamepadStateSync();
 
-    for (auto& pool : m_processPoolsUsingGamepads)
-        pool.gamepadDisconnected(*disconnectedGamepad);
+    for (Ref pool : m_processPoolsUsingGamepads)
+        pool->gamepadDisconnected(*disconnectedGamepad);
 }
 
 void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible eventVisibility)

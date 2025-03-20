@@ -227,16 +227,6 @@ typedef enum {
  * Default: 80
  */
 #define WPE_SETTING_KEY_REPEAT_INTERVAL "/wpe-platform/events/key-repeat/interval"
-/**
- * WPE_SETTING_DRM_SCALE:
- *
- * The scale size of the DRM screen.
- *
- * VariantType: double
- *
- * Default: 1.0
- */
-#define WPE_SETTING_DRM_SCALE "/wpe-platform/drm/scale"
 
 /**
  * WPESettingsSource:

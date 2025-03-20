@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AbstractSlotVisitorInlines.h"
+#include "HeapCellInlines.h"
 #include "MarkedBlock.h"
 #include "PreciseAllocation.h"
 #include "SlotVisitor.h"

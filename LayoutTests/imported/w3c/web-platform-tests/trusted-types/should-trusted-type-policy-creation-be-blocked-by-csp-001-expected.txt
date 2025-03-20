@@ -1,0 +1,267 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'tt-policy-name' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types tt-policy-name' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'tt-policy-name' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types *' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types 'none'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types 'allow-duplicates'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types tt-policy-name 'allow-duplicates'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types * 'allow-duplicates'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types 'none' 'allow-duplicates'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' 'allow-duplicates'"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'tt-policy-name' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types 'none' tt-policy-name' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'tt-policy-name' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' tt-policy-name"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
+
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types 'none' *' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types 'none' *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types tt-policy-name *' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'A' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'B' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'C' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name *"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'tt-policy-name1' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'tt-policy-name2' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'tt-policy-name3' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'tt-policy-name1' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'tt-policy-name2' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'tt-policy-name3' because it violates the following Content Security Policy directive: "trusted-types tt-policy-name1 tt-policy-name2 tt-policy-name3"
+CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+
+PASS single enforce policy with directive "trusted-type tt-policy-name"
+PASS single report-only policy with directive "trusted-type tt-policy-name"
+PASS single enforce policy with directive "trusted-type *"
+PASS single report-only policy with directive "trusted-type *"
+PASS single enforce policy with directive "trusted-type 'none'"
+PASS single report-only policy with directive "trusted-type 'none'"
+PASS single enforce policy with directive "trusted-type 'allow-duplicates'"
+PASS single report-only policy with directive "trusted-type 'allow-duplicates'"
+PASS single enforce policy with directive "trusted-type tt-policy-name 'allow-duplicates'"
+PASS single report-only policy with directive "trusted-type tt-policy-name 'allow-duplicates'"
+PASS single enforce policy with directive "trusted-type * 'allow-duplicates'"
+PASS single report-only policy with directive "trusted-type * 'allow-duplicates'"
+PASS single enforce policy with directive "trusted-type 'none' 'allow-duplicates'"
+PASS single report-only policy with directive "trusted-type 'none' 'allow-duplicates'"
+PASS single enforce policy with directive "trusted-type 'none' tt-policy-name"
+PASS single report-only policy with directive "trusted-type 'none' tt-policy-name"
+PASS single enforce policy with directive "trusted-type 'none' *"
+PASS single report-only policy with directive "trusted-type 'none' *"
+PASS single enforce policy with directive "trusted-type tt-policy-name *"
+PASS single report-only policy with directive "trusted-type tt-policy-name *"
+PASS single enforce policy with directive "trusted-type tt-policy-name1 tt-policy-name2 tt-policy-name3"
+PASS single report-only policy with directive "trusted-type tt-policy-name1 tt-policy-name2 tt-policy-name3"
+

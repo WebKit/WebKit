@@ -137,10 +137,15 @@ public:
     void setExistingEncoder(id<MTLCommandEncoder>);
     void generateInvalidEncoderStateError();
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
+    static void trackEncoder(CommandEncoder&, Vector<uint64_t>&);
     static void trackEncoder(CommandEncoder&, WeakHashSet<CommandEncoder>&);
+    static size_t computeSize(Vector<uint64_t>&, const Device&);
     uint64_t uniqueId() const { return m_uniqueId; }
     NSMutableSet<id<MTLCounterSampleBuffer>> *timestampBuffers() const { return m_retainedTimestampBuffers; };
     void addOnCommitHandler(Function<bool(CommandBuffer&)>&&);
+#if ENABLE(WEBGPU_BY_DEFAULT)
+    bool useResidencySet(id<MTLResidencySet>);
+#endif
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&, uint64_t uniqueId);
@@ -192,6 +197,9 @@ private PUBLIC_IN_WEBGPU_SWIFT:
     uint64_t m_sharedEventSignalValue { 0 };
     const Ref<Device> m_device;
     uint64_t m_uniqueId;
+#if ENABLE(WEBGPU_BY_DEFAULT)
+    uint32_t m_currentResidencySetCount { 0 };
+#endif
 private:
 } SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder);
 

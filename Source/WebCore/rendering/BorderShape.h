@@ -51,16 +51,21 @@ public:
     // overrideBorderWidths describe custom insets from the border box, used instead of the border widths from the style.
     static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
 
+    // Create a BorderShape suitable for rendering an outline. borderRect is provided to allow for scaling the corner radii.
+    static BorderShape shapeForOutlineRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& outlineBoxRect, const RectEdges<LayoutUnit>& outlineWidths, RectEdges<bool> closedEdges = { true });
+
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const RoundedRectRadii&);
 
-    BorderShape(const BorderShape& other)
-        : m_borderRect(other.m_borderRect)
-        , m_borderWidths(other.m_borderWidths)
-    {
-    }
+    BorderShape(const BorderShape&) = default;
+
+    BorderShape shapeWithBorderWidths(const RectEdges<LayoutUnit>&) const;
 
     LayoutRect borderRect() const { return m_borderRect.rect(); }
+    LayoutRect innerEdgeRect() const { return m_innerEdgeRect.rect(); }
+
+    // Takes `closedEdges` into account.
+    const RectEdges<LayoutUnit>& borderWidths() const { return m_borderWidths; }
 
     RoundedRect deprecatedRoundedRect() const;
     RoundedRect deprecatedInnerRoundedRect() const;
@@ -74,10 +79,17 @@ public:
     const RoundedRectRadii& radii() const { return m_borderRect.radii(); }
     void setRadii(const RoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
 
+    // Note that the inner edge isn't necessarily a rounded rect, but the radii still represent where the straight edge sections terminate.
+    const RoundedRectRadii& innerEdgeRadii() const { return m_innerEdgeRect.radii(); }
+
     FloatRect snappedOuterRect(float deviceScaleFactor) const;
     FloatRect snappedInnerRect(float deviceScaleFactor) const;
 
     bool isRounded() const { return m_borderRect.isRounded(); }
+
+    bool outerShapeIsRectangular() const;
+    bool innerShapeIsRectangular() const;
+
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
     void move(LayoutSize);
@@ -88,22 +100,27 @@ public:
     Path pathForOuterShape(float deviceScaleFactor) const;
     Path pathForInnerShape(float deviceScaleFactor) const;
 
+    void addOuterShapeToPath(Path&, float deviceScaleFactor) const;
+    void addInnerShapeToPath(Path&, float deviceScaleFactor) const;
+
     Path pathForBorderArea(float deviceScaleFactor) const;
 
-    void clipToOuterShape(GraphicsContext&, float deviceScaleFactor);
-    void clipToInnerShape(GraphicsContext&, float deviceScaleFactor);
+    void clipToOuterShape(GraphicsContext&, float deviceScaleFactor) const;
+    void clipToInnerShape(GraphicsContext&, float deviceScaleFactor) const;
 
-    void clipOutOuterShape(GraphicsContext&, float deviceScaleFactor);
-    void clipOutInnerShape(GraphicsContext&, float deviceScaleFactor);
+    void clipOutOuterShape(GraphicsContext&, float deviceScaleFactor) const;
+    void clipOutInnerShape(GraphicsContext&, float deviceScaleFactor) const;
 
-    void fillOuterShape(GraphicsContext&, const Color&, float deviceScaleFactor);
-    void fillInnerShape(GraphicsContext&, const Color&, float deviceScaleFactor);
+    void fillOuterShape(GraphicsContext&, const Color&, float deviceScaleFactor) const;
+    void fillInnerShape(GraphicsContext&, const Color&, float deviceScaleFactor) const;
+
+    void fillRectWithInnerHoleShape(GraphicsContext&, const LayoutRect& outerRect, const Color&, float deviceScaleFactor) const;
 
 private:
-    RoundedRect innerEdgeRoundedRect() const;
-    LayoutRect innerEdgeRect() const;
+    static RoundedRect computeInnerEdgeRoundedRect(const RoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
 
     RoundedRect m_borderRect;
+    RoundedRect m_innerEdgeRect;
     RectEdges<LayoutUnit> m_borderWidths;
 };
 

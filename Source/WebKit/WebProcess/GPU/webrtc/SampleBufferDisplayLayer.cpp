@@ -59,10 +59,11 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
-        if (!weakThis)
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return callback(false);
-        m_hostingContextID = contextId;
+        protectedThis->m_hostingContextID = contextId;
         callback(!!contextId);
     });
 }

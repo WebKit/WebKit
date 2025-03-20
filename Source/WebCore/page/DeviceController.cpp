@@ -35,9 +35,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceController);
 
-DeviceController::DeviceController(DeviceClient& client)
-    : m_client(client)
-    , m_timer(*this, &DeviceController::fireDeviceEvent)
+DeviceController::DeviceController()
+    : m_timer(*this, &DeviceController::fireDeviceEvent)
 {
 }
 
@@ -45,6 +44,10 @@ DeviceController::~DeviceController() = default;
 
 void DeviceController::addDeviceEventListener(LocalDOMWindow& window)
 {
+    RefPtr document = window.document();
+    if (!document)
+        return;
+
     bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(&window);
 
@@ -55,7 +58,7 @@ void DeviceController::addDeviceEventListener(LocalDOMWindow& window)
     }
 
     if (wasEmpty)
-        m_client->startUpdating();
+        checkedClient()->startUpdating(document->securityOrigin().data());
 }
 
 void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
@@ -63,7 +66,7 @@ void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
     m_listeners.remove(&window);
     m_lastEventListeners.remove(&window);
     if (m_listeners.isEmpty())
-        m_client->stopUpdating();
+        checkedClient()->stopUpdating();
 }
 
 void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
@@ -71,7 +74,7 @@ void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
     m_listeners.removeAll(&window);
     m_lastEventListeners.removeAll(&window);
     if (m_listeners.isEmpty())
-        m_client->stopUpdating();
+        checkedClient()->stopUpdating();
 }
 
 bool DeviceController::hasDeviceEventListener(LocalDOMWindow& window) const
@@ -88,11 +91,6 @@ void DeviceController::dispatchDeviceEvent(Event& event)
     }
 }
 
-DeviceClient& DeviceController::client()
-{
-    return m_client.get();
-}
-
 void DeviceController::fireDeviceEvent()
 {
     ASSERT(hasLastData());
@@ -107,6 +105,11 @@ void DeviceController::fireDeviceEvent()
                 listener->dispatchEvent(*lastEvent);
         }
     }
+}
+
+CheckedRef<DeviceClient> DeviceController::checkedClient()
+{
+    return client();
 }
 
 } // namespace WebCore

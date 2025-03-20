@@ -47,7 +47,7 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
     Vector<WebContextMenuItemData> submenu;
     submenu.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
-        if (auto* item = submenuItems->at<WebContextMenuItem>(i))
+        if (RefPtr item = submenuItems->at<WebContextMenuItem>(i))
             submenu.append(item->data());
     }
     submenu.shrinkToFit();

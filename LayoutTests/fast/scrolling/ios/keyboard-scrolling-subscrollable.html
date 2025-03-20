@@ -1,0 +1,120 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useHardwareKeyboardMode=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runSubTests() {
+            overflowElement = document.getElementById("overflowTest");
+            overflowScrollTop = overflowElement.scrollTop;
+
+            overflowElement2 = document.getElementById("overflowTest2");
+            overflow2ScrollTop = overflowElement2.scrollTop;
+
+            windowYPosition = window.scrollY;
+
+            // Tap the first overflow element, and keyboard scroll.
+
+            await UIHelper.activateElement(overflowElement);
+            
+            await UIHelper.rawKeyDown("downArrow");
+            await UIHelper.renderingUpdate();
+            await UIHelper.rawKeyUp("downArrow");
+
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+
+            shouldBeGreaterThanOrEqual("overflowElement.scrollTop", "overflowScrollTop + 1");
+            overflowScrollTop = overflowElement.scrollTop;
+
+            // Tap the main area, and keyboard scroll.
+
+            await UIHelper.activateElement(document.getElementById("placeholder"));
+
+            await UIHelper.rawKeyDown("downArrow");
+            await UIHelper.renderingUpdate();
+            await UIHelper.rawKeyUp("downArrow");
+
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+            shouldBeGreaterThanOrEqual("window.scrollY", "windowYPosition + 1");
+            windowYPosition = window.scrollY;
+
+            // Tap the second overflow element, and keyboard scroll.
+
+            await UIHelper.activateElement(overflowElement2);
+            
+            await UIHelper.rawKeyDown("downArrow");
+            await UIHelper.renderingUpdate();
+            await UIHelper.rawKeyUp("downArrow");
+
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+
+            shouldBeGreaterThanOrEqual("overflowElement2.scrollTop", "overflow2ScrollTop + 1");
+            overflow2ScrollTop = overflowElement2.scrollTop;
+        }
+        
+        async function runTest() {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            // Run the subtests nominally.
+
+            await runSubTests();
+
+            // Now, run the subtests with added event listeners.
+
+            const noop = () => {};
+
+            document.getElementById("overflowTest").addEventListener("touchstart", noop);
+            document.getElementById("overflowTest").addEventListener("touchend", noop);
+            document.getElementById("overflowTest").addEventListener("click", noop);
+
+            document.getElementById("overflowTest2").addEventListener("touchstart", noop);
+            document.getElementById("overflowTest2").addEventListener("touchend", noop);
+            document.getElementById("overflowTest2").addEventListener("click", noop);
+
+            document.getElementById("placeholder").addEventListener("touchstart", noop);
+            document.getElementById("placeholder").addEventListener("touchend", noop);
+            document.getElementById("placeholder").addEventListener("click", noop);
+
+            await runSubTests();
+
+            // Done.
+
+            testRunner.notifyDone();
+
+        }
+    </script>
+    <style>
+    #placeholder {
+        width: 300px;
+        height: 150lvh;
+        background: blue;
+    }
+    #overflowTest {
+        background: green;
+        width: 100%;
+        height: 100px;
+        overflow: scroll;
+    }
+    #overflowTest2 {
+        background: pink;
+        width: 100%;
+        height: 100px;
+        overflow: scroll;
+    }
+    </style>
+</head>
+<body style="margin: 0;" onload="runTest()">
+    <div id="placeholder">
+        <div id="overflowTest">This text is really long and the height of its container is only 100 pixels. Therefore, a scrollbar is added to help the reader to scroll the content. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem.</div>
+        <div id="overflowTest2">This text is really long and the height of its container is only 100 pixels. Therefore, a scrollbar is added to help the reader to scroll the content. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem.</div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

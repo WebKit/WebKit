@@ -52,3 +52,5 @@ private:
 };
     
 } // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(ContentRuleListAction);

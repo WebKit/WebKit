@@ -155,7 +155,7 @@ static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndi
                 snapshotOptions.flags.add(SnapshotFlags::ForceBlackText);
         }
         if (options.contains(TextIndicatorOption::SkipReplacedContent))
-            snapshotOptions.flags.add(SnapshotFlags::ExcludeReplacedContent);
+            snapshotOptions.flags.add(SnapshotFlags::ExcludeReplacedContentExceptForIFrames);
     } else
         snapshotOptions.flags.add(SnapshotFlags::ExcludeSelectionHighlighting);
 
@@ -212,7 +212,7 @@ static UncheckedKeyHashSet<Color> estimatedTextColorsForRange(const SimpleRange&
         if (!node)
             continue;
         auto renderer = node->renderer();
-        if (is<RenderText>(renderer))
+        if (CheckedPtr renderText = dynamicDowncast<RenderText>(renderer))
             colors.add(renderer->style().color());
     }
     return colors;

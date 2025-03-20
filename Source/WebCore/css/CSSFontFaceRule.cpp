@@ -22,9 +22,9 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
+#include "CSSFontFaceDescriptors.h"
 #include "CSSSerializationContext.h"
 #include "MutableStyleProperties.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/MakeString.h>
@@ -44,10 +44,10 @@ CSSFontFaceRule::~CSSFontFaceRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration& CSSFontFaceRule::style()
+CSSFontFaceDescriptors& CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_fontFaceRule->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = CSSFontFaceDescriptors::create(m_fontFaceRule->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 

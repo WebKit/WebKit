@@ -91,7 +91,7 @@ struct CSSParserContext {
     bool cssWordBreakAutoPhraseEnabled : 1 { false };
     bool popoverAttributeEnabled : 1 { false };
     bool sidewaysWritingModesEnabled : 1 { false };
-    bool cssTextWrapPrettyEnabled : 1 { false };
+    bool cssTextWrapPrettyEnabled : 1 { true };
     bool thumbAndTrackPseudoElementsEnabled : 1 { false };
 #if ENABLE(SERVICE_CONTROLS)
     bool imageControlsEnabled : 1 { false };
@@ -105,6 +105,7 @@ struct CSSParserContext {
     bool cssMediaProgressFunctionEnabled : 1 { false };
     bool cssContainerProgressFunctionEnabled : 1 { false };
     bool cssRandomFunctionEnabled : 1 { false };
+    bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;
@@ -112,7 +113,10 @@ struct CSSParserContext {
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&);
     CSSParserContext(const Document&, const URL& baseURL, ASCIILiteral charset = ""_s);
+
     ResolvedURL completeURL(const String&) const;
+
+    void setUASheetMode();
 
     bool operator==(const CSSParserContext&) const = default;
 };

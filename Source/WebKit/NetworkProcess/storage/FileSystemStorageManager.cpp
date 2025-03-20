@@ -146,10 +146,8 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
 
     auto identifiers = connectionHandles->value;
     for (auto identifier : identifiers) {
-        if (RefPtr handle = m_handles.take(identifier))
+        if (RefPtr handle = m_handles.get(identifier))
             handle->close();
-        if (RefPtr registry = m_registry.get())
-            registry->unregisterHandle(identifier);
     }
 
     m_handlesByConnection.remove(connectionHandles);
@@ -216,9 +214,12 @@ void FileSystemStorageManager::close()
             if (RefPtr registry = m_registry.get())
                 registry->unregisterHandle(identifier);
 
-            // Send message to web process to invalidate active sync access handle.
+            // Send messages to web process to invalidate active sync access handle and writables.
             if (auto accessHandleIdentifier = takenHandle->activeSyncAccessHandle())
                 IPC::Connection::send(connectionID, Messages::WebFileSystemStorageConnection::InvalidateAccessHandle(*accessHandleIdentifier), 0);
+
+            for (auto writableIdentifier : takenHandle->writables())
+                IPC::Connection::send(connectionID, Messages::WebFileSystemStorageConnection::InvalidateWritable(writableIdentifier), 0);
         }
     }
 

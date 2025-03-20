@@ -47,3 +47,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebFormSubmissionListenerProxy)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::FormSubmissionListener; }
+SPECIALIZE_TYPE_TRAITS_END()

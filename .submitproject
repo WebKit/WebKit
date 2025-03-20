@@ -15,5 +15,6 @@
     excludedSubdirectoryPatterns = Source/ThirdParty/skia
     excludedSubdirectoryPatterns = Source/ThirdParty/unifdef
     excludedSubdirectoryPatterns = Source/ThirdParty/xdgmime
+    excludedSubdirectoryPatterns = Source/*/SaferCPPExpectations/
 [submitproject "gitmodules"]
     enabled = false

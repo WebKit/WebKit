@@ -94,6 +94,12 @@ private:
 
     WorkResult work() final
     {
+#if USE(PROTECTED_JIT)
+        // Must be constructed before we allocate anything using
+        // SequesteredArenaMalloc
+        ArenaLifetime m_saLifetime { };
+#endif
+
         auto complete = [&] (const AbstractLocker&) {
             // We need to hold the lock to release our plan otherwise the main thread, while canceling plans
             // might use after free the plan we are looking at

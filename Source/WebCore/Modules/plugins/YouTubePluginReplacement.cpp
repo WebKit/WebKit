@@ -73,19 +73,23 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 
-    if (!m_embedShadowElement)
+    RefPtr embedShadowElement = m_embedShadowElement;
+    if (!embedShadowElement)
         return nullptr;
     
-    return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
+    return embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 {
-    m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
+    Ref document = m_parentElement->document();
+    Ref embedShadowElement = YouTubeEmbedShadowElement::create(document);
 
-    root.appendChild(*m_embedShadowElement);
+    m_embedShadowElement = embedShadowElement.copyRef();
 
-    auto iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
+    root.appendChild(embedShadowElement);
+
+    Ref iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, document);
     if (m_attributes.contains<HashTranslatorASCIILiteral>("width"_s))
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, "100%"_s);
 
@@ -100,7 +104,7 @@ void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     
     // Disable frame flattening for this iframe.
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, "no"_s);
-    m_embedShadowElement->appendChild(iframeElement);
+    embedShadowElement->appendChild(iframeElement);
 }
     
 static URL createYouTubeURL(StringView videoID, StringView timeID)
@@ -279,7 +283,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
 
 AtomString YouTubePluginReplacement::youTubeURL(const AtomString& srcString)
 {
-    URL srcURL = m_parentElement->document().completeURL(srcString);
+    URL srcURL = m_parentElement->protectedDocument()->completeURL(srcString);
     return youTubeURLFromAbsoluteURL(srcURL, srcString);
 }
 

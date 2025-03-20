@@ -54,29 +54,29 @@
 
 #if HAVE(SEC_ACCESS_CONTROL)
 
-additional_forward_declaration: typedef struct __SecAccessControl *SecAccessControlRef
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) __SecAccessControl *SecAccessControlRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecAccessControl()] SecAccessControlRef wrapped by WebKit::CoreIPCSecAccessControl {
 }
 
 #endif
 
-additional_forward_declaration: typedef struct __SecCertificate *SecCertificateRef
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) __SecCertificate *SecCertificateRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecCertificate()] SecCertificateRef wrapped by WebKit::CoreIPCSecCertificate {
 }
 
 #if HAVE(SEC_KEYCHAIN)
 
-additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainItemRef
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) __SecKeychainItem *SecKeychainItemRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecKeychainItem()] SecKeychainItemRef wrapped by WebKit::CoreIPCSecKeychainItem {
 }
 
 #endif
 
-additional_forward_declaration: typedef struct __CVBuffer *CVPixelBufferRef
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef
 [WebKitPlatform, CustomHeader,  AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCF()] CVPixelBufferRef wrapped by WebKit::CoreIPCCVPixelBufferRef {
 }
 
-additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
 }
 

@@ -132,7 +132,7 @@ private:
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_drawFramebuffer;
-    WebGLRenderingContextBase& m_context;
+    WeakRef<WebGLRenderingContextBase> m_context;
     Attributes m_attributes;
     PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Shared;
     IntSize m_framebufferSize; // Physical Space

@@ -164,6 +164,8 @@ static void webkitInputMethodContextImplGtkGetPreedit(WebKitInputMethodContext* 
         }
     }
 
+    g_clear_pointer(&attrList, pango_attr_list_unref);
+
     if (cursorOffset)
         *cursorOffset = clampTo<unsigned>(offset);
 }

@@ -34,10 +34,10 @@ TextStream& operator<<(TextStream& ts, RotationDirection direction)
 {
     switch (direction) {
     case RotationDirection::Counterclockwise:
-        ts << "counterclockwise";
+        ts << "counterclockwise"_s;
         break;
     case RotationDirection::Clockwise:
-        ts << "clockwise";
+        ts << "clockwise"_s;
         break;
     }
     return ts;

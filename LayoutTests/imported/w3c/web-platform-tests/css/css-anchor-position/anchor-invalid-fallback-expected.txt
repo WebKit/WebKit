@@ -35,5 +35,5 @@ PASS Invalid anchor function, anchor(var())
 PASS Invalid anchor function, anchor(unknown var()) (fallback)
 PASS Invalid anchor function, anchor(unknown var()) (no fallback)
 PASS Revert to invalid anchor()
-FAIL Flip to invalid anchor() assert_equals: left expected "10px" but got "9999px"
+PASS Flip to invalid anchor()
 

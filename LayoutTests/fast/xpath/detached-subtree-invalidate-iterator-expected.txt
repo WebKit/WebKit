@@ -1,5 +1,8 @@
 Test that iterators are invalidated even if the original context is detached.
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS result.invalidIteratorState is false
 PASS result.iterateNext().tagName is 'span'
 Modifying the document...

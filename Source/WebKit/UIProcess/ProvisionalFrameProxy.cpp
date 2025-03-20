@@ -43,19 +43,28 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     , m_frameProcess(WTFMove(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
 {
-    process().markProcessAsRecentlyUsed();
-    process().send(Messages::WebPage::CreateProvisionalFrame(ProvisionalFrameCreationParameters {
+    Ref process = this->process();
+    process->markProcessAsRecentlyUsed();
+    process->send(Messages::WebPage::CreateProvisionalFrame(ProvisionalFrameCreationParameters {
         frame.frameID(),
         frame.layerHostingContextIdentifier(),
         frame.effectiveSandboxFlags(),
         frame.scrollingMode()
-    }), frame.page()->webPageIDInProcess(process()));
+    }), frame.protectedPage()->webPageIDInProcess(process));
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
-    if (m_frameProcess && m_frame->page())
-        process().send(Messages::WebPage::DestroyProvisionalFrame(m_frame->frameID()), m_frame->page()->webPageIDInProcess(process()));
+    if (!m_frameProcess)
+        return;
+
+    Ref frame = m_frame.get();
+    RefPtr page = frame->page();
+    if (!page)
+        return;
+
+    Ref process = this->process();
+    process->send(Messages::WebPage::DestroyProvisionalFrame(frame->frameID()), page->webPageIDInProcess(process));
 }
 
 RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()

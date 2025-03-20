@@ -49,7 +49,7 @@ InspectorExtensionDelegate::InspectorExtensionDelegate(_WKInspectorExtension *in
     m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didNavigateTabWithIdentifier:newURL:)];
     m_delegateMethods.inspectorExtensionInspectedPageDidNavigate = [delegate respondsToSelector:@selector(inspectorExtension:inspectedPageDidNavigate:)];
 
-    inspectorExtension->_extension->setClient(makeUniqueRef<InspectorExtensionClient>(*this));
+    Ref { *inspectorExtension->_extension }->setClient(makeUniqueRef<InspectorExtensionClient>(*this));
 }
 
 InspectorExtensionDelegate::~InspectorExtensionDelegate() = default;

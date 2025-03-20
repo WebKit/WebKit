@@ -33,6 +33,7 @@
 #include "PDFKitSPI.h"
 #include "PDFScrollingPresentationController.h"
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/LocalFrameView.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -117,24 +118,35 @@ RefPtr<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocum
     ASSERT(pageBackgroundLayer);
 
     pageContainerLayer->setAnchorPoint({ });
-    addLayerShadow(*pageContainerLayer, containerShadowOffset, containerShadowColor, containerShadowStdDeviation);
 
     pageBackgroundLayer->setAnchorPoint({ });
     pageBackgroundLayer->setBackgroundColor(Color::white);
-
     pageBackgroundLayer->setDrawsContent(true);
     pageBackgroundLayer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
     pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
     pageBackgroundLayer->setAllowsTiling(false);
     pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once when page backgrounds change.
 
-    // FIXME: <https://webkit.org/b/276981> Need to add a 1px black border with alpha 0.0586.
-
-    addLayerShadow(*pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
+    if (shouldAddPageBackgroundLayerShadow()) {
+        addLayerShadow(*pageContainerLayer, containerShadowOffset, containerShadowColor, containerShadowStdDeviation);
+        // FIXME: <https://webkit.org/b/276981> Need to add a 1px black border with alpha 0.0586.
+        addLayerShadow(*pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
+    }
 
     pageContainerLayer->addChild(*pageBackgroundLayer);
 
     return pageContainerLayer;
+}
+
+bool PDFPresentationController::shouldAddPageBackgroundLayerShadow() const
+{
+#if PLATFORM(MAC)
+    return true;
+#else
+    // FIXME (288384): Remove this method and unconditionally add shadows behind the page once we figure out
+    // how to maintain a stable framerate during device rotation.
+    return false;
+#endif
 }
 
 RefPtr<GraphicsLayer> PDFPresentationController::pageBackgroundLayerForPageContainerLayer(GraphicsLayer& pageContainerLayer)
@@ -242,7 +254,8 @@ auto PDFPresentationController::pdfPositionForCurrentView(AnchorPoint anchorPoin
     if (!preservePosition)
         return { };
 
-    auto& documentLayout = m_plugin->documentLayout();
+    CheckedRef checkedPlugin { m_plugin.get() };
+    auto& documentLayout = checkedPlugin->documentLayout();
     if (!documentLayout.hasLaidOutPDFDocument())
         return { };
 
@@ -252,7 +265,7 @@ auto PDFPresentationController::pdfPositionForCurrentView(AnchorPoint anchorPoin
 
     auto pageIndex = *maybePageIndex;
     auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
-    auto topLeftInDocumentSpace = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint { });
+    auto topLeftInDocumentSpace = checkedPlugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint::zero());
     auto pagePoint = documentLayout.documentToPDFPage(FloatPoint { pageBounds.center().x(), topLeftInDocumentSpace.y() }, pageIndex);
 
     LOG_WITH_STREAM(PDF, stream << "PDFPresentationController::pdfPositionForCurrentView - point " << pagePoint << " in page " << pageIndex << " with anchor point " << std::to_underlying(anchorPoint));
@@ -262,17 +275,37 @@ auto PDFPresentationController::pdfPositionForCurrentView(AnchorPoint anchorPoin
 
 FloatPoint PDFPresentationController::anchorPointInDocumentSpace(AnchorPoint anchorPoint) const
 {
-    auto anchorPointInPluginSpace = [anchorPoint, checkedPlugin = CheckedRef { m_plugin.get() }] -> FloatPoint {
-        switch (anchorPoint) {
-        case AnchorPoint::TopLeft:
+    FloatPoint anchorPointInPluginSpace;
+    CheckedRef checkedPlugin { m_plugin.get() };
+    if (checkedPlugin->shouldSizeToFitContent()) {
+        RefPtr view = checkedPlugin->frameView();
+        if (!view)
             return { };
-        case AnchorPoint::Center:
-            return flooredIntPoint(checkedPlugin->size() / 2);
-        }
-        ASSERT_NOT_REACHED();
-        return { };
-    }();
-    return m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, anchorPointInPluginSpace);
+
+        anchorPointInPluginSpace = checkedPlugin->convertFromRootViewToPlugin([anchorPoint, view] -> FloatPoint {
+            auto unobscuredRootViewRect = view->contentsToRootView(view->unobscuredContentRect());
+            switch (anchorPoint) {
+            case AnchorPoint::TopLeft:
+                return unobscuredRootViewRect.location();
+            case AnchorPoint::Center:
+                return unobscuredRootViewRect.center();
+            }
+            ASSERT_NOT_REACHED();
+            return { };
+        }());
+    } else {
+        anchorPointInPluginSpace = [anchorPoint, checkedPlugin] -> FloatPoint {
+            switch (anchorPoint) {
+            case AnchorPoint::TopLeft:
+                return { };
+            case AnchorPoint::Center:
+                return flooredIntPoint(checkedPlugin->size() / 2);
+            }
+            ASSERT_NOT_REACHED();
+            return { };
+        }();
+    }
+    return checkedPlugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, anchorPointInPluginSpace);
 }
 
 bool PDFPresentationController::shouldUseInProcessBackingStore() const

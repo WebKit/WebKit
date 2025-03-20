@@ -36,6 +36,9 @@
 
 namespace WebCore {
 
+typedef MediaSourcePrivateGStreamer::StreamType StreamType;
+typedef MediaSourcePrivateGStreamer::RegisteredTrack RegisteredTrack;
+
 #if !LOG_DISABLED || ENABLE(ENCRYPTED_MEDIA)
 struct PadProbeInformation {
     AppendPipeline* appendPipeline;
@@ -57,13 +60,10 @@ public:
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
 private:
-    // Similar to TrackPrivateBaseGStreamer::TrackType, but with a new value (Invalid) for when the codec is
-    // not supported on this system, which should result in ParsingFailed error being thrown in SourceBuffer.
-    enum StreamType { Audio, Video, Text, Unknown, Invalid };
 #ifndef GST_DISABLE_GST_DEBUG
     static const char * streamTypeToString(StreamType);
-    static const char * streamTypeToStringLower(StreamType);
 #endif
+    static const char * streamTypeToStringLower(StreamType);
 
     struct Track {
         // Track objects are created on pad-added for the first initialization segment, and destroyed after
@@ -118,7 +118,7 @@ private:
     void handleErrorConditionFromStreamingThread();
 
     void hookTrackEvents(Track&);
-    static std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> parseDemuxerSrcPadCaps(GstCaps*);
+    static std::tuple<GRefPtr<GstCaps>, StreamType, FloatSize> parseDemuxerSrcPadCaps(GstCaps*);
     Ref<WebCore::TrackPrivateBase> makeWebKitTrack(Track& appendPipelineTrack, int trackIndex, TrackID);
     void appsinkCapsChanged(Track&);
     void appsinkNewSample(const Track&, GRefPtr<GstSample>&&);

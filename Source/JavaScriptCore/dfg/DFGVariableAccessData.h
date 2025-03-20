@@ -35,6 +35,7 @@
 #include "Operands.h"
 #include "SpeculatedType.h"
 #include "VirtualRegister.h"
+#include <wtf/SequesteredMalloc.h>
 #include <wtf/UnionFind.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -46,7 +47,7 @@ struct Node;
 enum DoubleBallot { VoteValue, VoteDouble };
 
 class VariableAccessData : public UnionFind<VariableAccessData> {
-    WTF_MAKE_TZONE_ALLOCATED(VariableAccessData);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(VariableAccessData);
     WTF_MAKE_NONCOPYABLE(VariableAccessData);
 public:
     VariableAccessData();

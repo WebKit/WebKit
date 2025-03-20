@@ -159,7 +159,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
     auto code = stringifyFunction(globalObject, args, functionName, functionConstructionMode, scope, functionConstructorParametersEndPosition);
     EXCEPTION_ASSERT(!!scope.exception() == code.isNull());
 
-    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes()) {
+    if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None) {
         bool isTrusted = true;
         auto* structure = globalObject->trustedScriptStructure();
         for (size_t i = 0; i < args.size(); i++) {
@@ -181,7 +181,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
         }
     }
 
-    if (UNLIKELY(!globalObject->evalEnabled())) {
+    if (UNLIKELY(!globalObject->evalEnabled()) && globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::EnforcedWithEvalEnabled) {
         scope.clearException();
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? WTFMove(code) : nullString());
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));

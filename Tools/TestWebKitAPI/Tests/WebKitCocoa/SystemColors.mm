@@ -27,10 +27,14 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/ColorSerialization.h>
+#import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSColorSPI.h>
 #endif
 
@@ -74,6 +78,7 @@ TEST(WebKit, LinkColor)
 }
 
 #if PLATFORM(MAC)
+
 TEST(WebKit, LinkColorWithSystemAppearance)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -92,6 +97,53 @@ TEST(WebKit, LinkColorWithSystemAppearance)
     NSString *cssLinkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
     EXPECT_WK_STREQ(expectedString.UTF8String, cssLinkColor);
 }
+
+TEST(WebKit, AppAccentColorAffectsSystemColors)
+{
+    NSUserAccentColor originalUserAccentColor = NSColorGetUserAccentColor();
+    NSColorSetUserAccentColor(NSUserAccentColorMulticolor, YES);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+
+    RetainPtr webViewForPreferenceChange = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webViewForPreferenceChange synchronouslyLoadHTMLString:@""];
+
+    NSString *globalDomain = (NSString *)kCFPreferencesAnyApplication;
+    NSString *userAccentColorPreferenceKey = @"AppleAccentColor";
+    RetainPtr readUserAccentColorPreferenceScript = [NSString stringWithFormat:@"window.internals.readPreferenceInteger(\"%@\",\"%@\")", globalDomain, userAccentColorPreferenceKey];
+
+    auto userAccentColorPreferenceValue = [&] {
+        return [webViewForPreferenceChange stringByEvaluatingJavaScript:readUserAccentColorPreferenceScript.get()].intValue;
+    };
+
+    for (unsigned i = 0; i < 10 && userAccentColorPreferenceValue() > 0; i++) {
+        TestWebKitAPI::Util::spinRunLoop();
+        TestWebKitAPI::Util::runFor(1_s);
+    }
+
+    if (userAccentColorPreferenceValue() > 0) {
+        NSLog(@"User accent color preference not updated. Exiting test.");
+        return;
+    }
+
+    RetainPtr originalAccentColor = [NSApp _effectiveAccentColor];
+    RetainPtr newAccentColor = [NSColor systemPurpleColor];
+    [NSApp _setAccentColor:newAccentColor.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setUseSystemAppearance:YES];
+    [webView synchronouslyLoadHTMLString:@"<body style='color: -apple-system-control-accent;'>Test</body>"];
+
+    RetainPtr cssColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).color"];
+    EXPECT_WK_STREQ(WebCore::serializationForCSS(WebCore::colorFromCocoaColor(newAccentColor.get())), cssColor.get());
+
+    [NSApp _setAccentColor:originalAccentColor.get()];
+
+    NSColorSetUserAccentColor(originalUserAccentColor, YES);
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)

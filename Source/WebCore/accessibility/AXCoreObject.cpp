@@ -215,6 +215,13 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::tabChildren()
 }
 
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+static bool isValidChildForTable(AXCoreObject& object)
+{
+    auto role = object.roleValue();
+    // Tables can only have these roles as exposed-to-AT children.
+    return role == AccessibilityRole::Row || role == AccessibilityRole::Column || role == AccessibilityRole::TableHeaderContainer || role == AccessibilityRole::Caption;
+}
+
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool updateChildrenIfNeeded)
 {
     if (onlyAddsUnignoredChildren())
@@ -227,12 +234,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
     const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
     RefPtr descendant = children.size() ? children[0].ptr() : nullptr;
     while (descendant && descendant != this) {
-        bool childIsValid = true;
-        if (isExposedTable) {
-            auto role = descendant->roleValue();
-            // Tables can only have these roles as exposed-to-AT children.
-            childIsValid = role == AccessibilityRole::Row || role == AccessibilityRole::Column || role == AccessibilityRole::TableHeaderContainer || role == AccessibilityRole::Caption;
-        }
+        bool childIsValid = !isExposedTable || isValidChildForTable(*descendant);
         if (!childIsValid || descendant->isIgnored()) {
             descendant = descendant->nextInPreOrder(updateChildrenIfNeeded, /* stayWithin */ this);
             continue;
@@ -248,13 +250,27 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
     }
     return unignoredChildren;
 }
+
+AXCoreObject* AXCoreObject::firstUnignoredChild()
+{
+    const auto& children = childrenIncludingIgnored(/* updateChildrenIfNeeded */ true);
+    RefPtr descendant = children.size() ? children[0].ptr() : nullptr;
+    if (onlyAddsUnignoredChildren())
+        return descendant.get();
+
+    bool isExposedTable = isTable() && isExposable();
+    while (descendant && descendant != this) {
+        bool childIsValid = !isExposedTable || isValidChildForTable(*descendant);
+        if (childIsValid && !descendant->isIgnored())
+            return descendant.get();
+        descendant = descendant->nextInPreOrder(/* updateChildrenIfNeeded */ true, /* stayWithin */ this);
+    }
+    return nullptr;
+}
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
 AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
-    if (updateChildrenIfNeeded)
-        updateChildrenIfNecessary();
-
     const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
     if (!children.isEmpty()) {
         auto role = roleValue();
@@ -280,9 +296,6 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreOb
 
 AXCoreObject* AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
-    if (updateChildrenIfNeeded)
-        updateChildrenIfNecessary();
-
     if (stayWithin == this)
         return nullptr;
 
@@ -318,7 +331,9 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNee
         return nullptr;
 
     const auto& siblings = parent->childrenIncludingIgnored(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.find(Ref { *this });
+    size_t indexOfThis = siblings.findIf([this] (const Ref<AXCoreObject>& object) {
+        return object.ptr() == this;
+    });
     if (indexOfThis == notFound)
         return nullptr;
 
@@ -332,7 +347,9 @@ AXCoreObject* AXCoreObject::previousSiblingIncludingIgnored(bool updateChildrenI
         return nullptr;
 
     const auto& siblings = parent->childrenIncludingIgnored(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.find(Ref { *this });
+    size_t indexOfThis = siblings.findIf([this] (const Ref<AXCoreObject>& object) {
+        return object.ptr() == this;
+    });
     if (indexOfThis == notFound)
         return nullptr;
 
@@ -349,7 +366,9 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
     if (!parent)
         return nullptr;
     const auto& siblings = parent->unignoredChildren(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.find(Ref { *this });
+    size_t indexOfThis = siblings.findIf([this] (const Ref<AXCoreObject>& object) {
+        return object.ptr() == this;
+    });
     if (indexOfThis == notFound)
         return nullptr;
 
@@ -713,6 +732,16 @@ bool AXCoreObject::supportsRequiredAttribute() const
     }
 }
 
+bool AXCoreObject::isRootWebArea() const
+{
+    if (roleValue() != AccessibilityRole::WebArea)
+        return false;
+
+    RefPtr parent = parentObject();
+    // If the parent is a scroll area, and the scroll area has no parent, we are at the root web area.
+    return parent && parent->roleValue() == AccessibilityRole::ScrollArea && !parent->parentObject();
+}
+
 bool AXCoreObject::hasPopup() const
 {
     return !equalLettersIgnoringASCIICase(popupValue(), "false"_s);
@@ -939,6 +968,8 @@ bool AXCoreObject::supportsActiveDescendant() const
     case AccessibilityRole::Grid:
     case AccessibilityRole::List:
     case AccessibilityRole::ListBox:
+    case AccessibilityRole::TextArea:
+    case AccessibilityRole::TextField:
     case AccessibilityRole::Tree:
     case AccessibilityRole::TreeGrid:
         return true;

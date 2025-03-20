@@ -31,5 +31,6 @@ enum class WebKit::FileSystemStorageError : uint8_t {
     InvalidState,
     MissingArgument,
     TypeMismatch,
+    QuotaError,
     Unknown
 }

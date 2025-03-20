@@ -1,0 +1,5 @@
+
+
+PASS Media streams can be gced if they are not expected to fire events - 1
+PASS Media streams can be gced if they are not expected to fire events - 2
+

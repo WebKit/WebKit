@@ -429,6 +429,21 @@ void IDBConnectionToServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdent
         m_delegate->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
 }
 
+void IDBConnectionToServer::generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const std::optional<IDBKeyPath>& keyPath, const IDBKeyData& key, const IDBValue& value, std::optional<int64_t> recordID)
+{
+    ASSERT(isMainThread());
+
+    m_proxy->generateIndexKeyForRecord(requestIdentifier, indexInfo, keyPath, key, value, recordID);
+}
+
+void IDBConnectionToServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey, std::optional<int64_t> recordID)
+{
+    ASSERT(isMainThread());
+
+    if (m_serverConnectionIsValid)
+        m_delegate->didGenerateIndexKeyForRecord(transactionIdentifier, requestIdentifier, indexInfo, key, indexKey, recordID);
+}
+
 void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");

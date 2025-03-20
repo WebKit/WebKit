@@ -146,7 +146,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
                 resultGPR = getFreeGPR();
             ASSERT(resultGPR != InvalidGPRReg);
             ASSERT(Reg::fromIndex(resultGPR).isGPR());
-            m_jit.purifyNaN(cachedRecovery.recovery().fpr());
+            m_jit.purifyNaN(cachedRecovery.recovery().fpr(), cachedRecovery.recovery().fpr());
             m_jit.moveDoubleTo64(cachedRecovery.recovery().fpr(), resultGPR);
             m_lockedRegisters.add(resultGPR, IgnoreVectors);
             if (tryAcquireNumberTagRegister())

@@ -27,22 +27,18 @@
 
 #import <AppKit/AppKit.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
 @interface EventSerializer : NSObject
 
 + (NSDictionary *)dictionaryForEvent:(CGEventRef)event relativeToTime:(CGEventTimestamp)referenceTimestamp;
 
-+ (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(CGEventTimestamp)referenceTimestamp;
++ (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(MonotonicTime)referenceTimestamp;
 
 @end
 
-@interface EventStreamPlayer : NSObject {
-    RetainPtr<NSMutableArray> _remainingEventDictionaries;
-    RetainPtr<NSWindow> _window;
-    BlockPtr<void ()> _completionHandler;
-    uint64_t _startTime;
-}
+@interface EventStreamPlayer : NSObject
 
 + (void)playStream:(NSArray<NSDictionary *> *)eventDicts window:(NSWindow *)window completionHandler:(void(^)())completionHandler;
 

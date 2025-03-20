@@ -158,14 +158,14 @@ void DeferredWorkTimer::doWork(VM& vm)
 
     if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish) {
         ASSERT(m_tasks.isEmpty());
-        RunLoop::current().stop();
+        RunLoop::currentSingleton().stop();
     }
 }
 
 void DeferredWorkTimer::runRunLoop()
 {
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
-    ASSERT(&RunLoop::current() == &m_apiLock->vm()->runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_apiLock->vm()->runLoop());
     m_shouldStopRunLoopWhenAllTicketsFinish = true;
     if (!m_pendingTickets.isEmpty())
         RunLoop::run();

@@ -54,6 +54,9 @@
 #include "ShapeDetectionObjectHeap.h"
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebPageProxy.h"
+#include <WebCore/Filter.h>
+#include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/Gradient.h>
 #include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/ImageBufferDisplayListBackend.h>
 #include <WebCore/NullImageBufferBackend.h>
@@ -270,13 +273,10 @@ void RemoteRenderingBackend::didDrawRemoteToPDF(PageIdentifier pageID, Rendering
     }
 
     ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
+    auto data = imageBuffer->sinkIntoPDFDocument();
 
-    callOnMainRunLoop([protectedThis = Ref { *this }, pageID, imageBuffer = WTFMove(imageBuffer), snapshotIdentifier]() mutable {
-        auto data = imageBuffer->sinkIntoPDFDocument();
+    callOnMainRunLoop([pageID, data = WTFMove(data), snapshotIdentifier]() mutable {
         GPUProcess::singleton().didDrawRemoteToPDF(pageID, WTFMove(data), snapshotIdentifier);
-
-        // Ensure destruction happens on creation thread.
-        protectedThis->protectedWorkQueue()->dispatch([imageBuffer = WTFMove(imageBuffer)] () mutable { });
     });
 }
 #endif
@@ -308,7 +308,8 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
         break;
 
     case RenderingMode::DisplayList:
-        imageBuffer = ImageBuffer::create<ImageBufferDisplayListBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+        if (auto backend = ImageBufferDisplayListBackend::create(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, ControlFactory::create()))
+            imageBuffer = ImageBuffer::create<ImageBufferDisplayListBackend, ImageBufferType>(logicalSize, creationContext, WTFMove(backend), imageBufferIdentifier);
         break;
     }
 
@@ -398,6 +399,13 @@ void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, 
     m_remoteResourceCache.cacheNativeImage(image.releaseNonNull());
 }
 
+void RemoteRenderingBackend::releaseNativeImage(RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseNativeImage(identifier);
+    MESSAGE_CHECK(success, "NativeImage released before being cached.");
+}
+
 void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, FontPlatformDataAttributes platformData, std::optional<RenderingResourceIdentifier> fontCustomPlatformDataIdentifier)
 {
     ASSERT(!RunLoop::isMain());
@@ -415,6 +423,13 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
     m_remoteResourceCache.cacheFont(WTFMove(font));
 }
 
+void RemoteRenderingBackend::releaseFont(WebCore::RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseFont(identifier);
+    MESSAGE_CHECK(success, "Font released before being cached.");
+}
+
 void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&& fontCustomPlatformSerializedData)
 {
     ASSERT(!RunLoop::isMain());
@@ -425,10 +440,24 @@ void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlat
     m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData.value()));
 }
 
+void RemoteRenderingBackend::releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseFontCustomPlatformData(identifier);
+    MESSAGE_CHECK(success, "FontCustomPlatformData released before being cached.");
+}
+
 void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs));
+}
+
+void RemoteRenderingBackend::releaseDecomposedGlyphs(RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseDecomposedGlyphs(identifier);
+    MESSAGE_CHECK(success, "DecomposedGlyphs released before being cached.");
 }
 
 void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
@@ -440,6 +469,14 @@ void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
         LOG_WITH_STREAM(DisplayLists, stream << "Received a Gradient without a valid resource identifier");
 }
 
+void RemoteRenderingBackend::releaseGradient(RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseGradient(identifier);
+    MESSAGE_CHECK(success, "Gradient released before being cached.");
+}
+
+
 void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
 {
     ASSERT(!RunLoop::isMain());
@@ -448,6 +485,14 @@ void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
     else
         LOG_WITH_STREAM(DisplayLists, stream << "Received a Filter without a valid resource identifier");
 }
+
+void RemoteRenderingBackend::releaseFilter(RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseFilter(identifier);
+    MESSAGE_CHECK(success, "Filter released before being cached.");
+}
+
 
 void RemoteRenderingBackend::releaseAllDrawingResources()
 {
@@ -460,13 +505,6 @@ void RemoteRenderingBackend::releaseAllImageResources()
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.releaseAllImageResources();
-}
-
-void RemoteRenderingBackend::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    assertIsCurrent(workQueue());
-    bool success = m_remoteResourceCache.releaseRenderingResource(renderingResourceIdentifier);
-    MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
 #if USE(GRAPHICS_LAYER_WC)

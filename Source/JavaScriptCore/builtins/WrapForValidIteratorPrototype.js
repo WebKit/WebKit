@@ -57,7 +57,7 @@ function return()
     var returnMethod = iterator.return;
     // 6. If returnMethod is undefined, then
     //   a. Return CreateIterResultObject(undefined, true).
-    if (returnMethod === @undefined)
+    if (@isUndefinedOrNull(returnMethod))
         return { value: @undefined, done: true };
     // 7. Return ? Call(returnMethod, iterator).
     return returnMethod.@call(iterator);

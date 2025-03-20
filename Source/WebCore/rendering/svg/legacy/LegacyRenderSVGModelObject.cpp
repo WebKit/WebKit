@@ -84,7 +84,7 @@ const RenderObject* LegacyRenderSVGModelObject::pushMappingToContainer(const Ren
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
-static void adjustRectForOutlineAndShadow(const RenderObject& renderer, LayoutRect& rect)
+static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& renderer, LayoutRect& rect)
 {
     auto shadowRect = rect;
     if (auto* boxShadow = renderer.style().boxShadow())

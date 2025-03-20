@@ -33,8 +33,8 @@ from webkitpy.results.options import upload_args
 from libraries.webkitscmpy.webkitscmpy import Commit
 from libraries.webkitscmpy.webkitscmpy import local, log, remote
 
-CHECKERS = ['MemoryUnsafeCastChecker', 'NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor',
-    'UncheckedCallArgsChecker', 'UncheckedLocalVarsChecker', 'UncountedCallArgsChecker', 'UncountedLambdaCapturesChecker', 'UncountedLocalVarsChecker']
+CHECKERS = ['ForwardDeclChecker', 'MemoryUnsafeCastChecker', 'NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'NoUnretainedMemberChecker', 'RefCntblBaseVirtualDtor', 'RetainPtrCtorAdoptChecker',
+     'UncheckedCallArgsChecker', 'UncheckedLocalVarsChecker', 'UncountedCallArgsChecker', 'UncountedLambdaCapturesChecker', 'UncountedLocalVarsChecker', 'UnretainedLambdaCapturesChecker', 'UnretainedCallArgsChecker']
 PROJECTS = ['JavaScriptCore', 'WebCore', 'WebDriver', 'WebGPU', 'WebInspectorUI', 'WebKit', 'WebKitLegacy', 'WTF']
 STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 UNEXPECTED_PASS = {'actual': 'PASS', 'expected': 'FAIL'}

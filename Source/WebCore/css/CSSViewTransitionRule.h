@@ -68,7 +68,7 @@ public:
     StyleRuleType styleRuleType() const final { return StyleRuleType::ViewTransition; }
 
     AtomString navigation() const;
-    Vector<AtomString> types() const { return m_viewTransitionRule->types(); }
+    Vector<AtomString> types() const { return Ref { m_viewTransitionRule }->types(); }
 
 private:
     CSSViewTransitionRule(StyleRuleViewTransition&, CSSStyleSheet* parent);

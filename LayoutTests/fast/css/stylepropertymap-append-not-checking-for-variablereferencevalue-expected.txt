@@ -1,0 +1,10 @@
+This test passes if there is not crash and there is a TypeError exception. This verifies that attributeStyleMap.append throws an exception when appending a CSSVariableReferenceValue property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS p.attributeStyleMap.append('background-size', body.computedStyleMap().get('-webkit-mask-position')) threw exception TypeError: Values cannot contain a CSSVariableReferenceValue.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+  </head>
+  <body>
+    <canvas width="50" height="50" />
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+      var imageData = null;
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              // Fill entire canvas with color.
+              ctx.fillStyle = "green";
+              ctx.fillRect(0, 0, 50, 50);
+              // Make snapshot.
+              imageData = ctx.getImageData(0, 0, 50, 50);
+              // Fill entire canvas with different color.
+              ctx.fillStyle = "blue";
+              ctx.fillRect(0, 0, 50, 50);
+          },
+          () => {
+              // Paint part of the snapshot.
+              ctx.putImageData(imageData, 10, 10, 0, 0, 5, 5);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertValid(damage);
+              assertRectsEq(damage.rects, [[9, 9, 7, 7]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

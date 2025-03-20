@@ -66,6 +66,8 @@ _FRAMEWORK_CONFIG_MAP = {
         "cpp_protocol_group": "Inspector",
         "export_macro": "JS_EXPORT_PRIVATE",
         "alternate_dispatchers": True,
+        # FIXME: Remove legacy_async_callbacks when IndexedDBAgent moves off of it. <rdar://143782962>
+        "legacy_async_callbacks": True,
     },
     "WebKit": {
         "cpp_protocol_group": "Automation",

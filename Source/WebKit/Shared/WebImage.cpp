@@ -96,9 +96,8 @@ WebImage::~WebImage() = default;
 
 IntSize WebImage::size() const
 {
-    if (!m_buffer)
-        return { };
-    return m_buffer->backendSize();
+    RefPtr buffer = m_buffer;
+    return buffer ? buffer->backendSize() : IntSize();
 }
 
 const ImageBufferParameters* WebImage::parameters() const
@@ -119,27 +118,28 @@ auto WebImage::parametersAndHandle() const -> std::optional<ParametersAndHandle>
 
 GraphicsContext* WebImage::context() const
 {
-    if (!m_buffer)
-        return nullptr;
-    return &m_buffer->context();
+    RefPtr buffer = m_buffer;
+    return buffer ? &buffer->context() : nullptr;
 }
 
 RefPtr<NativeImage> WebImage::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return nullptr;
     if (copyBehavior == CopyBackingStore)
-        return m_buffer->copyNativeImage();
-    return m_buffer->createNativeImageReference();
+        return buffer->copyNativeImage();
+    return buffer->createNativeImageReference();
 }
 
 RefPtr<ShareableBitmap> WebImage::bitmap() const
 {
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return nullptr;
-    const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
+    buffer->flushDrawingContext();
 
-    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(m_buffer->toBackendSharing());
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(buffer->toBackendSharing());
     return sharing ? sharing->bitmap() : nullptr;
 }
 
@@ -154,11 +154,12 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 
 std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return { };
-    const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
+    buffer->flushDrawingContext();
 
-    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(m_buffer->toBackendSharing());
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(buffer->toBackendSharing());
     if (!sharing)
         return { };
 

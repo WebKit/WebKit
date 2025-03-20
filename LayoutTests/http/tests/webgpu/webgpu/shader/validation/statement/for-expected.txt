@@ -49,7 +49,7 @@ FAIL :parse:test="init_call" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:8: Expected one of `=`, `++`, or `--`
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :parse:test="init_phony" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -68,7 +68,7 @@ FAIL :parse:test="init_phony" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: Invalid for-loop initialization clause
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :parse:test="init_increment"
 PASS :parse:test="init_compound_assign"
@@ -90,7 +90,7 @@ FAIL :parse:test="cont_call" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:10: Expected one of `=`, `++`, or `--`
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 FAIL :parse:test="cont_phony" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -109,7 +109,7 @@ FAIL :parse:test="cont_phony" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: Invalid for-loop update clause
     TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
  Reached unreachable code
 PASS :parse:test="cont_increment"
 PASS :parse:test="cont_compound_assign"

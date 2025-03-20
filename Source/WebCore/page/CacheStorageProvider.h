@@ -27,11 +27,11 @@
 
 #include "CacheStorageConnection.h"
 #include <wtf/NativePromise.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
-class CacheStorageProvider : public RefCounted<CacheStorageProvider> {
+class CacheStorageProvider : public RefCountedAndCanMakeWeakPtr<CacheStorageProvider> {
 public:
     class DummyCacheStorageConnection final : public WebCore::CacheStorageConnection {
     public:

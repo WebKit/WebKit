@@ -57,7 +57,7 @@ struct CommitTreeState {
     // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
     UncheckedKeyHashSet<ScrollingNodeID> unvisitedNodes { };
     // Nodes with non-empty synchronousScrollingReasons.
-    UncheckedKeyHashSet<ScrollingNodeID> synchronousScrollingNodes { };
+    HashSet<ScrollingNodeID> synchronousScrollingNodes { };
     // orphanNodes keeps child nodes alive while we rebuild child lists.
     OrphanScrollingNodeMap orphanNodes { };
     // Hosted subtrees needing attaching to scrolling tree after main commit has finished
@@ -1051,15 +1051,15 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
 
     {
         TextStream::GroupScope scope(ts);
-        ts << "scrolling tree";
+        ts << "scrolling tree"_s;
 
         Locker locker { m_treeStateLock };
 
         if (auto latchedNodeID = m_latchingController.latchedNodeID())
-            ts.dumpProperty("latched node", latchedNodeID.value());
+            ts.dumpProperty("latched node"_s, latchedNodeID.value());
 
         if (!m_treeState.mainFrameScrollPosition.isZero())
-            ts.dumpProperty("main frame scroll position", m_treeState.mainFrameScrollPosition);
+            ts.dumpProperty("main frame scroll position"_s, m_treeState.mainFrameScrollPosition);
         
         if (RefPtr rootNode = m_rootNode) {
             TextStream::GroupScope scope(ts);
@@ -1069,32 +1069,32 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
         if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
             if (!m_overflowRelatedNodesMap.isEmpty()) {
                 TextStream::GroupScope scope(ts);
-                ts << "overflow related nodes";
+                ts << "overflow related nodes"_s;
                 {
                     TextStream::IndentScope indentScope(ts);
                     for (auto& it : m_overflowRelatedNodesMap)
-                        ts << "\n" << indent << it.key << " -> " << it.value;
+                        ts << '\n' << indent << it.key << " -> "_s << it.value;
                 }
             }
 
 #if ENABLE(SCROLLING_THREAD)
             if (!m_activeOverflowScrollProxyNodes.isEmpty()) {
                 TextStream::GroupScope scope(ts);
-                ts << "overflow scroll proxy nodes";
+                ts << "overflow scroll proxy nodes"_s;
                 {
                     TextStream::IndentScope indentScope(ts);
                     for (auto& node : m_activeOverflowScrollProxyNodes)
-                        ts << "\n" << indent << node->scrollingNodeID();
+                        ts << '\n' << indent << node->scrollingNodeID();
                 }
             }
 
             if (!m_activePositionedNodes.isEmpty()) {
                 TextStream::GroupScope scope(ts);
-                ts << "active positioned nodes";
+                ts << "active positioned nodes"_s;
                 {
                     TextStream::IndentScope indentScope(ts);
                     for (const auto& node : m_activePositionedNodes)
-                        ts << "\n" << indent << node->scrollingNodeID();
+                        ts << '\n' << indent << node->scrollingNodeID();
                 }
             }
 #endif // ENABLE(SCROLLING_THREAD)

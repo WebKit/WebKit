@@ -334,7 +334,6 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 template<typename DOMInsertionWork>
 static ALWAYS_INLINE void executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(ContainerNode& containerNode, Node& child, DOMInsertionWork doNodeInsertion)
 {
-    NodeVector postInsertionNotificationTargets;
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -345,9 +344,7 @@ static ALWAYS_INLINE void executeParserNodeInsertionIntoIsolatedTreeWithoutNotif
 
         doNodeInsertion();
         ChildListMutationScope(containerNode).childAdded(child);
-        notifyChildNodeInserted(containerNode, child, postInsertionNotificationTargets);
     }
-    ASSERT(postInsertionNotificationTargets.isEmpty());
     containerNode.setHasHeldBackChildrenChanged();
 }
 

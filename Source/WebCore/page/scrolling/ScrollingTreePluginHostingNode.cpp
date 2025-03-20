@@ -63,7 +63,7 @@ void ScrollingTreePluginHostingNode::applyLayerPositions()
 
 void ScrollingTreePluginHostingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "plugin hosting node";
+    ts << "plugin hosting node"_s;
     ScrollingTreeNode::dumpProperties(ts, behavior);
 }
 

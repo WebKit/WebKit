@@ -3,7 +3,6 @@
   :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
 </style>
 <script id="shared">
-const log = console.log;
 
 async function gc() {
   await 0;
@@ -11,8 +10,6 @@ async function gc() {
     globalThis.GCController.collect();
   } else if (globalThis.$vm) {
     globalThis.$vm.gc();
-  } else {
-    log('no GC available');
   }
 }
 
@@ -29,37 +26,6 @@ function clearResourceUsages(device, computePassEncoder) {
       compute: {module},
     }));
   computePassEncoder.dispatchWorkgroups(1);
-}
-
-/**
- * @template {any} T
- * @param {GPUDevice} device
- * @param {string} label
- * @param {()=>T} payload
- * @returns {Promise<T>}
- */
-async function validationWrapper(device, label, payload)  {
-  device.pushErrorScope('internal');
-  device.pushErrorScope('out-of-memory');
-  device.pushErrorScope('validation');
-  let result = payload();
-  let validationError = await device.popErrorScope();
-  let outOfMemoryError = await device.popErrorScope();
-  let internalError = await device.popErrorScope();
-  let error = validationError ?? outOfMemoryError ?? internalError;
-  if (error) {
-    log('*'.repeat(25));
-    log(error[Symbol.toStringTag]);
-    log(error.message);
-    log(label);
-    if (error.stack != `_`) {
-      log(error.stack);
-    }
-    log(location);
-    log('*'.repeat(25));
-    throw error;
-  }
-  return result;
 }
 
 const videoUrls = [
@@ -122,8 +88,11 @@ function toBlobUrl(payload) {
   return URL.createObjectURL(blob);
 }
 </script>
+
 <script>
+globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.waitUntilDone();
+
 
 async function window0() {
 let adapter0 = await navigator.gpu.requestAdapter({});
@@ -4251,7 +4220,7 @@ try {
 renderPassEncoder1.setIndexBuffer(buffer14, 'uint32', 936, 1_178);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 commandEncoder46.copyBufferToBuffer(buffer10, 880, buffer32, 1204, 0);
@@ -4609,7 +4578,7 @@ try {
 renderPassEncoder3.setPipeline(pipeline2);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => {  e.label = device0.label; });
 } catch {}
 try {
 computePassEncoder29.pushDebugGroup('\u01cc');
@@ -5191,7 +5160,7 @@ try {
 renderPassEncoder6.drawIndexedIndirect(buffer33, 1_296);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 let bindGroup32 = device0.createBindGroup({layout: bindGroupLayout3, entries: [{binding: 44, resource: sampler11}]});
 let sampler39 = device0.createSampler({
@@ -7432,7 +7401,7 @@ try {
 renderBundleEncoder11.setIndexBuffer(buffer36, 'uint16', 8_222, 2_559);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
   await promise7;
@@ -9766,7 +9735,7 @@ try {
 renderPassEncoder18.setPipeline(pipeline1);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 device0.queue.writeBuffer(buffer50, 532, new DataView(new ArrayBuffer(5266)), 1015, 332);
@@ -10019,7 +9988,7 @@ try {
 renderPassEncoder16.executeBundles([renderBundle0]);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 let buffer62 = device0.createBuffer({
   size: 1605,
@@ -12259,7 +12228,7 @@ try {
 computePassEncoder11.end();
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
   await promise0;
@@ -14468,7 +14437,7 @@ try {
 computePassEncoder22.setBindGroup(0, bindGroup11, new Uint32Array(1656), 267, 0);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 commandEncoder35.copyBufferToTexture({
@@ -17613,7 +17582,7 @@ try {
 renderPassEncoder0.executeBundles([renderBundle3, renderBundle6, renderBundle3, renderBundle6, renderBundle8, renderBundle3, renderBundle3, renderBundle6, renderBundle3]);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 device0.queue.copyExternalImageToTexture(/*
@@ -18642,7 +18611,7 @@ try {
 computePassEncoder83.setPipeline(pipeline2);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 let bindGroup50 = device0.createBindGroup({
   layout: bindGroupLayout3,
@@ -23123,7 +23092,7 @@ try {
 renderPassEncoder0.setBindGroup(0, bindGroup1, new Uint32Array(6477), 16, 0);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 gpuCanvasContext0.configure({
@@ -23844,7 +23813,7 @@ try {
 renderPassEncoder3.setIndexBuffer(buffer5, 'uint16', 16, 19);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 globalThis.someLabel = device0.label;
@@ -24111,7 +24080,7 @@ try {
 renderPassEncoder4.setIndexBuffer(buffer9, 'uint16', 1_124, 175);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 let bindGroup14 = device0.createBindGroup({
   layout: bindGroupLayout3,
@@ -25079,7 +25048,7 @@ try {
 computePassEncoder38.setPipeline(pipeline0);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 if (!arrayBuffer2.detached) { new Uint8Array(arrayBuffer2).fill(0x55); };
@@ -25224,7 +25193,7 @@ try {
 renderPassEncoder2.setIndexBuffer(buffer13, 'uint16', 14, 33);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
   await device0.queue.onSubmittedWorkDone();
@@ -26892,7 +26861,7 @@ try {
 { clearResourceUsages(device0, computePassEncoder34); computePassEncoder34.dispatchWorkgroups(2, 2); };
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 commandEncoder70.copyBufferToBuffer(buffer3, 1276, buffer7, 696, 280);
@@ -27284,7 +27253,7 @@ try {
 renderPassEncoder16.setIndexBuffer(buffer28, 'uint32', 720, 260);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 commandEncoder77.copyBufferToBuffer(buffer19, 800, buffer32, 312, 152);
@@ -30859,7 +30828,7 @@ try {
 renderPassEncoder28.setPipeline(pipeline1);
 } catch {}
 try {
-device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
 } catch {}
 try {
 commandEncoder121.copyTextureToBuffer({
@@ -31083,28 +31052,20 @@ onload = async () => {
 
   ];
   let promises = [ window0(), window1(), window2() ];
-  log('promises created');
   let results = await Promise.allSettled(promises);
   for (let result of results) {
     if (result.status === 'rejected') { throw result.reason; }
   }
-  log('the end')
-  log(location);
+
   } catch (e) {
-    log('error');
-    log(e);
-    log(e[Symbol.toStringTag]);
-    log(e.stack);
-    if (e instanceof GPUPipelineError) {
-      log(`${e} - ${e.reason}`);
+
+      if (e instanceof GPUPipelineError) {
       
     } else if (e instanceof DOMException) {
       if (e.name === 'OperationError') {
-      log(e.message);
       
       } else if (e.name === 'InvalidStateError') {
       } else {
-        log(e);
         
       }
     } else if (e instanceof GPUValidationError) {
@@ -31112,14 +31073,12 @@ onload = async () => {
     } else if (e instanceof GPUOutOfMemoryError) {
       
     } else if (e instanceof TypeError) {
-      log(e);
       
     } else {
-      log('unexpected error type');
-      log(e);
       
     }
   }
-  globalThis.testRunner?.notifyDone();
+  console.log('Pass')
+    globalThis.testRunner?.notifyDone();
 };
 </script>

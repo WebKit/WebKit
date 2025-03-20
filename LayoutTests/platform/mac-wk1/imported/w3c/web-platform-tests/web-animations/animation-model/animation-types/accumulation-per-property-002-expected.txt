@@ -154,6 +154,9 @@ PASS pointer-events: "fill" onto "none"
 PASS position (type: discrete) has testAccumulation function
 PASS position: "fixed" onto "absolute"
 PASS position: "absolute" onto "fixed"
+PASS position-visibility (type: discrete) has testAccumulation function
+PASS position-visibility: "anchors-visible" onto "always"
+PASS position-visibility: "always" onto "anchors-visible"
 PASS quotes (type: discrete) has testAccumulation function
 PASS quotes: ""‘" "’" "“" "”"" onto ""“" "”" "‘" "’""
 PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""

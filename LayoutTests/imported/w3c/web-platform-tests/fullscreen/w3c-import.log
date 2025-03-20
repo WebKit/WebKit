@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/trusted-click.js

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "LocalFrame.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -64,7 +63,7 @@ public:
     }
 
 private:
-    WeakPtr<LocalFrame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

@@ -31,6 +31,7 @@
 
 #define CGCOLORTAGGEDPOINTER_H_
 
+#import <AppKit/NSApplication_Private.h>
 #import <AppKit/NSInspectorBar.h>
 #import <AppKit/NSMenu_Private.h>
 #import <AppKit/NSPreviewRepresentingActivityItem_Private.h>

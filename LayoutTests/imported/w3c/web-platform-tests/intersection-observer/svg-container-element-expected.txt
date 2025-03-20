@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Error: Invalid value for <svg> attribute y="100vh"
+
+PASS IntersectionObserver observing an SVG container element changing position
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.right expected 108 +/- 1 but got 8
+FAIL Change inner svg element assert_equals: entries.length expected 2 but got 1
+

@@ -28,13 +28,13 @@
     EnabledBy=FullScreenEnabled || VideoFullscreenRequiresElementFullscreen
 ]
 messages -> WebFullScreenManagerProxy {
-    EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails) -> (bool success)
+    EnterFullScreen(WebCore::FrameIdentifier frameID, bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails) -> (bool success)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     UpdateImageSource(struct WebKit::FullScreenMediaDetails mediaDetails)
 #endif
     ExitFullScreen() -> ()
-    BeganEnterFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)
-    BeganExitFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> ()
+    BeganEnterFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> (bool success)
+    BeganExitFullScreen(WebCore::FrameIdentifier frameID, WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> ()
     Close()
 }
 #endif

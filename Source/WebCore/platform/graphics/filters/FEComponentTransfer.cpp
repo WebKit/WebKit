@@ -166,22 +166,22 @@ static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
 {
     switch (type) {
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
-        ts << "UNKNOWN";
+        ts << "UNKNOWN"_s;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
-        ts << "IDENTITY";
+        ts << "IDENTITY"_s;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
-        ts << "TABLE";
+        ts << "TABLE"_s;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
-        ts << "DISCRETE";
+        ts << "DISCRETE"_s;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
-        ts << "LINEAR";
+        ts << "LINEAR"_s;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
-        ts << "GAMMA";
+        ts << "GAMMA"_s;
         break;
     }
     return ts;
@@ -189,7 +189,7 @@ static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
 
 static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& function)
 {
-    ts << "type=\"" << function.type;
+    ts << "type=\""_s << function.type;
 
     switch (function.type) {
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
@@ -197,16 +197,16 @@ static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& f
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
-        ts << " " << function.tableValues;
+        ts << ' ' << function.tableValues;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
-        ts << " " << function.tableValues;
+        ts << ' ' << function.tableValues;
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
-        ts << "\" slope=\"" << function.slope << "\" intercept=\"" << function.intercept << "\"";
+        ts << "\" slope=\""_s << function.slope << "\" intercept=\""_s << function.intercept << '"';
         break;
     case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
-        ts << "\" amplitude=\"" << function.amplitude << "\" exponent=\"" << function.exponent << "\" offset=\"" << function.offset << "\"";
+        ts << "\" amplitude=\""_s << function.amplitude << "\" exponent=\""_s << function.exponent << "\" offset=\""_s << function.offset << '"';
         break;
     }
 
@@ -215,19 +215,19 @@ static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& f
 
 TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
-    ts << indent << "[feComponentTransfer";
+    ts << indent << "[feComponentTransfer"_s;
     FilterEffect::externalRepresentation(ts, representation);
-    ts << "\n";
+    ts << '\n';
 
     {
         TextStream::IndentScope indentScope(ts, 2);
-        ts << indent << "{red: " << m_functions[ComponentTransferChannel::Red] << "}\n";
-        ts << indent << "{green: " << m_functions[ComponentTransferChannel::Green] << "}\n";
-        ts << indent << "{blue: " << m_functions[ComponentTransferChannel::Blue] << "}\n";
-        ts << indent << "{alpha: " << m_functions[ComponentTransferChannel::Alpha] << "}";
+        ts << indent << "{red: "_s << m_functions[ComponentTransferChannel::Red] << "}\n"_s;
+        ts << indent << "{green: "_s << m_functions[ComponentTransferChannel::Green] << "}\n"_s;
+        ts << indent << "{blue: "_s << m_functions[ComponentTransferChannel::Blue] << "}\n"_s;
+        ts << indent << "{alpha: "_s << m_functions[ComponentTransferChannel::Alpha] << '}';
     }
 
-    ts << "]\n";
+    ts << "]\n"_s;
     return ts;
 }
 

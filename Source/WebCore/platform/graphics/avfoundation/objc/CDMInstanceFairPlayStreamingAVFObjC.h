@@ -40,6 +40,7 @@ OBJC_CLASS AVContentKeyReportGroup;
 OBJC_CLASS AVContentKeyRequest;
 OBJC_CLASS AVContentKeySession;
 OBJC_CLASS NSData;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSURL;
 OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
@@ -233,6 +234,8 @@ public:
     KeyStatusVector copyKeyStatuses() const;
 
     void attachContentKeyToSample(const MediaSampleAVFObjC&);
+
+    static RetainPtr<NSDictionary> optionsForKeyRequestWithHashSalt(const String&);
 
 private:
     bool ensureSessionOrGroup(KeyGroupingStrategy);

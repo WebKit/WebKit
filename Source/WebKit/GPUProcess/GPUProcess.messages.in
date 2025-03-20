@@ -55,7 +55,7 @@ messages -> GPUProcess : AuxiliaryProcess {
     SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral)
     ResetMockMediaDevices()
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
-    TriggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
+    TriggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay)
     SetShouldListenToVoiceActivity(bool shouldListen)
     EnableMicrophoneMuteStatusAPI()
 #endif

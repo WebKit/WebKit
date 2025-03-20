@@ -49,20 +49,20 @@ IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
 TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
 {
     TextStream::GroupScope scope(ts);
-    ts << "IntersectionObserverEntry " << &entry;
-    ts.dumpProperty("time", entry.time());
+    ts << "IntersectionObserverEntry "_s << &entry << " target " << entry.target();
+    ts.dumpProperty("time"_s, entry.time());
     
     if (entry.rootBounds())
-        ts.dumpProperty("rootBounds", entry.rootBounds()->toFloatRect());
+        ts.dumpProperty("rootBounds"_s, entry.rootBounds()->toFloatRect());
 
     if (entry.boundingClientRect())
-        ts.dumpProperty("boundingClientRect", entry.boundingClientRect()->toFloatRect());
+        ts.dumpProperty("boundingClientRect"_s, entry.boundingClientRect()->toFloatRect());
 
     if (entry.intersectionRect())
-        ts.dumpProperty("intersectionRect", entry.intersectionRect()->toFloatRect());
+        ts.dumpProperty("intersectionRect"_s, entry.intersectionRect()->toFloatRect());
 
-    ts.dumpProperty("isIntersecting", entry.isIntersecting());
-    ts.dumpProperty("intersectionRatio", entry.intersectionRatio());
+    ts.dumpProperty("isIntersecting"_s, entry.isIntersecting());
+    ts.dumpProperty("intersectionRatio"_s, entry.intersectionRatio());
 
     return ts;
 }

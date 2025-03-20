@@ -95,7 +95,7 @@ RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject
     RetainPtr<NSMutableAttributedString> result = start.isolatedObject()->createAttributedString(start.runs()->substring(start.offset()), spellCheck);
     auto emitNewlineOnExit = [&] (AXIsolatedObject& object) {
         // FIXME: This function should not just be emitting newlines, but instead handling every character type in TextEmissionBehavior.
-        auto behavior = object.emitTextAfterBehavior();
+        auto behavior = object.textEmissionBehavior();
         if (behavior != TextEmissionBehavior::Newline && behavior != TextEmissionBehavior::DoubleNewline)
             return;
 

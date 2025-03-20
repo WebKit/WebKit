@@ -132,6 +132,14 @@ inline LayoutBoxExtent ShadowData::shadowInsetExtent(const ShadowData* shadow)
     return shadow->shadowInsetExtent();
 }
 
+inline size_t shadowListLength(const ShadowData* shadow)
+{
+    size_t count;
+    for (count = 0; shadow; shadow = shadow->next())
+        ++count;
+    return count;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, const ShadowData&);
 
 } // namespace WebCore

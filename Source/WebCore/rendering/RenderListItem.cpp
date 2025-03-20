@@ -95,9 +95,9 @@ bool isHTMLListElement(const Node& node)
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem& listItem)
 {
-    auto& element = listItem.element();
+    auto* element = listItem.element();
     auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
-    auto* parent = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
+    auto* parent = pseudoElement ? pseudoElement->hostElement() : element->parentElement();
     for (auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
             return ancestor;
@@ -144,7 +144,7 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
 
 static inline RenderListItem* nextListItem(const Element& list, const RenderListItem& item)
 {
-    return nextListItemHelper(list, item.element());
+    return nextListItemHelper(list, *item.element());
 }
 
 static inline RenderListItem* firstListItem(const Element& list)
@@ -154,7 +154,7 @@ static inline RenderListItem* firstListItem(const Element& list)
 
 static RenderListItem* previousListItem(const Element& list, const RenderListItem& item)
 {
-    auto* current = &item.element();
+    auto* current = item.element();
     auto advance = [&] {
         current = ElementTraversal::previousIncludingPseudo(*current, &list);
     };
@@ -263,18 +263,8 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    if (!oldStyle || oldStyle->counterDirectives().map.get("list-item"_s) == style().counterDirectives().map.get("list-item"_s))
-        return;
-
-    counterDirectivesChanged();
-}
-
-void RenderListItem::layout()
-{
-    StackStats::LayoutCheckPoint layoutCheckPoint;
-    ASSERT(needsLayout());
-
-    RenderBlockFlow::layout();
+    if (diff == StyleDifference::Layout && oldStyle && oldStyle->counterDirectives().map.get("list-item"_s) != style().counterDirectives().map.get("list-item"_s))
+        counterDirectivesChanged();
 }
 
 void RenderListItem::computePreferredLogicalWidths()

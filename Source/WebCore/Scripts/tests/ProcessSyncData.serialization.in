@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2024 Apple Inc. All rights reserved.
+# Copyright (C) 2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@ header: <WebCore/ProcessSyncData.h>
     bool userDidInteractWithPage;
 };
 
+[RefCounted] class WebCore::FrameTreeSyncData {
+    StringifyThis anotherOne;
+};
+
 enum class WebCore::ProcessSyncDataType : uint8_t {
 #if ENABLE(DOM_AUDIO_SESSION)
     AudioSessionType,
@@ -40,13 +44,14 @@ enum class WebCore::ProcessSyncDataType : uint8_t {
     MainFrameURLChange,
     IsAutofocusProcessed,
     UserDidInteractWithPage,
+    AnotherOne,
 };
  
 #if !ENABLE(DOM_AUDIO_SESSION)
 using WebCore::DOMAudioSessionType = bool;
 #endif
 
-using WebCore::ProcessSyncDataVariant = std::variant<WebCore::DOMAudioSessionType, URL, bool, bool>;
+using WebCore::ProcessSyncDataVariant = std::variant<WebCore::DOMAudioSessionType, URL, bool, bool, StringifyThis>;
 
 struct WebCore::ProcessSyncData {
     WebCore::ProcessSyncDataType type;

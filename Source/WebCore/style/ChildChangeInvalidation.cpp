@@ -73,7 +73,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
             if (isFirst && invalidationRuleSet.isNegation == IsNegation::No) {
                 // If this :has() matches ignoring this mutation, nothing actually changes and we don't need to invalidate.
                 // FIXME: We could cache this state across invalidations instead of just testing a single sibling.
-                auto* sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
+                RefPtr sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
                 if (sibling && selectorChecker.match(*selector, *sibling, checkingContext)) {
                     matchingHasSelectors.add(selector);
                     continue;
@@ -112,8 +112,8 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 void ChildChangeInvalidation::invalidateForChangeOutsideHasScope()
 {
     // FIXME: This is a performance footgun. Any mutation will trigger a full document traversal.
-    if (auto* invalidationRuleSet = parentElement().styleResolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet())
-        Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(parentElement(), invalidationRuleSet);
+    if (RefPtr invalidationRuleSet = parentElement().styleResolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet())
+        Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(parentElement(), invalidationRuleSet.get());
 }
 
 void ChildChangeInvalidation::invalidateForHasBeforeMutation()
@@ -243,15 +243,15 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
     auto& features = parentElement().styleResolver().ruleSets().features();
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
-    auto* firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
+    RefPtr firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
 
-    for (auto* toRemove = firstToRemove; toRemove != m_childChange.nextSiblingElement; toRemove = toRemove->nextElementSibling()) {
+    for (RefPtr toRemove = firstToRemove; toRemove != m_childChange.nextSiblingElement; toRemove = toRemove->nextElementSibling()) {
         function(*toRemove);
 
         if (!needsDescendantTraversal)
             continue;
 
-        for (auto& descendant : descendantsOfType<Element>(*toRemove))
+        for (Ref descendant : descendantsOfType<Element>(*toRemove))
             function(descendant);
     }
 }
@@ -262,7 +262,7 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
     if (!m_childChange.isInsertion())
         return;
 
-    auto* newElement = [&] {
+    RefPtr newElement = [&] {
         auto* previous = m_childChange.previousSiblingElement;
         auto* candidate = previous ? ElementTraversal::nextSibling(*previous) : ElementTraversal::firstChild(parentElement());
         if (candidate == m_childChange.nextSiblingElement)
@@ -279,7 +279,7 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
     if (!needsDescendantTraversal(features))
         return;
 
-    for (auto& descendant : descendantsOfType<Element>(*newElement))
+    for (Ref descendant : descendantsOfType<Element>(*newElement))
         function(descendant);
 }
 
@@ -289,10 +289,10 @@ void ChildChangeInvalidation::traverseRemainingExistingSiblings(Function&& funct
     if (m_childChange.isInsertion() && m_childChange.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
         return;
 
-    for (auto* child = m_childChange.previousSiblingElement; child; child = child->previousElementSibling())
+    for (RefPtr child = m_childChange.previousSiblingElement; child; child = child->previousElementSibling())
         function(*child);
 
-    for (auto* child = m_childChange.nextSiblingElement; child; child = child->nextElementSibling())
+    for (RefPtr child = m_childChange.nextSiblingElement; child; child = child->nextElementSibling())
         function(*child);
 }
 
@@ -314,11 +314,11 @@ static void invalidateForForwardPositionalRules(Element& parent, Element* elemen
     if (!childrenAffected && !descendantsAffected)
         return;
 
-    for (auto* sibling = elementAfterChange; sibling; sibling = sibling->nextElementSibling()) {
+    for (RefPtr sibling = elementAfterChange; sibling; sibling = sibling->nextElementSibling()) {
         if (childrenAffected)
             sibling->invalidateStyleInternal();
         if (descendantsAffected) {
-            for (auto* siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+            for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
                 siblingChild->invalidateStyleForSubtreeInternal();
         }
     }
@@ -332,11 +332,11 @@ static void invalidateForBackwardPositionalRules(Element& parent, Element* eleme
     if (!childrenAffected && !descendantsAffected)
         return;
 
-    for (auto* sibling = elementBeforeChange; sibling; sibling = sibling->previousElementSibling()) {
+    for (RefPtr sibling = elementBeforeChange; sibling; sibling = sibling->previousElementSibling()) {
         if (childrenAffected)
             sibling->invalidateStyleInternal();
         if (descendantsAffected) {
-            for (auto* siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+            for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
                 siblingChild->invalidateStyleForSubtreeInternal();
         }
     }
@@ -373,28 +373,28 @@ void ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(Element& pa
 
     checkForEmptyStyleChange(parent);
 
-    auto* lastChildElement = ElementTraversal::lastChild(parent);
+    RefPtr lastChildElement = ElementTraversal::lastChild(parent);
     if (!lastChildElement)
         return;
 
     if (parent.childrenAffectedByLastChildRules())
         invalidateForLastChildState(*lastChildElement, false);
 
-    invalidateForBackwardPositionalRules(parent, lastChildElement);
+    invalidateForBackwardPositionalRules(parent, lastChildElement.get());
 }
 
 void ChildChangeInvalidation::checkForSiblingStyleChanges()
 {
-    auto& parent = parentElement();
-    auto* elementBeforeChange = m_childChange.previousSiblingElement;
-    auto* elementAfterChange = m_childChange.nextSiblingElement;
+    Ref parent = parentElement();
+    RefPtr elementBeforeChange = m_childChange.previousSiblingElement;
+    RefPtr elementAfterChange = m_childChange.nextSiblingElement;
 
     // :first-child. In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
     // |afterChange| is 0 in the parser case, so it works out that we'll skip this block.
-    if (parent.childrenAffectedByFirstChildRules() && elementAfterChange) {
+    if (parent->childrenAffectedByFirstChildRules() && elementAfterChange) {
         // Find our new first child.
-        RefPtr<Element> newFirstElement = ElementTraversal::firstChild(parent);
+        RefPtr<Element> newFirstElement = ElementTraversal::firstChild(parent.get());
 
         // This is the insert/append case.
         if (newFirstElement != elementAfterChange)
@@ -407,9 +407,9 @@ void ChildChangeInvalidation::checkForSiblingStyleChanges()
 
     // :last-child. In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
-    if (parent.childrenAffectedByLastChildRules() && elementBeforeChange) {
+    if (parent->childrenAffectedByLastChildRules() && elementBeforeChange) {
         // Find our new last child.
-        RefPtr<Element> newLastElement = ElementTraversal::lastChild(parent);
+        RefPtr<Element> newLastElement = ElementTraversal::lastChild(parent.get());
 
         if (newLastElement != elementBeforeChange)
             invalidateForLastChildState(*elementBeforeChange, true);
@@ -419,10 +419,10 @@ void ChildChangeInvalidation::checkForSiblingStyleChanges()
             invalidateForLastChildState(*newLastElement, false);
     }
 
-    invalidateForSiblingCombinators(elementAfterChange);
+    invalidateForSiblingCombinators(elementAfterChange.get());
 
-    invalidateForForwardPositionalRules(parent, elementAfterChange);
-    invalidateForBackwardPositionalRules(parent, elementBeforeChange);
+    invalidateForForwardPositionalRules(parent, elementAfterChange.get());
+    invalidateForBackwardPositionalRules(parent, elementBeforeChange.get());
 }
 
 }

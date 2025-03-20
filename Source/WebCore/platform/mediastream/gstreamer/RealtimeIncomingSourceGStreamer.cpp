@@ -73,8 +73,7 @@ bool RealtimeIncomingSourceGStreamer::setBin(const GRefPtr<GstElement>& bin)
         if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM) {
             GRefPtr event = GST_PAD_PROBE_INFO_EVENT(info);
             auto sink = adoptGRef(gst_pad_get_parent_element(pad));
-            self->handleDownstreamEvent(sink.get(), WTFMove(event));
-            return GST_PAD_PROBE_OK;
+            return self->handleDownstreamEvent(sink.get(), WTFMove(event));
         }
 
         auto query = GST_PAD_PROBE_INFO_QUERY(info);
@@ -142,14 +141,14 @@ bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query)
     return gst_pad_peer_query(pad.get(), query);
 }
 
-void RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&& event)
+GstPadProbeReturn RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&& event)
 {
     switch (GST_EVENT_TYPE(event.get())) {
     case GST_EVENT_STREAM_START:
     case GST_EVENT_CAPS:
     case GST_EVENT_SEGMENT:
     case GST_EVENT_STREAM_COLLECTION:
-        return;
+        return GST_PAD_PROBE_OK;
     case GST_EVENT_LATENCY: {
         GstClockTime minLatency, maxLatency;
         if (gst_base_sink_query_latency(GST_BASE_SINK(sink), nullptr, nullptr, &minLatency, &maxLatency)) {
@@ -158,8 +157,19 @@ void RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElement* sink, GR
                 g_object_set(appsrc, "min-latency", minLatency, "max-latency", maxLatency, nullptr);
             });
         }
-        return;
+        return GST_PAD_PROBE_OK;
     }
+    case GST_EVENT_TAG: {
+        // Prevent overhead at startup, when baseparse emits many tag events with small bitrate updates, by applying some backpressure.
+        constexpr auto tagUpdateTimeout = 1_s;
+        const auto now = MonotonicTime::now();
+        if (now - m_lastTagUpdate < tagUpdateTimeout)
+            return GST_PAD_PROBE_DROP;
+
+        m_lastTagUpdate = now;
+        break;
+    }
+
     default:
         break;
     }
@@ -167,9 +177,11 @@ void RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElement* sink, GR
     forEachClient([&](auto* appsrc) {
         auto pad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
         GRefPtr eventCopy(event);
-        GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client", eventCopy.get());
+        GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client %" GST_PTR_FORMAT, eventCopy.get(), appsrc);
         gst_pad_push_event(pad.get(), eventCopy.leakRef());
     });
+
+    return GST_PAD_PROBE_OK;
 }
 
 void RealtimeIncomingSourceGStreamer::tearDown()

@@ -71,7 +71,7 @@ Vector<WTF::String> Array::toStringVector()
         return patternsVector;
 
     patternsVector.reserveInitialCapacity(size);
-    for (auto entry : elementsOfType<API::String>())
+    for (RefPtr entry : elementsOfType<API::String>())
         patternsVector.append(entry->string());
     return patternsVector;
 }

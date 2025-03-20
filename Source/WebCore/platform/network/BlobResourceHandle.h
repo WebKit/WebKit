@@ -64,6 +64,8 @@ public:
         MethodNotAllowed = 5
     };
 
+    bool isBlobResourceHandle() const final { return true; }
+
 private:
     BlobResourceHandle(BlobData*, const ResourceRequest&, ResourceHandleClient*, bool async);
     virtual ~BlobResourceHandle();
@@ -120,3 +122,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BlobResourceHandle)
+    static bool isType(const WebCore::ResourceHandle& handle) { return handle.isBlobResourceHandle(); }
+SPECIALIZE_TYPE_TRAITS_END()

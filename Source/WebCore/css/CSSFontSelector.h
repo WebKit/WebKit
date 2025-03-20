@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include "Font.h"
 #include "FontSelector.h"
+#include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include "WebKitFontFamilyNames.h"
 #include <memory>
@@ -85,6 +86,10 @@ public:
 
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
+
+    bool isSimpleFontSelectorForDescription() const final;
+
+    bool isCSSFontSelector() const final { return true; }
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
 
@@ -158,3 +163,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSFontSelector)
+    static bool isType(const WebCore::FontSelector& selector) { return selector.isCSSFontSelector(); }
+SPECIALIZE_TYPE_TRAITS_END()

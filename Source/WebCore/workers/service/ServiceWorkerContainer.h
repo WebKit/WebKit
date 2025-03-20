@@ -168,7 +168,7 @@ private:
     HashMap<ServiceWorkerRegistrationIdentifier, WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData>> m_registrations;
 
 #if ASSERT_ENABLED
-    Ref<Thread> m_creationThread { Thread::current() };
+    Ref<Thread> m_creationThread { Thread::currentSingleton() };
 #endif
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };

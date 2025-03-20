@@ -761,6 +761,7 @@ void IDBTransaction::createIndexOnServer(IDBClient::TransactionOperation& operat
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
+    operation.setNextRequestCanGoToServer(false);
     m_database->connectionProxy().createIndex(operation, info);
 }
 
@@ -1553,6 +1554,27 @@ uint64_t IDBTransaction::generateOperationID()
 {
     static std::atomic<uint64_t> currentOperationID(1);
     return currentOperationID += 1;
+}
+
+Ref<IDBDatabase> IDBTransaction::protectedDatabase() const
+{
+    return m_database;
+}
+
+void IDBTransaction::generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const std::optional<IDBKeyPath>& keyPath, const IDBKeyData& key, const IDBValue& value, std::optional<int64_t> recordID)
+{
+    RefPtr context = scriptExecutionContext();
+    auto* globalObject = context ? context->globalObject() : nullptr;
+    if (!globalObject)
+        return connectionProxy().didGenerateIndexKeyForRecord(info().identifier(), requestIdentifier, indexInfo, key, IndexKey { }, recordID);
+
+    auto jsValue = deserializeIDBValueToJSValue(*globalObject, value);
+    if (jsValue.isUndefinedOrNull())
+        return connectionProxy().didGenerateIndexKeyForRecord(info().identifier(), requestIdentifier, indexInfo, key, IndexKey { }, recordID);
+
+    IndexKey indexKey;
+    generateIndexKeyForValue(*globalObject, indexInfo, jsValue, indexKey, keyPath, key);
+    return connectionProxy().didGenerateIndexKeyForRecord(info().identifier(), requestIdentifier, indexInfo, key, indexKey, recordID);
 }
 
 } // namespace WebCore

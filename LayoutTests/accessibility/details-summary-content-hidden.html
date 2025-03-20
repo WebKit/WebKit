@@ -33,7 +33,7 @@ if (window.accessibilityController) {
         document.getElementById("details").removeAttribute("open");
         output += await expectAsync("details.isExpanded", "false");
         output += await expectAsync("summary.isExpanded", "false");
-        output += expect("!accessibilityController.accessibleElementById('content')", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('content')", "true");
 
         debug(output);
         finishJSTest();

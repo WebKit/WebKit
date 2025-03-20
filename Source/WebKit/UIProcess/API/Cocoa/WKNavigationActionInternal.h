@@ -27,6 +27,7 @@
 
 #import "APINavigationAction.h"
 #import "WKObject.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
@@ -38,6 +39,6 @@ template<> struct WrapperTraits<API::NavigationAction> {
 
 @interface WKNavigationAction () <WKObject> {
 @package
-    API::ObjectStorage<API::NavigationAction> _navigationAction;
+    AlignedStorage<API::NavigationAction> _navigationAction;
 }
 @end

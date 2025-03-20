@@ -151,10 +151,12 @@ TEST(TLSVersion, DefaultBehavior)
         callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     }];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+    [delegate waitForDidFailProvisionalNavigation];
+#else
     [delegate waitForDidFinishNavigation];
+#endif
 }
-
-#if HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 RetainPtr<WKWebView> makeWebViewWith(WKWebsiteDataStore *store, RetainPtr<TestNavigationDelegate> delegate)
 {
@@ -169,6 +171,8 @@ RetainPtr<WKWebView> makeWebViewWith(WKWebsiteDataStore *store, RetainPtr<TestNa
     return webView;
 };
 
+#if HAVE(TLS_VERSION_DURING_CHALLENGE)
+
 TEST(TLSVersion, NetworkSession)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
@@ -176,12 +180,20 @@ TEST(TLSVersion, NetworkSession)
     {
         auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore], delegate);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+        [delegate waitForDidFailProvisionalNavigation];
+#else
         [delegate waitForDidFinishNavigation];
+#endif
     }
     {
         auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore], delegate);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+        [delegate waitForDidFailProvisionalNavigation];
+#else
         [delegate waitForDidFinishNavigation];
+#endif
     }
     {
         auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
@@ -190,6 +202,14 @@ TEST(TLSVersion, NetworkSession)
         auto webView = makeWebViewWith(dataStore.get(), delegate);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];
+    }
+    {
+        auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [configuration setLegacyTLSEnabled:YES];
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+        auto webView = makeWebViewWith(dataStore.get(), delegate);
+        [webView loadRequest:server.request()];
+        [delegate waitForDidFinishNavigation];
     }
 }
 
@@ -202,12 +222,24 @@ TEST(TLSVersion, ShouldAllowDeprecatedTLS)
         [webView setNavigationDelegate:delegate.get()];
         [webView loadRequest:server.request()];
         [delegate waitForDidFailProvisionalNavigation];
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+        EXPECT_FALSE([delegate receivedShouldAllowDeprecatedTLS]);
+#else
         EXPECT_TRUE([delegate receivedShouldAllowDeprecatedTLS]);
+#endif
     }
     {
         auto delegate = adoptNS([TLSNavigationDelegate new]);
         delegate.get().shouldAllowDeprecatedTLS = YES;
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+        auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [configuration setLegacyTLSEnabled:YES];
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+        auto webView = makeWebViewWith(dataStore.get(), navigationDelegate);
+#else
         auto webView = adoptNS([WKWebView new]);
+#endif
         [webView setNavigationDelegate:delegate.get()];
         [webView loadRequest:server.request()];
         [delegate waitForDidFinishNavigation];
@@ -240,7 +272,20 @@ TEST(TLSVersion, Preconnect)
 static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate(RetainPtr<WKWebViewConfiguration> configuration = nullptr)
 {
     auto delegate = adoptNS([TestNavigationDelegate new]);
+
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+    RetainPtr<WKWebView> webView;
+    if (!configuration) {
+        auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [configuration setLegacyTLSEnabled:YES];
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+        webView = makeWebViewWith(dataStore.get(), delegate);
+    } else
+        webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+#else
     auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]) : adoptNS([WKWebView new]);
+#endif
+
     [webView setNavigationDelegate:delegate.get()];
     [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
@@ -471,7 +516,11 @@ TEST(TLSVersion, LegacySubresources)
     [defaultWebView setNavigationDelegate:delegate.get()];
     [defaultWebView loadRequest:modernServer.request()];
     [delegate waitForDidFinishNavigation];
+#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
+    EXPECT_EQ(legacyServer.totalRequests(), 0u);
+#else
     EXPECT_EQ(legacyServer.totalRequests(), 1u);
+#endif
     EXPECT_EQ(modernServer.totalRequests(), 2u);
 }
 

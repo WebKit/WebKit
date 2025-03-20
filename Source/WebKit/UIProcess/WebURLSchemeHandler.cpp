@@ -61,7 +61,7 @@ WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(WebPageProxy& pag
     auto iterator = m_tasks.find(key);
     if (iterator == m_tasks.end())
         return nullptr;
-    return iterator->value->process();
+    return &iterator->value->process();
 }
 
 void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProxy* process)
@@ -91,8 +91,9 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ResourceLoaderId
     if (iterator == m_tasks.end())
         return;
 
-    iterator->value->stop();
-    platformStopTask(page, iterator->value);
+    Ref task = iterator->value;
+    task->stop();
+    platformStopTask(page, task);
 
     removeTaskFromPageMap(page.identifier(), taskIdentifier);
     m_tasks.remove(iterator);

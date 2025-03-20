@@ -39,29 +39,29 @@ void IdentityTransformOperation::dump(TextStream& ts) const
 TextStream& operator<<(TextStream& ts, TransformOperation::Type type)
 {
     switch (type) {
-    case TransformOperation::Type::ScaleX: ts << "scaleX"; break;
-    case TransformOperation::Type::ScaleY: ts << "scaleY"; break;
-    case TransformOperation::Type::Scale: ts << "scale"; break;
-    case TransformOperation::Type::TranslateX: ts << "translateX"; break;
-    case TransformOperation::Type::TranslateY: ts << "translateY"; break;
-    case TransformOperation::Type::Translate: ts << "translate"; break;
-    case TransformOperation::Type::Rotate: ts << "rotate"; break;
-    case TransformOperation::Type::SkewX: ts << "skewX"; break;
-    case TransformOperation::Type::SkewY: ts << "skewY"; break;
-    case TransformOperation::Type::Skew: ts << "skew"; break;
-    case TransformOperation::Type::Matrix: ts << "matrix"; break;
-    case TransformOperation::Type::ScaleZ: ts << "scaleX"; break;
-    case TransformOperation::Type::Scale3D: ts << "scale3d"; break;
-    case TransformOperation::Type::TranslateZ: ts << "translateZ"; break;
-    case TransformOperation::Type::Translate3D: ts << "translate3d"; break;
-    case TransformOperation::Type::RotateX: ts << "rotateX"; break;
-    case TransformOperation::Type::RotateY: ts << "rotateY"; break;
-    case TransformOperation::Type::RotateZ: ts << "rotateZ"; break;
-    case TransformOperation::Type::Rotate3D: ts << "rotate3d"; break;
-    case TransformOperation::Type::Matrix3D: ts << "matrix3d"; break;
-    case TransformOperation::Type::Perspective: ts << "perspective"; break;
-    case TransformOperation::Type::Identity: ts << "identity"; break;
-    case TransformOperation::Type::None: ts << "none"; break;
+    case TransformOperation::Type::ScaleX: ts << "scaleX"_s; break;
+    case TransformOperation::Type::ScaleY: ts << "scaleY"_s; break;
+    case TransformOperation::Type::Scale: ts << "scale"_s; break;
+    case TransformOperation::Type::TranslateX: ts << "translateX"_s; break;
+    case TransformOperation::Type::TranslateY: ts << "translateY"_s; break;
+    case TransformOperation::Type::Translate: ts << "translate"_s; break;
+    case TransformOperation::Type::Rotate: ts << "rotate"_s; break;
+    case TransformOperation::Type::SkewX: ts << "skewX"_s; break;
+    case TransformOperation::Type::SkewY: ts << "skewY"_s; break;
+    case TransformOperation::Type::Skew: ts << "skew"_s; break;
+    case TransformOperation::Type::Matrix: ts << "matrix"_s; break;
+    case TransformOperation::Type::ScaleZ: ts << "scaleX"_s; break;
+    case TransformOperation::Type::Scale3D: ts << "scale3d"_s; break;
+    case TransformOperation::Type::TranslateZ: ts << "translateZ"_s; break;
+    case TransformOperation::Type::Translate3D: ts << "translate3d"_s; break;
+    case TransformOperation::Type::RotateX: ts << "rotateX"_s; break;
+    case TransformOperation::Type::RotateY: ts << "rotateY"_s; break;
+    case TransformOperation::Type::RotateZ: ts << "rotateZ"_s; break;
+    case TransformOperation::Type::Rotate3D: ts << "rotate3d"_s; break;
+    case TransformOperation::Type::Matrix3D: ts << "matrix3d"_s; break;
+    case TransformOperation::Type::Perspective: ts << "perspective"_s; break;
+    case TransformOperation::Type::Identity: ts << "identity"_s; break;
+    case TransformOperation::Type::None: ts << "none"_s; break;
     }
     
     return ts;

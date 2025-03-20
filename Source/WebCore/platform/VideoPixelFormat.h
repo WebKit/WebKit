@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <optional>
+
 namespace WebCore {
 
 enum class VideoPixelFormat {
@@ -39,7 +41,7 @@ enum class VideoPixelFormat {
     BGRX
 };
 
-VideoPixelFormat convertVideoFramePixelFormat(uint32_t, bool shouldDiscardAlpha);
+std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t, bool shouldDiscardAlpha = false);
 
 inline bool isRGBVideoPixelFormat(VideoPixelFormat format)
 {

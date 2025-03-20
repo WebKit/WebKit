@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/green-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-popover-backdrop-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-backdrop-entry-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-backdrop-entry.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-backdrop-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-backdrop.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-dialog-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-dialog-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-finished-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-finished.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-in-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-in-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-out-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-out-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-user-agent-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-valid.html

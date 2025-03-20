@@ -112,12 +112,11 @@ void ARKitInlinePreviewModelPlayerMac::createFile(WebCore::Model& modelSource)
     // We need to support .reality files as well, https://bugs.webkit.org/show_bug.cgi?id=227568.
     String fileName = makeString(WTF::UUID::createVersion4(), ".usdz"_s);
     auto filePath = FileSystem::pathByAppendingComponent(pathToDirectory, fileName);
-    auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
-    if (file <= 0)
+    auto fileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
+    if (!fileHandle)
         return;
 
-    FileSystem::writeToFile(file, modelSource.data()->makeContiguous()->span());
-    FileSystem::closeFile(file);
+    fileHandle.write(modelSource.data()->makeContiguous()->span());
     m_filePath = filePath;
 }
 

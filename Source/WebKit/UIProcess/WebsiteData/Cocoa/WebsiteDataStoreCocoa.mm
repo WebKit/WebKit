@@ -67,12 +67,6 @@
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #endif
 
-#if ENABLE(SCREEN_TIME)
-@interface STWebHistory (Staging_140439004)
-- (void)fetchAllHistoryWithCompletionHandler:(void (^)(NSSet<NSURL *> *urls, NSError *error))completionHandler;
-@end
-#endif
-
 namespace WebKit {
 
 static NSString* const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
@@ -94,10 +88,10 @@ static std::atomic<bool> keyExists = false;
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
-static WorkQueue& managedDomainQueue()
+static WorkQueue& managedDomainQueueSingleton()
 {
-    static auto& queue = WorkQueue::create("com.apple.WebKit.ManagedDomains"_s).leakRef();
-    return queue;
+    static MainThreadNeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("com.apple.WebKit.ManagedDomains"_s);
+    return queue.get();
 }
 static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
@@ -298,7 +292,7 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
 {
     ASSERT(isMainRunLoop());
 
-    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
+    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
         auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
             return WTF::UUID::parse(identifierString);
         });
@@ -324,7 +318,7 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
             return completionHandler("Data store is in use (by network process)"_s);
     }
 
-    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), identifier, directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
+    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTFMove(completionHandler), identifier, directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
         RetainPtr nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:identifier.toString() private:NO]);
         auto* credentials = [nsCredentialStorage allCredentials];
         for (NSURLProtectionSpace *space in credentials) {
@@ -341,41 +335,6 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
         });
     });
 }
-
-#if ENABLE(SCREEN_TIME)
-
-void WebsiteDataStore::removeScreenTimeData(const HashSet<URL>& websitesToRemove)
-{
-    if (![PAL::getSTWebHistoryClass() instancesRespondToSelector:@selector(fetchAllHistoryWithCompletionHandler:)])
-        return;
-
-    STWebHistoryProfileIdentifier profileIdentifier = nil;
-    if (configuration().identifier())
-        profileIdentifier = configuration().identifier()->toString();
-
-    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier]);
-
-    for (auto& url : websitesToRemove)
-        [webHistory deleteHistoryForURL:url];
-}
-
-void WebsiteDataStore::removeScreenTimeDataWithInterval(WallTime modifiedSince)
-{
-    STWebHistoryProfileIdentifier profileIdentifier = nil;
-    if (configuration().identifier())
-        profileIdentifier = configuration().identifier()->toString();
-
-    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier]);
-
-    if (!modifiedSince.isNaN()) {
-        NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-        RetainPtr dateInterval = adoptNS([[NSDateInterval alloc] initWithStartDate:date endDate:NSDate.now]);
-        [webHistory deleteHistoryDuringInterval:dateInterval.get()];
-    }
-}
-
-#endif
 
 String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier)
 {
@@ -837,7 +796,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
     if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
         return;
 
-    managedDomainQueue().dispatch([forceReinitialization] () mutable {
+    managedDomainQueueSingleton().dispatch([forceReinitialization] () mutable {
         if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         static const auto maxManagedDomainCount = 10;
@@ -906,7 +865,7 @@ void WebsiteDataStore::ensureManagedDomains(CompletionHandler<void(const HashSet
 
     // Hopping to the background thread then back to the main thread
     // ensures that initializeManagedDomains() has finished.
-    managedDomainQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+    managedDomainQueueSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedManagedDomains);
             completionHandler(managedDomains());

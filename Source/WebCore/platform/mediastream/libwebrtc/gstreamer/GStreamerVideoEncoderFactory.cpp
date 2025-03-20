@@ -118,11 +118,11 @@ public:
         return m_pipeline.get();
     }
 
-    GstElement* makeElement(const gchar* factoryName)
+    GstElement* makeElement(ASCIILiteral factoryName)
     {
         static Atomic<uint32_t> elementId;
-        auto name = makeString(Name(), "-enc-"_s, unsafeSpan(factoryName), "-"_s, elementId.exchangeAdd(1));
-        auto* elem = makeGStreamerElement(factoryName, name.utf8().data());
+        auto name = makeString(Name(), "-enc-"_s, factoryName, "-"_s, elementId.exchangeAdd(1));
+        auto* elem = makeGStreamerElement(factoryName, name);
         return elem;
     }
 

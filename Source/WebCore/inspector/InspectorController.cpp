@@ -511,7 +511,7 @@ void InspectorController::frontendInitialized()
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (m_isAutomaticInspection)
-        m_page->inspectorDebuggable().unpauseForInitializedInspector();
+        m_page->inspectorDebuggable().unpauseForResolvedAutomaticInspection();
 #endif
 }
 

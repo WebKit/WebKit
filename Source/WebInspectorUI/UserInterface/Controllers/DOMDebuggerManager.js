@@ -667,7 +667,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _supportsAllAnimationFramesBreakpoint(target)
     {
-        // COMPATIBILITY (iOS 18.X, macOS 15.X): Worker targets did not support `requestAnimationFrame` breakpoints yet.
+        // COMPATIBILITY (iOS 18.4, macOS 15.4): Worker targets did not support `requestAnimationFrame` breakpoints yet.
         // Since support can't be tested directly, check for the `shouldPartition`` parameter of `Page.setCookie`.
         // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
         return target.type !== WI.TargetType.Worker || InspectorBackend.hasCommand("Page.setCookie", "shouldPartition");

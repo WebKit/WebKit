@@ -53,6 +53,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebModelPlayerProvider);
 
+Ref<WebModelPlayerProvider> WebModelPlayerProvider::create(WebPage& webPage)
+{
+    return adoptRef(*new WebModelPlayerProvider(webPage));
+}
+
 WebModelPlayerProvider::WebModelPlayerProvider(WebPage& page)
     : m_page { page }
 {

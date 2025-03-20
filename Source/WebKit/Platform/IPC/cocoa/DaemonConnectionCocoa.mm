@@ -109,7 +109,7 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
             ASSERT_NOT_REACHED();
             return completionHandler({ });
         }
-        completionHandler(xpc_dictionary_get_data_span(reply, Traits::protocolEncodedMessageKey));
+        completionHandler(xpcDictionaryGetData(reply, Traits::protocolEncodedMessageKey));
     });
 }
 

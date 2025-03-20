@@ -760,7 +760,7 @@ end
     # do nothing: 0 in sp for no arguments, call normal operation
 
     move cfr, a1
-    move sp, a2
+    move 0, a2
     move PL, a3
     operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
 

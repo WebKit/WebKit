@@ -457,7 +457,7 @@ Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&&
         });
 
         return MediaPromise::createAndSettle(parser->appendData(WTFMove(data)));
-    })->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+    })->whenSettled(RunLoop::currentSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->appendCompleted(!!result);
         return MediaPromise::createAndSettle(WTFMove(result));
@@ -649,20 +649,22 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
 void SourceBufferPrivateAVFObjC::setCDMSession(LegacyCDMSession* session)
 {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (session == m_session)
+  RefPtr oldSession = m_session.get();
+    if (session == oldSession)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (RefPtr session = m_session.get()) {
-        session->removeSourceBuffer(this);
+    if (oldSession) {
+        oldSession->removeSourceBuffer(this);
 
         auto parser = this->streamDataParser();
         if (parser && shouldAddContentKeyRecipients())
-            [session->contentKeySession() removeContentKeyRecipient:parser];
+            [oldSession->contentKeySession() removeContentKeyRecipient:parser];
     }
 
-    m_session = toCDMSessionAVContentKeySession(session);
+    // FIXME: This is a false positive. Remove the suppression once rdar://145631564 is fixed.
+    SUPPRESS_UNCOUNTED_ARG m_session = toCDMSessionAVContentKeySession(session);
 
     if (RefPtr session = m_session.get()) {
         session->addSourceBuffer(this);
@@ -749,7 +751,7 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
             if (auto parser = this->streamDataParser())
                 [instanceSession->contentKeySession() addContentKeyRecipient:parser];
         }
-    } else if (!m_session)
+    } else if (!m_session.get())
         return;
 
     if (m_hasSessionSemaphore) {
@@ -1009,7 +1011,7 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(TrackID trackID, const MediaSa
         return true;
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
-    if (!m_cdmInstance && !m_session)
+    if (!m_cdmInstance && !m_session.get())
         return false;
 
     // DecompressionSessions doesn't support encrypted media.

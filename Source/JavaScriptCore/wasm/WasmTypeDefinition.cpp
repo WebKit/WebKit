@@ -116,34 +116,30 @@ void StructType::dump(PrintStream& out) const
 {
     out.print("("_s);
     CommaPrinter comma;
-    for (StructFieldCount fieldIndex = 0; fieldIndex < fieldCount(); ++fieldIndex) {
-        out.print(comma, makeString(field(fieldIndex).type));
-        out.print(comma, field(fieldIndex).mutability ? "immutable"_s : "mutable"_s);
-    }
+    for (StructFieldCount fieldIndex = 0; fieldIndex < fieldCount(); ++fieldIndex)
+        out.print(comma, field(fieldIndex).mutability ? "immutable "_s : "mutable "_s, makeString(field(fieldIndex).type));
     out.print(")"_s);
 }
 
 StructType::StructType(void* payload, StructFieldCount fieldCount, const FieldType* fieldTypes)
     : m_payload(static_cast<FieldType*>(payload))
     , m_fieldCount(fieldCount)
-    , m_hasRecursiveReference(false)
 {
-    bool hasRecursiveReference = false;
-    // Account for the internal header in m_payload.m_storage.data
-    unsigned currentFieldOffset = FixedVector<uint8_t>::Storage::offsetOfData();
+    unsigned currentFieldOffset = 0;
     for (unsigned fieldIndex = 0; fieldIndex < m_fieldCount; ++fieldIndex) {
         const auto& fieldType = fieldTypes[fieldIndex];
-        hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
+        m_hasRefFieldTypes |= isRefType(fieldType.type);
+        m_hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
+
         getField(fieldIndex) = fieldType;
 
         const auto& fieldStorageType = field(fieldIndex).type;
         currentFieldOffset = WTF::roundUpToMultipleOf(typeAlignmentInBytes(fieldStorageType), currentFieldOffset);
-        *offsetOfField(fieldIndex) = currentFieldOffset;
+        fieldOffsetFromInstancePayload(fieldIndex) = currentFieldOffset;
         currentFieldOffset += typeSizeInBytes(fieldStorageType);
     }
 
     m_instancePayloadSize = WTF::roundUpToMultipleOf<sizeof(uint64_t)>(currentFieldOffset);
-    setHasRecursiveReference(hasRecursiveReference);
 }
 
 String ArrayType::toString() const
@@ -155,8 +151,7 @@ void ArrayType::dump(PrintStream& out) const
 {
     out.print("("_s);
     CommaPrinter comma;
-    out.print(comma, makeString(elementType().type));
-    out.print(comma, elementType().mutability ? "immutable"_s : "mutable"_s);
+    out.print(comma, elementType().mutability ? "immutable "_s : "mutable "_s, makeString(elementType().type));
     out.print(")"_s);
 }
 
@@ -586,7 +581,7 @@ RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
     return adoptRef(new (NotNull, memory) RTT(kind, displaySize));
 }
 
-bool RTT::isSubRTT(const RTT& parent) const
+bool RTT::isStrictSubRTT(const RTT& parent) const
 {
     if (displaySize() > 0) {
         if (parent.displaySize() > 0) {
@@ -1147,25 +1142,25 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             auto funcRTT = funcRef->rtt();
             if (funcRTT == signatureRTT.get())
                 return true;
-            return funcRTT->isSubRTT(*signatureRTT);
+            return funcRTT->isStrictSubRTT(*signatureRTT);
         }
         if (signature.is<ArrayType>()) {
             JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
             if (!arrayRef)
                 return false;
             auto arrayRTT = arrayRef->rtt();
-            if (arrayRTT.get() == signatureRTT.get())
+            if (arrayRTT.ptr() == signatureRTT.get())
                 return true;
-            return arrayRTT->isSubRTT(*signatureRTT);
+            return arrayRTT->isStrictSubRTT(*signatureRTT);
         }
         ASSERT(signature.is<StructType>());
         JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
         if (!structRef)
             return false;
         auto structRTT = structRef->rtt();
-        if (structRTT.get() == signatureRTT.get())
+        if (structRTT.ptr() == signatureRTT.get())
             return true;
-        return structRTT->isSubRTT(*signatureRTT);
+        return structRTT->isStrictSubRTT(*signatureRTT);
     }
 
     return false;

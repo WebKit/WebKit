@@ -31,14 +31,13 @@
 #include "CSSKeyframeRule.h"
 #include "CSSNumericFactory.h"
 #include "CSSParserContext.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSPropertyParserConsumer+Easing.h"
 #include "CSSSelector.h"
 #include "CSSSerializationContext.h"
-#include "CSSStyleDeclaration.h"
+#include "CSSStyleProperties.h"
 #include "CSSTransition.h"
 #include "CSSUnitValue.h"
 #include "CSSValue.h"
@@ -65,6 +64,7 @@
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StyleEasingFunction.h"
+#include "StyleInterpolation.h"
 #include "StylePendingResources.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
@@ -144,7 +144,7 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
         return CSSPropertyFontWidth;
 
     // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
-    auto cssPropertyId = CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
+    auto cssPropertyId = CSSStyleProperties::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
 
     if (cssPropertyId == CSSPropertyInvalid && isCustomPropertyName(idlAttributeName))
         return CSSPropertyCustom;
@@ -460,7 +460,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyInvalid;
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, WritingMode());
-        if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty)) {
+        if (Style::Interpolation::canInterpolate(resolvedCSSProperty)) {
             if (isDirectionAwareShorthand(cssProperty))
                 logicalShorthands.append(inputProperty);
             else if (isShorthand(cssProperty))
@@ -1383,7 +1383,7 @@ void KeyframeEffect::analyzeAcceleratedProperties()
     ASSERT(document());
     auto& settings = document()->settings();
     for (auto& property : m_blendingKeyframes.properties()) {
-        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+        if (!Style::Interpolation::isAccelerated(property, settings))
             continue;
         m_acceleratedProperties.add(property);
         if (m_blendingKeyframes.hasImplicitKeyframeForProperty(property))
@@ -1713,7 +1713,7 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
         return false;
 
     ASSERT(document());
-    return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
+    return Style::Interpolation::isAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
 }
 
 static bool propertiesContainTransformRelatedProperty(const UncheckedKeyHashSet<AnimatableCSSProperty>& properties)
@@ -1744,7 +1744,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
         auto& settings = document->settings();
         for (auto property : m_blendingKeyframes.properties()) {
             // If any animated property can be accelerated, then the animation should run accelerated.
-            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+            if (Style::Interpolation::isAccelerated(property, settings))
                 hasSomeAcceleratedProperties = true;
             else
                 hasSomeUnacceleratedProperties = true;
@@ -1860,7 +1860,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, cons
     // progress which already accounts for the transition's timing function.
     if (m_animationType == WebAnimationType::CSSTransition) {
         ASSERT(properties.size() == 1);
-        CSSPropertyAnimation::blendProperty(*this, *properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress, m_compositeOperation);
+        Style::Interpolation::interpolate(*properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress, m_compositeOperation, *this);
         return;
     }
 
@@ -1901,9 +1901,9 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, cons
             }
 
             if (blendingKeyframe->offset() == startBlendingKeyframe->offset())
-                CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, targetStyle, *blendingKeyframe->style(), 1, compositeOperation);
+                Style::Interpolation::interpolate(property, startKeyframeStyle, targetStyle, *blendingKeyframe->style(), 1, compositeOperation, *this);
             else
-                CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, targetStyle, *blendingKeyframe->style(), 1, compositeOperation);
+                Style::Interpolation::interpolate(property, endKeyframeStyle, targetStyle, *blendingKeyframe->style(), 1, compositeOperation, *this);
         };
 
         KeyframeInterpolation::AccumulationCallback accumulateProperty = [&](const KeyframeInterpolation::Keyframe& keyframe) {
@@ -1914,20 +1914,20 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, cons
             }
 
             if (blendingKeyframe->offset() == startBlendingKeyframe->offset())
-                CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, *endBlendingKeyframe->style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
+                Style::Interpolation::interpolate(property, startKeyframeStyle, *endBlendingKeyframe->style(), startKeyframeStyle, 1, CompositeOperation::Accumulate, *this);
             else
-                CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, *endBlendingKeyframe->style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
+                Style::Interpolation::interpolate(property, endKeyframeStyle, *endBlendingKeyframe->style(), endKeyframeStyle, 1, CompositeOperation::Accumulate, *this);
         };
 
         KeyframeInterpolation::InterpolationCallback interpolateProperty = [&](double intervalProgress, double currentIteration, IterationCompositeOperation iterationCompositeOperation) {
-            CSSPropertyAnimation::blendProperty(*this, property, targetStyle, startKeyframeStyle, endKeyframeStyle, intervalProgress, CompositeOperation::Replace, iterationCompositeOperation, currentIteration);
+            Style::Interpolation::interpolate(property, targetStyle, startKeyframeStyle, endKeyframeStyle, intervalProgress, CompositeOperation::Replace, iterationCompositeOperation, currentIteration, *this);
         };
 
-        KeyframeInterpolation::RequiresBlendingForAccumulativeIterationCallback requiresBlendingForAccumulativeIterationCallback = [&]() {
-            return CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(*this, property, startKeyframeStyle, endKeyframeStyle);
+        KeyframeInterpolation::RequiresInterpolationForAccumulativeIterationCallback requiresInterpolationForAccumulativeIterationCallback = [&]() {
+            return Style::Interpolation::requiresInterpolationForAccumulativeIteration(property, startKeyframeStyle, endKeyframeStyle, *this);
         };
 
-        interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), before, composeProperty, accumulateProperty, interpolateProperty, requiresBlendingForAccumulativeIterationCallback);
+        interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), before, composeProperty, accumulateProperty, interpolateProperty, requiresInterpolationForAccumulativeIterationCallback);
     }
 
     // In case one of the animated properties has its value set to "inherit" in one of the keyframes,
@@ -2772,11 +2772,11 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // The only properties left are known to be implicit properties, so we must
             // check them for any accelerated property.
             for (auto implicitProperty : implicitZeroProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
+                if (Style::Interpolation::isAccelerated(implicitProperty, settings))
                     return true;
             }
             for (auto implicitProperty : implicitOneProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
+                if (Style::Interpolation::isAccelerated(implicitProperty, settings))
                     return true;
             }
             return false;
@@ -2812,7 +2812,7 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // At this point all properties left in implicitProperties are known to be implicit,
             // so we must check them for any accelerated property.
             for (auto implicitProperty : implicitProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
+                if (Style::Interpolation::isAccelerated(implicitProperty, settings))
                     return true;
             }
         }
@@ -2836,7 +2836,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 if (auto keyframeComposite = keyframe.compositeOperation()) {
                     if (*keyframeComposite != CompositeOperation::Replace) {
                         for (auto property : keyframe.properties()) {
-                            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+                            if (Style::Interpolation::isAccelerated(property, settings))
                                 return true;
                         }
                     }
@@ -2852,7 +2852,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 continue;
             auto styleProperties = keyframe.style;
             for (auto property : styleProperties.get()) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id(), settings))
+                if (Style::Interpolation::isAccelerated(property.id(), settings))
                     return true;
             }
         }
@@ -3014,7 +3014,7 @@ KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
 {
 #if ASSERT_ENABLED
-    ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
+    ASSERT(Style::Interpolation::isAccelerated(property, settings));
 #else
     UNUSED_PARAM(settings);
 #endif
@@ -3071,13 +3071,10 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
         auto& settings = document()->settings();
 
         ASSERT(previousStyle && currentStyle);
-        auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
-        for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
-            if (auto property = CSSPropertyAnimation::getAcceleratedPropertyAtIndex(propertyIndex, settings)) {
-                if (acceleratedPropertyDidChange(*property, *previousStyle, *currentStyle, settings)) {
-                    updateAssociatedThreadedEffectStack();
-                    return;
-                }
+        for (auto property : CSSProperty::allAcceleratedAnimationProperties(settings)) {
+            if (acceleratedPropertyDidChange(property, *previousStyle, *currentStyle, settings)) {
+                updateAssociatedThreadedEffectStack();
+                return;
             }
         }
 
@@ -3172,7 +3169,7 @@ const TimingFunction* KeyframeEffect::timingFunctionForKeyframe(const KeyframeIn
 bool KeyframeEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property property) const
 {
     return WTF::switchOn(property, [&](AnimatableCSSProperty& animatableCSSProperty) {
-        return CSSPropertyAnimation::isPropertyAdditiveOrCumulative(animatableCSSProperty);
+        return Style::Interpolation::isAdditiveOrCumulative(animatableCSSProperty);
     }, [] (auto&) {
         ASSERT_NOT_REACHED();
         return false;

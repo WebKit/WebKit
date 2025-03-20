@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+FAIL Event Timing: compare click timings. assert_implements: Event Timing is not supported. undefined
+

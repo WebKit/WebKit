@@ -50,7 +50,7 @@ private:
     bool runningInDaemon() const final { return false; }
 
     WeakPtr<NetworkSession> m_networkSession;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace PCM

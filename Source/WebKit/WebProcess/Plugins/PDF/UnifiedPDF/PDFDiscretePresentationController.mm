@@ -65,13 +65,13 @@ static float elasticDeltaForTimeDelta(float initialPosition, float initialVeloci
 static TextStream& operator<<(TextStream& ts, PageTransitionState state)
 {
     switch (state) {
-    case PageTransitionState::Idle: ts << "Idle"; break;
-    case PageTransitionState::DeterminingStretchAxis: ts << "DeterminingStretchAxis"; break;
-    case PageTransitionState::Stretching: ts << "Stretching"; break;
-    case PageTransitionState::Settling: ts << "Settling"; break;
-    case PageTransitionState::StartingAnimationFromStationary: ts << "StartingAnimationFromStationary"; break;
-    case PageTransitionState::StartingAnimationFromMomentum: ts << "StartingAnimationFromMomentum"; break;
-    case PageTransitionState::Animating: ts << "Animating"; break;
+    case PageTransitionState::Idle: ts << "Idle"_s; break;
+    case PageTransitionState::DeterminingStretchAxis: ts << "DeterminingStretchAxis"_s; break;
+    case PageTransitionState::Stretching: ts << "Stretching"_s; break;
+    case PageTransitionState::Settling: ts << "Settling"_s; break;
+    case PageTransitionState::StartingAnimationFromStationary: ts << "StartingAnimationFromStationary"_s; break;
+    case PageTransitionState::StartingAnimationFromMomentum: ts << "StartingAnimationFromMomentum"_s; break;
+    case PageTransitionState::Animating: ts << "Animating"_s; break;
     }
     return ts;
 }
@@ -1404,6 +1404,14 @@ std::optional<float> PDFDiscretePresentationController::customContentsScale(cons
 
     return { };
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+bool PDFDiscretePresentationController::layerAllowsDynamicContentScaling(const GraphicsLayer*) const
+{
+    // Provide DCS structures explicitly.
+    return false;
+}
+#endif
 
 void PDFDiscretePresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {

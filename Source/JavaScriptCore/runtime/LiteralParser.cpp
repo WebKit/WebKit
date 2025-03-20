@@ -63,7 +63,9 @@ inline const CharType* LiteralParser<CharType, reviverMode>::Lexer::currentToken
 
 template<typename CharType, JSONReviverMode reviverMode>
 bool LiteralParser<CharType, reviverMode>::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
+    requires (reviverMode == JSONReviverMode::Disabled)
 {
+    ASSERT(m_mode == JSONP);
     VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (m_lexer.next() != TokIdentifier)
@@ -1257,18 +1259,56 @@ ALWAYS_INLINE JSValue LiteralParser<CharType, reviverMode>::parsePrimitiveValue(
 
 template<typename CharType, JSONReviverMode reviverMode>
 JSValue LiteralParser<CharType, reviverMode>::parseRecursivelyEntry(VM& vm)
+    requires (reviverMode == JSONReviverMode::Disabled)
 {
     ASSERT(m_mode == StrictJSON);
     if (UNLIKELY(!Options::useRecursiveJSONParse()))
         return parse(vm, StartParseExpression, nullptr);
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBrace || type == TokLBracket)
-        return parseRecursively(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+        return parseRecursively<ParserMode::StrictJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
     return parsePrimitiveValue(vm);
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
+JSValue LiteralParser<CharType, reviverMode>::evalRecursivelyEntry(VM& vm)
+    requires (reviverMode == JSONReviverMode::Disabled)
+{
+    ASSERT(m_mode == SloppyJSON);
+    if (UNLIKELY(!Options::useRecursiveJSONParse()))
+        return parse(vm, StartParseStatement, nullptr);
+    TokenType type = m_lexer.currentToken()->type;
+    if (type == TokLParen) {
+        type = m_lexer.next();
+
+        JSValue result;
+        if (type == TokLBrace || type == TokLBracket)
+            result = parseRecursively<ParserMode::SloppyJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+        else
+            result = parsePrimitiveValue(vm);
+
+        if (UNLIKELY(m_lexer.currentToken()->type != TokRParen)) {
+            m_parseErrorMessage = "Unexpected content at end of JSON literal"_s;
+            return { };
+        }
+        m_lexer.next();
+        return result;
+    }
+
+    if (UNLIKELY(type == TokLBrace)) {
+        m_parseErrorMessage = "Unexpected token '{'"_s;
+        return { };
+    }
+
+    if (type == TokLBracket)
+        return parseRecursively<ParserMode::SloppyJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+    return parsePrimitiveValue(vm);
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+template<ParserMode parserMode>
 JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* stackLimit)
+    requires (reviverMode == JSONReviverMode::Disabled)
 {
     if (UNLIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit))
         return parse(vm, StartParseExpression, nullptr);
@@ -1287,7 +1327,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
         while (true) {
             JSValue value;
             if (type == TokLBrace || type == TokLBracket)
-                value = parseRecursively(vm, stackLimit);
+                value = parseRecursively<parserMode>(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
             EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
@@ -1323,7 +1363,12 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
         type = m_lexer.nextMaybeIdentifier();
     else
         type = m_lexer.next();
-    if (type == TokString) {
+
+    bool isPropertyKey = type == TokString;
+    if constexpr (parserMode != StrictJSON)
+        isPropertyKey |= type == TokIdentifier;
+
+    if (isPropertyKey) {
         while (true) {
             Identifier ident = makeIdentifier(vm, m_lexer.currentToken());
 
@@ -1335,14 +1380,22 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
             type = m_lexer.next();
             JSValue value;
             if (type == TokLBrace || type == TokLBracket)
-                value = parseRecursively(vm, stackLimit);
+                value = parseRecursively<parserMode>(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
             EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
             if (UNLIKELY(!value))
                 return { };
 
-            if (std::optional<uint32_t> index = parseIndex(ident)) {
+            if (UNLIKELY(parserMode != StrictJSON && ident == vm.propertyNames->underscoreProto)) {
+                if (UNLIKELY(!m_visitedUnderscoreProto.add(object).isNewEntry)) {
+                    m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
+                    return { };
+                }
+                PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
+                JSValue(object).put(m_globalObject, ident, value, slot);
+                RETURN_IF_EXCEPTION(scope, { });
+            } else if (std::optional<uint32_t> index = parseIndex(ident)) {
                 object->putDirectIndex(m_globalObject, index.value(), value);
                 RETURN_IF_EXCEPTION(scope, { });
             } else {
@@ -1377,7 +1430,11 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
 
             type = m_lexer.currentToken()->type;
             if (type == TokComma) {
-                if (UNLIKELY(m_lexer.next() != TokString)) {
+                type = m_lexer.next();
+                bool isPropertyKey = type == TokString;
+                if constexpr (parserMode != StrictJSON)
+                    isPropertyKey |= type == TokIdentifier;
+                if (UNLIKELY(!isPropertyKey)) {
                     m_parseErrorMessage = "Property name must be a string literal"_s;
                     return { };
                 }
@@ -1525,7 +1582,7 @@ JSValue LiteralParser<CharType, reviverMode>::parse(VM& vm, ParserState initialS
                     if (UNLIKELY(!primitive))
                         return { };
 
-                    if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+                    if (UNLIKELY(m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto)) {
                         ASSERT(!sourceRanges);
                         if (UNLIKELY(!m_visitedUnderscoreProto.add(object).isNewEntry)) {
                             m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
@@ -1620,7 +1677,7 @@ JSValue LiteralParser<CharType, reviverMode>::parse(VM& vm, ParserState initialS
         {
             JSObject* object = asObject(m_objectStack.last());
             Identifier ident = m_identifierStack.takeLast();
-            if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+            if (UNLIKELY(m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto)) {
                 ASSERT(!sourceRanges);
                 if (UNLIKELY(!m_visitedUnderscoreProto.add(object).isNewEntry)) {
                     m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;

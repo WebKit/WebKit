@@ -34,9 +34,9 @@
 namespace WebCore {
 
 class Attribute;
+class CSSStyleProperties;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
-class PropertySetCSSStyleDeclaration;
 class StyleProperties;
 class StylePropertyMap;
 
@@ -65,7 +65,7 @@ public:
 
     void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
     
-    WEBCORE_EXPORT CSSStyleDeclaration& cssomStyle();
+    WEBCORE_EXPORT CSSStyleProperties& cssomStyle();
     StylePropertyMap& ensureAttributeStyleMap();
 
     // https://html.spec.whatwg.org/#presentational-hints
@@ -97,7 +97,7 @@ private:
     void synchronizeStyleAttributeInternalImpl();
 
     void inlineStyleChanged();
-    PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
+    CSSStyleProperties* inlineStyleCSSOMWrapper();
     void setInlineStyleFromString(const AtomString&);
     MutableStyleProperties& ensureMutableInlineStyle();
 

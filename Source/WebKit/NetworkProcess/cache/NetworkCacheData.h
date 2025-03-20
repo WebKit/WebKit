@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/Box.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SHA1.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -60,14 +61,14 @@ public:
     ~Data() { }
 
     static Data empty();
-    static Data adoptMap(FileSystem::MappedFileData&&, FileSystem::PlatformFileHandle);
+    static Data adoptMap(FileSystem::MappedFileData&&, FileSystem::FileHandle&&);
 
 #if PLATFORM(COCOA)
     enum class Backing { Buffer, Map };
     Data(OSObjectPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
 #endif
 #if USE(GLIB)
-    Data(GRefPtr<GBytes>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
+    Data(GRefPtr<GBytes>&&, FileSystem::FileHandle&& = { });
 #elif USE(CURL)
     Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
     Data(Vector<uint8_t>&& data) : Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData> { WTFMove(data) }) { }
@@ -100,7 +101,7 @@ private:
 #endif
 #if USE(GLIB)
     mutable GRefPtr<GBytes> m_buffer;
-    FileSystem::PlatformFileHandle m_fileDescriptor { FileSystem::invalidPlatformFileHandle };
+    Box<FileSystem::FileHandle> m_fileHandle;
 #endif
 #if USE(CURL)
     Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>> m_buffer;
@@ -110,7 +111,7 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
+Data adoptAndMapFile(FileSystem::FileHandle&&, size_t offset, size_t);
 Data mapFile(const String& path);
 
 using Salt = FileSystem::Salt;

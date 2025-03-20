@@ -49,8 +49,9 @@ public:
             bool hasTextAutospace { false };
             size_t inlineBoxCount { 0 };
         };
-        void set(InlineItemList&&, ContentAttributes);
-        void replace(size_t insertionPosition, InlineItemList&&, ContentAttributes);
+        enum class IsPopulatedFromCache : bool { No, Yes };
+        void set(InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
+        void replace(size_t insertionPosition, InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
         void shrinkToFit() { m_inlineItemList.shrinkToFit(); }
 
         bool isEmpty() const { return content().isEmpty(); }
@@ -61,11 +62,12 @@ public:
         bool hasTextAutospace() const { return m_contentAttributes.hasTextAutospace; }
         bool hasInlineBoxes() const { return !!inlineBoxCount(); }
         size_t inlineBoxCount() const { return m_contentAttributes.inlineBoxCount; }
+        bool isPopulatedFromCache() const { return m_isPopulatedFromCache; }
 
     private:
         ContentAttributes m_contentAttributes;
         InlineItemList m_inlineItemList;
-
+        bool m_isPopulatedFromCache { false };
     };
     const InlineItems& inlineItems() const { return m_inlineItems; }
     InlineItems& inlineItems() { return m_inlineItems; }
@@ -103,17 +105,20 @@ inline void InlineContentCache::resetMinimumMaximumContentSizes()
     m_maximumIntrinsicWidthLineContent = { };
 }
 
-inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList, ContentAttributes contentAttributes)
+inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
 {
     m_inlineItemList = WTFMove(inlineItemList);
     m_contentAttributes = contentAttributes;
+    m_isPopulatedFromCache = isPopulatedFromCache == IsPopulatedFromCache::Yes;
 }
 
-inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes)
+inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
 {
     m_inlineItemList.remove(insertionPosition, m_inlineItemList.size() - insertionPosition);
     m_inlineItemList.appendVector(WTFMove(inlineItemList));
     m_contentAttributes = contentAttributes;
+    if (isPopulatedFromCache == IsPopulatedFromCache::No)
+        m_isPopulatedFromCache = false;
 }
 
 }

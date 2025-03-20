@@ -111,11 +111,8 @@ void WKViewWillEnterFullScreen(WKViewRef)
 {
 }
 
-void WKViewDidEnterFullScreen(WKViewRef view)
+void WKViewDidEnterFullScreen(WKViewRef)
 {
-#if ENABLE(FULLSCREEN_API)
-    WebKit::toImpl(view)->didEnterFullScreen();
-#endif
 }
 
 void WKViewWillExitFullScreen(WKViewRef)
@@ -180,14 +177,15 @@ void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
                 return;
             m_client.closeFullScreen(WebKit::toAPI(&view), m_client.base.clientInfo);
         }
-        
-        void beganEnterFullScreen(WebKit::PlayStationWebView& view, const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame)
+
+        void beganEnterFullScreen(WebKit::PlayStationWebView& view, const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
         {
             if (!m_client.beganEnterFullScreen)
-                return;
+                return completionHandler(false);
             m_client.beganEnterFullScreen(WebKit::toAPI(&view), WebKit::toAPI(initialFrame), WebKit::toAPI(finalFrame), m_client.base.clientInfo);
+            completionHandler(true);
         }
-        
+
         void beganExitFullScreen(WebKit::PlayStationWebView& view, const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&& completionHandler)
         {
             if (!m_client.beganExitFullScreen)

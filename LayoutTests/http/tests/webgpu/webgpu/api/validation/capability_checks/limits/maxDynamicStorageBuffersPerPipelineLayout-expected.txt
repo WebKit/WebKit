@@ -1,32 +1,166 @@
 
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=6
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=2
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=4
-PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=6
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";visibility=7;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=1;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=2;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=2;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=3;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=4;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=4;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=5;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=6;type="storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=6;type="read-only-storage"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";visibility=7;type="read-only-storage"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";type="read-only-storage"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";type="read-only-storage"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";type="read-only-storage"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";type="read-only-storage"
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";type="storage" assert_unreached:
+  - EXPECTATION FAILED: Bind group layout is invalid:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:16
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";type="read-only-storage" assert_unreached:
+  - EXPECTATION FAILED: Bind group layout is invalid:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:16
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";type="storage" assert_unreached:
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";type="read-only-storage" assert_unreached:
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";type="storage" assert_unreached:
+  - EXPECTATION FAILED: Bind group layout is invalid:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:16
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";type="read-only-storage" assert_unreached:
+  - EXPECTATION FAILED: Bind group layout is invalid:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:16
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";type="storage" assert_unreached:
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+FAIL :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";type="read-only-storage" assert_unreached:
+  - EXPECTATION FAILED: unexpected validation error: Storage buffers count(45) exceeded max count per stage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:590:16
+ Reached unreachable code
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";type="read-only-storage"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";type="storage"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";type="read-only-storage"
 

@@ -62,8 +62,10 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
     }
 
     gst_buffer_add_audio_meta(buffer.get(), &m_info, numberOfFrames, nullptr);
+#if GST_CHECK_VERSION(1, 20, 0)
     if (bus.isSilent())
         gst_buffer_add_audio_level_meta(buffer.get(), 127, FALSE);
+#endif
 
     auto sample = adoptGRef(gst_sample_new(buffer.get(), m_caps.get(), nullptr, nullptr));
     GStreamerAudioData audioBuffer(WTFMove(sample), m_info);

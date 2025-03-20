@@ -38,13 +38,13 @@ WKTypeID WKFrameInfoGetTypeID()
 
 WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfo)
 {
-    return WebKit::toAPI(&WebKit::toImpl(frameInfo)->handle().leakRef());
+    return WebKit::toAPILeakingRef(WebKit::toImpl(frameInfo)->handle());
 }
 
 WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfo)
 {
     auto origin = WebKit::toImpl(frameInfo)->securityOrigin();
-    return WebKit::toAPI(&API::SecurityOrigin::create(origin).leakRef());
+    return WebKit::toAPILeakingRef(API::SecurityOrigin::create(origin));
 }
 
 bool WKFrameInfoGetIsMainFrame(WKFrameInfoRef frameInfo)

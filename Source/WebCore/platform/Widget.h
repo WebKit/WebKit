@@ -199,6 +199,8 @@ public:
     WEBCORE_EXPORT virtual FloatPoint convertToContainingView(const FloatPoint&) const;
     WEBCORE_EXPORT virtual FloatPoint convertFromContainingView(const FloatPoint&) const;
 
+    virtual bool isPluginView() const { return false; }
+
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
 

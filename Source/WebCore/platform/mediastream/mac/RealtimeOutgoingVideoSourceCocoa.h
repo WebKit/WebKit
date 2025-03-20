@@ -31,7 +31,7 @@
 #include <webrtc/api/video/video_rotation.h>
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
-using CVPixelBufferRef = struct __CVBuffer*;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 

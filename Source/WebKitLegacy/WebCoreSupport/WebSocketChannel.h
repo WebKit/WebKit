@@ -69,16 +69,15 @@ public:
     static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
-    bool send(std::span<const uint8_t> data);
+    void send(std::span<const uint8_t> data);
 
     // ThreadableWebSocketChannel functions.
     ConnectStatus connect(const URL&, const String& protocol) final;
     String subprotocol() final;
     String extensions() final;
-    ThreadableWebSocketChannel::SendResult send(CString&&) final;
-    ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
-    ThreadableWebSocketChannel::SendResult send(Blob&) final;
-    unsigned bufferedAmount() const final;
+    void send(CString&&) final;
+    void send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
+    void send(Blob&) final;
     void close(int code, const String& reason) final; // Start closing handshake.
     void fail(String&& reason) final;
     void disconnect() final;

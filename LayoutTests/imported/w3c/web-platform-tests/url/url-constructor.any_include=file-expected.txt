@@ -26,7 +26,7 @@ PASS Parsing: <test> against <file:///tmp/mock/path>
 PASS Parsing: <file:test> against <file:///tmp/mock/path>
 PASS Parsing: <file:///w|m> without base
 PASS Parsing: <file:///w||m> without base
-FAIL Parsing: <file:///w|/m> without base assert_equals: href expected "file:///w:/m" but got "file:///w|/m"
+PASS Parsing: <file:///w|/m> without base
 PASS Parsing: <file:C|/m/> without base
 PASS Parsing: <file:C||/m/> without base
 PASS Parsing: <file:/example.com/> without base

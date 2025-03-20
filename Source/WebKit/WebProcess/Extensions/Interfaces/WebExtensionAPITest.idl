@@ -85,4 +85,7 @@
     // Adds a test represented by a promise. If the promise is resolved, the test passes; if the promise is rejected, the test fails.
     [NeedsScriptContext] any addTest(any function);
 
+    // Adds multiple tests to the queue to be ran and returns a promise. If all tests pass, the promise is resolved; if any test fails, the promise is rejected.
+    [NeedsScriptContext] any runTests([NSArray=JSValue] array tests);
+
 };

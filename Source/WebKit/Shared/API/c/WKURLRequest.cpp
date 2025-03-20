@@ -39,7 +39,7 @@ WKTypeID WKURLRequestGetTypeID()
 
 WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 {
-    return WebKit::toAPI(&API::URLRequest::create(URL { WebKit::toImpl(url)->string() }).leakRef());
+    return WebKit::toAPILeakingRef(API::URLRequest::create(URL { WebKit::toImpl(url)->string() }));
 }
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
@@ -61,7 +61,7 @@ WKURLRequestRef WKURLRequestCopySettingHTTPBody(WKURLRequestRef requestRef, WKDa
 {
     WebCore::ResourceRequest requestCopy(WebKit::toImpl(requestRef)->resourceRequest());
     requestCopy.setHTTPBody(WebCore::FormData::create(WKDataGetSpan(body)));
-    return WebKit::toAPI(&API::URLRequest::create(requestCopy).leakRef());
+    return WebKit::toAPILeakingRef(API::URLRequest::create(requestCopy));
 }
 
 void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)

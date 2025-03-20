@@ -118,12 +118,27 @@ void Navigation::appendRedirectionURL(const WTF::URL& url)
 bool Navigation::currentRequestIsCrossSiteRedirect() const
 {
     return currentRequestIsRedirect()
-        && RegistrableDomain(m_lastNavigationAction.redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
+        && m_lastNavigationAction
+        && RegistrableDomain(m_lastNavigationAction->redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
 }
 
 WebKit::WebBackForwardListItem* Navigation::targetItem() const
 {
     return m_targetFrameItem ? m_targetFrameItem->backForwardListItem() : nullptr;
+}
+
+bool Navigation::isRequestFromClientOrUserInput() const
+{
+    if (m_requestIsFromClientInput)
+        return true;
+    return m_lastNavigationAction && m_lastNavigationAction->isRequestFromClientOrUserInput;
+}
+
+void Navigation::markRequestAsFromClientInput()
+{
+    m_requestIsFromClientInput = true;
+    if (m_lastNavigationAction)
+        m_lastNavigationAction->isRequestFromClientOrUserInput = true;
 }
 
 #if !LOG_DISABLED

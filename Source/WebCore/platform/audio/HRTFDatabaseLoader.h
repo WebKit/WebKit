@@ -32,15 +32,15 @@
 #include "HRTFDatabase.h"
 #include <memory>
 #include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
 // HRTFDatabaseLoader will asynchronously load the default HRTFDatabase in a new thread.
 
-class HRTFDatabaseLoader : public RefCounted<HRTFDatabaseLoader> {
+class HRTFDatabaseLoader : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<HRTFDatabaseLoader, WTF::DestructionThread::Main> {
 public:
     // Lazily creates a HRTFDatabaseLoader (if not already created) for the given sample-rate
     // and starts loading asynchronously (when created the first time).

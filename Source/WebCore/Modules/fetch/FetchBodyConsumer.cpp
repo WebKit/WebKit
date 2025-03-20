@@ -517,4 +517,10 @@ FetchBodyConsumer FetchBodyConsumer::clone()
     return clone;
 }
 
+bool FetchBodyConsumer::hasPendingActivity() const
+{
+    return (m_formDataConsumer && m_formDataConsumer->hasPendingActivity())
+        || (m_sink && m_sink->hasCallback());
+}
+
 } // namespace WebCore

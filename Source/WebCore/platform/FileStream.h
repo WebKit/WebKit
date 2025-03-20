@@ -59,9 +59,9 @@ public:
     int read(std::span<uint8_t> buffer);
 
 private:
-    FileSystem::PlatformFileHandle m_handle;
-    long long m_bytesProcessed;
-    long long m_totalBytesToRead;
+    FileSystem::FileHandle m_handle;
+    long long m_bytesProcessed { 0 };
+    long long m_totalBytesToRead { 0 };
 };
 
 } // namespace WebCore

@@ -54,45 +54,41 @@ class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 public:
-    static Ref<FontCascadeFonts> create(RefPtr<FontSelector>&& fontSelector) { return adoptRef(*new FontCascadeFonts(WTFMove(fontSelector))); }
+    static Ref<FontCascadeFonts> create() { return adoptRef(*new FontCascadeFonts()); }
     static Ref<FontCascadeFonts> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontCascadeFonts(platformData)); }
 
     WEBCORE_EXPORT ~FontCascadeFonts();
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    GlyphData glyphDataForCharacter(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy);
+    GlyphData glyphDataForCharacter(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy);
 
-    bool isFixedPitch(const FontCascadeDescription&);
+    bool isFixedPitch(const FontCascadeDescription&, FontSelector*);
 
-    bool canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&);
+    bool canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&, FontSelector*);
 
     bool isLoadingCustomFonts() const;
 
-    FontSelector* fontSelector() { return m_fontSelector.get(); }
-    const FontSelector* fontSelector() const { return m_fontSelector.get(); }
-
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
-    unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
 
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const Font& primaryFont(const FontCascadeDescription&);
-    WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, unsigned fallbackIndex);
+    const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
+    WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
 
 private:
-    FontCascadeFonts(RefPtr<FontSelector>&&);
+    FontCascadeFonts();
     FontCascadeFonts(const FontPlatformData&);
 
-    GlyphData glyphDataForSystemFallback(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
-    GlyphData glyphDataForVariant(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
+    GlyphData glyphDataForSystemFallback(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
+    GlyphData glyphDataForVariant(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
 
-    WEBCORE_EXPORT void determinePitch(const FontCascadeDescription&);
-    WEBCORE_EXPORT void determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&);
+    WEBCORE_EXPORT void determinePitch(const FontCascadeDescription&, FontSelector*);
+    WEBCORE_EXPORT void determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&, FontSelector*);
 
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
@@ -121,11 +117,9 @@ private:
     UncheckedKeyHashSet<RefPtr<Font>> m_systemFallbackFontSet;
 
     SingleThreadWeakPtr<const Font> m_cachedPrimaryFont;
-    const RefPtr<FontSelector> m_fontSelector;
 
     WidthCache m_widthCache;
 
-    unsigned m_fontSelectorVersion { 0 };
     unsigned short m_generation { 0 };
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
@@ -135,31 +129,31 @@ private:
 #endif
 };
 
-inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& description)
+inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     if (m_pitch == UnknownPitch)
-        determinePitch(description);
+        determinePitch(description, fontSelector);
     return m_pitch == FixedPitch;
 }
 
-inline bool FontCascadeFonts::canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description)
+inline bool FontCascadeFonts::canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     if (m_canTakeFixedPitchFastContentMeasuring == TriState::Indeterminate)
-        determineCanTakeFixedPitchFastContentMeasuring(description);
+        determineCanTakeFixedPitchFastContentMeasuring(description, fontSelector);
     return m_canTakeFixedPitchFastContentMeasuring == TriState::True;
 }
 
-inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description)
+inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
-    ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
+    ASSERT(m_thread ? m_thread->ptr() == &Thread::currentSingleton() : isMainThread());
     if (!m_cachedPrimaryFont) {
-        auto& primaryRanges = realizeFallbackRangesAt(description, 0);
+        auto& primaryRanges = realizeFallbackRangesAt(description, fontSelector, 0);
         m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font.get();
         if (!m_cachedPrimaryFont)
             m_cachedPrimaryFont = primaryRanges.rangeAt(0).font(ExternalResourceDownloadPolicy::Allow);
         else if (m_cachedPrimaryFont->isInterstitial()) {
             for (unsigned index = 1; ; ++index) {
-                auto& localRanges = realizeFallbackRangesAt(description, index);
+                auto& localRanges = realizeFallbackRangesAt(description, fontSelector, index);
                 if (localRanges.isNull())
                     break;
                 WeakPtr font = localRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Forbid).font.get();

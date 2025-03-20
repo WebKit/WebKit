@@ -255,10 +255,10 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
     if (codecName.startsWith("mp4a"_s)) {
         const char* streamFormat = config.isAacADTS.value_or(false) ? "adts" : "raw";
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 4, "stream-format", G_TYPE_STRING, streamFormat, nullptr));
-        if (gstObjectHasProperty(m_encoder.get(), "bitrate") && config.bitRate && config.bitRate < std::numeric_limits<int>::max())
+        if (gstObjectHasProperty(m_encoder.get(), "bitrate"_s) && config.bitRate && config.bitRate < std::numeric_limits<int>::max())
             g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
     } else if (codecName == "mp3"_s) {
-        if (gstObjectHasProperty(m_encoder.get(), "cbr")) {
+        if (gstObjectHasProperty(m_encoder.get(), "cbr"_s)) {
             switch (config.bitRateMode) {
             case BitrateMode::Constant:
                 g_object_set(m_encoder.get(), "cbr", TRUE, nullptr);

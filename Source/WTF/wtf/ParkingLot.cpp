@@ -47,7 +47,7 @@ template<typename... Types>
 static void dataLogForCurrentThread(const Types&... values)
 {
     StringPrintStream stream;
-    SUPPRESS_UNCOUNTED_ARG stream.print(Thread::current());
+    SUPPRESS_UNCOUNTED_ARG stream.print(Thread::currentSingleton());
     stream.print(values...);
     dataLog(stream.toString());
 }
@@ -423,7 +423,7 @@ void ensureHashtableSize(unsigned numThreads)
 }
 
 ThreadData::ThreadData()
-    : thread(Thread::current())
+    : thread(Thread::currentSingleton())
 {
     unsigned currentNumThreads;
     for (;;) {

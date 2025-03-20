@@ -243,12 +243,12 @@ export class MemoryModelTester {
     const testLocationsSize =
     testingThreads * numMemLocations * this.params.memStride * bytesPerWord;
     const testLocationsBuffer = {
-      deviceBuf: this.test.device.createBuffer({
+      deviceBuf: this.test.createBufferTracked({
         label: 'testLocationsBuffer',
         size: testLocationsSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
       }),
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'testLocationsSrcBuf',
         size: testLocationsSize,
         usage: GPUBufferUsage.COPY_SRC
@@ -258,12 +258,12 @@ export class MemoryModelTester {
 
     const readResultsSize = testingThreads * numReadOutputs * bytesPerWord;
     const readResultsBuffer = {
-      deviceBuf: this.test.device.createBuffer({
+      deviceBuf: this.test.createBufferTracked({
         label: 'readResultsBuffer',
         size: readResultsSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
       }),
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'readResultsSrcBuf',
         size: readResultsSize,
         usage: GPUBufferUsage.COPY_SRC
@@ -273,12 +273,12 @@ export class MemoryModelTester {
 
     const testResultsSize = this.params.numBehaviors * bytesPerWord;
     const testResultsBuffer = {
-      deviceBuf: this.test.device.createBuffer({
+      deviceBuf: this.test.createBufferTracked({
         label: 'testResultsBuffer',
         size: testResultsSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
       }),
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'testResultsSrcBuffer',
         size: testResultsSize,
         usage: GPUBufferUsage.COPY_SRC
@@ -288,11 +288,11 @@ export class MemoryModelTester {
 
     const shuffledWorkgroupsSize = this.params.maxWorkgroups * bytesPerWord;
     const shuffledWorkgroupsBuffer = {
-      deviceBuf: this.test.device.createBuffer({
+      deviceBuf: this.test.createBufferTracked({
         size: shuffledWorkgroupsSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
       }),
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         size: shuffledWorkgroupsSize,
         usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE
       }),
@@ -305,7 +305,7 @@ export class MemoryModelTester {
       const height = numTexels / width;
       const textureSize = { width, height };
       const textureLocations = {
-        deviceTex: this.test.device.createTexture({
+        deviceTex: this.test.createTextureTracked({
           format: 'r32uint',
           dimension: '2d',
           size: textureSize,
@@ -332,7 +332,7 @@ export class MemoryModelTester {
     );
     const comboSize = barrierSize + scratchpadSize + scratchMemoryLocationsSize;
 
-    const comboBuffer = this.test.device.createBuffer({
+    const comboBuffer = this.test.createBufferTracked({
       label: 'comboBuffer',
       size: comboSize,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
@@ -340,7 +340,7 @@ export class MemoryModelTester {
 
     const barrierBuffer = {
       deviceBuf: comboBuffer,
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'barrierSrcBuf',
         size: barrierSize,
         usage: GPUBufferUsage.COPY_SRC
@@ -351,7 +351,7 @@ export class MemoryModelTester {
 
     const scratchpadBuffer = {
       deviceBuf: comboBuffer,
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'scratchpadSrcBuf',
         size: scratchpadSize,
         usage: GPUBufferUsage.COPY_SRC
@@ -362,7 +362,7 @@ export class MemoryModelTester {
 
     const scratchMemoryLocationsBuffer = {
       deviceBuf: comboBuffer,
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'scratchMemoryLocationsSrcBuf',
         size: scratchMemoryLocationsSize,
         usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE
@@ -373,12 +373,12 @@ export class MemoryModelTester {
 
     const stressParamsSize = numStressParams * bytesPerWord;
     const stressParamsBuffer = {
-      deviceBuf: this.test.device.createBuffer({
+      deviceBuf: this.test.createBufferTracked({
         label: 'stressParamsBuffer',
         size: stressParamsSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM
       }),
-      srcBuf: this.test.device.createBuffer({
+      srcBuf: this.test.createBufferTracked({
         label: 'stressParamsSrcBuf',
         size: stressParamsSize,
         usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE

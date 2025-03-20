@@ -113,10 +113,13 @@ private:
     WeakPtr<WebKit::WebPageProxy> m_webPage;
     InsertionState m_insertionState { InsertionState::NotInserted };
     WebCore::AttachmentAssociatedElementType m_associatedElementType { WebCore::AttachmentAssociatedElementType::None };
-    bool m_hasEnclosingImage { false };
+#if PLATFORM(COCOA)
     bool m_isCreatedFromSerializedRepresentation { false };
+#endif
 };
 
 } // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(Attachment);
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

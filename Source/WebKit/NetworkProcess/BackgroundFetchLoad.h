@@ -80,6 +80,8 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
 
+    RefPtr<WebCore::BackgroundFetchRecordLoaderClient> protectedClient() const;
+
     // WebCore::BackgroundFetchRecordLoader
     void abort() final;
 
@@ -91,7 +93,7 @@ private:
     WeakPtr<WebCore::BackgroundFetchRecordLoaderClient> m_client;
     WebCore::ResourceRequest m_request;
     RefPtr<NetworkDataTask> m_task;
-    Ref<NetworkLoadChecker> m_networkLoadChecker;
+    const Ref<NetworkLoadChecker> m_networkLoadChecker;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 

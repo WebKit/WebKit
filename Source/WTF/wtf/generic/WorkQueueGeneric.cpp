@@ -45,7 +45,7 @@ void WorkQueueBase::platformInitialize(ASCIILiteral name, Type, QOS qos)
     m_runLoop = RunLoop::create(name, ThreadType::Unknown, qos).ptr();
     BinarySemaphore semaphore;
     m_runLoop->dispatch([&] {
-        m_threadID = Thread::current().uid();
+        m_threadID = Thread::currentSingleton().uid();
         semaphore.signal();
     });
     semaphore.wait();
@@ -57,7 +57,7 @@ void WorkQueueBase::platformInvalidate()
         Ref<RunLoop> protector(*m_runLoop);
         protector->stop();
         protector->dispatch([] {
-            RunLoop::current().stop();
+            RunLoop::currentSingleton().stop();
         });
     }
 }

@@ -45,16 +45,17 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
     // Since WKNSString is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSString *)cfString) == wkNSStringClass())
-        return WebKit::toAPI(downcast<API::String>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]));
+        return WebKit::toAPI(RefPtr { downcast<API::String>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]) }.get());
     String string(cfString);
     return WebKit::toCopiedAPI(string);
 }
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
-    ASSERT(!WebKit::toImpl(stringRef)->string().isNull());
+    RefPtr apiString = WebKit::toImpl(stringRef);
+    ASSERT(!apiString->string().isNull());
 
-    auto string = WebKit::toImpl(stringRef)->string();
+    auto string = apiString->string();
 
     // NOTE: This does not use StringImpl::createCFString() since that function
     // expects to be called on the thread running WebCore.

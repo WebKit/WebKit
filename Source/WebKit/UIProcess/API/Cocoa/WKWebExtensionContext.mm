@@ -570,6 +570,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     Ref { *_webExtensionContext }->performCommand([command _protectedWebExtensionCommand].get(), WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
+- (void)_resetCommands
+{
+    Ref { *_webExtensionContext }->resetCommands();
+}
+
 #if TARGET_OS_IPHONE
 - (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand
 {
@@ -1153,6 +1158,10 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 }
 
 - (void)performCommand:(WKWebExtensionCommand *)command
+{
+}
+
+- (void)_resetCommands
 {
 }
 

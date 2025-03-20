@@ -48,9 +48,9 @@ TextStream& operator<<(TextStream& ts, const Model& model)
 {
     TextStream::GroupScope groupScope(ts);
 
-    ts.dumpProperty("data-size", model.data()->size());
-    ts.dumpProperty("mime-type", model.mimeType());
-    ts.dumpProperty("url", model.url());
+    ts.dumpProperty("data-size"_s, model.data()->size());
+    ts.dumpProperty("mime-type"_s, model.mimeType());
+    ts.dumpProperty("url"_s, model.url());
 
     return ts;
 }

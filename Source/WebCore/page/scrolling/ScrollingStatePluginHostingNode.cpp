@@ -72,7 +72,7 @@ Ref<ScrollingStateNode> ScrollingStatePluginHostingNode::clone(ScrollingStateTre
 
 void ScrollingStatePluginHostingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    ts << "Plugin hosting node";
+    ts << "Plugin hosting node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 }
 

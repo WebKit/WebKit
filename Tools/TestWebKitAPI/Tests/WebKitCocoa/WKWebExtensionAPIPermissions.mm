@@ -339,12 +339,48 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
-// rdar://142487203
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
-TEST(WKWebExtensionAPIPermissions, DISABLED_GrantOnlySomePermissions)
-#else
+TEST(WKWebExtensionAPIPermissions, RequestAllURLsMatchPattern)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"<all_urls>" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'origins': ['<all_urls>']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    auto requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Permissions method should not be called.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+        return;
+    };
+
+    // Grant the requested match patterns.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            requestComplete = true;
+            callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
+        });
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
 TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
-#endif
 {
     auto *manifest = @{
         @"manifest_version": @3,

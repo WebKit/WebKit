@@ -58,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-cssom-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-error-recovery.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-rule-cssom-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-ref.html

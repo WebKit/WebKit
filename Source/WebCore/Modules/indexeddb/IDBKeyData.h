@@ -105,6 +105,7 @@ public:
 
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     bool isValid() const;
+    WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
     IndexedDB::KeyType type() const;
 
     bool operator<(const IDBKeyData&) const;

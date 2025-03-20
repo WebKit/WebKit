@@ -48,7 +48,7 @@
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 - (void)updateImageSource;
 #endif
-- (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
+- (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 - (void)requestRestoreFullScreen:(CompletionHandler<void(bool)>&&)completionHandler;
 - (void)requestExitFullScreen;
 - (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler;
@@ -58,6 +58,7 @@
 - (void)close;
 - (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
 - (void)videoControlsManagerDidChange;
+- (void)videosInElementFullscreenChanged;
 - (void)didCleanupFullscreen;
 
 #if PLATFORM(VISION)
