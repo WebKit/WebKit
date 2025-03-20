@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TemporalPlainTimePrototype.h"
 
+#include "IntlDateTimeFormat.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
@@ -300,7 +301,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToLocaleString, (JSGlobal
     if (!plainTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toLocaleString called on value that's not a PlainTime"_s);
 
-    return JSValue::encode(jsString(vm, plainTime->toString()));
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
+    ASSERT(dateTimeFormat);
+    dateTimeFormat->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::Date);
+
+    auto [value, optionalDateTimeFormat] =
+        dateTimeFormat->IntlDateTimeFormat::handleDateTimeValue(globalObject, plainTime);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(
+        dateTimeFormat->format(globalObject, value, optionalDateTimeFormat)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.valueof

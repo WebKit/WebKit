@@ -146,7 +146,7 @@ shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30[u-ca=japanese]')), 
     shouldBe(Temporal.PlainTime.from(dateTime).toString(), time.toString());
 
     shouldBe(time.toJSON(), time.toString());
-    shouldBe(time.toLocaleString(), time.toString());
+    shouldBe(time.toLocaleString(), (new Intl.DateTimeFormat()).format(time));
 }
 {
     let time = Temporal.PlainTime.from({
