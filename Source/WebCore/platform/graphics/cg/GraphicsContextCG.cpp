@@ -234,7 +234,10 @@ CGContextRef GraphicsContextCG::platformContext() const
 CGContextRef GraphicsContextCG::contextForDraw()
 {
     ASSERT(m_cgContext);
-    m_hasDrawn = true;
+    if (!m_hasDrawn) {
+        m_currentImage = nullptr;
+        m_hasDrawn = true;
+    }
     return m_cgContext.get();
 }
 
@@ -1526,13 +1529,6 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
 bool GraphicsContextCG::canUseShadowBlur() const
 {
     return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredDropShadow() && !m_state.shadowsIgnoreTransforms();
-}
-
-bool GraphicsContextCG::consumeHasDrawn()
-{
-    bool hasDrawn = m_hasDrawn;
-    m_hasDrawn = false;
-    return hasDrawn;
 }
 
 }

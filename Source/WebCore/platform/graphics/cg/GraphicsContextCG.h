@@ -144,6 +144,10 @@ public:
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
+    // Function to cache current image of the drawing. This value will be
+    // cleared before any draw to this context.
+    void setCurrentImage(RefPtr<NativeImage>);
+    RefPtr<NativeImage> currentImage() const;
 
 protected:
     void setCGShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
@@ -158,6 +162,7 @@ private:
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<DestinationColorSpace> m_colorSpace;
+    RefPtr<NativeImage> m_currentImage;
     const RenderingMode m_renderingMode : 2; // NOLINT
     const bool m_isLayerCGContext : 1;
     mutable bool m_userToDeviceTransformKnownToBeIdentity : 1 { false };
@@ -166,6 +171,24 @@ private:
 };
 
 CGAffineTransform getUserToBaseCTM(CGContextRef);
+
+inline bool GraphicsContextCG::consumeHasDrawn()
+{
+    bool hasDrawn = m_hasDrawn;
+    m_hasDrawn = false;
+    return hasDrawn;
+}
+
+inline void GraphicsContextCG::setCurrentImage(RefPtr<NativeImage> image)
+{
+    ASSERT(!m_hasDrawn);
+    m_currentImage = WTFMove(image);
+}
+
+inline RefPtr<NativeImage> GraphicsContextCG::currentImage() const
+{
+    return m_currentImage;
+}
 
 } // namespace WebCore
 

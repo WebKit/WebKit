@@ -88,9 +88,12 @@ protected:
 
     RetainPtr<CGImageRef> createImage();
     RetainPtr<CGImageRef> createImageReference();
+    void setCurrentImage(RefPtr<NativeImage>);
+    RefPtr<NativeImage> currentImage() const;
 
     std::unique_ptr<IOSurface> m_surface;
     RetainPtr<CGContextRef> m_platformContext;
+    RefPtr<NativeImage> m_currentImageIfNoContext;
     const PlatformDisplayID m_displayID;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
