@@ -150,7 +150,7 @@ public:
     WEBCORE_EXPORT virtual void flushDrawingContext();
     WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
 
-    void prepareForDisplay();
+    WEBCORE_EXPORT virtual void prepareForDisplay();
 
     WEBCORE_EXPORT IntSize backendSize() const;
 

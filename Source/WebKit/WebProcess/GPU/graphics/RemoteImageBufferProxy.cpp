@@ -375,6 +375,11 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
     return true;
 }
 
+void RemoteImageBufferProxy::prepareForDisplay()
+{
+    send(Messages::RemoteImageBuffer::PrepareForDisplay());
+}
+
 void RemoteImageBufferProxy::prepareForBackingStoreChange()
 {
     // If the backing store is mapped in the process and the changes happen in the other

@@ -11111,15 +11111,17 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
 
         context->setIsInPreparationForDisplayOrFlush(false);
 
-        // Some canvas contexts hold memory that should be periodically freed.
-        if (context->hasDeferredOperations())
-            context->flushDeferredOperations();
-
+        bool needsFlushDeferredOperations = context->hasDeferredOperations();
         // Some canvases need to do work when rendering has finished but before their content is composited.
         if (RefPtr htmlCanvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
-            if (htmlCanvas->needsPreparationForDisplay())
+            if (htmlCanvas->needsPreparationForDisplay()) {
                 htmlCanvas->prepareForDisplay();
+                needsFlushDeferredOperations = false;
+            }
         }
+        // Some canvas contexts hold memory that should be periodically freed.
+        if (needsFlushDeferredOperations)
+            context->flushDeferredOperations();
     }
 }
 

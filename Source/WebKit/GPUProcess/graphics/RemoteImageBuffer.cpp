@@ -207,6 +207,12 @@ void RemoteImageBuffer::flushContextSync(CompletionHandler<void()>&& completionH
     completionHandler();
 }
 
+void RemoteImageBuffer::prepareForDisplay()
+{
+    assertIsCurrent(workQueue());
+    imageBuffer()->prepareForDisplay();
+}
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 void RemoteImageBuffer::dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&& completionHandler)
 {

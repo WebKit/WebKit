@@ -2481,13 +2481,14 @@ AffineTransform CanvasRenderingContext2DBase::baseTransform() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
+    m_hasDeferredOperations = false; // Prepare for display will take care of flushing the deferred operations.
+    if (RefPtr buffer = canvasBase().buffer())
         buffer->prepareForDisplay();
 }
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-#if USE(SKIA)
+#if USE(SKIA) || USE(CG)
     return isAccelerated();
 #else
     return false;

@@ -145,6 +145,12 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
     return m_surface->bytesPerRow();
 }
 
+void ImageBufferIOSurfaceBackend::prepareForDisplay()
+{
+    // Caller has determined this is a good time to cache the native image.
+    copyNativeImage();
+}
+
 void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreationContext& creationContext)
 {
     m_ioSurfacePool = creationContext.surfacePool;
