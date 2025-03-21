@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionStringSerialization.h"
+#include <system_error>
 #include <wtf/JSONValues.h>
 #include <wtf/Hasher.h>
 
