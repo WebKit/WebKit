@@ -938,6 +938,8 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
         return;
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();
+    if (!adjustedPaintOffset.x() && !adjustedPaintOffset.y())
+        return;
 
     PaintPhase phase = paintInfo.phase;
     bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
