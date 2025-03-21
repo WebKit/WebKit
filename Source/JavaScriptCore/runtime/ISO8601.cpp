@@ -28,6 +28,7 @@
 #include "ISO8601.h"
 
 #include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "ParseInt.h"
 #include "TemporalCalendar.h"
 #include "TemporalInstant.h"
@@ -41,6 +42,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -56,14 +58,164 @@ static constexpr int64_t nsPerMicrosecond = 1000LL;
 static constexpr int32_t maxYear = 275760;
 static constexpr int32_t minYear = -271821;
 
-std::optional<TimeZoneID> parseTimeZoneName(StringView string)
+static constexpr int32_t caseNormalizeExceptionsLength = 38;
+static const String caseNormalizeExceptions[caseNormalizeExceptionsLength] =
+    { "Australia/ACT"_s, "Australia/LHI"_s, "Australia/NSW"_s, "Africa/Dar_es_Salaam"_s,
+      "America/Port_of_Spain"_s, "Europe/Isle_of_Man"_s, "America/Argentina/ComodRivadavia"_s,
+      "America/Knox_IN"_s, "Antarctica/DumontDUrville"_s, "Antarctica/McMurdo"_s,
+      "Brazil/DeNoronha"_s, "Chile/EasterIsland"_s, "Mexico/BajaNorte"_s, "Mexico/BajaSur"_s,
+      "America/Port-au-Prince"_s, "US/Alaska"_s, "US/Aleutian"_s, "US/Arizona"_s,
+      "US/Central"_s, "US/East-Indiana"_s, "US/Eastern"_s, "US/Hawaii"_s,
+      "US/Indiana-Starke"_s, "US/Michigan"_s, "US/Mountain"_s, "US/Pacific"_s,
+      "US/Pacific-New"_s, "US/Samoa"_s, "GB-Eire"_s, "NZ-CHAT"_s, "W-SU"_s,
+      "EST5EDT"_s, "CST6CDT"_s, "MST7MDT"_s, "PST8PDT"_s, "Etc/UCT"_s, "Etc/UTC"_s};
+
+static String caseNormalize(StringView string)
 {
+    // Capitalize the first letter in the string,
+    // the first letter after the '/' if present,
+    // and the first letter after any '_'s if present.
+
+    // Anything <= 3 characters should be in all caps.
+
+    if (string.length() <= 3)
+        return string.convertToASCIIUppercase();
+    
+    // Special cases
+    for (unsigned i = 0; i < caseNormalizeExceptionsLength; i++) {
+        if (equalIgnoringASCIICase(string, caseNormalizeExceptions[i]))
+            return caseNormalizeExceptions[i];
+    }
+
+    if (string.length() >= 3
+        && toASCIILower(string[0]) == 'g'
+        && toASCIILower(string[1]) == 'm'
+        && toASCIILower(string[2]) == 't') {
+        return string.convertToASCIIUppercase();
+    }
+
+    StringBuilder result;
+    for (unsigned i = 0; i < string.length(); i++) {
+        if (i == 0)
+            result.append(toASCIIUpper(string[0]));
+        else if (string[i - 1] == '/' && i < string.length() - 2
+                 && toASCIILower(string[i]) == 'g'
+                 && toASCIILower(string[i + 1]) == 'm'
+                 && toASCIILower(string[i + 2]) == 't') {
+            result.append("GMT"_s);
+            i += 2;
+        }
+        else if (string[i - 1] == '/' || string[i - 1] == '_' || string[i - 1] == '-')
+            result.append(toASCIIUpper(string[i]));
+        else
+            result.append(toASCIILower(string[i]));
+    }
+
+    return result.toString();
+}
+
+// TODO move this into a separate file
+std::optional<TimeZone>
+parseTimeZoneName(JSGlobalObject* globalObject, StringView string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Need the canonical name so that ZonedDateTime comparisons
+    // work correctly
+
+    if (isNonIANALinkName(string))
+        return std::nullopt;
+
+    // TODO: cache this and refactor with getNamedTimeZoneEpochNanoseconds()
+    UErrorCode status = U_ZERO_ERROR;
+    String str = string.toStringWithoutCopying();
+    auto timeZoneName = str.charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return { };
+    }
+    Vector<UChar, 32> buffer;
+    UBool isSystemID = false;
+    status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneName->data(), -1, buffer, &isSystemID);
+    // ILLEGAL_ARGUMENT_ERROR means this isn't a known time zone, which is OK
+    // because there are more arguments to check
+    ASSERT_UNUSED(status, U_SUCCESS(status) || status == U_ILLEGAL_ARGUMENT_ERROR);
+
+    StringView canonical(buffer);
+    if (string != canonical && isSystemID) {
+        std::optional<TimeZone> result = parseTimeZoneName(globalObject, canonical);
+        if (result)
+            return result->withOriginal(caseNormalize(string));
+    }
+
     const auto& timeZones = intlAvailableTimeZones();
     for (unsigned index = 0; index < timeZones.size(); ++index) {
         if (equalIgnoringASCIICase(timeZones[index], string))
-            return index;
+            return TimeZone::named(index, caseNormalize(string));
     }
+
+    // Some special cases. Etc/GMT doesn't canonicalize to UTC or GMT for some reason.
+    if (equalIgnoringASCIICase(string, "Etc/GMT"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "Etc/GMT"_s);
+
+    if (equalIgnoringASCIICase(string, "Etc/UTC"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "Etc/UTC"_s);
+
+    if (equalIgnoringASCIICase(string, "GMT"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "GMT"_s);
+
     return std::nullopt;
+
+/* TODO: is any of this necessary now? Was a workaround for 
+   intlAvailableTimeZones() filtering out certain things
+
+    // Time zone may be non-canonical, so try canonicalizing it
+  
+    StringView canonical(buffer);
+    if (string != canonical && isSystemID) {
+        std::optional<TimeZone> result = parseTimeZoneName(globalObject, canonical);
+        if (result)
+            return result->withOriginal(caseNormalize(string));
+    }
+
+    // These zones canonicalize to themselves for some reason,
+    // even though they're shown as aliases in 
+    // https://github.com/unicode-org/cldr/blob/main/common/bcp47/timezone.xml .
+    // Also, non-uppercase versions of any of these strings are rejected by
+    // ucal_getCanonicalTimeZoneID()
+    std::optional<TimeZone> result;
+    if (equalIgnoringASCIICase(string, "EST5EDT"))
+        result = parseTimeZoneName(globalObject, "America/New_York"_s);
+    else if (equalIgnoringASCIICase(string, "CST6CDT"))
+        result = parseTimeZoneName(globalObject, "America/Chicago"_s);
+    else if (equalIgnoringASCIICase(string, "MST7MDT"))
+        result = parseTimeZoneName(globalObject, "America/Denver"_s);
+    else if (equalIgnoringASCIICase(string, "PST8PDT"))
+        result = parseTimeZoneName(globalObject, "America/Los_Angeles"_s);
+    else if (equalIgnoringASCIICase(string, "CET") || equalIgnoringASCIICase(string, "MET"))
+        result = parseTimeZoneName(globalObject, "Europe/Brussels"_s);
+    else if (equalIgnoringASCIICase(string, "EET"))
+        result = parseTimeZoneName(globalObject, "Europe/Athens"_s);
+    else if (equalIgnoringASCIICase(string, "EST"))
+        result = parseTimeZoneName(globalObject, "America/Panama"_s);
+    else if (equalIgnoringASCIICase(string, "HST"))
+        result = parseTimeZoneName(globalObject, "Pacific/Honolulu"_s);
+    else if (equalIgnoringASCIICase(string, "MST"))
+        result = parseTimeZoneName(globalObject, "America/Phoenix"_s);
+    else if (equalIgnoringASCIICase(string, "WET"))
+        result = parseTimeZoneName(globalObject, "Europe/Lisbon"_s);
+    else if (equalIgnoringASCIICase(string, "Etc/UTC"))
+        result = parseTimeZoneName(globalObject, "UTC"_s);
+    else if (equalIgnoringASCIICase(string, "Cuba"))
+        result = parseTimeZoneName(globalObject, "Cuba"_s);
+
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result)
+        return result->withOriginal(caseNormalize(string));
+
+    return std::nullopt;
+*/
 }
 
 std::optional<String> getTimeZoneNameFromId(TimeZoneID id) {
@@ -1516,6 +1668,10 @@ uint8_t daysInMonth(uint8_t month)
 
 String formatTimeZone(TimeZone tz)
 {
+    auto displayName = tz.getDisplayName();
+    if (displayName)
+        return displayName.value();
+
     if (tz.isUTC())
         return "UTC"_s;
     if (tz.isOffset())

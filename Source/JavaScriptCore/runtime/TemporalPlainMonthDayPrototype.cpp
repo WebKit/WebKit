@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
+#include "TemporalObjectInlines.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainMonthDay.h"
@@ -207,7 +208,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToLocaleString, (JSGl
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.toLocaleString called on value that's not a PlainMonthDay"_s);
 
-    return JSValue::encode(jsString(vm, monthDay->toString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(callIntlDateTimeFormat(globalObject, monthDay,
+        callFrame->argument(0), callFrame->argument(1))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.valueof

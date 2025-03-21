@@ -44,7 +44,7 @@ public:
 
     using TimeZone = ISO8601::TimeZone;
 
-    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
+    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID, std::optional<String>);
     static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
     static TemporalTimeZone* createFromTimeZone(VM&, Structure*, TimeZone);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -66,14 +66,16 @@ public:
         Vector<Int128>, ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
     static ISO8601::ExactTime getStartOfDay(JSGlobalObject*, ISO8601::TimeZone, ISO8601::PlainDate);
 
-    static std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID, Int128);
-    static std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(TimeZoneID, Int128);
+    static std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(JSGlobalObject*,
+        TimeZoneID, Int128);
+    static std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(JSGlobalObject*,
+        TimeZoneID, Int128);
 
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
         const Vector<LChar>&);
 
-    static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
+    static std::optional<TimeZone> parseTemporalTimeZoneString(JSGlobalObject*, StringView);
     static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
     static String formatDateTimeUTCOffsetRounded(Int128);
     static String formatOffsetTimeZoneIdentifier(int64_t, std::optional<bool>);

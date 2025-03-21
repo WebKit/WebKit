@@ -933,7 +933,7 @@ bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value)
 
     return true;
 }
-
+ 
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

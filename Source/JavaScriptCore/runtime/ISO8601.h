@@ -414,18 +414,35 @@ class TimeZone {
         RELEASE_ASSERT(!isOffset());
         return std::get<TimeZoneID>(m_timezone);
     }
-    static TimeZone utc() { return named(utcTimeZoneID()); }
+    std::optional<String> getDisplayName() const
+    {
+        if (isOffset())
+            return std::nullopt;
+        return m_originalName;
+    }
+    static TimeZone utc() { return named(utcTimeZoneID(), "UTC"_s); }
     static TimeZone offset(int64_t offset) { return TimeZone(offset); }
-    static TimeZone named(TimeZoneID id) { return TimeZone(id); }
+    static TimeZone named(TimeZoneID id, std::optional<String> original)
+        { return TimeZone(id, original); }
+    TimeZone withOriginal(String original)
+    {
+        ASSERT(std::holds_alternative<TimeZoneID>(m_timezone));
+        return named(std::get<TimeZoneID>(m_timezone), original);
+    }
     TimeZone()
         : m_timezone(utcTimeZoneID()) { }
     private:
-    TimeZone(TimeZoneID id)
-        : m_timezone(id) { }
+    TimeZone(TimeZoneID id, std::optional<String> original)
+        : m_timezone(id), m_originalName(original) { }
     TimeZone(int64_t offset)
         : m_timezone(offset) { }
     std::variant<TimeZoneID, int64_t> m_timezone;
     std::optional<String> m_offsetString;
+    // This is there so that non-canonical strings like "Etc/GMT0"
+    // can be displayed when (for example) calling toString() on
+    // a ZonedDateTime.
+    // The ID is the ID for the canonical string.
+    std::optional<String> m_originalName;
 };
 
 struct TimeZoneOffset {
@@ -460,7 +477,7 @@ struct CalendarRecord {
 };
 
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
-std::optional<TimeZoneID> parseTimeZoneName(StringView);
+std::optional<TimeZone> parseTimeZoneName(JSGlobalObject*, StringView);
 std::optional<TimeZoneRecord> parseTimeZone(StringView);
 std::optional<String> getTimeZoneNameFromId(TimeZoneID id);
 std::optional<Duration> parseDuration(StringView);

@@ -38,9 +38,9 @@ namespace JSC {
 
 const ClassInfo TemporalTimeZone::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalTimeZone) };
 
-TemporalTimeZone* TemporalTimeZone::createFromID(VM& vm, Structure* structure, TimeZoneID identifier)
+TemporalTimeZone* TemporalTimeZone::createFromID(VM& vm, Structure* structure, TimeZoneID identifier, std::optional<String> original)
 {
-    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone::named(identifier));
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone::named(identifier, original));
     format->finishCreation(vm);
     return format;
 }
@@ -330,6 +330,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     return ISO8601::ExactTime(possibleEpochNs[n - 1]);
 }
 
+/*
 static Int128 beforeFirstDST()
 {
     return ISO8601::getUTCEpochNanoseconds(ISO8601::PlainDateTime(ISO8601::PlainDate(1847, 0, 1),
@@ -362,51 +363,133 @@ static Int128 bisect(std::function<Int128(Int128)> const& getState, Int128 left,
     }
     return right;
 }
+*/
 
-static Int128 getNamedTimeZoneOffsetNanosecondsImpl(TimeZoneID timeZoneIdentifier, Int128)
+// https://tc39.es/proposal-temporal/#sec-temporal-getnamedtimezoneprevioustransition
+std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZonePreviousTransition(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier, Int128 epochNanoseconds)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
-    return 0;
+    std::optional<String> timeZoneString = ISO8601::getTimeZoneNameFromId(timeZoneIdentifier);
+    if (!timeZoneString) {
+        throwRangeError(globalObject, scope, "bad time zone ID in getNamedTimeZonePreviousTransition"_s);
+        return { };
+    }
+    // copied from JSDateMath.cpp
+    UErrorCode status = U_ZERO_ERROR;
+    auto timeZoneName = timeZoneString->charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return { };
+    }
+    UCalendar* calendar = ucal_open(timeZoneName->data(), -1, "", UCAL_DEFAULT, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    double millis = ISO8601::ExactTime(epochNanoseconds).epochMilliseconds();
+    // Round up to the nearest millisecond so that we get the correct result
+    // for a time 1 nanosecond after the previous transition
+    if (epochNanoseconds % 1'000'000 != 0)
+        millis++;
+    ucal_setMillis(calendar, millis, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+
+    UDate transitionDate = 0;
+    bool isValid = ucal_getTimeZoneTransitionDate(calendar, UCAL_TZ_TRANSITION_PREVIOUS,
+        &transitionDate, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    ucal_close(calendar);
+
+    Int128 transitionNs = static_cast<Int128>(std::trunc(transitionDate)) * 1'000'000;
+
+    if (isValid && transitionNs >= ISO8601::ExactTime::minValue)
+        return ISO8601::ExactTime(transitionNs);                                  
+    return std::nullopt;
+
 }
 
-// TODO: named time zones
-std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZonePreviousTransition(TimeZoneID, Int128)
+// TODO refactor
+// https://tc39.es/proposal-temporal/#sec-temporal-getnamedtimezonenexttransition
+std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZoneNextTransition(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier, Int128 epochNanoseconds)
 {
+     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::optional<String> timeZoneString = ISO8601::getTimeZoneNameFromId(timeZoneIdentifier);
+    if (!timeZoneString) {
+        throwRangeError(globalObject, scope, "bad time zone ID in getNamedTimeZonePreviousTransition"_s);
+        return { };
+    }
+    // copied from JSDateMath.cpp
+    UErrorCode status = U_ZERO_ERROR;
+    auto timeZoneName = timeZoneString->charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return { };
+    }
+    UCalendar* calendar = ucal_open(timeZoneName->data(), -1, "", UCAL_DEFAULT, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    double millis = ISO8601::ExactTime(epochNanoseconds).epochMilliseconds();
+    ucal_setMillis(calendar, millis, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+
+    UDate transitionDate = 0;
+    bool isValid = ucal_getTimeZoneTransitionDate(calendar, UCAL_TZ_TRANSITION_NEXT,
+        &transitionDate, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    ucal_close(calendar);
+
+    Int128 transitionNs = static_cast<Int128>(std::trunc(transitionDate)) * 1'000'000;
+
+    if (isValid && transitionNs <= ISO8601::ExactTime::maxValue)
+        return ISO8601::ExactTime(transitionNs);
     return std::nullopt;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-getnamedtimezonenexttransition
-std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZoneNextTransition(TimeZoneID timeZoneIdentifier,
-Int128 epochNanoseconds)
+// TODO: is this necessary?
+/*
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto epochMilliseconds = epochNsToMs(epochNanoseconds);
-    if (epochMilliseconds < beforeFirstDST())
-        return getNamedTimeZoneNextTransition(timeZoneIdentifier, beforeFirstDST() * 1000000);
+    Int128 bfd = beforeFirstDST() / 1'000'000;
+    if (epochMilliseconds < bfd)
+        RELEASE_AND_RETURN(scope, getNamedTimeZoneNextTransition(globalObject,
+            timeZoneIdentifier, bfd));
 
     auto now = ISO8601::ExactTime::now();
     auto base = std::max(epochMilliseconds, now.epochNanoseconds() / 1000000);
     auto dayMs = ISO8601::ExactTime::nsPerDay / 1000000;
     auto uppercap = base + dayMs * 366 * 3;
     auto leftMs = epochMilliseconds;
-    auto leftOffsetNs = getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, leftMs);
+    auto leftOffsetNs = ISO8601::getNamedTimeZoneOffsetNanoseconds(globalObject, timeZoneIdentifier, ISO8601::ExactTime(leftMs * 1'000'000));
+    RETURN_IF_EXCEPTION(scope, { });
     auto rightMs = leftMs;
     auto rightOffsetNs = leftOffsetNs;
     while (leftOffsetNs == rightOffsetNs && leftMs < uppercap) {
         rightMs = leftMs + dayMs * 2 * 7;
         if (rightMs > (ISO8601::ExactTime::maxValue / 1000000))
             return std::nullopt;
-        rightOffsetNs = getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, rightMs);
+        rightOffsetNs = ISO8601::getNamedTimeZoneOffsetNanoseconds(globalObject, timeZoneIdentifier, ISO8601::ExactTime(rightMs * 1'000'000));
+        RETURN_IF_EXCEPTION(scope, { });
         if (leftOffsetNs == rightOffsetNs)
             leftMs = rightMs;
     }
     if (leftOffsetNs == rightOffsetNs)
         return std::nullopt;
-    auto result = bisect([timeZoneIdentifier](Int128 epochMs)
-        { return getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, epochMs); },
+    auto result = bisect([timeZoneIdentifier, globalObject](Int128 epochMs) mutable
+        {
+            VM& vm = globalObject->vm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            RELEASE_AND_RETURN(scope, ISO8601::getNamedTimeZoneOffsetNanoseconds(globalObject, timeZoneIdentifier, ISO8601::ExactTime(epochMs * 1'000'000)));
+        },
         leftMs, rightMs, leftOffsetNs, rightOffsetNs);
     return ISO8601::ExactTime(result * 1000000);
 }
+*/
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getstartofday
 ISO8601::ExactTime TemporalTimeZone::getStartOfDay(JSGlobalObject* globalObject, ISO8601::TimeZone timeZone,
@@ -428,7 +511,9 @@ ISO8601::ExactTime TemporalTimeZone::getStartOfDay(JSGlobalObject* globalObject,
         throwRangeError(globalObject, scope, "day before is not valid in getStartOfDay()"_s);
         return { };
     }
-    auto result = getNamedTimeZoneNextTransition(timeZone.asID(), dayBefore.epochNanoseconds());
+    auto result = getNamedTimeZoneNextTransition(globalObject, timeZone.asID(),
+        dayBefore.epochNanoseconds());
+    RETURN_IF_EXCEPTION(scope, { });
     if (!result) {
         throwRangeError(globalObject, scope, "unable to get next transition in getStartOfDay()"_s);
         return { };
@@ -454,7 +539,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIden
 {
     if (timeZoneIdentifier == utcTimeZoneID())
         return ISO8601::TimeZone::offset(0);
-    return ISO8601::TimeZone::named(timeZoneIdentifier);
+    return ISO8601::TimeZone::named(timeZoneIdentifier, std::nullopt);
 }
 
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
@@ -487,7 +572,8 @@ ISO8601::TimeZone TemporalTimeZone::toTemporalTimeZoneIdentifier(JSGlobalObject*
     }
     auto toParse = temporalTimeZoneLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(toParse);
+    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(globalObject, toParse);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!parseResultOptional) {
         throwRangeError(globalObject, scope, makeString("error parsing time zone from string "_s, toParse));
         return { };
@@ -549,11 +635,19 @@ static std::optional<String> parseTimeZoneIANANameComponent(StringParsingBuffer<
     if (buffer.atEnd())
         return std::nullopt;
 
+    auto character = buffer[0];
+    if (!(isASCIIAlpha(character) || character == '.' || character == '_'))
+        return std::nullopt;
+
     unsigned index = 0;
     for (; index < buffer.lengthRemaining(); ++index) {
         auto character = buffer[index];
         if (character == '/')
             break;
+        if (!(isASCIIAlpha(character) || isASCIIDigit(character)
+              || character == '.' || character == '_' || character == '-'
+              || character == '+'))
+            return std::nullopt;
     }
     if (index == 1)
         return std::nullopt;
@@ -597,10 +691,16 @@ static bool parseTimeZoneIANAName(StringView string)
 }
 
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView identifier)
+// Returns a pair of the time zone and the original name
+static std::optional<ISO8601::TimeZone>
+parseTimeZoneIdentifier(JSGlobalObject* globalObject,
+    StringView identifier)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (isUTCTimeZoneString(identifier))
-        return ISO8601::TimeZone::utc();
+        return ISO8601::TimeZone::offset(0);
 
     Vector<LChar> ignore;
     auto parseResult = ISO8601::parseUTCOffset(identifier, ignore, false); // Don't accept sub-minute precision
@@ -608,12 +708,8 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     if (!parseResult) {
         isIANAName = parseTimeZoneIANAName(identifier);
     }
-    if (isIANAName) {
-        std::optional<TimeZoneID> id = ISO8601::parseTimeZoneName(identifier);
-        if (!id)
-            return std::nullopt;
-        return ISO8601::TimeZone::named(id.value());
-    }
+    if (isIANAName)
+        RELEASE_AND_RETURN(scope, ISO8601::parseTimeZoneName(globalObject, identifier));
 
     if (!parseResult)
         return std::nullopt;
@@ -623,15 +719,19 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     return ISO8601::TimeZone::offset(offsetNanoseconds);
 }
 
-static std::optional<ISO8601::TimeZone> parseTimeZoneFromAnnotation(const ISO8601::TimeZoneAnnotation& annotation)
+static std::optional<ISO8601::TimeZone> parseTimeZoneFromAnnotation(JSGlobalObject* globalObject,
+    const ISO8601::TimeZoneAnnotation& annotation)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (annotation.m_offset) {
         auto offsetNanoseconds = annotation.m_offset.value();
         ASSERT(!(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute));
         return ISO8601::TimeZone::offset(offsetNanoseconds);
     }
 
-    return parseTimeZoneIdentifier(WTF::String(annotation.m_annotation));
+    RELEASE_AND_RETURN(scope, parseTimeZoneIdentifier(globalObject, WTF::String(annotation.m_annotation)));
 }
 
 // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
@@ -671,10 +771,14 @@ static bool canBeTimeZoneIdentifier(StringView string)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView timeZoneString)
+std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(JSGlobalObject* globalObject,
+    StringView timeZoneString)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (canBeTimeZoneIdentifier(timeZoneString))
-        return parseTimeZoneIdentifier(timeZoneString);
+        RELEASE_AND_RETURN(scope, parseTimeZoneIdentifier(globalObject, timeZoneString));
     ISO8601::TimeZoneRecord timeZoneResult;
     auto asDateTime = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::Date);
     if (asDateTime) {
@@ -718,7 +822,8 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
         }
     }
     if (timeZoneResult.m_annotation)
-        return parseTimeZoneFromAnnotation(timeZoneResult.m_annotation.value());
+        RELEASE_AND_RETURN(scope,
+            parseTimeZoneFromAnnotation(globalObject, timeZoneResult.m_annotation.value()));
     if (timeZoneResult.m_z)
         return ISO8601::TimeZone::utc();
     if (timeZoneResult.m_offset) {
@@ -753,15 +858,17 @@ TemporalTimeZone* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue t
     if (utcOffset)
         return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffset.value());
 
-    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
-    if (identifier)
-        return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value());
+    std::optional<TimeZone> tz = ISO8601::parseTimeZoneName(globalObject, timeZoneString);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (tz)
+        return TemporalTimeZone::createFromTimeZone(vm, globalObject->timeZoneStructure(), tz.value());
 
-    std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
+    std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(globalObject, timeZoneString);
+    RETURN_IF_EXCEPTION(scope, { });
     if (utcOffsetFromInstant) {
         if (utcOffsetFromInstant->isOffset())
             return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->offsetNanoseconds());
-        return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID());
+        return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID(), timeZoneString);
     }
 
 

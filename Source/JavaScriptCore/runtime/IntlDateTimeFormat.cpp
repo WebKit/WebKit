@@ -740,6 +740,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     String timeZoneForICU;
     int64_t offset;
     if (!tzValue.isUndefined()) {
+        m_userSpecifiedTimeZone = true;
+
         String originalTz = tzValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (auto minutesValue = ISO8601::parseUTCOffsetInMinutes(originalTz)) {
@@ -757,21 +759,23 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                 throwRangeError(globalObject, scope, message);
                 return;
             }
-            std::optional<TimeZoneID> tzId = ISO8601::parseTimeZoneName(tz);
-            if (!tzId) {
+            std::optional<ISO8601::TimeZone> timeZone = ISO8601::parseTimeZoneName(globalObject, tz);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (!timeZone) {
                 throwRangeError(globalObject, scope, "invalid time zone"_s);
                 return;
             }
-            m_timeZone = ISO8601::TimeZone::named(*tzId);
+            m_timeZone = timeZone.value();
         }
     } else {
         tz = vm.dateCache.defaultTimeZone();
-        std::optional<TimeZoneID> tzId = ISO8601::parseTimeZoneName(tz);
-        if (!tzId) {
+        std::optional<ISO8601::TimeZone> timeZone = ISO8601::parseTimeZoneName(globalObject, tz);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!timeZone) {
             throwRangeError(globalObject, scope, "invalid time zone"_s);
             return;
         }
-        m_timeZone = ISO8601::TimeZone::named(*tzId);
+        m_timeZone = timeZone.value();
     }
     if (!timeZoneForICU.isNull())
         m_timeZoneForICU = WTFMove(timeZoneForICU);
@@ -1277,8 +1281,10 @@ String IntlDateTimeFormat::dateTimeStyleToICUDateFormat(TemporalDateTimeFormat f
 {
     String dateString;
     String timeString;
+    String timeZoneString;
 
-    if (format == TemporalDateTimeFormat::PlainDateTime) {
+    if (format == TemporalDateTimeFormat::PlainDateTime
+     || format == TemporalDateTimeFormat::ZonedDateTime) {
         switch (m_dateStyle) {
             case DateTimeStyle::None:
                 break;
@@ -1314,7 +1320,19 @@ String IntlDateTimeFormat::dateTimeStyleToICUDateFormat(TemporalDateTimeFormat f
             return timeString;
         if (timeString.isEmpty())
             return dateString;
-        return makeString(dateString, ", "_s, timeString);
+        if (format == TemporalDateTimeFormat::ZonedDateTime) {
+            switch (m_timeStyle) {
+                case DateTimeStyle::Long:
+                    timeZoneString = " z"_s;
+                    break;
+                case DateTimeStyle::Full:
+                    timeZoneString = " zzzz"_s;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return makeString(dateString, ", "_s, timeString, timeZoneString);
     }
     
     if (format == TemporalDateTimeFormat::PlainMonthDay) {
@@ -1418,14 +1436,18 @@ String IntlDateTimeFormat::dateTimeFormatToICUDateFormat(TemporalDateTimeFormat 
         return buildSkeleton(m_weekday, m_era, yearToUse, monthToUse, dayToUse, WTF::TriState::Indeterminate,
             m_hourCycle, hourToUse, m_dayPeriod, minuteToUse, secondToUse, m_fractionalSecondDigits,
             TimeZoneName::None);
-/*
-            m_hourCycle == HourCycle::None ? HourCycle::H11 : m_hourCycle,
-            m_hour == Hour::None ? Hour::TwoDigit : m_hour,
-            m_dayPeriod,
-            m_minute == Minute::None ? Minute::TwoDigit : m_minute,
-            m_second == Second::None ? Second::TwoDigit : m_second, m_fractionalSecondDigits,
-            m_timeZoneName);
-*/
+    }
+    case TemporalDateTimeFormat::ZonedDateTime: {
+        auto yearToUse = m_year == Year::None && needDefaults ? Year::Numeric : m_year;
+        auto monthToUse = m_month == Month::None && needDefaults ? Month::Numeric : m_month;
+        auto dayToUse = m_day == Day::None && needDefaults ? Day::Numeric : m_day;
+        auto hourToUse = m_hour == Hour::None && needDefaults ? Hour::Numeric : m_hour;
+        auto minuteToUse = m_minute == Minute::None && needDefaults ? Minute::Numeric : m_minute;
+        auto secondToUse = m_second == Second::None && needDefaults ? Second::Numeric : m_second;
+        auto timeZoneToUse = m_timeZoneName == TimeZoneName::None && needDefaults ? TimeZoneName::Short : m_timeZoneName;
+        return buildSkeleton(m_weekday, m_era, yearToUse, monthToUse, dayToUse, WTF::TriState::Indeterminate,
+            m_hourCycle, hourToUse, m_dayPeriod, minuteToUse, secondToUse, m_fractionalSecondDigits,
+            timeZoneToUse);
     }
     case TemporalDateTimeFormat::PlainMonthDay: {
         auto monthToUse = m_month == Month::None && needDefaults ? Month::Numeric : m_month;
@@ -1466,33 +1488,55 @@ String IntlDateTimeFormat::dateTimeFormatToICUDateFormat(TemporalDateTimeFormat 
 
 // https://tc39.es/ecma402/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, ExactTime value,
-    std::optional<TemporalDateTimeFormat> dateTimeFormat) const
+    std::optional<TemporalDateTimeFormat> dateTimeFormat,
+    std::optional<ISO8601::TimeZone> timeZone) const
 {
     ASSERT(m_dateFormat);
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<UChar, 64> oldPattern;
-    int32_t oldPatternSize = 0;
     Vector<UChar, 64> result;
 
-    auto dateFormat = m_dateFormat.get();
+    UDateFormat* dateFormat = m_dateFormat.get();
 
-    // Apply pattern if this is a Temporal value
+    // If this is a Temporal value, clone the date format and apply
+    // a different pattern (and possibly a different calendar)
     if (dateTimeFormat) {
-        // Save off old pattern
         UErrorCode status = U_ZERO_ERROR;
-        oldPatternSize = udat_toPattern(dateFormat, false, oldPattern.data(), 64, &status);
+
+        dateFormat = udat_clone(dateFormat, &status);
         if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "Internal error: failed to get pattern in format()"_s);
+            throwRangeError(globalObject, scope, "internal error in format()"_s);
             return { };
+        }
+
+        CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem).utf8();
+        if (timeZone) {
+            // If time zone option was set, it's an error
+            if (m_userSpecifiedTimeZone) {
+                throwTypeError(globalObject, scope, "timeZone option disallowed with ZonedDateTime.toLocaleString"_s);
+                return { };
+            }
+            // Set the calendar to reflect the time zone
+            std::optional<String> timeZoneString = ISO8601::formatTimeZone(timeZone.value());
+            if (!timeZoneString) {
+                throwRangeError(globalObject, scope, "bad time zone ID in IntlDateTimeFormat.format"_s);
+                return { };
+            }
+            auto timeZoneName = timeZoneString->charactersWithNullTermination();
+            if (!timeZoneName) {
+                throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+                return { };
+            }
+            UCalendar* calendar = ucal_open(timeZoneName->data(), -1, "", UCAL_DEFAULT, &status);
+            ASSERT_UNUSED(status, U_SUCCESS(status));
+            udat_setCalendar(dateFormat, calendar);
         }
 
         auto str = dateTimeFormatToICUDateFormat(dateTimeFormat.value());
         auto currentFormat = StringView(str);
 
-        CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem).utf8();
         Vector<UChar, 32> patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, currentFormat.upconvertedCharacters(), status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "Internal error: failed to initialize formatter in format()"_s);
@@ -1507,9 +1551,8 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, ExactTime value
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
-    // Restore default pattern if we changed the pattern
     if (dateTimeFormat)
-        udat_applyPattern(dateFormat, false, oldPattern.data(), oldPatternSize);
+        ucal_close(dateFormat);
 
     return jsString(vm, String(WTFMove(result)));
 }
@@ -1852,7 +1895,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, ExactTime 
     }
 
     if (equal)
-        RELEASE_AND_RETURN(scope, format(globalObject, startDate, startFormat));
+        RELEASE_AND_RETURN(scope, format(globalObject, startDate, startFormat, std::nullopt)); // TODO: ZonedDateTime
 
     int32_t formattedStringLength = 0;
     const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);

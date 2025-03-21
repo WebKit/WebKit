@@ -105,13 +105,14 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::TimeZone timeZone;
-    // TODO: non-UTC named time zones
     if (timeZoneString.convertToASCIIUppercase() == "UTC"_s)
         timeZone = ISO8601::TimeZone::utc();
     else {
-        std::optional<ISO8601::TimeZone> timeZoneParse = TemporalTimeZone::parseTemporalTimeZoneString(timeZoneString);
+        std::optional<ISO8601::TimeZone> timeZoneParse =
+            TemporalTimeZone::parseTemporalTimeZoneString(globalObject, timeZoneString);
+        RETURN_IF_EXCEPTION(scope, { });
         if (!timeZoneParse)
-            return throwVMRangeError(globalObject, scope, "Couldn't parse time zone name"_s);
+            return throwVMRangeError(globalObject, scope, makeString("Couldn't parse time zone name: "_s, timeZoneString));
         timeZone = timeZoneParse.value();
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, structure, WTFMove(exactTime), WTFMove(timeZone))));

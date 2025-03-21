@@ -20,10 +20,7 @@ skip:
   paths:
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/intl402/Temporal/PlainDate
     - test/intl402/Temporal/PlainDateTime
-    - test/intl402/Temporal/PlainMonthDay
-    - test/intl402/Temporal/PlainTime
     - test/intl402/Temporal/PlainYearMonth
     - test/intl402/Temporal/ZonedDateTime
     - test/staging/Intl402
@@ -242,6 +239,95 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/timezone-iso-string.js
     - test/intl402/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
     - test/intl402/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/compare/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/from/calendar-not-supporting-eras.js
+    - test/intl402/Temporal/PlainDate/from/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/from/canonicalize-era-codes.js
+    - test/intl402/Temporal/PlainDate/from/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/from/one-of-era-erayear-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/argument-object-valid.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/argument-string.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/era/branding.js
+    - test/intl402/Temporal/PlainDate/prototype/era/prop-desc.js
+    - test/intl402/Temporal/PlainDate/prototype/eraYear/branding.js
+    - test/intl402/Temporal/PlainDate/prototype/eraYear/prop-desc.js
+    - test/intl402/Temporal/PlainDate/prototype/since/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/since/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/since/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/until/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/until/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/until/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/until/until-across-lunisolar-leap-months.js
+    - test/intl402/Temporal/PlainDate/prototype/weekOfYear/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/PlainDate/prototype/weekOfYear/non-iso-week-of-year.js
+    - test/intl402/Temporal/PlainDate/prototype/with/cross-era-boundary.js
+    - test/intl402/Temporal/PlainDate/prototype/with/gregorian-mutually-exclusive-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/with/japanese-mutually-exclusive-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/with/non-iso-calendar-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/withCalendar/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/yearOfWeek/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/PlainDate/prototype/yearOfWeek/non-iso-week-of-year.js
+    - test/intl402/Temporal/PlainMonthDay/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/calendars.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/calendar-not-supporting-eras.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-missing-properties.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-object.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-underspecified.js
+    - test/intl402/Temporal/PlainMonthDay/from/reference-date-noniso-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/reference-year-1972.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toJSON/calendarname.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toJSON/year-format.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/dateStyle.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toPlainDate/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-never.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/year-format.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/with/fields-missing-properties.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/with/non-iso-calendar-fields.js
+    - test/intl402/Temporal/ZonedDateTime/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/compare/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/ZonedDateTime/construct-non-utc-non-iso.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/era/branding.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/era/prop-desc.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/eraYear/branding.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/eraYear/prop-desc.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/calendar-mismatch.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/dateStyle.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toPlainDate/preserves-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/weekOfYear/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/weekOfYear/non-iso-week-of-year.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/basic.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/calendar-case-insensitive.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/yearOfWeek/non-iso-week-of-year.js
 
     # Depends on annotations in datetime strings
     - test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js

@@ -146,12 +146,13 @@ JSValue TemporalZonedDateTime::getTimeZoneTransition(JSGlobalObject* globalObjec
         return jsNull();
     std::optional<ExactTime> transition;
     if (direction == TemporalDirectionOption::Next) {
-        transition = TemporalTimeZone::getNamedTimeZoneNextTransition(timeZone().asID(),
+        transition = TemporalTimeZone::getNamedTimeZoneNextTransition(globalObject, timeZone().asID(),
             exactTime().epochNanoseconds());
-    } else {
-        transition = TemporalTimeZone::getNamedTimeZonePreviousTransition(timeZone().asID(),
+     } else {
+        transition = TemporalTimeZone::getNamedTimeZonePreviousTransition(globalObject, timeZone().asID(),
             exactTime().epochNanoseconds());
     }
+    RETURN_IF_EXCEPTION(scope, { });
     if (!transition)
         return jsNull();
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(transition.value()), timeZone()));

@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
 #include "TemporalDuration.h"
+#include "TemporalObjectInlines.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"

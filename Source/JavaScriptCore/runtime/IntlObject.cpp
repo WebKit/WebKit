@@ -1831,12 +1831,16 @@ static bool isValidTimeZoneNameFromICUTimeZone(StringView timeZoneName)
     // We need to filter them out.
     if (timeZoneName.startsWith("SystemV/"_s))
         return false;
-    if (timeZoneName.startsWith("Etc/"_s))
-        return isUTCEquivalent(timeZoneName);
+    // TODO: Temporal test cases use time zones like "Etc/GMT-1", etc.
+//    if (timeZoneName.startsWith("Etc/"_s))
+//        return isUTCEquivalent(timeZoneName);
     // IANA time zone names include '/'. Some of them are not including, but it is in backward links.
     // And ICU already resolved these backward links.
-    if (!timeZoneName.contains('/'))
-        return timeZoneName == "UTC"_s || timeZoneName == "GMT"_s;
+// TODO: Temporal test cases also use these time zones
+//    if (!timeZoneName.contains('/'))
+//        return timeZoneName == "UTC"_s || timeZoneName == "GMT"_s;
+    if (isNonIANALinkName(timeZoneName))
+        return false;
     return true;
 }
 

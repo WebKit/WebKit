@@ -49,6 +49,7 @@ enum class TemporalDateTimeFormat : uint8_t {
     PlainMonthDay,
     PlainTime,
     PlainYearMonth,
+    ZonedDateTime,
 };
 
 class IntlDateTimeFormat final : public JSNonFinalObject {
@@ -78,7 +79,8 @@ public:
     enum class RequiredComponent : uint8_t { Date, Time, Any };
     enum class Defaults : uint8_t { Date, Time, All };
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options, RequiredComponent, Defaults);
-    JSValue format(JSGlobalObject*, ExactTime value, std::optional<TemporalDateTimeFormat>) const;
+    JSValue format(JSGlobalObject*, ExactTime value, std::optional<TemporalDateTimeFormat>,
+        std::optional<ISO8601::TimeZone>) const;
     JSValue formatToParts(JSGlobalObject*, ExactTime value, std::optional<TemporalDateTimeFormat>,
         JSString* sourceType = nullptr) const;
     JSValue formatRange(JSGlobalObject*, ExactTime, ExactTime, std::optional<TemporalDateTimeFormat>);
@@ -115,8 +117,8 @@ private:
     enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
     enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
-    std::tuple<ExactTime, std::optional<TemporalDateTimeFormat>>
-    handleDateTimeValue(JSGlobalObject*, JSValue);
+    std::tuple<ExactTime, std::optional<TemporalDateTimeFormat>, std::optional<ISO8601::TimeZone>>
+    handleDateTimeValue(JSGlobalObject*, JSValue, bool);
     void checkTimeOptions(JSGlobalObject*, StringView);
     void checkDateOptions(JSGlobalObject*, StringView);
     void checkOptionsCompatibility(JSGlobalObject*, JSValue);
@@ -174,6 +176,7 @@ private:
     bool m_userSpecifiedHour = false;
     bool m_userSpecifiedMinute = false;
     bool m_userSpecifiedSecond = false;
+    bool m_userSpecifiedTimeZone = false;
 
     TimeZoneName m_timeZoneName { TimeZoneName::None };
     DateTimeStyle m_dateStyle { DateTimeStyle::None };

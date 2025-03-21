@@ -412,17 +412,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToLocaleString, (JSGlobal
     auto* plainDate = jsDynamicCast<TemporalPlainDate*>(callFrame->thisValue());
     if (!plainDate)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.toLocaleString called on value that's not a PlainDate"_s);
-
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
-    ASSERT(dateTimeFormat);
-    dateTimeFormat->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::Date);
-
-    auto [value, optionalDateTimeFormat] =
-        dateTimeFormat->IntlDateTimeFormat::handleDateTimeValue(globalObject, plainDate);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(
-        dateTimeFormat->format(globalObject, value, optionalDateTimeFormat)));
+   
+    RELEASE_AND_RETURN(scope, JSValue::encode(callIntlDateTimeFormat(globalObject, plainDate,
+        callFrame->argument(0), callFrame->argument(1))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.valueof
