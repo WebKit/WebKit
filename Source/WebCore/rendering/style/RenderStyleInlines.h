@@ -26,7 +26,6 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "AnimationList.h"
-#include "CSSLineBoxContainValue.h"
 #include "Element.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsTypes.h"
@@ -49,6 +48,7 @@
 #include "StyleGridData.h"
 #include "StyleGridItemData.h"
 #include "StyleInheritedData.h"
+#include "StyleLineBoxContain.h"
 #include "StyleMarqueeData.h"
 #include "StyleMiscNonInheritedData.h"
 #include "StyleMultiColData.h"
@@ -434,7 +434,7 @@ inline const IntSize& RenderStyle::initialLetter() const { return m_nonInherited
 inline int RenderStyle::initialLetterDrop() const { return initialLetter().width(); }
 inline int RenderStyle::initialLetterHeight() const { return initialLetter().height(); }
 constexpr LineAlign RenderStyle::initialLineAlign() { return LineAlign::None; }
-constexpr OptionSet<LineBoxContain> RenderStyle::initialLineBoxContain() { return { LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Replaced }; }
+constexpr OptionSet<Style::LineBoxContain> RenderStyle::initialLineBoxContain() { return { Style::LineBoxContain::Block, Style::LineBoxContain::Inline, Style::LineBoxContain::Replaced }; }
 constexpr LineBreak RenderStyle::initialLineBreak() { return LineBreak::Auto; }
 constexpr LineClampValue RenderStyle::initialLineClamp() { return { }; }
 inline const AtomString& RenderStyle::initialLineGrid() { return nullAtom(); }
@@ -588,7 +588,7 @@ inline const StyleSelfAlignmentData& RenderStyle::justifySelf() const { return m
 inline const Length& RenderStyle::left() const { return m_nonInheritedData->surroundData->offset.left(); }
 inline float RenderStyle::letterSpacing() const { return m_inheritedData->fontData->fontCascade.letterSpacing(); }
 inline LineAlign RenderStyle::lineAlign() const { return static_cast<LineAlign>(m_rareInheritedData->lineAlign); }
-inline OptionSet<LineBoxContain> RenderStyle::lineBoxContain() const { return OptionSet<LineBoxContain>::fromRaw(m_rareInheritedData->lineBoxContain); }
+inline OptionSet<Style::LineBoxContain> RenderStyle::lineBoxContain() const { return OptionSet<Style::LineBoxContain>::fromRaw(m_rareInheritedData->lineBoxContain); }
 inline LineBreak RenderStyle::lineBreak() const { return static_cast<LineBreak>(m_rareInheritedData->lineBreak); }
 inline const LineClampValue& RenderStyle::lineClamp() const { return m_nonInheritedData->rareData->lineClamp; }
 inline const AtomString& RenderStyle::lineGrid() const { return m_rareInheritedData->lineGrid; }

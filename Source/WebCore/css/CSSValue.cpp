@@ -65,7 +65,6 @@
 #include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
-#include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSOffsetRotateValue.h"
 #include "CSSPaintImageValue.h"
@@ -186,8 +185,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSImageSetOptionValue>(*this));
     case ImageSet:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSImageSetValue>(*this));
-    case LineBoxContain:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSLineBoxContainValue>(*this));
     case NamedImage:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSNamedImageValue>(*this));
     case OffsetRotate:

@@ -1862,21 +1862,40 @@ class KeywordTerm:
 #   e.g. "auto" | "reverse" | "<angle unitless-allowed unitless-zero-allowed>"
 #
 class MatchOneTerm:
-    def __init__(self, subterms):
+    def __init__(self, subterms, *, annotation=None):
         self.subterms = subterms
+        self.annotation = annotation
+
+        self.settings_flag = None
+        self._process_annotation(annotation)
 
     def __str__(self):
-        return f"[ {' | '.join(stringify_iterable(self.subterms))} ]"
+        return f"[ {' | '.join(stringify_iterable(self.subterms))} ]" + self.stringified_annotation
 
     def __repr__(self):
         return self.__str__()
+
+    @property
+    def stringified_annotation(self):
+        if not self.annotation:
+            return ''
+        return str(self.annotation)
+
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        for directive in annotation.directives:
+            if directive.name == 'settings-flag':
+                self.settings_flag = directive.value[0]
+            else:
+                raise Exception(f"Unknown grouping annotation directive '{directive}'.")
 
     @staticmethod
     def from_node(node):
         assert(type(node) is BNFGroupingNode)
         assert(node.kind is BNFGroupingNode.Kind.MATCH_ONE)
 
-        return MatchOneTerm(list(compact_map(lambda member: Term.from_node(member), node.members)))
+        return MatchOneTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), annotation=node.annotation)
 
     @staticmethod
     def from_values(values):
@@ -1901,6 +1920,8 @@ class MatchOneTerm:
         simplified_subterms = []
         for subterm in subterms:
             if isinstance(subterm, MatchOneTerm):
+                if subterm.settings_flag:
+                    raise Exception(f"Simplifying {subterm} is not yet supported due to inability to merge settings flags down from MatchOneTerm to its subterms on simplification.")
                 simplified_subterms += subterm.subterms
             else:
                 simplified_subterms += [subterm]
@@ -4486,6 +4507,7 @@ class GenerateCSSPropertyParsing:
                 to=writer,
                 headers=[
                     "CSSFunctionValue.h",
+                    "CSSOffsetRotateValue.h",
                     "CSSParserContext.h",
                     "CSSParserIdioms.h",
                     "CSSPropertyParser.h",
@@ -4520,7 +4542,6 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Motion.h",
                     "CSSPropertyParserConsumer+NumberDefinitions.h",
                     "CSSPropertyParserConsumer+Overflow.h",
-                    "CSSPropertyParserConsumer+Page.h",
                     "CSSPropertyParserConsumer+Percentage.h",
                     "CSSPropertyParserConsumer+PercentageDefinitions.h",
                     "CSSPropertyParserConsumer+Position.h",
@@ -5143,7 +5164,7 @@ class TermGeneratorFunctionTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             inner_lambda_declaration_paramaters = ["CSSParserTokenRange& args"]
             inner_lambda_declaration_calling_parameters = ["args"]
@@ -5276,7 +5297,7 @@ class TermGeneratorUnboundedRepetitionTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             self._generate_consume_repeated_term_lambda(to=to)
 
@@ -5369,7 +5390,7 @@ class TermGeneratorBoundedRepetitionTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             self._generate_consume_repeated_term_lambda(to=to)
 
@@ -5404,7 +5425,10 @@ class TermGeneratorBoundedRepetitionTerm(TermGenerator):
                             to.write(f"return {self.term.type}::create({', '.join(terms_to_return)});")
                         else:
                             to.write(f"range = rangeCopy;")
-                            to.write(f"return {self.term.type}::create({', '.join(terms_to_return[:-1])});")
+                            if i - 1 == 0 and self.term.single_value_optimization:
+                                to.write(f"return term{i - 1}.releaseNonNull(); // single item optimization")
+                            else:
+                                to.write(f"return {self.term.type}::create({', '.join(terms_to_return[:-1])});")
                     to.write(f"}}")
 
                 to.write(f"range = rangeCopy;")
@@ -5452,7 +5476,7 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         self.term = term
         self.keyword_fast_path_generator = keyword_fast_path_generator
         self.term_generators = TermGeneratorMatchOneTerm._build_term_generators(term, keyword_fast_path_generator)
-        self.requires_context = any(term_generator.requires_context for term_generator in self.term_generators)
+        self.requires_context = term.settings_flag is not None or any(term_generator.requires_context for term_generator in self.term_generators)
 
     def __str__(self):
         return str(self.term)
@@ -5527,12 +5551,22 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         return term_generators
 
     def generate_conditional(self, *, to, range_string, context_string):
+        if self.term.settings_flag:
+            to.write(f"if (!{context_string}.{self.term.settings_flag})")
+            with to.indent():
+                to.write(f"return {{ }};")
+
         for term_generator in self.term_generators:
             term_generator.generate_conditional(to=to, range_string=range_string, context_string=context_string)
 
     def generate_unconditional(self, *, to, range_string, context_string):
         # Pop the last generator off, as that one will be the special, non-if case.
         *remaining_term_generators, last_term_generator = self.term_generators
+
+        if self.term.settings_flag:
+            to.write(f"if (!{context_string}.{self.term.settings_flag})")
+            with to.indent():
+                to.write(f"return {{ }};")
 
         # For any remaining generators, call the consume function and return the result if non-null.
         for term_generator in remaining_term_generators:
@@ -5599,7 +5633,7 @@ class TermGeneratorMatchAllOrderedTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             self._generate_consume_subterm_lambdas(to=to)
 
@@ -5649,8 +5683,6 @@ class TermGeneratorMatchAllOrderedTerm(TermGenerator):
                         to.write(f"if (list.size() == {list_index + 1})")
                         with to.indent():
                             if list_index == 0 and self.term.single_value_optimization:
-                                # Only attempt the single item optimization if there are enough optional terms that it
-                                # can kick in and it hasn't been explicitly disabled via @(no-single-item-opt).
                                 to.write(f"return WTFMove(list[0]); // single item optimization")
                             else:
                                 to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
@@ -5819,14 +5851,9 @@ class TermGeneratorMatchAllAnyOrderTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             self._generate_consume_subterm_lambdas(to=to)
-
-            if self.term.type == 'CSSValueList':
-                return_type_create = "CSSValueList::createSpaceSeparated"
-            else:
-                return_type_create = f"{self.term.type}::create"
 
             if self.number_of_optional_terms > 0 or self.term.preserve_order:
                 if self.term.preserve_order:
@@ -5847,15 +5874,42 @@ class TermGeneratorMatchAllAnyOrderTerm(TermGenerator):
                             with to.indent():
                                 to.write(f"return {{ }};")
 
-                if self.number_of_terms - self.number_of_optional_terms <= 1 and self.term.single_value_optimization:
-                    # Only attempt the single item optimization if there are enough optional terms that it
-                    # can kick in and it hasn't been explicitly disabled via @(no-single-item-opt).
-                    to.write(f"if (list.size() == 1)")
-                    with to.indent():
-                        to.write(f"return WTFMove(list[0]); // single item optimization")
+                if self.term.type == 'CSSValueList':
+                    if self.number_of_terms - self.number_of_optional_terms <= 1 and self.term.single_value_optimization:
+                        # Only attempt the single item optimization if there are enough optional terms that it
+                        # can kick in and it hasn't been explicitly disabled via @(no-single-item-opt).
+                        to.write(f"if (list.size() == 1)")
+                        with to.indent():
+                            to.write(f"return WTFMove(list[0]); // single item optimization")
+                    to.write(f"return CSSValueList::createSpaceSeparated(WTFMove(list));")
+                else:
+                    return_type_create = f"{self.term.type}::create"
 
-                to.write(f"return {return_type_create}(WTFMove(list));")
+                    min_values = self.number_of_terms - self.number_of_optional_terms
+                    max_values = self.number_of_terms
+
+                    list_value_strings = []
+                    for list_index in range(0, min_values - 1):
+                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+
+                    for list_index in range(min_values - 1, max_values - 1):
+                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+
+                        to.write(f"if (list.size() == {list_index + 1})")
+                        with to.indent():
+                            if list_index == 0 and self.term.single_value_optimization:
+                                to.write(f"return WTFMove(list[0]); // single item optimization")
+                            else:
+                                to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
+
+                    list_value_strings.append(f"WTFMove(list[{max_values - 1}])")
+                    to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
             else:
+                if self.term.type == 'CSSValueList':
+                    return_type_create = "CSSValueList::createSpaceSeparated"
+                else:
+                    return_type_create = f"{self.term.type}::create"
+
                 return_value_strings = []
 
                 for (i, subterm_generator) in enumerate(self.subterm_generators):
@@ -6008,7 +6062,7 @@ class TermGeneratorMatchOneOrMoreAnyOrderTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
 
             self._generate_consume_subterm_lambdas(to=to)
 
@@ -6023,17 +6077,34 @@ class TermGeneratorMatchOneOrMoreAnyOrderTerm(TermGenerator):
             with to.indent():
                 to.write(f"return {{ }};")
 
-            if self.term.single_value_optimization:
-                to.write(f"if (list.size() == 1)")
-                with to.indent():
-                    to.write(f"return WTFMove(list[0]); // single item optimization")
-
             if self.term.type == 'CSSValueList':
-                return_type_create = "CSSValueList::createSpaceSeparated"
+                if self.term.single_value_optimization:
+                    to.write(f"if (list.size() == 1)")
+                    with to.indent():
+                        to.write(f"return WTFMove(list[0]); // single item optimization")
+                to.write(f"return CSSValueList::createSpaceSeparated(WTFMove(list));")
             else:
                 return_type_create = f"{self.term.type}::create"
-            to.write(f"return {return_type_create}(WTFMove(list));")
 
+                min_values = 1
+                max_values = len(self.subterm_generators)
+
+                list_value_strings = []
+                for list_index in range(0, min_values - 1):
+                    list_value_strings.append(f"WTFMove(list[{list_index}])")
+
+                for list_index in range(min_values - 1, max_values - 1):
+                    list_value_strings.append(f"WTFMove(list[{list_index}])")
+
+                    to.write(f"if (list.size() == {list_index + 1})")
+                    with to.indent():
+                        if list_index == 0 and self.term.single_value_optimization:
+                            to.write(f"return WTFMove(list[0]); // single item optimization")
+                        else:
+                            to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
+
+                list_value_strings.append(f"WTFMove(list[{max_values - 1}])")
+                to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
         to.write(f"}};")
 
     def _generate_lambda_into_builder(self, *, to):
@@ -6145,7 +6216,7 @@ class TermGeneratorReferenceTerm(TermGenerator):
             if self.term.settings_flag:
                 to.write(f"if (!context.{self.term.settings_flag})")
                 with to.indent():
-                    to.write(f"return nullptr;")
+                    to.write(f"return {{ }};")
             to.write(f"return {self._generate_call_reference_string(range_string='range', context_string='context')};")
         to.write(f"}};")
 

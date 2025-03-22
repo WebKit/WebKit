@@ -913,7 +913,6 @@ css/CSSKeyframeRule.cpp
 css/CSSKeyframesRule.cpp
 css/CSSLayerBlockRule.cpp
 css/CSSLayerStatementRule.cpp
-css/CSSLineBoxContainValue.cpp
 css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
@@ -1056,7 +1055,6 @@ css/parser/CSSPropertyParserConsumer+Masking.cpp
 css/parser/CSSPropertyParserConsumer+Motion.cpp
 css/parser/CSSPropertyParserConsumer+Number.cpp
 css/parser/CSSPropertyParserConsumer+Overflow.cpp
-css/parser/CSSPropertyParserConsumer+Page.cpp
 css/parser/CSSPropertyParserConsumer+Percentage.cpp
 css/parser/CSSPropertyParserConsumer+Position.cpp
 css/parser/CSSPropertyParserConsumer+PositionTry.cpp

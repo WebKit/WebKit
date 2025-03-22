@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Inline.h"
 
-#include "CSSLineBoxContainValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
@@ -83,46 +82,6 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, const CSSParserC
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
     return consumeTextEdge(range);
-}
-
-RefPtr<CSSValue> consumeWebkitLineBoxContain(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // <'-webkit-line-box-contain'> = none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]
-    // NOTE: This is a non-standard property with no standard equivalent.
-
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-
-    OptionSet<LineBoxContain> value;
-    while (range.peek().type() == IdentToken) {
-        auto flag = [&]() -> std::optional<LineBoxContain> {
-            switch (range.peek().id()) {
-            case CSSValueBlock:
-                return LineBoxContain::Block;
-            case CSSValueInline:
-                return LineBoxContain::Inline;
-            case CSSValueFont:
-                return LineBoxContain::Font;
-            case CSSValueGlyphs:
-                return LineBoxContain::Glyphs;
-            case CSSValueReplaced:
-                return LineBoxContain::Replaced;
-            case CSSValueInlineBox:
-                return LineBoxContain::InlineBox;
-            case CSSValueInitialLetter:
-                return LineBoxContain::InitialLetter;
-            default:
-                return std::nullopt;
-            }
-        }();
-        if (!flag || value.contains(*flag))
-            return nullptr;
-        value.add(flag);
-        range.consumeIncludingWhitespace();
-    }
-    if (!value)
-        return nullptr;
-    return CSSLineBoxContainValue::create(value);
 }
 
 } // namespace CSSPropertyParserHelpers

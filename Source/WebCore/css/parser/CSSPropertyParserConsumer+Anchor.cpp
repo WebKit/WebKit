@@ -316,38 +316,5 @@ RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, const CSSParser
     return valueForPositionArea(dim1, dim2);
 }
 
-RefPtr<CSSValue> consumePositionVisibility(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    if (range.peek().id() == CSSValueAlways) {
-        range.consumeIncludingWhitespace();
-        return CSSPrimitiveValue::create(CSSValueAlways);
-    }
-
-    // Sort the keywords such that the order in the resulting list matches the order in the spec.
-    // e.g "anchors-visible anchors-valid" is parsed to ["anchors-valid", "anchors-visible"]
-
-    OptionSet<PositionVisibility> specifiedValues;
-    while (!range.atEnd()) {
-        auto ident = consumeIdentRaw<CSSValueAnchorsValid, CSSValueAnchorsVisible, CSSValueNoOverflow>(range);
-        if (!ident)
-            return nullptr;
-
-        auto specifiedValue = fromCSSValueID<PositionVisibility>(*ident);
-        if (specifiedValues.contains(specifiedValue))
-            return nullptr;
-
-        specifiedValues.add(specifiedValue);
-    }
-
-    if (specifiedValues.isEmpty())
-        return nullptr;
-
-    CSSValueListBuilder builder;
-    for (auto value : specifiedValues)
-        builder.append(CSSPrimitiveValue::create(toCSSValueID(value)));
-
-    return CSSValueList::createSpaceSeparated(WTFMove(builder));
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

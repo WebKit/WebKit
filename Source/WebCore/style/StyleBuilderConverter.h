@@ -81,6 +81,7 @@
 #include "StyleCornerShapeValue.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
+#include "StyleLineBoxContain.h"
 #include "StylePathData.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
@@ -1204,15 +1205,64 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
 
 inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(BuilderState& builderState, const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
-        return { };
+    if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        switch (primitive->valueID()) {
+        case CSSValueNone:
+            return { };
+        case CSSValueBlock:
+            return LineBoxContain::Block;
+        case CSSValueInline:
+            return LineBoxContain::Inline;
+        case CSSValueFont:
+            return LineBoxContain::Font;
+        case CSSValueGlyphs:
+            return LineBoxContain::Glyphs;
+        case CSSValueReplaced:
+            return LineBoxContain::Replaced;
+        case CSSValueInlineBox:
+            return LineBoxContain::InlineBox;
+        case CSSValueInitialLetter:
+            return LineBoxContain::InitialLetter;
+        default:
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return { };
+        }
     }
 
-    auto lineBoxContainValue = requiredDowncast<CSSLineBoxContainValue>(builderState, value);
-    if (!lineBoxContainValue)
+    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
+    if (!list)
         return { };
-    return lineBoxContainValue->value();
+
+    OptionSet<LineBoxContain> result;
+    for (Ref primitive : *list) {
+        switch (primitive->valueID()) {
+        case CSSValueBlock:
+            result.add(LineBoxContain::Block);
+            break;
+        case CSSValueInline:
+            result.add(LineBoxContain::Inline);
+            break;
+        case CSSValueFont:
+            result.add(LineBoxContain::Font);
+            break;
+        case CSSValueGlyphs:
+            result.add(LineBoxContain::Glyphs);
+            break;
+        case CSSValueReplaced:
+            result.add(LineBoxContain::Replaced);
+            break;
+        case CSSValueInlineBox:
+            result.add(LineBoxContain::InlineBox);
+            break;
+        case CSSValueInitialLetter:
+            result.add(LineBoxContain::InitialLetter);
+            break;
+        default:
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            return { };
+        }
+    }
+    return result;
 }
 
 inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& builderState, const CSSValue& value)

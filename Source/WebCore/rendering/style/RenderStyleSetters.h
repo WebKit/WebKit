@@ -210,7 +210,7 @@ inline void RenderStyle::setJustifySelf(const StyleSelfAlignmentData& data) { SE
 inline void RenderStyle::setJustifySelfPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().justifySelf.setPosition(position); }
 inline void RenderStyle::setLeft(Length&& length) { SET_NESTED(m_nonInheritedData, surroundData, offset.left(), WTFMove(length)); }
 inline void RenderStyle::setLineAlign(LineAlign alignment) { SET(m_rareInheritedData, lineAlign, static_cast<unsigned>(alignment)); }
-inline void RenderStyle::setLineBoxContain(OptionSet<LineBoxContain> c) { SET(m_rareInheritedData, lineBoxContain, c.toRaw()); }
+inline void RenderStyle::setLineBoxContain(OptionSet<Style::LineBoxContain> c) { SET(m_rareInheritedData, lineBoxContain, c.toRaw()); }
 inline void RenderStyle::setLineBreak(LineBreak rule) { SET(m_rareInheritedData, lineBreak, static_cast<unsigned>(rule)); }
 inline void RenderStyle::setLineClamp(LineClampValue value) { SET_NESTED(m_nonInheritedData, rareData, lineClamp, value); }
 inline void RenderStyle::setLineGrid(const AtomString& name) { SET(m_rareInheritedData, lineGrid, name); }

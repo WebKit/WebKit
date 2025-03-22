@@ -2810,7 +2810,7 @@
                 "animation-wrapper": "LengthBoxWrapper",
                 "style-builder-custom": "All",
                 "disables-native-appearance": true,
-                "parser-grammar": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}@(type=CSSQuadValue)",
+                "parser-grammar": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}@(type=CSSQuadValue no-single-item-opt)",
                 "parser-exported": true
             },
             "specification": {
@@ -5421,7 +5421,7 @@
                 ],
                 "animation-wrapper": "LengthBoxWrapper",
                 "style-builder-custom": "All",
-                "parser-grammar": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}@(type=CSSQuadValue)"
+                "parser-grammar": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}@(type=CSSQuadValue no-single-item-opt)"
 
             },
             "specification": {
@@ -6390,9 +6390,7 @@
                 "animation-wrapper-acceleration": "threaded-only",
                 "style-builder-converter": "OffsetRotate",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeOffsetRotate",
-                "parser-grammar-unused": "[ auto | reverse ] || <angle>",
-                "parser-grammar-unused-reason": "Needs support for using custom types for '||' groups."
+                "parser-grammar": "[ [ auto | reverse ] || <angle> ]@(type=CSSOffsetRotateValue)"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -9987,9 +9985,7 @@
             ],
             "codegen-properties": {
                 "style-builder-converter": "LineBoxContain",
-                "parser-function": "consumeWebkitLineBoxContain",
-                "parser-grammar-unused": "none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]",
-                "parser-grammar-unused-reason": "Needs support for using custom types for '||' groups."
+                "parser-grammar": "none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]"
             },
             "status": {
                 "status": "obsolete",
@@ -10598,10 +10594,7 @@
                     "-webkit-text-underline-position"
                 ],
                 "style-builder-converter": "TextUnderlinePosition",
-                "parser-function": "consumeTextUnderlinePosition",
-                "parser-grammar-unused": "auto | [ [ under | from-font ] || [ left | right ] ]",
-                "parser-grammar-unused-reason": "Needs support for using custom types for '||' groups.",
-                "parser-grammar-comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font | left | right'."
+                "parser-grammar": "auto | [ [ under | from-font ] || [ left | right ]@(settings-flag=cssTextUnderlinePositionLeftRightEnabled) ]@(type=CSSValuePair)"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -11611,11 +11604,9 @@
                 "both-edges"
             ],
             "codegen-properties": {
+                "settings-flag": "cssScrollbarGutterEnabled",
                 "style-builder-converter": "ScrollbarGutter",
-                "parser-function": "consumeScrollbarGutter",
-                "parser-grammar-unused": "auto | [ stable && both-edges? ]",
-                "parser-grammar-unused-reason": "Needs support for using custom types for '&&' groups.",
-                "settings-flag": "cssScrollbarGutterEnabled"
+                "parser-grammar": "auto | [ stable && both-edges? ]@(type=CSSValuePair)"
             },
             "specification": {
                 "category": "css-overflow",
@@ -11956,10 +11947,8 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssAnchorPositioningEnabled",
-                "parser-function": "consumePositionVisibility",
-                "parser-grammar-unused": "always | [ anchors-valid || anchors-visible || no-overflow ]",
-                "parser-grammar-unused-reason": "Needs support for '||' groups.",
-                "style-builder-converter": "PositionVisibility"
+                "style-builder-converter": "PositionVisibility",
+                "parser-grammar": "always | [ anchors-valid || anchors-visible || no-overflow ]@(no-single-item-opt)"
             },
             "specification": {
                 "category": "css-anchor-position",
@@ -12439,9 +12428,7 @@
         "@page": {
             "size": {
                 "codegen-properties": {
-                    "parser-function": "consumeSize",
-                    "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
-                    "parser-grammar-unused-reason": "Needs support for using custom types for '||' groups."
+                    "parser-grammar": "<length [0,inf]>{1,2}@(type=CSSValuePair) | auto | [ <page-size> || [ portrait | landscape ] ]@(type=CSSValuePair)"
                 },
                 "specification": {
                     "category": "css-page",
@@ -13331,7 +13318,6 @@
         },
         "<page-size>": {
             "grammar": "A5 | A4 | A3 | B5 | B4 | jis-B5 | jis-B4 | letter | legal | ledger",
-            "exported": true,
             "specification": {
                 "category": "css-page",
                 "url": "https://www.w3.org/TR/css-page-3/#typedef-page-size-page-size"

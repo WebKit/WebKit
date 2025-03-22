@@ -105,7 +105,6 @@ public:
     bool isImageSetOptionValue() const { return m_classType == ClassType::ImageSetOption; }
     bool isImageSetValue() const { return m_classType == ClassType::ImageSet; }
     bool isImageValue() const { return m_classType == ClassType::Image; }
-    bool isLineBoxContainValue() const { return m_classType == ClassType::LineBoxContain; }
     bool isNamedImageValue() const { return m_classType == ClassType::NamedImage; }
     bool isOffsetRotateValue() const { return m_classType == ClassType::OffsetRotate; }
     bool isPair() const { return m_classType == ClassType::ValuePair; }
@@ -235,7 +234,6 @@ protected:
         GridLineNames,
         GridLineValue,
         GridTemplateAreas,
-        LineBoxContain,
         OffsetRotate,
         Path,
         PendingSubstitutionValue,

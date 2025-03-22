@@ -43,9 +43,5 @@ RefPtr<CSSValue> consumeLineFitEdge(CSSParserTokenRange&, const CSSParserContext
 // https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange&, const CSSParserContext&);
 
-// MARK: <'-webkit-line-box-contain'> consuming
-// No standard equivalent
-RefPtr<CSSValue> consumeWebkitLineBoxContain(CSSParserTokenRange&, const CSSParserContext&);
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

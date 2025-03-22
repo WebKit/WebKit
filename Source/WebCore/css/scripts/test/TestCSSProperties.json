@@ -261,6 +261,13 @@
                 "parser-grammar": "<number>{1,2}@(type=CSSValuePair)"
             }
         },
+        "test-bounded-repetition-with-spaces-with-type-no-single-item-opt": {
+            "animation-type": "discrete",
+            "initial": "0 0",
+            "codegen-properties": {
+                "parser-grammar": "<number>{1,2}@(type=CSSValuePair no-single-item-opt)"
+            }
+        },
         "test-bounded-repetition-with-spaces-with-type-with-default-previous": {
             "animation-type": "discrete",
             "initial": "0 0",
@@ -340,7 +347,13 @@
                 "parser-grammar": "[ <number> | foo | bar | baz | [ <custom-ident> && <dashed-ident> ]@(settings-flag=cssSettingsGroupDisabled) ]"
             }
         },
-
+        "test-match-one-with-settings-flag": {
+            "animation-type": "discrete",
+            "initial": "none",
+            "codegen-properties": {
+                "parser-grammar": "none || [ foo | bar ]@(settings-flag=cssSettingsGroupDisabled)"
+            }
+        },
         "test-match-all-ordered": {
             "animation-type": "discrete",
             "initial": "0 foo 1px",
@@ -460,6 +473,62 @@
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(preserve-order no-single-item-opt)"
             }
         },
+        "test-match-all-any-order-with-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-preserve-order-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(preserve-order type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-preserve-order-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(preserve-order type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-multiple-required-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-multiple-required-and-custom-type-no-single-item-opt": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(type=CSSCustomType no-single-item-opt)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-multiple-required-and-preserve-order-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(preserve-order type=CSSCustomType)"
+            }
+        },
+        "test-match-all-any-order-with-optional-and-multiple-required-and-preserve-order-and-custom-type-no-single-item-opt": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(preserve-order type=CSSCustomType no-single-item-opt)"
+            }
+        },
         "test-match-one-or-more-any-order": {
             "animation-type": "discrete",
             "initial": "0 foo 1px",
@@ -486,6 +555,34 @@
             "initial": "0 foo 1px",
             "codegen-properties": {
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order no-single-item-opt)"
+            }
+        },
+        "test-match-one-or-more-any-order-with-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(type=CSSCustomType)"
+            }
+        },
+        "test-match-one-or-more-any-order-with-custom-type-no-single-item-opt": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(type=CSSCustomType no-single-item-opt)"
+            }
+        },
+        "test-match-one-or-more-any-order-with-preserve-order-and-custom-type": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order type=CSSCustomType)"
+            }
+        },
+        "test-match-one-or-more-any-order-with-preserve-order-and-custom-type-no-single-item-opt": {
+            "animation-type": "discrete",
+            "initial": "0 foo 1px",
+            "codegen-properties": {
+                "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order type=CSSCustomType no-single-item-opt)"
             }
         },
         "test-function-no-parameters": {

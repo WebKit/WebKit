@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InlineLineBuilder.h"
 
-#include "CSSLineBoxContainValue.h"
 #include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingUtils.h"
@@ -36,6 +35,7 @@
 #include "LayoutShape.h"
 #include "RenderStyleInlines.h"
 #include "RubyFormattingContext.h"
+#include "StyleLineBoxContain.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include <wtf/unicode/CharacterNames.h>
@@ -857,7 +857,7 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
         if (inlineItem.isText()) {
             auto& styleToUse = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
             candidateContentHeight = std::max<InlineLayoutUnit>(candidateContentHeight, styleToUse.computedLineHeight());
-        } else if (inlineItem.isAtomicInlineBox() && lineBoxContain.contains(LineBoxContain::Replaced))
+        } else if (inlineItem.isAtomicInlineBox() && lineBoxContain.contains(Style::LineBoxContain::Replaced))
             candidateContentHeight = std::max(candidateContentHeight, InlineLayoutUnit { formattingContext().geometryForBox(inlineItem.layoutBox()).marginBoxHeight() });
     }
     if (candidateContentHeight <= m_lineLogicalRect.height())
