@@ -1076,6 +1076,18 @@ public:
     {
         builderState.style().setTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(fromCSSValueDeducingType(builderState, value));
     }
+    static void applyInitialTestUnderline(BuilderState& builderState)
+    {
+        builderState.style().setTestUnderline(RenderStyle::initialTestUnderline());
+    }
+    static void applyInheritTestUnderline(BuilderState& builderState)
+    {
+        builderState.style().setTestUnderline(forwardInheritedValue(builderState.parentStyle().testUnderline()));
+    }
+    static void applyValueTestUnderline(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestUnderline(fromCSSValueDeducingType(builderState, value));
+    }
     static void applyInitialTestUsingSharedRule(BuilderState& builderState)
     {
         builderState.style().setTestUsingSharedRule(RenderStyle::initialTestUsingSharedRule());
@@ -2307,6 +2319,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestUnderline:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestUnderline(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestUnderline(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestUnderline(builderState, value);
             break;
         }
         break;

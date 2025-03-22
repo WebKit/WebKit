@@ -2,7 +2,7 @@
 
 typedef USVString CSSOMString;
 
-partial interface CSSStyleDeclaration {
+partial interface CSSStyleProperties {
     // For each CSS property property that is a supported CSS property, the following
     // partial interface applies where camel-cased attribute is obtained by running the
     // CSS property to IDL attribute algorithm for property.
@@ -108,6 +108,7 @@ partial interface CSSStyleDeclaration {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUnboundedRepetitionWithSpacesWithMin;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUnboundedRepetitionWithSpacesWithMinSingleItemOpt;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUnderline;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRule;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleExported;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleWithOverrideFunction;
@@ -224,6 +225,7 @@ partial interface CSSStyleDeclaration {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-unbounded-repetition-with-spaces-with-min;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-unbounded-repetition-with-spaces-with-min-no-single-item-opt;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-unbounded-repetition-with-spaces-with-min-single-item-opt;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-underline;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-exported;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-with-override-function;

@@ -731,6 +731,13 @@
             "codegen-properties": {
                 "parser-grammar": "foo@(aliased-to=baz) | bar"
             }
+        },
+        "test-underline": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "[ foo || [ baz | bar | [ boo blah ] | [ poo pee ] ] ]"
+            }
         }
     },
     "descriptors": {

@@ -103,17 +103,18 @@ enum CSSPropertyID : uint16_t {
     CSSPropertyTestUnboundedRepetitionWithSpacesWithMin = 89,
     CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt = 90,
     CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt = 91,
-    CSSPropertyTestUsingSharedRule = 92,
-    CSSPropertyTestUsingSharedRuleExported = 93,
-    CSSPropertyTestUsingSharedRuleWithOverrideFunction = 94,
-    CSSPropertyTestSinkPriority = 95,
-    CSSPropertyTestLogicalPropertyGroupLogicalBlock = 96,
-    CSSPropertyTestLogicalPropertyGroupLogicalInline = 97,
-    CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal = 98,
-    CSSPropertyTestLogicalPropertyGroupPhysicalVertical = 99,
-    CSSPropertyFont = 100,
-    CSSPropertyTestShorthandOne = 101,
-    CSSPropertyTestShorthandTwo = 102,
+    CSSPropertyTestUnderline = 92,
+    CSSPropertyTestUsingSharedRule = 93,
+    CSSPropertyTestUsingSharedRuleExported = 94,
+    CSSPropertyTestUsingSharedRuleWithOverrideFunction = 95,
+    CSSPropertyTestSinkPriority = 96,
+    CSSPropertyTestLogicalPropertyGroupLogicalBlock = 97,
+    CSSPropertyTestLogicalPropertyGroupLogicalInline = 98,
+    CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal = 99,
+    CSSPropertyTestLogicalPropertyGroupPhysicalVertical = 100,
+    CSSPropertyFont = 101,
+    CSSPropertyTestShorthandOne = 102,
+    CSSPropertyTestShorthandTwo = 103,
 };
 
 // Enum value of the first "real" CSS property, which excludes
@@ -121,10 +122,10 @@ enum CSSPropertyID : uint16_t {
 constexpr uint16_t firstCSSProperty = 2;
 // Total number of enum values in the CSSPropertyID enum. If making an array
 // that can be indexed into using the enum value, use this as the size.
-constexpr uint16_t cssPropertyIDEnumValueCount = 103;
+constexpr uint16_t cssPropertyIDEnumValueCount = 104;
 // Number of "real" CSS properties. This differs from cssPropertyIDEnumValueCount,
 // as this doesn't consider CSSPropertyInvalid and CSSPropertyCustom.
-constexpr uint16_t numCSSProperties = 101;
+constexpr uint16_t numCSSProperties = 102;
 constexpr unsigned maxCSSPropertyNameLength = 114;
 constexpr auto firstTopPriorityProperty = CSSPropertyID::CSSPropertyTestTopPriority;
 constexpr auto lastTopPriorityProperty = CSSPropertyID::CSSPropertyTestTopPriority;
@@ -137,7 +138,7 @@ constexpr auto lastLogicalGroupProperty = CSSPropertyID::CSSPropertyTestLogicalP
 constexpr auto firstShorthandProperty = CSSPropertyID::CSSPropertyFont;
 constexpr auto lastShorthandProperty = CSSPropertyID::CSSPropertyTestShorthandTwo;
 constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;
-extern const std::array<CSSPropertyID, 96> computedPropertyIDs;
+extern const std::array<CSSPropertyID, 97> computedPropertyIDs;
 
 struct CSSPropertySettings {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

@@ -24,7 +24,7 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 96> computedPropertyIDs {
+const std::array<CSSPropertyID, 97> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestAnimationWrapper,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly,
@@ -118,6 +118,7 @@ const std::array<CSSPropertyID, 96> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMin,
     CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt,
     CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt,
+    CSSPropertyID::CSSPropertyTestUnderline,
     CSSPropertyID::CSSPropertyTestUsingSharedRule,
     CSSPropertyID::CSSPropertyTestUsingSharedRuleExported,
     CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction,
@@ -214,6 +215,7 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-unbounded-repetition-with-spaces-with-min"_s,
     "test-unbounded-repetition-with-spaces-with-min-no-single-item-opt"_s,
     "test-unbounded-repetition-with-spaces-with-min-single-item-opt"_s,
+    "test-underline"_s,
     "test-using-shared-rule"_s,
     "test-using-shared-rule-exported"_s,
     "test-using-shared-rule-with-override-function"_s,
@@ -332,6 +334,7 @@ test-unbounded-repetition-with-spaces-no-min-no-single-item-opt, CSSPropertyID::
 test-unbounded-repetition-with-spaces-with-min, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMin
 test-unbounded-repetition-with-spaces-with-min-no-single-item-opt, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt
 test-unbounded-repetition-with-spaces-with-min-single-item-opt, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt
+test-underline, CSSPropertyID::CSSPropertyTestUnderline
 test-using-shared-rule, CSSPropertyID::CSSPropertyTestUsingSharedRule
 test-using-shared-rule-exported, CSSPropertyID::CSSPropertyTestUsingSharedRuleExported
 test-using-shared-rule-with-override-function, CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction
@@ -556,6 +559,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMin
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt
+    false, // CSSPropertyID::CSSPropertyTestUnderline
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRule
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleExported
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction
