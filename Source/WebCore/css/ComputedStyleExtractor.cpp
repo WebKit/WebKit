@@ -95,6 +95,7 @@
 #include "StyleEasingFunction.h"
 #include "StyleFilterProperty.h"
 #include "StyleInterpolation.h"
+#include "StyleLineBoxContain.h"
 #include "StylePathData.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePropertyShorthand.h"
@@ -1976,11 +1977,27 @@ static Ref<CSSValue> transitionShorthandValue(const RenderStyle& style, const An
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-static Ref<CSSValue> createLineBoxContainValue(OptionSet<LineBoxContain> lineBoxContain)
+static Ref<CSSValue> createLineBoxContainValue(OptionSet<Style::LineBoxContain> lineBoxContain)
 {
     if (!lineBoxContain)
         return CSSPrimitiveValue::create(CSSValueNone);
-    return CSSLineBoxContainValue::create(lineBoxContain);
+
+    CSSValueListBuilder list;
+    if (lineBoxContain.contains(Style::LineBoxContain::Block))
+        list.append(CSSPrimitiveValue::create(CSSValueBlock));
+    if (lineBoxContain.contains(Style::LineBoxContain::Inline))
+        list.append(CSSPrimitiveValue::create(CSSValueInline));
+    if (lineBoxContain.contains(Style::LineBoxContain::Font))
+        list.append(CSSPrimitiveValue::create(CSSValueFont));
+    if (lineBoxContain.contains(Style::LineBoxContain::Glyphs))
+        list.append(CSSPrimitiveValue::create(CSSValueGlyphs));
+    if (lineBoxContain.contains(Style::LineBoxContain::Replaced))
+        list.append(CSSPrimitiveValue::create(CSSValueReplaced));
+    if (lineBoxContain.contains(Style::LineBoxContain::InlineBox))
+        list.append(CSSPrimitiveValue::create(CSSValueInlineBox));
+    if (lineBoxContain.contains(Style::LineBoxContain::InitialLetter))
+        list.append(CSSPrimitiveValue::create(CSSValueInitialLetter));
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 static Ref<CSSValue> valueForWebkitRubyPosition(RubyPosition position)

@@ -907,7 +907,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
     css/CSSImportRule.h
-    css/CSSLineBoxContainValue.h
     css/CSSMediaRule.h
     css/CSSPageRule.h
     css/CSSPrimitiveValue.h
@@ -2713,6 +2712,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/color-adjust/StyleColorScheme.h
 
     style/values/images/StyleGradient.h
+
+    style/values/inline/StyleLineBoxContain.h
 
     style/values/motion/StyleRayFunction.h
 

@@ -170,7 +170,6 @@ enum class Isolation : bool;
 enum class ItemPosition : uint8_t;
 enum class LengthType : uint8_t;
 enum class LineAlign : bool;
-enum class LineBoxContain : uint8_t;
 enum class LineBreak : uint8_t;
 enum class LineCap : uint8_t;
 enum class LineJoin : uint8_t;
@@ -301,6 +300,7 @@ struct ScrollPadding;
 struct ScrollPaddingEdge;
 
 enum class Change : uint8_t;
+enum class LineBoxContain : uint8_t;
 enum class PositionTryOrder : uint8_t;
 }
 
@@ -1066,7 +1066,7 @@ public:
     inline const LengthSize& pageSize() const;
     inline PageSizeType pageSizeType() const;
 
-    inline OptionSet<LineBoxContain> lineBoxContain() const;
+    inline OptionSet<Style::LineBoxContain> lineBoxContain() const;
     inline const LineClampValue& lineClamp() const;
     inline const BlockEllipsis& blockEllipsis() const;
     inline size_t maxLines() const;
@@ -1626,7 +1626,7 @@ public:
     inline void setPageSizeType(PageSizeType);
     inline void resetPageSizeType();
 
-    inline void setLineBoxContain(OptionSet<LineBoxContain>);
+    inline void setLineBoxContain(OptionSet<Style::LineBoxContain>);
     inline void setLineClamp(LineClampValue);
     
     inline void setMaxLines(size_t);
@@ -2089,7 +2089,7 @@ public:
     static constexpr RubyPosition initialRubyPosition();
     static constexpr RubyAlign initialRubyAlign();
     static constexpr RubyOverhang initialRubyOverhang();
-    static constexpr OptionSet<LineBoxContain> initialLineBoxContain();
+    static constexpr OptionSet<Style::LineBoxContain> initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();
     static StyleImage* initialBorderImageSource() { return nullptr; }

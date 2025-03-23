@@ -50,7 +50,5 @@ RefPtr<CSSValue> valueForPositionArea(CSSValueID, CSSValueID);
 
 RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange&, const CSSParserContext&);
 
-RefPtr<CSSValue> consumePositionVisibility(CSSParserTokenRange&, const CSSParserContext&);
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

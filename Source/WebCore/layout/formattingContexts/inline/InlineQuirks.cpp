@@ -104,7 +104,7 @@ bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox)
 std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const
 {
     ASSERT(floatBox.isFloatingPositioned());
-    if (!floatBox.style().lineBoxContain().contains(LineBoxContain::InitialLetter))
+    if (!floatBox.style().lineBoxContain().contains(Style::LineBoxContain::InitialLetter))
         return { };
     auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {

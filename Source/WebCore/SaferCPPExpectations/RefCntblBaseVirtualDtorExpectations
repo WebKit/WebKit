@@ -36,7 +36,6 @@ css/CSSImageSetValue.h
 css/CSSImageValue.h
 css/CSSKeyframeRule.h
 css/CSSKeyframesRule.h
-css/CSSLineBoxContainValue.h
 css/CSSNamedImageValue.h
 css/CSSOffsetRotateValue.h
 css/CSSPaintImageValue.h

@@ -462,7 +462,7 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
     LOG_IF_DIFFERENT_WITH_CAST(TextIndentType, textIndentType);
     LOG_IF_DIFFERENT_WITH_CAST(TextUnderlinePosition, textUnderlinePosition);
 
-    LOG_RAW_OPTIONSET_IF_DIFFERENT(LineBoxContain, lineBoxContain);
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(Style::LineBoxContain, lineBoxContain);
 
     LOG_IF_DIFFERENT_WITH_CAST(ImageOrientation, imageOrientation);
     LOG_IF_DIFFERENT_WITH_CAST(ImageRendering, imageRendering);

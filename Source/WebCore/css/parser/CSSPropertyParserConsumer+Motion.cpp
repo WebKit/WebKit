@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Motion.h"
 
-#include "CSSOffsetRotateValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
@@ -189,24 +188,6 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, const CSSParserCo
         return nullptr;
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    auto rangeCopy = range;
-
-    // Attempt to parse the first token as the modifier (auto / reverse keyword). If
-    // successful, parse the second token as the angle. If not, try to parse the other
-    // way around.
-    auto modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy);
-    auto angle = consumeAngle(rangeCopy, context);
-    if (!modifier)
-        modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy);
-    if (!angle && !modifier)
-        return nullptr;
-
-    range = rangeCopy;
-    return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
 } // namespace CSSPropertyParserHelpers

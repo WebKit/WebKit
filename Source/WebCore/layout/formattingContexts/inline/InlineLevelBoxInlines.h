@@ -73,18 +73,18 @@ inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, 
 inline bool InlineLevelBox::mayStretchLineBox() const
 {
     if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Block, WebCore::Style::LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::InitialLetter, WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
 
     if (isAtomicInlineBox())
-        return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
+        return m_style.lineBoxContain.contains(WebCore::Style::LineBoxContain::Replaced);
 
     if (isInlineBox()) {
-        // Either the inline box itself is included or its text content thorugh Glyph and Font.
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+        // Either the inline box itself is included or its text content through Glyph and Font.
+        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Inline, WebCore::Style::LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
     }
 
     if (isLineBreakBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Inline, WebCore::Style::LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ WebCore::Style::LineBoxContain::Font, WebCore::Style::LineBoxContain::Glyphs }));
 
     return true;
 }

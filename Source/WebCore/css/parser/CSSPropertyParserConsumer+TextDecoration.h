@@ -39,9 +39,5 @@ namespace CSSPropertyParserHelpers {
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, const CSSParserContext&);
 
-// MARK: <'text-underline-position'> consuming
-// https://drafts.csswg.org/css-text-decor-4/#text-underline-position-property
-RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

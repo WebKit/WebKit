@@ -138,7 +138,7 @@ public:
     unsigned textIndentLine : 1; // TextIndentLine
     unsigned textIndentType : 1; // TextIndentType
     unsigned textUnderlinePosition : 4; // TextUnderlinePosition
-    unsigned lineBoxContain: 7; // OptionSet<LineBoxContain>
+    unsigned lineBoxContain: 7; // OptionSet<Style::LineBoxContain>
     // CSS Image Values Level 3
     unsigned imageOrientation : 1; // ImageOrientation
     unsigned imageRendering : 3; // ImageRendering

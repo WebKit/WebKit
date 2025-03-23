@@ -169,7 +169,7 @@ private:
         TextBoxTrim textBoxTrim;
         TextEdge textBoxEdge;
         TextEdge lineFitEdge;
-        OptionSet<LineBoxContain> lineBoxContain;
+        OptionSet<WebCore::Style::LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
     };
