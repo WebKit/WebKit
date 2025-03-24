@@ -284,6 +284,8 @@ SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& va
         return { value.resolveAsNumber<float>(conversionData), SVGLengthType::Number };
     case SVGLengthType::Percentage:
         return { value.resolveAsPercentage<float>(conversionData), SVGLengthType::Percentage };
+    case SVGLengthType::Rems:
+        return { value.resolveAsLength<float>(conversionData), SVGLengthType::Rems };
     default:
         return { value.resolveAsLength<float>(conversionData), SVGLengthType::Pixels };
     }

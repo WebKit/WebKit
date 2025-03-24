@@ -98,6 +98,7 @@
 #include "TransformOperationsBuilder.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
+#include "svg/SVGLengthValue.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -109,6 +110,7 @@ namespace Style {
 class BuilderConverter {
 public:
     static WebCore::Length convertLength(BuilderState&, const CSSValue&);
+    static SVGLengthValue convertSVGLength(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAuto(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAutoOrContent(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthSizing(BuilderState&, const CSSValue&);
@@ -400,6 +402,17 @@ inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderStat
 
     ASSERT_NOT_REACHED();
     return WebCore::Length(0, LengthType::Fixed);
+}
+
+inline SVGLengthValue BuilderConverter::convertSVGLength(BuilderState& builderState, const CSSValue& value)
+{
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    if (!primitiveValue)
+        return { };
+
+    CSSToLengthConversionData conversionData = builderState.cssToLengthConversionData().copyForFontSize();
+
+    return SVGLengthValue::fromCSSPrimitiveValue(*primitiveValue, conversionData);
 }
 
 inline WebCore::Length BuilderConverter::convertLengthAllowingNumber(BuilderState& builderState, const CSSValue& value)

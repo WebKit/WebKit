@@ -300,7 +300,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromREMSToUserUnits(float value
     if (!rootStyle)
         return Exception { ExceptionCode::NotSupportedError };
 
-    return value * rootStyle->computedFontSize();
+    return value * rootStyle->specifiedFontSize();
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const

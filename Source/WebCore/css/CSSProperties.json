@@ -8270,10 +8270,11 @@
             "animation-type": "by computed value",
             "initial": "0",
             "codegen-properties": {
-                "animation-wrapper": "LengthWrapper",
+                "animation-wrapper": "DiscreteSVGWrapper",
                 "animation-wrapper-comment": "FIXME: Should probably pass 'IsLengthPercentage'",
                 "render-style-initial": "zeroLength",
-                "style-builder-converter": "Length",
+                "style-builder-converter": "SVGLength",
+                "svg": true,
                 "parser-grammar": "<length-percentage>"
             },
             "specification": {

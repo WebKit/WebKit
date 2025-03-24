@@ -93,6 +93,7 @@ public:
     static String initialMarkerEndResource() { return String(); }
     static MaskType initialMaskType() { return MaskType::Luminance; }
     static SVGLengthValue initialBaselineShiftValue() { return SVGLengthValue(0, SVGLengthType::Number); }
+    static SVGLengthValue zeroLength() { return SVGLengthValue(0, SVGLengthType::Number); }
 
     // SVG CSS Property setters
     void setAlignmentBaseline(AlignmentBaseline val) { m_nonInheritedFlags.flagBits.alignmentBaseline = static_cast<unsigned>(val); }
@@ -115,6 +116,7 @@ public:
     void setRx(const Length&);
     void setRy(const Length&);
     void setX(const Length&);
+    void setX(const SVGLengthValue&);
     void setY(const Length&);
     void setD(RefPtr<StylePathData>&&);
     void setFillOpacity(float);
@@ -343,6 +345,13 @@ inline void SVGRenderStyle::setX(const Length& length)
 {
     if (!(m_layoutData->x == length))
         m_layoutData.access().x = length;
+}
+
+inline void SVGRenderStyle::setX(const SVGLengthValue& length) {
+    Length newLength = Length(length.valueInSpecifiedUnits(), LengthType::Fixed, false);
+
+    if (!(m_layoutData->x == newLength))
+        m_layoutData.access().x = newLength;
 }
 
 inline void SVGRenderStyle::setY(const Length& length)
