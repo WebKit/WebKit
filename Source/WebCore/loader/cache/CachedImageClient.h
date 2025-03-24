@@ -57,6 +57,7 @@ public:
     virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
 
     virtual bool allowsAnimation() const { return true; }
+    virtual bool useSystemDarkAppearance() const { return false; }
 };
 
 } // namespace WebCore

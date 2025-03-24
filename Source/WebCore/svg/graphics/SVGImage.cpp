@@ -495,6 +495,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
             }
+            m_page->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
 
         RefPtr localMainFrame = m_page->localMainFrame();

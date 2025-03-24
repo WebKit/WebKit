@@ -1712,6 +1712,13 @@ bool RenderElement::allowsAnimation() const
     return page().imageAnimationEnabled();
 }
 
+bool RenderElement::useSystemDarkAppearance() const
+{
+    if (RefPtr page = document().page())
+        return page->useDarkAppearance();
+    return false;
+}
+
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 {
     if (hasPausedImageAnimations())
