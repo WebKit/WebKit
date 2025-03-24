@@ -133,18 +133,15 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateConstructorFuncFrom, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
     JSValue itemValue = callFrame->argument(0);
 
-    if (itemValue.inherits<TemporalPlainDate>())
+    if (itemValue.inherits<TemporalPlainDate>()) {
+        // Validate overflow
+        toTemporalOverflow(globalObject, callFrame->argument(1));
+        RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), jsCast<TemporalPlainDate*>(itemValue)->plainDate())));
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::from(globalObject, itemValue, overflow)));
+    }
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::from(globalObject, itemValue, callFrame->argument(1))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.compare

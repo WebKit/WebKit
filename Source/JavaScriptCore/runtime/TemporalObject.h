@@ -32,6 +32,13 @@ namespace JSC {
     macro(month, Month) \
     macro(day, Day) \
 
+#define JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(macro) \
+    macro(month, Month) \
+    macro(day, Day)
+
+#define JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month)
 
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
@@ -59,6 +66,8 @@ enum class TemporalUnit : uint8_t {
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainYearMonthUnits = 0 JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainMonthDayUnits = 0 JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
 extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
@@ -97,6 +106,14 @@ enum class RoundingMode : uint8_t {
     HalfEven
 };
 
+enum class UnsignedRoundingMode : uint8_t {
+    Infinity,
+    Zero,
+    HalfInfinity,
+    HalfZero,
+    HalfEven
+};
+
 enum class Precision : uint8_t {
     Minute,
     Fixed,
@@ -115,25 +132,153 @@ enum class UnitGroup : uint8_t {
     Time,
 };
 
-double nonNegativeModulo(double x, double y);
+enum class TemporalShowCalendar : uint8_t {
+    Auto,
+    Never,
+    Critical,
+    Always,
+};
+
+enum class TemporalShowOffset : bool {
+    Auto,
+    Never,
+};
+
+enum class TemporalShowTimeZone : uint8_t {
+    Auto,
+    Never,
+    Critical,
+};
+
+enum class TemporalDisambiguation : uint8_t {
+    Compatible,
+    Earlier,
+    Later,
+    Reject,
+};
+
+enum class TemporalOffset : uint8_t {
+    Prefer,
+    Use,
+    Ignore,
+    Reject,
+};
+
+enum class TemporalFractionalSecondDigits : uint8_t {
+    Zero = 0,
+    One,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Auto,
+};
+
+enum class FieldName : uint8_t {
+    Year,
+    Month,
+    MonthCode,
+    Day,
+    Hour,
+    Minute,
+    Second,
+    Millisecond,
+    Microsecond,
+    Nanosecond,
+    Calendar,
+    Offset,
+    TimeZone,
+};
+
+enum class TemporalDirectionOption : bool {
+    Next,
+    Previous,
+};
+
+Int128 nonNegativeModulo(Int128 x, Int128 y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
 std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
-std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);
+std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, std::variant<JSObject*, TemporalUnit>, std::initializer_list<TemporalUnit>);
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
-std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
+TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject*, JSObject*);
+TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject*, JSObject*);
+std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject*, JSObject*);
+TemporalOffset getTemporalOffsetOption(JSGlobalObject*, JSObject*, TemporalOffset);
+TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject*, JSObject*);
+TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject*, JSObject*);
+unsigned getRoundingIncrementOption(JSGlobalObject*, JSObject*);
+TemporalFractionalSecondDigits temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
+PrecisionData secondsStringPrecision(std::optional<TemporalUnit>, TemporalFractionalSecondDigits);
+PrecisionData secondsStringPrecision(TemporalFractionalSecondDigits);
 RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
 RoundingMode negateTemporalRoundingMode(RoundingMode);
 void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
-double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
-double roundNumberToIncrement(double, double increment, RoundingMode);
-Int128 roundNumberToIncrement(Int128, Int128 increment, RoundingMode);
+double doubleNumberOption(JSGlobalObject*, JSObject*, PropertyName, double);
+double temporalRoundingIncrement(JSGlobalObject*, double, std::optional<double>, bool);
+bool validateTemporalRoundingIncrement(unsigned, unsigned, bool);
+double roundNumberToIncrementDouble(double, double increment, RoundingMode);
+Int128 roundNumberToIncrementInt128(Int128, Int128 increment, RoundingMode);
+Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
+double applyUnsignedRoundingMode(double, double, double, UnsignedRoundingMode);
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
+bool isPartialTemporalObject(JSGlobalObject*, JSObject* value);
+
+constexpr Int128 lengthInNanoseconds(TemporalUnit unit)
+{
+    switch (unit) {
+    case TemporalUnit::Nanosecond:
+        return 1;
+    case TemporalUnit::Microsecond:
+        return 1000;
+    case TemporalUnit::Millisecond:
+        return 1000000;
+    case TemporalUnit::Second:
+        return 1000000000;
+    case TemporalUnit::Minute:
+        return 60 * ((Int128) 1000000000);
+    case TemporalUnit::Hour:
+        return 60 * 60 * ((Int128) 1000000000);
+    case TemporalUnit::Day:
+        return 24 * 60 * 60 * ((Int128) 1000000000);
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+constexpr UnsignedRoundingMode getUnsignedRoundingMode(RoundingMode roundingMode, bool isNegative)
+{
+    switch (roundingMode) {
+    case RoundingMode::Ceil:
+        return isNegative ? UnsignedRoundingMode::Zero : UnsignedRoundingMode::Infinity;
+    case RoundingMode::Floor:
+        return isNegative ? UnsignedRoundingMode::Infinity : UnsignedRoundingMode::Zero;
+    case RoundingMode::Expand:
+        return UnsignedRoundingMode::Infinity;
+    case RoundingMode::Trunc:
+        return UnsignedRoundingMode::Zero;
+    case RoundingMode::HalfCeil:
+        return isNegative ? UnsignedRoundingMode::HalfZero : UnsignedRoundingMode::HalfInfinity;
+    case RoundingMode::HalfFloor:
+        return isNegative ? UnsignedRoundingMode::HalfInfinity : UnsignedRoundingMode::HalfZero;
+    case RoundingMode::HalfExpand:
+        return UnsignedRoundingMode::HalfInfinity;
+    case RoundingMode::HalfTrunc:
+        return UnsignedRoundingMode::HalfZero;
+    default:
+        return UnsignedRoundingMode::HalfEven;
+    }
+}
 
 enum class TemporalOverflow : bool {
     Constrain,
@@ -141,5 +286,38 @@ enum class TemporalOverflow : bool {
 };
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
+TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
+String toTemporalCalendarName(JSGlobalObject*, JSObject*);
+
+static constexpr Int128 absInt128(const Int128& value)
+{
+    if (value < 0)
+        return -value;
+    return value;
+}
+
+enum class TemporalDateFormat : uint8_t {
+    Date,
+    YearMonth,
+    MonthDay
+};
+
+enum class TemporalOffsetBehavior : uint8_t {
+    Option,
+    Exact,
+    Wall,
+};
+
+enum class TemporalOffsetOption : uint8_t {
+    Ignore,
+    Use,
+    Prefer,
+    Reject,
+};
+
+enum class TemporalMatchBehavior : bool {
+    Exactly,
+    Minutes,
+};
 
 } // namespace JSC

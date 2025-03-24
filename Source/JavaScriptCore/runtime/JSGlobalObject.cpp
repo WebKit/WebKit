@@ -250,10 +250,16 @@
 #include "TemporalPlainDatePrototype.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimePrototype.h"
+#include "TemporalPlainMonthDay.h"
+#include "TemporalPlainMonthDayPrototype.h"
 #include "TemporalPlainTime.h"
 #include "TemporalPlainTimePrototype.h"
+#include "TemporalPlainYearMonth.h"
+#include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalTimeZone.h"
 #include "TemporalTimeZonePrototype.h"
+#include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimePrototype.h"
 #include "VMTrapsInlines.h"
 #include "WaiterListManager.h"
 #include "WasmCapabilities.h"
@@ -1472,6 +1478,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.set(TemporalPlainDateTime::createStructure(init.vm, globalObject, plainDateTimePrototype));
             });
 
+        m_plainMonthDayStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* plainMonthDayPrototype = TemporalPlainMonthDayPrototype::create(init.vm, globalObject, TemporalPlainMonthDayPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalPlainMonthDay::createStructure(init.vm, globalObject, plainMonthDayPrototype));
+            });
+
         m_plainTimeStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
@@ -1479,11 +1492,25 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.set(TemporalPlainTime::createStructure(init.vm, globalObject, plainTimePrototype));
             });
 
+        m_plainYearMonthStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* plainYearMonthPrototype = TemporalPlainYearMonthPrototype::create(init.vm, globalObject, TemporalPlainYearMonthPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalPlainYearMonth::createStructure(init.vm, globalObject, plainYearMonthPrototype));
+            });
+
         m_timeZoneStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
                 TemporalTimeZonePrototype* timeZonePrototype = TemporalTimeZonePrototype::create(init.vm, globalObject, TemporalTimeZonePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalTimeZone::createStructure(init.vm, globalObject, timeZonePrototype));
+            });
+
+        m_zonedDateTimeStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* zonedDateTimePrototype = TemporalZonedDateTimePrototype::create(init.vm, globalObject, TemporalZonedDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalZonedDateTime::createStructure(init.vm, globalObject, zonedDateTimePrototype));
             });
 
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
@@ -2600,7 +2627,9 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_instantStructure.visit(visitor);
     thisObject->m_plainDateStructure.visit(visitor);
     thisObject->m_plainDateTimeStructure.visit(visitor);
+    thisObject->m_plainMonthDayStructure.visit(visitor);
     thisObject->m_plainTimeStructure.visit(visitor);
+    thisObject->m_plainYearMonthStructure.visit(visitor);
     thisObject->m_timeZoneStructure.visit(visitor);
 
     visitor.append(thisObject->m_nullGetterFunction);

@@ -38,7 +38,7 @@
 #include "StructureInlines.h"
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
-#include "TemporalTimeZone.h"
+#include "TemporalZonedDateTime.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -79,13 +79,13 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }
 
-TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+ISO8601::ExactTime TemporalInstant::exactTimeFromJSValue(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue epochNanoseconds = value.toBigInt(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
 
 #if USE(BIGINT32)
     if (epochNanoseconds.isBigInt32()) {
@@ -129,8 +129,19 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
         }
 
         throwRangeError(globalObject, scope, makeString(ellipsizeAt(100, argAsString), " epoch nanoseconds is outside of the supported range for Temporal.Instant"_s));
-        return nullptr;
+        return { };
     }
+
+    return exactTime;
+}
+
+TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ISO8601::ExactTime exactTime = exactTimeFromJSValue(globalObject, value);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }
@@ -150,9 +161,8 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
     if (itemValue.inherits<TemporalInstant>())
         return jsCast<TemporalInstant*>(itemValue);
 
-    // FIXME: when Temporal.ZonedDateTime lands
-    // if (itemValue.inherits<TemporalZonedDateTime>())
-    //    return TemporalInstant::create(vm, globalObject->instantStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->epochTime());
+    if (itemValue.inherits<TemporalZonedDateTime>())
+        return TemporalInstant::create(vm, globalObject->instantStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->exactTime());
 
     String string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -256,19 +266,15 @@ ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, Temp
 
     std::optional<double> maxIncrement = maximumRoundingIncrement(smallestUnit);
     ASSERT(maxIncrement && *maxIncrement <= 1000); // unbounded increments are impossible with Temporal.Instant
-    unsigned increment = temporalRoundingIncrement(globalObject, options, maxIncrement, false);
+    double incrementDouble = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned increment = temporalRoundingIncrement(globalObject, incrementDouble, maxIncrement, false);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Int128 roundedDiff = exactTime().difference(other->exactTime(), increment, smallestUnit, roundingMode);
-    // NOTE: Duration fields are currently doubles, and the total number of
-    // nanoseconds may not fit in a double. This may need to change if the
-    // internal representation of Duration changes.
-    ASSERT(roundedDiff / 1'000'000'000 < INT64_MAX);
-    double seconds { static_cast<double>(static_cast<int64_t>(roundedDiff / 1'000'000'000)) };
-    double nanosecondsRemainder { static_cast<double>(static_cast<int64_t>(roundedDiff % 1'000'000'000)) };
-    ISO8601::Duration result { 0, 0, 0, 0, 0, 0, seconds, 0, 0, nanosecondsRemainder };
-
-    TemporalDuration::balance(result, largestUnit);
+    ISO8601::InternalDuration internalDuration = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
+    ISO8601::Duration result = TemporalDuration::temporalDurationFromInternal(internalDuration, largestUnit);
+    // Omitted step 6 as it's already in order
     return result;
 }
 
@@ -289,6 +295,29 @@ static double maximumIncrement(TemporalUnit smallestUnit)
         { }
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-addinstant
+ISO8601::ExactTime TemporalInstant::addInstant(JSGlobalObject* globalObject,
+    ISO8601::ExactTime epochNanoseconds, Int128 timeDuration)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto result = ISO8601::ExactTime(timeDuration + epochNanoseconds.epochNanoseconds());
+    if (!result.isValid()) {
+        throwRangeError(globalObject, scope, "result out of range in addInstant"_s);
+        return { };
+    }
+    return result;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtemporalinstant
+Int128 TemporalInstant::roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    auto unitLength = lengthInNanoseconds(unit);
+    auto incrementNs = increment * unitLength;
+    return roundNumberToIncrementAsIfPositive(ns, incrementNs, roundingMode);
 }
 
 ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -329,10 +358,17 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
     RoundingMode roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
-    double increment = temporalRoundingIncrement(globalObject, options, maximumIncrement(smallestUnit), true);
+    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    increment = temporalRoundingIncrement(globalObject, increment, maximumIncrement(smallestUnit), true);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return exactTime().round(increment, smallestUnit, roundingMode);
+    auto result = exactTime().round(increment, smallestUnit, roundingMode);
+    if (!result) {
+        throwRangeError(globalObject, scope, "rounding increment out of range"_s);
+        return { };
+    }
+    return result.value();
 }
 
 // Temporal.Instant.prototype.toString( [ options ] )
@@ -348,7 +384,7 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
     if (!options)
         return toString();
 
-    JSObject* timeZone = nullptr;
+    TemporalTimeZone* timeZone = nullptr;
     JSValue timeZoneValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, { });
     if (!timeZoneValue.isUndefined()) {
@@ -366,7 +402,12 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
     if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
         return toString(timeZone);
 
-    ISO8601::ExactTime newExactTime { exactTime().round(data.increment, data.unit, roundingMode) };
+    auto maybeRounded = exactTime().round(data.increment, data.unit, roundingMode);
+    if (!maybeRounded) {
+        throwRangeError(globalObject, scope, "rounding increment out of range"_s);
+        return { };
+    }
+    ISO8601::ExactTime newExactTime { maybeRounded.value() };
 
     // FIXME: Missing, relies on TimeZone:
     // 1. Let roundedInstant be ! CreateTemporalInstant(roundedNs).
@@ -386,36 +427,20 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
 
 // TemporalInstantToString ( instant, timeZone, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalinstanttostring
-String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZone, PrecisionData precision)
+String TemporalInstant::toString(ISO8601::ExactTime exactTime, TemporalTimeZone* timeZone, PrecisionData precision)
 {
-    GregorianDateTime gregorianDateTime { static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
     StringBuilder builder;
 
-    // If the year is outside the bounds of 0 and 9999 inclusive we want to
-    // use the extended year format (PadISOYear).
-    unsigned yearLength = 4;
-    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 0) {
-        builder.append(gregorianDateTime.year() < 0 ? '-' : '+');
-        yearLength = 6;
-    }
-
-    builder.append(makeString(pad('0', yearLength, std::abs(gregorianDateTime.year())),
-        '-', pad('0', 2, gregorianDateTime.month() + 1),
-        '-', pad('0', 2, gregorianDateTime.monthDay()),
-        'T', pad('0', 2, gregorianDateTime.hour()),
-        ':', pad('0', 2, gregorianDateTime.minute())));
-
-    static constexpr int nsPerSecond { 1'000'000'000 };
-    int fraction { exactTime.nanosecondsFraction() };
-    if (fraction < 0)
-        fraction += nsPerSecond;
-
-    formatSecondsStringPart(builder, gregorianDateTime.second(), fraction, precision);
+    auto outputTimeZone = timeZone ? timeZone->timeZone() : ISO8601::TimeZone::utc();
+    auto epochNs = exactTime.epochNanoseconds();
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(outputTimeZone, exactTime);
+    auto dateTimeString = ISO8601::temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
+    builder.append(dateTimeString);
 
     if (timeZone) {
-        // FIXME: Missing, relies on TimeZone:
-        //   1. Let _timeZoneString_ be ? BuiltinTimeZoneGetOffsetStringFor(_timeZone_, _instant_).
-        builder.append('Z');
+        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(outputTimeZone,
+            epochNs);
+        builder.append(TemporalTimeZone::formatDateTimeUTCOffsetRounded(offsetNanoseconds));
     } else
         builder.append('Z');
 

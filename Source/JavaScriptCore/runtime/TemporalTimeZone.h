@@ -42,17 +42,41 @@ public:
         return vm.temporalTimeZoneSpace<mode>();
     }
 
+    using TimeZone = ISO8601::TimeZone;
+
     static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
     static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
+    static TemporalTimeZone* createFromTimeZone(VM&, Structure*, TimeZone);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    using TimeZone = ISO8601::TimeZone;
-
     TimeZone timeZone() const { return m_timeZone; }
 
-    static JSObject* from(JSGlobalObject*, JSValue);
+    static TemporalTimeZone* from(JSGlobalObject*, JSValue);
+
+    static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone, Int128);
+    static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
+        ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
+    static ISO8601::PlainDateTime getISODateTimeFor(ISO8601::TimeZone, ISO8601::ExactTime);
+    static Vector<Int128> getPossibleEpochNanoseconds(JSGlobalObject*,
+        ISO8601::TimeZone, ISO8601::PlainDateTime);
+    static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
+        Vector<Int128>, ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
+    static ISO8601::ExactTime getStartOfDay(JSGlobalObject*, ISO8601::TimeZone, ISO8601::PlainDate);
+
+    static std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID, Int128);
+    static std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(TimeZoneID, Int128);
+
+    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
+    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
+        const Vector<LChar>&);
+
+    static std::optional<int64_t> parseDateTimeUTCOffset(StringView);
+    static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
+    static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
+    static String formatDateTimeUTCOffsetRounded(Int128);
+    static String formatOffsetTimeZoneIdentifier(int64_t, std::optional<bool>);
 
 private:
     TemporalTimeZone(VM&, Structure*, TimeZone);
@@ -60,5 +84,11 @@ private:
     // TimeZoneID or UTC offset.
     TimeZone m_timeZone;
 };
+
+static inline bool isUTCTimeZoneString(StringView str)
+{
+    auto lowered = str.convertToASCIILowercase();
+    return (lowered.length() == 3 && lowered[0] == 'u' && lowered[1] == 't' && lowered[2] == 'c');
+}
 
 } // namespace JSC

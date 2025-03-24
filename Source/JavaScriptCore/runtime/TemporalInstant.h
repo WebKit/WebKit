@@ -30,6 +30,7 @@
 #include "JSObject.h"
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
+#include "TemporalTimeZone.h"
 #include "VM.h"
 #include <wtf/Packed.h>
 
@@ -49,6 +50,7 @@ public:
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, ISO8601::ExactTime, Structure* = nullptr);
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, JSValue, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    static ISO8601::ExactTime exactTimeFromJSValue(JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
@@ -57,13 +59,15 @@ public:
     static TemporalInstant* fromEpochMilliseconds(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochNanoseconds(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
+    static ISO8601::ExactTime addInstant(JSGlobalObject*, ISO8601::ExactTime, Int128);
+    static Int128 roundTemporalInstant(Int128, unsigned, TemporalUnit, RoundingMode);
 
     ISO8601::ExactTime exactTime() const { return m_exactTime.get(); }
 
     ISO8601::Duration difference(JSGlobalObject*, TemporalInstant*, JSValue options) const;
     ISO8601::ExactTime round(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString(JSObject* timeZone = nullptr, PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
+    String toString(TemporalTimeZone* timeZone = nullptr, PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
     {
         return toString(exactTime(), timeZone, precision);
     }
@@ -75,7 +79,7 @@ private:
     static std::optional<ISO8601::ExactTime> parse(StringParsingBuffer<CharacterType>&);
     static ISO8601::ExactTime fromObject(JSGlobalObject*, JSObject*);
 
-    static String toString(ISO8601::ExactTime, JSObject* timeZone, PrecisionData);
+    static String toString(ISO8601::ExactTime, TemporalTimeZone*, PrecisionData);
 
     Packed<ISO8601::ExactTime> m_exactTime;
 };

@@ -67,9 +67,15 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Temporal/Duration/compare/compare-no-precision-loss.js:
-  default: 'Test262Error: Expected SameValue(«0», «0») to be false'
-  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be false'
+test/built-ins/RegExp/prototype/Symbol.replace/flags-tostring-error.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/exhaustive.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -85,27 +91,6 @@ test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string.
 test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
   default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-test/built-ins/Temporal/Duration/from/argument-duration-max.js:
-  default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-  strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-test/built-ins/Temporal/Duration/from/argument-duration-precision-exact-numerical-values.js:
-  default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
-  strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
-test/built-ins/Temporal/Duration/prototype/add/argument-duration-max.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/add/argument-duration-precision-exact-numerical-values.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
-  default: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-  strict mode: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-test/built-ins/Temporal/Duration/prototype/add/precision-no-floating-point-loss.js:
-  default: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-  strict mode: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
 test/built-ins/Temporal/Duration/prototype/round/accepts-datetime-strings-for-relative-to.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -121,12 +106,6 @@ test/built-ins/Temporal/Duration/prototype/round/balances-up-differently-dependi
 test/built-ins/Temporal/Duration/prototype/round/balances-up-to-next-unit-after-rounding.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/round/balances-up-to-weeks.js:
-  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/round/days-24-hours-relative-to-zoned-date-time.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
 test/built-ins/Temporal/Duration/prototype/round/does-not-accept-non-string-primitives-for-relative-to.js:
   default: 'Test262Error: Expected a TypeError but got a Error'
   strict mode: 'Test262Error: Expected a TypeError but got a Error'
@@ -142,15 +121,6 @@ test/built-ins/Temporal/Duration/prototype/round/half-expand-is-default.js:
 test/built-ins/Temporal/Duration/prototype/round/largestunit-correct-rebalancing.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-combinations-relativeto.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/round/next-day-out-of-range.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-duration.js:
-  default: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
-  strict mode: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
 test/built-ins/Temporal/Duration/prototype/round/relative-to-required-for-rounding-durations-with-calendar-units.js:
   default: 'Test262Error: Expected a RangeError but got a Error'
   strict mode: 'Test262Error: Expected a RangeError but got a Error'
@@ -175,9 +145,6 @@ test/built-ins/Temporal/Duration/prototype/round/round-cross-unit-boundary.js:
 test/built-ins/Temporal/Duration/prototype/round/rounding-increments.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/round/rounding-is-noop.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
 test/built-ins/Temporal/Duration/prototype/round/rounding-relative-to-date.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -190,123 +157,24 @@ test/built-ins/Temporal/Duration/prototype/round/throws-on-wrong-offset-for-zone
 test/built-ins/Temporal/Duration/prototype/round/valid-increments.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-max.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-precision-exact-numerical-values.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
-  default: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-  strict mode: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-test/built-ins/Temporal/Duration/prototype/subtract/precision-no-floating-point-loss.js:
-  default: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-  strict mode: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/max-value.js:
-  default: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'
-  strict mode: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/no-precision-loss.js:
-  default: 'Test262Error: Expected SameValue(«"PT9016206453995.732991S"», «"PT9016206453995.731991S"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"PT9016206453995.732991S"», «"PT9016206453995.731991S"») to be true'
 test/built-ins/Temporal/Duration/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Duration/prototype/toString/round-cross-unit-boundary.js:
-  default: 'Test262Error: 1:59:60 balances to 2 hours Expected SameValue(«"PT1H59M60S"», «"PT2H0S"») to be true'
-  strict mode: 'Test262Error: 1:59:60 balances to 2 hours Expected SameValue(«"PT1H59M60S"», «"PT2H0S"») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration-is-invalid.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/toString/total-of-duration-time-units-out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/total/balance-subseconds.js:
-  default: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
 test/built-ins/Temporal/Duration/prototype/total/incorrect-properties-ignored.js:
-  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/total/no-dst-day-length.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
-test/built-ins/Temporal/Duration/prototype/total/no-precision-loss-for-small-units.js:
-  default: 'Test262Error: Expected SameValue(«0.0020310000000000003», «0.002031») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0.0020310000000000003», «0.002031») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-1.js:
-  default: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
-  strict mode: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-2.js:
-  default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-6.js:
-  default: 'Test262Error: hours=816, nanoseconds=2049187497660 Expected SameValue(«816.5692187493501», «816.56921874935») to be true'
-  strict mode: 'Test262Error: hours=816, nanoseconds=2049187497660 Expected SameValue(«816.5692187493501», «816.56921874935») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js:
-  default: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
-  strict mode: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
-test/built-ins/Temporal/Duration/prototype/total/relativeto-plaindatetime.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-string-limits.js:
-  default: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-plaindate-relative.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-zoneddatetime-relative.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/total/throws-if-target-nanoseconds-outside-valid-limits.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Instant/prototype/since/add-subtract.js:
-  default: 'Test262Error: equals method'
-  strict mode: 'Test262Error: equals method'
-test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
-  default: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
-  strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
+  default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/order-of-operations.js:
   default: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Instant/prototype/since/round-cross-unit-boundary.js:
-  default: 'Test262Error: -1:59 balances to -2 hours: hours result: Expected SameValue(«-1», «-2») to be true'
-  strict mode: 'Test262Error: -1:59 balances to -2 hours: hours result: Expected SameValue(«-1», «-2») to be true'
-test/built-ins/Temporal/Instant/prototype/since/rounding-increments.js:
-  default: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-  strict mode: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-ceil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-expand.js:
-  default: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-floor.js:
-  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfCeil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfEven.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfExpand.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfFloor.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfTrunc.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-trunc.js:
-  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
   default: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
   strict mode: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
@@ -316,303 +184,18 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-sub-minute-of
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Instant/prototype/until/add-subtract.js:
-  default: 'Test262Error: equals method'
-  strict mode: 'Test262Error: equals method'
 test/built-ins/Temporal/Instant/prototype/until/order-of-operations.js:
   default: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Instant/prototype/until/rounding-increments.js:
-  default: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-  strict mode: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-ceil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-expand.js:
-  default: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-floor.js:
-  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfCeil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfEven.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfExpand.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfFloor.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
-  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
-test/built-ins/Temporal/PlainDate/argument-convert.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
   default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'
   strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'
 test/built-ins/Temporal/PlainDate/calendar-iso-string.js:
   default: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainDate/calendar-string.js:
-  default: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«undefined», «"iso8601"») to be true'
-  strict mode: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«undefined», «"iso8601"») to be true'
-test/built-ins/Temporal/PlainDate/calendar-undefined.js:
-  default: 'Test262Error: calendar string is iso8601 Expected SameValue(«undefined», «"iso8601"») to be true'
-  strict mode: 'Test262Error: calendar string is iso8601 Expected SameValue(«undefined», «"iso8601"») to be true'
-test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/from/argument-leap-second.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-object-invalid.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-object-valid.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-string-time-separators.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/limits.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/monthcode-invalid.js:
-  default: "Test262Error: monthCode 'M19' is not valid for ISO 8601 calendar Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: monthCode 'M19' is not valid for ISO 8601 calendar Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-primitive.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string-invalid.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
-test/built-ins/Temporal/PlainDate/from/one-of-era-erayear-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/options-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/options-wrong-type.js:
-  default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/PlainDate/from/order-of-operations.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDate/from/out-of-range.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainDate/from/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/with-year-month-day-need-constrain.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/with-year-month-day.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/with-year-monthCode-day-need-constrain.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/from/with-year-monthCode-day.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/limits.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-days.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-months-weeks.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-months.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-weeks-days.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-weeks.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-years-months-days.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-years-months.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-years-weeks.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/add-years.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/argument-duration-max.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/balance-smaller-units-basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/options-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/overflow-constrain.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/add/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/calendarId/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
-test/built-ins/Temporal/PlainDate/prototype/calendarId/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/round-cross-unit-boundary.js:
-  default: 'RangeError: unimplemented: depends on Duration relativeTo'
-  strict mode: 'RangeError: unimplemented: depends on Duration relativeTo'
-test/built-ins/Temporal/PlainDate/prototype/since/wrapping-at-end-of-month.js:
-  default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
-  strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/argument-duration-max.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/balance-smaller-units-basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/options-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-constrain.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/subtract/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-separators.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-with-time-designator.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/leap-second.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/limits.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/plaintime-propertybag-no-time-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/time-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/until/calendar-id-match.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/until/largestunit-week.js:
-  default: 'Test262Error: negative one day: weeks result: Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: negative one day: weeks result: Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainDate/prototype/until/round-cross-unit-boundary.js:
-  default: 'RangeError: unimplemented: depends on Duration relativeTo'
-  strict mode: 'RangeError: unimplemented: depends on Duration relativeTo'
-test/built-ins/Temporal/PlainDate/prototype/until/wrapping-at-end-of-month.js:
-  default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/copy-properties-not-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/options-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
@@ -622,333 +205,27 @@ test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/branding.js:
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDate/subclass.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/calendar-case-insensitive.js:
-  default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'
-  strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'
+  default: 'Test262Error: calendar ID is capital dotted I is not lowercased Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: calendar ID is capital dotted I is not lowercased Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/calendar-iso-string.js:
   default: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainDateTime/calendar-string.js:
-  default: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«undefined», «"iso8601"») to be true'
-  strict mode: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«undefined», «"iso8601"») to be true'
-test/built-ins/Temporal/PlainDateTime/calendar-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «"iso8601"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «"iso8601"») to be true'
-test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/from/argument-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-comma-decimal-separator.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-offset.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-optional-data.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-subsecond.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-time-separators.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-timezone.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/leap-second.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/limits.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/monthcode-invalid.js:
-  default: "Test262Error: monthCode 'M19' is not valid for ISO 8601 calendar Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: monthCode 'M19' is not valid for ISO 8601 calendar Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-primitive.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-string-invalid.js:
   default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after string parsing'
   strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after string parsing'
-test/built-ins/Temporal/PlainDateTime/from/options-object.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/from/options-wrong-type.js:
   default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDateTime/from/overflow-default-constrain.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/overflow-reject.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/parser.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/from/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/hour-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/microsecond-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/millisecond-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/minute-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/nanosecond-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/order-of-operations.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/ambiguous-date.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/argument-duration-max.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/argument-duration.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/balance-negative-time-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/hour-overflow.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/negative-duration.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/options-empty.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/add/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/calendarId/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
-test/built-ins/Temporal/PlainDateTime/prototype/calendarId/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/prototype/round/balance.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/rounding-direction.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-non-integer.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-one-day.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-ceil.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-expand.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-floor.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfCeil.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfEven.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfExpand.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfFloor.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfTrunc.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfexpand-is-default.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-trunc.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/round/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/ambiguous-date.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-duration-max.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-duration.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/balance-negative-time-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/hour-overflow.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/negative-duration.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/options-empty.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/subtract/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/toPlainDate/limits.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/toString/rounding-edge-of-range.js:
   default: 'Test262Error: Rounding down can go out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Rounding down can go out of range Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainDateTime/prototype/with/argument-object-insufficient-data.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/basic.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/copy-properties-not-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/multiple-unrecognized-properties-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/options-empty.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
   default: 'Test262Error: Actual [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/with/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-object-insufficient-data.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-separators.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-with-time-designator.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-without-time-designator.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-time.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/leap-second.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/no-argument-default-to-midnight.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/plaintime-propertybag-no-time-units.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/subclassing-ignored.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
@@ -958,39 +235,21 @@ test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/branding.js:
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDateTime/second-undefined.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-test/built-ins/Temporal/PlainDateTime/subclass.js:
-  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
-  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainTime/from/observable-get-overflow-argument-string-invalid.js:
   default: 'Test262Error: Actual [get overflow, get overflow.toString, call overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
   strict mode: 'Test262Error: Actual [get overflow, get overflow.toString, call overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
 test/built-ins/Temporal/PlainTime/from/options-wrong-type.js:
   default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js:
-  default: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
-  strict mode: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/order-of-operations.js:
-  default: 'Test262Error: Actual [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematical-values-1.js:
-  default: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
-  strict mode: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
 test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainTime/prototype/until/order-of-operations.js:
-  default: 'Test262Error: Actual [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/getOwnPropertyNames.js:
-  default: 'Test262Error: ZonedDateTime'
-  strict mode: 'Test262Error: ZonedDateTime'
+test/built-ins/Temporal/PlainYearMonth/calendar-iso-string.js:
+  default: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-wrong-type.js:
+  default: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-length-out-of-bounds.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
@@ -1052,44 +311,23 @@ test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
   default: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
   strict mode: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatRange/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
+  default: 'Test262Error: Expected SameValue(«1», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«1», «2») to be true'
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
-  default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
-  default: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
-  default: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  default: 'Test262Error: Expected SameValue(«1», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«1», «2») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
-test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
@@ -1120,33 +358,9 @@ test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
-test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/intl402/Temporal/Duration/prototype/round/rounding-with-largestunit.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-day-length.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
@@ -1317,8 +531,6 @@ test/staging/sm/Date/makeday-year-month-is-infinity.js:
   default: 'Test262Error: Expected SameValue(«-62167219200000», «NaN») to be true'
 test/staging/sm/Date/non-iso.js:
   default: 'Test262Error: Expected SameValue(«NaN», «857811661010») to be true'
-test/staging/sm/Date/to-temporal-instant.js:
-  default: "TypeError: min.toZonedDateTimeISO is not a function. (In 'min.toZonedDateTimeISO('UTC')', 'min.toZonedDateTimeISO' is undefined)"
 test/staging/sm/Date/two-digit-years.js:
   default: 'Test262Error: Expected SameValue(«923641200000», «NaN») to be true'
 test/staging/sm/Function/arguments-parameter-shadowing.js:
