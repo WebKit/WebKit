@@ -388,6 +388,10 @@ inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderStat
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
 
+    if (primitiveValue->isFontRelativeLength()) {
+        conversionData = conversionData.copyForFontSize();
+    }
+
     if (primitiveValue->isLength()) {
         auto length = primitiveValue->resolveAsLength<WebCore::Length>(conversionData);
         length.setHasQuirk(primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
