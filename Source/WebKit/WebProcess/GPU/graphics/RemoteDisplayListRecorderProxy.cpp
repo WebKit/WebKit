@@ -147,15 +147,17 @@ void RemoteDisplayListRecorderProxy::scale(const FloatSize& scale)
 
 void RemoteDisplayListRecorderProxy::setCTM(const AffineTransform& transform)
 {
-    updateStateForSetCTM(transform);
-    send(Messages::RemoteDisplayListRecorder::SetCTM(transform));
+    updateStateForDeferredSetCTM(transform);
 }
 
 void RemoteDisplayListRecorderProxy::concatCTM(const AffineTransform& transform)
 {
-    if (!updateStateForConcatCTM(transform))
-        return;
-    send(Messages::RemoteDisplayListRecorder::ConcatCTM(transform));
+    updateStateForDeferredConcatCTM(transform);
+}
+
+void RemoteDisplayListRecorderProxy::recordDeferredSetCTM(const AffineTransform& transform)
+{
+    send(Messages::RemoteDisplayListRecorder::SetCTM(transform));
 }
 
 void RemoteDisplayListRecorderProxy::recordSetInlineFillColor(PackedColor::RGBA color)

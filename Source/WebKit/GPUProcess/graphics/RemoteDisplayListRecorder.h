@@ -70,7 +70,6 @@ public:
     void rotate(float angle);
     void scale(const WebCore::FloatSize& scale);
     void setCTM(const WebCore::AffineTransform&);
-    void concatCTM(const WebCore::AffineTransform&);
     void setInlineFillColor(WebCore::PackedColor::RGBA);
     void setInlineStroke(std::optional<WebCore::PackedColor::RGBA>, std::optional<float> thickness);
     void setState(WebCore::DisplayList::SetState&&);

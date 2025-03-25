@@ -93,7 +93,8 @@ void RecorderImpl::scale(const FloatSize& scale)
 
 void RecorderImpl::setCTM(const AffineTransform& transform)
 {
-    updateStateForSetCTM(transform);
+    if (!updateStateForSetCTM(transform))
+        return;
     append(SetCTM(transform));
 }
 
@@ -102,6 +103,12 @@ void RecorderImpl::concatCTM(const AffineTransform& transform)
     if (!updateStateForConcatCTM(transform))
         return;
     append(ConcatenateCTM(transform));
+}
+
+void RecorderImpl::recordDeferredSetCTM(const AffineTransform&)
+{
+    // Deferring feature not used, since some display lists must remain agnostic to the initial transform of the recording context.
+    ASSERT_NOT_REACHED();
 }
 
 void RecorderImpl::recordSetInlineFillColor(PackedColor::RGBA inlineColor)

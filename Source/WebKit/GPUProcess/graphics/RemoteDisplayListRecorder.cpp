@@ -123,11 +123,6 @@ void RemoteDisplayListRecorder::setCTM(const AffineTransform& ctm)
     context().setCTM(ctm);
 }
 
-void RemoteDisplayListRecorder::concatCTM(const AffineTransform& ctm)
-{
-    context().concatCTM(ctm);
-}
-
 void RemoteDisplayListRecorder::setInlineFillColor(PackedColor::RGBA color)
 {
     context().setFillColor(asSRGBA(color));

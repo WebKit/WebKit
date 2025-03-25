@@ -34,7 +34,6 @@ messages -> RemoteDisplayListRecorder Stream {
     Rotate(float angle) StreamBatched
     Scale(WebCore::FloatSize scale) StreamBatched
     SetCTM(WebCore::AffineTransform ctm) StreamBatched
-    ConcatCTM(WebCore::AffineTransform ctm) StreamBatched
     SetInlineFillColor(struct WebCore::PackedColor::RGBA fillColor) StreamBatched;
     SetInlineStroke(std::optional<WebCore::PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness) StreamBatched;
     SetState(WebCore::DisplayList::SetState item) StreamBatched
