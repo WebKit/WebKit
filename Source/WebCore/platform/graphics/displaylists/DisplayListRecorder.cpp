@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -74,7 +74,7 @@ void Recorder::commitRecording()
 void Recorder::appendStateChangeItem(const GraphicsContextState& state)
 {
     ASSERT(state.changes());
-    
+
     if (state.containsOnlyInlineChanges()) {
         if (state.changes().contains(GraphicsContextState::Change::FillBrush))
             recordSetInlineFillColor(*fillColor().tryGetAsPackedInline());
@@ -107,17 +107,23 @@ void Recorder::appendStateChangeItem(const GraphicsContextState& state)
 
 void Recorder::appendStateChangeItemIfNecessary()
 {
+    auto& currentState = this->currentState();
+    if (currentState.ctmChangeDeferred) {
+        recordDeferredSetCTM(currentState.ctm);
+        currentState.ctmChangeDeferred = false;
+    }
+
     // FIXME: This is currently invoked in an ad-hoc manner when recording drawing items. We should consider either
     // splitting GraphicsContext state changes into individual display list items, or refactoring the code such that
     // this method is automatically invoked when recording a drawing item.
-    auto& state = currentState().state;
+    auto& state = currentState.state;
     if (!state.changes())
         return;
 
     LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << state);
     appendStateChangeItem(state);
     state.didApplyChanges();
-    currentState().lastDrawingState = state;
+    currentState.lastDrawingState = state;
 }
 
 SetInlineStroke Recorder::buildSetInlineStroke(const GraphicsContextState& state)
@@ -313,38 +319,58 @@ bool Recorder::updateStateForTranslate(float x, float y)
 {
     if (!x && !y)
         return false;
-    currentState().translate(x, y);
-    return true;
+    auto& currentState = this->currentState();
+    currentState.ctm.translate(x, y);
+    return !currentState.ctmChangeDeferred;
 }
 
 bool Recorder::updateStateForRotate(float angleInRadians)
 {
     if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, piFloat * 2.f)))
         return false;
-    currentState().rotate(angleInRadians);
-    return true;
+    double angleInDegrees = rad2deg(static_cast<double>(angleInRadians));
+    auto& currentState = this->currentState();
+    currentState.ctm.rotate(angleInDegrees);
+    return !currentState.ctmChangeDeferred;
 }
 
 bool Recorder::updateStateForScale(const FloatSize& size)
 {
     if (areEssentiallyEqual(size, FloatSize { 1.f, 1.f }))
         return false;
-    currentState().scale(size);
-    return true;
+    auto& currentState = this->currentState();
+    currentState.ctm.scale(size);
+    return !currentState.ctmChangeDeferred;
 }
 
 bool Recorder::updateStateForConcatCTM(const AffineTransform& transform)
 {
     if (transform.isIdentity())
         return false;
-
-    currentState().concatCTM(transform);
+    auto& currentState = this->currentState();
+    currentState.ctm *= transform;
     return true;
 }
 
-void Recorder::updateStateForSetCTM(const AffineTransform& transform)
+bool Recorder::updateStateForSetCTM(const AffineTransform& transform)
 {
-    currentState().setCTM(transform);
+    auto& currentState = this->currentState();
+    if (transform == currentState.ctm)
+        return false;
+    currentState.ctm = transform;
+    return true;
+}
+
+void Recorder::updateStateForDeferredSetCTM(const AffineTransform& transform)
+{
+    if (updateStateForSetCTM(transform))
+        currentState().ctmChangeDeferred = true;
+}
+
+void Recorder::updateStateForDeferredConcatCTM(const AffineTransform& transform)
+{
+    if (updateStateForConcatCTM(transform))
+        currentState().ctmChangeDeferred = true;
 }
 
 AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
@@ -502,7 +528,7 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 {
     // We modify the state directly here instead of calling GraphicsContext::scale()
     // because the recorded item will scale() when replayed.
-    currentState().scale({ deviceScaleFactor, deviceScaleFactor });
+    currentState().ctm.scale({ deviceScaleFactor, deviceScaleFactor });
 
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
@@ -523,35 +549,6 @@ Recorder::ContextState& Recorder::currentState()
 const AffineTransform& Recorder::ctm() const
 {
     return currentState().ctm;
-}
-
-void Recorder::ContextState::translate(float x, float y)
-{
-    ctm.translate(x, y);
-}
-
-void Recorder::ContextState::rotate(float angleInRadians)
-{
-    double angleInDegrees = rad2deg(static_cast<double>(angleInRadians));
-    ctm.rotate(angleInDegrees);
-    
-    AffineTransform rotation;
-    rotation.rotate(angleInDegrees);
-}
-
-void Recorder::ContextState::scale(const FloatSize& size)
-{
-    ctm.scale(size);
-}
-
-void Recorder::ContextState::setCTM(const AffineTransform& matrix)
-{
-    ctm = matrix;
-}
-
-void Recorder::ContextState::concatCTM(const AffineTransform& matrix)
-{
-    ctm *= matrix;
 }
 
 } // namespace DisplayList

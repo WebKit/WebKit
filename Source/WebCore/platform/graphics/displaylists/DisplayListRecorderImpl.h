@@ -100,6 +100,7 @@ public:
     void setURLForRect(const URL&, const FloatRect&) final;
 
 private:
+    void recordDeferredSetCTM(const AffineTransform&) final;
     void recordSetInlineFillColor(PackedColor::RGBA) final;
     void recordSetInlineStroke(SetInlineStroke&&) final;
     void recordSetState(const GraphicsContextState&) final;

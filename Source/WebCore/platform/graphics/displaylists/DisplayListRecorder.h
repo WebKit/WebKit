@@ -71,6 +71,7 @@ public:
 protected:
     WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
 
+    virtual void recordDeferredSetCTM(const AffineTransform&) = 0;
     virtual void recordSetInlineFillColor(PackedColor::RGBA) = 0;
     virtual void recordSetInlineStroke(SetInlineStroke&&) = 0;
     virtual void recordSetState(const GraphicsContextState&) = 0;
@@ -116,6 +117,7 @@ protected:
         AffineTransform ctm;
         FloatRect clipBounds;
         std::optional<GraphicsContextState> lastDrawingState { std::nullopt };
+        bool ctmChangeDeferred = false;
 
         ContextState cloneForTransparencyLayer() const
         {
@@ -125,12 +127,6 @@ protected:
                 lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
             return ContextState { WTFMove(stateClone), ctm, clipBounds, WTFMove(lastDrawingStateClone) };
         }
-
-        void translate(float x, float y);
-        void rotate(float angleInRadians);
-        void scale(const FloatSize&);
-        void concatCTM(const AffineTransform&);
-        void setCTM(const AffineTransform&);
     };
 
     const Vector<ContextState, 4>& stateStack() const { return m_stateStack; }
@@ -145,7 +141,9 @@ protected:
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForConcatCTM(const AffineTransform&);
-    WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForSetCTM(const AffineTransform&);
+    WEBCORE_EXPORT void updateStateForDeferredConcatCTM(const AffineTransform&);
+    WEBCORE_EXPORT void updateStateForDeferredSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
     WEBCORE_EXPORT void updateStateForEndTransparencyLayer();

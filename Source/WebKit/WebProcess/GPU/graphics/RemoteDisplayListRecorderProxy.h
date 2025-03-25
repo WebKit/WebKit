@@ -120,6 +120,7 @@ private:
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
 private:
+    void recordDeferredSetCTM(const WebCore::AffineTransform&) final;
     void recordSetInlineFillColor(WebCore::PackedColor::RGBA) final;
     void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
     void recordSetState(const WebCore::GraphicsContextState&) final;
