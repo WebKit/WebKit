@@ -347,8 +347,9 @@ inline void SVGRenderStyle::setX(const Length& length)
         m_layoutData.access().x = length;
 }
 
-inline void SVGRenderStyle::setX(const SVGLengthValue& length) {
-    Length newLength = Length(length.valueInSpecifiedUnits(), LengthType::Fixed, false);
+inline void SVGRenderStyle::setX(const SVGLengthValue& length)
+{
+    Length newLength = Length(length.valueInSpecifiedUnits(), length.toCoreLengthType(), false);
 
     if (!(m_layoutData->x == newLength))
         m_layoutData.access().x = newLength;

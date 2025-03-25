@@ -78,6 +78,7 @@ public:
 
     SVGLengthType lengthType() const { return m_lengthType; }
     SVGLengthMode lengthMode() const { return m_lengthMode; }
+    WebCore::LengthType toCoreLengthType() const;
 
     bool isZero() const { return !m_valueInSpecifiedUnits;  }
     bool isRelative() const { return m_lengthType == SVGLengthType::Percentage || m_lengthType == SVGLengthType::Ems || m_lengthType == SVGLengthType::Exs || m_lengthType == SVGLengthType::Ch || m_lengthType == SVGLengthType::Rems; }

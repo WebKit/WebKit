@@ -271,6 +271,31 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
     return { WebCore::blend(fromValue.releaseReturnValue(), toValue, { progress }), to.lengthType() };
 }
 
+WebCore::LengthType SVGLengthValue::toCoreLengthType() const {
+    switch (m_lengthType) {
+        case SVGLengthType::Unknown:
+            return LengthType::Undefined;
+        case SVGLengthType::Number:
+        case SVGLengthType::Ems:
+        case SVGLengthType::Exs:
+        case SVGLengthType::Pixels:
+        case SVGLengthType::Rems:
+        case SVGLengthType::Ch:
+        case SVGLengthType::Inches:
+        case SVGLengthType::Lh:
+        case SVGLengthType::Centimeters:
+        case SVGLengthType::Millimeters:
+        case SVGLengthType::Picas:
+        case SVGLengthType::Points:
+            return LengthType::Fixed;
+        case SVGLengthType::Percentage:
+            return LengthType::Percent;
+    }
+
+    ASSERT_NOT_REACHED();
+    return LengthType::Undefined;
+}
+
 SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value, const CSSToLengthConversionData& conversionData, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
     auto primitiveType = value.primitiveType();
