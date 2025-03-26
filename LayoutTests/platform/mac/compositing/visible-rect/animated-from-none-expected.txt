@@ -35,6 +35,7 @@
                   (position -100.00 0.00)
                   (bounds 200.00 200.00)
                   (contentsOpaque 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 100.00, 0.00 100.00 x 200.00)
                   (coverage rect 100.00, 0.00 500.00 x 200.00)
                   (intersects coverage rect 1)

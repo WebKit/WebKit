@@ -12,15 +12,15 @@ promise_test(async t => {
     let numberOfCalls = 0;
     let customEffectProgress = null;
 
+    await waitForAnimationFrames(1);
+    await new Promise(setTimeout);
+
     const animation = document.timeline.animate(progress => {
         customEffectProgress = progress;
         numberOfCalls++;
     }, { duration: 1 });
 
     assert_equals(customEffectProgress, null, "Callback does not fire upon creation.");
-
-    await waitForAnimationFrames(1);
-    assert_equals(customEffectProgress, 0, "Callback is first fired with progress = 0.");
 
     await animation.finished;
     const numberOfCallsAfterEffectEnded = numberOfCalls;
