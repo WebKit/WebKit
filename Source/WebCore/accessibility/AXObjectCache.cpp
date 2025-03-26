@@ -2709,6 +2709,11 @@ void AXObjectCache::deferAttributeChangeIfNeeded(Element& element, const Qualifi
         relationsNeedUpdate(true);
 }
 
+void AXObjectCache::handleReferenceTargetChanged()
+{
+    relationsNeedUpdate(true);
+}
+
 bool AXObjectCache::shouldProcessAttributeChange(Element* element, const QualifiedName& attrName)
 {
     if (!element)

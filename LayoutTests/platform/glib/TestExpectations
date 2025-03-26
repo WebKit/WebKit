@@ -788,6 +788,7 @@ accessibility/display-contents/tree-and-treeitems.html [ Skip ]
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 accessibility/combobox/mac [ Skip ]
+accessibility/shadow-dom/reference-target/mac [ Skip ]
 
 accessibility/textarea-line-for-index.html [ Skip ]
 

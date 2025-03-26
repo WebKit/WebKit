@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
+#include "AXObjectCache.h"
 #include "CSSStyleSheet.h"
 #include "ChildListMutationScope.h"
 #include "CustomElementRegistry.h"
@@ -472,7 +473,13 @@ void ShadowRoot::setReferenceTarget(const AtomString& referenceTarget)
     if (!document().settings().shadowRootReferenceTargetEnabled())
         return;
 
+    if (m_referenceTarget == referenceTarget)
+        return;
+
     m_referenceTarget = referenceTarget;
+
+    if (CheckedPtr cache = document().existingAXObjectCache())
+        cache->handleReferenceTargetChanged();
 }
 
 } // namespace WebCore
