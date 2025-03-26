@@ -458,6 +458,8 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
     GdkRGBA rgba;
     webkit_color_chooser_request_get_rgba(request, &rgba);
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorChooser), &rgba);
+    gboolean allow_alpha = webkit_color_chooser_request_get_allow_alpha(request);
+    gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(colorChooser), allow_alpha);
     g_signal_connect(colorChooser, "notify::rgba", G_CALLBACK(colorChooserRGBAChanged), request);
 #if GTK_CHECK_VERSION(3, 98, 5)
     gtk_popover_set_child(GTK_POPOVER(popover), colorChooser);
