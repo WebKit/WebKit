@@ -72,14 +72,14 @@ RemoteSharedResourceCache::RemoteSharedResourceCache(GPUConnectionToWebProcess& 
 
 RemoteSharedResourceCache::~RemoteSharedResourceCache() = default;
 
-void RemoteSharedResourceCache::addSerializedImageBuffer(RenderingResourceIdentifier identifier, Ref<ImageBuffer> imageBuffer)
+void RemoteSharedResourceCache::addSerializedImageBuffer(RemoteSerializedImageBufferReference ref, Ref<ImageBuffer> imageBuffer)
 {
-    m_serializedImageBuffers.add({ identifier, 0 }, WTFMove(imageBuffer));
+    m_serializedImageBuffers.add(ref, WTFMove(imageBuffer));
 }
 
-RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(RenderingResourceIdentifier identifier)
+RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(RemoteSerializedImageBufferWriteReference ref)
 {
-    return m_serializedImageBuffers.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
+    return m_serializedImageBuffers.take(WTFMove(ref), defaultRemoteSharedResourceCacheTimeout);
 }
 
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier identifier)

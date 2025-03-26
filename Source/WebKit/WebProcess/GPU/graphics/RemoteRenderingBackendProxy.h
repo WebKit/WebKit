@@ -37,7 +37,6 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
-#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "StreamClientConnection.h"
@@ -94,8 +93,8 @@ public:
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
-    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
+    void moveToSerializedBuffer(RemoteSerializedImageBufferReference);
+    void moveToImageBuffer(RemoteSerializedImageBufferWriteReference);
 
 #if PLATFORM(COCOA)
     void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier);

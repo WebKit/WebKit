@@ -36,7 +36,6 @@
 #include "MessageSender.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RemoteResourceCache.h"
-#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RemoteSharedResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -144,8 +143,8 @@ private:
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingResourceIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
+    void moveToSerializedBuffer(RemoteSerializedImageBufferReference);
+    void moveToImageBuffer(RemoteSerializedImageBufferWriteReference);
 #if PLATFORM(COCOA)
     void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier, WebCore::SnapshotIdentifier);
 #endif

@@ -56,10 +56,12 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxy);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSerializedImageBufferProxy);
 
-RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
-    : ImageBuffer(parameters, info, { }, WTFMove(backend), identifier)
+RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RemoteSerializedImageBufferReferenceTracker&& renderingResourceReferenceTracker, bool needsFlush)
+    : ImageBuffer(parameters, info, { }, WTFMove(backend), renderingResourceReferenceTracker.identifier())
+    , m_renderingResourceReferenceTracker(RemoteSerializedImageBufferReferenceTracker(WTFMove(renderingResourceReferenceTracker)))
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
+    , m_needsFlush(needsFlush)
 {
     ASSERT(m_remoteRenderingBackendProxy);
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
@@ -144,6 +146,7 @@ void RemoteImageBufferProxy::backingStoreWillChange()
 
 void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> backendHandle)
 {
+    clearBackend(); // in case serialization couldn't clearBackend because previous DidCreateBackend hadn't arrived
     ASSERT(!m_backend);
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
@@ -306,7 +309,6 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
 
 void RemoteImageBufferProxy::clearBackend()
 {
-    m_needsFlush = false;
     if (m_backend)
         prepareForBackingStoreChange();
     m_backend = nullptr;
@@ -386,21 +388,15 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 {
     ASSERT(hasOneRef());
 
-    flushDrawingContext();
     m_remoteDisplayList.disconnect();
 
     RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
     if (!remoteRenderingBackendProxy)
         return nullptr;
 
-    prepareForBackingStoreChange();
-
-    if (!ensureBackend())
-        return nullptr;
-
     remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *remoteRenderingBackendProxy);
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), WTFMove(m_renderingResourceReferenceTracker), m_needsFlush, *remoteRenderingBackendProxy);
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -409,19 +405,20 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     return ret;
 }
 
-RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
+RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, RemoteSerializedImageBufferReferenceTracker&& renderingResourceReferenceTracker, bool needsFlush, RemoteRenderingBackendProxy& backend)
     : m_parameters(parameters)
     , m_info(info)
-    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    , m_renderingResourceReferenceTracker(WTFMove(renderingResourceReferenceTracker))
     , m_connection(nullptr/*backend.connection()*/)
+    , m_needsFlush(needsFlush)
 {
-    backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
+    backend.moveToSerializedBuffer(m_renderingResourceReferenceTracker.add());
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
-    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
-    backend.moveToImageBuffer(result->renderingResourceIdentifier());
+    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, RemoteSerializedImageBufferReferenceTracker(WTFMove(buffer->m_renderingResourceReferenceTracker)), buffer->m_needsFlush));
+    backend.moveToImageBuffer(result->m_renderingResourceReferenceTracker.write());
     buffer->m_connection = nullptr;
     return result;
 }
@@ -429,7 +426,7 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
     if (RefPtr connection = m_connection)
-        connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
+        connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceReferenceTracker.identifier()), 0);
 }
 
 } // namespace WebKit

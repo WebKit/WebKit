@@ -120,6 +120,11 @@ public:
         , m_version(reference.version())
     {
     }
+    explicit ObjectIdentifierReferenceTracker(ObjectIdentifierReferenceTracker&& tracker)
+        : m_identifier(tracker.identifier())
+        , m_version(tracker.m_version)
+    {
+    }
     // Thread safe.
     ReadReference read() const
     {

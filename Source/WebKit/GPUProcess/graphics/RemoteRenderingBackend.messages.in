@@ -64,8 +64,8 @@ messages -> RemoteRenderingBackend Stream {
     Flush(IPC::Semaphore semaphore) NotStreamEncodable
 #endif
 
-    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
-    MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
+    MoveToSerializedBuffer(WebKit::RemoteSerializedImageBufferReference source)
+    MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference destination)
 
 #if PLATFORM(COCOA)
     DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier snapshotIdentifier)

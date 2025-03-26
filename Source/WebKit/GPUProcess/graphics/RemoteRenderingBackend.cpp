@@ -48,6 +48,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RemoteSharedResourceCache.h"
 #include "RemoteTextDetector.h"
 #include "RemoteTextDetectorMessages.h"
@@ -219,18 +220,18 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
     send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), imageBufferIdentifier);
 }
 
-void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::moveToSerializedBuffer(RemoteSerializedImageBufferReference ref)
 {
     assertIsCurrent(workQueue());
     // Destroy the DisplayListRecorder which plays back to this image buffer.
-    m_remoteDisplayLists.take(identifier);
+    m_remoteDisplayLists.take(ref.identifier());
     // This transfers ownership of the RemoteImageBuffer contents to the transfer heap.
-    auto imageBuffer = takeImageBuffer(identifier);
+    auto imageBuffer = takeImageBuffer(ref.identifier());
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    protectedSharedResourceCache()->addSerializedImageBuffer(identifier, imageBuffer.releaseNonNull());
+    protectedSharedResourceCache()->addSerializedImageBuffer(WTFMove(ref), imageBuffer.releaseNonNull());
 }
 
 static void adjustImageBufferCreationContext(RemoteSharedResourceCache& sharedResourceCache, ImageBufferCreationContext& creationContext)
@@ -241,16 +242,16 @@ static void adjustImageBufferCreationContext(RemoteSharedResourceCache& sharedRe
     creationContext.resourceOwner = sharedResourceCache.resourceOwner();
 }
 
-void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferWriteReference ref)
 {
     assertIsCurrent(workQueue());
-    auto imageBuffer = protectedSharedResourceCache()->takeSerializedImageBuffer(identifier);
+    auto imageBuffer = protectedSharedResourceCache()->takeSerializedImageBuffer(WTFMove(ref));
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
 
-    ASSERT(identifier == imageBuffer->renderingResourceIdentifier());
+    ASSERT(ref.identifier() == imageBuffer->renderingResourceIdentifier());
 
     ImageBufferCreationContext creationContext;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
