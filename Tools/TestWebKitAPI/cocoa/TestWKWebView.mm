@@ -913,6 +913,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration addToWindow:(BOOL)addToWindow
 {
+    [configuration _setAllowTestOnlyIPC:YES];
     self = [super initWithFrame:frame configuration:configuration];
     if (!self)
         return nil;

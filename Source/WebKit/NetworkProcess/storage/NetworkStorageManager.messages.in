@@ -100,5 +100,5 @@
     CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> ()
     CacheStorageRepresentation() -> (String representation)
 
-    ResetQuotaUpdatedBasedOnUsageForTesting(struct WebCore::ClientOrigin origin)
+    [EnabledBy=AllowTestOnlyIPC] ResetQuotaUpdatedBasedOnUsageForTesting(struct WebCore::ClientOrigin origin)
 }

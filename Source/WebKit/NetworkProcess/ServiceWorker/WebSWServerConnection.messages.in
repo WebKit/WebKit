@@ -44,8 +44,8 @@ messages -> WebSWServerConnection {
     RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
-    TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
-    WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    [EnabledBy=AllowTestOnlyIPC] TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    [EnabledBy=AllowTestOnlyIPC] WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
 
     SetThrottleState(bool isThrottleable)
     StoreRegistrationsOnDisk() -> ()
