@@ -291,6 +291,7 @@ bool doesGC(Graph& graph, Node* node)
     case CallForwardVarargs:
     case CallObjectConstructor:
     case CallVarargs:
+    case VirtualCall:
     case CheckTierUpAndOSREnter:
     case CheckTierUpAtReturn:
     case CheckTierUpInLoop:

@@ -39,6 +39,7 @@ namespace JSC {
 
 class DateInstance;
 class DirectCallLinkInfo;
+class ExecutableBase;
 class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
@@ -439,6 +440,8 @@ JSC_DECLARE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObjec
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase*));
+
+JSC_DECLARE_JIT_OPERATION(operationVirtualCallWithoutFeedback, ExecutableBase*, (JSGlobalObject*, JSFunction*, ExecutableBase*));
 
 #if USE(JSVALUE32_64)
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationRandom, double, (JSGlobalObject*));

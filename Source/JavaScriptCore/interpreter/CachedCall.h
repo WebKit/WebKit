@@ -73,7 +73,7 @@ public:
             return;
         }
 
-        auto* newCodeBlock = m_vm.interpreter.prepareForCachedCall(*this, function);
+        auto* newCodeBlock = m_vm.interpreter.prepareForCachedCall(*this);
         if (UNLIKELY(scope.exception()))
             return;
         m_numParameters = newCodeBlock->numParameters();
@@ -125,7 +125,7 @@ public:
     {
         VM& vm = m_vm;
         auto scope = DECLARE_THROW_SCOPE(vm);
-        auto* codeBlock = m_vm.interpreter.prepareForCachedCall(*this, this->function());
+        auto* codeBlock = m_vm.interpreter.prepareForCachedCall(*this);
         RETURN_IF_EXCEPTION(scope, void());
         m_protoCallFrame.setCodeBlock(codeBlock);
     }

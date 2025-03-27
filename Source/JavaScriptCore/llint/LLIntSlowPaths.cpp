@@ -2109,7 +2109,7 @@ static inline UGPRPair setUpCall(CallFrame* calleeFrame, CodeSpecializationKind 
             LLINT_CALL_THROW(globalObject, createNotAConstructorError(globalObject, callee));
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, scope, kind, *codeBlockSlot);
         LLINT_CALL_CHECK_EXCEPTION(globalObject);
 
         CodeBlock* codeBlock = *codeBlockSlot;

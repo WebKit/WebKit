@@ -5252,6 +5252,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case DirectTailCallInlinedCaller:
     case CallCustomAccessorGetter:
     case CallCustomAccessorSetter:
+    case VirtualCall:
         clobberWorld();
         makeHeapTopForNode(node);
         break;

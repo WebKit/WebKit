@@ -248,7 +248,7 @@ bool ScriptExecutable::hasClearableCode() const
     return false;
 }
 
-CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunction* function, JSScope* scope)
+CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSScope* scope)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -262,7 +262,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
-        RELEASE_ASSERT(!function);
 
         // FIXME: There might be a case that executable->unlinkedCodeBlock() will be a nullptr 
         // since ScriptExecutable::clearCode might be triggered due to limited memory usage. 
@@ -275,7 +274,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
-        RELEASE_ASSERT(!function);
         RELEASE_AND_RETURN(throwScope, ProgramCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
     }
 
@@ -283,7 +281,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
-        RELEASE_ASSERT(!function);
 
         UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = executable->getUnlinkedCodeBlock(globalObject);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
@@ -292,7 +289,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     }
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
-    RELEASE_ASSERT(function);
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
     ParserError error;
@@ -386,7 +382,7 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 #endif
 }
 
-void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     DeferGCForAWhile deferGC(vm);
@@ -397,7 +393,7 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
         return;
     }
 
-    CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope);
+    CodeBlock* codeBlock = newCodeBlockFor(kind, scope);
     RETURN_IF_EXCEPTION(throwScope, void());
 
     ASSERT(codeBlock);

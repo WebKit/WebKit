@@ -49,10 +49,11 @@ public:
     {
     }
     
-    static CallLinkStatus takesSlowPath()
+    static CallLinkStatus takesSlowPath(bool isVirtualCall)
     {
         CallLinkStatus result;
         result.m_couldTakeSlowPath = true;
+        result.m_isVirtualCall = isVirtualCall;
         return result;
     }
     
@@ -92,6 +93,8 @@ public:
     explicit operator bool() const { return isSet(); }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
+
+    bool isVirtualCall() const { return m_isVirtualCall; }
     
     void setCouldTakeSlowPath(bool value) { m_couldTakeSlowPath = value; }
     
@@ -126,9 +129,10 @@ private:
     void accountForExits(ExitSiteData, ExitingInlineKind);
     
     CallVariantList m_variants;
-    bool m_couldTakeSlowPath { false };
-    bool m_isProved { false };
-    bool m_isBasedOnStub { false };
+    bool m_couldTakeSlowPath : 1 { false };
+    bool m_isProved : 1 { false };
+    bool m_isBasedOnStub : 1 { false };
+    bool m_isVirtualCall : 1 { false };
     uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // More than UINT8_MAX will be recorded as UINT8_MAX.
 };
 

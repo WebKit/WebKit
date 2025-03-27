@@ -1461,6 +1461,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     if (kind == InlineCallFrame::SetterCall && ecmaMode.isStrict())
         addToGraph(CheckNotJSCast, OpInfo(NullSetterFunction::info()), callTarget);
     Node* callNode = addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    if (!inlineCallFrame() && callLinkStatus.isVirtualCall())
+        m_graph.m_slowCall.add(callNode);
     ASSERT(callNode->op() != TailCallVarargs && callNode->op() != TailCallForwardVarargs);
     return callNode->op() == TailCall ? Terminal : NonTerminal;
 }
@@ -2399,9 +2401,11 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     if (couldTakeSlowPath) {
         if (kind == InlineCallFrame::SetterCall && ecmaMode.isStrict())
             addToGraph(CheckNotJSCast, OpInfo(NullSetterFunction::info()), myCallTargetNode);
-        addCall(
+        Node* callNode = addCall(
             result, callOp, OpInfo(), myCallTargetNode, argumentCountIncludingThis,
             registerOffset, prediction);
+        if (!inlineCallFrame() && callLinkStatus.isVirtualCall())
+            m_graph.m_slowCall.add(callNode);
         VERBOSE_LOG("We added a call in the slow path\n");
     } else {
         addToGraph(CheckBadValue);

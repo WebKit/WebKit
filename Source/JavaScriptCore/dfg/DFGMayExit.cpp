@@ -143,6 +143,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ConstructVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:
+    case VirtualCall:
     case CreateActivation:
     case MaterializeCreateActivation:
     case MaterializeNewObject:
