@@ -37,6 +37,7 @@
 #include "RemoteScrollingTree.h"
 #include "WebEventConversion.h"
 #include "WebPageProxy.h"
+#include <QuartzCore/CALayer.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingNodeID.h>

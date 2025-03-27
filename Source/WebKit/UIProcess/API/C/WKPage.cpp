@@ -123,6 +123,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include <WebCore/AuthenticatorAssertionResponse.h>
+#endif
+
 namespace API {
 using namespace WebCore;
 using namespace WebKit;
