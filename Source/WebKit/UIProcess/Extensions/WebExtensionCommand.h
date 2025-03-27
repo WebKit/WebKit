@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if defined(__OBJC__) && PLATFORM(IOS_FAMILY)
-#include <UIKit/UIKeyCommand.h>
+#include <UIKit/UICommand.h>
 #endif
 
 OBJC_CLASS WKWebExtensionCommand;
@@ -44,15 +44,15 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS NSMenuItem;
 using CocoaMenuItem = NSMenuItem;
 #else
-OBJC_CLASS UIKeyCommand;
+OBJC_CLASS UICommand;
 OBJC_CLASS UIMenuElement;
 using CocoaMenuItem = UIMenuElement;
 #endif
 
 #if defined(__OBJC__) && PLATFORM(IOS_FAMILY)
-@interface _WKWebExtensionKeyCommand : UIKeyCommand
+@interface _WKWebExtensionKeyCommand : UICommand
 
-+ (UIKeyCommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier;
++ (UICommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier extensionIdentifier:(NSString *)extensionIdentifier;
 
 @end
 #endif // PLATFORM(IOS_FAMILY)
@@ -99,8 +99,8 @@ public:
     CocoaMenuItem *platformMenuItem() const;
 
 #if PLATFORM(IOS_FAMILY)
-    UIKeyCommand *keyCommand() const;
-    bool matchesKeyCommand(UIKeyCommand *) const;
+    UICommand *keyCommand() const;
+    bool matchesKeyCommand(UICommand *) const;
 #endif
 
 #if USE(APPKIT)

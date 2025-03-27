@@ -51,7 +51,7 @@
 #if PLATFORM(IOS_FAMILY)
 @implementation _WKWebExtensionKeyCommand
 
-+ (UIKeyCommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier
++ (UICommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier extensionIdentifier:(NSString *)extensionIdentifier
 {
     RELEASE_ASSERT(title);
     RELEASE_ASSERT(input);
@@ -61,9 +61,15 @@
         @"title": title,
         @"activation": input,
         @"identifier": identifier,
+        @"extensionIdentifier": extensionIdentifier,
     };
 
-    auto *command = [UIKeyCommand commandWithTitle:title image:image action:@selector(performWebExtensionCommandForKeyCommand:) input:input modifierFlags:modifierFlags propertyList:propertyList];
+    UICommand *command;
+    if (input.length)
+        command = [UIKeyCommand commandWithTitle:title image:image action:@selector(performWebExtensionCommandForKeyCommand:) input:input modifierFlags:modifierFlags propertyList:propertyList];
+    else
+        command = [UICommand commandWithTitle:title image:image action:@selector(performWebExtensionCommandForKeyCommand:) propertyList:propertyList];
+
     if (!command)
         return nil;
 
@@ -295,14 +301,19 @@ CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-UIKeyCommand *WebExtensionCommand::keyCommand() const
+UICommand *WebExtensionCommand::keyCommand() const
 {
-    return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() identifier:identifier()];
+    return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() identifier:identifier() extensionIdentifier:m_extensionContext->uniqueIdentifier()];
 }
 
-bool WebExtensionCommand::matchesKeyCommand(UIKeyCommand *keyCommand) const
+bool WebExtensionCommand::matchesKeyCommand(UICommand *command) const
 {
-    return keyCommand.modifierFlags == modifierFlags().toRaw() && [keyCommand.input isEqual:activationKey()] && [keyCommand.propertyList[@"identifier"] isEqual:identifier()];
+    if ([command isKindOfClass:UIKeyCommand.class]) {
+        UIKeyCommand *keyCommand = (UIKeyCommand *)command;
+        return keyCommand.modifierFlags == modifierFlags().toRaw() && [keyCommand.input isEqual:activationKey()] && [keyCommand.propertyList[@"identifier"] isEqual:identifier()] && [keyCommand.propertyList[@"extensionIdentifier"] isEqual:m_extensionContext->uniqueIdentifier()];
+    }
+
+    return [command.propertyList[@"identifier"] isEqual:identifier()] && [command.propertyList[@"extensionIdentifier"] isEqual:m_extensionContext->uniqueIdentifier()];
 }
 #endif
 

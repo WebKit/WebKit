@@ -576,9 +576,9 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
 }
 
 #if TARGET_OS_IPHONE
-- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand
+- (BOOL)performCommandForKeyCommand:(UICommand *)keyCommand
 {
-    NSParameterAssert([keyCommand isKindOfClass:UIKeyCommand.class]);
+    NSParameterAssert([keyCommand isKindOfClass:UICommand.class]);
 
     return Ref { *_webExtensionContext }->performCommand(keyCommand);
 }
@@ -1166,7 +1166,7 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 }
 
 #if TARGET_OS_IPHONE
-- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand
+- (BOOL)performCommandForKeyCommand:(UICommand *)keyCommand
 {
     return NO;
 }

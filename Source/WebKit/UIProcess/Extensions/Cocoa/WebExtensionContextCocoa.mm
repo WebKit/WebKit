@@ -2987,7 +2987,7 @@ void WebExtensionContext::resetCommands()
 }
 
 #if TARGET_OS_IPHONE
-WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UIKeyCommand *keyCommand)
+WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UICommand *keyCommand)
 {
     ASSERT(keyCommand);
     for (auto& command : commands()) {
@@ -2998,7 +2998,7 @@ WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UIKeyCommand
     return nullptr;
 }
 
-bool WebExtensionContext::performCommand(UIKeyCommand *keyCommand)
+bool WebExtensionContext::performCommand(UICommand *keyCommand)
 {
     ASSERT(isLoaded());
     if (!isLoaded())

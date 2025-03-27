@@ -495,8 +495,8 @@ public:
     void resetCommands();
 
 #if TARGET_OS_IPHONE
-    WebExtensionCommand* commandMatchingKeyCommand(UIKeyCommand *);
-    bool performCommand(UIKeyCommand *);
+    WebExtensionCommand* commandMatchingKeyCommand(UICommand *);
+    bool performCommand(UICommand *);
 #endif
 #if USE(APPKIT)
     WebExtensionCommand* command(NSEvent *);

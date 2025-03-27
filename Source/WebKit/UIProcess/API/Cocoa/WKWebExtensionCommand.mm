@@ -124,7 +124,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 }
 
 #if PLATFORM(IOS_FAMILY)
-- (UIKeyCommand *)keyCommand
+- (UICommand *)keyCommand
 {
     return _webExtensionCommand->keyCommand();
 }
@@ -212,7 +212,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 }
 
 #if PLATFORM(IOS_FAMILY)
-- (UIKeyCommand *)keyCommand
+- (UICommand *)keyCommand
 {
     return nil;
 }

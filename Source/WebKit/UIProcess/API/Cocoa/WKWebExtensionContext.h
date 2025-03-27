@@ -38,7 +38,7 @@
 
 #if TARGET_OS_IPHONE
 @class UIMenuElement;
-@class UIKeyCommand;
+@class UICommand;
 #else
 @class NSEvent;
 @class NSMenuItem;
@@ -583,12 +583,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 #if TARGET_OS_IPHONE
 /*!
  @abstract Performs the command associated with the given key command.
- @discussion This method checks for a command corresponding to the provided ``UIKeyCommand`` and performs it, if available. The app should use this method to perform
+ @discussion This method checks for a command corresponding to the provided ``UICommand`` and performs it, if available. The app should use this method to perform
  any extension commands at an appropriate time in the app's responder object that handles the ``performWebExtensionCommandForKeyCommand:`` action.
  @param keyCommand The key command received by the first responder.
- @result Returns `YES` if a command corresponding to the UIKeyCommand was found and performed, `NO` otherwise.
+ @result Returns `YES` if a command corresponding to the UICommand was found and performed, `NO` otherwise.
  */
-- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand NS_SWIFT_NAME(performCommand(for:));
+- (BOOL)performCommandForKeyCommand:(UICommand *)keyCommand NS_SWIFT_NAME(performCommand(for:));
 #endif
 
 #if TARGET_OS_OSX
