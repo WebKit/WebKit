@@ -5323,11 +5323,14 @@ ModelProcessEnabled:
   humanReadableDescription: "Load <model> content in a separate process"
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(VISION) && ENABLE(MODEL_PROCESS)": true
+      default: false
     WebKit:
-      default: true
+      "PLATFORM(VISION) && ENABLE(MODEL_PROCESS)": true
+      default: false
     WebCore:
-      default: true
+      "PLATFORM(VISION) && ENABLE(MODEL_PROCESS)": true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
