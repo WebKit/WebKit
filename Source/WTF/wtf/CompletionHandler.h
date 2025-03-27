@@ -78,10 +78,26 @@ public:
         return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
+    ThreadLikeAssertion callThread() const { return m_callThread; }
+
 private:
     Function<Out(In...)> m_function;
     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_callThread;
 };
+
+template <typename CallableType>
+concept HasThreadAssertion = requires(CallableType callable)
+{
+    { callable.callThread() } -> std::same_as<ThreadLikeAssertion>;
+};
+
+template <typename CallableType>
+std::optional<ThreadLikeAssertion> threadAssertionFromCallable(const CallableType& callable)
+{
+    if constexpr (HasThreadAssertion<CallableType>)
+        return callable.callThread();
+    return std::nullopt;
+}
 
 // Wraps a Function to make sure it is called at most once.
 // If the CompletionHandlerWithFinalizer is destroyed and the function hasn't yet been called,
@@ -96,7 +112,8 @@ public:
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     CompletionHandlerWithFinalizer(CallableType&& callable, Function<void(Function<Out(In...)>&)>&& finalizer)
-        : m_function(std::forward<CallableType>(callable))
+        : m_callThread(threadAssertionFromCallable(callable).value_or(ThreadLikeAssertion { }))
+        , m_function(std::forward<CallableType>(callable))
         , m_finalizer(WTFMove(finalizer))
     {
     }
@@ -122,9 +139,9 @@ public:
     }
 
 private:
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_callThread;
     Function<Out(In...)> m_function;
     Function<void(Function<Out(In...)>&)> m_finalizer;
-    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_callThread;
 };
 
 namespace Detail {

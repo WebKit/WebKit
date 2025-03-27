@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -137,6 +138,25 @@ TEST_F(CompletionHandlerTest, ConstructWithSpecificThreadLikeAssertion)
     EXPECT_TRUE(didCall);
 }
 
+TEST_F(CompletionHandlerTest, FinalizerInheritsHandlersThreadAssertion)
+{
+    CompletionHandler<void()> handler;
+    Thread::create("ConstructionThread"_s, [&] {
+        handler = CompletionHandler<void()> { [] { }, CompletionHandlerCallThread::AnyThread };
+    })->waitForCompletion();
+
+    CompletionHandlerWithFinalizer<void()> handlerWithFinalizer { WTFMove(handler), [](auto&& callable) {
+        callable();
+    } };
+
+    bool didDestroy = false;
+    Thread::create("DestructionThread"_s, [&] {
+        auto localHandlerWithFinalizer = WTFMove(handlerWithFinalizer);
+        didDestroy = true;
+    })->waitForCompletion();
+    EXPECT_TRUE(didDestroy);
+}
+
 TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(UncalledHandlerAsserts))
 {
     ::testing::FLAGS_gtest_death_test_style = "threadsafe";
@@ -202,6 +222,19 @@ TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ConstructionThr
         Thread::create("ConstructionThreadHandlerOnThreadAsserts"_s, [&] {
             ch1(); // This should assert.
         })->waitForCompletion();
+    }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");
+}
+
+TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(FinalizerUsesDefaultThreadAssertionForGenericCallable))
+{
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    ASSERT_DEATH_IF_SUPPORTED({
+        WTF::initializeMainThread();
+        Function<void()> callable([] { });
+        CompletionHandlerWithFinalizer<void()> finalizer(WTFMove(callable), [](auto&& callable) {
+            callable();
+        });
+        Thread::create("FinalizerWithDefaultThreadAssertionAssertsOnNonCurrentThread"_s, [finalizer = WTFMove(finalizer)] { })->waitForCompletion();
     }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");
 }
 
