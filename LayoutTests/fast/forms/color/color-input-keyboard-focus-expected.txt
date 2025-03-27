@@ -1,0 +1,5 @@
+Tests that pressing the tab key focuses a color input.
+
+PASS focused the color input.
+
+

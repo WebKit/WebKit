@@ -1054,7 +1054,6 @@ input:is([type="checkbox"], [type="radio"]):checked:disabled {
 input[type="color"] {
     appearance: auto;
     box-sizing: border-box;
-    outline: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     width: 28px;
     height: 28px;

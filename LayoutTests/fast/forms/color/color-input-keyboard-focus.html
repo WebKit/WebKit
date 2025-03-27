@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>Tests that pressing the tab key focuses a color input.</p>
+<p id="result">FAIL did not focus the color input.</p>
+<input type="text" id="firstField"><input type="color" id="secondField" onfocus="passed()">
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    async function runTest()
+    {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+        await UIHelper.activateFormControl(document.getElementById("firstField"));
+        await UIHelper.keyDown("\t");
+    }
+
+    function passed()
+    {
+        document.getElementById("result").textContent = "PASS focused the color input.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    runTest();
+</script>
+</body>
+</html>
