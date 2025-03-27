@@ -87,6 +87,7 @@
     macro(bytecodes) \
     macro(bytecodesID) \
     macro(calendar) \
+    macro(calendarName) \
     macro(callee) \
     macro(caller) \
     macro(captureStackTrace) \
@@ -115,6 +116,8 @@
     macro(descriptions) \
     macro(detached) \
     macro(detail) \
+    macro(direction) \
+    macro(disambiguation) \
     macro(displayName) \
     macro(done) \
     macro(dotAll) \
@@ -229,6 +232,7 @@
     macro(numberingSystem) \
     macro(numeric) \
     macro(of) \
+    macro(offset) \
     macro(omitPadding) \
     macro(opcode) \
     macro(origin) \
@@ -239,6 +243,7 @@
     macro(parse) \
     macro(parseInt) \
     macro(parseFloat) \
+    macro(plainTime) \
     macro(pluralCategories) \
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
@@ -247,6 +252,7 @@
     macro(rawJSON) \
     macro(read) \
     macro(region) \
+    macro(relativeTo) \
     macro(replace) \
     macro(resizable) \
     macro(resize) \

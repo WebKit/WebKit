@@ -372,6 +372,23 @@ private:
     Vector<int32_t, 4> m_stringLengths;
 };
 
+static constexpr int32_t nonIANALinkNamesLength = 25;
+static const String nonIANALinkNames[nonIANALinkNamesLength] =
+    { "ACT"_s, "AET"_s, "AGT"_s, "ART"_s, "AST"_s, "BET"_s, "BST"_s, "CAT"_s, "CNT"_s,
+      "CST"_s, "CTT"_s, "EAT"_s, "ECT"_s, "IET"_s, "IST"_s, "JST"_s, "MIT"_s, "NET"_s,
+      "NST"_s, "PLT"_s, "PNT"_s, "PRT"_s, "PST"_s, "SST"_s, "VST"_s };
+
+static inline bool isNonIANALinkName(StringView string)
+{
+    // TODO: can this be simplified to just check for 3-letter length and not
+    // UTC or GMT?
+    for (unsigned i = 0; i < nonIANALinkNamesLength; i++) {
+        if (nonIANALinkNames[i] == string)
+            return true;
+    }
+    return false;
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

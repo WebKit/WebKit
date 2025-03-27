@@ -90,7 +90,7 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-
     shouldBe(Temporal.PlainDate.from({ year: 2007, month: 20, day: 40 }, { overflow: 'constrain' }).toString(), '2007-12-31');
 
     shouldBe(date.toJSON(), date.toString());
-    shouldBe(date.toLocaleString(), date.toString());
+    shouldBe(date.toLocaleString(), new Intl.DateTimeFormat().format(date));
 }
 
 shouldThrow(() => { Temporal.PlainDate.from({ month: 1, day: 9 }); }, TypeError);

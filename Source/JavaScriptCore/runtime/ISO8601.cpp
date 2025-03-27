@@ -28,14 +28,21 @@
 #include "ISO8601.h"
 
 #include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "ParseInt.h"
+#include "TemporalCalendar.h"
+#include "TemporalInstant.h"
+#include "TemporalObject.h"
+#include "TemporalPlainTime.h"
 #include <limits>
+#include <unicode/ucal.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -51,14 +58,171 @@ static constexpr int64_t nsPerMicrosecond = 1000LL;
 static constexpr int32_t maxYear = 275760;
 static constexpr int32_t minYear = -271821;
 
-std::optional<TimeZoneID> parseTimeZoneName(StringView string)
+static constexpr int32_t caseNormalizeExceptionsLength = 38;
+static const String caseNormalizeExceptions[caseNormalizeExceptionsLength] =
+    { "Australia/ACT"_s, "Australia/LHI"_s, "Australia/NSW"_s, "Africa/Dar_es_Salaam"_s,
+      "America/Port_of_Spain"_s, "Europe/Isle_of_Man"_s, "America/Argentina/ComodRivadavia"_s,
+      "America/Knox_IN"_s, "Antarctica/DumontDUrville"_s, "Antarctica/McMurdo"_s,
+      "Brazil/DeNoronha"_s, "Chile/EasterIsland"_s, "Mexico/BajaNorte"_s, "Mexico/BajaSur"_s,
+      "America/Port-au-Prince"_s, "US/Alaska"_s, "US/Aleutian"_s, "US/Arizona"_s,
+      "US/Central"_s, "US/East-Indiana"_s, "US/Eastern"_s, "US/Hawaii"_s,
+      "US/Indiana-Starke"_s, "US/Michigan"_s, "US/Mountain"_s, "US/Pacific"_s,
+      "US/Pacific-New"_s, "US/Samoa"_s, "GB-Eire"_s, "NZ-CHAT"_s, "W-SU"_s,
+      "EST5EDT"_s, "CST6CDT"_s, "MST7MDT"_s, "PST8PDT"_s, "Etc/UCT"_s, "Etc/UTC"_s};
+
+static String caseNormalize(StringView string)
 {
+    // Capitalize the first letter in the string,
+    // the first letter after the '/' if present,
+    // and the first letter after any '_'s if present.
+
+    // Anything <= 3 characters should be in all caps.
+
+    if (string.length() <= 3)
+        return string.convertToASCIIUppercase();
+    
+    // Special cases
+    for (unsigned i = 0; i < caseNormalizeExceptionsLength; i++) {
+        if (equalIgnoringASCIICase(string, caseNormalizeExceptions[i]))
+            return caseNormalizeExceptions[i];
+    }
+
+    if (string.length() >= 3
+        && toASCIILower(string[0]) == 'g'
+        && toASCIILower(string[1]) == 'm'
+        && toASCIILower(string[2]) == 't') {
+        return string.convertToASCIIUppercase();
+    }
+
+    StringBuilder result;
+    for (unsigned i = 0; i < string.length(); i++) {
+        if (i == 0)
+            result.append(toASCIIUpper(string[0]));
+        else if (string[i - 1] == '/' && i < string.length() - 2
+                 && toASCIILower(string[i]) == 'g'
+                 && toASCIILower(string[i + 1]) == 'm'
+                 && toASCIILower(string[i + 2]) == 't') {
+            result.append("GMT"_s);
+            i += 2;
+        }
+        else if (string[i - 1] == '/' || string[i - 1] == '_' || string[i - 1] == '-')
+            result.append(toASCIIUpper(string[i]));
+        else
+            result.append(toASCIILower(string[i]));
+    }
+
+    return result.toString();
+}
+
+// TODO move this into a separate file
+std::optional<TimeZone>
+parseTimeZoneName(JSGlobalObject* globalObject, StringView string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Need the canonical name so that ZonedDateTime comparisons
+    // work correctly
+
+    if (isNonIANALinkName(string))
+        return std::nullopt;
+
+    // TODO: cache this and refactor with getNamedTimeZoneEpochNanoseconds()
+    UErrorCode status = U_ZERO_ERROR;
+    String str = string.toStringWithoutCopying();
+    auto timeZoneName = str.charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return { };
+    }
+    Vector<UChar, 32> buffer;
+    UBool isSystemID = false;
+    status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneName->data(), -1, buffer, &isSystemID);
+    // ILLEGAL_ARGUMENT_ERROR means this isn't a known time zone, which is OK
+    // because there are more arguments to check
+    ASSERT_UNUSED(status, U_SUCCESS(status) || status == U_ILLEGAL_ARGUMENT_ERROR);
+
+    StringView canonical(buffer);
+    if (string != canonical && isSystemID) {
+        std::optional<TimeZone> result = parseTimeZoneName(globalObject, canonical);
+        if (result)
+            return result->withOriginal(caseNormalize(string));
+    }
+
     const auto& timeZones = intlAvailableTimeZones();
     for (unsigned index = 0; index < timeZones.size(); ++index) {
         if (equalIgnoringASCIICase(timeZones[index], string))
-            return index;
+            return TimeZone::named(index, caseNormalize(string));
     }
+
+    // Some special cases. Etc/GMT doesn't canonicalize to UTC or GMT for some reason.
+    if (equalIgnoringASCIICase(string, "Etc/GMT"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "Etc/GMT"_s);
+
+    if (equalIgnoringASCIICase(string, "Etc/UTC"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "Etc/UTC"_s);
+
+    if (equalIgnoringASCIICase(string, "GMT"))
+        return ISO8601::TimeZone::named(utcTimeZoneID(), "GMT"_s);
+
     return std::nullopt;
+
+/* TODO: is any of this necessary now? Was a workaround for 
+   intlAvailableTimeZones() filtering out certain things
+
+    // Time zone may be non-canonical, so try canonicalizing it
+  
+    StringView canonical(buffer);
+    if (string != canonical && isSystemID) {
+        std::optional<TimeZone> result = parseTimeZoneName(globalObject, canonical);
+        if (result)
+            return result->withOriginal(caseNormalize(string));
+    }
+
+    // These zones canonicalize to themselves for some reason,
+    // even though they're shown as aliases in 
+    // https://github.com/unicode-org/cldr/blob/main/common/bcp47/timezone.xml .
+    // Also, non-uppercase versions of any of these strings are rejected by
+    // ucal_getCanonicalTimeZoneID()
+    std::optional<TimeZone> result;
+    if (equalIgnoringASCIICase(string, "EST5EDT"))
+        result = parseTimeZoneName(globalObject, "America/New_York"_s);
+    else if (equalIgnoringASCIICase(string, "CST6CDT"))
+        result = parseTimeZoneName(globalObject, "America/Chicago"_s);
+    else if (equalIgnoringASCIICase(string, "MST7MDT"))
+        result = parseTimeZoneName(globalObject, "America/Denver"_s);
+    else if (equalIgnoringASCIICase(string, "PST8PDT"))
+        result = parseTimeZoneName(globalObject, "America/Los_Angeles"_s);
+    else if (equalIgnoringASCIICase(string, "CET") || equalIgnoringASCIICase(string, "MET"))
+        result = parseTimeZoneName(globalObject, "Europe/Brussels"_s);
+    else if (equalIgnoringASCIICase(string, "EET"))
+        result = parseTimeZoneName(globalObject, "Europe/Athens"_s);
+    else if (equalIgnoringASCIICase(string, "EST"))
+        result = parseTimeZoneName(globalObject, "America/Panama"_s);
+    else if (equalIgnoringASCIICase(string, "HST"))
+        result = parseTimeZoneName(globalObject, "Pacific/Honolulu"_s);
+    else if (equalIgnoringASCIICase(string, "MST"))
+        result = parseTimeZoneName(globalObject, "America/Phoenix"_s);
+    else if (equalIgnoringASCIICase(string, "WET"))
+        result = parseTimeZoneName(globalObject, "Europe/Lisbon"_s);
+    else if (equalIgnoringASCIICase(string, "Etc/UTC"))
+        result = parseTimeZoneName(globalObject, "UTC"_s);
+    else if (equalIgnoringASCIICase(string, "Cuba"))
+        result = parseTimeZoneName(globalObject, "Cuba"_s);
+
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result)
+        return result->withOriginal(caseNormalize(string));
+
+    return std::nullopt;
+*/
+}
+
+std::optional<String> getTimeZoneNameFromId(TimeZoneID id) {
+    const auto& timeZones = intlAvailableTimeZones();
+    if (id >= timeZones.size())
+        return std::nullopt;
+    return timeZones[id];
 }
 
 template<typename CharType>
@@ -257,7 +421,7 @@ std::optional<Duration> parseDuration(StringView string)
 
 enum class Second60Mode { Accept, Reject };
 template<typename CharacterType>
-static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, bool parseSubMinutePrecision = true)
+static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Vector<LChar>& result, Second60Mode second60Mode, bool parseSubMinutePrecision = true)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeSpec
     // TimeSpec :
@@ -275,11 +439,13 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 
     ASSERT(buffer.lengthRemaining() >= 2);
     auto firstHourCharacter = *buffer;
+    result.append(firstHourCharacter);
     if (!(firstHourCharacter >= '0' && firstHourCharacter <= '2'))
         return std::nullopt;
 
     buffer.advance();
     auto secondHourCharacter = *buffer;
+    result.append(secondHourCharacter);
     if (!isASCIIDigit(secondHourCharacter))
         return std::nullopt;
     unsigned hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
@@ -293,6 +459,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     bool splitByColon = false;
     if (*buffer == ':') {
         splitByColon = true;
+        result.append(':');
         buffer.advance();
     } else if (!(*buffer >= '0' && *buffer <= '5'))
         return PlainTime(hour, 0, 0, 0, 0, 0);
@@ -300,11 +467,13 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
     auto firstMinuteCharacter = *buffer;
+    result.append(firstMinuteCharacter);
     if (!(firstMinuteCharacter >= '0' && firstMinuteCharacter <= '5'))
         return std::nullopt;
 
     buffer.advance();
     auto secondMinuteCharacter = *buffer;
+    result.append(secondMinuteCharacter);
     if (!isASCIIDigit(secondMinuteCharacter))
         return std::nullopt;
     unsigned minute = (secondMinuteCharacter - '0') + 10 * (firstMinuteCharacter - '0');
@@ -315,8 +484,10 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
         return PlainTime(hour, minute, 0, 0, 0, 0);
 
     if (splitByColon) {
-        if (*buffer == ':')
+        if (*buffer == ':') {
+            result.append(':');
             buffer.advance();
+        }
         else
             return PlainTime(hour, minute, 0, 0, 0, 0);
     } else if (!(*buffer >= '0' && (second60Mode == Second60Mode::Accept ? (*buffer <= '6') : (*buffer <= '5'))))
@@ -329,9 +500,11 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
     auto firstSecondCharacter = *buffer;
+    result.append(firstSecondCharacter);
     if (firstSecondCharacter >= '0' && firstSecondCharacter <= '5') {
         buffer.advance();
         auto secondSecondCharacter = *buffer;
+        result.append(secondSecondCharacter);
         if (!isASCIIDigit(secondSecondCharacter))
             return std::nullopt;
         second = (secondSecondCharacter - '0') + 10 * (firstSecondCharacter - '0');
@@ -340,6 +513,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     } else if (second60Mode == Second60Mode::Accept && firstSecondCharacter == '6') {
         buffer.advance();
         auto secondSecondCharacter = *buffer;
+        result.append(secondSecondCharacter);
         if (secondSecondCharacter != '0')
             return std::nullopt;
         second = 59;
@@ -352,6 +526,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 
     if (*buffer != '.' && *buffer != ',')
         return PlainTime(hour, minute, second, 0, 0, 0);
+    result.append(*buffer);
     buffer.advance();
 
     size_t digits = 0;
@@ -366,7 +541,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     Vector<LChar, 9> padded(9, '0');
     for (size_t i = 0; i < digits; ++i)
         padded[i] = buffer[i];
-    buffer.advanceBy(digits);
+    result.append(buffer.consume(digits).subspan(0, digits));
 
     unsigned millisecond = parseDecimalInt32(padded.span().first(3));
     unsigned microsecond = parseDecimalInt32(padded.subspan(3, 3));
@@ -375,8 +550,9 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     return PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
 }
 
+
 template<typename CharacterType>
-static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision = true)
+static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, Vector<LChar>& result, bool parseSubMinutePrecision = true)
 {
     // UTCOffset[SubMinutePrecision] :
     //     ASCIISign Hour
@@ -395,15 +571,18 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
         return std::nullopt;
 
     int64_t factor = 1;
-    if (*buffer == '+')
+    if (*buffer == '+') {
+        result.append('+');
         buffer.advance();
+    }
     else if (*buffer == '-') {
         factor = -1;
+        result.append('-');
         buffer.advance();
     } else
         return std::nullopt;
 
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, parseSubMinutePrecision);
+    auto plainTime = parseTimeSpec(buffer, result, Second60Mode::Reject, parseSubMinutePrecision);
     if (!plainTime)
         return std::nullopt;
 
@@ -417,14 +596,20 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
     return (nsPerHour * hour + nsPerMinute * minute + nsPerSecond * second + nsPerMillisecond * millisecond + nsPerMicrosecond * microsecond + nanosecond) * factor;
 }
 
-std::optional<int64_t> parseUTCOffset(StringView string, bool parseSubMinutePrecision)
+std::optional<int64_t> parseUTCOffset(StringView string, Vector<LChar>& chars, bool parseSubMinutePrecision)
 {
-    return readCharactersForParsing(string, [parseSubMinutePrecision](auto buffer) -> std::optional<int64_t> {
-        auto result = parseUTCOffset(buffer, parseSubMinutePrecision);
+    return readCharactersForParsing(string, [parseSubMinutePrecision, chars](auto buffer) mutable -> std::optional<int64_t> {
+        auto result = parseUTCOffset(buffer, chars, parseSubMinutePrecision);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
     });
+}
+
+std::optional<int64_t> parseDateTimeUTCOffset(StringView string)
+{
+    Vector<LChar> ignore;
+    return parseUTCOffset(string, ignore, true);
 }
 
 template<typename CharacterType>
@@ -566,7 +751,27 @@ static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, Char
 }
 
 template<typename CharacterType>
-static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static bool canBeTimeZoneAnnotation(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
+{
+    switch (static_cast<UChar>(character)) {
+    // TimeZoneBracketedAnnotation
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
+    case '[': {
+        // We should reject calendar extension case.
+        // https://tc39.es/proposal-temporal/#prod-Calendar
+        // Calendar :
+        //     [u-ca= CalendarName]
+        if (canBeCalendar(buffer))
+            return false;
+        return true;
+    }
+    default:
+        return false;
+    }
+}
+
+template<typename CharacterType>
+static std::optional<TimeZoneAnnotation> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
@@ -588,7 +793,8 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
     switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer, false);
+        Vector<LChar> asString;
+        auto offset = parseUTCOffset(buffer, asString, false);
         if (!offset)
             return std::nullopt;
         if (buffer.atEnd())
@@ -596,7 +802,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return offset.value();
+        return TimeZoneAnnotation { asString, offset.value() };
     }
     case 'E': {
         // "Etc/GMT+20" and "]" => length is 11.
@@ -615,8 +821,8 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
                         if (isASCIIDigit(secondHourCharacter)) {
                             hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
                             if (hour < 24 && buffer[10] == ']') {
-                                buffer.advanceBy(11);
-                                return nsPerHour * hour * factor;
+                                Vector<LChar> asString = buffer.consume(11);
+                                return TimeZoneAnnotation { asString, nsPerHour * hour * factor };
                             }
                         }
                     }
@@ -700,14 +906,14 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<LChar> result(buffer.consume(nameLength));
+        Vector<LChar> result = buffer.consume(nameLength).subspan(0, nameLength);
 
         if (buffer.atEnd())
             return std::nullopt;
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return result;
+        return TimeZoneAnnotation { result, std::nullopt };
     }
     }
 }
@@ -724,66 +930,54 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case 'Z': {
         buffer.advance();
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            return TimeZoneRecord { true, std::nullopt, WTFMove(timeZone.value()) };
+            return TimeZoneRecord { true, std::nullopt, timeZoneAnnotation };
         }
-        return TimeZoneRecord { true, std::nullopt, { } };
+        return TimeZoneRecord { true, std::nullopt, std::nullopt };
     }
     // TimeZoneUTCOffsetSign
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer);
+        // Accept sub-minute precision in offset
+        Vector<LChar> chars;
+        auto offset = parseUTCOffset(buffer, chars, true);
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTFMove(timeZone.value()) };
+            return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, timeZoneAnnotation };
         }
-        return TimeZoneRecord { false, offset.value(), { } };
+        return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, std::nullopt };
     }
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     case '[': {
-        auto timeZone = parseTimeZoneAnnotation(buffer);
-        if (!timeZone)
-            return std::nullopt;
-        return TimeZoneRecord { false, std::nullopt, WTFMove(timeZone.value()) };
+        auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+        return TimeZoneRecord { false, std::nullopt, timeZoneAnnotation };
     }
     default:
         return std::nullopt;
     }
 }
 
-template<typename CharacterType>
-static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<CharacterType>& buffer)
+std::optional<TimeZoneRecord> parseTimeZone(StringView string)
 {
-    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
-    // Calendar :
-    //     [u-ca= CalendarName ]
-    //
-    // CalendarName :
-    //     CalendarNameComponent
-    //     CalendarNameComponent - CalendarName
-    //
-    // CalendarNameComponent :
-    //     CalChar CalChar CalChar CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt]
-    //
-    // CalChar :
-    //     Alpha
-    //     Digit
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
+        auto result = parseTimeZone(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
 
-    if (!canBeCalendar(buffer))
-        return std::nullopt;
-    buffer.advanceBy(6);
-
-    if (buffer.atEnd())
-        return std::nullopt;
-
+template<typename CharacterType>
+static std::optional<CalendarRecord> parseCalendarName(StringParsingBuffer<CharacterType>& buffer)
+{
     unsigned nameLength = 0;
     {
         unsigned index = 0;
@@ -836,14 +1030,64 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
     if (!isValidComponent(currentNameComponentStartIndex, nameLength))
         return std::nullopt;
 
-    Vector<LChar, maxCalendarLength> result(buffer.consume(nameLength));
+    Vector<LChar, maxCalendarLength> result(buffer.consume(nameLength).subspan(0, nameLength));
+
+    return CalendarRecord { WTFMove(result) };
+}
+
+std::optional<CalendarRecord> parseCalendarName(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
+        auto result = parseCalendarName(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
+template<typename CharacterType>
+static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
+    // Calendar :
+    //     [u-ca= CalendarName ]
+    //
+    // CalendarName :
+    //     CalendarNameComponent
+    //     CalendarNameComponent - CalendarName
+    //
+    // CalendarNameComponent :
+    //     CalChar CalChar CalChar CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt]
+    //
+    // CalChar :
+    //     Alpha
+    //     Digit
+
+    if (!canBeCalendar(buffer))
+        return std::nullopt;
+    buffer.advanceBy(6);
+
+    if (buffer.atEnd())
+        return std::nullopt;
+
+    auto result = parseCalendarName(buffer);
 
     if (buffer.atEnd())
         return std::nullopt;
     if (*buffer != ']')
         return std::nullopt;
     buffer.advance();
-    return CalendarRecord { WTFMove(result) };
+    return result;
+}
+
+std::optional<CalendarRecord> parseCalendar(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
+        auto result = parseCalendar(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
 }
 
 template<typename CharacterType>
@@ -852,7 +1096,8 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
     // https://tc39.es/proposal-temporal/#prod-Time
     // Time :
     //     TimeSpec TimeZone[opt]
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Accept);
+    Vector<LChar> chars;
+    auto plainTime = parseTimeSpec(buffer, chars, Second60Mode::Accept);
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
@@ -867,7 +1112,24 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
 }
 
 template<typename CharacterType>
-static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& buffer)
+static bool canBeYear(StringParsingBuffer<CharacterType>& buffer)
+{
+    // 4 characters for year, plus 2 more for month
+    if (buffer.lengthRemaining() < 6)
+        return false;
+    bool hasPrefix = buffer[0] == '+' || buffer[0] == '-';
+    if (!isASCIIDigit(buffer[0]) && !hasPrefix)
+        return false;
+    size_t start = hasPrefix ? 1 : 0;
+    for (size_t i = start; i < 4 + start; i++) {
+        if (!isASCIIDigit(buffer[i]))
+            return false;
+    }
+    return true;
+}
+
+template<typename CharacterType>
+static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& buffer, TemporalDateFormat format)
 {
     // https://tc39.es/proposal-temporal/#prod-Date
     // Date :
@@ -896,59 +1158,81 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     //     2 Digit
     //     30
     //     31
+    //
+    //  DateSpecYearMonth :::
+    //      DateYear DateSeparator_[+Extended] DateMonth
+    //      DateYear DateSeparator_[~Extended] DateMonth
+    //
+    //  DateSpecMonthDay :::
+    //      --opt DateMonth DateSeparator_[+Extended] DateDay
+    //      --opt DateMonth DateSeparator_[~Extended] DateDay
 
     if (buffer.atEnd())
-        return std::nullopt;
-
-    bool sixDigitsYear = false;
-    int yearFactor = 1;
-    if (*buffer == '+') {
-        buffer.advance();
-        sixDigitsYear = true;
-    } else if (*buffer == '-') {
-        yearFactor = -1;
-        buffer.advance();
-        sixDigitsYear = true;
-    } else if (!isASCIIDigit(*buffer))
         return std::nullopt;
 
     int32_t year = 0;
-    if (sixDigitsYear) {
-        if (buffer.lengthRemaining() < 6)
-            return std::nullopt;
-        for (unsigned index = 0; index < 6; ++index) {
-            if (!isASCIIDigit(buffer[index]))
-                return std::nullopt;
-        }
-        year = parseDecimalInt32(std::span { buffer.position(), 6 }) * yearFactor;
-        if (!year && yearFactor < 0)
-            return std::nullopt;
-        buffer.advanceBy(6);
-    } else {
-        if (buffer.lengthRemaining() < 4)
-            return std::nullopt;
-        for (unsigned index = 0; index < 4; ++index) {
-            if (!isASCIIDigit(buffer[index]))
-                return std::nullopt;
-        }
-        year = parseDecimalInt32(std::span { buffer.position(), 4 });
-        buffer.advanceBy(4);
-    }
-
-    if (buffer.atEnd())
-        return std::nullopt;
-
     bool splitByHyphen = false;
+
     if (*buffer == '-') {
-        splitByHyphen = true;
-        buffer.advance();
-        if (buffer.lengthRemaining() < 5)
-            return std::nullopt;
-    } else {
-        if (buffer.lengthRemaining() < 4)
-            return std::nullopt;
+        if (buffer.lengthRemaining() > 2
+            && buffer[1] == '-'
+            && format == TemporalDateFormat::MonthDay) {
+            buffer.advanceBy(2);
+        }
     }
-    // We ensured that buffer has enough length for month and day. We do not need to check length.
+
+    // Look ahead to distinguish month from year
+    if (canBeYear(buffer)) {
+        bool sixDigitsYear = false;
+        int yearFactor = 1;
+        if (*buffer == '+') {
+            buffer.advance();
+            sixDigitsYear = true;
+        } else if (*buffer == '-') {
+            yearFactor = -1;
+            buffer.advance();
+            sixDigitsYear = true;
+        } else if (!isASCIIDigit(*buffer))
+            return std::nullopt;
+
+        if (sixDigitsYear) {
+            if (buffer.lengthRemaining() < 6)
+                return std::nullopt;
+            for (unsigned index = 0; index < 6; ++index) {
+                if (!isASCIIDigit(buffer[index]))
+                    return std::nullopt;
+            }
+            year = parseDecimalInt32(std::span { buffer.position(), 6 }) * yearFactor;
+            if (!year && yearFactor < 0)
+                return std::nullopt;
+            buffer.advanceBy(6);
+        } else {
+            if (buffer.lengthRemaining() < 4)
+                return std::nullopt;
+            for (unsigned index = 0; index < 4; ++index) {
+                if (!isASCIIDigit(buffer[index]))
+                return std::nullopt;
+            }
+            year = parseDecimalInt32(std::span { buffer.position(), 4 });
+            buffer.advanceBy(4);
+        }
+
+        if (buffer.atEnd())
+            return std::nullopt;
+
+        if (*buffer == '-') {
+            splitByHyphen = true;
+            buffer.advance();
+            if (buffer.lengthRemaining() < 5 && format == TemporalDateFormat::Date)
+                return std::nullopt;
+        } else {
+            if (buffer.lengthRemaining() < 4 && format == TemporalDateFormat::Date)
+                return std::nullopt;
+        }
+    }
+
+    if (buffer.lengthRemaining() < 2)
+        return std::nullopt;
 
     unsigned month = 0;
     auto firstMonthCharacter = *buffer;
@@ -964,32 +1248,47 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     } else
         return std::nullopt;
 
-    if (splitByHyphen) {
-        if (*buffer == '-')
+    if (format == TemporalDateFormat::YearMonth && (buffer.atEnd() || canBeCalendar(buffer)))
+        return PlainDate(year, month, 1);
+
+    if (!buffer.atEnd() && *buffer == '-') {
+        if (splitByHyphen || format != TemporalDateFormat::Date)
             buffer.advance();
         else
             return std::nullopt;
-    }
-
-    unsigned day = 0;
-    auto firstDayCharacter = *buffer;
-    if (firstDayCharacter >= '0' && firstDayCharacter <= '3') {
-        buffer.advance();
-        auto secondDayCharacter = *buffer;
-        if (!isASCIIDigit(secondDayCharacter))
-            return std::nullopt;
-        day = (secondDayCharacter - '0') + 10 * (firstDayCharacter - '0');
-        if (!day || day > daysInMonth(year, month))
-            return std::nullopt;
-        buffer.advance();
-    } else
+    } else if (splitByHyphen)
         return std::nullopt;
 
-    return PlainDate(year, month, day);
+    unsigned day = 0;
+    if (buffer.lengthRemaining() >= 2) {
+        auto firstDayCharacter = *buffer;
+        if (firstDayCharacter >= '0' && firstDayCharacter <= '3') {
+            buffer.advance();
+            auto secondDayCharacter = *buffer;
+            if (!isASCIIDigit(secondDayCharacter))
+                return std::nullopt;
+            day = (secondDayCharacter - '0') + 10 * (firstDayCharacter - '0');
+            if (!day || day > daysInMonth(year, month))
+                return std::nullopt;
+            buffer.advance();
+        } else if (format != TemporalDateFormat::YearMonth)
+            return std::nullopt;
+    }
+
+    switch (format) {
+    case TemporalDateFormat::Date:
+        return PlainDate(year, month, day);
+    case TemporalDateFormat::YearMonth:
+        return PlainDate(year, month, 1);
+    case TemporalDateFormat::MonthDay:
+        return PlainDate(1972, month, day);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 template<typename CharacterType>
-static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringParsingBuffer<CharacterType>& buffer, TemporalDateFormat format)
 {
     // https://tc39.es/proposal-temporal/#prod-DateTime
     // DateTime :
@@ -997,7 +1296,7 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
     //
     // TimeSpecSeparator :
     //     DateTimeSeparator TimeSpec
-    auto plainDate = parseDate(buffer);
+    auto plainDate = parseDate(buffer, format);
     if (!plainDate)
         return std::nullopt;
     if (buffer.atEnd())
@@ -1019,6 +1318,58 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
 }
 
 template<typename CharacterType>
+static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseTemporalDateTimeString(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
+    // TemporalDateTimeString[Zoned] :
+    //     AnnotatedDateTime[?Zoned, ~TimeRequired]
+    //
+    //  AnnotatedDateTime[Zoned, TimeRequired] :
+    //      [~Zoned] DateTime[~Z, ?TimeRequired] TimeZoneAnnotationopt Annotationsopt
+    //      [+Zoned] DateTime[+Z, ?TimeRequired] TimeZoneAnnotation Annotationsopt
+    auto plainDate = parseDate(buffer, TemporalDateFormat::Date);
+    if (!plainDate)
+        return std::nullopt;
+    if (buffer.atEnd())
+        return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt, std::nullopt };
+
+    std::optional<PlainTime> plainTimeOptional = std::nullopt;
+    std::optional<TimeZoneRecord> timeZoneOptional = std::nullopt;
+
+    if (*buffer == ' ' || *buffer == 'T' || *buffer == 't') {
+        buffer.advance();
+        auto plainTimeAndTimeZone = parseTime(buffer);
+        if (!plainTimeAndTimeZone)
+            return std::nullopt;
+        auto [plainTime, timeZone] = WTFMove(plainTimeAndTimeZone.value());
+        if (buffer.atEnd())
+            return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTime), WTFMove(timeZone), std::nullopt };
+        plainTimeOptional = plainTime;
+        timeZoneOptional = timeZone;
+    }
+
+    if (!timeZoneOptional) {
+        if (canBeTimeZoneAnnotation(buffer, *buffer))
+            timeZoneOptional = parseTimeZone(buffer);
+    }
+
+    if (buffer.atEnd())
+        return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), std::nullopt };
+
+    std::optional<CalendarRecord> calendarOptional;
+    if (canBeCalendar(buffer)) {
+        auto calendar = parseCalendar(buffer);
+        if (!calendar)
+            return std::nullopt;
+        calendarOptional = WTFMove(calendar);
+    }
+
+    return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), WTFMove(calendarOptional) };
+
+}
+
+
+template<typename CharacterType>
 static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-CalendarTime
@@ -1033,7 +1384,8 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
     if (*buffer == 'T' || *buffer == 't')
         buffer.advance();
 
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Accept);
+    Vector<LChar> chars;
+    auto plainTime = parseTimeSpec(buffer, chars, Second60Mode::Accept);
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
@@ -1062,13 +1414,13 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
 }
 
 template<typename CharacterType>
-static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringParsingBuffer<CharacterType>& buffer, TemporalDateFormat format)
 {
     // https://tc39.es/proposal-temporal/#prod-DateTime
     // CalendarDateTime :
     //     DateTime CalendarName[opt]
     //
-    auto dateTime = parseDateTime(buffer);
+    auto dateTime = parseDateTime(buffer, format);
     if (!dateTime)
         return std::nullopt;
 
@@ -1095,9 +1447,23 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
 }
 
 template<typename CharacterType>
+static unsigned lengthRemainingBeforeAnnotation(StringParsingBuffer<CharacterType>& buffer)
+{
+    unsigned length = 0;
+    while (length < buffer.lengthRemaining()) {
+        if (buffer[length] == '[')
+            break;
+        length++;
+    }
+    return length;
+}
+
+template<typename CharacterType>
 static bool isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>& buffer)
 {
-    auto length = buffer.lengthRemaining();
+    // Time zone or calendar annotations don't disambiguate,
+    // so we consider the length of the buffer without annotations if any are present
+    auto length = lengthRemainingBeforeAnnotation(buffer);
     ASSERT(length > 1);
 
     // There is no ambiguity if we have a TimeDesignator.
@@ -1140,9 +1506,11 @@ static bool isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>& buffer)
 
     buffer.advanceBy(monthPartLength);
     if (buffer.hasCharactersRemaining()) {
-        unsigned day = (buffer[0] - '0') * 10 + (buffer[1] - '0');
-        if (!day || day > daysInMonth(month))
-            return false;
+        if (isASCIIDigit(buffer[0]) && isASCIIDigit(buffer[1])) {
+            auto day = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+            if (!day || day > daysInMonth(month))
+                return false;
+        }
     }
 
     return true;
@@ -1157,8 +1525,8 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional
         return result;
     });
 
-    // Without a calendar, we need to verify that the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
-    if (tuple && !std::get<2>(tuple.value())) {
+    // We need to verify that the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
+    if (tuple) {
         if (readCharactersForParsing(string, [](auto buffer) -> bool { return isAmbiguousCalendarTime(buffer); }))
             return std::nullopt;
     }
@@ -1166,20 +1534,30 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional
     return tuple;
 }
 
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView string)
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView string, TemporalDateFormat format)
 {
-    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> {
-        auto result = parseDateTime(buffer);
+    return readCharactersForParsing(string, [format](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> {
+        auto result = parseDateTime(buffer, format);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
     });
 }
 
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView string)
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseTemporalDateTimeString(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
-        auto result = parseCalendarDateTime(buffer);
+        auto result = parseTemporalDateTimeString(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView string, TemporalDateFormat format)
+{
+    return readCharactersForParsing(string, [format](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+        auto result = parseCalendarDateTime(buffer, format);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -1198,7 +1576,7 @@ std::optional<ExactTime> parseInstant(StringView string)
     //     TimeZoneUTCOffset TimeZoneBracketedAnnotation_opt
 
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<ExactTime> {
-        auto datetime = parseCalendarDateTime(buffer);
+        auto datetime = parseCalendarDateTime(buffer, TemporalDateFormat::Date);
         if (!datetime)
             return std::nullopt;
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
@@ -1209,7 +1587,13 @@ std::optional<ExactTime> parseInstant(StringView string)
 
         PlainTime plainTime = plainTimeOptional.value_or(PlainTime());
 
-        int64_t offset = timeZoneOptional->m_z ? 0 : *timeZoneOptional->m_offset;
+        int64_t offset = 0;
+        if (!timeZoneOptional->m_z) {
+            if (timeZoneOptional->m_offset)
+                offset = timeZoneOptional->m_offset->m_offset;
+            else
+                return std::nullopt;
+        }
         return { ExactTime::fromISOPartsAndOffset(plainDate.year(), plainDate.month(), plainDate.day(), plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond(), offset) };
     });
 }
@@ -1282,22 +1666,30 @@ uint8_t daysInMonth(uint8_t month)
     return daysInMonths[isLeapYear][month - 1];
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
-String formatTimeZoneOffsetString(int64_t offset)
+String formatTimeZone(TimeZone tz)
 {
-    bool negative = false;
-    if (offset < 0) {
-        negative = true;
-        offset = -offset; // This is OK since offset range is much narrower than [INT64_MIN, INT64_MAX] range.
-    }
-    int64_t nanoseconds = offset % nsPerSecond;
-    int64_t seconds = (offset / nsPerSecond) % 60;
-    int64_t minutes = (offset / nsPerMinute) % 60;
-    int64_t hours = offset / nsPerHour;
+    auto displayName = tz.getDisplayName();
+    if (displayName)
+        return displayName.value();
 
-    if (nanoseconds) {
-        // Since nsPerSecond is 1000000000, stringified nanoseconds takes at most 9 characters (999999999).
-        auto fraction = numberToStringUnsigned<Vector<LChar, 9>>(nanoseconds);
+    if (tz.isUTC())
+        return "UTC"_s;
+    if (tz.isOffset())
+        return formatUTCOffsetNanoseconds(tz.offsetNanoseconds());
+    auto timeZoneName = getTimeZoneNameFromId(tz.asID());
+    ASSERT(timeZoneName);
+    return timeZoneName.value();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatfractionalseconds
+static String formatFractionalSeconds(int64_t subSecondNanoseconds, TemporalFractionalSecondDigits precision)
+{
+    WTF::String fractionString;
+
+    if (precision == TemporalFractionalSecondDigits::Auto) {
+        if (!subSecondNanoseconds)
+            return ""_s;
+        WTF::Vector<LChar, 9> fraction = numberToStringUnsigned<Vector<LChar, 9>>(subSecondNanoseconds);
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1311,11 +1703,47 @@ String formatTimeZoneOffsetString(int64_t offset)
             fraction.shrink(validLength.value());
         else
             fraction.clear();
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', paddingLength, emptyString()), fraction);
+        fractionString = makeString(pad('0', paddingLength, emptyString()), fraction);
+    } else {
+        if (precision == TemporalFractionalSecondDigits::Zero)
+            return ""_s;
+        fractionString = makeString(pad('0', 9, subSecondNanoseconds));
+        fractionString = fractionString.substring(0, (unsigned) precision);
     }
-    if (seconds)
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes));
+    return makeString("."_s, fractionString);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formattimestring
+String formatTimeString(int64_t hour, int64_t minute, int64_t second, int64_t subSecondNanoseconds,
+    std::optional<TemporalFractionalSecondDigits> precision, std::optional<bool> isSeparated)
+{
+    auto separator = isSeparated && !(isSeparated.value()) ? ""_s : ":"_s;
+    auto hh = pad('0', 2, hour);
+    auto mm = pad('0', 2, minute);
+    if (!precision)
+        return makeString(hh, separator, mm);
+    auto ss = pad('0', 2, second);
+    auto subSecondsPart = formatFractionalSeconds(subSecondNanoseconds, precision.value());
+    return makeString(hh, separator, mm, separator, ss, subSecondsPart);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatutcoffsetnanoseconds
+String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
+{
+    auto sign = offsetNanoseconds >= 0 ? '+' : '-';
+    int64_t absoluteNanoseconds = std::abs(offsetNanoseconds);
+    Int128 divisor = 3600 * 1000000000ll;
+    auto hour = std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor));
+    divisor = 60 * 1000000000ll;
+    auto minute = std::fmod(std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor)), 60);
+    divisor = 1000000000ll;
+    auto second = std::fmod(std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor)), 60);
+    auto subSecondNanoseconds = absoluteNanoseconds % (static_cast<int64_t>(divisor));
+    std::optional<TemporalFractionalSecondDigits> precision = std::nullopt;
+    if (!(!second && !subSecondNanoseconds))
+        precision = TemporalFractionalSecondDigits::Auto;
+    auto timeString = formatTimeString(hour, minute, second, subSecondNanoseconds, precision, std::nullopt);
+    return makeString(sign, timeString);
 }
 
 String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned> precision)
@@ -1358,10 +1786,8 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);
 }
 
-String temporalDateToString(PlainDate plainDate)
+static String temporalDateToString(double year, double month)
 {
-    auto year = plainDate.year();
-
     String prefix;
     auto yearDigits = 4;
     if (year < 0 || year > 9999) {
@@ -1370,12 +1796,44 @@ String temporalDateToString(PlainDate plainDate)
         year = std::abs(year);
     }
 
-    return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));
+    return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, month));
+}
+
+static String temporalDateToString(double year, double month, double day)
+{
+    auto first = temporalDateToString(year, month);
+    return makeString(first, '-', pad('0', 2, day));
 }
 
 String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::tuple<Precision, unsigned> precision)
 {
     return makeString(temporalDateToString(plainDate), 'T', temporalTimeToString(plainTime, precision));
+}
+
+String temporalDateToString(PlainDate plainDate)
+{
+    return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
+}
+
+String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName)
+{
+    if (calendarName == "always"_s) {
+        // TODO: print the correct calendar ID when calendars are fully implemented
+        auto first = temporalDateToString(plainYearMonth.isoPlainDate());
+        return makeString(first, "[u-ca=iso8601]"_s);
+    }
+    return temporalDateToString(plainYearMonth.year(), plainYearMonth.month());
+}
+
+String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName)
+{
+    if (calendarName == "always"_s) {
+        // TODO: print the correct calendar ID when calendars are fully implemented
+        auto first = temporalDateToString(plainMonthDay.isoPlainDate());
+        return makeString(first, "[u-ca=iso8601]"_s);
+    }
+
+    return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
 }
 
 String monthCode(uint32_t month)
@@ -1386,7 +1844,7 @@ String monthCode(uint32_t month)
 // returns 0 for any invalid string
 uint8_t monthFromCode(StringView monthCode)
 {
-    if (monthCode.length() != 3 || !monthCode.startsWith('M') || !isASCIIDigit(monthCode[2]))
+    if (!validMonthCode(monthCode))
         return 0;
 
     uint8_t result = monthCode[2] - '0';
@@ -1396,6 +1854,15 @@ uint8_t monthFromCode(StringView monthCode)
         return 0;
 
     return result;
+}
+
+bool validMonthCode(StringView monthCode)
+{
+    // Allow leap month marker (e.g. "M05L"), even though it doesn't apply to ISO8601 calendar
+    if (monthCode.length() < 3 || monthCode.length() > 4 || !monthCode.startsWith('M') || !isASCIIDigit(monthCode[2]))
+        return false;
+
+    return true;
 }
 
 ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond, int64_t offset)
@@ -1571,33 +2038,121 @@ std::optional<ExactTime> ExactTime::add(Duration duration) const
     return result;
 }
 
-Int128 ExactTime::round(Int128 quantity, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
+static bool validateTemporalRoundingIncrement(unsigned increment, Int128 dividend, bool inclusive)
 {
-    Int128 incrementNs { increment };
-    switch (unit) {
-    case TemporalUnit::Hour: incrementNs *= ExactTime::nsPerHour; break;
-    case TemporalUnit::Minute: incrementNs *= ExactTime::nsPerMinute; break;
-    case TemporalUnit::Second: incrementNs *= ExactTime::nsPerSecond; break;
-    case TemporalUnit::Millisecond: incrementNs *= ExactTime::nsPerMillisecond; break;
-    case TemporalUnit::Microsecond: incrementNs *= ExactTime::nsPerMicrosecond; break;
-    case TemporalUnit::Nanosecond: break;
-    default:
-        ASSERT_NOT_REACHED();
+    Int128 maximum = 0;
+    if (inclusive)
+        maximum = dividend;
+    else {
+        ASSERT(dividend > 1);
+        maximum = dividend - 1;
     }
-    return roundNumberToIncrement(quantity, incrementNs, roundingMode);
+    if (increment > maximum)
+        return false;
+    if (dividend % increment)
+        return false;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
+// (Steps 10-17 only)
+std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    Int128 maximum = 0;
+    switch (unit) {
+    case TemporalUnit::Hour: maximum = (Int128) WTF::hoursPerDay; break;
+    case TemporalUnit::Minute: maximum = (Int128) (minutesPerHour * WTF::hoursPerDay); break;
+    case TemporalUnit::Second: maximum = (Int128) (secondsPerMinute * minutesPerHour * WTF::hoursPerDay); break;
+    case TemporalUnit::Millisecond: maximum = (Int128) msPerDay; break;
+    case TemporalUnit::Microsecond: maximum = (Int128) msPerDay * 1000; break;
+    case TemporalUnit::Nanosecond: maximum = nsPerDay; break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    if (!validateTemporalRoundingIncrement(increment, maximum, true))
+        return std::nullopt;
+    return TemporalInstant::roundTemporalInstant(quantity, increment, unit, roundingMode);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
+std::optional<Int128> roundTimeDurationToIncrement(Int128 d, Int128 increment, RoundingMode roundingMode)
+{
+    Int128 rounded = roundNumberToIncrementInt128(d, increment, roundingMode);
+    if (absInt128(rounded) > InternalDuration::maxTimeDuration)
+        return std::nullopt;
+    return rounded;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimeduration
+std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    auto divisor = lengthInNanoseconds(unit);
+    return roundTimeDurationToIncrement(timeDuration, divisor * increment, roundingMode);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-datedurationsign
+int32_t dateDurationSign(const Duration& d)
+{
+    if (d.years() > 0)
+        return 1;
+    if (d.years() < 0)
+        return -1;
+    if (d.months() > 0)
+        return 1;
+    if (d.months() < 0)
+        return -1;
+    if (d.weeks() > 0)
+        return 1;
+    if (d.weeks() < 0)
+        return -1;
+    if (d.days() > 0)
+        return 1;
+    if (d.days() < 0)
+        return -1;
+    return 0;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-combinedateandtimeduration
+InternalDuration InternalDuration::combineDateAndTimeDuration(JSGlobalObject* globalObject, Duration dateDuration, Int128 timeDuration)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    int32_t dateSign = dateDurationSign(dateDuration);
+    int32_t timeSign = timeDuration < 0 ? -1 : timeDuration > 0 ? 1 : 0;
+    if (dateSign && timeSign && dateSign != timeSign) {
+        throwRangeError(globalObject, scope, "Date and time have different signs"_s);
+        return { };
+    }
+    return InternalDuration { WTFMove(dateDuration), timeDuration };
 }
 
 // DifferenceInstant ( ns1, ns2, roundingIncrement, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-differenceinstant
-Int128 ExactTime::difference(ExactTime other, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
+InternalDuration ExactTime::difference(JSGlobalObject* globalObject, ExactTime other, unsigned roundingIncrement, TemporalUnit smallestUnit, RoundingMode roundingMode) const
 {
-    Int128 diff = other.m_epochNanoseconds - m_epochNanoseconds;
-    return round(diff, increment, unit, roundingMode);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Int128 timeDuration = other.m_epochNanoseconds - m_epochNanoseconds;
+    std::optional<Int128> maybeTimeDuration = roundTimeDuration(timeDuration, roundingIncrement, smallestUnit, roundingMode);
+    if (!maybeTimeDuration) {
+        throwRangeError(globalObject, scope, "Rounded duration exceeds the maximum time duration"_s);
+        return { };
+    }
+    timeDuration = maybeTimeDuration.value();
+    RELEASE_AND_RETURN(scope,
+        InternalDuration::combineDateAndTimeDuration(globalObject,
+            ISO8601::Duration(), timeDuration));
 }
 
-ExactTime ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
+std::optional<ExactTime> ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
 {
-    return ExactTime { round(m_epochNanoseconds, increment, unit, roundingMode) };
+    auto maybeRounded = round(m_epochNanoseconds, increment, unit, roundingMode);
+    if (!maybeRounded)
+        return std::nullopt;
+    return ExactTime { maybeRounded.value() };
 }
 
 ExactTime ExactTime::now()
@@ -1616,10 +2171,122 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
     return true;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isoyearmonthwithinlimits
+bool isYearMonthWithinLimits(double year, double month)
+{
+    if (!isYearWithinLimits(year))
+        return false;
+    if (year == minYear && month < 4)
+        return false;
+    if (year == maxYear && month > 9)
+        return false;
+    return true;
+}
+
 // More effective for our purposes than isInBounds<int32_t>.
 bool isYearWithinLimits(double year)
 {
     return year >= minYear && year <= maxYear;
+}
+
+// https://tc39.es/proposal-temporal/#sec-checkisodaysrange
+void checkISODaysRange(JSGlobalObject* globalObject, ISO8601::PlainDate isoDate)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double val = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    if (std::abs(val) > 100000000)
+        throwRangeError(globalObject, scope, "date/time value is outside the supported range"_s);
+}
+
+// https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
+Int128 getNamedTimeZoneOffsetNanoseconds(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier, ExactTime epochNanoseconds)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (timeZoneIdentifier == utcTimeZoneID())
+        return 0;
+    // TODO: cache this
+    std::optional<String> timeZoneString = getTimeZoneNameFromId(timeZoneIdentifier);
+    if (!timeZoneString) {
+        throwRangeError(globalObject, scope, "bad time zone ID in getNamedTimeZoneOffsetNanoseconds"_s);
+        return 0;
+    }
+    // copied from JSDateMath.cpp
+    UErrorCode status = U_ZERO_ERROR;
+    auto timeZoneName = timeZoneString->charactersWithNullTermination();
+    if (!timeZoneName) {
+        throwRangeError(globalObject, scope, "internal error getting time zone data"_s);
+        return 0;
+    }
+    UCalendar* calendar = ucal_open(timeZoneName->data(), -1, "", UCAL_DEFAULT, &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    ucal_setMillis(calendar, epochNanoseconds.epochMilliseconds(), &status);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+
+    int32_t rawOffset = 0;
+    int32_t dstOffset = 0;
+
+    rawOffset = ucal_get(calendar, UCAL_ZONE_OFFSET, &status);
+    if (U_FAILURE(status)) {
+        throwRangeError(globalObject, scope, "error looking up time zone data"_s);
+        return 0;
+    }
+    dstOffset = ucal_get(calendar, UCAL_DST_OFFSET, &status);
+    if (U_FAILURE(status)) {
+        throwRangeError(globalObject, scope, "error looking up time zone data"_s);
+        return 0;
+    }
+
+    ucal_close(calendar);
+
+    return (static_cast<Int128>(rawOffset + dstOffset) * 1'000'000);
+}
+
+// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
+Int128 getUTCEpochNanoseconds(PlainDateTime isoDateTime)
+{
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
+    auto date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    auto time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
+    auto ms = makeDate(date, time);
+    ASSERT(isInteger(ms));
+    return (((Int128) ms) * 1000000
+        + ((Int128) isoTime.microsecond()) * 1000
+        + ((Int128) isoTime.nanosecond()));
+}
+
+int32_t compareTimeRecord(const PlainTime& time1, const PlainTime& time2)
+{
+    if (time1.hour() > time2.hour())
+        return 1;
+    if (time1.hour() < time2.hour())
+        return -1;
+    if (time1.minute() > time2.minute())
+        return 1;
+    if (time1.minute() < time2.minute())
+        return -1;
+    if (time1.second() > time2.second())
+        return 1;
+    if (time1.second() < time2.second())
+        return -1;
+    if (time1.millisecond() > time2.millisecond())
+        return 1;
+    if (time1.millisecond() < time2.millisecond())
+        return -1;
+    if (time1.microsecond() > time2.microsecond())
+        return 1;
+    if (time1.microsecond() < time2.microsecond())
+        return -1;
+    if (time1.nanosecond() > time2.nanosecond())
+        return 1;
+    if (time1.nanosecond() < time2.nanosecond())
+        return -1;
+    return 0;
 }
 
 } // namespace ISO8601

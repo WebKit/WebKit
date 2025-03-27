@@ -29,8 +29,23 @@
 #include "ISO8601.h"
 #include "IntlObject.h"
 #include "JSObject.h"
+#include "TemporalDuration.h"
 
 namespace JSC {
+
+// https://tc39.es/proposal-temporal/#sec-year-week-record-specification-type
+struct YearWeekRecord {
+    std::optional<int32_t> week;
+    std::optional<int32_t> year;
+};
+
+// https://tc39.es/proposal-temporal/#sec-temporal-calendar-date-records
+// (Modified to only include fields that are currently used)
+struct CalendarDateRecord {
+    int32_t dayOfWeek;
+    int32_t dayOfYear;
+    int32_t daysInYear;
+};
 
 class TemporalCalendar final : public JSNonFinalObject {
 public:
@@ -49,11 +64,33 @@ public:
 
     static JSObject* toTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
     static JSObject* getTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
-    static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, JSObject*, TemporalOverflow);
-    static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, double year, double month, double day, TemporalOverflow);
+    static CalendarID toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
+    static CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject*, JSValue);
+    static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, JSObject*, TemporalDateFormat, std::variant<JSObject*, TemporalOverflow>, TemporalOverflow&);
+    static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, TemporalDateFormat, double year, double month, double day, TemporalOverflow);
+    static ISO8601::PlainDate yearMonthFromFields(JSGlobalObject*, double year, double month, TemporalOverflow);
+    static ISO8601::PlainDate monthDayFromFields(JSGlobalObject*, std::optional<double>, double, double, TemporalOverflow);
+    static std::tuple<std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
+        std::optional<double>, std::optional<double>, std::optional<double>, std::optional<double>,
+        std::optional<double>, std::optional<double>, std::optional<String>, std::optional<ISO8601::TimeZone>>
+        prepareCalendarFields(JSGlobalObject*, CalendarID, JSObject*, Vector<FieldName>,
+            std::optional<Vector<FieldName>>);
+    static ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject*,
+        CalendarID, std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
+        double, double, double, double, double, double, TemporalOverflow);
+    static ISO8601::Duration differenceTemporalPlainYearMonth(JSGlobalObject*,
+        bool, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&,
+        unsigned, TemporalUnit, TemporalUnit, RoundingMode);
+    static ISO8601::PlainDate addDurationToDate(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
     static ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
-    static ISO8601::Duration isoDateDifference(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
+    static ISO8601::PlainYearMonth balanceISOYearMonth(double, double);
+    static ISO8601::PlainDate balanceISODate(double, double, double);
+    static ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static int32_t isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
+    static int32_t isoDateTimeCompare(const ISO8601::PlainDateTime&, const ISO8601::PlainDateTime&);
+    static String formatCalendarAnnotation(TemporalShowCalendar);
+    static ISO8601::PlainDateTime getISOPartsFromEpoch(ISO8601::ExactTime);
+    static YearWeekRecord calendarDateWeekOfYear(JSGlobalObject*, const ISO8601::PlainDate&);
 
     CalendarID identifier() const { return m_identifier; }
     bool isISO8601() const { return m_identifier == iso8601CalendarID(); }
@@ -63,6 +100,22 @@ public:
     static JSObject* from(JSGlobalObject*, JSValue);
 
     bool equals(JSGlobalObject*, TemporalCalendar*);
+
+
+    static inline int epochTimeToEpochYear(double t)
+    {
+        return msToYear(t);
+    }
+
+    static inline int32_t epochTimeToMonthInYear(double t)
+    {
+        return std::get<1>(WTF::yearMonthDayFromDays(msToDays(t)));
+    }
+
+    static inline int32_t epochTimeToDate(double t)
+    {
+        return std::get<2>(WTF::yearMonthDayFromDays(msToDays(t)));
+    }
 
 private:
     TemporalCalendar(VM&, Structure*, CalendarID);

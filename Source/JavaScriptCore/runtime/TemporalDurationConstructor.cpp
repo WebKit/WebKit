@@ -121,7 +121,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationConstructorFuncFrom, (JSGlobalObject* g
 
 JSC_DEFINE_HOST_FUNCTION(temporalDurationConstructorFuncCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(TemporalDuration::compare(globalObject, callFrame->argument(0), callFrame->argument(1)));
+    return JSValue::encode(TemporalDuration::compare(globalObject, callFrame->argument(0), callFrame->argument(1),
+        callFrame->argument(2)));
 }
 
 } // namespace JSC

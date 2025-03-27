@@ -52,9 +52,12 @@ public:
     static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject*, JSObject*, bool skipRelevantPropertyCheck = false);
     static std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> toPartialTime(JSGlobalObject*, JSObject*, bool skipRelevantPropertyCheck = false);
     static ISO8601::PlainTime regulateTime(JSGlobalObject*, ISO8601::Duration&&, TemporalOverflow);
-    static ISO8601::Duration addTime(const ISO8601::PlainTime&, const ISO8601::Duration&);
+    static ISO8601::Duration addTime(const ISO8601::PlainTime&, Int128);
+    static ISO8601::PlainTime addDurationToTime(JSGlobalObject*, bool, TemporalPlainTime*,
+        ISO8601::Duration);
+    static ISO8601::Duration balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond);
 
-    static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
+    static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
     static int32_t compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
@@ -76,6 +79,8 @@ public:
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
 
+    static Int128 differenceTime(ISO8601::PlainTime, ISO8601::PlainTime);
+
     DECLARE_VISIT_CHILDREN;
 
 private:
@@ -85,6 +90,8 @@ private:
     template<typename CharacterType>
     static std::optional<ISO8601::PlainTime> parse(StringParsingBuffer<CharacterType>&);
     static ISO8601::PlainTime fromObject(JSGlobalObject*, JSObject*);
+
+    ISO8601::Duration differenceTemporalPlainTime(bool, JSGlobalObject*, TemporalPlainTime*, JSValue) const;
 
     ISO8601::PlainTime m_plainTime;
     LazyProperty<TemporalPlainTime, TemporalCalendar> m_calendar;

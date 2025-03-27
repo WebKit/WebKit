@@ -18,28 +18,9 @@ skip:
     - source-phase-imports
     - import-defer
   paths:
-    - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
-    - test/built-ins/Temporal/Now/plainDateISO
-    - test/built-ins/Temporal/Now/plainDateTimeISO
-    - test/built-ins/Temporal/Now/plainTimeISO
-    - test/built-ins/Temporal/Now/zonedDateTimeISO
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth
-    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
-    - test/built-ins/Temporal/PlainDateTime/prototype/since
-    - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
-    - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/built-ins/Temporal/PlainMonthDay
-    - test/built-ins/Temporal/PlainYearMonth
-    - test/built-ins/Temporal/ZonedDateTime
-    - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
-    - test/intl402/Temporal/Now
-    - test/intl402/Temporal/PlainDate
     - test/intl402/Temporal/PlainDateTime
-    - test/intl402/Temporal/PlainMonthDay
-    - test/intl402/Temporal/PlainTime
     - test/intl402/Temporal/PlainYearMonth
     - test/intl402/Temporal/ZonedDateTime
     - test/staging/Intl402
@@ -76,139 +57,13 @@ skip:
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-upper-p.js
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-lower-p.js
 
-    # Depends on Temporal.Duration relativeTo option
-    - test/built-ins/Temporal/Duration/compare/basic.js
-    - test/built-ins/Temporal/Duration/compare/calendar-possibly-required.js
-    - test/built-ins/Temporal/Duration/compare/calendar-temporal-object.js
-    - test/built-ins/Temporal/Duration/compare/options-wrong-type.js
-    - test/built-ins/Temporal/Duration/compare/order-of-operations.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-hour.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-month.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-invalid.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-datetime.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-leap-second.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-year-zero.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-wrong-type.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-string-plaindatetime.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-string-zoneddatetime.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-sub-minute-offset.js
-    - test/built-ins/Temporal/Duration/compare/relativeto-year.js
-    - test/built-ins/Temporal/Duration/prototype/add/balance-negative-result.js
-    - test/built-ins/Temporal/Duration/prototype/add/balance-negative-time-units.js
-    - test/built-ins/Temporal/Duration/prototype/add/infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-safe-integer.js
-    - test/built-ins/Temporal/Duration/prototype/add/negative-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/add/order-of-operations.js
-    - test/built-ins/Temporal/Duration/prototype/round/calendar-possibly-required.js
-    - test/built-ins/Temporal/Duration/prototype/round/calendar-temporal-object.js
-    - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
-    - test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js
-    - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js
-    - test/built-ins/Temporal/Duration/prototype/round/order-of-operations.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-leap-second.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-number.js
+     # Depends on Calendar support
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-number.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-invalid-offset-string.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-no-time-units.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string-datetime.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string-leap-second.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-string-datetime.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-string-plaindatetime.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-string-zoneddatetime-wrong-offset.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-string-zoneddatetime.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-ceil.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-expand.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-floor.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfCeil.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfEven.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfExpand.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfFloor.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfTrunc.js
-    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js
-    - test/built-ins/Temporal/Duration/prototype/round/total-duration-nanoseconds-too-large-with-zoned-datetime.js
-    - test/built-ins/Temporal/Duration/prototype/round/year-zero.js
-    - test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-time-duration.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/balance-negative-result.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/balance-negative-time-units.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-safe-integer.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/negative-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/order-of-operations.js
-    - test/built-ins/Temporal/Duration/prototype/total/balances-days-up-to-both-years-and-months.js
-    - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
-    - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
-    - test/built-ins/Temporal/Duration/prototype/total/does-not-accept-non-string-primitives-for-relativeTo.js
-    - test/built-ins/Temporal/Duration/prototype/total/duration-out-of-range-added-to-relativeto.js
-    - test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-leap-second.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeTo-must-have-required-properties.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-number.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-number.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-no-time-units.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string-datetime.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string-leap-second.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-datetime.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-plaindatetime-invalid.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-plaindatetime.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-zoneddatetime.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/total/rounds-calendar-units-in-durations-without-calendar-units.js
-    - test/built-ins/Temporal/Duration/prototype/total/rounds-durations-with-calendar-units.js
-    - test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-5.js
-    - test/built-ins/Temporal/Duration/prototype/total/throws-on-wrong-offset-for-zoneddatetime-relativeto.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/rounding-relative.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingincrement.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-ceil.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-expand.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-floor.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfCeil.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfEven.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfExpand.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfFloor.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfTrunc.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-trunc.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-undefined.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-wrong-type.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/smallestunit-higher-units.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/smallestunit-wrong-type.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/rounding-relative.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingincrement.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-ceil.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-expand.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-floor.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfCeil.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfEven.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfExpand.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfFloor.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfTrunc.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-trunc.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-undefined.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-wrong-type.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/smallestunit-higher-units.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/smallestunit-wrong-type.js
-    - test/built-ins/Temporal/PlainDateTime/datetime-math.js
-    - test/intl402/Temporal/Duration/compare/relativeto-hour.js
-    - test/intl402/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
-    - test/intl402/Temporal/Duration/prototype/round/relativeto-string-datetime.js
-    - test/intl402/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
-    - test/intl402/Temporal/Duration/prototype/total/relativeto-string-datetime.js
-
-    # Depends on Calendar support
     - test/built-ins/Temporal/PlainDate/basic.js
+    - test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js
     - test/built-ins/Temporal/PlainDate/calendar-number.js
     - test/built-ins/Temporal/PlainDate/calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-leap-second.js
@@ -285,8 +140,11 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-number.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-string-shorthand.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-always.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-critical.js
@@ -296,37 +154,180 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-temporal-object-throws.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-invalid.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-auto.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-critical.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-never.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/order-of-operations.js
+    - test/built-ins/Temporal/PlainMonthDay/refisoyear-undefined.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/from/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js
-
-    # Depends on PlainMonthDay, PlainYearMonth
-    - test/built-ins/Temporal/Duration/prototype/round/largestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js
-    - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
-    - test/built-ins/Temporal/Instant/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDate/prototype/with/plaindatelike-invalid.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/with/plaintimelike-invalid.js
-    - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-datetime.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-always.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-invalid.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-string.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-undefined.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-critical-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/limits.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-auto.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-critical.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-never.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/order-of-operations.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/refisoday-undefined.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-case-insensitive.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-iso-string.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-number.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-wrong-type.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/timezone-iso-string.js
+    - test/intl402/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
+    - test/intl402/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/compare/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/from/calendar-not-supporting-eras.js
+    - test/intl402/Temporal/PlainDate/from/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/from/canonicalize-era-codes.js
+    - test/intl402/Temporal/PlainDate/from/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/from/one-of-era-erayear-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/argument-object-valid.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/argument-string.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/equals/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/era/branding.js
+    - test/intl402/Temporal/PlainDate/prototype/era/prop-desc.js
+    - test/intl402/Temporal/PlainDate/prototype/eraYear/branding.js
+    - test/intl402/Temporal/PlainDate/prototype/eraYear/prop-desc.js
+    - test/intl402/Temporal/PlainDate/prototype/since/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/since/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/since/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/PlainDate/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/PlainDate/prototype/until/calendar-mismatch.js
+    - test/intl402/Temporal/PlainDate/prototype/until/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/until/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainDate/prototype/until/until-across-lunisolar-leap-months.js
+    - test/intl402/Temporal/PlainDate/prototype/weekOfYear/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/PlainDate/prototype/weekOfYear/non-iso-week-of-year.js
+    - test/intl402/Temporal/PlainDate/prototype/with/cross-era-boundary.js
+    - test/intl402/Temporal/PlainDate/prototype/with/gregorian-mutually-exclusive-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/with/japanese-mutually-exclusive-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/with/non-iso-calendar-fields.js
+    - test/intl402/Temporal/PlainDate/prototype/withCalendar/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainDate/prototype/yearOfWeek/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/PlainDate/prototype/yearOfWeek/non-iso-week-of-year.js
+    - test/intl402/Temporal/PlainMonthDay/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/calendars.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/canonicalize-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/calendar-not-supporting-eras.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-missing-properties.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-object.js
+    - test/intl402/Temporal/PlainMonthDay/from/fields-underspecified.js
+    - test/intl402/Temporal/PlainMonthDay/from/reference-date-noniso-calendar.js
+    - test/intl402/Temporal/PlainMonthDay/from/reference-year-1972.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/equals/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toJSON/calendarname.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toJSON/year-format.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/dateStyle.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toPlainDate/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-never.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/toString/year-format.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/with/fields-missing-properties.js
+    - test/intl402/Temporal/PlainMonthDay/prototype/with/non-iso-calendar-fields.js
+    - test/intl402/Temporal/ZonedDateTime/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/compare/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/ZonedDateTime/construct-non-utc-non-iso.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/era/branding.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/era/prop-desc.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/eraYear/branding.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/eraYear/prop-desc.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/calendar-mismatch.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/since/infinity-throws-rangeerror.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/calendar-mismatch.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/dateStyle.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toPlainDate/preserves-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-always.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-auto.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-critical.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-undefined.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/calendarname-wrong-type.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/toString/options-undefined.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/weekOfYear/gregory-iso-weekofyear.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/weekOfYear/non-iso-week-of-year.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/basic.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/calendar-case-insensitive.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/withCalendar/canonicalize-calendar.js
+    - test/intl402/Temporal/ZonedDateTime/prototype/yearOfWeek/non-iso-week-of-year.js
 
     # Depends on annotations in datetime strings
     - test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js
@@ -359,15 +360,22 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-critical-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-date-with-utc-offset.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-unknown-annotation.js
@@ -383,41 +391,23 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-unknown-annotation.js
-
-    # Depends on Temporal.ZonedDateTime
-    - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-slots.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-with-fractional-days.js
-    - test/built-ins/Temporal/Instant/compare/argument-zoneddatetime.js
-    - test/built-ins/Temporal/Instant/from/argument-zoneddatetime.js
-    - test/built-ins/Temporal/Instant/prototype/equals/argument-zoneddatetime.js
-    - test/built-ins/Temporal/Instant/prototype/since/argument-zoneddatetime.js
-    - test/built-ins/Temporal/Instant/prototype/until/argument-zoneddatetime.js
-    - test/built-ins/Temporal/PlainDate/compare/argument-zoneddatetime-slots.js
-    - test/built-ins/Temporal/PlainDate/compare/argument-zoneddatetime.js
-    - test/built-ins/Temporal/PlainDate/from/argument-zoneddatetime-slots.js
-    - test/built-ins/Temporal/PlainDate/from/argument-zoneddatetime.js
-    - test/built-ins/Temporal/PlainDate/from/overflow-invalid-string.js
-    - test/built-ins/Temporal/PlainDate/prototype/equals/argument-zoneddatetime-slots.js
-    - test/built-ins/Temporal/PlainDate/prototype/since/argument-zoneddatetime-slots.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainDate/prototype/until/argument-zoneddatetime-slots.js
-    - test/built-ins/Temporal/PlainDateTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainDateTime/from/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainDateTime/from/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-negative-epochnanoseconds.js
-    - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-time-zone-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js

@@ -26,9 +26,11 @@
 #include "config.h"
 #include "TemporalPlainTimePrototype.h"
 
+#include "IntlDateTimeFormat.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
+#include "TemporalObjectInlines.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
@@ -124,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncAdd, (JSGlobalObject* glo
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto result = TemporalPlainTime::toPlainTime(globalObject, TemporalPlainTime::addTime(plainTime->plainTime(), duration));
+    auto result = TemporalPlainTime::addDurationToTime(globalObject, true, plainTime, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(result)));
@@ -143,7 +145,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSubtract, (JSGlobalObject
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto result = TemporalPlainTime::toPlainTime(globalObject, TemporalPlainTime::addTime(plainTime->plainTime(), -duration));
+    auto result = TemporalPlainTime::addDurationToTime(globalObject, false, plainTime, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(result)));
@@ -300,7 +302,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToLocaleString, (JSGlobal
     if (!plainTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toLocaleString called on value that's not a PlainTime"_s);
 
-    return JSValue::encode(jsString(vm, plainTime->toString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(callIntlDateTimeFormat(globalObject, plainTime,
+        callFrame->argument(0), callFrame->argument(1))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.valueof
