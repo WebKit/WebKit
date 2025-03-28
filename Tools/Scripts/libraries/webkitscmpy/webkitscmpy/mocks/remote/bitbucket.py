@@ -23,7 +23,6 @@
 import os
 import json
 import time
-import sys
 
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote

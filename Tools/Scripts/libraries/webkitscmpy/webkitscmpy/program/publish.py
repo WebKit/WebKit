@@ -23,7 +23,7 @@
 import collections
 import getpass
 import os
-import re
+
 import sys
 
 from .command import Command
