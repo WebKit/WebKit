@@ -192,7 +192,8 @@ void NetscapePlugInStreamLoader::notifyDone()
     if (!m_isInitialized)
         return;
 
-    protectedDocumentLoader()->removePlugInStreamLoader(*this);
+    if (RefPtr documentLoader = this->documentLoader())
+        documentLoader->removePlugInStreamLoader(*this);
 }
 
 
