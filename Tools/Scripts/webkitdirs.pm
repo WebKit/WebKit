@@ -534,6 +534,8 @@ sub determineNativeArchitecture($)
         $output = "arm64";
     }
 
+    $output = "x86_64" if $output =~ /amd64/i;
+    $output = "arm64" if $output =~ /aarch64/i;
     $output = "arm" if $output =~ m/^armv[78]l$/;
     $nativeArchitectureMap{@{$remotes}} = $output;
 }
@@ -579,6 +581,7 @@ sub determineArchitecture
 
     $architecture = 'x86_64' if $architecture =~ /amd64/i;
     $architecture = 'arm64' if $architecture =~ /aarch64/i;
+    $architecture = "arm" if $architecture =~ m/^armv[78]l$/;
 }
 
 sub xcodeBuildRequestsInRecencyOrder

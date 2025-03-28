@@ -583,7 +583,7 @@ if (defined $archs) {
 
 # For running tests, arm64e should map to arm64
 $archs = "arm64" if $archs eq "arm64e";
-if ($archs ne nativeArchitecture($remotes) && (nativeArchitecture($remotes) ne "arm64" || !isAppleMacWebKit())) {
+if ($archs ne nativeArchitecture($remotes) && nativeArchitecture($remotes) ne "arm64") {
     die "Cannot run tests with $archs on this machine";
 }
 
@@ -833,7 +833,7 @@ sub runJSCStressTests
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
         "-j", jscPath($productDir), "-o", $jscStressResultsDir, "--arch", $archs);
 
-    if (nativeArchitecture($remotes) ne $archs) {
+    if (nativeArchitecture($remotes) ne $archs && $archs ne "arm") {
         push(@jscStressDriverCmd, "--force-architecture");
         push(@jscStressDriverCmd, $archs);
     }
