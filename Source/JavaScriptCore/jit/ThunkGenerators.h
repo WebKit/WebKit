@@ -56,6 +56,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForRegularCall(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForTailCall(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForConstruct(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM&);

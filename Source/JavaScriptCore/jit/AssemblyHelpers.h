@@ -1965,8 +1965,8 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
-    void emitVirtualCall(VM&, CallLinkInfo*);
-    void emitVirtualCallWithoutMovingGlobalObject(VM&, GPRReg callLinkInfoGPR, CallMode);
+    void emitVirtualCall(VM&, CallLinkInfo*, bool isTopTier);
+    void emitVirtualCallWithoutMovingGlobalObject(VM&, GPRReg callLinkInfoGPR, CallMode, bool isTopTier);
     
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();

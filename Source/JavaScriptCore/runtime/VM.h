@@ -631,7 +631,7 @@ public:
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
-    MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode, bool isTopTier);
 
     static constexpr ptrdiff_t exceptionOffset()
     {

@@ -153,7 +153,7 @@ public:
     void setStub(Ref<PolymorphicCallStubRoutine>&&);
     void clearStub();
 
-    void setVirtualCall(VM&);
+    void setVirtualCall(VM&, bool isTopTier);
 
     void revertCall(VM&);
 

@@ -189,7 +189,7 @@ void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector
     static_assert(noOverlap(BaselineJITRegisters::Call::calleeJSR, BaselineJITRegisters::Call::callLinkInfoGPR, regT3));
     loadValue(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), BaselineJITRegisters::Call::calleeJSR);
     materializePointerIntoMetadata(bytecode, OpCallDirectEval::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
-    emitVirtualCallWithoutMovingGlobalObject(*m_vm, BaselineJITRegisters::Call::callLinkInfoGPR, CallMode::Regular);
+    emitVirtualCallWithoutMovingGlobalObject(*m_vm, BaselineJITRegisters::Call::callLinkInfoGPR, CallMode::Regular, /* isTopTier */ false);
     resetSP();
 }
 

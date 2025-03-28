@@ -986,7 +986,7 @@ void SpeculativeJIT::emitCall(Node* node)
         addPtr(TrustedImm32(requiredBytes), stackPointerRegister);
         load64(calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
         loadLinkableConstant(callLinkInfoConstant, GPRInfo::regT2);
-        emitVirtualCallWithoutMovingGlobalObject(vm(), GPRInfo::regT2, CallMode::Regular);
+        emitVirtualCallWithoutMovingGlobalObject(vm(), GPRInfo::regT2, CallMode::Regular, /* isTopTier */ false);
         
         done.link(this);
         setResultAndResetStack();

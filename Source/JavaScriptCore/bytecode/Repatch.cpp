@@ -74,18 +74,18 @@
 
 namespace JSC {
 
-static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
-{
-    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
-        callLinkInfo.setVirtualCall(vm);
-}
-
 void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
 {
     ASSERT(!callLinkInfo.stub());
 
     CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
     ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+    bool isWebAssembly = false;
+#endif
+    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
 
     if (UNLIKELY(Options::forceICFailure()))
         return;
@@ -102,7 +102,9 @@ void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, Code
 
     if (callLinkInfo.specializationKind() == CodeForCall)
         return;
-    linkSlowFor(vm, callLinkInfo);
+
+    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
+        callLinkInfo.setVirtualCall(vm, notUsingCounting);
 }
 
 CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
@@ -127,11 +129,6 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
     // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
     DeferGCForAWhile deferGCForAWhile(vm);
 
-    if (!newVariant) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-
     CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
     ASSERT(owner);
 #if ENABLE(WEBASSEMBLY)
@@ -139,6 +136,13 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
 #else
     bool isWebAssembly = false;
 #endif
+    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
+
+    if (!newVariant) {
+        callLinkInfo.setVirtualCall(vm, notUsingCounting);
+        return;
+    }
+
     bool isTailCall = callLinkInfo.isTailCall();
 
     bool isClosureCall = false;
@@ -178,7 +182,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
 
     // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
     if (list.size() > maxPolymorphicCallVariantListSize) {
-        callLinkInfo.setVirtualCall(vm);
+        callLinkInfo.setVirtualCall(vm, notUsingCounting);
         return;
     }
 
@@ -193,7 +197,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
             // If we cannot handle a callee, because we don't have a CodeBlock,
             // assume that it's better for this whole thing to be a virtual call.
             if (!codeBlock) {
-                callLinkInfo.setVirtualCall(vm);
+                callLinkInfo.setVirtualCall(vm, notUsingCounting);
                 return;
             }
         }
@@ -243,7 +247,6 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         callSlots.append(WTFMove(slot));
     }
 
-    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
     if (callSlots.isEmpty())
         notUsingCounting = true;
 

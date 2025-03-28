@@ -241,7 +241,7 @@ void DataOnlyCallLinkInfo::initialize(VM& vm, CodeBlock* owner, CallType callTyp
     m_callType = callType;
     m_mode = static_cast<unsigned>(Mode::Init);
     if (UNLIKELY(!Options::useLLIntICs()))
-        setVirtualCall(vm);
+        setVirtualCall(vm, /* isTopTier */ false);
 }
 
 std::tuple<CodeBlock*, BytecodeIndex> CallLinkInfo::retrieveCaller(JSCell* owner)
@@ -270,18 +270,18 @@ void CallLinkInfo::reset(VM&)
 void CallLinkInfo::revertCall(VM& vm)
 {
     if (UNLIKELY(!Options::useLLIntICs() && type() == CallLinkInfo::Type::DataOnly))
-        setVirtualCall(vm);
+        setVirtualCall(vm, /* isTopTier */ false);
     else
         reset(vm);
 }
 
-void CallLinkInfo::setVirtualCall(VM& vm)
+void CallLinkInfo::setVirtualCall(VM& vm, bool isTopTier)
 {
     reset(vm);
     m_callee.clear();
     *std::bit_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
     m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
-    m_monomorphicCallDestination = vm.getCTIVirtualCall(callMode()).code().template retagged<JSEntryPtrTag>();
+    m_monomorphicCallDestination = vm.getCTIVirtualCall(callMode(), isTopTier).code().template retagged<JSEntryPtrTag>();
 
     setClearedByVirtual();
     m_mode = static_cast<unsigned>(Mode::Virtual);
