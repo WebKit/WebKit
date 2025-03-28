@@ -58,17 +58,17 @@ void ResourceResponse::initNSURLResponse() const
         else
             expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
 
-        NSString* encodingNSString = nsStringNilIfEmpty(m_textEncodingName);
-        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:encodingNSString]);
+        RetainPtr encodingNSString = nsStringNilIfEmpty(m_textEncodingName);
+        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:encodingNSString.get()]);
         return;
     }
 
     // FIXME: We lose the status text and the HTTP version here.
-    NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
+    RetainPtr headerDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     for (auto& header : m_httpHeaderFields)
         [headerDictionary setObject:(NSString *)header.value forKey:(NSString *)header.key];
 
-    m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary]);
+    m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary.get()]);
 
     // Mime type sniffing doesn't work with a synthesized response.
     [m_nsResponse _setMIMEType:(NSString *)m_mimeType];
@@ -85,31 +85,31 @@ CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::b
     if (!cfResponse)
         return { };
 
-    CFDictionaryRef context = _CFURLResponseGetSSLCertificateContext(cfResponse);
+    RetainPtr context = _CFURLResponseGetSSLCertificateContext(cfResponse);
     if (!context)
         return { };
 
-    auto trustValue = CFDictionaryGetValue(context, kCFStreamPropertySSLPeerTrust);
+    auto trustValue = CFDictionaryGetValue(context.get(), kCFStreamPropertySSLPeerTrust);
     if (!trustValue)
         return { };
-    auto trust = checked_cf_cast<SecTrustRef>(trustValue);
+    RetainPtr trust = checked_cf_cast<SecTrustRef>(trustValue);
 
     if (trust && auditToken.size()) {
         auto data = adoptCF(CFDataCreate(nullptr, byteCast<uint8_t>(auditToken.data()), auditToken.size()));
-        SecTrustSetClientAuditToken(trust, data.get());
+        SecTrustSetClientAuditToken(trust.get(), data.get());
     }
 
     SecTrustResultType trustResultType;
-    OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);
+    OSStatus result = SecTrustGetTrustResult(trust.get(), &trustResultType);
     if (result != errSecSuccess)
         return { };
 
     if (trustResultType == kSecTrustResultInvalid) {
-        if (!SecTrustEvaluateWithError(trust, nullptr))
+        if (!SecTrustEvaluateWithError(trust.get(), nullptr))
             return { };
     }
 
-    return CertificateInfo(trust);
+    return CertificateInfo(trust.get());
 }
 
 NSURLResponse *ResourceResponse::nsURLResponse() const

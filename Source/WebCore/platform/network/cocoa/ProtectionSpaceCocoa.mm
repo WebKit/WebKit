@@ -34,7 +34,7 @@ namespace WebCore {
 static ProtectionSpace::ServerType type(NSURLProtectionSpace *space)
 {
     if ([space isProxy]) {
-        NSString *proxyType = space.proxyType;
+        RetainPtr<NSString> proxyType = space.proxyType;
         if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPProxy])
             return ProtectionSpace::ServerType::ProxyHTTP;
         if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPSProxy])
@@ -51,7 +51,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return ProtectionSpace::ServerType::ProxyHTTP;
     }
 
-    NSString *protocol = space.protocol;
+    RetainPtr<NSString> protocol = space.protocol;
     if ([protocol caseInsensitiveCompare:@"http"] == NSOrderedSame)
         return ProtectionSpace::ServerType::HTTP;
     if ([protocol caseInsensitiveCompare:@"https"] == NSOrderedSame)
@@ -67,7 +67,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static ProtectionSpace::AuthenticationScheme scheme(NSURLProtectionSpace *space)
 {
-    NSString *method = space.authenticationMethod;
+    RetainPtr<NSString> method = space.authenticationMethod;
     if ([method isEqualToString:NSURLAuthenticationMethodDefault])
         return ProtectionSpace::AuthenticationScheme::Default;
     if ([method isEqualToString:NSURLAuthenticationMethodHTTPBasic])
@@ -97,14 +97,14 @@ static ProtectionSpace::AuthenticationScheme scheme(NSURLProtectionSpace *space)
 ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)
     : ProtectionSpace(space.host, space.port, type(space), space.realm, scheme(space))
 {
-    m_nsSpace = space;
+    lazyInitialize(m_nsSpace, RetainPtr { space });
 }
 
 ProtectionSpace::ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme, std::optional<PlatformData> platformData)
     : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
 {
     if (platformData)
-        m_nsSpace = platformData->nsSpace;
+        lazyInitialize(m_nsSpace, RetainPtr { platformData->nsSpace });
 }
 
 NSURLProtectionSpace *ProtectionSpace::nsSpace() const
@@ -112,8 +112,8 @@ NSURLProtectionSpace *ProtectionSpace::nsSpace() const
     if (m_nsSpace)
         return m_nsSpace.get();
 
-    NSString *proxyType = nil;
-    NSString *protocol = nil;
+    RetainPtr<NSString> proxyType;
+    RetainPtr<NSString> protocol;
     switch (serverType()) {
     case ProtectionSpace::ServerType::HTTP:
         protocol = @"http";
@@ -181,9 +181,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         ASSERT_NOT_REACHED();
     }
     
-    m_nsSpace = adoptNS(proxyType
-        ? [[NSURLProtectionSpace alloc] initWithProxyHost:host() port:port() type:proxyType realm:realm() authenticationMethod:method]
-        : [[NSURLProtectionSpace alloc] initWithHost:host() port:port() protocol:protocol realm:realm() authenticationMethod:method]);
+    lazyInitialize(m_nsSpace, adoptNS(proxyType
+        ? [[NSURLProtectionSpace alloc] initWithProxyHost:host() port:port() type:proxyType.get() realm:realm() authenticationMethod:method]
+        : [[NSURLProtectionSpace alloc] initWithHost:host() port:port() protocol:protocol.get() realm:realm() authenticationMethod:method]));
 
     return m_nsSpace.get();
 }

@@ -51,7 +51,7 @@ public:
 
     WEBCORE_EXPORT bool isEmpty() const;
 
-    bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(m_nsCredential.get()); }
+    bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(RetainPtr { m_nsCredential }.get()); }
 
     WEBCORE_EXPORT NSURLCredential *nsCredential() const;
 

@@ -67,20 +67,20 @@ static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NS
 
 Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, const NetworkLoadMetrics& metricsFromTask)
 {
-    NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = incompleteMetrics.transactionMetrics;
-    NSURLSessionTaskTransactionMetrics *metrics = transactionMetrics.lastObject;
+    RetainPtr<NSArray<NSURLSessionTaskTransactionMetrics *>> transactionMetrics = incompleteMetrics.transactionMetrics;
+    RetainPtr<NSURLSessionTaskTransactionMetrics> metrics = transactionMetrics.get().lastObject;
     return packageTimingData(
-        dateToMonotonicTime(transactionMetrics.firstObject.fetchStartDate),
-        metrics.fetchStartDate,
-        metrics.domainLookupStartDate,
-        metrics.domainLookupEndDate,
-        metrics.connectStartDate,
-        metrics.secureConnectionStartDate,
-        metrics.connectEndDate,
-        metrics.requestStartDate,
-        metrics.responseStartDate,
-        metrics.reusedConnection,
-        metrics.response.URL.scheme,
+        dateToMonotonicTime(transactionMetrics.get().firstObject.fetchStartDate),
+        metrics.get().fetchStartDate,
+        metrics.get().domainLookupStartDate,
+        metrics.get().domainLookupEndDate,
+        metrics.get().connectStartDate,
+        metrics.get().secureConnectionStartDate,
+        metrics.get().connectEndDate,
+        metrics.get().requestStartDate,
+        metrics.get().responseStartDate,
+        metrics.get().reusedConnection,
+        metrics.get().response.URL.scheme,
         incompleteMetrics.redirectCount,
         metricsFromTask.failsTAOCheck,
         metricsFromTask.hasCrossOriginRedirect
@@ -89,11 +89,11 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetric
 
 Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const ResourceHandle& handle)
 {
-    NSDictionary *timingData = [connection _timingData];
+    RetainPtr<NSDictionary> timingData = [connection _timingData];
 
     auto timingValue = [&](NSString *key) -> RetainPtr<NSDate> {
-        if (NSNumber *number = [timingData objectForKey:key]) {
-            if (double doubleValue = number.doubleValue)
+        if (RetainPtr<NSNumber> number = [timingData objectForKey:key]) {
+            if (double doubleValue = number.get().doubleValue)
                 return adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:doubleValue]);
         }
         return { };

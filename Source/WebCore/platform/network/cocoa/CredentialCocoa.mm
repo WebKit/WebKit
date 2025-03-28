@@ -62,18 +62,18 @@ static CredentialPersistence toCredentialPersistence(NSURLCredentialPersistence 
 Credential::Credential(const Credential& original, CredentialPersistence persistence)
     : CredentialBase(original, persistence)
 {
-    NSURLCredential *originalNSURLCredential = original.m_nsCredential.get();
+    RetainPtr originalNSURLCredential = original.m_nsCredential;
     if (!originalNSURLCredential)
         return;
 
-    if (NSString *user = originalNSURLCredential.user)
-        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:user password:originalNSURLCredential.password persistence:toNSURLCredentialPersistence(persistence)]);
-    else if (SecIdentityRef identity = originalNSURLCredential.identity)
-        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithIdentity:identity certificates:originalNSURLCredential.certificates persistence:toNSURLCredentialPersistence(persistence)]);
+    if (RetainPtr<NSString> user = originalNSURLCredential.get().user)
+        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:user.get() password:originalNSURLCredential.get().password persistence:toNSURLCredentialPersistence(persistence)]);
+    else if (RetainPtr<SecIdentityRef> identity = originalNSURLCredential.get().identity)
+        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:originalNSURLCredential.get().certificates persistence:toNSURLCredentialPersistence(persistence)]);
     else {
         // It is not possible to set the persistence of server trust credentials.
         ASSERT_NOT_REACHED();
-        m_nsCredential = originalNSURLCredential;
+        m_nsCredential = WTFMove(originalNSURLCredential);
     }
 }
 

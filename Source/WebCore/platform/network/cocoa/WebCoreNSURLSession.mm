@@ -454,7 +454,7 @@ NS_ASSUME_NONNULL_END
     }
 
     [self addDelegateOperation:[strongSelf = retainPtr(self)] {
-        auto delegate = strongSelf.get().delegate;
+        RetainPtr<id<NSURLSessionDelegate> _Nullable> delegate = strongSelf.get().delegate;
         if ([delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
             [delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
     }];
@@ -751,14 +751,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     _resumeSessionID = 0;
 
     // CoreMedia will explicitly add a user agent header. Remove if present.
-    RetainPtr<NSMutableURLRequest> mutableRequest;
     if ([request valueForHTTPHeaderField:@"User-Agent"]) {
-        mutableRequest = adoptNS([request mutableCopy]);
+        RetainPtr mutableRequest = adoptNS([request mutableCopy]);
         [mutableRequest setValue:nil forHTTPHeaderField:@"User-Agent"];
-        request = mutableRequest.get();
-    }
-
-    self->_originalRequest = self->_currentRequest = request;
+        self->_originalRequest = self->_currentRequest = mutableRequest;
+    } else
+        self->_originalRequest = self->_currentRequest = request;
 
     return self;
 }
@@ -969,7 +967,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     [strongSession addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler), targetDispatcher = _targetDispatcher] () mutable {
         strongSelf->_response = strongResponse.get();
 
-        id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
+        RetainPtr<id<NSURLSessionDataDelegate>> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if (![dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveResponse:completionHandler:)]) {
             targetDispatcher->dispatch([strongSelf, completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(ShouldContinuePolicyCheck::Yes);
@@ -1006,7 +1004,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     [strongSession addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
         strongSelf.get().countOfBytesReceived += [data length];
-        id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
+        RetainPtr<id<NSURLSessionDataDelegate>> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:data.get()];
     }];
@@ -1027,7 +1025,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
             return;
         }
 
-        id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
+        RetainPtr<id<NSURLSessionDataDelegate>> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]) {
             auto completionHandlerBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler), targetDispatcher = WTFMove(targetDispatcher)](NSURLRequest *newRequest) mutable {
                 targetDispatcher->dispatch([request = ResourceRequest { newRequest }, completionHandler = WTFMove(completionHandler)] () mutable {
@@ -1056,7 +1054,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<NSError> strongError { error };
     auto taskMetrics = adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:metrics.isolatedCopy() onTarget:_targetDispatcher.get()]);
     [strongSession addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics), targetDispatcher = _targetDispatcher] () mutable {
-        id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
+        RetainPtr<id<NSURLSessionTaskDelegate>> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
             [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)taskMetrics.get()];

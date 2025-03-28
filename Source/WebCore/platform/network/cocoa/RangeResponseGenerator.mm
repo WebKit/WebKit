@@ -76,11 +76,10 @@ struct RangeResponseGenerator::Data {
 
     void shutdownResource()
     {
-        if (resource) {
-            resource->shutdown();
-            resource = nullptr;
-        }
+        if (RefPtr resourceBeingShutdown = std::exchange(resource, nullptr))
+            resourceBeingShutdown->shutdown();
     }
+
     HashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<RangeResponseGeneratorDataTaskData>> taskData;
     SharedBufferBuilder buffer;
     ResourceResponse originalResponse;
@@ -124,11 +123,11 @@ static ResourceResponse synthesizedResponseForRange(const ResourceResponse& orig
 
 void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 {
-    auto url = task.originalRequest.URL;
+    RetainPtr<NSURL> url = task.originalRequest.URL;
     // HashMap::get() crashes if a null String is passed.
     if (!url)
         return;
-    auto* data = map().get(url.absoluteString);
+    auto* data = map().get(url.get().absoluteString);
     if (!data)
         return;
     data->taskData.remove(task);
@@ -316,8 +315,8 @@ private:
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
 {
     assertIsCurrent(m_targetDispatcher.get());
-    NSURLRequest *originalRequest = task.originalRequest;
-    if (!originalRequest.URL)
+    RetainPtr<NSURLRequest> originalRequest = task.originalRequest;
+    if (!originalRequest.get().URL)
         return false;
     if (response.httpStatusCode() != httpStatus200OK)
         return false;
@@ -328,9 +327,9 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
     if (!parsedRequestRange)
         return false;
 
-    resource.setClient(adoptRef(new MediaResourceClient(*this, originalRequest.URL)));
+    resource.setClient(adoptRef(new MediaResourceClient(*this, originalRequest.get().URL)));
 
-    m_map.ensure(originalRequest.URL.absoluteString, [&] {
+    m_map.ensure(originalRequest.get().URL.absoluteString, [&] {
         return makeUnique<Data>(response, resource);
     }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTFMove(*parsedRequestRange)));
 
