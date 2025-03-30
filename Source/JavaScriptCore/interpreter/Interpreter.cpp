@@ -1648,7 +1648,6 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
 
     ProtoCallFrame protoCallFrame;
     EncodedJSValue args[numberOfArguments] = {
-        JSValue::encode(record),
         JSValue::encode(record->internalField(JSModuleRecord::Field::State).get()),
         JSValue::encode(sentValue),
         JSValue::encode(resumeMode),
@@ -1674,7 +1673,7 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
             // The |this| of the module is always `undefined`.
             // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
             // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
-            protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), numberOfArguments + 1, args);
+            protoCallFrame.init(codeBlock, globalObject, callee, record, numberOfArguments + 1, args);
         }
 
         record->internalField(JSModuleRecord::Field::State).set(vm, record, jsNumber(static_cast<int>(JSModuleRecord::State::Executing)));

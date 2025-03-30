@@ -2404,8 +2404,6 @@ template <class TreeBuilder> typename TreeBuilder::FormalParameterList Parser<Le
         ++parameterCount;
     };
 
-    // @generator
-    addParameter(m_vm.propertyNames->generatorPrivateName);
     // @generatorState
     addParameter(m_vm.propertyNames->generatorStatePrivateName);
     // @generatorValue
@@ -4295,7 +4293,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseYieldExpress
     //     yield [no LineTerminator here] * AssignmentExpression[?In, Yield]
 
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions
-    failIfFalse(currentScope()->isGeneratorFunction() && !currentScope()->isArrowFunctionBoundary(), "Cannot use yield expression out of generator");
+    failIfFalse(currentScope()->isGeneratorFunction(), "Cannot use yield expression out of generator");
 
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     failIfTrue(m_parserState.functionParsePhase == FunctionParsePhase::Parameters, "Cannot use yield expression within parameters");

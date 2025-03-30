@@ -39,7 +39,7 @@ function generatorResume(generator, state, value, resumeMode)
     @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateExecuting);
 
     try {
-        var value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(@getGeneratorInternalField(generator, @generatorFieldThis), generator, state, value, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
+        var value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(generator, state, value, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
     } catch (error) {
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateCompleted);
         throw error;

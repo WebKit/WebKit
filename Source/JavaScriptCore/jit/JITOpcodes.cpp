@@ -1560,7 +1560,6 @@ void JIT::emit_op_to_this(const JSInstruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(jsRegT10, srcDst);
 
-    addSlowCase(branchIfNotType(jsRegT10.payloadGPR(), FinalObjectType));
     load32FromMetadata(bytecode, OpToThis::Metadata::offsetOfCachedStructureID(), regT2);
     addSlowCase(branch32(NotEqual, Address(jsRegT10.payloadGPR(), JSCell::structureIDOffset()), regT2));
 }

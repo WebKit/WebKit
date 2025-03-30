@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-class JSAsyncGenerator final : public JSInternalFieldObjectImpl<8> {
+class JSAsyncGenerator final : public JSInternalFieldObjectImpl<7> {
 public:
-    using Base = JSInternalFieldObjectImpl<8>;
+    using Base = JSInternalFieldObjectImpl<7>;
 
     // JSAsyncGenerator has one inline storage slot, which is pointing internalField(0).
     static size_t allocationSize(Checked<size_t> inlineCapacity)
@@ -69,19 +69,17 @@ public:
         PolyProto = 0,
         State,
         Next,
-        This,
         Frame,
         SuspendReason,
         QueueFirst,
         QueueLast,
     };
-    static_assert(numberOfInternalFields == 8);
+    static_assert(numberOfInternalFields == 7);
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
             jsNull(),
             jsNumber(static_cast<int32_t>(AsyncGeneratorState::SuspendedStart)),
-            jsUndefined(),
             jsUndefined(),
             jsUndefined(),
             jsNumber(static_cast<int32_t>(AsyncGeneratorSuspendReason::None)),

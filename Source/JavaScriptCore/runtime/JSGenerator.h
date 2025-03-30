@@ -29,9 +29,9 @@
 
 namespace JSC {
 
-class JSGenerator final : public JSInternalFieldObjectImpl<6> {
+class JSGenerator final : public JSInternalFieldObjectImpl<5> {
 public:
-    using Base = JSInternalFieldObjectImpl<6>;
+    using Base = JSInternalFieldObjectImpl<5>;
 
     // JSGenerator has one inline storage slot, which is pointing internalField(0).
     static size_t allocationSize(Checked<size_t> inlineCapacity)
@@ -58,14 +58,13 @@ public:
         Init = 0,
     };
 
-    // [this], @generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame.
+    // [this(@generator)], @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame.
     enum class Argument : int32_t {
-        ThisValue = 0,
-        Generator = 1,
-        State = 2,
-        Value = 3,
-        ResumeMode = 4,
-        Frame = 5,
+        Generator = 0,
+        State = 1,
+        Value = 2,
+        ResumeMode = 3,
+        Frame = 4,
         NumberOfArguments = Frame,
     };
 
@@ -75,17 +74,15 @@ public:
         PolyProto = 0,
         State,
         Next,
-        This,
         Frame,
         Context,
     };
-    static_assert(numberOfInternalFields == 6);
+    static_assert(numberOfInternalFields == 5);
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
             jsNull(),
             jsNumber(static_cast<int32_t>(State::Init)),
-            jsUndefined(),
             jsUndefined(),
             jsUndefined(),
             jsUndefined(),

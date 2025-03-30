@@ -212,6 +212,7 @@ public:
         case SourceParseMode::AsyncGeneratorBodyMode:
             setIsAsyncGeneratorFunctionBody();
             break;
+
         case SourceParseMode::AsyncArrowFunctionBodyMode:
             setIsAsyncArrowFunctionBody();
             break;
@@ -883,7 +884,7 @@ private:
 
     void setIsGeneratorFunctionBody()
     {
-        setIsFunction();
+        setIsArrowFunction();
         m_hasArguments = false;
         m_isGeneratorFunction = true;
         m_isGeneratorFunctionBoundary = true;
@@ -917,7 +918,7 @@ private:
 
     void setIsAsyncGeneratorFunctionBody()
     {
-        setIsFunction();
+        setIsArrowFunction();
         m_hasArguments = false;
         m_isGeneratorFunction = true;
         m_isGeneratorFunctionBoundary = true;
@@ -927,7 +928,7 @@ private:
 
     void setIsAsyncFunctionBody()
     {
-        setIsFunction();
+        setIsArrowFunction();
         m_hasArguments = false;
         m_isAsyncFunction = true;
         m_isAsyncFunctionBoundary = true;

@@ -49,7 +49,7 @@ function asyncFunctionResume(generator, sentValue, resumeMode)
 
     try {
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateExecuting);
-        var value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(@getGeneratorInternalField(generator, @generatorFieldThis), generator, state, sentValue, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
+        var value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(generator, state, sentValue, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
         if (@getGeneratorInternalField(generator, @generatorFieldState) === @GeneratorStateExecuting)
             return @resolvePromiseWithFirstResolvingFunctionCallCheck(@getGeneratorInternalField(generator, @generatorFieldContext), value);
     } catch (error) {

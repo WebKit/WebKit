@@ -482,8 +482,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         //    function *gen(a, b = hello())
         //    {
         //        return {
-        //            @generatorNext: function (@generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame)
-        //            {
+        //            @generatorNext: (@generatorState, @generatorValue, @generatorResumeMode, @generatorFrame) => {
         //                arguments;  // This `arguments` should reference to the gen's arguments.
         //                ...
         //            }
@@ -523,8 +522,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     emitEnter();
 
-    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
-        m_generatorRegister = &m_parameters[static_cast<unsigned>(JSGenerator::Argument::Generator)];
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
+        m_generatorRegister = addVar();
+        auto virtualRegister = m_thisRegister.virtualRegister();
+        m_thisRegister.setIndex(m_generatorRegister->virtualRegister());
+        m_generatorRegister->setIndex(virtualRegister);
+    }
 
     allocateScope();
 
@@ -725,7 +728,13 @@ IGNORE_GCC_WARNINGS_END
         }
 
         bool shouldCreateArgumensVariable = !haveParameterNamedArguments
-            && !SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::ClassFieldInitializerMode).contains(m_codeBlock->parseMode());
+            && !SourceParseModeSet(
+                SourceParseMode::ArrowFunctionMode,
+                SourceParseMode::AsyncArrowFunctionMode,
+                SourceParseMode::GeneratorBodyMode,
+                SourceParseMode::AsyncFunctionBodyMode,
+                SourceParseMode::AsyncGeneratorBodyMode,
+                SourceParseMode::ClassFieldInitializerMode).contains(m_codeBlock->parseMode());
         shouldCreateArgumentsVariableInParameterScope = shouldCreateArgumensVariable && !isSimpleParameterList;
         // Do not create arguments variable in case of Arrow function. Value will be loaded from parent scope
         if (shouldCreateArgumensVariable && !shouldCreateArgumentsVariableInParameterScope) {
@@ -762,11 +771,6 @@ IGNORE_GCC_WARNINGS_END
     case SourceParseMode::AsyncGeneratorWrapperMethodMode:
     case SourceParseMode::AsyncGeneratorWrapperFunctionMode: {
         m_generatorRegister = addVar();
-
-        // FIXME: Emit to_this only when Generator uses it.
-        // https://bugs.webkit.org/show_bug.cgi?id=151586
-        emitToThis();
-
         break;
     }
 
@@ -777,12 +781,6 @@ IGNORE_GCC_WARNINGS_END
         ASSERT(constructorKind() == ConstructorKind::None);
         m_generatorRegister = addVar();
         m_promiseRegister = addVar();
-
-        if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
-            // FIXME: Emit to_this only when AsyncFunctionBody uses it.
-            // https://bugs.webkit.org/show_bug.cgi?id=151586
-            emitToThis();
-        }
 
         emitNewGenerator(m_generatorRegister);
         bool isInternalPromise = false;
@@ -796,12 +794,8 @@ IGNORE_GCC_WARNINGS_END
     case SourceParseMode::AsyncGeneratorBodyMode:
     case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::AsyncArrowFunctionBodyMode:
-    case SourceParseMode::GeneratorBodyMode: {
-        // |this| is already filled correctly before here.
-        if (m_newTargetRegister)
-            emitLoad(m_newTargetRegister, jsUndefined());
+    case SourceParseMode::GeneratorBodyMode:
         break;
-    }
 
     case SourceParseMode::ArrowFunctionMode:
         break;
@@ -864,7 +858,7 @@ IGNORE_GCC_WARNINGS_END
 
     // We need load |super| & |this| for arrow function before initializeDefaultParameterValuesAndSetupFunctionScopeStack
     // if we have default parameter expression. Because |super| & |this| values can be used there
-    if ((SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !isSimpleParameterList) || parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {
+    if (isArrowFunctionParseMode(parseMode) && !isSimpleParameterList) {
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
 
@@ -892,7 +886,7 @@ IGNORE_GCC_WARNINGS_END
     // If we don't have  default parameter expression, then loading |this| inside an arrow function must be done
     // after initializeDefaultParameterValuesAndSetupFunctionScopeStack() because that function sets up the
     // SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment() consults the SymbolTable stack
-    if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && isSimpleParameterList) {
+    if (isArrowFunctionParseMode(parseMode) && isSimpleParameterList) {
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
     
@@ -2847,19 +2841,12 @@ void BytecodeGenerator::emitPutSetterByVal(RegisterID* base, RegisterID* propert
 void BytecodeGenerator::emitPutGeneratorFields(RegisterID* nextFunction)
 {
     emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSGenerator::Field::Next), nextFunction);
-
-    // We do not store 'this' in arrow function within constructor,
-    // because it might be not initialized, if super is called later.
-    if (!(isDerivedConstructorContext() && m_codeBlock->parseMode() == SourceParseMode::AsyncArrowFunctionMode))
-        emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSGenerator::Field::This), &m_thisRegister);
 }
 
 void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 {
     ASSERT(isAsyncGeneratorWrapperParseMode(parseMode()));
-
     emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSAsyncGenerator::Field::Next), nextFunction);
-    emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSAsyncGenerator::Field::This), &m_thisRegister);
 }
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
@@ -3470,7 +3457,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* dst, FuncEx
 
 RegisterID* BytecodeGenerator::emitNewArrowFunctionExpression(RegisterID* dst, ArrowFuncExprNode* func)
 {
-    ASSERT(SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(func->metadata()->parseMode()));
+    ASSERT(isArrowFunctionParseMode(func->metadata()->parseMode()));
     emitNewFunctionExpressionCommon(dst, func->metadata());
     return dst;
 }

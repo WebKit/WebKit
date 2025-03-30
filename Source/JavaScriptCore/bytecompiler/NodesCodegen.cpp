@@ -1557,8 +1557,6 @@ static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* nod
         return JSGenerator::Field::State;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
         return JSGenerator::Field::Next;
-    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
-        return JSGenerator::Field::This;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
         return JSGenerator::Field::Frame;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldContext)
@@ -1585,8 +1583,6 @@ static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsi
         return JSAsyncGenerator::Field::State;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
         return JSAsyncGenerator::Field::Next;
-    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
-        return JSAsyncGenerator::Field::This;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
         return JSAsyncGenerator::Field::Frame;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldSuspendReason)
@@ -5309,11 +5305,8 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         ASSERT(singleStatement->isExprStatement());
         ExprStatementNode* exprStatement = static_cast<ExprStatementNode*>(singleStatement);
         ExpressionNode* expr = exprStatement->expr();
-        ASSERT(expr->isFuncExprNode());
-        FuncExprNode* funcExpr = static_cast<FuncExprNode*>(expr);
-
         RefPtr<RegisterID> next = generator.newTemporary();
-        generator.emitNode(next.get(), funcExpr);
+        generator.emitNode(next.get(), expr);
 
         if (generator.superBinding() == SuperBinding::Needed) {
             RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
@@ -5340,11 +5333,8 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         ASSERT(singleStatement->isExprStatement());
         ExprStatementNode* exprStatement = static_cast<ExprStatementNode*>(singleStatement);
         ExpressionNode* expr = exprStatement->expr();
-        ASSERT(expr->isFuncExprNode());
-        FuncExprNode* funcExpr = static_cast<FuncExprNode*>(expr);
-
         RefPtr<RegisterID> next = generator.newTemporary();
-        generator.emitNode(next.get(), funcExpr);
+        generator.emitNode(next.get(), expr);
 
         if (generator.superBinding() == SuperBinding::Needed || (generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode && generator.isSuperUsedInInnerArrowFunction())) {
             RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
