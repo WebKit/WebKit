@@ -687,6 +687,13 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
     , m_compilation(compilation)
     , m_pcToCodeOriginMapBuilder(Options::useSamplingProfiler())
 {
+#if OS(WINDOWS)
+    for (RegisterBinding& binding : fprBindings())
+        binding.m_kind = RegisterBinding::Kind::None;
+
+    for (RegisterBinding& binding : gprBindings())
+        binding.m_kind = RegisterBinding::Kind::None;
+#endif
     RegisterSetBuilder gprSetBuilder = RegisterSetBuilder::allGPRs();
     gprSetBuilder.exclude(RegisterSetBuilder::specialRegisters());
     gprSetBuilder.exclude(RegisterSetBuilder::macroClobberedGPRs());
