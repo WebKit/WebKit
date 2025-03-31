@@ -2050,12 +2050,20 @@ class YarrGenerator final : public YarrJITInfo {
 
             unsigned currPosition = currTerm->inputPosition;
 
+            constexpr unsigned maxGroupingDistance = 16;
+
             if (currPosition > lastPosition) {
+                // If the next term is too far away, we'll handle it by itself
+                if (currPosition > lastPosition + maxGroupingDistance)
+                    break;
                 if (currPosition > lastPosition + 1)
                     opList.insertFill(lastPosition - firstPosition + 1, nullptr, currPosition - lastPosition - 1);
                 opList.append(currOp);
                 lastPosition = currPosition;
             } else if (currPosition < firstPosition) {
+                // If the next term is too far away, we'll handle it by itself
+                if (currPosition < firstPosition - maxGroupingDistance)
+                    break;
                 opList.insertFill(0, nullptr, firstPosition - currPosition);
                 opList.first() = currOp;
                 firstPosition = currPosition;
