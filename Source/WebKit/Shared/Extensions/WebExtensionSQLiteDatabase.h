@@ -34,8 +34,6 @@
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 
-struct sqlite3;
-
 namespace WebKit {
 
 class WebExtensionSQLiteStatement;

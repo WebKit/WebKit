@@ -38,8 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-struct sqlite3;
-
 namespace WebCore {
 
 class DatabaseAuthorizer;

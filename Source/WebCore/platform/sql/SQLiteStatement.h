@@ -28,10 +28,9 @@
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include <span>
+#include <sqlite3.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
-
-struct sqlite3_stmt;
 
 namespace WebCore {
 

@@ -31,7 +31,6 @@
 #include "APIError.h"
 #include "Logging.h"
 #include "WebExtensionSQLiteHelpers.h"
-#include <sqlite3.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
