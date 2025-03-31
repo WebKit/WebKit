@@ -559,16 +559,6 @@ void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor
     completionHandler();
 }
 
-void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode)
-{
-    updateLayerHostingContext();
-
-    // Finally, inform the UIProcess that the context has changed.
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_layerHostingContext->cachedContextID();
-    send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
-}
-
 void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
 {
     m_layerHostingContext->setColorSpace(colorSpace ? colorSpace->platformColorSpace() : nullptr);
@@ -595,21 +585,7 @@ void TiledCoreAnimationDrawingArea::updateLayerHostingContext()
         m_layerHostingContext = nullptr;
     }
 
-    // Create a new context and set it up.
-    switch (Ref { m_webPage.get() }->layerHostingMode()) {
-    case LayerHostingMode::InProcess:
-#if HAVE(HOSTED_CORE_ANIMATION)
-        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::singleton().compositingRenderServerPort());
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-        break;
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    case LayerHostingMode::OutOfProcess:
-        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-        break;
-#endif
-    }
+    m_layerHostingContext = LayerHostingContext::create();
 
     if (m_rootLayer)
         m_layerHostingContext->setRootLayer(m_hostingLayer.get());

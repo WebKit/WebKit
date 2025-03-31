@@ -47,12 +47,13 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return vm.heap.webAssemblyStructSpace<mode>();
+        return &vm.heap.variableSizedCellSpace;
     }
 
     DECLARE_INFO;
 
     static inline WebAssemblyGCStructure* createStructure(VM&, JSGlobalObject*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
+    static JSWebAssemblyStruct* tryCreate(VM&, WebAssemblyGCStructure*);
     static JSWebAssemblyStruct* create(VM&, WebAssemblyGCStructure*);
 
     DECLARE_VISIT_CHILDREN;
@@ -68,6 +69,8 @@ public:
     const uint8_t* fieldPointer(uint32_t fieldIndex) const { return const_cast<JSWebAssemblyStruct*>(this)->fieldPointer(fieldIndex); }
 
     using TrailingArrayType::offsetOfData;
+    using TrailingArrayType::offsetOfSize;
+    using TrailingArrayType::allocationSize;
 
 protected:
     JSWebAssemblyStruct(VM&, WebAssemblyGCStructure*);

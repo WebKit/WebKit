@@ -81,7 +81,7 @@ public:
 // probably can't while it uses batching for prepare and volatility.
 class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>, public Identified<RemoteImageBufferSetIdentifier> {
 public:
-    RemoteImageBufferSetProxy(RemoteRenderingBackendProxy&);
+    static Ref<RemoteImageBufferSetProxy> create(RemoteRenderingBackendProxy&);
     ~RemoteImageBufferSetProxy();
 
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
@@ -95,15 +95,15 @@ public:
 #endif
 
     WebCore::GraphicsContext& context();
-    bool hasContext() const { return !!m_displayListRecorder; }
+    bool hasContext() const { return !!m_context; }
 
-    WebCore::RenderingResourceIdentifier displayListResourceIdentifier() const { return m_displayListIdentifier; }
+    RemoteDisplayListRecorderIdentifier contextIdentifier() const { return m_contextIdentifier; }
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
 
     void setConfiguration(RemoteImageBufferSetConfiguration&&);
     void willPrepareForDisplay();
-    void remoteBufferSetWasDestroyed();
+    void disconnect();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
@@ -116,15 +116,15 @@ public:
     void close();
 
 private:
+    RemoteImageBufferSetProxy(RemoteRenderingBackendProxy&);
     template<typename T> auto send(T&& message);
     template<typename T> auto sendSync(T&& message);
     RefPtr<IPC::StreamClientConnection> connection() const;
     void didBecomeUnresponsive() const;
 
+    const RemoteDisplayListRecorderIdentifier m_contextIdentifier { RemoteDisplayListRecorderIdentifier::generate() };
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-
-    WebCore::RenderingResourceIdentifier m_displayListIdentifier;
-    std::unique_ptr<RemoteDisplayListRecorderProxy> m_displayListRecorder;
+    std::optional<RemoteDisplayListRecorderProxy> m_context;
 
     OptionSet<BufferInSetType> m_requestedVolatility;
     OptionSet<BufferInSetType> m_confirmedVolatility;

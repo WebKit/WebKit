@@ -203,7 +203,7 @@ VideoPresentationManager::ModelInterfaceTuple VideoPresentationManager::createMo
     m_playbackSessionManager->addClientForContext(contextId);
 
     if (createlayerHostingContext)
-        interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
+        interface->setLayerHostingContext(LayerHostingContext::create());
 
     model->addClient(interface.get());
 

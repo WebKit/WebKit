@@ -1248,7 +1248,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             UTI = UTIFromMIMEType(attachmentType);
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-        [documentInteractionController setUTI:static_cast<NSString *>(UTI)];
+        [documentInteractionController setUTI:UTI.createNSString().get()];
 #endif
     }
 

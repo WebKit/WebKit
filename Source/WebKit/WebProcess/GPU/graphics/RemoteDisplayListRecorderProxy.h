@@ -27,11 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDisplayListRecorderIdentifier.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/GraphicsContext.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URL.h>
-#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Signal;
@@ -48,13 +49,14 @@ class SharedVideoFrameWriter;
 class RemoteDisplayListRecorderProxy : public WebCore::DisplayList::Recorder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDisplayListRecorderProxy);
 public:
-    RemoteDisplayListRecorderProxy(RemoteImageBufferProxy&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&);
-    RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& , WebCore::RenderingResourceIdentifier, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect&, const WebCore::AffineTransform&);
-    virtual ~RemoteDisplayListRecorderProxy();
-
+    RemoteDisplayListRecorderProxy(const WebCore::DestinationColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteRenderingBackendProxy&);
+    RemoteDisplayListRecorderProxy(const WebCore::DestinationColorSpace&, WebCore::ContentsFormat, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackendProxy&);
+    ~RemoteDisplayListRecorderProxy();
+    RemoteDisplayListRecorderIdentifier identifier() const { return m_identifier; }
     void disconnect();
 
-    WebCore::RenderingResourceIdentifier identifier() const { return m_destinationBufferIdentifier; }
+
+    void setClient(ThreadSafeWeakPtr<RemoteImageBufferProxy>&& client) { m_client = WTFMove(client); }
 
 private:
     template<typename T> void send(T&& message);
@@ -120,7 +122,6 @@ private:
     void endPage() final;
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
-private:
     void recordSetInlineFillColor(WebCore::PackedColor::RGBA) final;
     void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
     void recordSetState(const WebCore::GraphicsContextState&) final;
@@ -163,10 +164,11 @@ private:
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
-    WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
-    ThreadSafeWeakPtr<RemoteImageBufferProxy> m_imageBuffer;
+    const WebCore::RenderingMode m_renderingMode;
+    const RemoteDisplayListRecorderIdentifier m_identifier;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
-    WebCore::RenderingMode m_renderingMode;
+    std::optional<WebCore::ContentsFormat> m_contentsFormat;
+    ThreadSafeWeakPtr<RemoteImageBufferProxy> m_client;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     Lock m_sharedVideoFrameWriterLock;
     std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter WTF_GUARDED_BY_LOCK(m_sharedVideoFrameWriterLock);

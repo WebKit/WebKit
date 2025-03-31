@@ -1,7 +1,6 @@
 Modules/websockets/WorkerThreadableWebSocketChannel.h
 html/parser/HTMLTreeBuilder.h
 loader/WorkerThreadableLoader.h
-page/scrolling/ScrollAnchoringController.h
 platform/ScrollAnimator.h
 platform/Scrollbar.h
 platform/ScrollbarsController.h

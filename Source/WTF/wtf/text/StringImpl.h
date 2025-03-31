@@ -511,6 +511,7 @@ public:
 
 #ifdef __OBJC__
     WTF_EXPORT_PRIVATE operator NSString *();
+    WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSString();
 #endif
 
 #if STRING_STATS

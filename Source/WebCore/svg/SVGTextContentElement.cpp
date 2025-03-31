@@ -56,13 +56,13 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 
 unsigned SVGTextContentElement::getNumberOfChars()
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     return SVGTextQuery(checkedRenderer().get()).numberOfCharacters();
 }
 
 float SVGTextContentElement::getComputedTextLength()
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     return SVGTextQuery(checkedRenderer().get()).textLength();
 }
 
@@ -110,7 +110,7 @@ ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 
 int SVGTextContentElement::getCharNumAtPosition(DOMPointInit&& pointInit)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     FloatPoint transformPoint {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
     return SVGTextQuery(checkedRenderer().get()).characterNumberAtPosition(transformPoint);
 }

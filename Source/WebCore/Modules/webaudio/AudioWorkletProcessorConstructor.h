@@ -43,8 +43,8 @@ class AudioWorkletProcessorConstructor : public RefCounted<AudioWorkletProcessor
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<RefPtr<AudioWorkletProcessor>> handleEvent(JSC::Strong<JSC::JSObject> options) = 0;
-    virtual CallbackResult<RefPtr<AudioWorkletProcessor>> handleEventRethrowingException(JSC::Strong<JSC::JSObject> options) = 0;
+    virtual CallbackResult<RefPtr<AudioWorkletProcessor>> invoke(JSC::Strong<JSC::JSObject> options) = 0;
+    virtual CallbackResult<RefPtr<AudioWorkletProcessor>> invokeRethrowingException(JSC::Strong<JSC::JSObject> options) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

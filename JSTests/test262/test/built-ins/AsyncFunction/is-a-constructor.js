@@ -15,10 +15,10 @@ info: |
   If Type(argument) is not Object, return false.
   If argument has a [[Construct]] internal method, return true.
   Return false.
-includes: [isConstructor.js, hidden-constructors.js]
+includes: [isConstructor.js, wellKnownIntrinsicObjects.js]
 features: [Reflect.construct]
 ---*/
 
+var AsyncFunction = getWellKnownIntrinsicObject('%AsyncFunction%');
 assert.sameValue(isConstructor(AsyncFunction), true, 'isConstructor(AsyncFunction) must return true');
 new AsyncFunction();
-  

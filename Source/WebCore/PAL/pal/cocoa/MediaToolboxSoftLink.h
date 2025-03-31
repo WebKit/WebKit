@@ -33,7 +33,9 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, MediaToolbox)
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, FigPhotoDecompressionSetHardwareCutoff, void, (int, size_t numPixelsCutoff), (format, numPixelsCutoff))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, FigVideoTargetCreateWithVideoReceiverEndpointID, OSStatus, (CFAllocatorRef allocator, xpc_object_t videoReceiverXPCEndpointID, CFDictionaryRef creationOptions, FigVideoTargetRef* videoTargetOut), (allocator, videoReceiverXPCEndpointID, creationOptions, videoTargetOut))
+
+// FIXME: CoreMedia doesn't specify CF_RETURNS_RETAINED. See rdar://148150007.
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, FigVideoTargetCreateWithVideoReceiverEndpointID, OSStatus, (CFAllocatorRef allocator, xpc_object_t videoReceiverXPCEndpointID, CFDictionaryRef creationOptions, CF_RETURNS_RETAINED FigVideoTargetRef* videoTargetOut), (allocator, videoReceiverXPCEndpointID, creationOptions, videoTargetOut))
 #define FigVideoTargetCreateWithVideoReceiverEndpointID PAL::softLink_MediaToolbox_FigVideoTargetCreateWithVideoReceiverEndpointID
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTShouldPlayHDRVideo, Boolean, (CFArrayRef displayList), (displayList))
@@ -48,7 +50,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapGetStorage,
 #define MTAudioProcessingTapGetStorage softLink_MediaToolbox_MTAudioProcessingTapGetStorage
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapGetSourceAudio, OSStatus, (MTAudioProcessingTapRef tap, CMItemCount numberFrames, AudioBufferList *bufferListInOut, MTAudioProcessingTapFlags *flagsOut, CMTimeRange *timeRangeOut, CMItemCount *numberFramesOut), (tap, numberFrames, bufferListInOut, flagsOut, timeRangeOut, numberFramesOut))
 #define MTAudioProcessingTapGetSourceAudio softLink_MediaToolbox_MTAudioProcessingTapGetSourceAudio
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapCreate, OSStatus, (CFAllocatorRef allocator, const MTAudioProcessingTapCallbacks* callbacks, MTAudioProcessingTapCreationFlags flags, MTAudioProcessingTapRef* tapOut), (allocator, callbacks, flags, tapOut))
+
+// FIXME: CoreMedia doesn't specify CF_RETURNS_RETAINED. See rdar://148149858.
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapCreate, OSStatus, (CFAllocatorRef allocator, const MTAudioProcessingTapCallbacks* callbacks, MTAudioProcessingTapCreationFlags flags, CF_RETURNS_RETAINED MTAudioProcessingTapRef* tapOut), (allocator, callbacks, flags, tapOut))
 #define MTAudioProcessingTapCreate softLink_MediaToolbox_MTAudioProcessingTapCreate
 
 #endif // USE(MEDIATOOLBOX)

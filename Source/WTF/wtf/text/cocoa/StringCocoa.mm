@@ -26,11 +26,11 @@
 
 namespace WTF {
 
-RetainPtr<NSString> String::protectedNSString() const
+RetainPtr<NSString> String::createNSString() const
 {
-    if (!m_impl)
-        return @"";
-    SUPPRESS_UNCOUNTED_ARG return static_cast<NSString *>(*m_impl);
+    if (RefPtr impl = m_impl)
+        return impl->createNSString();
+    return @"";
 }
 
 RetainPtr<id> makeNSArrayElement(const String& vectorElement)

@@ -1624,9 +1624,28 @@ private:
             break;
         }
 
+        case GetArrayLength: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            switch (node->arrayMode().type()) {
+            case Array::Undecided:
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, (MAX_STORAGE_VECTOR_LENGTH + 1)));
+                break;
+            default:
+                break;
+            }
+            break;
+        }
+
+        case GetVectorLength: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, (MAX_STORAGE_VECTOR_LENGTH + 1)));
+            break;
+        }
+
         case DataViewGetByteLength:
-        case GetArrayLength:
-        case GetVectorLength:
         case GetUndetachedTypeArrayLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;

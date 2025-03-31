@@ -40,8 +40,8 @@ class WebCodecsVideoFrameOutputCallback : public RefCounted<WebCodecsVideoFrameO
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(WebCodecsVideoFrame&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(WebCodecsVideoFrame&) = 0;
+    virtual CallbackResult<void> invoke(WebCodecsVideoFrame&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(WebCodecsVideoFrame&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

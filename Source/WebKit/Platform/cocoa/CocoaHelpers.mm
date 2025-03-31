@@ -472,7 +472,7 @@ NSSet *toAPI(const HashSet<URL>& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)
-        [result addObject:static_cast<NSURL *>(element)];
+        [result addObject:element.createNSURL().get()];
     return [result copy];
 }
 
@@ -480,7 +480,7 @@ NSSet *toAPI(const HashSet<String>& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)
-        [result addObject:static_cast<NSString *>(element)];
+        [result addObject:element.createNSString().get()];
     return [result copy];
 }
 
@@ -488,7 +488,7 @@ NSArray *toAPIArray(const HashSet<String>& set)
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
     for (auto& element : set)
-        [result addObject:static_cast<NSString *>(element)];
+        [result addObject:element.createNSString().get()];
     return [result copy];
 }
 

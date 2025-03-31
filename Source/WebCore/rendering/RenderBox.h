@@ -774,6 +774,8 @@ private:
     static bool s_hadNonVisibleOverflow;
 };
 
+inline bool isSkippedContentRoot(const RenderBox&);
+
 inline RenderBox* RenderBox::parentBox() const
 {
     if (auto* box = dynamicDowncast<RenderBox>(parent()))

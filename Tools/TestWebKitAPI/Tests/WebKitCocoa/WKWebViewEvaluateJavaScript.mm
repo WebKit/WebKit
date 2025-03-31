@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestScriptMessageHandler.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -91,6 +92,12 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+
+    auto handler = adoptNS([TestScriptMessageHandler new]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[webView configuration].userContentController addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [webView evaluateJavaScript:@"window.webkit.messageHandlers.testHandler.postMessage(document.body)" completionHandler:nil];
+    EXPECT_EQ([handler waitForMessage].body, NSNull.null);
 
     [webView evaluateJavaScript:@"document.body.insertBefore(document, document)" completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);

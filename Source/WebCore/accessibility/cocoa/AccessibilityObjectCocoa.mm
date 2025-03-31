@@ -35,18 +35,11 @@
 
 namespace WebCore {
 
-String AccessibilityObject::speechHintAttributeValue() const
+OptionSet<SpeakAs> AccessibilityObject::speakAs() const
 {
-    auto speak = speakAsProperty();
-    NSMutableArray<NSString *> *hints = [NSMutableArray array];
-    [hints addObject:(speak & SpeakAs::SpellOut) ? @"spell-out" : @"normal"];
-    if (speak & SpeakAs::Digits)
-        [hints addObject:@"digits"];
-    if (speak & SpeakAs::LiteralPunctuation)
-        [hints addObject:@"literal-punctuation"];
-    if (speak & SpeakAs::NoPunctuation)
-        [hints addObject:@"no-punctuation"];
-    return [hints componentsJoinedByString:@" "];
+    if (auto* style = this->style())
+        return style->speakAs();
+    return { };
 }
 
 FloatPoint AccessibilityObject::screenRelativePosition() const

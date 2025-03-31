@@ -38,6 +38,7 @@ enum class MessageSource : uint8_t {
     AppCache,
     Rendering,
     CSS,
+    Accessibility,
     Security,
     ContentBlocker,
     Media,

@@ -40,8 +40,8 @@ public:
 
     virtual bool hasCallback() const = 0;
 
-    virtual CallbackResult<void> handleEvent(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;
+    virtual CallbackResult<void> invoke(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;
 };
 
 } // namespace WebCore

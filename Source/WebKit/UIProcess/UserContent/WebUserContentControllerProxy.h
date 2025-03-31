@@ -146,7 +146,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, std::optional<JavaScriptEvaluationResult>&&, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&&);
 
     void addContentWorld(API::ContentWorld&);
 

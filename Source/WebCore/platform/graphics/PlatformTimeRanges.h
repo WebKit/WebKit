@@ -146,6 +146,8 @@ private:
 RetainPtr<NSArray> makeNSArray(const PlatformTimeRanges&);
 #endif
 
+inline String toString(const PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
+
 } // namespace WebCore
 
 namespace WTF {

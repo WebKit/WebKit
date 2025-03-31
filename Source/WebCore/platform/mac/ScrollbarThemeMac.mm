@@ -550,12 +550,14 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         context.translate(scrollbarRect.location());
         paintScrollbar(scrollbar, context);
     } else {
-        auto imageBuffer = [&] {
-            auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), DestinationColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local);
-            paintScrollbar(scrollbar, buffer->context());
-            return buffer;
-        }();
-        context.drawImageBuffer(*imageBuffer, scrollbarRect);
+        if (auto imageBuffer = [&] -> RefPtr<ImageBuffer> {
+            if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), DestinationColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local)) {
+                paintScrollbar(scrollbar, buffer->context());
+                return buffer;
+            }
+            return nullptr;
+        }())
+            context.drawImageBuffer(*imageBuffer, scrollbarRect);
     }
 
     return true;

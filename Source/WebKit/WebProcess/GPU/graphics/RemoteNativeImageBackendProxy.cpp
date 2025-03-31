@@ -33,7 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteNativeImageBackendProxy> RemoteNativeImageBackendProxy::create(NativeImage& image)
+std::unique_ptr<RemoteNativeImageBackendProxy> RemoteNativeImageBackendProxy::create(NativeImage& image, const DestinationColorSpace& colorSpace)
 {
     RefPtr<ShareableBitmap> bitmap;
     PlatformImagePtr platformImage;
@@ -45,7 +45,7 @@ std::unique_ptr<RemoteNativeImageBackendProxy> RemoteNativeImageBackendProxy::cr
 
     // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
     if (!platformImage) {
-        bitmap = ShareableBitmap::createFromImageDraw(image);
+        bitmap = ShareableBitmap::createFromImageDraw(image, colorSpace);
         if (bitmap)
             platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
 

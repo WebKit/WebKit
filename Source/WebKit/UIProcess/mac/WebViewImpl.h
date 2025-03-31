@@ -323,7 +323,6 @@ public:
     void windowWillBeginSheet();
     void windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor);
     void windowDidChangeScreen();
-    void windowDidChangeLayerHosting();
     void windowDidChangeOcclusionState();
     void windowWillClose();
     void screenDidChangeColorSpace();
@@ -476,6 +475,7 @@ public:
     void preferencesDidChange();
 
     void setTextIndicator(WebCore::TextIndicator&, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent);
+    void updateTextIndicator(WebCore::TextIndicator&);
     void clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation);
     void setTextIndicatorAnimationProgress(float);
     void dismissContentRelativeChildWindowsFromViewOnly();

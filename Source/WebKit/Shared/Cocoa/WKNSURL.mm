@@ -34,7 +34,7 @@
 
 - (NSObject *)_web_createTarget
 {
-    return (NSURL *)WKURLCopyCFURL(kCFAllocatorDefault, WebKit::toAPI(RefPtr { reinterpret_cast<API::URL*>(&self._apiObject) }.get()));
+    return (NSURL *)WKURLCopyCFURL(kCFAllocatorDefault, WebKit::toAPI(RefPtr { downcast<API::URL>(&self._apiObject) }.get()));
 }
 
 #pragma mark NSCopying protocol implementation

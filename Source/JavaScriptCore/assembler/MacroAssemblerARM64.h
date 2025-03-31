@@ -2210,82 +2210,69 @@ public:
         store64(dataTempRegister, address);
     }
 
-    void transfer32(Address src, Address dest)
+    // FIXME: This could be a shared implementation with a size template but there's no equivalently templated load/store functions to use.
+    template<typename SrcType, typename DestType>
+    void transfer8(SrcType src, DestType dest)
     {
-        if (src == dest)
-            return;
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
+
+        load8(src, getCachedDataTempRegisterIDAndInvalidate());
+        store8(getCachedDataTempRegisterIDAndInvalidate(), dest);
+    }
+
+    template<typename SrcType, typename DestType>
+    void transfer16(SrcType src, DestType dest)
+    {
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
+
+        load16(src, getCachedDataTempRegisterIDAndInvalidate());
+        store16(getCachedDataTempRegisterIDAndInvalidate(), dest);
+    }
+
+    template<typename SrcType, typename DestType>
+    void transfer32(SrcType src, DestType dest)
+    {
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
+
         load32(src, getCachedDataTempRegisterIDAndInvalidate());
         store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
-    void transfer64(Address src, Address dest)
+    template<typename SrcType, typename DestType>
+    void transfer64(SrcType src, DestType dest)
     {
-        if (src == dest)
-            return;
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
+
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
-    void transferFloat(Address src, Address dest)
-    {
-        transfer32(src, dest);
-    }
+    void transferPtr(auto src, auto dest) { transfer64(src, dest); }
+    void transferFloat(auto src, auto dest) { transfer32(src, dest); }
+    void transferDouble(auto src, auto dest) { transfer64(src, dest); }
 
-    void transferDouble(Address src, Address dest)
+    template<typename SrcType, typename DestType>
+    void transferVector(SrcType src, DestType dest)
     {
-        transfer64(src, dest);
-    }
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
 
-    void transferVector(Address src, Address dest)
-    {
-        if (src == dest)
-            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
-    }
-
-    void transferPtr(Address src, Address dest)
-    {
-        transfer64(src, dest);
-    }
-
-    void transfer32(BaseIndex src, BaseIndex dest)
-    {
-        if (src == dest)
-            return;
-        load32(src, getCachedDataTempRegisterIDAndInvalidate());
-        store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    void transfer64(BaseIndex src, BaseIndex dest)
-    {
-        if (src == dest)
-            return;
-        load64(src, getCachedDataTempRegisterIDAndInvalidate());
-        store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    void transferFloat(BaseIndex src, BaseIndex dest)
-    {
-        transfer32(src, dest);
-    }
-
-    void transferDouble(BaseIndex src, BaseIndex dest)
-    {
-        transfer64(src, dest);
-    }
-
-    void transferVector(BaseIndex src, BaseIndex dest)
-    {
-        if (src == dest)
-            return;
-        loadVector(src, fpTempRegister);
-        storeVector(fpTempRegister, dest);
-    }
-
-    void transferPtr(BaseIndex src, BaseIndex dest)
-    {
-        transfer64(src, dest);
     }
 
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)

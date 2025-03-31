@@ -99,9 +99,9 @@ public:
     void setCameraPermission(bool);
     void setMicrophonePermission(bool);
     void resetUserMediaPermission();
-    void setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef origin, WKStringRef parentOrigin);
-    unsigned userMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin) const;
-    void resetUserMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin);
+    void delayUserMediaRequestDecision();
+    unsigned userMediaPermissionRequestCount() const;
+    void resetUserMediaPermissionRequestCount();
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);

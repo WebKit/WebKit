@@ -104,11 +104,6 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
     return adoptRef(new ShareableBitmap(configuration, WTFMove(sharedMemory)));
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
-{
-    return createFromImageDraw(image, image.colorSpace());
-}
-
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image, const DestinationColorSpace& colorSpace)
 {
     return createFromImageDraw(image, colorSpace, image.size());

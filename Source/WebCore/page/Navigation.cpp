@@ -966,7 +966,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         Vector<RefPtr<DOMPromise>> promiseList;
 
         for (auto& handler : event->handlers()) {
-            auto callbackResult = handler->handleEvent();
+            auto callbackResult = handler->invoke();
             if (callbackResult.type() == CallbackResultType::Success)
                 promiseList.append(callbackResult.releaseReturnValue());
             else if (callbackResult.type() == CallbackResultType::ExceptionThrown) {

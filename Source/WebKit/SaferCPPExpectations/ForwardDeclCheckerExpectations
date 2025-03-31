@@ -1,5 +1,3 @@
-GPUProcess/graphics/WebGPU/RemoteGPU.cpp
-GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/Connection.h
 Platform/IPC/Encoder.h

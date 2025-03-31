@@ -142,10 +142,11 @@ public:
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
 
-    void computeTransform();
+    void computeTransform(bool);
     void applyEnvironmentMapDataAndRelease();
     void applyStageModeOperationToDriver();
     bool stageModeInteractionInProgress() const;
+    void updateTransformSRT();
 
     WebCore::ModelPlayerIdentifier m_id;
     Ref<IPC::Connection> m_webProcessConnection;

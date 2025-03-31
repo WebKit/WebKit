@@ -53,7 +53,6 @@ constexpr auto machPortKey = "p";
 #endif
 
 using LayerHostingContextID = uint32_t;
-enum class LayerHostingMode : uint8_t;
 
 struct LayerHostingContextOptions {
 #if PLATFORM(IOS_FAMILY)
@@ -68,20 +67,11 @@ class LayerHostingContext {
     WTF_MAKE_TZONE_ALLOCATED(LayerHostingContext);
     WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
-    static std::unique_ptr<LayerHostingContext> createForPort(const WTF::MachSendRight& serverPort);
-    
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess(const LayerHostingContextOptions& = { });
-
-#if PLATFORM(MAC)
-    static std::unique_ptr<LayerHostingContext> createForExternalPluginHostingProcess();
-#endif
+    static std::unique_ptr<LayerHostingContext> create(const LayerHostingContextOptions& = { });
     
     static std::unique_ptr<LayerHostingContext> createTransportLayerForRemoteHosting(LayerHostingContextID);
 
     static RetainPtr<CALayer> createPlatformLayerForHostingContext(LayerHostingContextID);
-
-#endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
     LayerHostingContext();
     ~LayerHostingContext();
@@ -92,26 +82,16 @@ public:
     LayerHostingContextID contextID() const;
     void invalidate();
 
-    LayerHostingMode layerHostingMode() { return m_layerHostingMode; }
-
     void setColorSpace(CGColorSpaceRef);
     CGColorSpaceRef colorSpace() const;
 
-#if PLATFORM(MAC)
-    void setColorMatchUntaggedContent(bool);
-    bool colorMatchUntaggedContent() const;
-#endif
-
-    // Fences only work on iOS and OS 10.10+.
     void setFencePort(mach_port_t);
 
     // createFencePort does not install the fence port on the LayerHostingContext's
     // CAContext; call setFencePort() with the newly created port if synchronization
     // with this context is desired.
     WTF::MachSendRight createFencePort();
-    
-    // Should be only be used inside webprocess
-    void updateCachedContextID(LayerHostingContextID);
+
     LayerHostingContextID cachedContextID();
 
 #if USE(EXTENSIONKIT)
@@ -123,7 +103,6 @@ public:
 #endif
 
 private:
-    LayerHostingMode m_layerHostingMode;
     // Denotes the contextID obtained from GPU process, should be returned
     // for all calls to context ID in web process when UI side compositing
     // is enabled. This is done to avoid making calls to CARenderServer from webprocess

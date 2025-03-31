@@ -125,7 +125,6 @@ accessibility/mac/AXObjectCacheMac.mm
 accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-animation/AnimationEffect.cpp
 animation/AnimationTimeline.cpp
 animation/AnimationTimelinesController.cpp
 animation/BlendingKeyframes.cpp

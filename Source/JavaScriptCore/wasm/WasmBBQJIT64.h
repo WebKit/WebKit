@@ -580,9 +580,9 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
 
     RegisterBinding currentBinding;
     if (resultLocation.isGPR())
-        currentBinding = m_gprBindings[resultLocation.asGPR()];
+        currentBinding = gprBindings()[resultLocation.asGPR()];
     else if (resultLocation.isFPR())
-        currentBinding = m_fprBindings[resultLocation.asFPR()];
+        currentBinding = fprBindings()[resultLocation.asFPR()];
     RELEASE_ASSERT(!currentBinding.isScratch());
 
     bind(result, resultLocation);

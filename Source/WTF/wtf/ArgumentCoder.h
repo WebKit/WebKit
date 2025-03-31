@@ -82,8 +82,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
     template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
-        std::optional<std::underlying_type_t<T>> value;
-        decoder >> value;
+        auto value = decoder.template decode<std::underlying_type_t<T>>();
         if (value && WTF::isValidEnum<T>(*value))
             return static_cast<T>(*value);
         return std::nullopt;

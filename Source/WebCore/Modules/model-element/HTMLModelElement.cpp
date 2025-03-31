@@ -88,10 +88,13 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
     , m_environmentMapReadyPromise(makeUniqueRef<EnvironmentMapPromise>())
 #endif
 {
+    document.registerForVisibilityStateChangedCallbacks(*this);
 }
 
 HTMLModelElement::~HTMLModelElement()
 {
+    document().unregisterForVisibilityStateChangedCallbacks(*this);
+
     if (m_resource) {
         m_resource->removeClient(*this);
         m_resource = nullptr;
@@ -141,6 +144,12 @@ URL HTMLModelElement::selectModelSource() const
     }
 
     return { };
+}
+
+void HTMLModelElement::visibilityStateChanged()
+{
+    if (!document().hidden() && !m_modelPlayer)
+        createModelPlayer();
 }
 
 void HTMLModelElement::sourcesChanged()
@@ -213,6 +222,11 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
 
 void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+
+    oldDocument.unregisterForVisibilityStateChangedCallbacks(*this);
+    newDocument.registerForVisibilityStateChangedCallbacks(*this);
+
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     sourcesChanged();
 }
@@ -511,6 +525,15 @@ void HTMLModelElement::endStageModeInteraction()
 {
     if (m_modelPlayer)
         m_modelPlayer->endStageModeInteraction();
+}
+
+void HTMLModelElement::renderingAbruptlyStopped()
+{
+    m_modelPlayer = nullptr;
+
+    // FIXME: rdar://148027600 Prevent infinite reloading of model.
+    if (!document().hidden())
+        createModelPlayer();
 }
 #endif // ENABLE(MODEL_PROCESS)
 

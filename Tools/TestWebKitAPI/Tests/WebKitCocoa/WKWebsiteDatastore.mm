@@ -633,6 +633,43 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifier)
     EXPECT_FALSE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
 }
 
+TEST(WKWebsiteDataStore, RemoveSessionWithIdentifierFromNetworkProcess)
+{
+    // Launch network process with operation on default data store.
+    __block bool done = false;
+    RetainPtr defaultDataStore = [WKWebsiteDataStore defaultDataStore];
+    [defaultDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    pid_t defaultNetworkProcessIdentifier = [defaultDataStore _networkProcessIdentifier];
+    EXPECT_NE(defaultNetworkProcessIdentifier, 0);
+
+    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00067";
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:uuidString]);
+    RetainPtr<NSURL> generalStorageDirectory;
+    @autoreleasepool {
+        RetainPtr websiteDataStore = createWebsiteDataStoreAndPrepare(uuid.get(), @"");
+        generalStorageDirectory = websiteDataStore.get()._configuration.generalStorageDirectory;
+        EXPECT_EQ(defaultNetworkProcessIdentifier, [websiteDataStore _networkProcessIdentifier]);
+    }
+
+    EXPECT_NOT_NULL(generalStorageDirectory.get());
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    EXPECT_TRUE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
+
+    // Make sure network process is still alive.
+    EXPECT_FALSE(kill(defaultNetworkProcessIdentifier, 0));
+
+    done = false;
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        done = true;
+        EXPECT_NULL(error);
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
+}
+
 TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierRemoveCredentials)
 {
     // FIXME: we should use persistent credential for test after rdar://100722784 is in build.

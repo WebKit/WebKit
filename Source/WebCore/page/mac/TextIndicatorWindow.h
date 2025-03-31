@@ -50,6 +50,7 @@ public:
     WEBCORE_EXPORT ~TextIndicatorWindow();
 
     WEBCORE_EXPORT void setTextIndicator(Ref<TextIndicator>, CGRect contentRect, TextIndicatorLifetime);
+    WEBCORE_EXPORT void updateTextIndicator(Ref<TextIndicator>&&, CGRect contentRect);
     WEBCORE_EXPORT void clearTextIndicator(TextIndicatorDismissalAnimation);
 
     WEBCORE_EXPORT void setAnimationProgress(float);

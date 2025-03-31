@@ -1,7 +1,6 @@
 WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
-WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm

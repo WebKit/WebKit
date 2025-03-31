@@ -29,13 +29,6 @@
 
 namespace WebKit {
 
-enum class LayerHostingMode : uint8_t {
-    InProcess,
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    OutOfProcess
-#endif
-};
-
 class LayerTreeContext {
 public:
     LayerTreeContext() = default;

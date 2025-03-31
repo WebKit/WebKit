@@ -10,7 +10,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta, timezone
 from shutil import which
 from typing import Optional
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, quote
 
 import html5lib
 import requests
@@ -2374,116 +2374,130 @@ class WebKitTestRunner(Browser):
             return f.read().strip()
 
 
-class WebKitGTKMiniBrowser(WebKit):
-    def _get_osidversion(self):
-        with open('/etc/os-release') as osrelease_handle:
-            for line in osrelease_handle.readlines():
-                if line.startswith('ID='):
-                    os_id = line.split('=')[1].strip().strip('"')
-                if line.startswith('VERSION_ID='):
-                    version_id = line.split('=')[1].strip().strip('"')
-        assert os_id
-        assert version_id
-        osidversion = os_id + '-' + version_id
-        assert ' ' not in osidversion
-        assert len(osidversion) > 3
-        return osidversion.capitalize()
+class WebKitGlibBaseMiniBrowser(WebKit):
+    """WebKitGTK and WPE MiniBrowser specific interface (base class)."""
 
+    # This class is not meant to be used directly.
+    # And the class variables below should be defined on the subclasses.
+    BASE_DOWNLOAD_URI = ""
+    PORT_PRETTY_NAME = ""
+    WEBDRIVER_BINARY_NAME = ""
+    LIBEXEC_SUBDIR_PREFIXES = [""]
+    product = ""
+
+    def __init__(self, *args, **kwargs):
+        if self.__class__.__name__ == "WebKitGlibBaseMiniBrowser":
+            raise RuntimeError("class WebKitGlibBaseMiniBrowser should not be used directly, but subclassed")
+        for required_class_var in ["BASE_DOWNLOAD_URI", "PORT_PRETTY_NAME", "WEBDRIVER_BINARY_NAME", "LIBEXEC_SUBDIR_PREFIXES", "product"]:
+            class_var_value = getattr(self, required_class_var, "")
+            if all(len(i) == 0 for i in class_var_value):
+                raise NotImplementedError('subclass "%s" should define class variable "%s"' % (self.__class__.__name__, required_class_var))
+        return super().__init__(*args, **kwargs)
 
     def download(self, dest=None, channel=None, rename=None):
-        base_dowload_uri = "https://webkitgtk.org/built-products/"
-        base_download_dir = base_dowload_uri + "x86_64/release/" + channel + "/" + self._get_osidversion() + "/MiniBrowser/"
+        base_download_dir = self.BASE_DOWNLOAD_URI + platform.machine() + "/release/" + channel + "/MiniBrowser/"
         try:
             response = get(base_download_dir + "LAST-IS")
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                raise RuntimeError("Can't find a WebKitGTK MiniBrowser %s bundle for %s at %s"
-                                   % (channel, self._get_osidversion(), base_dowload_uri))
+                raise RuntimeError("Can't find a %s MiniBrowser %s bundle for %s at %s"
+                                   % (self.PORT_PRETTY_NAME, channel, platform.machine(), self.BASE_DOWNLOAD_URI))
             raise
 
         bundle_filename = response.text.strip()
-        bundle_url = base_download_dir + bundle_filename
+        bundle_url = base_download_dir + quote(bundle_filename)
 
         dest = self._get_browser_download_dir(dest, channel)
         bundle_file_path = os.path.join(dest, bundle_filename)
 
-        self.logger.info("Downloading WebKitGTK MiniBrowser bundle from %s" % bundle_url)
+        self.logger.info("Downloading %s MiniBrowser bundle from %s" % (self.PORT_PRETTY_NAME, bundle_url))
         with open(bundle_file_path, "w+b") as f:
             get_download_to_descriptor(f, bundle_url)
 
-        bundle_filename_no_ext, _ = os.path.splitext(bundle_filename)
+        ext_ndots = 2 if '.tar.' in bundle_filename else 1
+        bundle_filename_no_ext = '.'.join(bundle_filename.split('.')[:-ext_ndots])
         bundle_hash_url = base_download_dir + bundle_filename_no_ext + ".sha256sum"
         bundle_expected_hash = get(bundle_hash_url).text.strip().split(" ")[0]
         bundle_computed_hash = sha256sum(bundle_file_path)
 
         if bundle_expected_hash != bundle_computed_hash:
-            self.logger.error("Calculated SHA256 hash is %s but was expecting %s" % (bundle_computed_hash,bundle_expected_hash))
-            raise RuntimeError("The WebKitGTK MiniBrowser bundle at %s has incorrect SHA256 hash." % bundle_file_path)
+            self.logger.error("Calculated SHA256 hash is %s but was expecting %s" % (bundle_computed_hash, bundle_expected_hash))
+            raise RuntimeError("The %s MiniBrowser bundle at %s has incorrect SHA256 hash." % (self.PORT_PRETTY_NAME, bundle_file_path))
         return bundle_file_path
 
     def install(self, dest=None, channel=None, prompt=True):
         dest = self._get_browser_binary_dir(dest, channel)
         bundle_path = self.download(dest, channel)
-        bundle_uncompress_directory = os.path.join(dest, "webkitgtk_minibrowser")
+        bundle_uncompress_directory = os.path.join(dest, self.product)
 
         # Clean it from previous runs
         if os.path.exists(bundle_uncompress_directory):
             rmtree(bundle_uncompress_directory)
         os.mkdir(bundle_uncompress_directory)
 
+        bundle_file_name = os.path.basename(bundle_path)
         with open(bundle_path, "rb") as f:
-            unzip(f, bundle_uncompress_directory)
+            if bundle_file_name.endswith(".zip"):
+                unzip(f, bundle_uncompress_directory)
+            elif ".tar." in bundle_file_name:
+                untar(f, bundle_uncompress_directory)
+            else:
+                raise NotImplementedError("Don't know how to install the file: %s" % bundle_file_name)
+        os.remove(bundle_path)
 
-        install_dep_script = os.path.join(bundle_uncompress_directory, "install-dependencies.sh")
-        if os.path.isfile(install_dep_script):
-            self.logger.info("Executing install-dependencies.sh script from bundle.")
-            install_dep_cmd = [install_dep_script]
-            if not prompt:
-                install_dep_cmd.append("--autoinstall")
-            # use subprocess.check_call() directly to display unbuffered stdout/stderr in real-time.
-            subprocess.check_call(install_dep_cmd)
+        for expected_binary in ["MiniBrowser", self.WEBDRIVER_BINARY_NAME]:
+            binary_path = os.path.join(bundle_uncompress_directory, expected_binary)
+            if not (os.path.isfile(binary_path) and os.access(binary_path, os.X_OK)):
+                raise RuntimeError("Can't find a %s binary at %s" % (expected_binary, binary_path))
 
         minibrowser_path = os.path.join(bundle_uncompress_directory, "MiniBrowser")
-        if not os.path.isfile(minibrowser_path):
-            raise RuntimeError("Can't find a MiniBrowser binary at %s" % minibrowser_path)
-
-        os.remove(bundle_path)
+        version_str = subprocess.check_output([minibrowser_path, "--version"]).decode("utf-8").strip()
+        self.logger.info("%s MiniBrowser bundle for channel %s installed: %s" % (self.PORT_PRETTY_NAME, channel, version_str))
         install_ok_file = os.path.join(bundle_uncompress_directory, ".installation-ok")
         open(install_ok_file, "w").close()  # touch
-        self.logger.info("WebKitGTK MiniBrowser bundle for channel %s installed." % channel)
         return minibrowser_path
 
     def _find_executable_in_channel_bundle(self, binary, venv_path=None, channel=None):
         if venv_path:
             venv_base_path = self._get_browser_binary_dir(venv_path, channel)
-            bundle_dir = os.path.join(venv_base_path, "webkitgtk_minibrowser")
+            bundle_dir = os.path.join(venv_base_path, self.product)
             install_ok_file = os.path.join(bundle_dir, ".installation-ok")
             if os.path.isfile(install_ok_file):
-                return which(binary, path=bundle_dir)
+                return shutil.which(binary, path=bundle_dir)
         return None
 
     def find_binary(self, venv_path=None, channel=None):
         minibrowser_path = self._find_executable_in_channel_bundle("MiniBrowser", venv_path, channel)
         if minibrowser_path:
+            self.logger.info("Found %s MiniBrowser %s at path: %s" % (self.PORT_PRETTY_NAME, channel, minibrowser_path))
             return minibrowser_path
 
-        libexecpaths = ["/usr/libexec/webkit2gtk-4.0"]  # Fedora path
+        # Find MiniBrowser on the system which is usually installed on the libexec dir
         triplet = "x86_64-linux-gnu"
         # Try to use GCC to detect this machine triplet
-        gcc = which("gcc")
+        gcc = shutil.which("gcc")
         if gcc:
             try:
                 triplet = call(gcc, "-dumpmachine").strip()
             except subprocess.CalledProcessError:
                 pass
-        # Add Debian/Ubuntu path
-        libexecpaths.append("/usr/lib/%s/webkit2gtk-4.0" % triplet)
-        return which("MiniBrowser", path=os.pathsep.join(libexecpaths))
+        for libexec_dir in ["/usr/libexec", f"/usr/lib/{triplet}", "/usr/lib"]:
+            if os.path.isdir(libexec_dir):
+                for libexec_entry in sorted(os.listdir(libexec_dir), reverse=True):
+                    for libexec_subdir_prefix in self.LIBEXEC_SUBDIR_PREFIXES:
+                        if libexec_entry.startswith(libexec_subdir_prefix):
+                            minibrowser_candidate_path = os.path.join(libexec_dir, libexec_entry, 'MiniBrowser')
+                            if os.path.isfile(minibrowser_candidate_path) and os.access(minibrowser_candidate_path, os.X_OK):
+                                self.logger.info("Found %s MiniBrowser at path: %s" % (self.PORT_PRETTY_NAME, minibrowser_candidate_path))
+                                return minibrowser_candidate_path
+        return None
 
     def find_webdriver(self, venv_path=None, channel=None):
-        webdriver_path = self._find_executable_in_channel_bundle("WebKitWebDriver", venv_path, channel)
+        webdriver_path = self._find_executable_in_channel_bundle(self.WEBDRIVER_BINARY_NAME, venv_path, channel)
         if not webdriver_path:
-            webdriver_path = which("WebKitWebDriver")
+            webdriver_path = shutil.which(self.WEBDRIVER_BINARY_NAME)
+        if webdriver_path:
+            self.logger.info("Found %s WebDriver at path: %s" % (self.PORT_PRETTY_NAME, webdriver_path))
         return webdriver_path
 
     def version(self, binary=None, webdriver_binary=None):
@@ -2495,12 +2509,32 @@ class WebKitGTKMiniBrowser(WebKit):
             return None
         # Example output: "WebKitGTK 2.26.1"
         if output:
-            m = re.match(r"WebKitGTK (.+)", output)
+            m = re.match(r"%s (.+)" % self.PORT_PRETTY_NAME, output)
             if not m:
                 self.logger.warning("Failed to extract version from: %s" % output)
                 return None
             return m.group(1)
         return None
+
+
+class WebKitGTKMiniBrowser(WebKitGlibBaseMiniBrowser):
+    """WebKitGTK MiniBrowser specific interface."""
+
+    BASE_DOWNLOAD_URI = "https://webkitgtk.org/built-products/"
+    PORT_PRETTY_NAME = "WebKitGTK"
+    WEBDRIVER_BINARY_NAME = "WebKitWebDriver"
+    LIBEXEC_SUBDIR_PREFIXES = ["webkitgtk", "webkit2gtk"]
+    product = "webkitgtk_minibrowser"
+
+
+class WPEWebKitMiniBrowser(WebKitGlibBaseMiniBrowser):
+    """WPE WebKit MiniBrowser specific interface."""
+
+    BASE_DOWNLOAD_URI = "https://wpewebkit.org/built-products/"
+    PORT_PRETTY_NAME = "WPE WebKit"
+    WEBDRIVER_BINARY_NAME = "WPEWebDriver"
+    LIBEXEC_SUBDIR_PREFIXES = ["wpe-webkit"]
+    product = "wpewebkit_minibrowser"
 
 
 class Epiphany(Browser):

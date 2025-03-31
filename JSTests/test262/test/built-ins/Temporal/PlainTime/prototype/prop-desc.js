@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-plaintime-prototype
+esid: sec-temporal.plaintime.prototype
 description: The "prototype" property of Temporal.PlainTime
 includes: [propertyHelper.js]
 features: [Temporal]

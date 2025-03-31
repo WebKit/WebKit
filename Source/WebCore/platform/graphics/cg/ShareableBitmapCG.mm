@@ -59,7 +59,7 @@ std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColor
         return colorSpaceAsRGB;
 
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-    return DestinationColorSpace(extendedSRGBColorSpaceRef());
+    return DestinationColorSpace::ExtendedSRGB();
 #else
     return DestinationColorSpace::SRGB();
 #endif

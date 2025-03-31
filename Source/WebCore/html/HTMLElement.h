@@ -138,6 +138,9 @@ public:
     String enterKeyHint() const;
     void setEnterKeyHint(const AtomString& value);
 
+    std::optional<std::variant<bool, double, String>> hidden() const;
+    void setHidden(const std::optional<std::variant<bool, double, String>>&);
+
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
 
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();

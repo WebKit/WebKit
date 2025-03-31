@@ -59,7 +59,7 @@ void AnimationEffect::setAnimation(WebAnimation* animation)
 
 EffectTiming AnimationEffect::getBindingsTiming() const
 {
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
         styleOriginatedAnimation->flushPendingStyleChanges();
 
     EffectTiming timing;
@@ -73,7 +73,7 @@ EffectTiming AnimationEffect::getBindingsTiming() const
     else
         timing.duration = autoAtom();
     timing.direction = m_timing.direction;
-    timing.easing = m_timing.timingFunction->cssText();
+    timing.easing = RefPtr { m_timing.timingFunction }->cssText();
     return timing;
 }
 
@@ -101,7 +101,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<WebAnimationTime
 
 ComputedEffectTiming AnimationEffect::getBindingsComputedTiming()
 {
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
         styleOriginatedAnimation->flushPendingStyleChanges();
     return getComputedTiming();
 }
@@ -134,7 +134,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<WebAnimati
     computedTiming.iterations = m_timing.iterations;
     computedTiming.duration = computedDuration;
     computedTiming.direction = m_timing.direction;
-    computedTiming.easing = m_timing.timingFunction->cssText();
+    computedTiming.easing = RefPtr { m_timing.timingFunction }->cssText();
     computedTiming.endTime = m_timing.endTime;
     computedTiming.activeDuration = m_timing.activeDuration;
     computedTiming.localTime = data.localTime;
@@ -150,7 +150,7 @@ ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Document& document, std:
 {
     auto retVal = updateTiming(document, timing);
     if (!retVal.hasException() && timing) {
-        if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+        if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
             cssAnimation->effectTimingWasUpdatedUsingBindings(*timing);
     }
     return retVal;
@@ -248,8 +248,8 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optiona
     if (auto direction = timing->direction)
         setDirection(*direction);
 
-    if (m_animation)
-        m_animation->effectTimingDidChange();
+    if (RefPtr animation = m_animation.get())
+        animation->effectTimingDidChange();
 
     return { };
 }
@@ -441,15 +441,16 @@ void AnimationEffect::updateComputedTimingPropertiesIfNeeded()
     }();
 
     auto rangeDuration = [&] -> std::optional<WebAnimationTime> {
-        if (!m_animation)
+        RefPtr animation = m_animation.get();
+        if (!animation)
             return std::nullopt;
 
-        RefPtr timeline = m_animation->timeline();
+        RefPtr timeline = animation->timeline();
         if (!timeline)
             return std::nullopt;
 
         if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(timeline)) {
-            auto interval = scrollTimeline->intervalForAttachmentRange(m_animation->range());
+            auto interval = scrollTimeline->intervalForAttachmentRange(animation->range());
             return interval.second - interval.first;
         }
 

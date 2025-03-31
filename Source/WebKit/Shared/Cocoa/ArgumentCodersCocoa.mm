@@ -204,7 +204,7 @@
     }
 
     if (!m_wrappedURL)
-        m_wrappedURL = adoptNS([[NSURL alloc] initWithString:@""]);
+        m_wrappedURL = URL::emptyNSURL();
 
     return self;
 }

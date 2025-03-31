@@ -311,7 +311,12 @@ private:
 
 constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options = { })
 {
-    TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors, TextIteratorBehavior::EntersImageOverlays };
+    TextIteratorBehaviors iteratorOptions {
+        TextIteratorBehavior::EntersTextControls,
+        TextIteratorBehavior::ClipsToFrameAncestors,
+        TextIteratorBehavior::EntersImageOverlays,
+        TextIteratorBehavior::EntersSkippedContentRelevantToUser
+    };
     if (!options.contains(FindOption::DoNotTraverseFlatTree))
         iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
     return iteratorOptions;

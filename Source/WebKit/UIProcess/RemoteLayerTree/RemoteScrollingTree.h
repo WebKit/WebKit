@@ -106,7 +106,7 @@ public:
     }
 
 private:
-    Ref<RemoteScrollingTree> m_scrollingTree;
+    const Ref<RemoteScrollingTree> m_scrollingTree;
 };
 
 } // namespace WebKit

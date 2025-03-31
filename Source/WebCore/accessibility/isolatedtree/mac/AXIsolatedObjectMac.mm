@@ -37,7 +37,7 @@ namespace WebCore {
 void AXIsolatedObject::initializePlatformProperties(const Ref<const AccessibilityObject>& object)
 {
     setProperty(AXProperty::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
-    setProperty(AXProperty::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
+    setProperty(AXProperty::SpeakAs, object->speakAs());
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (object->isStaticText()) {
         auto style = object->stylesForAttributedString();
@@ -336,7 +336,7 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     if (!nsRange)
         return nil;
 
-    // If the range spans the beginning of the node, account for the length of the text marker prefix, if any.
+    // If the range spans the beginning of the node, account for the length of the list marker prefix, if any.
     if (!nsRange->location)
         nsRange->length += textContentPrefixFromListMarker().length();
 

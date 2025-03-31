@@ -91,7 +91,6 @@ GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
 ModelProcess/ModelProcess.cpp

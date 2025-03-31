@@ -95,7 +95,7 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
             return;
         gpuProcessConnection->releaseRenderingBackend(identifier);
     });
-    m_remoteResourceCacheProxy.clear();
+
     disconnectGPUProcess();
 }
 
@@ -181,14 +181,33 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
     if (!m_connection)
         return;
     disconnectGPUProcess();
-    // Note: The cache will call back to this to setup a new connection.
-    m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
+    m_remoteResourceCacheProxy.releaseMemory();
 
-    for (auto weakBufferSet : m_bufferSets.values()) {
-        if (RefPtr bufferSet = weakBufferSet.get()) {
-            bufferSet->remoteBufferSetWasDestroyed();
-            send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet->identifier(), bufferSet->displayListResourceIdentifier()));
-        }
+    for (auto& weakImageBuffer : m_imageBuffers.values()) {
+        RefPtr imageBuffer = weakImageBuffer.get();
+        if (!imageBuffer)
+            continue;
+        imageBuffer->disconnect();
+    }
+    for (auto& weakImageBufferSet : m_imageBufferSets.values()) {
+        RefPtr imageBufferSet = weakImageBufferSet.get();
+        if (!imageBufferSet)
+            continue;
+        imageBufferSet->disconnect();
+    }
+
+    // Note: sends below will re-enter at ensureGPUProcessConnection.
+    for (auto& [identifier, weakImageBuffer] : m_imageBuffers) {
+        RefPtr imageBuffer  = weakImageBuffer.get();
+        if (!imageBuffer)
+            continue;
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->renderingPurpose(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), identifier, imageBuffer->contextIdentifier()));
+    }
+    for (auto& [identifier, weakImageBufferSet] : m_imageBufferSets) {
+        RefPtr imageBufferSet = weakImageBufferSet.get();
+        if (!imageBufferSet)
+            continue;
+        send(Messages::RemoteRenderingBackend::CreateImageBufferSet(identifier, imageBufferSet->contextIdentifier()));
     }
 }
 
@@ -206,6 +225,11 @@ void RemoteRenderingBackendProxy::didBecomeUnresponsive()
     });
 }
 
+unsigned RemoteRenderingBackendProxy::nativeImageCountForTesting() const
+{
+    return m_remoteResourceCacheProxy.nativeImageCountForTesting();
+}
+
 void RemoteRenderingBackendProxy::disconnectGPUProcess()
 {
     if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
@@ -219,11 +243,6 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_gpuProcessConnection = nullptr;
 }
 
-void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
-{
-    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
-}
-
 bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
 {
     // When DOM rendering happens in WebContent process, we need to paint 2D contexts
@@ -231,10 +250,9 @@ bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
     return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat)
+RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat)
 {
-    RefPtr<ImageBuffer> imageBuffer;
-
+    RefPtr<RemoteImageBufferProxy> imageBuffer;
     switch (renderingMode) {
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
@@ -258,54 +276,58 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
         break;
     }
-
-    if (!imageBuffer)
-        return nullptr;
-
-    createRemoteImageBuffer(*imageBuffer);
+    if (imageBuffer) {
+        auto identifier = imageBuffer->renderingResourceIdentifier();
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->renderingPurpose(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), identifier, imageBuffer->contextIdentifier()));
+        auto addResult = m_imageBuffers.add(identifier, *imageBuffer);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
     return imageBuffer;
 }
 
-std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::createDisplayListRecorder(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat)
+void RemoteRenderingBackendProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
-    ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    ImageBufferParameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
-    auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters));
-    return makeUnique<RemoteDisplayListRecorderProxy>(*this, renderingResourceIdentifier, colorSpace, renderingMode, FloatRect { { }, size }, transform);
+    auto identifier = imageBuffer.renderingResourceIdentifier();
+    bool success = m_imageBuffers.remove(identifier);
+    ASSERT_UNUSED(success, success);
+    send(Messages::RemoteRenderingBackend::ReleaseImageBuffer(identifier));
 }
 
-void RemoteRenderingBackendProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+Ref<RemoteImageBufferSetProxy> RemoteRenderingBackendProxy::createImageBufferSet()
 {
-    send(Messages::RemoteRenderingBackend::ReleaseImageBuffer(renderingResourceIdentifier));
-}
-
-RefPtr<RemoteImageBufferSetProxy>  RemoteRenderingBackendProxy::createRemoteImageBufferSet()
-{
-    RefPtr<RemoteImageBufferSetProxy> result = adoptRef(new RemoteImageBufferSetProxy(*this));
-    send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(result->identifier(), result->displayListResourceIdentifier()));
-
-    auto addResult = m_bufferSets.add(result->identifier(), result);
+    Ref result = RemoteImageBufferSetProxy::create(*this);
+    send(Messages::RemoteRenderingBackend::CreateImageBufferSet(result->identifier(), result->contextIdentifier()));
+    auto addResult = m_imageBufferSets.add(result->identifier(), result);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     return result;
 }
 
-void RemoteRenderingBackendProxy::releaseRemoteImageBufferSet(RemoteImageBufferSetProxy& bufferSet)
+void RemoteRenderingBackendProxy::releaseImageBufferSet(RemoteImageBufferSetProxy& bufferSet)
 {
-    bool success = m_bufferSets.remove(bufferSet.identifier());
+    auto identifier = bufferSet.identifier();
+    bool success = m_imageBufferSets.remove(identifier);
     ASSERT_UNUSED(success, success);
-    if (!m_connection)
-        return;
-    send(Messages::RemoteRenderingBackend::ReleaseRemoteImageBufferSet(bufferSet.identifier()));
+    send(Messages::RemoteRenderingBackend::ReleaseImageBufferSet(identifier));
 }
 
-void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
+std::unique_ptr<RemoteSerializedImageBufferProxy> RemoteRenderingBackendProxy::moveToSerializedBuffer(RemoteImageBufferProxy& imageBuffer)
 {
-    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier));
+    auto identifier = imageBuffer.renderingResourceIdentifier();
+    bool success = m_imageBuffers.remove(identifier);
+    ASSERT_UNUSED(success, success);
+    std::unique_ptr result = makeUnique<RemoteSerializedImageBufferProxy>(imageBuffer.parameters(), imageBuffer.backendInfo(), *this);
+    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier, result->identifier()));
+    return result;
 }
 
-void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
+Ref<RemoteImageBufferProxy> RemoteRenderingBackendProxy::moveToImageBuffer(RemoteSerializedImageBufferProxy& serialized)
 {
-    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier));
+    auto result = RemoteImageBufferProxy::create(serialized.parameters(), serialized.info(), *this);
+    auto resultIdentifier = result->renderingResourceIdentifier();
+    auto addResult = m_imageBuffers.add(resultIdentifier, result);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(serialized.identifier(), resultIdentifier, result->contextIdentifier()));
+    return result;
 }
 
 #if PLATFORM(COCOA)
@@ -382,6 +404,8 @@ void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& han
 
 void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseNativeImage(identifier));
 }
 
@@ -392,6 +416,8 @@ void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fon
 
 void RemoteRenderingBackendProxy::releaseFont(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseFont(identifier));
 }
 
@@ -403,6 +429,8 @@ void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCust
 
 void RemoteRenderingBackendProxy::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseFontCustomPlatformData(identifier));
 }
 
@@ -413,6 +441,8 @@ void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(const DecomposedGlyphs& 
 
 void RemoteRenderingBackendProxy::releaseDecomposedGlyphs(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseDecomposedGlyphs(identifier));
 }
 
@@ -423,6 +453,8 @@ void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
 
 void RemoteRenderingBackendProxy::releaseGradient(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseGradient(identifier));
 }
 
@@ -433,17 +465,25 @@ void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
 
 void RemoteRenderingBackendProxy::releaseFilter(RenderingResourceIdentifier identifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseFilter(identifier));
 }
 
-void RemoteRenderingBackendProxy::releaseAllDrawingResources()
+void RemoteRenderingBackendProxy::releaseMemory()
 {
-    send(Messages::RemoteRenderingBackend::ReleaseAllDrawingResources());
+    m_remoteResourceCacheProxy.releaseMemory();
+    if (!m_connection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseMemory());
 }
 
-void RemoteRenderingBackendProxy::releaseAllImageResources()
+void RemoteRenderingBackendProxy::releaseNativeImages()
 {
-    send(Messages::RemoteRenderingBackend::ReleaseAllImageResources());
+    m_remoteResourceCacheProxy.releaseNativeImages();
+    if (!m_connection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseNativeImages());
 }
 
 #if PLATFORM(COCOA)
@@ -517,7 +557,7 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
         return;
 
     for (auto& bufferSetIdentifierAndType : markedBufferSets) {
-        auto bufferSet = m_bufferSets.get(bufferSetIdentifierAndType.first).get();
+        RefPtr bufferSet = m_imageBufferSets.get(bufferSetIdentifierAndType.first).get();
         if (!bufferSet)
             continue;
 
@@ -543,7 +583,7 @@ void RemoteRenderingBackendProxy::didPaintLayers()
 bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
-        auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
+        RefPtr imageBuffer = m_imageBuffers.get(RenderingResourceIdentifier { decoder.destinationID() }).get();
         if (imageBuffer)
             imageBuffer->didReceiveMessage(connection, decoder);
         // Messages to already removed instances are ok.
@@ -605,7 +645,7 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
 {
-    if (auto cachedImageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(imageBuffer.renderingResourceIdentifier())) {
+    if (RefPtr cachedImageBuffer = m_imageBuffers.get(imageBuffer.renderingResourceIdentifier()).get()) {
         ASSERT_UNUSED(cachedImageBuffer, cachedImageBuffer == &imageBuffer);
         return true;
     }

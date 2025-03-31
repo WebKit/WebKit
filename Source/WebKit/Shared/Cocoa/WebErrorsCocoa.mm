@@ -37,12 +37,12 @@ using namespace WebCore;
 
 static RetainPtr<NSError> createNSError(NSString* domain, int code, NSURL *URL)
 {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+    RetainPtr<NSDictionary> userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         URL, @"NSErrorFailingURLKey",
         [URL absoluteString], @"NSErrorFailingURLStringKey",
         nil];
 
-    return adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:userInfo]);
+    return adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:userInfo.get()]);
 }
 
 ResourceError cancelledError(const ResourceRequest& request)

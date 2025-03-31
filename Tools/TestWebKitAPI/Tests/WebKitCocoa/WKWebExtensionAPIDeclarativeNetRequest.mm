@@ -520,6 +520,69 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SessionRules)
     Util::run(&receivedActionNotification);
 }
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, GetSessionRules)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let sessionRules = await browser.declarativeNetRequest.getSessionRules()",
+        @"browser.test.assertEq(sessionRules.length, 0)",
+
+        @"await browser.declarativeNetRequest.updateSessionRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'foo' } }] })",
+        @"await browser.declarativeNetRequest.updateSessionRules({ addRules: [{ id: 2, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'bar' } }] })",
+        @"await browser.declarativeNetRequest.updateSessionRules({ addRules: [{ id: 3, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'baz' } }] })",
+
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: 1 }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: '' }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: true }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: { } }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: function foo() { } }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: [ '' ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: [ true ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: [ { } ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getSessionRules({ ruleIds: [ function foo() { } ] }))",
+
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules({ })",
+        @"sessionRules = sessionRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(sessionRules.length, 3)",
+        @"browser.test.assertEq(sessionRules[0].id, 1)",
+        @"browser.test.assertEq(sessionRules[1].id, 2)",
+        @"browser.test.assertEq(sessionRules[2].id, 3)",
+
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules({ ruleIds: [ ] })",
+        @"sessionRules = sessionRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(sessionRules.length, 3)",
+        @"browser.test.assertEq(sessionRules[0].id, 1)",
+        @"browser.test.assertEq(sessionRules[1].id, 2)",
+        @"browser.test.assertEq(sessionRules[2].id, 3)",
+
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules({ ruleIds: [ 1 ] })",
+        @"browser.test.assertEq(sessionRules.length, 1)",
+        @"browser.test.assertEq(sessionRules[0].id, 1)",
+
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules({ ruleIds: [ 1, 2 ] })",
+        @"sessionRules = sessionRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(sessionRules.length, 2)",
+        @"browser.test.assertEq(sessionRules[0].id, 1)",
+        @"browser.test.assertEq(sessionRules[1].id, 2)",
+
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules({ ruleIds: [ 1, 2, 3 ] })",
+        @"sessionRules = sessionRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(sessionRules.length, 3)",
+        @"browser.test.assertEq(sessionRules[0].id, 1)",
+        @"browser.test.assertEq(sessionRules[1].id, 2)",
+        @"browser.test.assertEq(sessionRules[2].id, 3)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+    };
+
+    Util::loadAndRunExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript  });
+}
+
 TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
 {
     TestWebKitAPI::HTTPServer server({
@@ -584,6 +647,69 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     [webView loadRequest:server.requestWithLocalhost()];
 
     Util::run(&receivedActionNotification);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, GetDynamicRules)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let dynamicRules = await browser.declarativeNetRequest.getDynamicRules()",
+        @"browser.test.assertEq(dynamicRules.length, 0)",
+
+        @"await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'foo' } }] })",
+        @"await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 2, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'bar' } }] })",
+        @"await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 3, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'baz' } }] })",
+
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: 1 }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: '' }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: true }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: { } }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: function foo() { } }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ '' ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ true ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ { } ] }))",
+        @"browser.test.assertRejects(browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ function foo() { } ] }))",
+
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ })",
+        @"dynamicRules = dynamicRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(dynamicRules.length, 3)",
+        @"browser.test.assertEq(dynamicRules[0].id, 1)",
+        @"browser.test.assertEq(dynamicRules[1].id, 2)",
+        @"browser.test.assertEq(dynamicRules[2].id, 3)",
+
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ ] })",
+        @"dynamicRules = dynamicRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(dynamicRules.length, 3)",
+        @"browser.test.assertEq(dynamicRules[0].id, 1)",
+        @"browser.test.assertEq(dynamicRules[1].id, 2)",
+        @"browser.test.assertEq(dynamicRules[2].id, 3)",
+
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ 1 ] })",
+        @"browser.test.assertEq(dynamicRules.length, 1)",
+        @"browser.test.assertEq(dynamicRules[0].id, 1)",
+
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ 1, 2 ] })",
+        @"dynamicRules = dynamicRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(dynamicRules.length, 2)",
+        @"browser.test.assertEq(dynamicRules[0].id, 1)",
+        @"browser.test.assertEq(dynamicRules[1].id, 2)",
+
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ ruleIds: [ 1, 2, 3 ] })",
+        @"dynamicRules = dynamicRules.sort((a, b) => { a.id < b.id })",
+        @"browser.test.assertEq(dynamicRules.length, 3)",
+        @"browser.test.assertEq(dynamicRules[0].id, 1)",
+        @"browser.test.assertEq(dynamicRules[1].id, 2)",
+        @"browser.test.assertEq(dynamicRules[2].id, 3)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+    };
+
+    Util::loadAndRunExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript  });
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)

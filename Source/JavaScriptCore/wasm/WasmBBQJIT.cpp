@@ -681,8 +681,6 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
     , m_directCallees(m_info.internalFunctionCount())
     , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_loopIndexForOSREntry(loopIndexForOSREntry)
-    , m_gprBindings(jit.numberOfRegisters(), RegisterBinding::none())
-    , m_fprBindings(jit.numberOfFPRegisters(), RegisterBinding::none())
     , m_gprLRU(jit.numberOfRegisters())
     , m_fprLRU(jit.numberOfFPRegisters())
     , m_lastUseTimestamp(0)
@@ -693,7 +691,7 @@ BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& ca
     gprSetBuilder.exclude(RegisterSetBuilder::specialRegisters());
     gprSetBuilder.exclude(RegisterSetBuilder::macroClobberedGPRs());
     gprSetBuilder.exclude(RegisterSetBuilder::wasmPinnedRegisters());
-    // TODO: handle callee-saved registers better.
+    // FIXME: handle callee-saved registers better.
     gprSetBuilder.exclude(RegisterSetBuilder::vmCalleeSaveRegisters());
 
     RegisterSetBuilder fprSetBuilder = RegisterSetBuilder::allFPRs();
@@ -819,6 +817,13 @@ Value BBQJIT::addConstant(Type type, uint64_t value)
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant type.\n");
         return Value::none();
     }
+
+    if (UNLIKELY(Options::disableBBQConsts())) {
+        Value stackResult = topValue(type.kind);
+        emitStoreConst(result, canonicalSlot(stackResult));
+        result = stackResult;
+    }
+
     return result;
 }
 
@@ -1081,6 +1086,17 @@ void BBQJIT::emitWriteBarrier(GPRReg cellGPR)
     // Continuation
     noFenceCheck.link(&m_jit);
     belowBlackThreshold.link(&m_jit);
+}
+
+void BBQJIT::emitMutatorFence()
+{
+    if (isX86_64())
+        return;
+
+    m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), wasmScratchGPR);
+    Jump ok = m_jit.branchTest8(MacroAssembler::Zero, Address(wasmScratchGPR, VM::offsetOfHeapMutatorShouldBeFenced()));
+    m_jit.storeFence();
+    ok.link(m_jit);
 }
 
 // Memory
@@ -1884,7 +1900,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Mul(Value lhs, Value rhs, Value& 
 template<typename Func>
 void BBQJIT::addLatePath(Func func)
 {
-    m_latePaths.append(createSharedTask<void(BBQJIT&, CCallHelpers&)>(WTFMove(func)));
+    m_latePaths.append(WTFMove(func));
 }
 
 void BBQJIT::emitThrowException(ExceptionType type)
@@ -3939,7 +3955,17 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(BlockSignature, const Stack
         m_disassembler->setEndOfOpcode(m_jit.label());
 
     for (const auto& latePath : m_latePaths)
-        latePath->run(*this, m_jit);
+        latePath(*this, m_jit);
+
+    for (auto& [ jumpList, returnLabel, registerBindings, generator ] : m_slowPaths) {
+        JIT_COMMENT(m_jit, "Slow path start");
+        jumpList.link(m_jit);
+        slowPathSpillBindings(registerBindings);
+        generator(*this, m_jit);
+        slowPathRestoreBindings(registerBindings);
+        JIT_COMMENT(m_jit, "Slow path end");
+        m_jit.jump(returnLabel);
+    }
 
     for (unsigned i = 0; i < numberOfExceptionTypes; ++i) {
         auto& jumps = m_exceptions[i];
@@ -3947,11 +3973,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(BlockSignature, const Stack
             jumps.link(&jit);
             emitThrowException(static_cast<ExceptionType>(i));
         }
-    }
-
-    for (const auto& [jump, returnLabel, typeIndex, rttReg] : m_rttSlowPathJumps) {
-        jump.link(&jit);
-        emitSlowPathRTTCheck(returnLabel, typeIndex, rttReg);
     }
 
     m_compilation->osrEntryScratchBufferSize = m_osrEntryScratchBufferSize;
@@ -3985,12 +4006,12 @@ void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg was
 void BBQJIT::flushRegistersForException()
 {
     // Flush all locals.
-    for (RegisterBinding& binding : m_gprBindings) {
+    for (RegisterBinding& binding : gprBindings()) {
         if (binding.toValue().isLocal())
             flushValue(binding.toValue());
     }
 
-    for (RegisterBinding& binding : m_fprBindings) {
+    for (RegisterBinding& binding : fprBindings()) {
         if (binding.toValue().isLocal())
             flushValue(binding.toValue());
     }
@@ -3999,14 +4020,68 @@ void BBQJIT::flushRegistersForException()
 void BBQJIT::flushRegisters()
 {
     // Just flush everything.
-    for (RegisterBinding& binding : m_gprBindings) {
+    // FIXME: These should be store pairs.
+    for (const RegisterBinding& binding : gprBindings()) {
         if (!binding.toValue().isNone())
             flushValue(binding.toValue());
     }
 
-    for (RegisterBinding& binding : m_fprBindings) {
+    for (const RegisterBinding& binding : fprBindings()) {
         if (!binding.toValue().isNone())
             flushValue(binding.toValue());
+    }
+}
+
+void BBQJIT::RegisterBindings::dump(PrintStream& out) const
+{
+    CommaPrinter comma(", ", "[");
+    for (unsigned i = 0; i < m_fprBindings.size(); ++i) {
+        if (!m_fprBindings[i].isNone())
+            out.print(comma, "<", static_cast<FPRReg>(i), ": ", m_fprBindings[i], ">");
+    }
+    if (comma.didPrint())
+        out.print("]");
+
+    // FIXME: These should be store load pairs.
+    comma = CommaPrinter(", ", ", [");
+    for (unsigned i = 0; i < m_gprBindings.size(); ++i) {
+        if (!m_gprBindings[i].isNone())
+            out.print(comma, "<", static_cast<GPRReg>(i), ": ", m_gprBindings[i], ">");
+    }
+    if (comma.didPrint())
+        out.print("]");
+}
+
+void BBQJIT::slowPathSpillBindings(const RegisterBindings& bindings)
+{
+    dataLogLn(bindings);
+    for (unsigned i = 0; i < bindings.m_fprBindings.size(); ++i) {
+        Value value = bindings.m_fprBindings[i].toValue();
+        if (!value.isNone())
+            emitStore(value.type(), Location::fromFPR(static_cast<FPRReg>(i)), canonicalSlot(value));
+    }
+
+    // FIXME: These should be store load pairs.
+    for (unsigned i = 0; i < bindings.m_gprBindings.size(); ++i) {
+        Value value = bindings.m_gprBindings[i].toValue();
+        if (!value.isNone())
+            emitStore(value.type(), Location::fromGPR(static_cast<GPRReg>(i)), canonicalSlot(value));
+    }
+}
+
+void BBQJIT::slowPathRestoreBindings(const RegisterBindings& bindings)
+{
+    for (unsigned i = 0; i < bindings.m_fprBindings.size(); ++i) {
+        Value value = bindings.m_fprBindings[i].toValue();
+        if (!value.isNone())
+            emitLoad(value.type(), canonicalSlot(value), Location::fromFPR(static_cast<FPRReg>(i)));
+    }
+
+    // FIXME: These should be store load pairs.
+    for (unsigned i = 0; i < bindings.m_gprBindings.size(); ++i) {
+        Value value = bindings.m_gprBindings[i].toValue();
+        if (!value.isNone())
+            emitLoad(value.type(), canonicalSlot(value), Location::fromGPR(static_cast<GPRReg>(i)));
     }
 }
 
@@ -4032,7 +4107,7 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& argume
 
     // Next, for all values currently still occupying a caller-saved register, we flush them to their canonical slot.
     for (Reg reg : m_callerSaves) {
-        RegisterBinding binding = reg.isGPR() ? m_gprBindings[reg.gpr()] : m_fprBindings[reg.fpr()];
+        RegisterBinding binding = reg.isGPR() ? gprBindings()[reg.gpr()] : fprBindings()[reg.fpr()];
         if (!binding.toValue().isNone())
             flushValue(binding.toValue());
     }
@@ -4046,11 +4121,11 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& argume
         if (paramLocation.isRegister()) {
             RegisterBinding binding;
             if (paramLocation.isGPR())
-                binding = m_gprBindings[paramLocation.asGPR()];
+                binding = gprBindings()[paramLocation.asGPR()];
             else if (paramLocation.isFPR())
-                binding = m_fprBindings[paramLocation.asFPR()];
+                binding = fprBindings()[paramLocation.asFPR()];
             else if (paramLocation.isGPR2())
-                binding = m_gprBindings[paramLocation.asGPRhi()];
+                binding = gprBindings()[paramLocation.asGPRhi()];
             if (!binding.toValue().isNone())
                 flushValue(binding.toValue());
         }
@@ -4084,11 +4159,11 @@ void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSigna
         if (returnLocation.isRegister()) {
             RegisterBinding currentBinding;
             if (returnLocation.isGPR())
-                currentBinding = m_gprBindings[returnLocation.asGPR()];
+                currentBinding = gprBindings()[returnLocation.asGPR()];
             else if (returnLocation.isFPR())
-                currentBinding = m_fprBindings[returnLocation.asFPR()];
+                currentBinding = fprBindings()[returnLocation.asFPR()];
             else if (returnLocation.isGPR2())
-                currentBinding = m_gprBindings[returnLocation.asGPRhi()];
+                currentBinding = gprBindings()[returnLocation.asGPRhi()];
             if (currentBinding.isScratch()) {
                 // FIXME: This is a total hack and could cause problems. We assume scratch registers (allocated by a ScratchScope)
                 // will never be live across a call. So far, this is probably true, but it's fragile. Probably the fix here is to
@@ -4465,7 +4540,10 @@ void BBQJIT::addRTTSlowPathJump(TypeIndex signature, GPRReg calleeRTT)
 {
     auto jump = m_jit.jump();
     auto returnLabel = m_jit.label();
-    m_rttSlowPathJumps.append({ jump, returnLabel, signature, calleeRTT });
+    m_latePaths.append([jump, returnLabel, signature, calleeRTT](BBQJIT& bbq, CCallHelpers& jit) {
+        jump.link(jit);
+        bbq.emitSlowPathRTTCheck(returnLabel, signature, calleeRTT);
+    });
 }
 
 void BBQJIT::emitSlowPathRTTCheck(MacroAssembler::Label returnLabel, TypeIndex typeIndex, GPRReg calleeRTT)
@@ -4989,21 +5067,21 @@ Location BBQJIT::bind(Value value, Location loc)
         if (value.isFloat()) {
             ASSERT(m_fprSet.contains(loc.asFPR(), Width::Width128));
             m_fprSet.remove(loc.asFPR());
-            m_fprBindings[loc.asFPR()] = RegisterBinding::fromValue(value);
+            fprBindings()[loc.asFPR()] = RegisterBinding::fromValue(value);
         } else if (loc.isGPR2()) {
-            ASSERT(m_gprBindings[loc.asGPRlo()].isNone());
-            ASSERT(m_gprBindings[loc.asGPRhi()].isNone());
+            ASSERT(gprBindings()[loc.asGPRlo()].isNone());
+            ASSERT(gprBindings()[loc.asGPRhi()].isNone());
             ASSERT(m_gprSet.contains(loc.asGPRlo(), IgnoreVectors));
             ASSERT(m_gprSet.contains(loc.asGPRhi(), IgnoreVectors));
             m_gprSet.remove(loc.asGPRlo());
             m_gprSet.remove(loc.asGPRhi());
             auto binding = RegisterBinding::fromValue(value);
-            m_gprBindings[loc.asGPRlo()] = binding;
-            m_gprBindings[loc.asGPRhi()] = binding;
+            gprBindings()[loc.asGPRlo()] = binding;
+            gprBindings()[loc.asGPRhi()] = binding;
         } else {
             ASSERT(m_gprSet.contains(loc.asGPR(), IgnoreVectors));
             m_gprSet.remove(loc.asGPR());
-            m_gprBindings[loc.asGPR()] = RegisterBinding::fromValue(value);
+            gprBindings()[loc.asGPR()] = RegisterBinding::fromValue(value);
         }
     }
     if (value.isLocal())
@@ -5027,16 +5105,16 @@ void BBQJIT::unbind(Value value, Location loc)
     if (loc.isFPR()) {
         ASSERT(m_validFPRs.contains(loc.asFPR(), Width::Width128));
         m_fprSet.add(loc.asFPR(), Width::Width128);
-        m_fprBindings[loc.asFPR()] = RegisterBinding::none();
+        fprBindings()[loc.asFPR()] = RegisterBinding::none();
     } else if (loc.isGPR()) {
         ASSERT(m_validGPRs.contains(loc.asGPR(), IgnoreVectors));
         m_gprSet.add(loc.asGPR(), IgnoreVectors);
-        m_gprBindings[loc.asGPR()] = RegisterBinding::none();
+        gprBindings()[loc.asGPR()] = RegisterBinding::none();
     } else if (loc.isGPR2()) {
         m_gprSet.add(loc.asGPRlo(), IgnoreVectors);
         m_gprSet.add(loc.asGPRhi(), IgnoreVectors);
-        m_gprBindings[loc.asGPRlo()] = RegisterBinding::none();
-        m_gprBindings[loc.asGPRhi()] = RegisterBinding::none();
+        gprBindings()[loc.asGPRlo()] = RegisterBinding::none();
+        gprBindings()[loc.asGPRhi()] = RegisterBinding::none();
     }
     if (value.isLocal())
         m_locals[value.asLocal()] = m_localSlots[value.asLocal()];
@@ -5049,11 +5127,11 @@ void BBQJIT::unbind(Value value, Location loc)
 
 void BBQJIT::unbindAllRegisters()
 {
-    for (const auto& binding : m_gprBindings) {
+    for (const auto& binding : gprBindings()) {
         if (!binding.isNone())
             consume(binding.toValue());
     }
-    for (const auto& binding : m_fprBindings) {
+    for (const auto& binding : fprBindings()) {
         if (!binding.isNone())
             consume(binding.toValue());
     }
@@ -5064,7 +5142,7 @@ GPRReg BBQJIT::nextGPR()
     auto next = m_gprSet.begin();
     ASSERT(next != m_gprSet.end());
     GPRReg reg = (*next).gpr();
-    ASSERT(m_gprBindings[reg].m_kind == RegisterBinding::None);
+    ASSERT(gprBindings()[reg].m_kind == RegisterBinding::None);
     return reg;
 }
 
@@ -5073,35 +5151,35 @@ FPRReg BBQJIT::nextFPR()
     auto next = m_fprSet.begin();
     ASSERT(next != m_fprSet.end());
     FPRReg reg = (*next).fpr();
-    ASSERT(m_fprBindings[reg].m_kind == RegisterBinding::None);
+    ASSERT(fprBindings()[reg].m_kind == RegisterBinding::None);
     return reg;
 }
 
 GPRReg BBQJIT::evictGPR()
 {
     auto lruGPR = m_gprLRU.findMin();
-    auto lruBinding = m_gprBindings[lruGPR];
+    auto lruBinding = gprBindings()[lruGPR];
 
     if (UNLIKELY(Options::verboseBBQJITAllocation()))
         dataLogLn("BBQ\tEvicting GPR ", MacroAssembler::gprName(lruGPR), " currently bound to ", lruBinding);
     flushValue(lruBinding.toValue());
 
     ASSERT(m_gprSet.contains(lruGPR, IgnoreVectors));
-    ASSERT(m_gprBindings[lruGPR].m_kind == RegisterBinding::None);
+    ASSERT(gprBindings()[lruGPR].m_kind == RegisterBinding::None);
     return lruGPR;
 }
 
 FPRReg BBQJIT::evictFPR()
 {
     auto lruFPR = m_fprLRU.findMin();
-    auto lruBinding = m_fprBindings[lruFPR];
+    auto lruBinding = fprBindings()[lruFPR];
 
     if (UNLIKELY(Options::verboseBBQJITAllocation()))
         dataLogLn("BBQ\tEvicting FPR ", MacroAssembler::fprName(lruFPR), " currently bound to ", lruBinding);
     flushValue(lruBinding.toValue());
 
     ASSERT(m_fprSet.contains(lruFPR, Width::Width128));
-    ASSERT(m_fprBindings[lruFPR].m_kind == RegisterBinding::None);
+    ASSERT(fprBindings()[lruFPR].m_kind == RegisterBinding::None);
     return lruFPR;
 }
 
@@ -5110,7 +5188,7 @@ FPRReg BBQJIT::evictFPR()
 void BBQJIT::clobber(GPRReg gpr)
 {
     if (m_validGPRs.contains(gpr, IgnoreVectors) && !m_gprSet.contains(gpr, IgnoreVectors)) {
-        RegisterBinding& binding = m_gprBindings[gpr];
+        RegisterBinding& binding = gprBindings()[gpr];
         if (UNLIKELY(Options::verboseBBQJITAllocation()))
             dataLogLn("BBQ\tClobbering GPR ", MacroAssembler::gprName(gpr), " currently bound to ", binding);
         RELEASE_ASSERT(!binding.isNone() && !binding.isScratch()); // We could probably figure out how to handle this, but let's just crash if it happens for now.
@@ -5121,7 +5199,7 @@ void BBQJIT::clobber(GPRReg gpr)
 void BBQJIT::clobber(FPRReg fpr)
 {
     if (m_validFPRs.contains(fpr, Width::Width128) && !m_fprSet.contains(fpr, Width::Width128)) {
-        RegisterBinding& binding = m_fprBindings[fpr];
+        RegisterBinding& binding = fprBindings()[fpr];
         if (UNLIKELY(Options::verboseBBQJITAllocation()))
             dataLogLn("BBQ\tClobbering FPR ", MacroAssembler::fprName(fpr), " currently bound to ", binding);
         RELEASE_ASSERT(!binding.isNone() && !binding.isScratch()); // We could probably figure out how to handle this, but let's just crash if it happens for now.

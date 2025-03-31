@@ -56,12 +56,26 @@ promise_test(async t => {
     assert_equals(model.stageMode, "");
     assert_3d_matrix_is_identity(originalTransform, false);
 
-    model.stageMode = "orbit";
-    assert_equals(model.stageMode, "orbit");
-
-    let scaledTransform = originalTransform.scale(2, 2, 2);
+    let scaledTransform = originalTransform.scale(2000, 2000, 2000);
     model.entityTransform = scaledTransform;
-    assert_3d_matrix_equals(model.entityTransform, originalTransform);
+
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+    model.stageMode = "orbit";
+
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    assert_equals(model.stageMode, "orbit");
+    assert_3d_matrix_not_equals(model.entityTransform, scaledTransform);
+    assert_3d_matrix_not_equals(model.entityTransform, originalTransform);
+    let orbitFitTransform = model.entityTransform;
+
+    model.stageMode = "none";
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    assert_equals(model.stageMode, "none");
+    assert_3d_matrix_not_equals(model.entityTransform, scaledTransform);
+    assert_3d_matrix_not_equals(model.entityTransform, originalTransform);
+    assert_3d_matrix_equals(model.entityTransform, orbitFitTransform);
 }, `<model> ignores entityTransform when stagemode is set`);
 
 </script>

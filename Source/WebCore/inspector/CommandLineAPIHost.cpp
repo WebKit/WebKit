@@ -160,7 +160,7 @@ void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCL
         ASSERT(!logType.isNull());
         ASSERT(!logMessage.isNull());
 
-        callback->handleEvent({ WTFMove(logType), WTFMove(logMessage), WTFMove(logLevel), WTFMove(connection) });
+        callback->invoke({ WTFMove(logType), WTFMove(logMessage), WTFMove(logLevel), WTFMove(connection) });
     });
 }
 #endif

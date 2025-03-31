@@ -29,6 +29,7 @@
 #if OS(LINUX)
 
 #include <gio/gio.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 
@@ -64,6 +65,21 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
             "--sandbox-flag=allow-a11y",
             "--sandbox-flag=allow-dbus", // Note that this only allows portals and $appid.Sandbox.* access
         }));
+
+        // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
+        if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
+            auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
+            GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
+            flatpakArgs.append(pathArg.get());
+        }
+
+        // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
+        // permissions for its parent directory.
+        if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
+            auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
+            GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
+            flatpakArgs.append(pathArg.get());
+        }
 
         for (const auto& pathAndPermission : launchOptions.extraSandboxPaths) {
             const char* formatString = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro=%s": "--sandbox-expose-path=%s";

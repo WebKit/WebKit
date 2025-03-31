@@ -50,5 +50,8 @@ struct WebKit::RemoteMediaPlayerProxyConfiguration {
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked;
 #endif
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    bool prefersSpatialAudioExperience;
+#endif
 };
 #endif

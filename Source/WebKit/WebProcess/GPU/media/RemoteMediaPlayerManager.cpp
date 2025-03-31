@@ -189,6 +189,9 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
 #if PLATFORM(IOS_FAMILY)
     proxyConfiguration.canShowWhileLocked = player->canShowWhileLocked();
 #endif
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    proxyConfiguration.prefersSpatialAudioExperience = player->prefersSpatialAudioExperience();
+#endif
 
     auto identifier = MediaPlayerIdentifier::generate();
     auto clientIdentifier = player->clientIdentifier();

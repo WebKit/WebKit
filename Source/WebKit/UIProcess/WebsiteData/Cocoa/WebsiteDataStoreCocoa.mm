@@ -29,6 +29,7 @@
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
 #import "LegacyGlobalSettings.h"
+#import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
 #import "UnifiedOriginStorageLevel.h"
@@ -99,7 +100,7 @@ static std::atomic<bool> managedKeyExists = false;
 
 static std::optional<bool> optionalExperimentalFeatureEnabled(const String& key, std::optional<bool> defaultValue = false)
 {
-    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", key.createNSString().get()]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
         return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 
@@ -302,22 +303,8 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
     });
 }
 
-void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
+void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    ASSERT(isMainRunLoop());
-
-    if (!identifier.isValid())
-        return completionHandler("Identifier is invalid"_s);
-
-    if (auto existingDataStore = existingDataStoreForIdentifier(identifier)) {
-        if (existingDataStore->hasActivePages())
-            return completionHandler("Data store is in use"_s);
-        
-        // FIXME: Try removing session from network process instead of returning error.
-        if (existingDataStore->networkProcessIfExists())
-            return completionHandler("Data store is in use (by network process)"_s);
-    }
-
     websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTFMove(completionHandler), identifier, directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
         RetainPtr nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:identifier.toString() private:NO]);
         auto* credentials = [nsCredentialStorage allCredentials];
@@ -334,6 +321,37 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
             completionHandler({ });
         });
     });
+}
+
+void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& callback)
+{
+    ASSERT(isMainRunLoop());
+
+    auto completionHandler = [identifier, callback = WTFMove(callback)](const String& error) mutable {
+        RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal completed for identifier %" PUBLIC_LOG_STRING " (error '%" PUBLIC_LOG_STRING "')", identifier.toString().utf8().data(), error.isEmpty() ? "null"_s : error.utf8().data());
+        callback(error);
+    };
+    RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal started for identifier %" PUBLIC_LOG_STRING, identifier.toString().utf8().data());
+    if (!identifier.isValid())
+        return completionHandler("Identifier is invalid"_s);
+
+    if (RefPtr existingDataStore = existingDataStoreForIdentifier(identifier)) {
+        if (existingDataStore->hasActivePages())
+            return completionHandler("Data store is in use"_s);
+
+        // FIXME: Try removing session from network process instead of returning error.
+        if (existingDataStore->networkProcessIfExists())
+            return completionHandler("Data store is in use (by network process)"_s);
+    }
+
+    if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess().get()) {
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::EnsureSessionWithDataStoreIdentifierRemoved { identifier }, [identifier, completionHandler = WTFMove(completionHandler)]() mutable {
+            removeDataStoreWithIdentifierImpl(identifier, WTFMove(completionHandler));
+        });
+        return;
+    }
+
+    removeDataStoreWithIdentifierImpl(identifier, WTFMove(completionHandler));
 }
 
 String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier)

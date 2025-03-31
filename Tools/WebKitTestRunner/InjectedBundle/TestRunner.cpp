@@ -876,19 +876,19 @@ bool TestRunner::isDoingMediaCapture() const
     return postSynchronousPageMessageReturningBoolean("IsDoingMediaCapture");
 }
 
-void TestRunner::setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin)
+void TestRunner::delayUserMediaRequestDecision()
 {
-    InjectedBundle::singleton().setUserMediaPersistentPermissionForOrigin(permission, toWK(origin).get(), toWK(parentOrigin).get());
+    InjectedBundle::singleton().delayUserMediaRequestDecision();
 }
 
-unsigned TestRunner::userMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin) const
+unsigned TestRunner::userMediaPermissionRequestCount() const
 {
-    return InjectedBundle::singleton().userMediaPermissionRequestCountForOrigin(toWK(origin).get(), toWK(parentOrigin).get());
+    return InjectedBundle::singleton().userMediaPermissionRequestCount();
 }
 
-void TestRunner::resetUserMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin)
+void TestRunner::resetUserMediaPermissionRequestCount()
 {
-    InjectedBundle::singleton().resetUserMediaPermissionRequestCountForOrigin(toWK(origin).get(), toWK(parentOrigin).get());
+    InjectedBundle::singleton().resetUserMediaPermissionRequestCount();
 }
 
 bool TestRunner::callShouldCloseOnWebView(JSContextRef context)

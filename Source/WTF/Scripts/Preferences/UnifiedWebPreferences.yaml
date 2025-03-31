@@ -3469,6 +3469,20 @@ HiddenPageDOMTimerThrottlingEnabled:
     WebCore:
       default: false
 
+HiddenUntilFoundEnabled:
+   type: bool
+   status: testable
+   category: html
+   humanReadableName: "hidden=until-found"
+   humanReadableDescription: "Enable support for hidden=until-found"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 HostedBlurMaterialInMediaControlsEnabled:
   type: bool
   status: internal

@@ -175,7 +175,7 @@ unsigned ImageInputType::height() const
     ASSERT(element());
     Ref<HTMLInputElement> element(*this->element());
 
-    element->protectedDocument()->updateLayout({ LayoutOptions::ContentVisibilityForceLayout }, element.ptr());
+    element->protectedDocument()->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
 
     if (auto* renderer = element->renderer())
         return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxHeight(), *renderer);
@@ -197,7 +197,7 @@ unsigned ImageInputType::width() const
     ASSERT(element());
     Ref<HTMLInputElement> element(*this->element());
 
-    element->protectedDocument()->updateLayout({ LayoutOptions::ContentVisibilityForceLayout }, element.ptr());
+    element->protectedDocument()->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
 
     if (auto* renderer = element->renderer())
         return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxWidth(), *renderer);

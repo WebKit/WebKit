@@ -11,7 +11,6 @@ WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm
 WebProcess/Plugins/PluginView.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
-WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/FindController.cpp
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollbarsController.mm
 WebProcess/WebPage/WebFrame.cpp

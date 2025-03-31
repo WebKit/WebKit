@@ -905,7 +905,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (wasVisible != willBeVisible) {
             if (CheckedPtr layer = enclosingLayer()) {
                 if (willBeVisible) {
-                    if (m_style.hasSkippedContent() && isSkippedContentRoot(*this))
+                    auto* renderBox = dynamicDowncast<RenderBox>(*this);
+                    if (m_style.hasSkippedContent() && renderBox && isSkippedContentRoot(*renderBox))
                         layer->dirtyVisibleContentStatus();
                     else
                         layer->setHasVisibleContent();

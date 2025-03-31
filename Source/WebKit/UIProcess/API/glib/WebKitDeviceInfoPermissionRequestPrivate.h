@@ -21,6 +21,10 @@
 #include "APISecurityOrigin.h"
 #include "DeviceIdHashSaltStorage.h"
 
+namespace WebKit {
+class UserMediaPermissionCheckProxy;
+}
+
 typedef struct _WebKitDeviceInfoPermissionRequest WebKitDeviceInfoPermissionRequest;
 
 WebKitDeviceInfoPermissionRequest* webkitDeviceInfoPermissionRequestCreate(WebKit::UserMediaPermissionCheckProxy&, WebKit::DeviceIdHashSaltStorage*);

@@ -2538,6 +2538,7 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer& parent, RenderLayer&
     } else
         return;
 
+    child.clearRepaintContainer();
     child.setNeedsCompositingLayerConnection();
 }
 
@@ -4501,6 +4502,17 @@ float RenderLayerCompositor::pageScaleFactor() const
 float RenderLayerCompositor::zoomedOutPageScaleFactor() const
 {
     return page().zoomedOutPageScaleFactor();
+}
+
+FloatSize RenderLayerCompositor::enclosingFrameViewVisibleSize() const
+{
+    const Ref frameView = m_renderView.frameView();
+#if PLATFORM(IOS_FAMILY)
+    return frameView->exposedContentRect().size();
+#endif
+    if (m_scrolledContentsLayer)
+        return frameView->sizeForVisibleContent(scrollbarInclusionForVisibleRect());
+    return frameView->visibleContentRect().size();
 }
 
 float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const

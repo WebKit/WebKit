@@ -46,19 +46,19 @@ CoreIPCPlistDictionary::CoreIPCPlistDictionary(NSDictionary *dictionary)
     m_keyValuePairs.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {
-        id value = dictionary[key];
+        RetainPtr<id> value = dictionary[key];
 
         if (!key || ![key isKindOfClass:[NSString class]]) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
-        if (!CoreIPCPlistObject::isPlistType(value)) {
+        if (!CoreIPCPlistObject::isPlistType(value.get())) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
-        m_keyValuePairs.append({ CoreIPCString(key), CoreIPCPlistObject(value) });
+        m_keyValuePairs.append({ CoreIPCString(key), CoreIPCPlistObject(value.get()) });
     }
 }
 

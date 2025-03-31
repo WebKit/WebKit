@@ -87,6 +87,16 @@ void ModelProcessModelPlayerManager::didReceivePlayerMessage(IPC::Connection& co
         player->didReceiveMessage(connection, decoder);
 }
 
+void ModelProcessModelPlayerManager::modelProcessConnectionDidClose(ModelProcessConnection&)
+{
+    m_modelProcessConnection = nullptr;
+
+    for (auto& entry : m_players) {
+        if (RefPtr player = entry.value.get())
+            player->renderingAbruptlyStopped();
+    }
+}
+
 }
 
 #endif // ENABLE(MODEL_PROCESS)

@@ -118,14 +118,16 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSRectFromCGRect(contentRect) styleMask:NSWindowStyleMaskBorderless];
     NSRect integralWindowContentRect = NSIntegralRect(windowContentRect);
     NSPoint fractionalTextOffset = NSMakePoint(windowContentRect.origin.x - integralWindowContentRect.origin.x, windowContentRect.origin.y - integralWindowContentRect.origin.y);
+
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:integralWindowContentRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [m_textIndicatorWindow setBackgroundColor:[NSColor clearColor]];
     [m_textIndicatorWindow setOpaque:NO];
     [m_textIndicatorWindow setIgnoresMouseEvents:YES];
 
     NSRect frame = NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height);
+
     m_textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
-        textIndicator:*local_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset]);
+        textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset]);
     m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:frame]);
     [m_textIndicatorView setLayer:m_textIndicatorLayer.get()];
     [m_textIndicatorView setWantsLayer:YES];
@@ -134,11 +136,40 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
-    if (local_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
+    if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
         [m_textIndicatorLayer present];
 
     if (lifetime == TextIndicatorLifetime::Temporary)
         m_temporaryTextIndicatorTimer.startOneShot(WebCore::timeBeforeFadeStarts);
+}
+
+void TextIndicatorWindow::updateTextIndicator(Ref<TextIndicator>&& textIndicator, CGRect textBoundingRectInScreenCoordinates)
+{
+    bool wantsBounce = textIndicator->wantsBounce();
+    if (m_textIndicator != textIndicator.ptr())
+        m_textIndicator = WTFMove(textIndicator);
+
+    CGFloat horizontalMargin = dropShadowBlurRadius * 2 + TextIndicator::defaultHorizontalMargin;
+    CGFloat verticalMargin = dropShadowBlurRadius * 2 + TextIndicator::defaultVerticalMargin;
+
+    if (wantsBounce) {
+        horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (WebCore::midBounceScale - 1) + horizontalMargin);
+        verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (WebCore::midBounceScale - 1) + verticalMargin);
+    }
+
+    horizontalMargin = CGCeiling(horizontalMargin);
+    verticalMargin = CGCeiling(verticalMargin);
+
+    CGRect contentRect = CGRectInset(textBoundingRectInScreenCoordinates, -horizontalMargin, -verticalMargin);
+    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSRectFromCGRect(contentRect) styleMask:NSWindowStyleMaskBorderless];
+    NSRect integralWindowContentRect = NSIntegralRect(windowContentRect);
+    NSPoint fractionalTextOffset = NSMakePoint(windowContentRect.origin.x - integralWindowContentRect.origin.x, windowContentRect.origin.y - integralWindowContentRect.origin.y);
+
+    [m_textIndicatorWindow setFrame:integralWindowContentRect display:YES];
+
+    NSRect frame = NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height);
+
+    [m_textIndicatorLayer updateWithFrame:frame textIndicator:m_textIndicator  margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset updatingIndicator:YES];
 }
 
 void TextIndicatorWindow::closeWindow()

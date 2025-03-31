@@ -120,3 +120,23 @@ if ("numeric" in loc) {
     assert.sameValue(loc.numeric, false);
 }
 assert.sameValue(loc.numberingSystem, "latn");
+
+// Check that "und" language subtag returns "und" for `language` getter
+var loc = new Intl.Locale("und");
+
+assert.sameValue(loc.toString(), "und");
+assert.sameValue(loc.baseName, "und");
+assert.sameValue(loc.language, "und");
+assert.sameValue(loc.script, undefined);
+assert.sameValue(loc.region, undefined);
+
+var loc = new Intl.Locale("und-US-u-co-emoji");
+
+assert.sameValue(loc.toString(), "und-US-u-co-emoji");
+assert.sameValue(loc.baseName, "und-US");
+assert.sameValue(loc.language, "und");
+assert.sameValue(loc.script, undefined);
+assert.sameValue(loc.region, "US");
+if ("collation" in loc) {
+    assert.sameValue(loc.collation, "emoji");
+}

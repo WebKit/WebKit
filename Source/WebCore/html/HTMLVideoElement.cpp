@@ -749,7 +749,7 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     m_videoFrameRequests.swap(m_servicedVideoFrameRequests);
     for (auto& request : m_servicedVideoFrameRequests) {
         if (RefPtr callback = std::exchange(request->callback, { }))
-            callback->handleEvent(std::round(now.milliseconds()), *videoFrameMetadata);
+            callback->invoke(std::round(now.milliseconds()), *videoFrameMetadata);
     }
     m_servicedVideoFrameRequests.clear();
 

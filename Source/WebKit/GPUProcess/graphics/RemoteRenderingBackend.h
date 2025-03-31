@@ -34,6 +34,7 @@
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RemoteResourceCache.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -80,7 +81,6 @@ struct FaceDetectorOptions;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-class RemoteDisplayListRecorder;
 class RemoteImageBuffer;
 class RemoteImageBufferSet;
 struct BufferIdentifierSet;
@@ -123,9 +123,8 @@ public:
     Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
 
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
-    RefPtr<WebCore::ImageBuffer> takeImageBuffer(WebCore::RenderingResourceIdentifier);
 
-    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::ImageBufferCreationContext, WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::ImageBufferCreationContext);
 
     void terminateWebProcess(ASCIILiteral message);
 
@@ -142,10 +141,10 @@ private:
     uint64_t messageSenderDestinationID() const override;
 
     // Messages to be received.
-    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingResourceIdentifier);
+    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingResourceIdentifier, RemoteDisplayListRecorderIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
+    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferIdentifier);
+    void moveToImageBuffer(RemoteSerializedImageBufferIdentifier, WebCore::RenderingResourceIdentifier, RemoteDisplayListRecorderIdentifier);
 #if PLATFORM(COCOA)
     void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier, WebCore::SnapshotIdentifier);
 #endif
@@ -162,12 +161,12 @@ private:
     void releaseFont(WebCore::RenderingResourceIdentifier);
     void cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&&);
     void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
-    void releaseAllDrawingResources();
-    void releaseAllImageResources();
+    void releaseMemory();
+    void releaseNativeImages();
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>&, bool forcePurge);
-    void createRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier);
-    void releaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier);
+    void createImageBufferSet(WebKit::RemoteImageBufferSetIdentifier, RemoteDisplayListRecorderIdentifier);
+    void releaseImageBufferSet(WebKit::RemoteImageBufferSetIdentifier);
 
 #if USE(GRAPHICS_LAYER_WC)
     void flush(IPC::Semaphore&&);
@@ -187,12 +186,6 @@ private:
     void createRemoteTextDetector(ShapeDetectionIdentifier);
     void releaseRemoteTextDetector(ShapeDetectionIdentifier);
 
-    void didFailCreateImageBuffer(WebCore::RenderingResourceIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
-    void didCreateImageBuffer(Ref<WebCore::ImageBuffer>) WTF_REQUIRES_CAPABILITY(workQueue());
-
-    void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
-    void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
-
     Ref<ShapeDetection::ObjectHeap> protectedShapeDetectionObjectHeap() const;
 
     bool shouldUseLockdownFontParser() const;
@@ -208,9 +201,8 @@ private:
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
 
-    HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayLists WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBuffer>> m_remoteImageBuffers WTF_GUARDED_BY_CAPABILITY(workQueue());
-    HashMap<WebKit::RemoteImageBufferSetIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferSet>> m_remoteImageBufferSets WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<RemoteImageBufferSetIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferSet>> m_remoteImageBufferSets WTF_GUARDED_BY_CAPABILITY(workQueue());
     Ref<ShapeDetection::ObjectHeap> m_shapeDetectionObjectHeap;
 };
 

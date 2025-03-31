@@ -252,7 +252,7 @@ public:
     WEBCORE_EXPORT static String cookiePartitionIdentifier(const ResourceRequest&);
     static String cookiePartitionIdentifier(const URL&);
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static NSHTTPCookie *capExpiryOfPersistentCookie(NSHTTPCookie *, Seconds cap);
+    WEBCORE_EXPORT static RetainPtr<NSHTTPCookie> capExpiryOfPersistentCookie(NSHTTPCookie *, Seconds cap);
 #if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
     WEBCORE_EXPORT static NSHTTPCookie *setCookiePartition(NSHTTPCookie *, NSString*);
 #endif

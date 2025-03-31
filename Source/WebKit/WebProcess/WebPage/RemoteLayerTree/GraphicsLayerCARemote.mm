@@ -244,8 +244,6 @@ void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer* layer
 
 GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const
 {
-    if (m_context && m_context->layerHostingMode() == LayerHostingMode::InProcess)
-        return GraphicsLayer::LayerMode::PlatformLayer;
     return GraphicsLayer::LayerMode::LayerHostingContextId;
 }
 

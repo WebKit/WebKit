@@ -29,6 +29,7 @@
 
 #include "ArrayReferenceTuple.h"
 #include "Decoder.h"
+#include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -54,12 +55,7 @@ struct SharedPreferencesForWebProcess;
 
 class RemoteDisplayListRecorder : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteDisplayListRecorder> {
 public:
-    static Ref<RemoteDisplayListRecorder> create(WebCore::ImageBuffer& imageBuffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, RemoteRenderingBackend& renderingBackend)
-    {
-        auto instance = adoptRef(*new RemoteDisplayListRecorder(imageBuffer, imageBufferIdentifier, renderingBackend));
-        instance->startListeningForIPC();
-        return instance;
-    }
+    static Ref<RemoteDisplayListRecorder> create(WebCore::ImageBuffer&, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
     ~RemoteDisplayListRecorder();
 
     void stopListeningForIPC();
@@ -152,7 +148,7 @@ public:
     void setURLForRect(const URL&, const WebCore::FloatRect&);
 
 private:
-    RemoteDisplayListRecorder(WebCore::ImageBuffer&, WebCore::RenderingResourceIdentifier, RemoteRenderingBackend&);
+    RemoteDisplayListRecorder(WebCore::ImageBuffer&, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
 
     void drawFilteredImageBufferInternal(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&, WebCore::FilterResults&);
 
@@ -171,7 +167,7 @@ private:
 #endif
 
     const Ref<WebCore::ImageBuffer> m_imageBuffer;
-    const WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
+    const RemoteDisplayListRecorderIdentifier m_identifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
     RefPtr<WebCore::ControlFactory> m_controlFactory;

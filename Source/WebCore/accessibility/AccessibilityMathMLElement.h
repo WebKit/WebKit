@@ -100,7 +100,7 @@ private:
     String mathFencedOpenString() const final;
     String mathFencedCloseString() const final;
     int mathLineThickness() const final;
-    bool isAnonymousMathOperator() const final;
+    bool isAnonymousMathOperator() const final { return m_isAnonymousOperator; }
 
     // Multiscripts components.
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) final;

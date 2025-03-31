@@ -43,8 +43,8 @@ TEST(Damage, Mode)
 {
     // Rectangles is the default mode.
     Damage rectsDamage(IntSize { 1024, 768 });
-    rectsDamage.add(IntRect { 100, 100, 200, 200 });
-    rectsDamage.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_TRUE(rectsDamage.add(IntRect { 100, 100, 200, 200 }));
+    EXPECT_TRUE(rectsDamage.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_FALSE(rectsDamage.isEmpty());
     EXPECT_EQ(rectsDamage.rects().size(), 2);
     EXPECT_EQ(rectsDamage.bounds().x(), 100);
@@ -54,8 +54,8 @@ TEST(Damage, Mode)
 
     // BoundingBox always unite damage in bounds.
     Damage bboxDamage(IntSize { 1024, 768 }, Damage::Mode::BoundingBox);
-    bboxDamage.add(IntRect { 100, 100, 200, 200 });
-    bboxDamage.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_TRUE(bboxDamage.add(IntRect { 100, 100, 200, 200 }));
+    EXPECT_TRUE(bboxDamage.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_FALSE(bboxDamage.isEmpty());
     EXPECT_EQ(bboxDamage.rects().size(), 1);
     EXPECT_EQ(bboxDamage.rects()[0], bboxDamage.bounds());
@@ -66,8 +66,8 @@ TEST(Damage, Mode)
 
     // Full ignores any adds and always reports the whole area.
     Damage fullDamage(IntSize { 1024, 768 }, Damage::Mode::Full);
-    fullDamage.add(IntRect { 100, 100, 200, 200 });
-    fullDamage.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_FALSE(fullDamage.add(IntRect { 100, 100, 200, 200 }));
+    EXPECT_FALSE(fullDamage.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_FALSE(fullDamage.isEmpty());
     EXPECT_EQ(fullDamage.rects().size(), 1);
     EXPECT_EQ(fullDamage.rects()[0], fullDamage.bounds());
@@ -101,8 +101,8 @@ TEST(Damage, Mode)
 TEST(Damage, Move)
 {
     Damage damage(IntSize { 2048, 1024 });
-    damage.add(IntRect { 100, 100, 200, 200 });
-    damage.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_TRUE(damage.add(IntRect { 100, 100, 200, 200 }));
+    EXPECT_TRUE(damage.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_FALSE(damage.isEmpty());
     EXPECT_EQ(damage.rects().size(), 2);
     EXPECT_EQ(damage.bounds().x(), 100);
@@ -125,15 +125,10 @@ TEST(Damage, Move)
     EXPECT_EQ(damage.bounds().height(), 400);
 }
 
-TEST(Damage, Resize)
-{
-
-}
-
 TEST(Damage, AddRect)
 {
     Damage damage(IntSize { 2048, 1024 });
-    damage.add(IntRect { 100, 100, 200, 200 });
+    EXPECT_TRUE(damage.add(IntRect { 100, 100, 200, 200 }));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // When there's only one rect, that should be the bounds.
@@ -144,15 +139,15 @@ TEST(Damage, AddRect)
 
     // When there's only one rect, adding a rect already contained
     // by the bounding box does nothing.
-    damage.add(IntRect { 150, 150, 100, 100 });
+    EXPECT_FALSE(damage.add(IntRect { 150, 150, 100, 100 }));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // Adding an empty rect does nothing.
-    damage.add(IntRect { });
+    EXPECT_FALSE(damage.add(IntRect { }));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // Adding a new rect not contained by previous one adds it to the list.
-    damage.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_EQ(damage.rects().size(), 2);
 
     // Now the bounding box contains the two rectangles.
@@ -162,7 +157,7 @@ TEST(Damage, AddRect)
     EXPECT_EQ(damage.bounds().height(), 400);
 
     // Adding a rect containing the bounds makes it the only rect.
-    damage.add(IntRect { 50, 50, 500, 500 });
+    EXPECT_TRUE(damage.add(IntRect { 50, 50, 500, 500 }));
     EXPECT_EQ(damage.rects().size(), 1);
     EXPECT_EQ(damage.bounds().x(), 50);
     EXPECT_EQ(damage.bounds().y(), 50);
@@ -170,7 +165,7 @@ TEST(Damage, AddRect)
     EXPECT_EQ(damage.bounds().height(), 500);
 
     // Adding FloatRect takes the enclosingIntRect
-    damage.add(FloatRect { 1024.50, 1024.25, 50.32, 25.75 });
+    EXPECT_TRUE(damage.add(FloatRect { 1024.50, 1024.25, 50.32, 25.75 }));
     EXPECT_EQ(damage.rects().size(), 2);
     EXPECT_EQ(damage.rects().last().x(), 1024);
     EXPECT_EQ(damage.rects().last().y(), 1024);
@@ -178,25 +173,25 @@ TEST(Damage, AddRect)
     EXPECT_EQ(damage.rects().last().height(), 26);
 
     // Adding an empty FloatRect does nothing.
-    damage.add(FloatRect { 1024.50, 1024.25, 0, 0 });
+    EXPECT_FALSE(damage.add(FloatRect { 1024.50, 1024.25, 0, 0 }));
     EXPECT_EQ(damage.rects().size(), 2);
 }
 
 TEST(Damage, AddDamage)
 {
     Damage damage(IntSize { 2048, 1024 });
-    damage.add(IntRect { 100, 100, 200, 200 });
+    EXPECT_TRUE(damage.add(IntRect { 100, 100, 200, 200 }));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // Adding empty Damage does nothing.
     Damage other(IntSize { 2048, 1024 });
-    damage.add(other);
+    EXPECT_FALSE(damage.add(other));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // Adding a valid Damage adds its rectangles.
-    other.add(IntRect { 300, 300, 200, 200 });
+    EXPECT_TRUE(other.add(IntRect { 300, 300, 200, 200 }));
     EXPECT_EQ(other.rects().size(), 1);
-    damage.add(other);
+    EXPECT_TRUE(damage.add(other));
     EXPECT_EQ(damage.rects().size(), 2);
     EXPECT_EQ(damage.bounds().x(), 100);
     EXPECT_EQ(damage.bounds().y(), 100);
@@ -208,15 +203,15 @@ TEST(Damage, Unite)
 {
     // Add several rects to the first tile.
     Damage damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 200, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 200, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 0, 200, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 200, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 200, 200, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 200, 200, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 128, 128, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 128, 128, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_FALSE(damage.rects()[0].isEmpty());
     EXPECT_TRUE(damage.rects()[1].isEmpty());
@@ -226,15 +221,15 @@ TEST(Damage, Unite)
 
     // Add several rects to the second tile.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 300, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 500, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 500, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 300, 200, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 200, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 500, 200, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 500, 200, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 384, 128, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 384, 128, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_TRUE(damage.rects()[0].isEmpty());
     EXPECT_FALSE(damage.rects()[1].isEmpty());
@@ -244,15 +239,15 @@ TEST(Damage, Unite)
 
     // Add several rects to the third tile.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 200, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 200, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 0, 500, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 500, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 200, 500, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 200, 500, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 128, 384, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 128, 384, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_TRUE(damage.rects()[0].isEmpty());
     EXPECT_TRUE(damage.rects()[1].isEmpty());
@@ -262,15 +257,15 @@ TEST(Damage, Unite)
 
     // Add several rects to the fourth tile.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 300, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 500, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 500, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 300, 500, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 500, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 500, 500, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 500, 500, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 384, 384, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 384, 384, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_TRUE(damage.rects()[0].isEmpty());
     EXPECT_TRUE(damage.rects()[1].isEmpty());
@@ -280,13 +275,13 @@ TEST(Damage, Unite)
 
     // Add one rect per tile.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 300, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 0, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 300, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_FALSE(damage.rects()[0].isEmpty());
     EXPECT_EQ(damage.rects()[0].x(), 0);
@@ -311,21 +306,21 @@ TEST(Damage, Unite)
 
     // Add rects with points off the grid area.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { -2, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { -2, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 50, -2, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 50, -2, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 2);
-    damage.add(IntRect { 550, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 550, 0, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 3);
-    damage.add(IntRect { 300, -2, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, -2, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { -2, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { -2, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 50, 550, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 50, 550, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 300, 550, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 550, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 550, 300, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 550, 300, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_FALSE(damage.rects()[0].isEmpty());
     EXPECT_EQ(damage.rects()[0].x(), -2);
@@ -350,45 +345,41 @@ TEST(Damage, Unite)
 
     // Add several rects and check that unite works for single tile grid.
     damage = Damage(IntSize { 128, 128 });
-    damage.add(IntRect { 10, 10, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 10, 10, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 60, 60, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 60, 60, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 70, 0, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 70, 10, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 120, 60, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 120, 60, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 0, 70, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 10, 70, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 60, 70, 4, 4 });
-    EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 70, 70, 4, 4 });
-    EXPECT_EQ(damage.rects().size(), 1);
-    damage.add(IntRect { 120, 120, 4, 4 });
+    EXPECT_TRUE(damage.add(IntRect { 120, 120, 4, 4 }));
     EXPECT_EQ(damage.rects().size(), 1);
 
     // Grid size should be ceiled.
     damage = Damage(IntSize { 512, 333 });
-    damage.add(IntRect { 0, 0, 1, 1 });
-    damage.add(IntRect { 1, 1, 1, 1 });
-    damage.add(IntRect { 2, 2, 1, 1 });
-    damage.add(IntRect { 3, 3, 1, 1 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 1, 1, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 2, 2, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 3, 3, 1, 1 }));
     EXPECT_EQ(damage.rects().size(), 4);
 
     // Grid size should be ceiled with high precision.
     damage = Damage(IntSize { 257, 50 });
-    damage.add(IntRect { 0, 0, 1, 1 });
-    damage.add(IntRect { 1, 1, 1, 1 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 1, 1, 1, 1 }));
     EXPECT_EQ(damage.rects().size(), 2);
 
     // Unification should work correctly when grid does not start and { 0, 0 }.
     damage = Damage(IntRect { 256, 256, 512, 512 });
-    damage.add(IntRect { 300, 300, 1, 1 });
-    damage.add(IntRect { 600, 300, 1, 1 });
-    damage.add(IntRect { 300, 600, 1, 1 });
-    damage.add(IntRect { 600, 600, 1, 1 });
+    EXPECT_TRUE(damage.add(IntRect { 300, 300, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 600, 300, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 300, 600, 1, 1 }));
+    EXPECT_TRUE(damage.add(IntRect { 600, 600, 1, 1 }));
     EXPECT_EQ(damage.rects().size(), 4);
-    damage.add(IntRect { 301, 301, 1, 1 });
+    EXPECT_TRUE(damage.add(IntRect { 301, 301, 1, 1 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_EQ(damage.rects()[0], IntRect(300, 300, 2, 2));
     EXPECT_EQ(damage.rects()[1], IntRect(600, 300, 1, 1));
@@ -400,61 +391,61 @@ TEST(Damage, RectsForPainting)
 {
     // The function should return the original rect when theres only a single one.
     Damage damage(IntSize { 512, 512 });
-    damage.add(IntRect { 250, 250, 12, 12 });
+    EXPECT_TRUE(damage.add(IntRect { 250, 250, 12, 12 }));
     ASSERT_EQ(damage.rectsForPainting().size(), 1);
     EXPECT_EQ(damage.rectsForPainting()[0], IntRect(250, 250, 12, 12));
 
     // The function should remove overlaps.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 0, 100, 100 });
-    damage.add(IntRect { 50, 50, 100, 100 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 100, 100 }));
+    EXPECT_TRUE(damage.add(IntRect { 50, 50, 100, 100 }));
     ASSERT_EQ(damage.rectsForPainting().size(), 1);
     EXPECT_EQ(damage.rectsForPainting()[0], IntRect(0, 0, 150, 150));
 
     // The function should remove empty rects.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 0, 10, 10 });
-    damage.add(IntRect { 10, 10, 10, 10 });
-    damage.add(IntRect { 20, 20, 10, 10 });
-    damage.add(IntRect { 30, 30, 10, 10 });
-    damage.add(IntRect { 40, 40, 10, 10 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 10, 10, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 20, 20, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 30, 30, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 40, 40, 10, 10 }));
     EXPECT_EQ(damage.rects().size(), 4);
     ASSERT_EQ(damage.rectsForPainting().size(), 1);
     EXPECT_EQ(damage.rectsForPainting()[0], IntRect(0, 0, 50, 50));
 
     // The function should clip the rects.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { -2, -2, 10, 10 });
-    damage.add(IntRect { 504, 504, 10, 10 });
+    EXPECT_TRUE(damage.add(IntRect { -2, -2, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 504, 504, 10, 10 }));
     ASSERT_EQ(damage.rectsForPainting().size(), 2);
     EXPECT_EQ(damage.rectsForPainting()[0], IntRect(0, 0, 8, 8));
     EXPECT_EQ(damage.rectsForPainting()[1], IntRect(504, 504, 8, 8));
 
     // The function should preserve the layout of cells when unification is enabled.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 0, 0, 10, 10 });
-    damage.add(IntRect { 10, 10, 10, 10 });
-    damage.add(IntRect { 0, 256, 10, 10 });
-    damage.add(IntRect { 256, 0, 10, 10 });
-    damage.add(IntRect { 256, 256, 10, 10 });
+    EXPECT_TRUE(damage.add(IntRect { 0, 0, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 10, 10, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 0, 256, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256, 0, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256, 256, 10, 10 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_EQ(damage.rects(), damage.rectsForPainting());
 
     // The function should preserve the layout of cells when unification is enabled
     // and the grid does not start at { 0, 0 }.
     damage = Damage(IntRect { 256, 256, 512, 512 });
-    damage.add(IntRect { 256, 256, 10, 10 });
-    damage.add(IntRect { 256+10, 256+10, 10, 10 });
-    damage.add(IntRect { 256, 256+256, 10, 10 });
-    damage.add(IntRect { 256+256, 256, 10, 10 });
-    damage.add(IntRect { 256+256, 256+256, 10, 10 });
+    EXPECT_TRUE(damage.add(IntRect { 256, 256, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256 + 10, 256 + 10, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256, 256 + 256, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256 + 256, 256, 10, 10 }));
+    EXPECT_TRUE(damage.add(IntRect { 256 + 256, 256 + 256, 10, 10 }));
     EXPECT_EQ(damage.rects().size(), 4);
     EXPECT_EQ(damage.rects(), damage.rectsForPainting());
 
     // The function should split a rect spanning multiple cells.
     damage = Damage(IntSize { 512, 512 });
-    damage.add(IntRect { 250, 250, 12, 12 });
-    damage.add(IntRect { 249, 249, 1, 1 });
+    EXPECT_TRUE(damage.add(IntRect { 250, 250, 12, 12 }));
+    EXPECT_TRUE(damage.add(IntRect { 249, 249, 1, 1 }));
     ASSERT_EQ(damage.rectsForPainting().size(), 4);
     EXPECT_EQ(damage.rectsForPainting()[0], IntRect(249, 249, 7, 7));
     EXPECT_EQ(damage.rectsForPainting()[1], IntRect(256, 250, 6, 6));
@@ -463,10 +454,10 @@ TEST(Damage, RectsForPainting)
 
     // The function should just return original rects when mode != Mode::Rectangles.
     damage = Damage(IntRect { 1024, 512, 512, 512 }, Damage::Mode::BoundingBox);
-    damage.add(IntRect { 1278, 678, 9, 341 });
-    damage.add(IntRect { 1285, 678, 5, 341 });
-    damage.add(IntRect { 1279, 678, 9, 341 });
-    damage.add(IntRect { 1286, 678, 5, 341 });
+    EXPECT_TRUE(damage.add(IntRect { 1278, 678, 9, 341 }));
+    EXPECT_TRUE(damage.add(IntRect { 1285, 678, 5, 341 }));
+    EXPECT_FALSE(damage.add(IntRect { 1279, 678, 9, 341 }));
+    EXPECT_TRUE(damage.add(IntRect { 1286, 678, 5, 341 }));
     EXPECT_EQ(damage.rects(), damage.rectsForPainting());
     damage = Damage(IntRect { 1024, 512, 512, 512 }, Damage::Mode::Full);
     EXPECT_EQ(damage.rects(), damage.rectsForPainting());

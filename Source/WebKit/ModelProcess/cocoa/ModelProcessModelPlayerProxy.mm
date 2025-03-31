@@ -303,7 +303,7 @@ void ModelProcessModelPlayerProxy::createLayer()
     [m_layer setPlayer:WeakPtr { this }];
 
     LayerHostingContextOptions contextOptions;
-    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
+    m_layerHostingContext = LayerHostingContext::create(contextOptions);
     m_layerHostingContext->setRootLayer(m_layer.get());
 
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy creating remote CA layer ctxID = %" PRIu64 " id=%" PRIu64, this, layerHostingContextIdentifier().value().toUInt64(), m_id.toUInt64());
@@ -337,7 +337,7 @@ static void computeScaledExtentsAndCenter(simd_float2 boundsOfLayerInMeters, sim
     }
 }
 
-static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, float pitch, float yaw, bool isPortal, CGFloat pointsPerMeter)
+static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, float boundingRadius, bool isPortal, CGFloat pointsPerMeter, WebCore::StageModeOperation operation, simd_quatf currentModelRotation)
 {
     auto boundsOfLayerInMeters = makeMeterSizeFromPointSize(layer.bounds.size, pointsPerMeter);
     simd_float3 boundingBoxExtents = originalBoundingBoxExtents;
@@ -345,23 +345,37 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
     computeScaledExtentsAndCenter(boundsOfLayerInMeters, boundingBoxExtents, boundingBoxCenter);
 
     RESRT srt;
-    srt.scale = simd_make_float3(boundingBoxExtents.x / originalBoundingBoxExtents.x, boundingBoxExtents.y / originalBoundingBoxExtents.y, boundingBoxExtents.z / originalBoundingBoxExtents.z);
-    float minScale = simd_reduce_min(srt.scale);
-    srt.scale = simd_make_float3(minScale, minScale, minScale); // FIXME: assume object-fit:contain for now
+    if (operation == WebCore::StageModeOperation::None) {
+        simd_float3 scale = simd_make_float3(boundingBoxExtents.x / originalBoundingBoxExtents.x, boundingBoxExtents.y / originalBoundingBoxExtents.y, boundingBoxExtents.z / originalBoundingBoxExtents.z);
+        if (std::isnan(scale.x) || std::isnan(scale.y) || std::isnan(scale.z))
+            scale = simd_make_float3(0.0f, 0.0f, 0.0f);
 
-    // Must be normalized, but these obviously are.
-    simd_float3 xAxis = simd_make_float3(1, 0, 0);
-    simd_float3 yAxis = simd_make_float3(0, 1, 0);
+        srt.scale = scale;
+        float minScale = simd_reduce_min(srt.scale);
 
-    // FIXME: These should rotate around the center point of the model.
-    simd_quatf pitchQuat = simd_quaternion(deg2rad(pitch), xAxis);
-    simd_quatf yawQuat = simd_quaternion(deg2rad(yaw), yAxis);
-    srt.rotation = simd_mul(pitchQuat, yawQuat);
+        srt.scale = simd_make_float3(minScale, minScale, minScale);
+        srt.rotation = currentModelRotation;
 
-    if (isPortal)
-        srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxExtents.z / 2.0f);
-    else
-        srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingBoxExtents.z / 2.0f);
+        if (isPortal)
+            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxExtents.z / 2.0f);
+        else
+            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingBoxExtents.z / 2.0f);
+    } else {
+        float boundingSphereDiameter = boundingRadius * 2.0f;
+        float layerBoundingEdge = simd_reduce_min(boundsOfLayerInMeters);
+        float minScale = layerBoundingEdge / boundingSphereDiameter;
+        if (std::isnan(minScale))
+            minScale = 0.0f;
+
+        srt.scale = simd_make_float3(minScale, minScale, minScale);
+        srt.rotation = currentModelRotation;
+        boundingBoxCenter = srt.scale * originalBoundingBoxCenter;
+
+        if (isPortal)
+            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingSphereDiameter * minScale / 2.0f);
+        else
+            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingSphereDiameter * minScale / 2.0f);
+    }
 
     return srt;
 }
@@ -380,13 +394,15 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
     return defaultPointsPerMeter;
 }
 
-void ModelProcessModelPlayerProxy::computeTransform()
+void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
 {
     if (!m_model || !m_layer)
         return;
 
     // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
-    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, m_pitch, m_yaw, m_hasPortal, effectivePointsPerMeter(m_layer.get()));
+    float boundingRadius = [m_modelRKEntity boundingRadius];
+    simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
+    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation);
     m_transformSRT = newSRT;
 
     simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
@@ -489,7 +505,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     if (!canLoadWithRealityKit)
         RENetworkMarkEntityMetadataDirty(m_model->rootEntity());
 
-    computeTransform();
+    computeTransform(true);
     updateTransform();
     [m_stageModeInteractionDriver setContainerTransformInPortal];
 
@@ -719,18 +735,8 @@ void ModelProcessModelPlayerProxy::endStageModeInteraction()
 
 void ModelProcessModelPlayerProxy::stageModeInteractionDidUpdateModel()
 {
-    if (stageModeInteractionInProgress() && m_modelRKEntity) {
-        WKEntityTransform entityTransform = [m_modelRKEntity transform];
-        m_transformSRT = RESRT {
-            .scale = entityTransform.scale,
-            .rotation = entityTransform.rotation,
-            .translation = entityTransform.translation
-        };
-
-        simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
-        WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
-        send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
-    }
+    if (stageModeInteractionInProgress() && m_modelRKEntity)
+        updateTransformSRT();
 }
 
 bool ModelProcessModelPlayerProxy::stageModeInteractionInProgress() const
@@ -742,11 +748,16 @@ void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()
 {
     if (m_transientEnvironmentMapData) {
         if (m_transientEnvironmentMapData->size() > 0) {
-            [m_modelRKEntity applyIBLData:m_transientEnvironmentMapData->createNSData().get() withCompletion:^(BOOL succeeded) {
+            [m_modelRKEntity applyIBLData:m_transientEnvironmentMapData->createNSData().get() withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }] (BOOL succeeded) {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+
                 if (!succeeded)
-                    [m_modelRKEntity applyDefaultIBL];
-                send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(succeeded));
-            }];
+                    [protectedThis->m_modelRKEntity applyDefaultIBL];
+
+                protectedThis->send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(succeeded));
+            }).get()];
         } else {
             [m_modelRKEntity applyDefaultIBL];
             send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(true));
@@ -764,7 +775,7 @@ void ModelProcessModelPlayerProxy::setHasPortal(bool hasPortal)
 
     m_hasPortal = hasPortal;
 
-    computeTransform();
+    computeTransform(true);
     updateTransform();
 }
 
@@ -774,7 +785,28 @@ void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stag
         return;
 
     m_stageModeOperation = stagemodeOp;
+
+    if (stagemodeOp != WebCore::StageModeOperation::None) {
+        computeTransform(false);
+        [m_modelRKEntity recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
+        updateTransformSRT();
+    }
+
     applyStageModeOperationToDriver();
+}
+
+void ModelProcessModelPlayerProxy::updateTransformSRT()
+{
+    WKEntityTransform entityTransform = [m_modelRKEntity transform];
+    m_transformSRT = RESRT {
+        .scale = entityTransform.scale,
+        .rotation = entityTransform.rotation,
+        .translation = entityTransform.translation
+    };
+
+    simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
+    WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
+    send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
 }
 
 void ModelProcessModelPlayerProxy::applyStageModeOperationToDriver()

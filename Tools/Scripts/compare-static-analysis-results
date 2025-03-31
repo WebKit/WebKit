@@ -33,8 +33,8 @@ from webkitpy.results.options import upload_args
 from libraries.webkitscmpy.webkitscmpy import Commit
 from libraries.webkitscmpy.webkitscmpy import local, log, remote
 
-CHECKERS = ['ForwardDeclChecker', 'MemoryUnsafeCastChecker', 'NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'NoUnretainedMemberChecker', 'RefCntblBaseVirtualDtor', 'RetainPtrCtorAdoptChecker',
-     'UncheckedCallArgsChecker', 'UncheckedLocalVarsChecker', 'UncountedCallArgsChecker', 'UncountedLambdaCapturesChecker', 'UncountedLocalVarsChecker', 'UnretainedLambdaCapturesChecker', 'UnretainedCallArgsChecker']
+CHECKERS = ['ForwardDeclChecker', 'MemoryUnsafeCastChecker', 'NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'NoUnretainedMemberChecker', 'RefCntblBaseVirtualDtor', 'RetainPtrCtorAdoptChecker', 'UncheckedCallArgsChecker',
+     'UncheckedLocalVarsChecker', 'UncountedCallArgsChecker', 'UncountedLambdaCapturesChecker', 'UncountedLocalVarsChecker', 'UnretainedLambdaCapturesChecker', 'UnretainedCallArgsChecker', 'UnretainedLocalVarsChecker']
 PROJECTS = ['JavaScriptCore', 'WebCore', 'WebDriver', 'WebGPU', 'WebInspectorUI', 'WebKit', 'WebKitLegacy', 'WTF']
 STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 UNEXPECTED_PASS = {'actual': 'PASS', 'expected': 'FAIL'}
@@ -99,11 +99,13 @@ def parser():
 
 def find_diff(args, file1, file2):
     # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
-    if not args.check_expectations and not os.path.exists(file1):
+    if not os.path.exists(file1):
+        os.makedirs(os.path.dirname(file1), exist_ok=True)
         f = open(file1, 'a')
         f.close()
 
     if not os.path.exists(file2):
+        os.makedirs(os.path.dirname(file2), exist_ok=True)
         f = open(file2, 'a')
         f.close()
 

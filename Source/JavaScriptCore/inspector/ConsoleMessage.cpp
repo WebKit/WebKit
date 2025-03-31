@@ -192,6 +192,7 @@ static Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
     case MessageSource::AppCache: return Protocol::Console::ChannelSource::Appcache;
     case MessageSource::Rendering: return Protocol::Console::ChannelSource::Rendering;
     case MessageSource::CSS: return Protocol::Console::ChannelSource::CSS;
+    case MessageSource::Accessibility: return Protocol::Console::ChannelSource::Accessibility;
     case MessageSource::Security: return Protocol::Console::ChannelSource::Security;
     case MessageSource::ContentBlocker: return Protocol::Console::ChannelSource::ContentBlocker;
     case MessageSource::Media: return Protocol::Console::ChannelSource::Media;

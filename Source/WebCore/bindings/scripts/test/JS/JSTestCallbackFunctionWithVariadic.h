@@ -42,8 +42,8 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(VariadicArguments<IDLAny>&& arguments) override;
-    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEventRethrowingException(VariadicArguments<IDLAny>&& arguments) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> invoke(VariadicArguments<IDLAny>&& arguments) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> invokeRethrowingException(VariadicArguments<IDLAny>&& arguments) override;
 
 private:
     JSTestCallbackFunctionWithVariadic(JSC::JSObject*, JSDOMGlobalObject*);

@@ -120,8 +120,9 @@ private:
         bool matches(const String&);
 
     private:
-        // Avoid having to (re)match the regex each time an event is dispatched.
-        std::optional<JSC::Yarr::RegularExpression> m_eventNameMatchRegex;
+        std::optional<Inspector::ContentSearchUtilities::Searcher> m_eventNameSearcher;
+
+        // Avoid having to (re)match the searcher each time an event is dispatched.
         HashSet<String> m_knownMatchingEventNames;
     };
     Vector<EventBreakpoint> m_listenerBreakpoints;

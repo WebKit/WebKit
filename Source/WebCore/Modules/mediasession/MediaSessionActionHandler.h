@@ -39,8 +39,8 @@ class MediaSessionActionHandler : public RefCounted<MediaSessionActionHandler>, 
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(const MediaSessionActionDetails&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(const MediaSessionActionDetails&) = 0;
+    virtual CallbackResult<void> invoke(const MediaSessionActionDetails&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(const MediaSessionActionDetails&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

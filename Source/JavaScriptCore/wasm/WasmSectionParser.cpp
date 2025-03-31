@@ -911,6 +911,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
         WASM_PARSER_FAIL_IF(structInstancePayloadSize.hasOverflowed(), "struct layout is too big"_s);
     }
 
+    m_info->m_hasGCObjectTypes = true;
     structType = TypeInformation::typeDefinitionForStruct(fields);
     return { };
 }
@@ -924,6 +925,7 @@ auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& ar
     WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get array's mutability"_s);
     WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid array mutability: 0x"_s, hex(mutability, 2, Lowercase));
 
+    m_info->m_hasGCObjectTypes = true;
     arrayType = TypeInformation::typeDefinitionForArray(FieldType { elementType, static_cast<Mutability>(mutability) });
     return { };
 }

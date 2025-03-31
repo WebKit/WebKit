@@ -295,6 +295,7 @@ private:
 #endif
 
     NetworkResourceLoadParameters m_parameters;
+    Vector<Ref<SandboxExtension>> m_extensionsToRevoke;
 
     Ref<NetworkConnectionToWebProcess> m_connection;
 

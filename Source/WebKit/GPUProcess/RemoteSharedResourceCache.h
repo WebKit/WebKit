@@ -57,8 +57,8 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    void addSerializedImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>);
-    RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
+    bool addSerializedImageBuffer(RemoteSerializedImageBufferIdentifier, Ref<WebCore::ImageBuffer>);
+    RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -80,7 +80,7 @@ private:
     RemoteSharedResourceCache(GPUConnectionToWebProcess&);
 
     // Messages
-    void releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
+    void releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
 
     IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<WebCore::ImageBuffer>> m_serializedImageBuffers;
     WebCore::ProcessIdentity m_resourceOwner;

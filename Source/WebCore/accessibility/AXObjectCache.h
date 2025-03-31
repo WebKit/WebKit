@@ -364,7 +364,15 @@ public:
     void setPageActivityState(OptionSet<ActivityState> state) { m_pageActivityState = state; }
     OptionSet<ActivityState> pageActivityState() const { return m_pageActivityState; }
 
-    void childrenChanged(Node*, Element* newChild = nullptr);
+    inline void childrenChanged(Node& node)
+    {
+        if (!node.renderer()) {
+            // We only need to handle DOM changes for things that don't have renderers.
+            // If something does have a renderer, we would already get children-changed notifications
+            // from the render tree.
+            childrenChanged(get(node));
+        }
+    }
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onDragElementChanged(Element* oldElement, Element* newElement);
@@ -387,6 +395,7 @@ public:
     void checkedStateChanged(Element&);
     void autofillTypeChanged(HTMLInputElement&);
     void handleRoleChanged(AccessibilityObject&, AccessibilityRole previousRole);
+    void handleReferenceTargetChanged();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void columnIndexChanged(AccessibilityObject&);

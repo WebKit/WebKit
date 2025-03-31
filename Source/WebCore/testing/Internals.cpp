@@ -879,7 +879,7 @@ String Internals::styleChangeType(Node& node)
 
 String Internals::description(JSC::JSValue value)
 {
-    return toString(value);
+    return ::toString(value);
 }
 
 void Internals::log(const String& value)
@@ -5828,13 +5828,13 @@ bool Internals::isProcessingUserGesture()
 void Internals::withUserGesture(Ref<VoidCallback>&& callback)
 {
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, contextDocument());
-    callback->handleEvent();
+    callback->invoke();
 }
 
 void Internals::withoutUserGesture(Ref<VoidCallback>&& callback)
 {
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::No, contextDocument());
-    callback->handleEvent();
+    callback->invoke();
 }
 
 bool Internals::userIsInteracting()
@@ -6031,12 +6031,12 @@ void Internals::postTask(Ref<VoidCallback>&& callback)
 {
     auto* document = contextDocument();
     if (!document) {
-        callback->handleEvent();
+        callback->invoke();
         return;
     }
 
     document->postTask([callback = WTFMove(callback)](ScriptExecutionContext&) {
-        callback->handleEvent();
+        callback->invoke();
     });
 }
 
@@ -6054,7 +6054,7 @@ ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const St
         return Exception { ExceptionCode::NotSupportedError };
 
     context.eventLoop().queueTask(*source, [callback = WTFMove(callback)] {
-        callback->handleEvent();
+        callback->invoke();
     });
 
     return { };
@@ -6070,7 +6070,7 @@ ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const
     context.eventLoop().queueTask(*source, [movedCallback = WTFMove(callback), protectedDocument = Ref { document }]() mutable {
         ScriptExecutionContext& context = protectedDocument.get();
         context.eventLoop().queueMicrotask([callback = WTFMove(movedCallback)] {
-            callback->handleEvent();
+            callback->invoke();
         });
     });
 
@@ -6649,10 +6649,10 @@ void Internals::requestTextRecognition(Element& element, Ref<VoidCallback>&& cal
 {
     auto page = contextDocument()->page();
     if (!page)
-        callback->handleEvent();
+        callback->invoke();
 
     page->chrome().client().requestTextRecognition(element, { }, [callback = WTFMove(callback)] (auto&&) {
-        callback->handleEvent();
+        callback->invoke();
     });
 }
 

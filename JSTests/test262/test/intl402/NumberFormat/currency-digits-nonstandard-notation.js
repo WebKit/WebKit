@@ -27,7 +27,7 @@ for (const notation of ["compact", "engineering", "scientific"]) {
     const maximumFractionDigits = resolvedOptions.maximumFractionDigits;
 
     assert.sameValue(minimumFractionDigits, 0, "Didn't get correct minimumFractionDigits for " + currency + " in " + notation + " notation.");
-    assert.sameValue(maximumFractionDigits, 3, "Didn't get correct maximumFractionDigits for " + currency + " in " + notation + " notation.");
+    assert.sameValue(maximumFractionDigits, notation !== "compact" ? 3 : 0, "Didn't get correct maximumFractionDigits for " + currency + " in " + notation + " notation.");
   }
 }
 

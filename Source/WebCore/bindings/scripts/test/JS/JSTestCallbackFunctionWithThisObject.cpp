@@ -56,7 +56,7 @@ JSTestCallbackFunctionWithThisObject::~JSTestCallbackFunctionWithThisObject()
 #endif
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunctionWithThisObject::handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunctionWithThisObject::invoke(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -84,7 +84,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunction
     return { };
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunctionWithThisObject::handleEventRethrowingException(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunctionWithThisObject::invokeRethrowingException(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

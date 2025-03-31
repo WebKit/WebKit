@@ -202,6 +202,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, optimizeParallelSlotVisitorsForStoppedMutator, false, Normal, nullptr) \
     v(Bool, verboseHeapSnapshotLogging, true, Normal, nullptr) \
     v(Unsigned, largeHeapSize, 32 * 1024 * 1024, Normal, nullptr) \
+    v(Unsigned, mediumHeapSize, 4 * 1024 * 1024, Normal, nullptr) \
     v(Unsigned, smallHeapSize, 1 * 1024 * 1024, Normal, nullptr) \
     v(Double, smallHeapRAMFraction, 0.25, Normal, nullptr) \
     v(Double, smallHeapGrowthFactor, 2, Normal, nullptr) \
@@ -536,6 +537,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxNumWasmFastMemories, hasCapacityToUseLargeGigacage() ? 8 : 3, Normal, nullptr) \
     v(Bool, verboseBBQJITAllocation, false, Normal, "Logs extra information about register allocation during BBQ JIT"_s) \
     v(Bool, verboseBBQJITInstructions, false, Normal, "Logs instruction information during BBQ JIT"_s) \
+    v(Bool, disableBBQConsts, false, Normal, "Wasm <type>.const instructions in BBQ JIT won't lower to a const BBQ::Value"_s) \
     v(Bool, useWasmLLInt, true, Normal, nullptr) \
     v(Bool, useBBQJIT, true, Normal, "allows the BBQ JIT to be used if true"_s) \
     v(Bool, useOMGJIT, !isARM_THUMB2(), Normal, "allows the OMG JIT to be used if true"_s) \
@@ -581,6 +583,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useLoopUnrolling, true, Normal, nullptr) \
     v(Bool, usePartialLoopUnrolling, false, Normal, nullptr) \
     v(Bool, verboseLoopUnrolling, false, Normal, nullptr) \
+    v(Bool, disallowLoopUnrollingForNonInnermost, false, Normal, nullptr) \
     v(Unsigned, maxLoopUnrollingCount, 2, Normal, nullptr) \
     v(Unsigned, maxLoopUnrollingBodyNodeSize, 200, Normal, nullptr) \
     v(Unsigned, maxLoopUnrollingIterationCount, 4, Normal, nullptr) \

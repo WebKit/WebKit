@@ -10020,7 +10020,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         context.get()[PAL::get_DataDetectorsUI_kDataDetectorsTrailingText()] = positionInformation.textAfter;
 
     auto canShowPreview = ^{
-        if (!static_cast<NSURL *>(positionInformation.url).iTunesStoreURL)
+        if (!positionInformation.url.createNSURL().get().iTunesStoreURL)
             return YES;
         if (!_page->websiteDataStore().isPersistent())
             return NO;
@@ -12458,7 +12458,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
     _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
-        textIndicator:textIndicator margin:CGSizeZero offset:CGPointZero]);
+        textIndicator:textIndicator.ptr() margin:CGSizeZero offset:CGPointZero]);
     
     [[self layer] addSublayer:_textIndicatorLayer.get()];
 
@@ -12466,6 +12466,18 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         [_textIndicatorLayer present];
     
     [self performSelector:@selector(startFadeOut) withObject:self afterDelay:WebCore::timeBeforeFadeStarts.value()];
+}
+
+- (void)updateTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
+{
+    if (_textIndicator != textIndicator.ptr())
+        return;
+
+    CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
+    _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
+        textIndicator:textIndicator.ptr() margin:CGSizeZero offset:CGPointZero]);
+
+    [[self layer] addSublayer:_textIndicatorLayer.get()];
 }
 
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation

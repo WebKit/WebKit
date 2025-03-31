@@ -523,7 +523,7 @@ bool WebExtensionController::isFeatureEnabled(const String& featureName) const
 {
     WKPreferences *preferences = protectedConfiguration()->webViewConfiguration().preferences;
 
-    NSString *cocoaFeatureName = static_cast<NSString *>(featureName);
+    auto *cocoaFeatureName = featureName.createNSString().get();
     for (_WKFeature *feature in WKPreferences._features) {
         if ([feature.key isEqualToString:cocoaFeatureName])
             return [preferences _isEnabledForFeature:feature];

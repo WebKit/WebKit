@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ContentsFormat.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/ImageBufferPixelFormat.h>
@@ -42,6 +43,7 @@ struct RemoteImageBufferSetConfiguration {
     WebCore::FloatSize logicalSize;
     float resolutionScale { 1.0f };
     WebCore::DestinationColorSpace colorSpace { WebCore::DestinationColorSpace::SRGB() };
+    WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
     WebCore::ImageBufferPixelFormat pixelFormat { WebCore::ImageBufferPixelFormat::BGRA8 };
     WebCore::RenderingMode renderingMode { WebCore::RenderingMode::Unaccelerated };
     WebCore::RenderingPurpose renderingPurpose { WebCore::RenderingPurpose::Unspecified };

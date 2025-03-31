@@ -219,7 +219,16 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
     ASSERT(m_relayConnection);
     ASSERT(m_automaticInspectionCandidates.contains(targetID));
 
-    NSDictionary *details = @{ WIRTargetIdentifierKey: @(targetID) };
+    RefPtr target = dynamicDowncast<RemoteInspectionTarget>(m_targetMap.get(targetID));
+    if (!target) {
+        m_automaticInspectionCandidates.remove(targetID);
+        return;
+    }
+
+    NSDictionary *details = @{
+        WIRTargetIdentifierKey : @(targetID),
+        WIRTargetAllowsAutomaticInspectionInSameProcessKey : @(target->automaticInspectionAllowedInSameProcess()),
+    };
     m_relayConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
@@ -234,7 +243,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
     if (!targetConnection)
         return;
 
-    NSData *messageData = [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *messageData = [message.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
     NSUInteger messageLength = messageData.length;
     const NSUInteger maxChunkSize = 2 * 1024 * 1024; // 2 Mebibytes
 
@@ -810,8 +819,10 @@ void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *use
         return;
 
     ASSERT(m_automaticInspectionCandidates.contains(targetIdentifier));
-    if (m_automaticInspectionCandidates.remove(targetIdentifier))
-        downcast<RemoteInspectionTarget>(m_targetMap.get(targetIdentifier))->unpauseForResolvedAutomaticInspection();
+    if (m_automaticInspectionCandidates.remove(targetIdentifier)) {
+        if (RefPtr target = dynamicDowncast<RemoteInspectionTarget>(m_targetMap.get(targetIdentifier)))
+            target->unpauseForResolvedAutomaticInspection();
+    }
 }
 
 void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *userInfo)

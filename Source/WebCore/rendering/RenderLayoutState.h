@@ -205,14 +205,17 @@ private:
     CheckedRef<const RenderBox> m_flexItem;
 };
 
-class ContentVisibilityForceLayoutScope {
+class ContentVisibilityOverrideScope {
 public:
-    ContentVisibilityForceLayoutScope(LocalFrameViewLayoutContext&, const Element*);
-    ~ContentVisibilityForceLayoutScope();
+    enum class OverrideType {
+        Hidden = 1 << 0,
+        Auto  = 1 << 1
+    };
+    ContentVisibilityOverrideScope(LocalFrameViewLayoutContext&, OptionSet<OverrideType>);
+    ~ContentVisibilityOverrideScope();
 
 private:
     CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
-    CheckedPtr<const Element> m_element;
 };
 
 } // namespace WebCore

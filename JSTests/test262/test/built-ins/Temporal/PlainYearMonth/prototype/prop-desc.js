@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-plainyearmonth-prototype
+esid: sec-temporal.plainyearmonth.prototype
 description: The "prototype" property of Temporal.PlainYearMonth
 includes: [propertyHelper.js]
 features: [Temporal]

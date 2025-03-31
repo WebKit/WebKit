@@ -447,20 +447,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPersistentPermissionForOrigin")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto permission = booleanValue(messageBodyDictionary, "permission");
-        auto originWK = stringValue(messageBodyDictionary, "origin");
-        auto parentOriginWK = stringValue(messageBodyDictionary, "parentOrigin");
-        TestController::singleton().setUserMediaPersistentPermissionForOrigin(permission, originWK, parentOriginWK);
+    if (WKStringIsEqualToUTF8CString(messageName, "DelayUserMediaRequestDecision")) {
+        TestController::singleton().delayUserMediaRequestDecision();
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "ResetUserMediaPermissionRequestCountForOrigin")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto originWK = stringValue(messageBodyDictionary, "origin");
-        auto parentOriginWK = stringValue(messageBodyDictionary, "parentOrigin");
-        TestController::singleton().resetUserMediaPermissionRequestCountForOrigin(originWK, parentOriginWK);
+    if (WKStringIsEqualToUTF8CString(messageName, "ResetUserMediaPermissionRequestCount")) {
+        TestController::singleton().resetUserMediaPermissionRequestCount();
         return;
     }
 
@@ -985,13 +978,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 #endif // ENABLE(GAMEPAD)
 
-    if (WKStringIsEqualToUTF8CString(messageName, "UserMediaPermissionRequestCountForOrigin")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto originWK = stringValue(messageBodyDictionary, "origin");
-        auto parentOriginWK = stringValue(messageBodyDictionary, "parentOrigin");
-        unsigned count = TestController::singleton().userMediaPermissionRequestCountForOrigin(originWK, parentOriginWK);
-        return adoptWK(WKUInt64Create(count));
-    }
+    if (WKStringIsEqualToUTF8CString(messageName, "UserMediaPermissionRequestCount"))
+        return adoptWK(WKUInt64Create(TestController::singleton().userMediaPermissionRequestCount()));
 
     if (WKStringIsEqualToUTF8CString(messageName, "GrantNotificationPermission")) {
         WKPageSetPermissionLevelForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody), true);

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "UserMediaPermissionCheckProxy.h"
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CompletionHandler.h>

@@ -222,7 +222,7 @@ FontVariantAlternates extractFontVariantAlternates(const CSSValue& value, Style:
 
     if (RefPtr valueList = dynamicDowncast<CSSValueList>(value)) {
         for (Ref item : *valueList) {
-            if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(item)) {
+            if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(item.get())) {
                 switch (primitive->valueID()) {
                 case CSSValueHistoricalForms:
                     result.valuesRef().historicalForms = true;
@@ -231,7 +231,7 @@ FontVariantAlternates extractFontVariantAlternates(const CSSValue& value, Style:
                     builderState.setCurrentPropertyInvalidAtComputedValueTime();
                     return FontVariantAlternates::Normal();
                 }
-            } else if (RefPtr function = dynamicDowncast<CSSFunctionValue>(item)) {
+            } else if (RefPtr function = dynamicDowncast<CSSFunctionValue>(item.get())) {
                 switch (function->name()) {
                 case CSSValueSwash:
                     if (!processSingleItemFunction(*function, result.valuesRef().swash))

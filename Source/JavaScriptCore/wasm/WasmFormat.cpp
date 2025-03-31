@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "HeapVerifier.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyStruct.h"
 #include <wtf/CheckedArithmetic.h>
@@ -76,6 +77,12 @@ void validateWasmValue(uint64_t wasmValue, Type expectedType)
             ASSERT(expectedType.isNullable());
             return;
         }
+
+        if (isExternref(expectedType)) {
+            if (value.isCell())
+                HeapVerifier::validateCell(value.asCell());
+        }
+
 
         if (!isExternref(expectedType) && !isI31ref(expectedType))
             ASSERT(value.isCell());

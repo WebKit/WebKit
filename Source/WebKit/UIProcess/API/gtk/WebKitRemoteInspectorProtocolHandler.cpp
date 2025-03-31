@@ -48,9 +48,9 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, std::optional<JavaScriptEvaluationResult>&& jsMessage) override
     {
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
+        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage->wireBytes());
         String message = serializedScriptValue->internalRepresentation().toString();
         Vector<String> tokens = message.split(':');
         if (tokens.size() != 3)
@@ -65,7 +65,7 @@ public:
         return false;
     }
     
-    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) override
+    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, std::optional<JavaScriptEvaluationResult>&&, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) override
     {
     }
 

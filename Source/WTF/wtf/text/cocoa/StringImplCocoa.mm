@@ -22,12 +22,18 @@
 #import "StringImpl.h"
 
 #import "RetainPtr.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WTF {
 
 StringImpl::operator NSString *()
 {
     return createCFString().bridgingAutorelease();
+}
+
+RetainPtr<NSString> StringImpl::createNSString()
+{
+    return bridge_cast(createCFString());
 }
 
 }

@@ -7,15 +7,15 @@ description: >
 info: |
   String.fromCodePoint ( ...codePoints )
 
-  1. Let codePoints be a List containing the arguments passed to this function.
-  ...
-  5. Repeat while nextIndex < length
-    a. Let next be codePoints[nextIndex].
-    b. Let nextCP be ToNumber(next).
-    ...
-  6. Return the String value whose elements are, in order, the elements in the
-  List elements. If length is 0, the empty string is returned.
-
+  1. Let result be the empty String.
+  2. For each element next of codePoints, do
+    a. Let nextCP be ? ToNumber(next).
+    b. If nextCP is not an integral Number, throw a RangeError exception.
+    c. If ℝ(nextCP) < 0 or ℝ(nextCP) > 0x10FFFF, throw a RangeError exception.
+    d. Set result to the string-concatenation of result and UTF16EncodeCodePoint(ℝ(nextCP)).
+  3. Assert: If codePoints is empty, then result is the empty String.
+  4. Return result.
+  
   Ref: 7.1.3 ToNumber ( argument )
 features: [String.fromCodePoint]
 ---*/

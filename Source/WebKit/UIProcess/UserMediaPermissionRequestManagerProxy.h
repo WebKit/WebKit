@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "UserMediaPermissionCheckProxy.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PermissionDescriptor.h>
@@ -169,9 +168,8 @@ private:
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(std::optional<WebCore::FrameIdentifier>, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
     bool wasRequestDenied(const UserMediaPermissionRequestProxy&, bool needsAudio, bool needsVideo, bool needsScreenCapture);
 
-    using PermissionInfo = UserMediaPermissionCheckProxy::PermissionInfo;
-    void getUserMediaPermissionInfo(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&&);
-    void captureDevicesChanged(PermissionInfo);
+    void getUserMediaPermissionInfo(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(WebCore::PermissionState, WebCore::PermissionState)>&&);
+    void captureDevicesChanged(bool hasCameraPersistentAccess, bool hasMicrophonePersistentAccess);
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
@@ -179,7 +177,7 @@ private:
     bool wasGrantedAudioAccess(WebCore::FrameIdentifier);
     bool wasGrantedVideoAccess(WebCore::FrameIdentifier);
 
-    void computeFilteredDeviceList(WebCore::FrameIdentifier, bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
+    void computeFilteredDeviceList(WebCore::FrameIdentifier, WebCore::PermissionState, WebCore::PermissionState, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
     void platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
 
     void processUserMediaPermissionRequest();

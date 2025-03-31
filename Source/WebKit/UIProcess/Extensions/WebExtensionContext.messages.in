@@ -66,9 +66,9 @@ messages -> WebExtensionContext {
     [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestDisplayActionCountAsBadgeText(bool result) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestIncrementActionCount(WebKit::WebExtensionTabIdentifier tabIdentifier, double increment) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestGetMatchedRules(std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp) -> (Expected<Vector<WebKit::WebExtensionMatchedRuleParameters>, WebKit::WebExtensionError> result)
-    [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestGetDynamicRules() -> (Expected<String, WebKit::WebExtensionError> result)
+    [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestGetDynamicRules(Vector<double> ruleIDs) -> (Expected<String, WebKit::WebExtensionError> result)
     [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestUpdateDynamicRules(String rulesToAddJSON, Vector<double> ruleIdsToRemove) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestGetSessionRules() -> (Expected<String, WebKit::WebExtensionError> result)
+    [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestGetSessionRules(Vector<double> ruleIDs) -> (Expected<String, WebKit::WebExtensionError> result)
     [Validator=isDeclarativeNetRequestMessageAllowed] DeclarativeNetRequestUpdateSessionRules(String rulesToAddJSON, Vector<double> ruleIdsToRemove) -> (Expected<void, WebKit::WebExtensionError> result)
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

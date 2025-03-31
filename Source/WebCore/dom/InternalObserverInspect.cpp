@@ -54,7 +54,7 @@ public:
             return adoptRef(*new SubscriberCallbackInspect(context, WTFMove(source), WTFMove(inspector)));
         }
 
-        CallbackResult<void> handleEvent(Subscriber& subscriber) final
+        CallbackResult<void> invoke(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -72,7 +72,7 @@ public:
                 JSC::JSLockHolder lock(vm);
                 auto scope = DECLARE_CATCH_SCOPE(vm);
 
-                subscribe->handleEventRethrowingException();
+                subscribe->invokeRethrowingException();
 
                 JSC::Exception* exception = scope.exception();
                 if (UNLIKELY(exception)) {
@@ -88,9 +88,9 @@ public:
             return { };
         }
 
-        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        CallbackResult<void> invokeRethrowingException(Subscriber& subscriber) final
         {
-            return handleEvent(subscriber);
+            return invoke(subscriber);
         }
 
     private:
@@ -114,7 +114,7 @@ private:
             JSC::JSLockHolder lock(vm);
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            next->handleEventRethrowingException(value);
+            next->invokeRethrowingException(value);
 
             JSC::Exception* exception = scope.exception();
             if (UNLIKELY(exception)) {
@@ -136,7 +136,7 @@ private:
             JSC::JSLockHolder lock(vm);
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            error->handleEventRethrowingException(value);
+            error->invokeRethrowingException(value);
 
             JSC::Exception* exception = scope.exception();
             if (UNLIKELY(exception)) {
@@ -160,7 +160,7 @@ private:
             JSC::JSLockHolder lock(vm);
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            complete->handleEventRethrowingException();
+            complete->invokeRethrowingException();
 
             JSC::Exception* exception = scope.exception();
             if (UNLIKELY(exception)) {
@@ -217,7 +217,7 @@ private:
         if (RefPtr abort = m_inspector.abort) {
             Ref signal = protectedSubscriber()->signal();
             m_abortAlgorithmHandler = signal->addAlgorithm([abort = WTFMove(abort)](JSC::JSValue reason) {
-                abort->handleEvent(reason);
+                abort->invoke(reason);
             });
         }
     }

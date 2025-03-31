@@ -7,14 +7,12 @@ description: >
 info: |
   String.fromCodePoint ( ...codePoints )
 
-  1. Let codePoints be a List containing the arguments passed to this function.
-  2. Let length be the number of elements in codePoints.
-  3. Let elements be a new List.
-  4. Let nextIndex be 0.
-  5. Repeat while nextIndex < length
-    a. Let next be codePoints[nextIndex].
-    b. Let nextCP be ToNumber(next).
-    c. ReturnIfAbrupt(nextCP).
+  1. Let result be the empty String.
+  2. For each element next of codePoints, do
+    a. Let nextCP be ? ToNumber(next).
+    b. If nextCP is not an integral Number, throw a RangeError exception.
+    c. If ℝ(nextCP) < 0 or ℝ(nextCP) > 0x10FFFF, throw a RangeError exception.
+  ...
 features: [Symbol, String.fromCodePoint]
 ---*/
 

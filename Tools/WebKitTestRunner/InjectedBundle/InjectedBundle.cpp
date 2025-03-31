@@ -537,31 +537,21 @@ void InjectedBundle::resetUserMediaPermission()
     postPageMessage("ResetUserMediaPermission");
 }
 
-void InjectedBundle::setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef origin, WKStringRef parentOrigin)
+void InjectedBundle::delayUserMediaRequestDecision()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "permission", permission);
-    setValue(body, "origin", origin);
-    setValue(body, "parentOrigin", parentOrigin);
-    postPageMessage("SetUserMediaPersistentPermissionForOrigin", body);
+    postPageMessage("DelayUserMediaRequestDecision");
 }
 
-unsigned InjectedBundle::userMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin) const
+unsigned InjectedBundle::userMediaPermissionRequestCount() const
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "origin", origin);
-    setValue(body, "parentOrigin", parentOrigin);
     WKTypeRef result = nullptr;
-    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("UserMediaPermissionRequestCountForOrigin").get(), body.get(), &result);
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("UserMediaPermissionRequestCount").get(), 0, &result);
     return uint64Value(adoptWK(result).get());
 }
 
-void InjectedBundle::resetUserMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin)
+void InjectedBundle::resetUserMediaPermissionRequestCount()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "origin", origin);
-    setValue(body, "parentOrigin", parentOrigin);
-    postPageMessage("ResetUserMediaPermissionRequestCountForOrigin", body);
+    postPageMessage("ResetUserMediaPermissionRequestCount");
 }
 
 void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)

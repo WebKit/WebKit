@@ -32,6 +32,6 @@ assertThrowsInstanceOf(() => iter.reduce(1), TypeError);
 
 assert.compareArray(
   log,
-  ["get: reduce"]
+  ["get: reduce", "get: return"]
 );
 

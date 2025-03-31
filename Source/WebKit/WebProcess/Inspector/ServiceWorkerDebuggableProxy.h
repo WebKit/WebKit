@@ -55,6 +55,7 @@ public:
     void dispatchMessageFromRemote(String&& message) final;
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)
     bool automaticInspectionAllowed() const final { return true; }
+    bool automaticInspectionAllowedInSameProcess() const final { return true; }
     void pauseWaitingForAutomaticInspection() final;
     void unpauseForResolvedAutomaticInspection() final;
 
@@ -70,5 +71,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebKit::ServiceWorkerDebuggableProxy, ServiceWorker);
 
 #endif // ENABLE(REMOTE_INSPECTOR)

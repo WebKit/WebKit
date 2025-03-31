@@ -60,11 +60,11 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
         return;
     }
 
-    NSString *visibleOrigin = applicationVisibleNameFromOrigin(origin);
+    RetainPtr visibleOrigin = applicationVisibleNameFromOrigin(origin);
     if (!visibleOrigin)
         visibleOrigin = applicationVisibleName();
 
-    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe one of your windows or screens?", "Message for window and screen sharing prompt"), visibleOrigin];
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe one of your windows or screens?", "Message for window and screen sharing prompt"), visibleOrigin.get()];
     auto *allowWindowButtonString = WEB_UI_NSSTRING(@"Allow to Share Window", "Allow window button title in window and screen sharing prompt");
     auto *allowScreenButtonString = WEB_UI_NSSTRING(@"Allow to Share Screen", "Allow screen button title in window and screen sharing prompt");
     auto *doNotAllowButtonString = WEB_UI_NSSTRING_KEY(@"Don’t Allow", @"Don’t Allow (window and screen sharing)", "Disallow button title in window and screen sharing prompt");

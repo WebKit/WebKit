@@ -76,13 +76,13 @@ void GeoNotifier::runSuccessCallback(GeolocationPosition* position)
     if (!m_geolocation->isAllowed())
         CRASH();
 
-    protectedSuccessCallback()->handleEvent(position);
+    protectedSuccessCallback()->invoke(position);
 }
 
 void GeoNotifier::runErrorCallback(GeolocationPositionError& error)
 {
     if (RefPtr errorCallback = m_errorCallback)
-        errorCallback->handleEvent(error);
+        errorCallback->invoke(error);
 }
 
 void GeoNotifier::startTimerIfNeeded()
@@ -119,7 +119,7 @@ void GeoNotifier::timerFired()
     
     if (m_errorCallback) {
         auto error = GeolocationPositionError::create(GeolocationPositionError::TIMEOUT, "Timeout expired"_s);
-        m_errorCallback->handleEvent(error);
+        m_errorCallback->invoke(error);
     }
     geolocation->requestTimedOut(this);
 }

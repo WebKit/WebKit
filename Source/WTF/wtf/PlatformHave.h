@@ -77,10 +77,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
-#endif
-
-#if PLATFORM(COCOA)
 #define HAVE_REMAP_JIT 1
 #endif
 
@@ -233,10 +229,6 @@
 
 #if OS(DARWIN) && __has_include(<mach/memory_entry.h>)
 #define HAVE_MACH_MEMORY_ENTRY 1
-#endif
-
-#if PLATFORM(MAC)
-#define HAVE_HOSTED_CORE_ANIMATION 1
 #endif
 
 #if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
@@ -1556,7 +1548,7 @@
 #define HAVE_AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION 1
 #endif
 
-#if PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #define HAVE_APPLE_THERMAL_MITIGATION_SUPPORT 1
 #endif
 

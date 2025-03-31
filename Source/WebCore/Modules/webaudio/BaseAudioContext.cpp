@@ -320,13 +320,13 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
             if (!result) {
                 promise->reject(WTFMove(result.error()));
                 if (errorCallback)
-                    errorCallback->handleEvent(nullptr);
+                    errorCallback->invoke(nullptr);
                 return;
             }
             auto audioBuffer = WTFMove(result.value());
             promise->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
             if (successCallback)
-                successCallback->handleEvent(audioBuffer.ptr());
+                successCallback->invoke(audioBuffer.ptr());
         });
     });
 }

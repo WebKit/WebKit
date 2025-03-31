@@ -183,6 +183,7 @@ int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize
 
 static float adjustedFontSize(float size, float sizeAdjust, float metricValue)
 {
+    ASSERT(sizeAdjust > 0);
     if (!size)
         return 0;
 

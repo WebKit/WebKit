@@ -718,6 +718,11 @@ void AXObjectCache::initializeAXThreadIfNeeded()
         return;
 
     if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread) {
+        // Initialize the role map before the accessibility thread starts so that it's safe for both threads
+        // to use (the only thing that needs to be thread-safe about it is initialization since it's not modified
+        // after creation and is never destroyed).
+        initializeRoleMap();
+
         _AXUIElementUseSecondaryAXThread(true);
         axThreadInitialized = true;
     }

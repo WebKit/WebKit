@@ -91,17 +91,15 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
     return false;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame textIndicator:(WebCore::TextIndicator&)textIndicator margin:(CGSize)margin offset:(CGPoint)offset
+- (void)updateWithFrame:(CGRect)frame textIndicator:(RefPtr<WebCore::TextIndicator>)textIndicator margin:(CGSize)margin offset:(CGPoint)offset updatingIndicator:(BOOL)updatingIndicator
 {
-    if (!(self = [super init]))
-        return nil;
-    
     self.anchorPoint = CGPointZero;
     self.frame = frame;
-    self.name = @"WebTextIndicatorLayer";
 
-    _textIndicator = &textIndicator;
+    _textIndicator = textIndicator;
     _margin = margin;
+
+    [self setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     RefPtr<WebCore::NativeImage> contentsImage;
     WebCore::FloatSize contentsImageLogicalSize { 1, 1 };
@@ -125,7 +123,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
 #else
     highlightColor = adoptCF(CGColorCreateSRGB(.99, .89, 0.22, 1.0));
 #endif
-    
+
     auto textRectsInBoundingRectCoordinates = _textIndicator->textRectsInBoundingRectCoordinates();
 
     auto paths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(textRectsInBoundingRectCoordinates, cornerRadius);
@@ -147,7 +145,8 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
         RetainPtr<CALayer> bounceLayer = adoptNS([[CALayer alloc] init]);
         [bounceLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [bounceLayer setFrame:bounceLayerRect];
-        [bounceLayer setOpacity:0];
+        if (updatingIndicator == NO)
+            [bounceLayer setOpacity:0];
         [bounceLayers addObject:bounceLayer.get()];
 
         WebCore::FloatRect yellowHighlightRect(WebCore::FloatPoint(), bounceLayerRect.size());
@@ -176,7 +175,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
         [bounceLayer addSublayer:rimShadowLayer.get()];
         [bounceLayer setValue:rimShadowLayer.get() forKey:rimShadowLayerKey];
 #endif // PLATFORM(MAC)
-        
+
         RetainPtr<CALayer> textLayer = adoptNS([[CALayer alloc] init]);
         [textLayer setBackgroundColor:highlightColor.get()];
         [textLayer setBorderColor:borderColor.get()];
@@ -186,6 +185,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
             [textLayer setContents:(__bridge id)contentsImage->platformImage().get()];
 
         RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
+        [maskLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [maskLayer setPath:translatedPath.platformPath()];
         [textLayer setMask:maskLayer.get()];
 
@@ -200,6 +200,17 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
 
     self.sublayers = bounceLayers.get();
     _bounceLayers = bounceLayers;
+
+}
+
+- (instancetype)initWithFrame:(CGRect)frame textIndicator:(RefPtr<WebCore::TextIndicator>)textIndicator margin:(CGSize)margin offset:(CGPoint)offset
+{
+    if (!(self = [super init]))
+        return nil;
+
+    self.name = @"WebTextIndicatorLayer";
+
+    [self updateWithFrame:frame textIndicator:textIndicator margin:margin offset:offset updatingIndicator:NO];
 
     return self;
 }

@@ -345,6 +345,7 @@ public:
     float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
+    FloatSize enclosingFrameViewVisibleSize() const override;
     void didChangePlatformLayerForLayer(const GraphicsLayer*) override { }
 
     void layerTiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/);

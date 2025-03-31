@@ -141,7 +141,7 @@ void WorkerAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighRes
             continue;
         callback->m_firedOrCancelled = true;
         InspectorInstrumentation::willFireAnimationFrame(m_workerGlobalScope, callback->m_id);
-        callback->handleEvent(timestamp);
+        callback->invoke(timestamp);
         InspectorInstrumentation::didFireAnimationFrame(m_workerGlobalScope, callback->m_id);
     }
 

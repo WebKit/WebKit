@@ -788,6 +788,7 @@ accessibility/display-contents/tree-and-treeitems.html [ Skip ]
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 accessibility/combobox/mac [ Skip ]
+accessibility/shadow-dom/reference-target/mac [ Skip ]
 
 accessibility/textarea-line-for-index.html [ Skip ]
 
@@ -1461,9 +1462,6 @@ webkit.org/b/260455 http/tests/media/media-source/mediasource-rvfc.html [ Crash 
 
 # MSE text tracks not supported
 webkit.org/b/281343 media/media-source/media-managedmse-webvtt-track.html [ Skip ]
-
-# Asserts when handling video flush events
-webkit.org/b/288936 [ Debug ] imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/ [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2449,10 +2447,10 @@ imported/w3c/web-platform-tests/webrtc/protocol/rtp-extension-support.html [ Fai
 webrtc/video-getParameters.html [ Failure ]
 
 # Legacy Offer options are enabled by default in WPE and GTK ports.
-imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.optional.html [ Failure ]
 
 # Fails because the transceiver state.currentDirection is expected to be null but isn't.
-imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToReceive-options.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToReceive-options.optional.https.html [ Failure ]
 
 # Missing support for ICE restarts
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Skip ]

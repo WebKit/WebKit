@@ -99,7 +99,7 @@ static RetainPtr<NSArray<NSHTTPCookie *>> cookiesByCappingExpiry(NSArray<NSHTTPC
 {
     RetainPtr cappedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
     for (NSHTTPCookie *cookie in cookies)
-        [cappedCookies addObject:WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCap)];
+        [cappedCookies addObject:WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCap).get()];
     return cappedCookies;
 }
 
@@ -242,11 +242,12 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
             };
 
             if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress) && !needsThirdPartyIPAddressQuirk(requestURL, firstPartyRegistrableDomainName)) {
-                cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies).autorelease();
+                RetainPtr cappedCookies = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies);
                 if (debugLoggingEnabled) {
-                    for (NSHTTPCookie *cookie in cookiesSetInResponse)
+                    for (NSHTTPCookie *cookie in cappedCookies.get())
                         RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party IP address cookie named %{public}@.", cookie.name);
                 }
+                return cappedCookies.autorelease();
             }
 
             return cookiesSetInResponse;
@@ -259,11 +260,12 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
             // Don't use RetainPtr here. This array has to be retained and
             // auto released to not be released before returned to the code
             // executing the block.
-            cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies).autorelease();
+            RetainPtr cappedCookies = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies).autorelease();
             if (debugLoggingEnabled) {
-                for (NSHTTPCookie *cookie in cookiesSetInResponse)
+                for (NSHTTPCookie *cookie in cappedCookies.get())
                     RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party CNAME cloaked cookie named %{public}@.", cookie.name);
             }
+            return cappedCookies.autorelease();
         }
 
         return cookiesSetInResponse;
@@ -340,8 +342,7 @@ void NetworkTaskCocoa::updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTa
     if (request.isSameSiteUnspecified())
         return;
 #if HAVE(FOUNDATION_WITH_SAME_SITE_COOKIE_SUPPORT)
-    static NeverDestroyed<RetainPtr<NSURL>> emptyURL = adoptNS([[NSURL alloc] initWithString:@""]);
-    task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL.get().get();
+    task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : URL::emptyNSURL();
     task._isTopLevelNavigation = request.isTopSite();
 #else
     UNUSED_PARAM(task);

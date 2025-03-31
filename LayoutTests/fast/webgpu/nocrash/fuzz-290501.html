@@ -1,0 +1,107 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter();
+let device0 = await adapter0.requestDevice();
+// START
+a = await navigator.gpu.requestAdapter()
+b = await a.requestDevice()
+c = b.createBuffer({size : 112, usage : GPUBufferUsage.STORAGE})
+d = b.createShaderModule({
+  code : ` 
+         fn e(f: u32) -> u32 {
+       return f;
+       }
+         @group(0) @binding(0) var<storage, read_write> g: array<array<array<f16, 6>, 8>>;
+         @compute @workgroup_size(1) fn h() {
+         g[5][2][extractBits(300849, 66, e(5))] = f16();
+       }
+        `
+})
+i = b.createBindGroupLayout({
+  entries : [ {
+    binding : 0,
+    visibility : GPUShaderStage.COMPUTE,
+    buffer : {type : 'storage', hasDynamicOffset : true}
+  } ]
+})
+j = b.createPipelineLayout({bindGroupLayouts : [ i ]})
+k = b.createComputePipeline({layout : j, compute : {module : d}})
+l = b.createBindGroup(
+    {layout : i, entries : [ {binding : 0, resource : {buffer : c}} ]})
+m = b.createCommandEncoder()
+n = m.beginComputePass()
+try {
+  n.setPipeline(k)
+  n.setBindGroup(0, l, new Uint32Array(22), 5, 1)
+  n.dispatchWorkgroups(1)
+  n.end()
+} catch {
+}
+o = m.finish()
+try {
+  b.queue.submit([ o ])
+} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  log('Pass');
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

@@ -38,7 +38,6 @@
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
-#import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
 #import "WKFrameInfoInternal.h"
@@ -198,7 +197,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewUnlockScreenOrientation = [delegate respondsToSelector:@selector(_webViewUnlockScreenOrientation:)];
 #endif
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
-    m_delegateMethods.webViewIsMediaCaptureAuthorizedForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:)] || [delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)];
 
     m_delegateMethods.webViewMediaCaptureStateDidChange = [delegate respondsToSelector:@selector(_webView:mediaCaptureStateDidChange:)];
     m_delegateMethods.webViewDidChangeFontAttributes = [delegate respondsToSelector:@selector(_webView:didChangeFontAttributes:)];
@@ -1466,49 +1464,6 @@ void UIDelegate::UIClient::decidePolicyForScreenCaptureUnmuting(WebPageProxy& pa
     RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
     [delegate _webView:uiDelegate->m_webView.get().get() decidePolicyForScreenCaptureUnmutingForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() decisionHandler:decisionHandler.get()];
-}
-
-void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionCheckProxy& request)
-{
-    RefPtr uiDelegate = m_uiDelegate.get();
-    if (!uiDelegate)
-        return;
-
-    auto delegate = uiDelegate->m_delegate.get();
-    if (!delegate || !uiDelegate->m_delegateMethods.webViewIsMediaCaptureAuthorizedForFrameDecisionHandler) {
-        request.setUserMediaAccessInfo(false);
-        return;
-    }
-
-    RefPtr mainFrame = frame.page()->mainFrame();
-
-    if ([delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)]) {
-        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:includeSensitiveMediaDeviceDetails:));
-        auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](BOOL includeSensitiveDetails) {
-            if (checker->completionHandlerHasBeenCalled())
-                return;
-            checker->didCallCompletionHandler();
-
-            protectedRequest->setUserMediaAccessInfo(includeSensitiveDetails);
-        });
-
-        [(id <WKUIDelegatePrivate>)delegate _webView:uiDelegate->m_webView.get().get() includeSensitiveMediaDeviceDetails:decisionHandler.get()];
-        return;
-    }
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](NSString*, BOOL authorized) {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-
-        protectedRequest->setUserMediaAccessInfo(authorized);
-    });
-
-    URL requestFrameURL { frame.url() };
-    URL mainFrameURL { mainFrame->url() };
-
-    [(id<WKUIDelegatePrivate>)delegate _webView:uiDelegate->m_webView.get().get() checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID().object().toUInt64() decisionHandler:decisionHandler.get()];
 }
 
 void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducerMediaStateFlags state)

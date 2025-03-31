@@ -899,7 +899,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 #if ENABLE(PAGE_LOAD_OBSERVER)
     URL url { _page->currentURL() };
     if (url.isValid() && url.protocolIsInHTTPFamily()) {
-        _pendingPageLoadObserverHost = static_cast<NSString *>(url.hostAndPort());
+        _pendingPageLoadObserverHost = url.hostAndPort().createNSString();
         [self _updatePageLoadObserverState];
     }
 #endif

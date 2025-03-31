@@ -582,8 +582,19 @@ Packing RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression)
 
 Packing RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression)
 {
-    if (expression.operation() == AST::UnaryOperation::AddressOf || expression.operation() == AST::UnaryOperation::Dereference)
-        return pack(Packing::Either, expression.expression());
+    if (expression.operation() == AST::UnaryOperation::AddressOf) {
+        pack(Packing::Either, expression.expression());
+        // we can't pack/unpack pointers, so we return Either to avoid that
+        return Packing::Either;
+    }
+    if (expression.operation() == AST::UnaryOperation::Dereference) {
+        // similarly to above, pointers are handled differently, so we can't trust
+        // the packing of the underlying element and instead we skip any packing
+        // of the operand (since we can't pack/unpack pointers) and return the
+        // packing of the resulting type from dereferencing
+        pack(Packing::Either, expression.expression());
+        return expression.inferredType()->packing();
+    }
     return pack(Packing::Unpacked, expression.expression());
 }
 

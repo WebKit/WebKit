@@ -473,14 +473,14 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
     if (!ScriptDisallowedScope::isScriptAllowedInMainThread())
         return;
 
-    constexpr bool caseSensitive = false;
+    constexpr auto searchCaseSensitive = ContentSearchUtilities::SearchCaseSensitive::No;
 
     auto breakpointURL = emptyString();
     auto breakpoint = m_pauseOnAllURLsBreakpoint.copyRef();
     if (!breakpoint) {
         for (auto& [query, textBreakpoint] : m_urlTextBreakpoints) {
-            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, caseSensitive, ContentSearchUtilities::SearchStringType::ContainsString);
-            if (regex.match(url) != -1) {
+            auto searcher = ContentSearchUtilities::createSearcherForString(query, ContentSearchUtilities::SearchType::ContainsString, searchCaseSensitive);
+            if (ContentSearchUtilities::searcherMatchesText(searcher, url)) {
                 breakpoint = textBreakpoint.copyRef();
                 breakpointURL = query;
                 break;
@@ -489,8 +489,8 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
     }
     if (!breakpoint) {
         for (auto& [query, regexBreakpoint] : m_urlRegexBreakpoints) {
-            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, caseSensitive, ContentSearchUtilities::SearchStringType::Regex);
-            if (regex.match(url) != -1) {
+            auto searcher = ContentSearchUtilities::createSearcherForString(query, ContentSearchUtilities::SearchType::Regex, searchCaseSensitive);
+            if (ContentSearchUtilities::searcherMatchesText(searcher, url)) {
                 breakpoint = regexBreakpoint.copyRef();
                 breakpointURL = query;
                 break;
@@ -524,11 +524,12 @@ bool InspectorDOMDebuggerAgent::EventBreakpoint::matches(const String& eventName
     if (m_knownMatchingEventNames.contains(eventName))
         return true;
 
-    if (!m_eventNameMatchRegex) {
-        auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
-        m_eventNameMatchRegex = ContentSearchUtilities::createRegularExpressionForSearchString(this->eventName, caseSensitive, searchStringType);
+    if (!m_eventNameSearcher) {
+        auto searchType = isRegex ? ContentSearchUtilities::SearchType::Regex : ContentSearchUtilities::SearchType::ExactString;
+        auto searchCaseSensitive = caseSensitive ? ContentSearchUtilities::SearchCaseSensitive::Yes : ContentSearchUtilities::SearchCaseSensitive::No;
+        m_eventNameSearcher = ContentSearchUtilities::createSearcherForString(this->eventName, searchType, searchCaseSensitive);
     }
-    if (m_eventNameMatchRegex->match(eventName) == -1)
+    if (!ContentSearchUtilities::searcherMatchesText(*m_eventNameSearcher, eventName))
         return false;
 
     m_knownMatchingEventNames.add(eventName);

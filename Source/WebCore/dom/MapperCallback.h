@@ -35,8 +35,8 @@ class MapperCallback : public RefCounted<MapperCallback>, public ActiveDOMCallba
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<JSC::JSValue> handleEvent(JSC::JSValue, uint64_t) = 0;
-    virtual CallbackResult<JSC::JSValue> handleEventRethrowingException(JSC::JSValue, uint64_t) = 0;
+    virtual CallbackResult<JSC::JSValue> invoke(JSC::JSValue, uint64_t) = 0;
+    virtual CallbackResult<JSC::JSValue> invokeRethrowingException(JSC::JSValue, uint64_t) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

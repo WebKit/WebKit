@@ -691,6 +691,10 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
         return;
 
     bool needsValidationLayerWorkaround;
+    auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
+    auto elementCount = indexBuffer.length / indexSizeInBytes;
+    RELEASE_ASSERT(elementCount);
+
     auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
     m_minVertexCountForDrawCommand.add(m_currentCommandIndex, IndexBufferAndIndexData {
         .indexBuffer = m_indexBuffer,
@@ -701,6 +705,7 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
             .minVertexCount = minVertexCount,
             .minInstanceCount = minInstanceCount,
             .bufferGpuAddress = indexBuffer.gpuAddress,
+            .indexBufferElementCountMinusOne = static_cast<uint32_t>(elementCount - 1),
             .indexCount = indexCount,
             .instanceCount = instanceCount,
             .firstIndex = firstIndex,
@@ -726,16 +731,17 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
     id<MTLBuffer> indirectBuffer = nil;
     RefPtr renderPassEncoder = m_renderPassEncoder.get();
     bool needsValidationLayerWorkaround = false;
+    bool passWasSplit = false;
     if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
         auto result = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, *renderPassEncoder, m_device.get(), m_descriptor.sampleCount, m_primitiveType);
         useIndirectCall = result.first;
         indirectBuffer = result.second;
         if (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw)
-            renderPassEncoder->splitRenderPass();
+            passWasSplit = renderPassEncoder->splitRenderPass();
     }
 
-    if (!executePreDrawCommands(needsValidationLayerWorkaround, useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw, firstInstance, instanceCount))
+    if (!executePreDrawCommands(needsValidationLayerWorkaround, passWasSplit, firstInstance, instanceCount))
         return finalizeRenderCommand();
 
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
@@ -792,7 +798,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
         auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, *renderPassEncoder.get(), splitPass);
         if (splitPass)
-            renderPassEncoder->splitRenderPass();
+            splitPass = renderPassEncoder->splitRenderPass();
         mtlIndirectBuffer = result.first;
         modifiedIndirectOffset = result.second;
     }
@@ -853,7 +859,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
         clampedIndirectBuffer = adjustedBuffer;
         indirectOffset = adjustedOffset;
         if (splitPass)
-            renderPassEncoder->splitRenderPass();
+            splitPass = renderPassEncoder->splitRenderPass();
     }
 
     if (!executePreDrawCommands(needsValidationLayerWorkaround, splitPass))

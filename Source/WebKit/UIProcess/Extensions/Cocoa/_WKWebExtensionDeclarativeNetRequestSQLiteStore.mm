@@ -182,7 +182,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
     });
 }
 
-- (void)getRulesWithCompletionHandler:(void (^)(NSArray<NSDictionary<NSString *, id> *> *rules, NSString *errorMessage))completionHandler
+- (void)getRulesWithRuleIDs:(NSArray<NSNumber *> *)ruleIDs completionHandler:(void (^)(NSArray<NSDictionary<NSString *, id> *> *rules, NSString *errorMessage))completionHandler
 {
     auto weakSelf = WeakObjCPtr<_WKWebExtensionDeclarativeNetRequestSQLiteStore> { self };
     dispatch_async(_databaseQueue, ^{
@@ -191,7 +191,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
             return;
 
         NSString *errorMessage;
-        NSArray<NSDictionary<NSString *, id> *> *rules = [strongSelf _getRulesWithOutErrorMessage:&errorMessage];
+        NSArray<NSDictionary<NSString *, id> *> *rules = [strongSelf _getRulesWithRuleIDs:ruleIDs errorMessage:&errorMessage];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             completionHandler(rules, errorMessage);
@@ -199,17 +199,34 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
     });
 }
 
-- (NSArray<NSDictionary<NSString *, id> *> *)_getRulesWithOutErrorMessage:(NSString **)outErrorMessage
+- (NSArray<NSDictionary<NSString *, id> *> *)_getRulesWithRuleIDs:(NSArray<NSNumber *> *)ruleIDs errorMessage:(NSString **)errorMessage
 {
     dispatch_assert_queue(_databaseQueue);
 
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:errorMessage createIfNecessary:NO])
         return @[ ];
 
-    ASSERT(!(*outErrorMessage).length);
+    ASSERT(!(*errorMessage).length);
     ASSERT(_database);
 
-    _WKWebExtensionSQLiteRowEnumerator *rows = SQLiteDatabaseFetch(_database, [NSString stringWithFormat:@"SELECT * FROM %@", _tableName]);
+    _WKWebExtensionSQLiteRowEnumerator *rows;
+
+    if (ruleIDs.count) {
+        auto *bindings = [NSMutableArray array];
+        for (NSUInteger i = 0; i < ruleIDs.count; i++)
+            [bindings addObject:@"?"];
+
+        auto *joinedBindings = [bindings componentsJoinedByString:@", "];
+        auto *query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE id IN (%@)", _tableName, joinedBindings];
+        auto *statement = [[_WKWebExtensionSQLiteStatement alloc] initWithDatabase:_database query:query];
+
+        for (NSUInteger i = 0; i < ruleIDs.count; i++)
+            [statement bindInt64:ruleIDs[i].integerValue atParameterIndex:i + 1];
+
+        rows = [statement fetch];
+    } else
+        rows = SQLiteDatabaseFetch(_database, [NSString stringWithFormat:@"SELECT * FROM %@", _tableName]);
+
     return [self _getKeysAndValuesFromRowEnumerator:rows];
 }
 

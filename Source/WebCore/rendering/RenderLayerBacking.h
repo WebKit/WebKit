@@ -242,6 +242,8 @@ public:
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
 
+    FloatSize enclosingFrameViewVisibleSize() const override;
+
     void didChangePlatformLayerForLayer(const GraphicsLayer*) override;
     bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 

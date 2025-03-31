@@ -66,6 +66,18 @@ namespace Metal {
 #define DEFINE_BOUND_HELPER(__name, __capitalizedName, __lowerBound, __upperBound, ...) \
     DEFINE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __name, __lowerBound, __upperBound, __VA_ARGS__)
 
+#define DEFINE_VOLATILE_HELPER_RENAMED(__name, __capitalizedName) \
+    DEFINE_HELPER(__capitalizedName, \
+    template <typename T>\n \
+    auto __wgsl##__capitalizedName(T value)\n \
+    {\n \
+        volatile auto result = __name(value);\n \
+        return result;\n \
+    }\n)
+
+#define DEFINE_VOLATILE_HELPER(__name, __capitalizedName) \
+    DEFINE_VOLATILE_HELPER_RENAMED(__name, __capitalizedName)
+
 struct HelperGenerator {
     StringBuilder& m_output;
 
@@ -82,6 +94,10 @@ DEFINE_BOUND_HELPER_RENAMED(inverseSqrt, InverseSqrt, rsqrt, 0, numeric_limits<T
 DEFINE_BOUND_HELPER(log, Log, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(log2, Log2, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(sqrt, Sqrt, 0, numeric_limits<T>::infinity())
+DEFINE_VOLATILE_HELPER(pack_float_to_snorm2x16, PackFloatToSnorm2x16)
+DEFINE_VOLATILE_HELPER(pack_float_to_unorm2x16, PackFloatToUnorm2x16)
+DEFINE_VOLATILE_HELPER(pack_float_to_snorm4x8, PackFloatToSnorm4x8)
+DEFINE_VOLATILE_HELPER(pack_float_to_unorm4x8, PackFloatToUnorm4x8)
 
 };
 
@@ -163,7 +179,7 @@ public:
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
-    void visit(const Type*);
+    void visit(const Type*, bool shouldPack = false);
 
     StringBuilder& stringBuilder() { return m_body; }
     Indentation<4>& indent() { return m_indent; }
@@ -172,7 +188,7 @@ private:
     void emitNecessaryHelpers();
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
-    bool emitPackedVector(const Types::Vector&);
+    bool emitPackedVector(const Types::Vector&, bool shouldPack);
     void serializeConstant(const Type*, ConstantValue);
     void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
     void visitStatements(AST::Statement::List&);
@@ -244,9 +260,9 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         {
             IndentationScope scope(m_indent);
             m_body.append(
-                m_indent, "T x;\n"_s,
-                m_indent, "T y;\n"_s,
-                m_indent, "T z;\n"_s,
+                m_indent, "union { T x; T r; };\n"_s,
+                m_indent, "union { T y; T g; };\n"_s,
+                m_indent, "union { T z; T b; };\n"_s,
                 m_indent, "uint8_t __padding[sizeof(T)];\n"_s,
                 m_indent, "\n"_s,
                 m_indent, "PackedVec3() { }\n"_s,
@@ -560,7 +576,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             IndentationScope scope(m_indent);
             m_body.append(m_indent, "auto o = min(offset, 32u);\n"_s,
                 m_indent, "auto c = min(count, 32u - o);\n"_s,
-                m_indent, "return extract_bits(e, min(o, 31u), c);\n"_s);
+                m_indent, "return select((T)0, extract_bits(e, min(o, 31u), c), c);\n"_s);
         }
         m_body.append(m_indent, "}\n"_s);
     }
@@ -801,9 +817,9 @@ bool FunctionDefinitionWriter::shouldPackType() const
     return false;
 }
 
-bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
+bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector, bool shouldPack)
 {
-    if (!shouldPackType())
+    if (!shouldPack)
         return false;
 
     // The only vectors that need to be packed are the vectors with 3 elements,
@@ -1069,9 +1085,12 @@ void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
 }
 
 // Types
-void FunctionDefinitionWriter::visit(const Type* type)
+void FunctionDefinitionWriter::visit(const Type* type, bool shouldPack)
 {
     using namespace WGSL::Types;
+
+    shouldPack |= shouldPackType();
+
     WTF::switchOn(*type,
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
@@ -1107,26 +1126,26 @@ void FunctionDefinitionWriter::visit(const Type* type)
             }
         },
         [&](const Vector& vector) {
-            if (emitPackedVector(vector))
+            if (emitPackedVector(vector, shouldPack))
                 return;
             m_body.append("vec<"_s);
-            visit(vector.element);
+            visit(vector.element, shouldPack);
             m_body.append(", "_s, vector.size, '>');
         },
         [&](const Matrix& matrix) {
             m_body.append("matrix<"_s);
-            visit(matrix.element);
+            visit(matrix.element, shouldPack);
             m_body.append(", "_s, matrix.columns, ", "_s, matrix.rows, '>');
         },
         [&](const Array& array) {
             m_body.append("array<"_s);
             auto* vector = std::get_if<Types::Vector>(array.element);
-            if (vector && vector->size == 3 && shouldPackType()) {
+            if (vector && vector->size == 3 && shouldPack) {
                 m_body.append("PackedVec3<"_s);
-                visit(vector->element);
+                visit(vector->element, shouldPack);
                 m_body.append(">"_s);
             } else
-                visit(array.element);
+                visit(array.element, shouldPack);
             m_body.append(", "_s);
             WTF::switchOn(array.size,
                 [&](unsigned size) { m_body.append(size); },
@@ -1138,7 +1157,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_body.append(structure.structure.name());
-            if (shouldPackType() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
+            if (shouldPack && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_body.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
@@ -1148,7 +1167,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 if (!first)
                     m_body.append(", "_s);
                 first = false;
-                visit(value);
+                visit(value, shouldPack);
             }
             m_body.append('>');
         },
@@ -1180,7 +1199,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             }
             m_body.append(type, '<');
-            visit(texture.element);
+            visit(texture.element, shouldPack);
             m_body.append(", access::"_s, access, '>');
         },
         [&](const TextureStorage& texture) {
@@ -1254,7 +1273,8 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 m_body.append("const "_s);
             if (addressSpace)
                 m_body.append(addressSpace, ' ');
-            visit(pointer.element);
+            bool shouldPack = pointer.addressSpace == AddressSpace::Storage || pointer.addressSpace == AddressSpace::Uniform;
+            visit(pointer.element, shouldPack);
             m_body.append('*');
         },
         [&](const Atomic& atomic) {
@@ -1907,7 +1927,9 @@ static void emitLength(FunctionDefinitionWriter* writer, AST::CallExpression& ca
 
 static void emitDegrees(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append('(');
+    writer->stringBuilder().append("static_cast<"_s);
+    writer->visit(call.inferredType());
+    writer->stringBuilder().append(">("_s);
     writer->visit(call.arguments()[0]);
     writer->stringBuilder().append(" * "_s, String::number(180 / std::numbers::pi), ')');
 }
@@ -1998,7 +2020,9 @@ static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpress
 
 static void emitRadians(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append('(');
+    writer->stringBuilder().append("static_cast<"_s);
+    writer->visit(call.inferredType());
+    writer->stringBuilder().append(">("_s);
     writer->visit(call.arguments()[0]);
     writer->stringBuilder().append(" * "_s, String::number(std::numbers::pi / 180), ')');
 }
@@ -2138,10 +2162,10 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "log"_s, EMIT_HELPER(Log) },
             { "log2"_s, EMIT_HELPER(Log2) },
             { "modf"_s, NOOP_HELPER(__wgslModf) },
-            { "pack2x16snorm"_s, NOOP_HELPER(pack_float_to_snorm2x16) },
-            { "pack2x16unorm"_s, NOOP_HELPER(pack_float_to_unorm2x16) },
-            { "pack4x8snorm"_s, NOOP_HELPER(pack_float_to_snorm4x8) },
-            { "pack4x8unorm"_s, NOOP_HELPER(pack_float_to_unorm4x8) },
+            { "pack2x16snorm"_s, EMIT_HELPER(PackFloatToSnorm2x16) },
+            { "pack2x16unorm"_s, EMIT_HELPER(PackFloatToUnorm2x16) },
+            { "pack4x8snorm"_s, EMIT_HELPER(PackFloatToSnorm4x8) },
+            { "pack4x8unorm"_s, EMIT_HELPER(PackFloatToUnorm4x8) },
             { "reverseBits"_s, NOOP_HELPER(reverse_bits) },
             { "round"_s, NOOP_HELPER(rint) },
             { "sign"_s, NOOP_HELPER(__wgslSign) },

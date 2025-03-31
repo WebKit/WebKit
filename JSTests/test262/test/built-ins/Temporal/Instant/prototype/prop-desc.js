@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-instant-prototype
+esid: sec-temporal.instant.prototype
 description: The "prototype" property of Temporal.Instant
 includes: [propertyHelper.js]
 features: [Temporal]

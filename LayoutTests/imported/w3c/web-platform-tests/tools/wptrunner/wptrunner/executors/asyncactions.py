@@ -7,6 +7,86 @@ def do_delayed_imports():
     global webdriver
     import webdriver
 
+class BidiBluetoothHandleRequestDevicePrompt:
+    name = "bidi.bluetooth.handle_request_device_prompt"
+
+    def __init__(self, logger, protocol):
+        do_delayed_imports()
+        self.logger = logger
+        self.protocol = protocol
+
+    async def __call__(self, payload):
+        if payload["context"] is None:
+            raise ValueError("Missing required parameter: context")
+
+        context = payload["context"]
+        if isinstance(context, str):
+            pass
+        elif isinstance(context, webdriver.bidi.protocol.BidiWindow):
+            # Context can be a serialized WindowProxy.
+            context = context.browsing_context
+        else:
+            raise ValueError("Unexpected context type: %s" % context)
+
+        prompt = payload["prompt"]
+        accept = payload["accept"]
+        device = payload["device"]
+        return await self.protocol.bidi_bluetooth.handle_request_device_prompt(context, prompt, accept, device)
+
+class BidiBluetoothSimulateAdapterAction:
+    name = "bidi.bluetooth.simulate_adapter"
+
+    def __init__(self, logger, protocol):
+        do_delayed_imports()
+        self.logger = logger
+        self.protocol = protocol
+
+    async def __call__(self, payload):
+        if payload["context"] is None:
+            raise ValueError("Missing required parameter: context")
+
+        context = payload["context"]
+        if isinstance(context, str):
+            pass
+        elif isinstance(context, webdriver.bidi.protocol.BidiWindow):
+            # Context can be a serialized WindowProxy.
+            context = context.browsing_context
+        else:
+            raise ValueError("Unexpected context type: %s" % context)
+
+        state = payload["state"]
+        return await self.protocol.bidi_bluetooth.simulate_adapter(context,
+                                                                   state,
+                                                                   type_="create")
+
+class BidiBluetoothSimulatePreconnectedPeripheralAction:
+    name = "bidi.bluetooth.simulate_preconnected_peripheral"
+
+    def __init__(self, logger, protocol):
+        do_delayed_imports()
+        self.logger = logger
+        self.protocol = protocol
+
+    async def __call__(self, payload):
+        if payload["context"] is None:
+            raise ValueError("Missing required parameter: context")
+
+        context = payload["context"]
+        if isinstance(context, str):
+            pass
+        elif isinstance(context, webdriver.bidi.protocol.BidiWindow):
+            # Context can be a serialized WindowProxy.
+            context = context.browsing_context
+        else:
+            raise ValueError("Unexpected context type: %s" % context)
+
+        address = payload["address"]
+        name = payload["name"]
+        manufacturer_data = payload["manufacturerData"]
+        known_service_uuids = payload["knownServiceUuids"]
+        return await self.protocol.bidi_bluetooth.simulate_preconnected_peripheral(
+            context, address, name, manufacturer_data, known_service_uuids)
+
 class BidiSessionSubscribeAction:
     name = "bidi.session.subscribe"
 
@@ -32,4 +112,26 @@ class BidiSessionSubscribeAction:
         return await self.protocol.bidi_events.subscribe(events, contexts)
 
 
-async_actions = [BidiSessionSubscribeAction]
+class BidiPermissionsSetPermissionAction:
+    name = "bidi.permissions.set_permission"
+
+    def __init__(self, logger, protocol):
+        do_delayed_imports()
+        self.logger = logger
+        self.protocol = protocol
+
+    async def __call__(self, payload):
+        descriptor = payload['descriptor']
+        state = payload['state']
+        origin = payload['origin']
+        return await self.protocol.bidi_permissions.set_permission(descriptor,
+                                                                   state,
+                                                                   origin)
+
+
+async_actions = [
+    BidiBluetoothHandleRequestDevicePrompt,
+    BidiBluetoothSimulateAdapterAction,
+    BidiBluetoothSimulatePreconnectedPeripheralAction,
+    BidiPermissionsSetPermissionAction,
+    BidiSessionSubscribeAction]

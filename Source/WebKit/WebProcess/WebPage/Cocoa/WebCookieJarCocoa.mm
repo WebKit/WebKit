@@ -40,10 +40,9 @@ namespace WebKit {
 
 static RetainPtr<NSDictionary> policyProperties(const WebCore::SameSiteInfo& sameSiteInfo, const URL& url)
 {
-    static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
     NSURL *nsURL = url;
     NSDictionary *policyProperties = @{
-        @"_kCFHTTPCookiePolicyPropertySiteForCookies": sameSiteInfo.isSameSite ? nsURL : emptyURL,
+        @"_kCFHTTPCookiePolicyPropertySiteForCookies": sameSiteInfo.isSameSite ? nsURL : URL::emptyNSURL(),
         @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation": [NSNumber numberWithBool:sameSiteInfo.isTopSite],
     };
     return policyProperties;

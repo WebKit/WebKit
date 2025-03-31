@@ -114,7 +114,7 @@ MediaControlsHost::~MediaControlsHost()
 {
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     if (auto showMediaControlsContextMenuCallback = std::exchange(m_showMediaControlsContextMenuCallback, nullptr))
-        showMediaControlsContextMenuCallback->handleEvent();
+        showMediaControlsContextMenuCallback->invoke();
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 }
 
@@ -717,7 +717,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
         auto invokeCallbackAtScopeExit = makeScopeExit([protectedThis] {
             if (auto showMediaControlsContextMenuCallback = std::exchange(protectedThis->m_showMediaControlsContextMenuCallback, nullptr))
-                showMediaControlsContextMenuCallback->handleEvent();
+                showMediaControlsContextMenuCallback->invoke();
         });
 
         if (selectedItemID == invalidMenuItemIdentifier)

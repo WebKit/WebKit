@@ -399,7 +399,7 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
     m_scriptMessageHandlers.clear();
 }
 
-void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& reply)
+void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, std::optional<JavaScriptEvaluationResult>&& message, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& reply)
 {
     auto page = WebProcessProxy::webPage(pageProxyID);
     if (!page)

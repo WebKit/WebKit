@@ -441,14 +441,13 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     NetworkResourceLoadParameters loadParameters {
         trackingParameters.webPageProxyID,
         trackingParameters.pageID,
-        trackingParameters.frameID
+        trackingParameters.frameID,
+        request
     };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
+
     loadParameters.identifier = identifier;
     loadParameters.parentPID = legacyPresentingApplicationPID();
-#if HAVE(AUDIT_TOKEN)
-    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
-#endif
-    loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;
     loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
@@ -585,7 +584,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
     WEBLOADERSTRATEGY_RELEASE_LOG_FORWARDABLE(WEBLOADERSTRATEGY_SCHEDULELOAD_RESOURCE_SCHEDULED_WITH_NETWORKPROCESS, static_cast<int>(resourceLoader.request().priority()), existingNetworkResourceLoadIdentifierToResume ? existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
 
-    if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters, existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
+    if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(WTFMove(loadParameters), existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
         WEBLOADERSTRATEGY_RELEASE_LOG_ERROR("scheduleLoad: Unable to schedule resource with the NetworkProcess (priority=%d)", static_cast<int>(resourceLoader.request().priority()));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
@@ -809,14 +808,13 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     NetworkResourceLoadParameters loadParameters {
         webPageProxyID,
         pageID,
-        frameID
+        frameID,
+        request
     };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
+
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.parentPID = legacyPresentingApplicationPID();
-#if HAVE(AUDIT_TOKEN)
-    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
-#endif
-    loadParameters.request = request;
     loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
     loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
@@ -843,7 +841,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(WTFMove(loadParameters)), 0);
     if (!sendResult.succeeded()) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: failed sending synchronous network process message %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
         if (page)
@@ -891,16 +889,15 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
     NetworkResourceLoadParameters loadParameters {
         webPage->webPageProxyIdentifier(),
         webPage->identifier(),
-        webFrame->frameID()
+        webFrame->frameID(),
+        request
     };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
+
     loadParameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
-    loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.topOrigin = &document->topOrigin();
     loadParameters.parentPID = legacyPresentingApplicationPID();
-#if HAVE(AUDIT_TOKEN)
-    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
-#endif
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.options = options;
     loadParameters.originalRequestHeaders = originalRequestHeaders;
@@ -926,7 +923,7 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
     if (completionHandler)
         m_pingLoadCompletionHandlers.add(*loadParameters.identifier, WTFMove(completionHandler));
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing { loadParameters }, 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing { WTFMove(loadParameters) }, 0);
 }
 
 void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
@@ -969,9 +966,11 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     NetworkResourceLoadParameters parameters {
         webPage.webPageProxyIdentifier(),
         webPage.identifier(),
-        webFrame.frameID()
+        webFrame.frameID(),
+        WTFMove(request)
     };
-    parameters.request = WTFMove(request);
+    parameters.createSandboxExtensionHandlesIfNecessary();
+
     if (parameters.request.httpUserAgent().isEmpty()) {
         // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
         // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
@@ -981,9 +980,6 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     }
     parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
     parameters.parentPID = legacyPresentingApplicationPID();
-#if HAVE(AUDIT_TOKEN)
-    parameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
-#endif
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();

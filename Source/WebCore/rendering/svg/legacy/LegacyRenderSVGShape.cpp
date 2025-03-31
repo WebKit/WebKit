@@ -108,7 +108,7 @@ bool LegacyRenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point,
 
 bool LegacyRenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    return path().contains(point, fillRule);
+    return const_cast<LegacyRenderSVGShape&>(*this).ensurePath().contains(point, fillRule);
 }
 
 bool LegacyRenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, const WindRule fillRule)

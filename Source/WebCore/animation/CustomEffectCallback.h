@@ -36,8 +36,8 @@ class CustomEffectCallback : public RefCounted<CustomEffectCallback>, public Act
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(double progress) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(double progress) = 0;
+    virtual CallbackResult<void> invoke(double progress) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(double progress) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

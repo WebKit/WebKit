@@ -35,8 +35,8 @@ class VisitorCallback : public RefCounted<VisitorCallback>, public ActiveDOMCall
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(JSC::JSValue, uint64_t) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(JSC::JSValue, uint64_t) = 0;
+    virtual CallbackResult<void> invoke(JSC::JSValue, uint64_t) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue, uint64_t) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

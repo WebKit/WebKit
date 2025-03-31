@@ -264,7 +264,7 @@ JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JS
     if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)] || [moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)]) {
         String moduleKey = key.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        url = [NSURL URLWithString:static_cast<NSString *>(moduleKey)];
+        url = [NSURL URLWithString:moduleKey.createNSString().get()];
     }
 
     if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)])

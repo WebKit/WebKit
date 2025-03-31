@@ -77,7 +77,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     URL cachePathURL([cachePath absoluteURL]);
     if (!cachePathURL.protocolIsFile()) {
-        createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSURL *>(cachePathURL)], error);
+        createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", cachePathURL.createNSURL().get()], error);
         return false;
     }
 
@@ -85,25 +85,25 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     if (auto fileType = FileSystem::fileType(systemPath)) {
         if (*fileType != FileSystem::FileType::Regular) {
-            createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", static_cast<NSString *>(systemPath)], error);
+            createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", systemPath.createNSString().get()], error);
             return false;
         }
     }
 
     String directory = FileSystem::parentPath(systemPath);
     if (directory.isNull()) {
-        createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", static_cast<NSString *>(systemPath)], error);
+        createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", systemPath.createNSString().get()], error);
         return false;
     }
 
     if (FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
-        createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", static_cast<NSString *>(directory)], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", directory.createNSString().get()], error);
         return false;
     }
 
 #if USE(APPLE_INTERNAL_SDK)
     if (rootless_check_datavault_flag(FileSystem::fileSystemRepresentation(directory).data(), nullptr)) {
-        createError([NSString stringWithFormat:@"Cache directory `%@` is not a data vault", static_cast<NSString *>(directory)], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a data vault", directory.createNSString().get()], error);
         return false;
     }
 #endif
@@ -133,15 +133,15 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     URL filePathURL([filePath absoluteURL]);
     if (!filePathURL.protocolIsFile())
-        return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSURL *>(filePathURL)], error);
+        return createError([NSString stringWithFormat:@"File path %@ is not a local file", filePathURL.createNSURL().get()], error);
 
     String systemPath = filePathURL.fileSystemPath();
     auto fileData = FileSystem::mapFile(systemPath, FileSystem::MappedFileMode::Shared);
     if (!fileData)
-        return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", static_cast<NSString *>(systemPath)], error);
+        return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", systemPath.createNSString().get()], error);
 
     if (!charactersAreAllASCII(fileData->span()))
-        return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", static_cast<NSString *>(systemPath)], error);
+        return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", systemPath.createNSString().get()], error);
 
     auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;

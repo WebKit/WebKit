@@ -44,6 +44,7 @@ struct SpatialAudioExperienceOptions {
 };
 
 WEBCORE_EXPORT RetainPtr<CASpatialAudioExperience> createSpatialAudioExperienceWithOptions(const SpatialAudioExperienceOptions&);
+WEBCORE_EXPORT String spatialAudioExperienceDescription(CASpatialAudioExperience *);
 
 }
 #endif

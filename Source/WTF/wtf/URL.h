@@ -235,6 +235,8 @@ public:
 #if USE(FOUNDATION)
     WTF_EXPORT_PRIVATE URL(NSURL *);
     WTF_EXPORT_PRIVATE operator NSURL *() const;
+    WTF_EXPORT_PRIVATE RetainPtr<NSURL> createNSURL() const;
+    WTF_EXPORT_PRIVATE static NSURL *emptyNSURL();
 #endif
 
 #if USE(GLIB)
@@ -265,7 +267,7 @@ private:
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
 #if USE(CF)
-    static RetainPtr<CFURLRef> emptyCFURL();
+    static CFURLRef emptyCFURL();
 #endif
 
     String m_string;

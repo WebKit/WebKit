@@ -24,6 +24,7 @@ window.setTimeout(async () => {
     streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
 
     const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
+    const contextIdentifier = Math.floor(Math.random() * 0x1000000);
     remoteRenderingBackend.CreateImageBuffer({
         logicalSize: {width: 128, height: 128},
         renderingMode: 0,
@@ -31,7 +32,8 @@ window.setTimeout(async () => {
         resolutionScale: 1.0,
         colorSpace: {serializableColorSpace: {alias: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}},
         pixelFormat: 0,
-        renderingResourceIdentifier: imageBufferIdentifier
+        identifier: imageBufferIdentifier,
+        contextIdentifier: contextIdentifier
     });
     const didCreateBackendReply = streamConnection.connection.waitForMessage(imageBufferIdentifier, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, 1);
 

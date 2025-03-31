@@ -949,6 +949,10 @@ class webkit_ipc_cpp_impl(object):
             size_arg = cpp_arg(get_cpp_type("size_t"), f"{a.name}Size")
             self.args.args += [size_arg]
             store_arg = cpp_arg(webkit_ipc_get_span_store_type(a.type), a.name)
+            inline_capacity = store_arg.type.arity
+            contained_type = a.type.contained_type.type_name
+            self.pre_call_stmts += [f"if (!WTF::isValidCapacityForVector<{contained_type}>({a.name}Size))"]
+            self.pre_call_stmts += [f"    {a.name}Size = {inline_capacity};"]
             self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}({a.name}Size, 0);"]
             self.in_exprs += [cpp_expr(store_arg.type, f"{store_arg.name}")]
             webkit_ipc_type = webkit_ipc_types[a.type]

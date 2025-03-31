@@ -308,6 +308,8 @@ bool GraphicsContextGLCocoa::platformInitializeExtensions()
 
 bool GraphicsContextGLCocoa::platformInitialize()
 {
+    // Compute platform-specific max internal framebuffer size.
+    m_maxInternalFramebufferSize.clampToMinimumSize(IOSurface::maximumSize());
     return true;
 }
 

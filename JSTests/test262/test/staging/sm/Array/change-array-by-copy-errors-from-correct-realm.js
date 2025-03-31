@@ -41,8 +41,11 @@ function test(otherGlobal) {
         ["toSpliced - array too long", () => {
             var oldLen = arrayLike.length;
             arrayLike.length = 2**53 - 1;
-            gToSpliced.call(arrayLike, 0, 0, 1);
-            arrayLike.length = oldLen;
+            try {
+                gToSpliced.call(arrayLike, 0, 0, 1);
+            } finally {
+                arrayLike.length = oldLen;
+            }
         }]
     ]
 

@@ -231,7 +231,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
                     result.duration,
                     BufferSource { WTFMove(buffer) }
                 });
-                encoder.m_output->handleEvent(WTFMove(chunk), encoder.createEncodedChunkMetadata());
+                encoder.m_output->invoke(WTFMove(chunk), encoder.createEncodedChunkMetadata());
             });
         });
 
@@ -384,7 +384,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::closeEncoder(Exception&& exception)
     setState(WebCodecsCodecState::Closed);
     m_internalEncoder = nullptr;
     if (exception.code() != ExceptionCode::AbortError)
-        m_error->handleEvent(DOMException::create(WTFMove(exception)));
+        m_error->invoke(DOMException::create(WTFMove(exception)));
 
     return { };
 }

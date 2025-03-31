@@ -67,12 +67,12 @@ using namespace WebKit;
 
 - (id)objectForKey:(id)key
 {
-    auto *str = dynamic_objc_cast<NSString>(key);
+    RetainPtr str = dynamic_objc_cast<NSString>(key);
     if (!str)
         return nil;
 
     bool exists;
-    RefPtr value = self._protectedDictionary->get(str, exists);
+    RefPtr value = self._protectedDictionary->get(str.get(), exists);
     if (!exists)
         return nil;
 

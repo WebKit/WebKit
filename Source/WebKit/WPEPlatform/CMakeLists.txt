@@ -118,16 +118,20 @@ if (USE_ATK)
         ${ATK_INCLUDE_DIRS}
     )
 
+    list(APPEND WPEPlatform_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/WPEPlatform/wpe/atk"
+    )
+
     list(APPEND WPEPlatform_LIBRARIES
         ATK::Bridge
         ${ATK_LIBRARIES}
     )
 
     list(APPEND WPEPlatform_SOURCES
-        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEAccessibilityAtk.cpp
-        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEApplicationAccessibleAtk.cpp
-        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevelAccessibleAtk.cpp
-        ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessibleAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/atk/WPEAccessibilityAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/atk/WPEApplicationAccessibleAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/atk/WPEToplevelAccessibleAtk.cpp
+        ${WEBKIT_DIR}/WPEPlatform/wpe/atk/WPEViewAccessibleAtk.cpp
     )
 endif ()
 

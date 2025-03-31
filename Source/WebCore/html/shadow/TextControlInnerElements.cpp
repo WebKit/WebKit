@@ -104,11 +104,6 @@ std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyl
         elementStyle.style->setOverflowY(Overflow::Hidden);
     }
 
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    if (isNumberInput(shadowHost()) && shadowHost()->document().settings().vectorBasedControlsOnMacEnabled())
-        elementStyle.style->setAlignItems(StyleSelfAlignmentData(ItemPosition::Stretch));
-#endif
-
     return elementStyle;
 }
 

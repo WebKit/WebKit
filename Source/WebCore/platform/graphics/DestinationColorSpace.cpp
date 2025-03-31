@@ -134,7 +134,7 @@ std::optional<DestinationColorSpace> DestinationColorSpace::asRGB() const
     if (CGColorSpaceGetModel(colorSpace) != kCGColorSpaceModelRGB)
         return std::nullopt;
 
-    if (!usesStandardRange())
+    if (usesExtendedRange())
         return std::nullopt;
 
     return DestinationColorSpace(colorSpace);
@@ -164,16 +164,6 @@ bool DestinationColorSpace::usesExtendedRange() const
 {
 #if USE(CG)
     return CGColorSpaceUsesExtendedRange(platformColorSpace());
-#else
-    notImplemented();
-    return false;
-#endif
-}
-
-bool DestinationColorSpace::usesRec2100TransferFunctions() const
-{
-#if USE(CG)
-    return CGColorSpaceUsesITUR_2100TF(platformColorSpace());
 #else
     notImplemented();
     return false;

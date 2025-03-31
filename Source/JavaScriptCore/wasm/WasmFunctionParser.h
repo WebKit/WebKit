@@ -2222,7 +2222,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addRefI31(value, result));
 
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
-            return { };
+            break;
         }
         case ExtGCOpType::I31GetS: {
             TypedExpression ref;
@@ -2233,7 +2233,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addI31GetS(ref, result));
 
             m_expressionStack.constructAndAppend(Types::I32, result);
-            return { };
+            break;
         }
         case ExtGCOpType::I31GetU: {
             TypedExpression ref;
@@ -2244,7 +2244,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addI31GetU(ref, result));
 
             m_expressionStack.constructAndAppend(Types::I32, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayNew: {
             uint32_t typeIndex;
@@ -2270,7 +2270,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             m_expressionStack.constructAndAppend(arrayRefType, result);
 
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayNewDefault: {
             uint32_t typeIndex;
@@ -2287,7 +2287,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewDefault(typeIndex, size, result));
 
             m_expressionStack.constructAndAppend(arrayRefType, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayNewFixed: {
             // Get the array type and element type
@@ -2332,7 +2332,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewFixed(typeIndex, args, result));
             m_expressionStack.constructAndAppend(arrayRefType, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayNewData: {
             uint32_t typeIndex;
@@ -2362,7 +2362,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewData(typeIndex, dataIndex, size, offset, result));
             m_expressionStack.constructAndAppend(arrayRefType, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayNewElem: {
             uint32_t typeIndex;
@@ -2404,7 +2404,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewElem(typeIndex, elemSegmentIndex, size, offset, result));
             m_expressionStack.constructAndAppend(arrayRefType, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayGet:
         case ExtGCOpType::ArrayGetS:
@@ -2443,7 +2443,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addArrayGet(op, typeIndex, arrayref, index, result));
 
             m_expressionStack.constructAndAppend(resultType, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArraySet: {
             uint32_t typeIndex;
@@ -2472,7 +2472,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             WASM_TRY_ADD_TO_CONTEXT(addArraySet(typeIndex, arrayref, index, value));
 
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayLen: {
             TypedExpression arrayref;
@@ -2483,7 +2483,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addArrayLen(arrayref, result));
 
             m_expressionStack.constructAndAppend(Types::I32, result);
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayFill: {
             uint32_t typeIndex;
@@ -2511,7 +2511,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             }
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayFill(typeIndex, arrayref, offset, value, size));
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayCopy: {
             uint32_t dstTypeIndex;
@@ -2539,7 +2539,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.copy size to type ", size.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayCopy(dstTypeIndex, dst, dstOffset, srcTypeIndex, src, srcOffset, size));
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayInitElem: {
             uint32_t dstTypeIndex;
@@ -2570,7 +2570,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.init_elem size to type ", size.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayInitElem(dstTypeIndex, dst, dstOffset, elemSegmentIndex, srcOffset, size));
-            return { };
+            break;
         }
         case ExtGCOpType::ArrayInitData: {
             uint32_t dstTypeIndex;
@@ -2595,7 +2595,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.init_data size to type "_s, size.type(), " expected "_s, TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayInitData(dstTypeIndex, dst, dstOffset, dataSegmentIndex, srcOffset, size));
-            return { };
+            break;
         }
         case ExtGCOpType::StructNew: {
             uint32_t typeIndex;
@@ -2632,7 +2632,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addStructNew(typeIndex, args, result));
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
-            return { };
+            break;
         }
         case ExtGCOpType::StructNewDefault: {
             uint32_t typeIndex;
@@ -2647,7 +2647,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addStructNewDefault(typeIndex, result));
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
-            return { };
+            break;
         }
         case ExtGCOpType::StructGet:
         case ExtGCOpType::StructGetS:
@@ -2674,7 +2674,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
 
             m_expressionStack.constructAndAppend(structGetInput.field.type.unpacked(), result);
-            return { };
+            break;
         }
         case ExtGCOpType::StructSet: {
             TypedExpression value;
@@ -2695,7 +2695,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->expand().template as<StructType>();
             WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, structSetInput.indices.fieldIndex, value));
-            return { };
+            break;
         }
         case ExtGCOpType::RefTest:
         case ExtGCOpType::RefTestNull:
@@ -2754,7 +2754,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 m_expressionStack.constructAndAppend(Types::I32, result);
             }
 
-            return { };
+            break;
         }
         case ExtGCOpType::BrOnCast:
         case ExtGCOpType::BrOnCastFail: {
@@ -2811,7 +2811,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             WASM_TRY_ADD_TO_CONTEXT(addBranchCast(data, ref, m_expressionStack, hasNull2, heapType2, op == ExtGCOpType::BrOnCastFail));
 
-            return { };
+            break;
         }
         case ExtGCOpType::AnyConvertExtern: {
             TypedExpression reference;
@@ -2821,7 +2821,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addAnyConvertExtern(reference, result));
             m_expressionStack.constructAndAppend(anyrefType(reference.type().isNullable()), result);
-            return { };
+            break;
         }
         case ExtGCOpType::ExternConvertAny: {
             TypedExpression reference;
@@ -2831,12 +2831,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addExternConvertAny(reference, result));
             m_expressionStack.constructAndAppend(externrefType(reference.type().isNullable()), result);
-            return { };
+            break;
         }
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op "_s, m_currentExtOp);
             break;
         }
+
         return { };
     }
 

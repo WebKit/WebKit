@@ -1511,11 +1511,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute])
             return makeNSArray(backingObject->rowHeaders());
 
-        if ([attributeName isEqualToString:NSAccessibilityARIAColumnIndexAttribute])
-            return @(backingObject->axColumnIndex());
+        if ([attributeName isEqualToString:NSAccessibilityARIAColumnIndexAttribute]) {
+            if (std::optional columnIndex = backingObject->axColumnIndex())
+                return @(*columnIndex);
+            return @(-1);
+        }
 
-        if ([attributeName isEqualToString:NSAccessibilityARIARowIndexAttribute])
-            return @(backingObject->axRowIndex());
+        if ([attributeName isEqualToString:NSAccessibilityARIARowIndexAttribute]) {
+            if (std::optional rowIndex = backingObject->axRowIndex())
+                return @(*rowIndex);
+            return @(-1);
+        }
     }
 
     if (backingObject->isTree()) {

@@ -61,11 +61,6 @@
 
     decisionHandler(WKPermissionDecisionGrant);
 }
-
-- (void)_webView:(WKWebView *)webView includeSensitiveMediaDeviceDetails:(void (^)(BOOL includeSensitiveDetails))decisionHandler
-{
-    decisionHandler(NO);
-}
 @end
 
 class MediaCaptureSimulateFailedSandbox : public testing::Test {

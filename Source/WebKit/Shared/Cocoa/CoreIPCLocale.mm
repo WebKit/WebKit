@@ -65,14 +65,14 @@ std::optional<String> CoreIPCLocale::canonicalLocaleStringReplacement(const Stri
     static NeverDestroyed<RetainPtr<NSDictionary>> dictionary = [] {
         RetainPtr dictionary = adoptNS([NSMutableDictionary new]);
         for (NSString *input in [NSLocale availableLocaleIdentifiers]) {
-            NSString *output = [[NSLocale localeWithLocaleIdentifier:input] localeIdentifier];
+            RetainPtr<NSString> output = [[NSLocale localeWithLocaleIdentifier:input] localeIdentifier];
             if (![output isEqualToString:input])
-                [dictionary setObject:input forKey:output];
+                [dictionary setObject:input forKey:output.get()];
         }
         return dictionary;
     }();
-    if (NSString *entry = [dictionary.get() objectForKey:identifier])
-        return entry;
+    if (RetainPtr<NSString> entry = [dictionary.get() objectForKey:identifier])
+        return String(entry.get());
     return std::nullopt;
 }
 

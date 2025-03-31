@@ -343,9 +343,9 @@ public:
     void setMicrophonePermission(bool);
     void setUserMediaPermission(bool);
     void resetUserMediaPermission();
-    void setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin);
-    unsigned userMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin) const;
-    void resetUserMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin);
+    void delayUserMediaRequestDecision();
+    unsigned userMediaPermissionRequestCount() const;
+    void resetUserMediaPermissionRequestCount();
     bool isDoingMediaCapture() const;
 
     void setPageVisibility(JSStringRef state);

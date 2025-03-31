@@ -42,8 +42,8 @@ class RequestAnimationFrameCallback : public RefCounted<RequestAnimationFrameCal
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(double highResTimeMs) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(double highResTimeMs) = 0;
+    virtual CallbackResult<void> invoke(double highResTimeMs) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(double highResTimeMs) = 0;
 
     int m_id;
     bool m_firedOrCancelled;

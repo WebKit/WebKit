@@ -3653,6 +3653,11 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
     VisiblePosition caretPosition(renderer->positionForPoint(request.point, HitTestSource::User, nullptr));
     info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
 #endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (is<HTMLModelElement>(*hitNode))
+        info.prefersDraggingOverTextSelection = true;
+#endif
 }
 
 static void textInteractionPositionInformation(WebPage& page, const HTMLInputElement& input, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)

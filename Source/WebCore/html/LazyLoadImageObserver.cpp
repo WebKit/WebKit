@@ -53,7 +53,7 @@ private:
 
     bool hasCallback() const final { return true; }
 
-    CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
+    CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {
         ASSERT(!entries.isEmpty());
 
@@ -68,9 +68,9 @@ private:
         return { };
     }
 
-    CallbackResult<void> handleEventRethrowingException(IntersectionObserver& thisObserver, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver& observer) final
+    CallbackResult<void> invokeRethrowingException(IntersectionObserver& thisObserver, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver& observer) final
     {
-        return handleEvent(thisObserver, entries, observer);
+        return invoke(thisObserver, entries, observer);
     }
 };
 

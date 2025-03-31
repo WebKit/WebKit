@@ -28,6 +28,7 @@ window.setTimeout(async () => {
   connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
 
   const imageBufferIdentifier = randomIPCID();
+  const contextIdentifier = randomIPCID();
   const snapshotIdentifier = randomIPCID();
 
   renderingBackend.CreateImageBuffer({
@@ -43,13 +44,14 @@ window.setTimeout(async () => {
       }
     },
     pixelFormat: 1,
-    renderingResourceIdentifier: imageBufferIdentifier
+    identifier: imageBufferIdentifier,
+    contextIdentifier: contextIdentifier
   });
 
   const didCreateBackend = connection.connection.waitForMessage(imageBufferIdentifier, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, 1);
 
   const imageBuffer = connection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
-  const displayListRecorder = connection.newInterface("RemoteDisplayListRecorder", imageBufferIdentifier);
+  const displayListRecorder = connection.newInterface("RemoteDisplayListRecorder", contextIdentifier);
   const pageID = IPC.pageID;
 
   displayListRecorder.BeginPage({

@@ -156,4 +156,9 @@ inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth,
     return LayoutUnit(logicalWidth * aspectRatio);
 }
 
+inline bool isSkippedContentRoot(const RenderBox& renderBox)
+{
+    return renderBox.element() && WebCore::isSkippedContentRoot(renderBox.style(), *renderBox.protectedElement());
+}
+
 } // namespace WebCore

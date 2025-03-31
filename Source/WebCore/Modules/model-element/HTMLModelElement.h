@@ -40,6 +40,7 @@
 #include "PlatformLayer.h"
 #include "PlatformLayerIdentifier.h"
 #include "SharedBuffer.h"
+#include "VisibilityChangeClient.h"
 #include <wtf/UniqueRef.h>
 
 #if ENABLE(MODEL_PROCESS)
@@ -66,7 +67,7 @@ template<typename IDLType> class DOMPromiseProxy;
 class ModelContext;
 #endif
 
-class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject {
+class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject, public VisibilityChangeClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
 public:
@@ -78,6 +79,9 @@ public:
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
+
+    // VisibilityChangeClient.
+    void visibilityStateChanged() final;
 
     void sourcesChanged();
     const URL& currentSrc() const { return m_sourceURL; }
@@ -212,6 +216,7 @@ private:
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
     void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
     void didFinishEnvironmentMapLoading(bool succeeded) final;
+    void renderingAbruptlyStopped() final;
 #endif
     std::optional<PlatformLayerIdentifier> modelContentsLayerID() const final;
 

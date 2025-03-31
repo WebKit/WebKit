@@ -159,6 +159,17 @@ bool GraphicsContextGLANGLE::initialize()
 
     GL_ClearColor(0, 0, 0, 0);
 
+    // Compute initial platform-independent max internal framebuffer size.
+    GCGLint maxTextureSize;
+    GCGLint maxRenderbufferSize;
+    std::array<GCGLint, 2> maxViewportDims { 0, 0 };
+    GL_GetIntegerv(GraphicsContextGL::MAX_TEXTURE_SIZE, &maxTextureSize);
+    GL_GetIntegerv(GraphicsContextGL::MAX_RENDERBUFFER_SIZE, &maxRenderbufferSize);
+    GL_GetIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, maxViewportDims.data());
+    m_maxInternalFramebufferSize = { maxViewportDims[0], maxViewportDims[1] };
+    m_maxInternalFramebufferSize.clampToMinimumSize({ maxTextureSize, maxTextureSize });
+    m_maxInternalFramebufferSize.clampToMinimumSize({ maxRenderbufferSize, maxRenderbufferSize });
+
     if (!platformInitialize())
         return false;
 
@@ -687,6 +698,9 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
 
     ASSERT(width >= 0 && height >= 0);
     if (width < 0 || height < 0)
+        return;
+
+    if (width > m_maxInternalFramebufferSize.width() || height > m_maxInternalFramebufferSize.height())
         return;
 
     if (!makeContextCurrent())

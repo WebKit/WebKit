@@ -29,6 +29,7 @@
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
 
 #import <pal/spi/cocoa/AudioToolboxCoreSPI.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 namespace WebCore {
 
@@ -67,6 +68,32 @@ RetainPtr<CASpatialAudioExperience> createSpatialAudioExperienceWithOptions(cons
 
     RetainPtr anchoring = adoptNS([[CASceneAnchoringStrategy alloc] initWithSceneIdentifier:options.sceneIdentifier]);
     return adoptNS([[CAHeadTrackedSpatialAudio alloc] initWithSoundStageSize:toCASoundStageSize(options.soundStageSize) anchoringStrategy:anchoring.get()]);
+}
+
+String spatialAudioExperienceDescription(CASpatialAudioExperience *experience)
+{
+    if (!experience)
+        return "nil"_s;
+
+    StringBuilder builder;
+    builder.append('{', NSStringFromClass(experience.class));
+
+    if (auto *headTrackedExperience = dynamic_objc_cast<CAHeadTrackedSpatialAudio>(experience)) {
+        builder.append(": soundStageSize("_s, headTrackedExperience.soundStageSize, "), "_s);
+
+        auto *anchoringStrategy = headTrackedExperience.anchoringStrategy;
+        builder.append("anchoringStrategy: {"_s, NSStringFromClass(anchoringStrategy.class));
+
+        if (auto *sceneAnchoringStrategy = dynamic_objc_cast<CASceneAnchoringStrategy>(anchoringStrategy))
+            builder.append(": sceneId: "_s, sceneAnchoringStrategy.sceneIdentifier);
+        else if (auto *tetherAnchoringStrategy = dynamic_objc_cast<CAAudioTetherAnchoringStrategy>(anchoringStrategy))
+            builder.append(": identifier: "_s, tetherAnchoringStrategy.audioTether.identifier.UUIDString);
+
+        builder.append('}');
+    }
+
+    builder.append('}');
+    return builder.toString();
 }
 
 }

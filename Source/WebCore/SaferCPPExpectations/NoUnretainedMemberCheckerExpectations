@@ -1,5 +1,5 @@
 PAL/pal/spi/mac/NSGraphicsSPI.h
-accessibility/mac/AccessibilityObjectMac.mm
+accessibility/cocoa/AXCoreObjectCocoa.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 page/EventHandler.h
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp

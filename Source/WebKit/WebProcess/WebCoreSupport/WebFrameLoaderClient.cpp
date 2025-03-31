@@ -196,7 +196,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             }
 
             auto [policyDecision] = sendResult.takeReply();
-            WebFrameLoaderClient_RELEASE_LOG(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_SYNC_IPC, (unsigned)policyDecision.policyAction);
+            WebFrameLoaderClient_RELEASE_LOG(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_SYNC_IPC, toString(policyDecision.policyAction).characters());
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, { }, policyDecision.downloadID });
             return;
         }
@@ -211,7 +211,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         if (!frame)
             return;
 
-        RELEASE_LOG_ERROR_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, frame->frameID().object().toUInt64(), webPageID, (unsigned)policyDecision.policyAction);
+        RELEASE_LOG_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, frame->frameID().object().toUInt64(), webPageID, toString(policyDecision.policyAction).characters());
 
         frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });

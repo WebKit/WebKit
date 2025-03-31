@@ -405,14 +405,16 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
+    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, std::optional<JavaScriptEvaluationResult>&& jsMessage) override
     {
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
         if (!m_manager) {
             g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));
             return;
         }
+        if (!jsMessage)
+            return;
 
+        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage->wireBytes());
 #if ENABLE(2022_GLIB_API)
         GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue->internalRepresentation());
         g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
@@ -428,15 +430,17 @@ public:
         return m_supportsAsyncReply;
     }
 
-    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, std::optional<JavaScriptEvaluationResult>&& jsMessage, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
     {
         if (!m_manager) {
             g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));
             return;
         }
+        if (!jsMessage)
+            return;
 
         WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTFMove(completionHandler));
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
+        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage->wireBytes());
         GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue->internalRepresentation());
         gboolean returnValue;
         g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);

@@ -86,7 +86,7 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper,
             // If the tile size is big enough, the Damage will have a better resolution
             // and will allow more than one "draw" operation thus reducing the re-painted
             // area significantly in many cases.
-            const IntRect tileIntRect = enclosingIntRect(tile.rect());
+            const auto tileIntRect = enclosingIntRect(tile.rect());
             Damage tileDamage(tileIntRect);
             for (const auto& damageRect : frameDamage->rects()) {
                 if (damageRect.isEmpty())

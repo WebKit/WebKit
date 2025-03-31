@@ -1118,7 +1118,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    [m_avPlayer _setSTSLabel:nsStringNilIfNull(m_spatialTrackingLabel)];
+    updateSpatialTrackingLabel();
 #endif
 
     if (m_avPlayerItem)
@@ -4098,6 +4098,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
             .spatialTrackingLabel = m_spatialTrackingLabel,
 #endif
         });
+        INFO_LOG(LOGIDENTIFIER, "Setting spatialAudioExperience: ", spatialAudioExperienceDescription(experience.get()));
         [m_avPlayer setIntendedSpatialAudioExperience:experience.get()];
         return;
     }

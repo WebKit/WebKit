@@ -158,8 +158,8 @@ public:
     std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override { return { 0, 1 }; }
-    int axColumnIndex() const override { return -1; }
-    int axRowIndex() const override { return -1; }
+    std::optional<unsigned> axColumnIndex() const override { return std::nullopt; }
+    std::optional<unsigned> axRowIndex() const override { return std::nullopt; }
 
     // Table column support.
     unsigned columnIndex() const override { return 0; }
@@ -230,7 +230,6 @@ public:
     bool hasSameFontColor(AXCoreObject&) override { return false; }
     bool hasSameStyle(AXCoreObject&) override { return false; }
     bool hasUnderline() const override { return false; }
-    bool hasHighlighting() const final;
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
 
     WallTime dateTimeValue() const override { return { }; }
@@ -276,19 +275,18 @@ public:
     bool supportsARIARoleDescription() const;
     bool supportsARIAOwns() const override { return false; }
 
-    String popupValue() const final;
+    String explicitPopupValue() const final;
     bool hasDatalist() const;
     bool supportsHasPopup() const final;
     bool pressedIsPresent() const final;
     bool ariaIsMultiline() const;
-    String invalidStatus() const final;
+    String explicitInvalidStatus() const final;
     bool supportsPressed() const;
     bool supportsExpanded() const final;
     bool supportsChecked() const final;
     bool supportsRowCountChange() const;
     AccessibilitySortDirection sortDirection() const final;
-    virtual bool canvasHasFallbackContent() const { return false; }
-    bool supportsRangeValue() const final;
+    virtual bool hasElementDescendant() const { return false; }
     String identifierAttribute() const final;
     String linkRelValue() const final;
     Vector<String> classList() const final;
@@ -434,8 +432,7 @@ public:
     SRGBA<uint8_t> colorValue() const override;
 
     virtual AccessibilityRole determineAccessibilityRole() = 0;
-    String rolePlatformString() const final;
-    String roleDescription() const override;
+    String roleDescription() override;
     String subrolePlatformString() const final;
 
     AXObjectCache* axObjectCache() const override;
@@ -573,7 +570,9 @@ public:
     bool hasAttachmentTag() const final { return hasTagName(HTMLNames::attachmentTag); }
     bool hasBodyTag() const final { return hasTagName(HTMLNames::bodyTag); }
     bool hasMarkTag() const final { return hasTagName(HTMLNames::markTag); }
-    AtomString tagName() const;
+    bool hasRowGroupTag() const final;
+
+    const AtomString& tagName() const;
     bool hasDisplayContents() const;
 
     std::optional<SimpleRange> simpleRange() const final;
@@ -637,11 +636,10 @@ public:
 
     // ARIA live-region features.
     AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
-    const String liveRegionStatus() const override { return String(); }
-    const String liveRegionRelevant() const override { return nullAtom(); }
+    const String explicitLiveRegionStatus() const override { return String(); }
+    const String explicitLiveRegionRelevant() const override { return nullAtom(); }
     bool liveRegionAtomic() const override { return false; }
     bool isBusy() const override { return false; }
-    static const String defaultLiveRegionStatusForRole(AccessibilityRole);
     static bool contentEditableAttributeIsEnabled(Element&);
     bool hasContentEditableAttributeSet() const;
 
@@ -649,13 +647,10 @@ public:
     virtual String readOnlyValue() const;
 
     bool supportsAutoComplete() const;
-    String autoCompleteValue() const final;
+    String explicitAutoCompleteValue() const final;
 
     bool hasARIAValueNow() const { return hasAttribute(HTMLNames::aria_valuenowAttr); }
     bool supportsARIAAttributes() const;
-
-    // CSS3 Speech properties.
-    OptionSet<SpeakAs> speakAsProperty() const;
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     void scrollToMakeVisible() const final;
@@ -715,7 +710,7 @@ public:
     String mathFencedOpenString() const override { return String(); }
     String mathFencedCloseString() const override { return String(); }
     int mathLineThickness() const override { return 0; }
-    virtual bool isAnonymousMathOperator() const { return false; }
+    bool isAnonymousMathOperator() const override { return false; }
 
     // Multiscripts components.
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override { }
@@ -751,7 +746,7 @@ public:
     bool preventKeyboardDOMEventDispatch() const final;
     void setPreventKeyboardDOMEventDispatch(bool) final;
     bool fileUploadButtonReturnsValueInTitle() const final;
-    String speechHintAttributeValue() const final;
+    OptionSet<SpeakAs> speakAs() const final;
     bool hasApplePDFAnnotationAttribute() const final { return hasAttribute(HTMLNames::x_apple_pdf_annotationAttr); }
 #endif
 
@@ -904,7 +899,7 @@ protected:
 
     virtual bool shouldIgnoreAttributeRole() const { return false; }
     virtual AccessibilityRole buttonRoleType() const;
-    String rolePlatformDescription() const;
+    String rolePlatformDescription();
     bool dispatchTouchEvent();
 
     static bool isARIAInput(AccessibilityRole);
@@ -999,11 +994,6 @@ inline bool AccessibilityObject::hasAttributedText() const
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, NOESCAPE const Function<bool(const AccessibilityObject&)>& isAccessible);
 
 namespace Accessibility {
-
-using PlatformRoleMap = UncheckedKeyHashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
-
-PlatformRoleMap createPlatformRoleMap();
-String roleToPlatformString(AccessibilityRole);
 
 #if PLATFORM(IOS_FAMILY)
 WEBCORE_EXPORT RetainPtr<NSData> newAccessibilityRemoteToken(NSString *);

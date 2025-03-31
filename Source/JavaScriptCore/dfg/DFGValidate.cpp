@@ -979,6 +979,10 @@ private:
                     VALIDATE((node), node->entrypointIndex() < m_graph.m_numberOfEntrypoints);
                     break;
 
+                case GetButterfly:
+                    VALIDATE((node), !node->child1()->isPhantomAllocation() || node->child1()->op() == PhantomNewArrayWithConstantSize);
+                    break;
+
                 default:
                     m_graph.doToChildren(
                         node,

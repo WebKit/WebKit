@@ -57,23 +57,22 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connecti
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
 {
-    Ref { m_trackPrivate }->removeClient(m_clientId);
+    m_trackPrivate->removeClient(m_clientId);
 }
 
 AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 {
-    Ref trackPrivate = m_trackPrivate;
     return {
         {
-            trackPrivate->id(),
-            trackPrivate->label(),
-            trackPrivate->language(),
-            trackPrivate->startTimeVariance(),
-            trackPrivate->trackIndex(),
+            m_trackPrivate->id(),
+            m_trackPrivate->label(),
+            m_trackPrivate->language(),
+            m_trackPrivate->startTimeVariance(),
+            m_trackPrivate->trackIndex(),
         },
-        trackPrivate->enabled(),
-        trackPrivate->kind(),
-        trackPrivate->configuration(),
+        m_trackPrivate->enabled(),
+        m_trackPrivate->kind(),
+        m_trackPrivate->configuration(),
     };
 }
 

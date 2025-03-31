@@ -91,6 +91,8 @@
 #define WIRPingMessage                          @"WIRPingMessage"
 #define WIRPingSuccessMessage                   @"WIRPingSuccessMessage"
 
+#define WIRTargetAllowsAutomaticInspectionInSameProcessKey  @"WIRTargetAllowsAutomaticInspectionInSameProcess"
+
 // Allowed values for WIRMessageDataTypeKey.
 #define WIRMessageDataTypeFull                  @"WIRMessageDataTypeFull"
 #define WIRMessageDataTypeChunk                 @"WIRMessageDataTypeChunk"

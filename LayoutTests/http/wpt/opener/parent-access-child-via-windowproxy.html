@@ -15,8 +15,18 @@ promise_test(async function(t) {
 
   var w = window.open("/common/redirect.py?location=" + encodeURIComponent(url.href));
 
-  await new Promise(resolve => setTimeout(resolve, 100));
-  assert_false(w.closed);
+  // A janky way to ensure that we're accessing a property on a cross-origin
+  // WindowProxy without having the opened page communicate with us.
+  for (let i = 0; i < 10; i++) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      w.location;
+    } catch (e) {
+      if (e instanceof SecurityError) {
+        break;
+      }
+    }
+  }
 
   let domains = await new Promise(resolve => {
     window.testRunner.getAndClearReportedWindowProxyAccessDomains(resolve);

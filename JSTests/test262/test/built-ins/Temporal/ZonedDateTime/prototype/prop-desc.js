@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-zoneddatetime-prototype
+esid: sec-temporal.zoneddatetime.prototype
 description: The "prototype" property of Temporal.ZonedDateTime
 includes: [propertyHelper.js]
 features: [Temporal]

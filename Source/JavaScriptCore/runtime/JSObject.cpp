@@ -125,7 +125,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 
     auto visitElements = [&] (IndexingType indexingMode) {
         switch (indexingMode) {
-        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSImmutableButterfly acting as out butterfly.
+        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSImmutableButterfly acting as our butterfly.
         case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
             visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
             break;

@@ -435,8 +435,6 @@ void HTMLSelectElement::optionElementChildrenChanged()
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
     updateValidity();
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
-        cache->childrenChanged(this);
 }
 
 void HTMLSelectElement::setSize(unsigned size)
@@ -811,9 +809,6 @@ void HTMLSelectElement::setRecalcListItems()
         invalidateSelectedItems();
 
     Ref document = this->document();
-    if (CheckedPtr cache = document->existingAXObjectCache())
-        cache->childrenChanged(this);
-
     if (this == document->focusedElement()) {
         if (RefPtr page = document->page())
             page->chrome().client().focusedSelectElementDidChangeOptions(*this);

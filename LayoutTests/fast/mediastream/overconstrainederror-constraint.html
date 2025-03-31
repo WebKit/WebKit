@@ -9,9 +9,6 @@
     <body>
 
         <script>
-if (window.testRunner)
-    testRunner.setUserMediaPermission(true);
-
 promise_test(async () => {
     return navigator.mediaDevices.getUserMedia({audio: {deviceId: {exact:"none"}}}).then(
         () => assert_not_reached("gum should fail"),

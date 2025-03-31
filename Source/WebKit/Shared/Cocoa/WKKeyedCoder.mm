@@ -82,13 +82,13 @@
     if (m_failedDecoding)
         return nil;
 
-    id object = [m_dictionary objectForKey:key];
+    RetainPtr<id> object = [m_dictionary objectForKey:key];
     if (object && ![object isKindOfClass:aClass]) {
         m_failedDecoding = YES;
         return nil;
     }
 
-    return object;
+    return object.autorelease();
 }
 
 - (id)decodeObjectOfClasses:(NSSet<Class> *)classes forKey:(NSString *)key
@@ -96,12 +96,12 @@
     if (m_failedDecoding)
         return nil;
 
-    id object = [m_dictionary objectForKey:key];
+    RetainPtr<id> object = [m_dictionary objectForKey:key];
     if (!object)
         return nil;
     for (id aClass in classes) {
         if ([object isKindOfClass:aClass])
-            return object;
+            return object.autorelease();
     }
 
     m_failedDecoding = YES;

@@ -919,11 +919,13 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     bool shouldUpdateOverflow = false;
     for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
         RenderObject& renderer = *walker.current();
-        if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrAtomicInline() || renderer.isFloating())) {
-            RenderBox& box = downcast<RenderBox>(renderer);
-            box.layoutIfNeeded();
-            shouldUpdateOverflow = true;
-        } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
+        if (!renderer.isOutOfFlowPositioned()) {
+            if (CheckedPtr element = dynamicDowncast<RenderBox>(renderer)) {
+                element->layoutIfNeeded();
+                shouldUpdateOverflow = true;
+            }
+        }
+        if (is<RenderText>(renderer) || is<RenderInline>(renderer))
             renderer.clearNeedsLayout();
     }
 

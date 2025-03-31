@@ -91,6 +91,8 @@
     (allow iokit-open-user-client
         (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient")
         (apply-message-filter
+            (allow iokit-external-method
+                (iokit-method-number 0 1 2 3 4))
             (allow (with report) (with telemetry)
                 iokit-async-external-method
                 iokit-external-method
@@ -171,11 +173,14 @@
                     iokit-external-trap)
                 (when (not (equal? (param "CPU") "arm64"))
                     (allow iokit-external-method
-                        (iokit-method-number 1 4 9 11 12 20 257))
+                        (iokit-method-number 1 4 9 11 12 20 24 257 267))
                     (allow iokit-async-external-method
                         (iokit-method-number 0)))
                 (allow iokit-external-method
                     (iokit-method-number 0 2 5 6 7 8 9 10 14 15 16 17 28 29 30 31 39 40 256 258 261 263 264))
+                (with-filter (iokit-registry-entry-class "AGXDeviceUserClient")
+                    (allow iokit-external-method
+                        (iokit-method-number 21 22 23 24 259 260 262 270)))
                 (allow iokit-external-trap
                     (iokit-trap-number 0 1 3))
                 (allow iokit-async-external-method
@@ -1173,9 +1178,9 @@
         (iokit-user-client-class "AppleAVDUserClient")
         (apply-message-filter
             (allow iokit-external-method
-                (iokit-method-number 0 1 2 3 4 6))
+                (iokit-method-number 0 1 2 3 4 5 6))
             (allow iokit-async-external-method
-                (iokit-method-number 8))
+                (iokit-method-number 7 8))
             (allow (with report) (with telemetry)
                 iokit-async-external-method
                 iokit-external-method
@@ -1186,9 +1191,11 @@
 
 (when (equal? (param "CPU") "arm64")
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT (with report) (with telemetry)
+        (allow IOKIT_OPEN_USER_CLIENT
             (iokit-user-client-class "IOMobileFramebufferUserClient")
             (apply-message-filter
+                (allow iokit-external-method
+                    (iokit-method-number 82 88))
                 (allow (with report) (with telemetry)
                     iokit-async-external-method
                     iokit-external-method
@@ -1204,7 +1211,7 @@
             (iokit-user-client-class "IOSurfaceAcceleratorClient")
             (apply-message-filter
                 (allow iokit-external-method
-                    (iokit-method-number 10))
+                    (iokit-method-number 1 4 10))
                 (allow (with report) (with telemetry)
                     iokit-async-external-method
                     iokit-external-method

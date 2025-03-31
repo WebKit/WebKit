@@ -974,6 +974,7 @@ private:
     RefPtr<ContainerNode> m_scheduledMaintainScrollPositionAnchor;
     RefPtr<Node> m_nodeToDraw;
     std::optional<SimpleRange> m_pendingTextFragmentIndicatorRange;
+    bool m_haveCreatedTextIndicator { false };
     String m_pendingTextFragmentIndicatorText;
     bool m_skipScrollResetOfScrollToTextFragmentRange { false };
 

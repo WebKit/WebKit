@@ -430,6 +430,24 @@ inline bool isDefaultableType(StorageType type)
     return true;
 }
 
+inline size_t sizeOfType(TypeKind kind)
+{
+    switch (kind) {
+    case Wasm::TypeKind::I32:
+    case Wasm::TypeKind::F32:
+        return sizeof(uint32_t);
+    case Wasm::TypeKind::I64:
+    case Wasm::TypeKind::F64:
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull:
+        return sizeof(uint64_t);
+    case Wasm::TypeKind::V128:
+        return sizeof(v128_t);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 inline JSValue internalizeExternref(JSValue value)
 {
     if (value.isDouble() && JSC::canBeStrictInt32(value.asDouble())) {

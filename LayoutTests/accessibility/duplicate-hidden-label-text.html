@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+
+<div>
+  <label for="input" id="label" style="display:none">
+    Foo!
+      <strong>Bar</strong> Baz,
+  </label>
+  <input type="checkbox" name="input" id="input">
+</div>
+
+<script>
+var output = "This test ensures we compute the right string value for unrendered text (with this test exercising one such possible way: hidden labels).\n\n";
+// There are other ways to get unrendered text that matters in the accessibility tree, e.g. canvas fallback content.
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var input = accessibilityController.accessibleElementById("input");
+    var initialText = platformTextAlternatives(input);
+    output += `${initialText}\n\n`;
+
+    // Remove strong "Bar".
+    const label = document.getElementById("label");
+    label.removeChild(label.childNodes[1]);
+
+    var newText;
+    setTimeout(async function() {
+        await waitFor(() => {
+            newText = platformTextAlternatives(input);
+            return newText != initialText;
+        });
+        output += `${newText}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

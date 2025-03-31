@@ -22,13 +22,6 @@
 
 header: "LayerTreeContext.h"
 
-enum class WebKit::LayerHostingMode : uint8_t {
-    InProcess,
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    OutOfProcess
-#endif
-}
-
 class WebKit::LayerTreeContext {
     uint64_t contextID;
 }

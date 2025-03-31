@@ -127,7 +127,7 @@ bool IdleCallbackController::invokeIdleCallbacks()
 
     auto request = m_runnableIdleCallbacks.takeFirst();
     auto idleDeadline = IdleDeadline::create(request.timeout && *request.timeout < now ? IdleDeadline::DidTimeout::Yes : IdleDeadline::DidTimeout::No);
-    request.callback->handleEvent(idleDeadline.get());
+    request.callback->invoke(idleDeadline.get());
 
     return !m_runnableIdleCallbacks.isEmpty();
 }
@@ -148,7 +148,7 @@ void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
     auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);
     auto callback = WTFMove(it->callback);
     m_idleRequestCallbacks.remove(it);
-    callback->handleEvent(idleDeadline.get());
+    callback->invoke(idleDeadline.get());
 }
 
 } // namespace WebCore

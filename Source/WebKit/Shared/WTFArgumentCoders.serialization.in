@@ -200,6 +200,8 @@ template: enum class WebKit::LegacyCustomProtocolIDType
 template: enum class WebKit::LibWebRTCResolverIdentifierType
 template: enum class WebKit::LogStreamIdentifierType
 template: enum class WebKit::QuotaIncreaseRequestIdentifierType
+template: enum class WebKit::RemoteDisplayListRecorderIdentifierType
+template: enum class WebKit::RemoteSerializedImageBufferIdentifierType
 template: enum class WebKit::RemoteVideoFrameIdentifierType
 template: enum class WebKit::RenderingBackendIdentifierType
 template: enum class WebKit::VideoDecoderIdentifierType

@@ -61,6 +61,8 @@ static NSString * const actionCountIncrementKey = @"increment";
 static NSString * const getMatchedRulesTabIDKey = @"tabId";
 static NSString * const getMatchedRulesMinTimeStampKey = @"minTimeStamp";
 
+static NSString * const getDynamicOrSessionRulesRuleIDsKey = @"ruleIds";
+
 static NSString * const addRulesKey = @"addRules";
 static NSString * const removeRulesKey = @"removeRuleIds";
 
@@ -138,9 +140,24 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getDynamicRules(Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIDeclarativeNetRequest::getDynamicRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetDynamicRules(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+    NSString *outExceptionString;
+
+    static NSDictionary<NSString *, id> *keyTypes = @{
+        getDynamicOrSessionRulesRuleIDsKey: @[ NSNumber.class ]
+    };
+
+    if (!validateDictionary(filter, nil, nil, keyTypes, &outExceptionString)) {
+        callback->reportError(outExceptionString);
+        return;
+    }
+
+    Vector<double> ruleIDs;
+    for (NSNumber *ruleID in filter[getDynamicOrSessionRulesRuleIDsKey])
+        ruleIDs.append(ruleID.doubleValue);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetDynamicRules(WTFMove(ruleIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -194,9 +211,24 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getSessionRules(Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIDeclarativeNetRequest::getSessionRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetSessionRules(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+    NSString *outExceptionString;
+
+    static NSDictionary<NSString *, id> *keyTypes = @{
+        getDynamicOrSessionRulesRuleIDsKey: @[ NSNumber.class ]
+    };
+
+    if (!validateDictionary(filter, nil, nil, keyTypes, &outExceptionString)) {
+        callback->reportError(outExceptionString);
+        return;
+    }
+
+    Vector<double> ruleIDs;
+    for (NSNumber *ruleID in filter[getDynamicOrSessionRulesRuleIDsKey])
+        ruleIDs.append(ruleID.doubleValue);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetSessionRules(WTFMove(ruleIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

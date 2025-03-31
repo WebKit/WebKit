@@ -139,7 +139,6 @@ public:
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     LayoutUnit masonryContentSize() const;
-    Vector<LayoutRect> gridItemsLayoutRects();
 
     void updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
     std::optional<GridItemSizeCache>& intrinsicLogicalHeightsForRowSizingFirstPass() const;

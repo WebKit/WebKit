@@ -101,7 +101,6 @@ compositing/shared-backing/overflow-scroll [ Pass ]
 compositing/scrolling/async-overflow-scrolling [ Pass ]
 compositing/scrolling/async-overflow-scrolling/mac [ Skip ]
 compositing/layer-creation/clipping-scope [ Pass ]
-contact-picker/contacts-select-while-presenting-picker.html [ Pass ]
 contact-picker/contacts-select.html [ Pass ]
 css3/scroll-snap/ios [ Pass ]
 fast/attachment/cocoa [ Pass ]
@@ -2324,6 +2323,7 @@ accessibility/display-contents/table.html [ Pass ]
 accessibility/display-contents/table-section-elements.html [ Pass ]
 accessibility/display-flex-shadow-dom-accname.html [ Pass ]
 accessibility/display-none-descendant-of-relation.html [ Pass ]
+accessibility/duplicate-hidden-label-text.html [ Pass ]
 accessibility/dynamic-aria-describedby-subtree.html [ Pass ]
 accessibility/dynamic-aria-describedby-text.html [ Pass ]
 accessibility/dynamic-datetime-attribute.html [ Pass ]
@@ -2834,6 +2834,8 @@ http/tests/storageAccess/has-storage-access-false-by-default.https.html [ Pass ]
 http/tests/storageAccess/has-storage-access-false-by-default-ephemeral.https.html [ Pass ]
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.https.html [ Pass Timeout ]
 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-with-link-query-using-cookiestore-api.https.html [ Pass ]
+imported/w3c/web-platform-tests/storage-access-api/ [ Pass ]
+imported/w3c/web-platform-tests/storage-access-api/hasStorageAccess.sub.https.window.html [ Skip ]
 
 # Enable on appropriate platforms: rdar://140222322
 http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
@@ -7767,3 +7769,29 @@ webkit.org/b/290420 [ Debug ] ipc/invalid-message-to-web-process.html [ Timeout 
 webkit.org/b/290457 [ Debug ] ipc/ui-send-empty-uuid.html [ Failure ]
 
 webkit.org/b/290462 contact-picker/contacts-select-after-dismissing-picker.html [ Pass Timeout ]
+
+webkit.org/b/290483 [ Debug ] imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-fragment-does-not-exist.html [ Pass Failure ]
+
+webkit.org/b/290489 [ Debug ] media/video-webm-seek-singlekeyframe.html [ Crash ]
+
+webkit.org/b/290494 editing/caret/caret-position-sideways-lr.html [ Pass Failure ]
+
+webkit.org/b/290564 imported/w3c/web-platform-tests/css/css-viewport/computedStyle-zoom.html [ Pass Timeout ]
+
+webkit.org/b/290568 [ Debug ] fast/dynamic/link-href-change.html [ Pass Crash ]
+
+webkit.org/b/290580 [ Debug ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass Crash ]
+
+webkit.org/b/290568 [ Debug ] compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass Crash ]
+
+webkit.org/b/290648 contact-picker/contacts-select-while-presenting-picker.html [ Pass Timeout ]
+
+# webkit.org/b/290654 REGRESSION(iOS 17.2 - 17.5?): [ iOS Debug ] 2x imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-*.html is a flaky failure (290654)
+[ Debug ] imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-immediate-scroll.html [ Pass Failure ]
+[ Debug ] imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-basic.html [ Pass Failure ]
+
+webkit.org/b/290666 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ Pass Failure ]
+
+webkit.org/b/290670 imported/w3c/web-platform-tests/css/css-viewport/zoom/relative-units.html [ Failure ]
+
+webkit.org/b/290546 [ Debug ] imported/w3c/web-platform-tests/workers/abrupt-completion.html [ Pass Crash ]

@@ -152,10 +152,7 @@ public:
     void setContentsColor(const Color&);
     void setContentsTileSize(const FloatSize&);
     void setContentsTilePhase(const FloatSize&);
-    void setDirtyRegion(Vector<IntRect, 1>&&);
-#if ENABLE(DAMAGE_TRACKING)
-    void setDamage(Damage&&);
-#endif
+    void setDirtyRegion(Damage&&);
 
     void setFilters(const FilterOperations&);
     void setMask(CoordinatedPlatformLayer*);

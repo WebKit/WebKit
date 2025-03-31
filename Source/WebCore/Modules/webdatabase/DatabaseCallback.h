@@ -42,8 +42,8 @@ class DatabaseCallback : public ThreadSafeRefCounted<DatabaseCallback>, public A
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(Database&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(Database&) = 0;
+    virtual CallbackResult<void> invoke(Database&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(Database&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

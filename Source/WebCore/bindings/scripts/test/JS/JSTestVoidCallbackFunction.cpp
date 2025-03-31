@@ -64,7 +64,7 @@ JSTestVoidCallbackFunction::~JSTestVoidCallbackFunction()
 #endif
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunction::handleEvent(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunction::invoke(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -97,7 +97,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunc
     return { };
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunction::handleEventRethrowingException(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunction::invokeRethrowingException(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

@@ -577,7 +577,7 @@ void IntersectionObserver::notify()
 #endif
 
     InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
-    m_callback->handleEvent(*this, WTFMove(takenRecords.records), *this);
+    m_callback->invoke(*this, WTFMove(takenRecords.records), *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 

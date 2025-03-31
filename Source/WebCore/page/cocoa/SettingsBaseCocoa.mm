@@ -47,11 +47,6 @@ void SettingsBase::initializeDefaultFontFamilies()
     setStandardFontFamily("Songti SC"_s, USCRIPT_SIMPLIFIED_HAN);
     setStandardFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
     setStandardFontFamily("AppleMyungjo"_s, USCRIPT_HANGUL);
-
-    setStandardFontFamily("Times"_s, USCRIPT_COMMON);
-    setFixedFontFamily("Courier"_s, USCRIPT_COMMON);
-    setSerifFontFamily("Times"_s, USCRIPT_COMMON);
-    setSansSerifFontFamily("Helvetica"_s, USCRIPT_COMMON);
 }
 
 #else

@@ -53,8 +53,8 @@ public:
     
     void addChildren() final;
 
-    int axColumnIndex() const final;
-    int axRowIndex() const final;
+    std::optional<unsigned> axColumnIndex() const final;
+    std::optional<unsigned> axRowIndex() const final;
 
 protected:
     explicit AccessibilityTableRow(AXID, RenderObject&);

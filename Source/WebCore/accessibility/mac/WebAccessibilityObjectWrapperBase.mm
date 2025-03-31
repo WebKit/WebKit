@@ -393,7 +393,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (NSArray<NSString *> *)baseAccessibilitySpeechHint
 {
-    return [(NSString *)self.axBackingObject->speechHintAttributeValue() componentsSeparatedByString:@" "];
+    return [(NSString *)self.axBackingObject->speechHint() componentsSeparatedByString:@" "];
 }
 
 #if HAVE(ACCESSIBILITY_FRAMEWORK)

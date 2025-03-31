@@ -1,4 +1,4 @@
 
 
-PASS enumerateDevices depends only on capture state, not permission state
+FAIL enumerateDevices depends only on capture state, not permission state assert_equals: At most one of a kind prior to capture expected 2 but got 5
 

@@ -332,7 +332,7 @@ private:
 
     bool hasCallback() const final { return true; }
 
-    CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) override
+    CallbackResult<void> invoke(double, const VideoFrameMetadata&) override
     {
         if (!m_videoElement)
             return { };
@@ -346,9 +346,9 @@ private:
         return { };
     }
 
-    CallbackResult<void> handleEventRethrowingException(double now, const VideoFrameMetadata& metadata) override
+    CallbackResult<void> invokeRethrowingException(double now, const VideoFrameMetadata& metadata) override
     {
-        return handleEvent(now, metadata);
+        return invoke(now, metadata);
     }
 
     Ref<GPUExternalTexture> m_externalTexture;

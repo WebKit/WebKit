@@ -214,7 +214,7 @@ static void* lib##Library() \
     @class className; \
     static Class init##className(); \
     static Class (*get##className##Class)() = init##className; \
-    static Class class##className; \
+    SUPPRESS_UNRETAINED_LOCAL static Class class##className; \
     \
     static Class className##Function() \
     { \
@@ -242,7 +242,7 @@ static void* lib##Library() \
     @class className; \
     static Class init##className(); \
     static Class (*get##className##Class)() = init##className; \
-    static Class class##className; \
+    SUPPRESS_UNRETAINED_LOCAL static Class class##className; \
     \
     static Class className##Function() \
     { \
@@ -459,7 +459,7 @@ static void* lib##Library() \
     namespace functionNamespace { \
     static Class init##className(); \
     export Class (*get##className##Class)() = init##className; \
-    static Class class##className; \
+    SUPPRESS_UNRETAINED_LOCAL static Class class##className; \
     \
     static Class className##Function() \
     { \
@@ -520,7 +520,7 @@ static void* lib##Library() \
     export variableType get_##framework##_##variableName(); \
     variableType get_##framework##_##variableName() \
     { \
-        static variableType constant##framework##variableName; \
+        SUPPRESS_UNRETAINED_LOCAL static variableType constant##framework##variableName; \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
@@ -571,17 +571,23 @@ static void* lib##Library() \
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
     SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
-#define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     namespace functionNamespace { \
     extern resultType (*softLink##framework##functionName) parameterDeclarations; \
-    inline resultType softLink_##framework##_##functionName parameterDeclarations \
+    inline functionAttributes resultType softLink_##framework##_##functionName parameterDeclarations \
     { \
         return softLink##framework##functionName parameterNames; \
     } \
     } \
+
+#define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+
+#define SOFT_LINK_FUNCTION_FOR_HEADER_WITH_CF_RETURNS_RETAINED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, CF_RETURNS_RETAINED)
 
 #define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \

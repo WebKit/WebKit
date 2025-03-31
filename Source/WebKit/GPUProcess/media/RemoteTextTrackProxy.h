@@ -93,7 +93,7 @@ private:
     void configurationChanged();
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
+    const Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     size_t m_clientId { 0 };

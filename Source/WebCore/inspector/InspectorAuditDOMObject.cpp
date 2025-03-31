@@ -74,7 +74,7 @@ ExceptionOr<void> InspectorAuditDOMObject::simulateUserInteraction(Document& doc
     ERROR_IF_NO_ACTIVE_AUDIT();
 
     UserGestureEmulationScope userGestureScope(m_auditAgent.inspectedPage(), true, &document);
-    callback->handleEvent();
+    callback->invoke();
 
     return { };
 }

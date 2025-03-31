@@ -59,7 +59,7 @@ class WebAssemblyGCStructure;
 class WebAssemblyModuleRecord;
 
 // The layout of a JSWebAssemblyInstance is
-//     { struct JSWebAssemblyInstance }[ WasmOrJSImportableFunctionCallLinkInfo ][ Wasm::Table* ][ Global::Value ][ WebAssemblyGCStructure* ]
+//     { struct JSWebAssemblyInstance }[ WasmOrJSImportableFunctionCallLinkInfo ][ Wasm::Table* ][ Global::Value ][ WebAssemblyGCStructure* ][ Allocator* ]
 // in a compound TrailingArray-like format.
 class JSWebAssemblyInstance final : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;
@@ -280,6 +280,10 @@ public:
     WriteBarrier<WebAssemblyGCStructure>& gcObjectStructure(unsigned numImportFunctions, unsigned numTables, unsigned numGlobals, unsigned i) { return *std::bit_cast<WriteBarrier<WebAssemblyGCStructure>*>(reinterpret_cast<char*>(this) + offsetOfGCObjectStructure(numImportFunctions, numTables, numGlobals, i)); }
     WriteBarrier<WebAssemblyGCStructure>& gcObjectStructure(unsigned typeIndex) { return gcObjectStructure(numImportFunctions(), moduleInformation().tableCount(), moduleInformation().globalCount(), typeIndex); }
 
+    static constexpr size_t offsetOfAllocatorForGCObject(unsigned numImportFunctions, unsigned numTables, unsigned numGlobals, unsigned numTypes, unsigned i) { return offsetOfGCObjectStructure(numImportFunctions, numTables, numGlobals, numTypes) + sizeof(Allocator) * i; }
+    Allocator& allocatorForGCObject(unsigned numImportFunctions, unsigned numTables, unsigned numGlobals, unsigned numTypes, unsigned i) { ASSERT(moduleInformation().hasGCObjectTypes()); return *std::bit_cast<Allocator*>(reinterpret_cast<char*>(this) + offsetOfAllocatorForGCObject(numImportFunctions, numTables, numGlobals, numTypes, i)); }
+    Allocator& allocatorForGCObject(unsigned sizeClassIndex) { return allocatorForGCObject(numImportFunctions(), moduleInformation().tableCount(), moduleInformation().globalCount(), moduleInformation().typeCount(), sizeClassIndex); }
+
     const Wasm::Tag& tag(unsigned i) const { return *m_tags[i]; }
     void setTag(unsigned, Ref<const Wasm::Tag>&&);
 
@@ -300,11 +304,7 @@ private:
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
 
-    static size_t allocationSize(Checked<size_t> numImportFunctions, Checked<size_t> numTables, Checked<size_t> numGlobals, Checked<size_t> numTypes)
-    {
-        return roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(offsetOfTail() + sizeof(WasmOrJSImportableFunctionCallLinkInfo) * numImportFunctions + sizeof(Wasm::Table*) * numTables) + sizeof(Wasm::Global::Value) * numGlobals + sizeof(WriteBarrier<Structure>) * numTypes;
-    }
-
+    static size_t allocationSize(const Wasm::ModuleInformation&);
     bool evaluateConstantExpression(uint64_t, Wasm::Type, uint64_t&);
 
     VM* const m_vm;

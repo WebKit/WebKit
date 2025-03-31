@@ -24,9 +24,6 @@
         }
         
         promise_test((test) => {
-            if (window.testRunner)
-                testRunner.setUserMediaPermission(true);
-
             new window.AudioContext().createMediaStreamDestination();
             return navigator.mediaDevices.enumerateDevices()
                 .then((devices) => {
@@ -36,9 +33,8 @@
         }, "Enumerate devices without permission");
 
         promise_test((test) => {
-
             if (window.testRunner)
-                testRunner.setUserMediaPersistentPermissionForOrigin(true, document.location.href, "");
+                testRunner.setUserMediaPermission(true);
 
             return navigator.mediaDevices.enumerateDevices()
                 .then((devices) => {
@@ -49,9 +45,8 @@
         }, "Enumerate devices with persistent access");
 
         promise_test((test) => {
-
             if (window.testRunner)
-                testRunner.setUserMediaPersistentPermissionForOrigin(false, document.location.href, "");
+                testRunner.resetUserMediaPermission();
 
             return navigator.mediaDevices.getUserMedia({audio:{}, video:{}})
                 .then((stream) => {

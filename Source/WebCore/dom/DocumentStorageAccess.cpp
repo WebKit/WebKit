@@ -76,6 +76,21 @@ void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPro
     DocumentStorageAccess::from(document)->hasStorageAccess(WTFMove(promise));
 }
 
+static bool hasSameOrigin(const Document& document)
+{
+    if (document.isTopDocument())
+        return true;
+
+    Ref securityOrigin = document.securityOrigin();
+    for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
+        if (!securityOrigin->equal(parentDocument->protectedSecurityOrigin()))
+            break;
+        if (parentDocument->isTopDocument())
+            return true;
+    }
+    return false;
+}
+
 std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 {
     Ref document = m_document.get();
@@ -84,14 +99,10 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (frame && hasFrameSpecificStorageAccess())
         return true;
 
-    Ref securityOrigin = document->securityOrigin();
-    if (!frame || securityOrigin->isOpaque())
+    if (!frame || document->securityOrigin().isOpaque())
         return false;
 
-    if (frame->isMainFrame())
-        return true;
-
-    if (securityOrigin->equal(document->topOrigin()))
+    if (hasSameOrigin(document))
         return true;
 
     if (!frame->page())
@@ -103,6 +114,10 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
 {
     Ref document = m_document.get();
+    if (!document->isFullyActive()) {
+        promise->reject(ExceptionCode::InvalidStateError);
+        return;
+    }
 
     auto quickCheckResult = hasStorageAccessQuickCheck();
     if (quickCheckResult) {
@@ -157,10 +172,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (!frame || securityOrigin.isOpaque() || !isAllowedToRequestStorageAccess())
         return StorageAccessQuickResult::Reject;
 
-    if (frame->isMainFrame())
-        return StorageAccessQuickResult::Grant;
-
-    if (securityOrigin.equal(document->topOrigin()))
+    if (hasSameOrigin(document))
         return StorageAccessQuickResult::Grant;
 
     // If there is a sandbox, it has to allow the storage access API to be called.
@@ -178,6 +190,10 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
 void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
 {
     Ref document = m_document.get();
+    if (!document->isFullyActive()) {
+        promise->reject(ExceptionCode::InvalidStateError);
+        return;
+    }
 
     auto quickCheckResult = requestStorageAccessQuickCheck();
     if (quickCheckResult) {

@@ -677,7 +677,7 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
                     continue;
                 callback->setFiredOrCancelled();
                 //  6.7.Invoke the Web IDL callback function for entry, passing now and frame as the arguments
-                callback->handleEvent(now, frame.get());
+                callback->invoke(now, frame.get());
 
                 //  6.8.If an exception is thrown, report the exception.
             }

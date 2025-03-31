@@ -271,7 +271,6 @@ accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 animation/AcceleratedEffectStackUpdater.cpp
-animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationTimeline.cpp
 animation/AnimationTimelinesController.cpp
@@ -1084,7 +1083,6 @@ platform/mock/RTCNotifiersMock.cpp
 platform/mock/TimerEventBasedMock.h
 platform/mock/mediasource/MockMediaSourcePrivate.cpp
 platform/network/SynchronousLoaderClient.cpp
-platform/network/cocoa/RangeResponseGenerator.mm
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 platform/text/BidiContext.cpp

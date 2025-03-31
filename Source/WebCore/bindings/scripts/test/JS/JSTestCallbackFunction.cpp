@@ -52,7 +52,7 @@ JSTestCallbackFunction::~JSTestCallbackFunction()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::invoke(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -84,7 +84,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::handleEventRethrowingException(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::invokeRethrowingException(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

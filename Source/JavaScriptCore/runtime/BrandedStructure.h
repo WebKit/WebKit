@@ -73,11 +73,6 @@ private:
 
     static Structure* create(VM&, Structure*, UniquedStringImpl* brand, DeferredStructureTransitionWatchpointFire* = nullptr);
 
-    void destruct()
-    {
-        m_brand = nullptr;
-    }
-
     CompactRefPtr<UniquedStringImpl> m_brand;
     WriteBarrierStructureID m_parentBrand;
 

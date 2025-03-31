@@ -159,7 +159,7 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 #if ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     return true;
 #else
     return false;

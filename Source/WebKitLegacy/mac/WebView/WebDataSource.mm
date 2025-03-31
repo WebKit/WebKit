@@ -404,7 +404,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
     _private = static_cast<void*>(new WebDataSourcePrivate(WTFMove(loader)));
         
-    LOG(Loading, "creating datasource for %@", static_cast<NSURL *>(toPrivate(_private)->loader->request().url()));
+    LOG(Loading, "creating datasource for %@", toPrivate(_private)->loader->request().url().createNSURL().get());
 
     if ((toPrivate(_private)->includedInWebKitStatistics = [[self webFrame] _isIncludedInWebKitStatistics]))
         ++WebDataSourceCount;

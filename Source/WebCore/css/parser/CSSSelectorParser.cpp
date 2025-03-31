@@ -322,7 +322,7 @@ static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentLi
     Vector<AtomString> customIdents { };
 
     do {
-        auto ident = CSSPropertyParserHelpers::consumeCustomIdentRaw(range, /* shouldLowercase */ true);
+        auto ident = CSSPropertyParserHelpers::consumeCustomIdentRaw(range);
         if (ident.isEmpty())
             return std::nullopt;
 

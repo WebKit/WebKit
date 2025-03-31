@@ -164,28 +164,28 @@ void AccessibilityTableRow::addChildren()
     // column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
     // Update child cells' axColIndex if there's an aria-colindex value set for the row. So the cell doesn't have to go through the siblings
     // to calculate the index.
-    int colIndex = axColumnIndex();
-    if (colIndex == -1)
+    std::optional colIndex = axColumnIndex();
+    if (!colIndex)
         return;
 
     unsigned index = 0;
     for (const auto& cell : unignoredChildren()) {
         if (auto* tableCell = dynamicDowncast<AccessibilityTableCell>(cell.get()))
-            tableCell->setAXColIndexFromRow(colIndex + index);
+            tableCell->setAXColIndexFromRow(*colIndex + index);
         index++;
     }
 }
 
-int AccessibilityTableRow::axColumnIndex() const
+std::optional<unsigned> AccessibilityTableRow::axColumnIndex() const
 {
     int value = getIntegralAttribute(aria_colindexAttr);
-    return value >= 1 ? value : -1;
+    return value >= 1 ? std::optional(value) : std::nullopt;
 }
 
-int AccessibilityTableRow::axRowIndex() const
+std::optional<unsigned> AccessibilityTableRow::axRowIndex() const
 {
     int value = getIntegralAttribute(aria_rowindexAttr);
-    return value >= 1 ? value : -1;
+    return value >= 1 ? std::optional(value) : std::nullopt;
 }
     
 } // namespace WebCore

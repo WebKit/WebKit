@@ -2845,14 +2845,22 @@ sub generateBuildSystemFromCMakeProject
         $ENV{"LDFLAGS"} = "-m32" . ($ENV{"LDFLAGS"} || "");
     }
     if (architecture() eq "arm64" && shouldBuild32Bit()) {
+        my $compiler = "";
+        $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
         # CMAKE_LIBRARY_ARCHITECTURE is needed to get the right .pc
         # files in Debian-based systems, for the others
         # CMAKE_PREFIX_PATH will get us /usr/lib, which should be the
         # right path for 32bit. See FindPkgConfig.cmake.
         push @cmakeArgs, '-DFORCE_32BIT=ON -DCMAKE_PREFIX_PATH="/usr" -DCMAKE_LIBRARY_ARCHITECTURE=armv7-a+fp ';
-        $ENV{"CFLAGS"} =  "-m32 -march=armv7-a+fp " . ($ENV{"CFLAGS"} || "");
-        $ENV{"CXXFLAGS"} = "-m32 -march=armv7-a+fp " . ($ENV{"CXXFLAGS"} || "");
-        $ENV{"LDFLAGS"} = "-m32 -march=armv7-a+fp " . ($ENV{"LDFLAGS"} || "");
+        $ENV{"CFLAGS"} =  " -march=armv7-a+fp " . ($ENV{"CFLAGS"} || "");
+        $ENV{"CXXFLAGS"} = " -march=armv7-a+fp " . ($ENV{"CXXFLAGS"} || "");
+        $ENV{"LDFLAGS"} = " -march=armv7-a+fp " . ($ENV{"LDFLAGS"} || "");
+
+        if ($compiler =~ /clang/) {
+            $ENV{"CFLAGS"} =  " -m32 " . ($ENV{"CFLAGS"} || "");
+            $ENV{"CXXFLAGS"} = " -m32 " . ($ENV{"CXXFLAGS"} || "");
+            $ENV{"LDFLAGS"} = " -m32 " . ($ENV{"LDFLAGS"} || "");
+        }
     }
     push @args, @cmakeArgs if @cmakeArgs;
 

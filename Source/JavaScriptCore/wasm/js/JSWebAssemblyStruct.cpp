@@ -44,16 +44,27 @@ JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, WebAssemblyGCStructure* structu
     : Base(vm, structure)
     , TrailingArrayType(structure->typeDefinition().as<Wasm::StructType>()->instancePayloadSize())
 {
-    // FIXME: It would be nice to not do this but we need to zero the memory otherwise we would have to be extremely careful to avoid visiting this object before the mutator initializes all the fields.
+    // Make sure if another object is allocated while initializing the struct we don't crash the GC. It's *VERY* important this happens before finishCreation since that executes our mutator fence.
     memsetSpan(span(), 0);
+}
+
+JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(VM& vm, WebAssemblyGCStructure* structure)
+{
+    auto* structType = structure->typeDefinition().as<Wasm::StructType>();
+    auto* cell = tryAllocateCell<JSWebAssemblyStruct>(vm, TrailingArrayType::allocationSize(structType->instancePayloadSize()));
+    if (UNLIKELY(!cell))
+        return nullptr;
+
+    auto* structValue = new (NotNull, cell) JSWebAssemblyStruct(vm, structure);
+    structValue->finishCreation(vm);
+    return structValue;
 }
 
 JSWebAssemblyStruct* JSWebAssemblyStruct::create(VM& vm, WebAssemblyGCStructure* structure)
 {
-    auto* structType = structure->typeDefinition().as<Wasm::StructType>();
-    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm, TrailingArrayType::allocationSize(structType->instancePayloadSize()))) JSWebAssemblyStruct(vm, structure);
-    structValue->finishCreation(vm);
-    return structValue;
+    auto* result = JSWebAssemblyStruct::tryCreate(vm, structure);
+    RELEASE_ASSERT(result);
+    return result;
 }
 
 uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const

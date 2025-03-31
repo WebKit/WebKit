@@ -65,7 +65,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         if (result.hasException()) {
             if (errorCallback && document) {
                 document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                    errorCallback->handleEvent(DOMException::create(WTFMove(exception)));
+                    errorCallback->invoke(DOMException::create(WTFMove(exception)));
                 });
             }
             return;
@@ -74,14 +74,14 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         if (!matches(entry)) {
             if (errorCallback && document) {
                 document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                    errorCallback->handleEvent(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
+                    errorCallback->invoke(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
                 });
             }
             return;
         }
         if (successCallback && document) {
             document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), entry = WTFMove(entry), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                successCallback->handleEvent(WTFMove(entry));
+                successCallback->invoke(WTFMove(entry));
             });
         }
     });

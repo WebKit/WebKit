@@ -8057,6 +8057,13 @@
    },
    {
       "emails" : [
+         "v_bykov@apple.com"
+      ],
+      "github" : "ast-hugger",
+      "name" : "Vassili Bykov"
+   },
+   {
+      "emails" : [
          "ostap73@gmail.com",
          "sl.ostapenko@samsung.com",
          "ostapenko.viatcheslav@nokia.com"

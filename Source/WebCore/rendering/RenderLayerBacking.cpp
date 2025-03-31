@@ -4089,6 +4089,11 @@ float RenderLayerBacking::zoomedOutPageScaleFactor() const
     return compositor().zoomedOutPageScaleFactor();
 }
 
+FloatSize RenderLayerBacking::enclosingFrameViewVisibleSize() const
+{
+    return compositor().enclosingFrameViewVisibleSize();
+}
+
 float RenderLayerBacking::deviceScaleFactor() const
 {
     return compositor().deviceScaleFactor();
@@ -4275,25 +4280,25 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     if (!renderer().isSVGLayerAwareRenderer())
         referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, referenceBoxRect.size(), &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, referenceBoxRect.size(), &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, referenceBoxRect.size(), &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, referenceBoxRect.size(), &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize { }, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, IntSize { }, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
     if (didAnimate) {

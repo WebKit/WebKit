@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IsoSubspace.h"
 
-#include "IsoAlignedMemoryAllocator.h"
+#include "FastMallocAlignedMemoryAllocator.h"
 #include "IsoCellSetInlines.h"
 #include "JSCellInlines.h"
 #include "MarkedSpaceInlines.h"
@@ -36,16 +36,16 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoSubspace);
 
-IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
+IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<AlignedMemoryAllocator>&& allocator)
     : Subspace(SubspaceKind::IsoSubspace, name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
-    , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
+    , m_allocator(allocator ? WTFMove(allocator) : makeUnique<FastMallocAlignedMemoryAllocator>())
 {
     m_remainingLowerTierPreciseCount = numberOfLowerTierPreciseCells;
     ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     ASSERT(m_remainingLowerTierPreciseCount <= MarkedBlock::maxNumberOfLowerTierPreciseCells);
 
-    initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
+    initialize(heapCellType, m_allocator.get());
 
     Locker locker { m_space.directoryLock() };
     m_directory.setSubspace(this);

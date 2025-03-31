@@ -145,7 +145,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
         auto reports = observer.takeRecords();
 
         InspectorInstrumentation::willFireObserverCallback(*context, "ReportingObserver"_s);
-        protectedCallback->handleEvent(reports, observer);
+        protectedCallback->invoke(reports, observer);
         InspectorInstrumentation::didFireObserverCallback(*context);
     });
 }

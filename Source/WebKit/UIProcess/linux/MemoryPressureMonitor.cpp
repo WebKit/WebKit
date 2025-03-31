@@ -205,33 +205,33 @@ static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* c
     CString cgroupMemoryControllerPath;
     while (!feof(cgroupControllerFile)) {
         unsigned hierarchyId;
-        char name[CGROUP_NAME_BUFFER_SIZE + 1];
-        char path[maxCgroupPath + 1];
+        std::array<char, CGROUP_NAME_BUFFER_SIZE + 1> name;
+        std::array<char, maxCgroupPath + 1>  path;
         name[0] = path[0] = '\0';
         int scanResult = fscanf(cgroupControllerFile, "%u:", &hierarchyId);
         if (scanResult != 1)
             return CString();
         if (hierarchyId == CGROUP_V2_HIERARCHY) {
-            scanResult = fscanf(cgroupControllerFile, ":%" STRINGIFY(PATH_MAX) "[^\n]", path);
+            scanResult = fscanf(cgroupControllerFile, ":%" STRINGIFY(PATH_MAX) "[^\n]", path.data());
             if (scanResult != 1)
                 return CString();
         } else {
-            scanResult = fscanf(cgroupControllerFile, "%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name, path);
+            scanResult = fscanf(cgroupControllerFile, "%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name.data(), path.data());
             if (scanResult != 2)
                 return CString();
         }
-        if (!strcmp(name, controllerName)) {
-            cgroupMemoryControllerPath = CString(path);
+        if (!strcmp(name.data(), controllerName)) {
+            cgroupMemoryControllerPath = CString(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath.data());
             return cgroupMemoryControllerPath;
         }
-        if (!strcmp(name, "name=systemd")) {
-            cgroupMemoryControllerPath = CString(path);
+        if (!strcmp(name.data(), "name=systemd")) {
+            cgroupMemoryControllerPath = CString(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
             return cgroupMemoryControllerPath;
         }
-        if (!strcmp(name, "")) {
-            cgroupMemoryControllerPath = CString(path);
+        if (!strcmp(name.data(), "")) {
+            cgroupMemoryControllerPath = CString(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
             return cgroupMemoryControllerPath;
         }

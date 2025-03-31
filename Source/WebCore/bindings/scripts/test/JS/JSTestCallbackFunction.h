@@ -40,8 +40,8 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(typename IDLLong::ParameterType argument) override;
-    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEventRethrowingException(typename IDLLong::ParameterType argument) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> invoke(typename IDLLong::ParameterType argument) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> invokeRethrowingException(typename IDLLong::ParameterType argument) override;
 
 private:
     JSTestCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);

@@ -5,20 +5,19 @@
     <script src="../../resources/testharness.js"></script>
     <script src="../../resources/testharnessreport.js"></script>
     <script>
-    
+
     promise_test(async (test) => {
-        
         const originalLabel = "WebKit's AirPods";
         const anonymizedLabel = "AirPods";
+
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        for (const device of devices)
+            assert_false(!!device.label.length, "navigator.mediaDevices revealed device name before getUserMedia()");
 
         if (window.testRunner) {
             testRunner.setUserMediaPermission(true);
             testRunner.addMockMicrophoneDevice("id-1", originalLabel);
         }
-
-        let devices = await navigator.mediaDevices.enumerateDevices();
-        for (const device of devices)
-            assert_false(!!device.label.length, "navigator.mediaDevices revealed device name before getUserMedia()");
 
         let stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
 

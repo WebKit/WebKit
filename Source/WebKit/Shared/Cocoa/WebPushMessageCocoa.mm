@@ -38,23 +38,23 @@ namespace WebKit {
 
 std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dictionary)
 {
-    NSURL *url = [dictionary objectForKey:WebKitPushRegistrationURLKey];
+    RetainPtr url = [dictionary objectForKey:WebKitPushRegistrationURLKey];
     if (!url || ![url isKindOfClass:[NSURL class]])
         return std::nullopt;
 
-    id pushData = [dictionary objectForKey:WebKitPushDataKey];
+    RetainPtr<id> pushData = [dictionary objectForKey:WebKitPushDataKey];
     BOOL isNull = [pushData isEqual:[NSNull null]];
     BOOL isData = [pushData isKindOfClass:[NSData class]];
 
     if (!isNull && !isData)
         return std::nullopt;
 
-    NSString *pushPartition = [dictionary objectForKey:WebKitPushPartitionKey];
+    RetainPtr<NSString> pushPartition = [dictionary objectForKey:WebKitPushPartitionKey];
     if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
         return std::nullopt;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    id payloadDictionary = [dictionary objectForKey:WebKitNotificationPayloadKey];
+    RetainPtr<id> payloadDictionary = [dictionary objectForKey:WebKitNotificationPayloadKey];
     isNull = [payloadDictionary isEqual:[NSNull null]];
     BOOL isCorrectType = [payloadDictionary isKindOfClass:[NSDictionary class]];
 
@@ -63,18 +63,18 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
 
     std::optional<WebCore::NotificationPayload> payload;
     if (isCorrectType) {
-        payload = WebCore::NotificationPayload::fromDictionary(payloadDictionary);
+        payload = WebCore::NotificationPayload::fromDictionary(payloadDictionary.get());
         if (!payload)
             return std::nullopt;
     }
 
-    WebPushMessage message { { }, String { pushPartition }, URL { url }, WTFMove(payload) };
+    WebPushMessage message { { }, String { pushPartition.get() }, URL { url.get() }, WTFMove(payload) };
 #else
-    WebPushMessage message { { }, String { pushPartition }, URL { url }, { } };
+    WebPushMessage message { { }, String { pushPartition.get() }, URL { url.get() }, { } };
 #endif
 
     if (isData)
-        message.pushData = makeVector((NSData *)pushData);
+        message.pushData = makeVector((NSData *)pushData.get());
 
     return message;
 }
@@ -85,7 +85,7 @@ NSDictionary *WebPushMessage::toDictionary() const
     if (pushData)
         nsData = nsData = toNSData(pushData->span());
 
-    NSDictionary *nsPayload = nil;
+    RetainPtr<NSDictionary> nsPayload;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     if (notificationPayload)
         nsPayload = notificationPayload->dictionaryRepresentation();
@@ -95,7 +95,7 @@ NSDictionary *WebPushMessage::toDictionary() const
         WebKitPushDataKey : nsData ? nsData.get() : [NSNull null],
         WebKitPushRegistrationURLKey : (NSURL *)registrationURL,
         WebKitPushPartitionKey : (NSString *)pushPartitionString,
-        WebKitNotificationPayloadKey : nsPayload ? nsPayload : [NSNull null]
+        WebKitNotificationPayloadKey : nsPayload ? nsPayload.get() : [NSNull null]
     };
 }
 

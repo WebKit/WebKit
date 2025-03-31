@@ -83,7 +83,7 @@ void CustomEffect::animationDidTick()
     if (!computedTiming.progress)
         return;
 
-    m_callback->handleEvent(*computedTiming.progress);
+    m_callback->invoke(*computedTiming.progress);
 }
 
 } // namespace WebCore

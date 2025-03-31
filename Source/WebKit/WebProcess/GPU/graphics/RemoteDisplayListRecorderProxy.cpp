@@ -53,20 +53,20 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDisplayListRecorderProxy);
 
-RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBufferProxy& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::Deconstruct)
-    , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
-    , m_imageBuffer(imageBuffer)
+RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteRenderingBackendProxy& renderingBackend)
+    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct)
+    , m_renderingMode(renderingMode)
+    , m_identifier(RemoteDisplayListRecorderIdentifier::generate())
     , m_renderingBackend(renderingBackend)
-    , m_renderingMode(imageBuffer.renderingMode())
 {
 }
 
-RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& renderingBackend, RenderingResourceIdentifier renderingResourceIdentifier, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM)
+RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(const DestinationColorSpace& colorSpace, WebCore::ContentsFormat contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
     : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct)
-    , m_destinationBufferIdentifier(renderingResourceIdentifier)
-    , m_renderingBackend(renderingBackend)
     , m_renderingMode(renderingMode)
+    , m_identifier(identifier)
+    , m_renderingBackend(renderingBackend)
+    , m_contentsFormat(contentsFormat)
 {
 }
 
@@ -79,10 +79,9 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
     if (UNLIKELY(!connection))
         return;
 
-    RefPtr imageBuffer = m_imageBuffer.get();
-    if (LIKELY(imageBuffer))
-        imageBuffer->backingStoreWillChange();
-    auto result = connection->send(std::forward<T>(message), m_destinationBufferIdentifier);
+    if (RefPtr client = m_client.get())
+        client->backingStoreWillChange();
+    auto result = connection->send(std::forward<T>(message), m_identifier);
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
@@ -584,7 +583,26 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(NativeImage& image)
         return false;
     }
 
-    m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image);
+    auto colorSpace = image.colorSpace();
+
+    if (image.headroom() > Headroom::None) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+        // The image will be drawn to a Float16 layer, so use extended range sRGB
+        // to preserve the HDR contents.
+        if (m_contentsFormat && *m_contentsFormat == ContentsFormat::RGBA16F)
+            colorSpace = DestinationColorSpace::ExtendedSRGB();
+        else
+#endif
+#if PLATFORM(IOS_FAMILY)
+            // iOS typically renders into extended range sRGB to preserve wide gamut colors, but we want
+            // a non-extended range colorspace here so that the contents are tone mapped to SDR range.
+            colorSpace = DestinationColorSpace::DisplayP3();
+#else
+            colorSpace = DestinationColorSpace::SRGB();
+#endif
+    }
+
+    m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, colorSpace);
     return true;
 }
 
@@ -595,14 +613,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
         ASSERT_NOT_REACHED();
         return false;
     }
-
-    if (!renderingBackend->isCached(imageBuffer)) {
-        LOG_WITH_STREAM(DisplayLists, stream << "RemoteDisplayListRecorderProxy::recordResourceUse - failed to record use of image buffer " << imageBuffer.renderingResourceIdentifier());
-        return false;
-    }
-
-    renderingBackend->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);
-    return true;
+    return renderingBackend->isCached(imageBuffer);
 }
 
 bool RemoteDisplayListRecorderProxy::recordResourceUse(const SourceImage& image)

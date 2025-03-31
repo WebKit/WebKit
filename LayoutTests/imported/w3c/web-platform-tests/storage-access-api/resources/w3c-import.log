@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/bless_cross_site_permissions.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/echo-cookie-header.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/embedded_forwarder.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/embedded_responder.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/embedded_worker.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/get_cookies.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/handle-headers-non-retry.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/handle-headers-retry.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/hasStorageAccess-ABA-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/hasStorageAccess-ABA-iframe.sub.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/hasStorageAccess-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/hasStorageAccess-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/header-helpers.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/nested-handle-storage-access-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/permissions-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/requestStorageAccess-ABA-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/requestStorageAccess-ABA-iframe.sub.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/requestStorageAccess-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/requestStorageAccess-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/retrieve-storage-access-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/sandboxed-iframe-allow-storage-access.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/sandboxed-iframe-no-storage-access.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/script-with-cookie-header.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/set-cookie-header.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/set_cookies.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/shared-worker-cookies.py
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/shared-worker-relay.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/storage-access-beyond-cookies-iframe-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/resources/storage-access-beyond-cookies-iframe.sub.html

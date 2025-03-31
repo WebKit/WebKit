@@ -97,7 +97,7 @@ void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<Internal
     JSC::Exception* previousException = nullptr;
     {
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
-        m_subscriberCallback->handleEventRethrowingException(subscriber);
+        m_subscriberCallback->invokeRethrowingException(subscriber);
         previousException = catchScope.exception();
         if (previousException) {
             catchScope.clearException();

@@ -26,7 +26,7 @@ flags: [module, raw]
 
 throw "Test262: This statement should not be evaluated.";
 
-import "../resources/ensure-linking-error_FIXTURE.js";
+import "./ensure-linking-error_FIXTURE.js";
 
 import * as x from './import-attribute-1_FIXTURE.js'
 with

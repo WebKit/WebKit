@@ -54,7 +54,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     RetainPtr nsData = toNSData(resumeData);
 
     RetainPtr dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
-    [dictionary setObject:static_cast<NSString*>(path) forKey:@"NSURLSessionResumeInfoLocalPath"];
+    [dictionary setObject:path.createNSString().get() forKey:@"NSURLSessionResumeInfoLocalPath"];
     RetainPtr updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary.get() format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
 
     // FIXME: Use nsData instead of updatedData once we've migrated from _WKDownload to WKDownload

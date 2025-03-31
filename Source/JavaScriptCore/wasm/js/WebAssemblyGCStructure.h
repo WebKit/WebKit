@@ -55,12 +55,6 @@ public:
 
     static WebAssemblyGCStructure* create(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
 
-    void destruct()
-    {
-        auto rtt = WTFMove(m_rtt);
-        auto type = WTFMove(m_type);
-    }
-
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCStructure, m_rtt); }
 
 private:

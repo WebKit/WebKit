@@ -3446,7 +3446,7 @@ WKWebView *WebExtensionContext::relatedWebView()
 NSString *WebExtensionContext::processDisplayName()
 {
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), static_cast<NSString *>(protectedExtension()->displayShortName())];
+    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), protectedExtension()->displayShortName().createNSString().get()];
 ALLOW_NONLITERAL_FORMAT_END
 }
 
@@ -4858,7 +4858,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     };
 
     auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
-        [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+        [declarativeNetRequestDynamicRulesStore() getRulesWithRuleIDs:@[] completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
             if (!rules.count) {
                 m_dynamicRulesIDs.clear();
                 addStaticRulesets();
@@ -4882,7 +4882,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         }).get()];
     };
 
-    [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+    [declarativeNetRequestSessionRulesStore() getRulesWithRuleIDs:@[] completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
         if (!rules.count) {
             m_sessionRulesIDs.clear();
             addDynamicAndStaticRules();

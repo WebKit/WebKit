@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 
 
 FAIL willValidate assert_false: false in DATALIST expected false got true

@@ -42,7 +42,7 @@ std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlob
     if (!jsonString)
         return std::nullopt;
 
-    auto dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
+    auto dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString().get() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 

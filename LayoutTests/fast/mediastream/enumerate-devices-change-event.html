@@ -7,10 +7,6 @@
     <script>
     
     promise_test(async (test) => {
-    
-        if (window.testRunner)
-            testRunner.setUserMediaPermission(true);
-
         let devices1 = await navigator.mediaDevices.enumerateDevices();
 
         let eventCount = 0;

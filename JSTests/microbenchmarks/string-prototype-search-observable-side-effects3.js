@@ -21,8 +21,8 @@ function assert(testedValue, msg) {
 
     assert(accesses == "", "unexpected call to overridden props");
     let result = "searchme".search(obj);
-    assert(accesses == "Symbol(Symbol.search)", "Property accesses do not match expectation");
-    assert(result === 3, "Unexpected result");
+    assert(accesses == "", "unexpected call to overridden props");
+    assert(result === 0, "Unexpected result");
 
     Object.defineProperty(String.prototype, Symbol.search, { value: undefined, writable: false, configurable: true });
 })();

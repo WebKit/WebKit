@@ -14,9 +14,9 @@ export default class Executor {
     }
 
     createInstance() {
-        this._remoteRenderingBackend.CreateRemoteImageBufferSet({
-            bufferSetIdentifier: 1234n,
-            displayListIdentifier: 1235n,
+        this._remoteRenderingBackend.CreateImageBufferSet({
+            identifier: 1234n,
+            contextIdentifier: 1235n,
         });
 
         this._remoteRenderingBackend.PrepareImageBufferSetsForDisplay({
@@ -50,8 +50,8 @@ export default class Executor {
                     renderingUpdateID: 1n
                 });
 
-                this._remoteRenderingBackend.ReleaseRemoteImageBufferSet({
-                    bufferSetIdentifier: 1234n,
+                this._remoteRenderingBackend.ReleaseImageBufferSet({
+                    identifier: 1234n,
                 });
             }
         };

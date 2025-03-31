@@ -1233,7 +1233,7 @@ inline void BuilderCustom::applyInheritFill(BuilderState& builderState)
 inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& value)
 {
     auto& svgStyle = builderState.style().accessSVGStyle();
-    RefPtr<const CSSValue> localValue = &value;
+    RefPtr<const CSSValue> localValue;
     String url;
     if (RefPtr list = dynamicDowncast<CSSValueList>(value)) {
         auto primitiveValue = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, *list->item(0));
@@ -1241,12 +1241,10 @@ inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& 
             return;
         url = primitiveValue->stringValue();
         localValue = list->protectedItem(1);
+        if (!localValue)
+            return;
     }
-
-    if (!localValue)
-        return;
-
-    auto [color, paintType] = colorAndSVGPaintType(builderState, *localValue, url);
+    auto [color, paintType] = colorAndSVGPaintType(builderState, localValue ? *localValue : value, url);
     svgStyle.setFillPaint(paintType, color, url, builderState.applyPropertyToRegularStyle(), builderState.applyPropertyToVisitedLinkStyle());
 }
 
@@ -1266,7 +1264,7 @@ inline void BuilderCustom::applyInheritStroke(BuilderState& builderState)
 inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue& value)
 {
     auto& svgStyle = builderState.style().accessSVGStyle();
-    RefPtr<const CSSValue> localValue = &value;
+    RefPtr<const CSSValue> localValue;
     String url;
     if (RefPtr list = dynamicDowncast<CSSValueList>(value)) {
         auto primitiveValue = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, *list->item(0));
@@ -1274,12 +1272,11 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
             return;
         url = primitiveValue->stringValue();
         localValue = list->protectedItem(1);
+        if (!localValue)
+            return;
     }
 
-    if (!localValue)
-        return;
-
-    auto [color, paintType] = colorAndSVGPaintType(builderState, *localValue, url);
+    auto [color, paintType] = colorAndSVGPaintType(builderState, localValue ? *localValue : value, url);
     svgStyle.setStrokePaint(paintType, color, url, builderState.applyPropertyToRegularStyle(), builderState.applyPropertyToVisitedLinkStyle());
 }
 

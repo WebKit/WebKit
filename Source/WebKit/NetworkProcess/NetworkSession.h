@@ -302,6 +302,8 @@ public:
     void resetResourceMonitorThrottlerForTesting();
 #endif
 
+    std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -416,6 +418,7 @@ protected:
     RefPtr<WebCore::ResourceMonitorThrottlerHolder> m_resourceMonitorThrottler;
     String m_resourceMonitorThrottlerDirectory;
 #endif
+    Markable<WTF::UUID> m_dataStoreIdentifier;
 };
 
 } // namespace WebKit

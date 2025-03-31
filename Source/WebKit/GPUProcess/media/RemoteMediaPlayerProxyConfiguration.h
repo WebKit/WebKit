@@ -65,6 +65,9 @@ struct RemoteMediaPlayerProxyConfiguration {
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked { false };
 #endif
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    bool prefersSpatialAudioExperience { false };
+#endif
 };
 
 } // namespace WebKit

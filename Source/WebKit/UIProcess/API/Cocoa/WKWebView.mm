@@ -32,6 +32,7 @@
 #import "APIPageConfiguration.h"
 #import "APISecurityOrigin.h"
 #import "APISerializedScriptValue.h"
+#import "AboutSchemeHandler.h"
 #import "BrowsingWarning.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
@@ -627,6 +628,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(pair.value.get(), pair.key);
+    _page->setURLSchemeHandlerForScheme(_page->protectedAboutSchemeHandler(), WebKit::AboutSchemeHandler::scheme);
 
     _page->setCocoaView(self);
 

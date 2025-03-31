@@ -500,6 +500,30 @@ bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
         && LIKELY(m_start.treeID() == m_end.treeID());
 }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+String listMarkerTextOnSameLine(const AXTextMarker& marker)
+{
+    RefPtr textMarkerObject = marker.object();
+    if (!textMarkerObject)
+        return { };
+
+    RefPtr listItemAncestor = Accessibility::findAncestor(*textMarkerObject, /* includeSelf */ true, [] (const auto& selfOrAncestor) {
+        return selfOrAncestor.isListItem();
+    });
+
+    if (listItemAncestor) {
+        if (RefPtr listMarker = findUnignoredDescendant(*listItemAncestor, /* includeSelf */ false, [] (const auto& descendant) {
+            return descendant.roleValue() == AccessibilityRole::ListMarker;
+        })) {
+            auto lineID = listMarker->listMarkerLineID();
+            if (lineID && lineID == marker.lineID())
+                return listMarker->listMarkerText();
+        }
+    }
+    return { };
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
 String AXTextMarkerRange::toString() const
 {
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -513,21 +537,9 @@ String AXTextMarkerRange::toString() const
             return emptyString();
 
         StringBuilder result;
-        RefPtr startObject = start.isolatedObject();
-        RefPtr listItemAncestor = Accessibility::findAncestor(*startObject, /* includeSelf */ true, [] (const auto& object) {
-            return object.isListItem();
-        });
-        if (listItemAncestor) {
-            if (RefPtr listMarker = findUnignoredDescendant(*listItemAncestor, /* includeSelf */ false, [] (const auto& object) {
-                return object.roleValue() == AccessibilityRole::ListMarker;
-            })) {
-                auto lineID = listMarker->listMarkerLineID();
-                if (lineID && lineID == start.lineID())
-                    result.append(listMarker->listMarkerText());
-            }
-        }
+        result.append(listMarkerTextOnSameLine(start));
 
-        if (startObject.get() == end.isolatedObject()) {
+        if (start.isolatedObject() == end.isolatedObject()) {
             size_t minOffset = std::min(start.offset(), end.offset());
             size_t maxOffset = std::max(start.offset(), end.offset());
             result.append(start.runs()->substring(minOffset, maxOffset - minOffset));

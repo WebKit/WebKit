@@ -375,6 +375,7 @@ public:
     virtual RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
 
     virtual void setTextIndicator(const TextIndicatorData&) const = 0;
+    virtual void updateTextIndicator(const TextIndicatorData&) const = 0;
 
     virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback) { callback(false); }

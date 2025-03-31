@@ -50,7 +50,7 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
         return;
     }
 
-    m_bufferSet = collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createRemoteImageBufferSet();
+    m_bufferSet = collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet();
 }
 
 RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()
@@ -116,6 +116,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
             .logicalSize = size(),
             .resolutionScale = scale(),
             .colorSpace = colorSpace(),
+            .contentsFormat = contentsFormat(),
             .pixelFormat = pixelFormat(),
             .renderingMode = type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated,
             .renderingPurpose = WebCore::RenderingPurpose::LayerBacking,

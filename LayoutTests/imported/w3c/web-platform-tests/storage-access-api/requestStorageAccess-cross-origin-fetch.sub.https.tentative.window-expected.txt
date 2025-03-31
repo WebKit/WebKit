@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Cross-origin fetches from a frame with storage-access are not credentialed by default Test timed out
+NOTRUN Cross-origin HTTP redirects from a frame with storage-access are not credentialed by default
+

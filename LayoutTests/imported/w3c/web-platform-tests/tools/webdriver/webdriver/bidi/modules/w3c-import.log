@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/_module.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/bluetooth.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/browser.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/browsing_context.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/input.py
@@ -24,3 +25,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/script.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/session.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/storage.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/modules/web_extension.py

@@ -1823,6 +1823,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
             .spatialTrackingLabel = m_spatialTrackingLabel,
 #endif
         });
+        INFO_LOG(LOGIDENTIFIER, "Setting spatialAudioExperience: ", spatialAudioExperienceDescription(experience.get()));
         [m_synchronizer setIntendedSpatialAudioExperience:experience.get()];
         return;
     }

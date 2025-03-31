@@ -204,7 +204,7 @@ static RefPtr<Node> nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContain
     return nullptr;
 }
 
-static inline bool fullyClipsContents(Node& node)
+static inline bool fullyClipsContents(const Node& node, TextIteratorBehaviors behaviors)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer) {
@@ -219,6 +219,11 @@ static inline bool fullyClipsContents(Node& node)
     if (is<HTMLTextAreaElement>(node))
         return box->size().isEmpty();
 
+    if (behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser) && isSkippedContentRoot(*box)) {
+        // This may reveal collapsed content to find-in-page, but it's uncommon (and highly redundant) to have computed block height 0px while applying c-v: hidden.
+        return false;
+    }
+
     return box->contentBoxSize().isEmpty();
 }
 
@@ -230,14 +235,14 @@ static inline bool ignoresContainerClip(const Node& node)
     return renderer->isOutOfFlowPositioned();
 }
 
-static void pushFullyClippedState(BitStack& stack, Node& node)
+static void pushFullyClippedState(BitStack& stack, Node& node, TextIteratorBehaviors behaviors)
 {
     // Push true if this node full clips its contents, or if a parent already has fully
     // clipped and this is not a node that ignores its container's clip.
-    stack.push(fullyClipsContents(node) || (stack.top() && !ignoresContainerClip(node)));
+    stack.push(fullyClipsContents(node, behaviors) || (stack.top() && !ignoresContainerClip(node)));
 }
 
-static void setUpFullyClippedStack(BitStack& stack, Node& node)
+static void setUpFullyClippedStack(BitStack& stack, Node& node, TextIteratorBehaviors behaviors)
 {
     // Put the nodes in a vector so we can iterate in reverse order.
     // FIXME: This (and TextIterator in general) should use ComposedTreeIterator.
@@ -248,8 +253,8 @@ static void setUpFullyClippedStack(BitStack& stack, Node& node)
     // Call pushFullyClippedState on each node starting with the earliest ancestor.
     size_t size = ancestry.size();
     for (size_t i = 0; i < size; ++i)
-        pushFullyClippedState(stack, ancestry[size - i - 1]);
-    pushFullyClippedState(stack, node);
+        pushFullyClippedState(stack, ancestry[size - i - 1], behaviors);
+    pushFullyClippedState(stack, node, behaviors);
 }
 
 static bool isClippedByFrameAncestor(const Document& document, TextIteratorBehaviors behaviors)
@@ -259,7 +264,7 @@ static bool isClippedByFrameAncestor(const Document& document, TextIteratorBehav
 
     for (RefPtr owner = document.ownerElement(); owner; owner = owner->document().ownerElement()) {
         BitStack ownerClipStack;
-        setUpFullyClippedStack(ownerClipStack, *owner);
+        setUpFullyClippedStack(ownerClipStack, *owner, behaviors);
         if (ownerClipStack.top())
             return true;
     }
@@ -361,7 +366,7 @@ TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behav
 {
     ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages));
 
-    range.start.protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    range.start.protectedDocument()->updateLayoutIgnorePendingStylesheets(m_behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser) ? OptionSet<LayoutOptions> { LayoutOptions::TreatContentVisibilityAutoAsVisible } : OptionSet<LayoutOptions> { });
 
     m_startContainer = range.start.container.ptr();
     m_startOffset = range.start.offset;
@@ -381,7 +386,7 @@ void TextIterator::init()
     if (isClippedByFrameAncestor(currentNode->protectedDocument(), m_behaviors))
         return;
 
-    setUpFullyClippedStack(m_fullyClippedStack, *currentNode);
+    setUpFullyClippedStack(m_fullyClippedStack, *currentNode, m_behaviors);
 
     m_offset = currentNode == m_startContainer.get() ? m_startOffset : 0;
 
@@ -436,9 +441,30 @@ static inline bool hasDisplayContents(Node& node)
     return element && element->hasDisplayContents();
 }
 
-static bool isRendererVisible(const RenderObject* renderer, TextIteratorBehaviors behaviors)
+static bool isRendererAccessible(const RenderObject* renderer, TextIteratorBehaviors behaviors)
 {
-    return renderer && !renderer->isSkippedContent() && !(renderer->style().usedUserSelect() == UserSelect::None && behaviors.contains(TextIteratorBehavior::IgnoresUserSelectNone));
+    if (!renderer)
+        return false;
+
+    auto& style = renderer->style();
+    if (style.usedUserSelect() == UserSelect::None && behaviors.contains(TextIteratorBehavior::IgnoresUserSelectNone))
+        return false;
+
+    if (renderer->isSkippedContent()) {
+        if (!behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser))
+            return false;
+        return style.usedContentVisibility() == ContentVisibility::Auto;
+    }
+
+    return true;
+}
+
+static bool isConsideredSkippedContent(const RenderBox* renderBox, TextIteratorBehaviors behaviors)
+{
+    if (!renderBox || !isSkippedContentRoot(*renderBox))
+        return false;
+
+    return behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser) ? renderBox->style().usedContentVisibility() == ContentVisibility::Hidden : true;
 }
 
 void TextIterator::advance()
@@ -486,14 +512,13 @@ void TextIterator::advance()
         
         CheckedPtr renderer = m_currentNode->renderer();
         if (!m_handledNode) {
-            if (!isRendererVisible(renderer.get(), m_behaviors)) {
+            if (!isRendererAccessible(renderer.get(), m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*protectedCurrentNode()) && !renderer;
-            } else if (auto* renderElement = dynamicDowncast<RenderElement>(renderer.get()); renderElement && isSkippedContentRoot(*renderElement))
-                m_handledChildren = true;
-            else {
-                // handle current node according to its type
-                if (renderer->isRenderText() && m_currentNode->isTextNode())
+            } else {
+                if (isConsideredSkippedContent(dynamicDowncast<RenderBox>(renderer.get()), m_behaviors))
+                    m_handledChildren = true;
+                else if (renderer->isRenderText() && m_currentNode->isTextNode())
                     m_handledNode = handleTextNode();
                 else if (isRendererReplacedElement(renderer.get(), m_behaviors))
                     m_handledNode = handleReplacedElement();
@@ -518,7 +543,7 @@ void TextIterator::advance()
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer.get()) || isDescendantOf(m_behaviors, *m_endContainer, *parentNode))
                         return;
-                    bool haveRenderer = isRendererVisible(currentNode->renderer(), m_behaviors);
+                    bool haveRenderer = isRendererAccessible(currentNode->renderer(), m_behaviors);
                     RefPtr exitedNode = WTFMove(currentNode);
                     m_currentNode = WTFMove(parentNode);
                     currentNode = m_currentNode;
@@ -532,7 +557,7 @@ void TextIterator::advance()
                         return;
                     }
                     next = nextSibling(m_behaviors, *currentNode);
-                    if (next && isRendererVisible(currentNode->renderer(), m_behaviors))
+                    if (next && isRendererAccessible(currentNode->renderer(), m_behaviors))
                         exitNode(currentNode.get());
                 }
             }
@@ -542,7 +567,7 @@ void TextIterator::advance()
         // set the new current node
         m_currentNode = WTFMove(next);
         if (auto currentNode = protectedCurrentNode())
-            pushFullyClippedState(m_fullyClippedStack, *currentNode);
+            pushFullyClippedState(m_fullyClippedStack, *currentNode, m_behaviors);
         m_handledNode = false;
         m_handledChildren = false;
         m_handledFirstLetter = false;
@@ -770,7 +795,7 @@ bool TextIterator::handleReplacedElement()
     if (CheckedPtr renderTextControl = dynamicDowncast<RenderTextControl>(renderer.get()); renderTextControl && m_behaviors.contains(TextIteratorBehavior::EntersTextControls)) {
         if (auto innerTextElement = renderTextControl->textFormControlElement().innerTextElement()) {
             m_currentNode = innerTextElement->containingShadowRoot();
-            pushFullyClippedState(m_fullyClippedStack, *protectedCurrentNode());
+            pushFullyClippedState(m_fullyClippedStack, *protectedCurrentNode(), m_behaviors);
             m_offset = 0;
             return false;
         }
@@ -780,7 +805,7 @@ bool TextIterator::handleReplacedElement()
     if (m_behaviors.contains(TextIteratorBehavior::EntersImageOverlays) && currentElement && ImageOverlay::hasOverlay(*currentElement)) {
         if (RefPtr shadowRoot = m_currentNode->shadowRoot()) {
             m_currentNode = WTFMove(shadowRoot);
-            pushFullyClippedState(m_fullyClippedStack, *protectedCurrentNode());
+            pushFullyClippedState(m_fullyClippedStack, *protectedCurrentNode(), m_behaviors);
             m_offset = 0;
             return false;
         }
@@ -1252,7 +1277,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const SimpleRan
     }
 
     m_node = endNode;
-    setUpFullyClippedStack(m_fullyClippedStack, *m_node);
+    setUpFullyClippedStack(m_fullyClippedStack, *m_node, m_behaviors);
     m_offset = endOffset;
     m_handledNode = false;
     m_handledChildren = endOffset == 0;
@@ -1298,7 +1323,7 @@ void SimplifiedBackwardsTextIterator::advance()
 
         if (!m_handledChildren && m_node->hasChildNodes()) {
             m_node = m_node->lastChild();
-            pushFullyClippedState(m_fullyClippedStack, *protectedNode());
+            pushFullyClippedState(m_fullyClippedStack, *protectedNode(), m_behaviors);
         } else {
             // Exit empty containers as we pass over them or containers
             // where [container, 0] is where we started iterating.
@@ -1326,7 +1351,7 @@ void SimplifiedBackwardsTextIterator::advance()
 
             m_fullyClippedStack.pop();
             if (advanceRespectingRange(m_node->protectedPreviousSibling().get()))
-                pushFullyClippedState(m_fullyClippedStack, *protectedNode());
+                pushFullyClippedState(m_fullyClippedStack, *protectedNode(), m_behaviors);
             else
                 m_node = nullptr;
         }

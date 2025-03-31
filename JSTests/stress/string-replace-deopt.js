@@ -13,4 +13,4 @@ for (var i = 0; i < testLoopCount; ++i)
 
 String.prototype[Symbol.replace] = function () { return "Changed"; };
 for (var i = 0; i < testLoopCount; ++i)
-    shouldBe(test("Hello"), "Changed");
+    shouldBe(test("Hello"), "World");

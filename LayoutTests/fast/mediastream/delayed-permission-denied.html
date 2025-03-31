@@ -15,7 +15,7 @@ function denyPermission() {
 }
 
 if (window.testRunner)
-    testRunner.resetUserMediaPermission();
+    testRunner.delayUserMediaRequestDecision();
 
 var error;
 var options = {audio: true, video: true};

@@ -40,8 +40,8 @@ class VideoFrameRequestCallback : public RefCounted<VideoFrameRequestCallback>, 
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(double, const VideoFrameMetadata&) = 0;
+    virtual CallbackResult<void> invoke(double, const VideoFrameMetadata&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(double, const VideoFrameMetadata&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

@@ -48,9 +48,6 @@ struct NetworkLoadParameters {
     RefPtr<WebCore::SecurityOrigin> topOrigin;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WTF::ProcessID parentPID { 0 };
-#if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> networkProcessAuditToken;
-#endif
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };
     WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy { WebCore::ContentEncodingSniffingPolicy::Default };

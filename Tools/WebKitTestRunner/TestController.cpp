@@ -334,11 +334,6 @@ static void runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef
     TestController::singleton().handleJavaScriptConfirm(message, listener);
 }
 
-static void checkUserMediaPermissionForOrigin(WKPageRef, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef checkRequest, const void*)
-{
-    TestController::singleton().handleCheckOfUserMediaPermissionForOrigin(frame, userMediaDocumentOrigin, topLevelDocumentOrigin, checkRequest);
-}
-
 static void requestPointerLock(WKPageRef page, const void*)
 {
     WKPageDidAllowPointerLock(page);
@@ -386,6 +381,32 @@ static void queryPermission(WKStringRef string, WKSecurityOriginRef securityOrig
 
 void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginRef securityOrigin, WKQueryPermissionResultCallbackRef callback)
 {
+    if (toWTFString(string) == "camera"_s) {
+        if (!m_isCameraPermissionAllowed) {
+            WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
+            return;
+        }
+        if (!*m_isCameraPermissionAllowed) {
+            WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+        WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+        return;
+    }
+
+    if (toWTFString(string) == "microphone"_s) {
+        if (!m_isMicrophonePermissionAllowed) {
+            WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
+            return;
+        }
+        if (!*m_isMicrophonePermissionAllowed) {
+            WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+        WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+        return;
+    }
+
     if (toWTFString(string) == "notifications"_s) {
         auto permissionState = m_webNotificationProvider.permissionState(securityOrigin);
         if (permissionState) {
@@ -678,7 +699,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         runJavaScriptAlert,
         runJavaScriptConfirm,
         runJavaScriptPrompt,
-        checkUserMediaPermissionForOrigin,
+        nullptr, // checkUserMediaPermissionForOrigin,
         nullptr, // runBeforeUnloadConfirmPanel
         nullptr, // fullscreenMayReturnToInline
         requestPointerLock,
@@ -1153,7 +1174,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         runJavaScriptAlert,
         runJavaScriptConfirm,
         runJavaScriptPrompt,
-        checkUserMediaPermissionForOrigin,
+        nullptr, // checkUserMediaPermissionForOrigin,
         nullptr, // runBeforeUnloadConfirmPanel
         nullptr, // fullscreenMayReturnToInline
         requestPointerLock,
@@ -1412,9 +1433,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
-    m_cachedUserMediaPermissions.clear();
-    setCameraPermission(true);
-    setMicrophonePermission(true);
+    resetUserMediaPermission();
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
@@ -3141,46 +3160,26 @@ bool TestController::isGeolocationProviderActive() const
     return m_geolocationProvider->isActive();
 }
 
-static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin)
-{
-    String userMediaDocumentOriginString = originUserVisibleName(userMediaDocumentOrigin);
-    String topLevelDocumentOriginString = originUserVisibleName(topLevelDocumentOrigin);
-
-    if (topLevelDocumentOriginString.isEmpty())
-        return userMediaDocumentOriginString;
-
-    return makeString(userMediaDocumentOriginString, '-', topLevelDocumentOriginString);
-}
-
-static String userMediaOriginHash(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
-{
-    auto userMediaDocumentOrigin = adoptWK(WKSecurityOriginCreateFromString(userMediaDocumentOriginString));
-    if (!WKStringGetLength(topLevelDocumentOriginString))
-        return userMediaOriginHash(userMediaDocumentOrigin.get(), nullptr);
-
-    auto topLevelDocumentOrigin = adoptWK(WKSecurityOriginCreateFromString(topLevelDocumentOriginString));
-    return userMediaOriginHash(userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
-}
-
 void TestController::setCameraPermission(bool enabled)
 {
-    m_isUserMediaPermissionSet = true;
+    m_canDecideUserMediaRequest = true;
     m_isCameraPermissionAllowed = enabled;
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
 void TestController::setMicrophonePermission(bool enabled)
 {
-    m_isUserMediaPermissionSet = true;
+    m_canDecideUserMediaRequest = true;
     m_isMicrophonePermissionAllowed = enabled;
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
 void TestController::resetUserMediaPermission()
 {
-    m_isUserMediaPermissionSet = false;
-    m_isCameraPermissionAllowed = true;
-    m_isMicrophonePermissionAllowed = true;
+    m_requestCount = 0;
+    m_canDecideUserMediaRequest = true;
+    m_isCameraPermissionAllowed = { };
+    m_isMicrophonePermissionAllowed = { };
 }
 
 void TestController::setShouldDismissJavaScriptAlertsAsynchronously(bool value)
@@ -3218,73 +3217,6 @@ void TestController::handleJavaScriptConfirm(WKStringRef message, WKPageRunJavaS
     WKPageRunJavaScriptConfirmResultListenerCall(listener, true);
 }
 
-class OriginSettings : public RefCounted<OriginSettings> {
-public:
-    explicit OriginSettings()
-    {
-    }
-
-    bool persistentPermission() const { return m_persistentPermission; }
-    void setPersistentPermission(bool permission) { m_persistentPermission = permission; }
-
-    String persistentSalt() const { return m_persistentSalt; }
-    void setPersistentSalt(const String& salt) { m_persistentSalt = salt; }
-
-    HashMap<uint64_t, String>& ephemeralSalts() { return m_ephemeralSalts; }
-
-    void incrementRequestCount() { ++m_requestCount; }
-    void resetRequestCount() { m_requestCount = 0; }
-    unsigned requestCount() const { return m_requestCount; }
-
-private:
-    HashMap<uint64_t, String> m_ephemeralSalts;
-    String m_persistentSalt;
-    unsigned m_requestCount { 0 };
-    bool m_persistentPermission { false };
-};
-
-String TestController::saltForOrigin(WKFrameRef frame, String originHash)
-{
-    auto& settings = settingsForOrigin(originHash);
-    auto& ephemeralSalts = settings.ephemeralSalts();
-    auto frameHandle = adoptWK(WKFrameCreateFrameHandle(frame));
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    uint64_t frameIdentifier = WKFrameHandleGetFrameID(frameHandle.get());
-ALLOW_DEPRECATED_DECLARATIONS_END
-    String frameSalt = ephemeralSalts.get(frameIdentifier);
-
-    if (settings.persistentPermission()) {
-        if (frameSalt.length())
-            return frameSalt;
-
-        if (!settings.persistentSalt().length())
-            settings.setPersistentSalt(createVersion4UUIDString());
-
-        return settings.persistentSalt();
-    }
-
-    if (!frameSalt.length()) {
-        frameSalt = createVersion4UUIDString();
-        ephemeralSalts.add(frameIdentifier, frameSalt);
-    }
-
-    return frameSalt;
-}
-
-void TestController::setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
-{
-    auto originHash = userMediaOriginHash(userMediaDocumentOriginString, topLevelDocumentOriginString);
-    auto& settings = settingsForOrigin(originHash);
-    settings.setPersistentPermission(permission);
-}
-
-void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, const WKUserMediaPermissionCheckRef& checkRequest)
-{
-    auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
-    auto salt = saltForOrigin(frame, originHash);
-    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, toWK(salt).get(), settingsForOrigin(originHash).persistentPermission());
-}
-
 bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin, WKFrameInfoRef frame)
 {
     auto frameOrigin = adoptWK(WKFrameInfoCopySecurityOrigin(frame));
@@ -3294,61 +3226,47 @@ bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOri
 
 void TestController::handleUserMediaPermissionRequest(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef request)
 {
-    auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
-    m_userMediaPermissionRequests.append(std::make_pair(originHash, request));
+    m_requestCount++;
+    m_userMediaPermissionRequests.append(request);
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
-OriginSettings& TestController::settingsForOrigin(const String& originHash)
+void TestController::delayUserMediaRequestDecision()
 {
-    RefPtr<OriginSettings> settings = m_cachedUserMediaPermissions.get(originHash);
-    if (!settings) {
-        settings = adoptRef(*new OriginSettings());
-        m_cachedUserMediaPermissions.add(originHash, settings);
-    }
-
-    return *settings;
+    m_canDecideUserMediaRequest = false;
 }
 
-unsigned TestController::userMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
+unsigned TestController::userMediaPermissionRequestCount()
 {
-    auto originHash = userMediaOriginHash(userMediaDocumentOriginString, topLevelDocumentOriginString);
-    return settingsForOrigin(originHash).requestCount();
+    return m_requestCount;
 }
 
-void TestController::resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
+void TestController::resetUserMediaPermissionRequestCount()
 {
-    auto originHash = userMediaOriginHash(userMediaDocumentOriginString, topLevelDocumentOriginString);
-    settingsForOrigin(originHash).resetRequestCount();
+    m_requestCount = 0;
 }
 
 void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
 {
-    if (!m_isUserMediaPermissionSet)
+    if (!m_canDecideUserMediaRequest)
         return;
 
-    for (auto& pair : m_userMediaPermissionRequests) {
-        auto originHash = pair.first;
-        auto request = pair.second.get();
-
-        auto& settings = settingsForOrigin(originHash);
-        settings.incrementRequestCount();
-
-        if (m_isUserMediaPermissionSet && WKUserMediaPermissionRequestRequiresCameraCapture(request) && !m_isCameraPermissionAllowed) {
-            WKUserMediaPermissionRequestDeny(request, kWKPermissionDenied);
+    for (WKRetainPtr request : m_userMediaPermissionRequests) {
+        if (m_isCameraPermissionAllowed && WKUserMediaPermissionRequestRequiresCameraCapture(request.get()) && !*m_isCameraPermissionAllowed) {
+            WKUserMediaPermissionRequestDeny(request.get(), kWKPermissionDenied);
             continue;
         }
 
-        if (m_isUserMediaPermissionSet && WKUserMediaPermissionRequestRequiresMicrophoneCapture(request) && !m_isMicrophonePermissionAllowed) {
-            WKUserMediaPermissionRequestDeny(request, kWKPermissionDenied);
+        if (m_isMicrophonePermissionAllowed && WKUserMediaPermissionRequestRequiresMicrophoneCapture(request.get()) && !*m_isMicrophonePermissionAllowed) {
+            WKUserMediaPermissionRequestDeny(request.get(), kWKPermissionDenied);
             continue;
         }
 
-        auto audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
-        auto videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
+        auto audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request.get()));
+        auto videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request.get()));
 
-        if (!WKUserMediaPermissionRequestRequiresDisplayCapture(request) && !WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
-            WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
+        if (!WKUserMediaPermissionRequestRequiresDisplayCapture(request.get()) && !WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
+            WKUserMediaPermissionRequestDeny(request.get(), kWKNoConstraints);
             continue;
         }
 
@@ -3364,7 +3282,7 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         else
             audioDeviceUID = toWK("");
 
-        WKUserMediaPermissionRequestAllow(request, audioDeviceUID.get(), videoDeviceUID.get());
+        WKUserMediaPermissionRequestAllow(request.get(), audioDeviceUID.get(), videoDeviceUID.get());
     }
     m_userMediaPermissionRequests.clear();
 }

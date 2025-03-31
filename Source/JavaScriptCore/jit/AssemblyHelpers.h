@@ -130,9 +130,25 @@ public:
         else
             store64(src.gpr(), dst);
     }
+
+    void store64FromReg(Reg src, BaseIndex dst)
+    {
+        if (src.isFPR())
+            storeDouble(src.fpr(), dst);
+        else
+            store64(src.gpr(), dst);
+    }
 #endif
     
     void store32FromReg(Reg src, Address dst)
+    {
+        if (src.isFPR())
+            storeFloat(src.fpr(), dst);
+        else
+            store32(src.gpr(), dst);
+    }
+
+    void store32FromReg(Reg src, BaseIndex dst)
     {
         if (src.isFPR())
             storeFloat(src.fpr(), dst);
@@ -2019,6 +2035,7 @@ public:
     
     // allocationSize can be aliased with any of the other input GPRs. If it's not aliased then it
     // won't be clobbered.
+    void emitAllocateVariableSized(GPRReg resultGPR, const JITAllocator& allocator, Address subspaceAllocatorsBase, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath, SlowAllocationResult = SlowAllocationResult::ClearToNull);
     void emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspace&, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath, SlowAllocationResult = SlowAllocationResult::ClearToNull);
     
     template<typename ClassType, typename StructureType>

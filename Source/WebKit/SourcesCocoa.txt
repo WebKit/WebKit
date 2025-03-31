@@ -83,6 +83,7 @@ GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
+GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.mm
 
 ModelProcess/EntryPoint/Cocoa/XPCService/ModelServiceEntryPoint.mm
 ModelProcess/cocoa/ModelProcessCocoa.mm

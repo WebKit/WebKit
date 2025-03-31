@@ -30,14 +30,13 @@
 
 (allow syscall-unix
     (syscall-number
-        SYS_getsockname
-        SYS_getpeername
-        SYS_getsockopt
         SYS_recvmsg
-        SYS_sendmsg
-        SYS_setsockopt
     ))
-
-;; FIXME: Remove after rdar://138963941 is addressed
-(deny syscall-unix (with no-report) (syscall-number SYS_necp_open))
-(deny syscall-unix (with no-report) (syscall-number SYS_necp_client_action))
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-unix
+        (syscall-number
+            SYS_getsockname
+            SYS_getpeername
+            SYS_getsockopt
+            SYS_setsockopt)))
+(deny syscall-unix (with no-report))

@@ -310,7 +310,7 @@
     "web-platform-tests/speculation-rules": "skip",
     "web-platform-tests/speech-api": "import",
     "web-platform-tests/storage": "import",
-    "web-platform-tests/storage-access-api": "skip",
+    "web-platform-tests/storage-access-api": "import",
     "web-platform-tests/streams": "import",
     "web-platform-tests/subapps": "skip",
     "web-platform-tests/subresource-integrity": "import",

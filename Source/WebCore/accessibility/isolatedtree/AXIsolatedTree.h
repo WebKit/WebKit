@@ -95,7 +95,6 @@ enum class AXProperty : uint16_t {
     AccessibilityText,
     ActionVerb,
     AncestorFlags,
-    AutoCompleteValue,
     BackgroundColor,
     BrailleLabel,
     BrailleRoleDescription,
@@ -127,7 +126,12 @@ enum class AXProperty : uint16_t {
     DocumentURI,
     EmbeddedImageDescription,
     ExpandedTextValue,
+    ExplicitAutoCompleteValue,
+    ExplicitInvalidStatus,
+    ExplicitLiveRegionRelevant,
+    ExplicitLiveRegionStatus,
     ExplicitOrientation,
+    ExplicitPopupValue,
     ExtendedDescription,
 #if PLATFORM(COCOA)
     Font,
@@ -137,7 +141,6 @@ enum class AXProperty : uint16_t {
     HasApplePDFAnnotationAttribute,
     HasBoldFont,
     HasClickHandler,
-    HasHighlighting,
     HasItalicFont,
     HasLinethrough,
     HasPlainText,
@@ -155,9 +158,9 @@ enum class AXProperty : uint16_t {
     InnerHTML,
     InternalLinkElement,
     InsideLink,
-    InvalidStatus,
     IsGrabbed,
     IsARIATreeGridRow,
+    IsAnonymousMathOperator,
     IsAttachment,
     IsBusy,
     IsChecked,
@@ -212,8 +215,6 @@ enum class AXProperty : uint16_t {
     ListMarkerText,
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
     LiveRegionAtomic,
-    LiveRegionRelevant,
-    LiveRegionStatus,
     LocalizedActionVerb,
     MathFencedOpenString,
     MathFencedCloseString,
@@ -235,7 +236,6 @@ enum class AXProperty : uint16_t {
     OuterHTML,
     Path,
     PlaceholderValue,
-    PopupValue,
     PosInSet,
     PreventKeyboardDOMEventDispatch,
     RadioButtonGroup,
@@ -245,7 +245,6 @@ enum class AXProperty : uint16_t {
     RolePlatformString,
     RoleDescription,
     Rows,
-    RowGroupAncestorID,
     RowHeader,
     RowHeaders,
     RowIndex,
@@ -254,7 +253,7 @@ enum class AXProperty : uint16_t {
     SelectedTextRange,
     SetSize,
     SortDirection,
-    SpeechHint,
+    SpeakAs,
     StringValue,
     SubrolePlatformString,
     SupportsDragging,
@@ -268,7 +267,6 @@ enum class AXProperty : uint16_t {
     SupportsKeyShortcuts,
     SupportsPath,
     SupportsPosInSet,
-    SupportsRangeValue,
     SupportsSetSize,
     TagName,
     TextContentPrefixFromListMarker,
@@ -298,10 +296,11 @@ WTF::TextStream& operator<<(WTF::TextStream&, AXProperty);
 using AXPropertySet = HashSet<AXProperty, IntHash<AXProperty>, WTF::StrongEnumHashTraits<AXProperty>>;
 
 // If this type is modified, the switchOn statment in AXIsolatedObject::setProperty must be updated as well.
-using AXPropertyValueVariant = std::variant<std::nullptr_t, Markable<AXID>, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<Markable<AXID>, Markable<AXID>>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<Markable<AXID>>>, CharacterRange, std::pair<Markable<AXID>, CharacterRange>, TagName, std::optional<AccessibilityOrientation>
+using AXPropertyValueVariant = std::variant<std::nullptr_t, Markable<AXID>, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, std::optional<unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<Markable<AXID>, Markable<AXID>>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<Markable<AXID>>>, CharacterRange, std::pair<Markable<AXID>, CharacterRange>, TagName, std::optional<AccessibilityOrientation>
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
     , RetainPtr<id>
+    , OptionSet<SpeakAs>
 #endif // PLATFORM(COCOA)
 #if ENABLE(AX_THREAD_TEXT_APIS)
     , RetainPtr<CTFontRef>

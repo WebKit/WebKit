@@ -171,7 +171,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
 
         auto identifier = callback->m_id;
         InspectorInstrumentation::willFireAnimationFrame(document, identifier);
-        Ref { callback }->handleEvent(highResNowMs);
+        Ref { callback }->invoke(highResNowMs);
         InspectorInstrumentation::didFireAnimationFrame(document, identifier);
     }
 

@@ -132,9 +132,7 @@ enum LinearMediaPlayerErrors: Error {
         get { swiftOnlyData.spatialVideoMetadata }
         set {
             swiftOnlyData.spatialVideoMetadata = newValue
-#if canImport(LinearMediaKit, _version: 211.60.3)
             swiftOnlyData.peculiarEntity?.setVideoMetaData(to: swiftOnlyData.spatialVideoMetadata?.metadata)
-#endif
         }
     }
     var isImmersiveVideo: Bool {
@@ -194,9 +192,7 @@ enum LinearMediaPlayerErrors: Error {
         Logger.linearMediaPlayer.log("\(#function)")
 
         let viewController = PlayableViewController()
-#if canImport(LinearMediaKit, _version: 205)
         viewController.playable = self
-#endif
         viewController.prefersAutoDimming = true
         return viewController
     }
@@ -298,7 +294,6 @@ extension WKSLinearMediaPlayer {
     }
 
     private func maybeCreateSpatialOrImmersiveEntity() {
-#if canImport(LinearMediaKit, _version: 211.60.3)
         if swiftOnlyData.enteredFromInline || swiftOnlyData.peculiarEntity != nil || contentType == .immersive { return }
         if swiftOnlyData.isImmersiveVideo {
             contentType = .immersive
@@ -307,12 +302,14 @@ extension WKSLinearMediaPlayer {
         guard let metadata = swiftOnlyData.spatialVideoMetadata else { return }
         swiftOnlyData.peculiarEntity = ContentType.makeSpatialEntity(videoMetadata: metadata.metadata, extruded: true)
         swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .immersive : .portal;
+// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+#if canImport(XPC)
         swiftOnlyData.videoReceiverEndpointObserver = swiftOnlyData.peculiarEntity?.videoReceiverEndpointPublisher.sink {
             [weak self] in guard let endpoint = $0 else { return }
             self?.setVideoReceiverEndpoint(endpoint)
         }
-        contentType = .spatial
 #endif
+        contentType = .spatial
     }
 
     private func maybeClearSpatialOrImmersiveEntity() {
@@ -320,16 +317,12 @@ extension WKSLinearMediaPlayer {
             contentType = .none
             return
         }
-#if canImport(LinearMediaKit, _version: 211.60.3)
         if swiftOnlyData.peculiarEntity == nil { return }
         swiftOnlyData.videoReceiverEndpointObserver = nil;
         swiftOnlyData.peculiarEntity = nil;
         contentType = .none; // this causes a call to makeDefaultEntity
-#endif
     }
 }
-
-#if canImport(LinearMediaKit, _version: 205)
 
 @_spi(Internal) extension WKSLinearMediaPlayer: @retroactive Playable {
     public var selectedPlaybackRatePublisher: AnyPublisher<Double, Never> {
@@ -758,7 +751,6 @@ extension WKSLinearMediaPlayer {
     public func makeDefaultEntity() -> Entity? {
         Logger.linearMediaPlayer.log("\(#function)")
 
-#if canImport(LinearMediaKit, _version: 211.60.3)
         // This gets called from maybeCreateSpatialOrImmersiveEntity through the KVO when setting
         // peculiarEntity. As such, we can't check if the peculiarEntity is set or not.
         // We will return nil here on the first call and will get call back again once
@@ -766,7 +758,6 @@ extension WKSLinearMediaPlayer {
         if swiftOnlyData.spatialVideoMetadata != nil && !swiftOnlyData.enteredFromInline {
             return swiftOnlyData.peculiarEntity
         }
-#endif
         if let captionLayer {
             let entity = ContentType.makeEntity(captionLayer: captionLayer)
             swiftOnlyData.defaultEntity = entity
@@ -838,12 +829,13 @@ extension WKSLinearMediaPlayer {
         delegate?.linearMediaPlayer?(self, setMuted: value)
     }
 
+// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+#if canImport(XPC)
     public func setVideoReceiverEndpoint(_ endpoint: xpc_object_t) {
         Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayer?(self, setVideoReceiverEndpoint: endpoint)
     }
+#endif
 }
-
-#endif // canImport(LinearMediaKit, _version: 205)
 
 #endif // os(visionOS)

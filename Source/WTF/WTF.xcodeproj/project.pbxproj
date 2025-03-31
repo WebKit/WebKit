@@ -1156,9 +1156,8 @@
 		0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParallelHelperPool.cpp; sourceTree = "<group>"; };
 		0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelHelperPool.h; sourceTree = "<group>"; };
 		132743924FC54E469F5A8E6E /* StdUnorderedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedSet.h; sourceTree = "<group>"; };
-		1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractRefCountedAndCanMakeWeakPtr.h; path = wtf/AbstractRefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
+		1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractRefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
-		140ECC352C9906DF00473E19 /* RefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RefCountedAndCanMakeWeakPtr.h; path = wtf/RefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		143A90B92CC2F08D002D3E27 /* IndexedRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
 		143DDE9520C8BC37007F76FA /* Entitlements.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Entitlements.mm; sourceTree = "<group>"; };
 		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
@@ -1166,7 +1165,7 @@
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
 		1447AEC518FCE57700B3D7FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		1447AECA18FCE5B900B3D7FF /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
-		144EB7452CBC94B100926E1B /* AbstractRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractRefCounted.h; path = wtf/AbstractRefCounted.h; sourceTree = "<group>"; };
+		144EB7452CBC94B100926E1B /* AbstractRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractRefCounted.h; sourceTree = "<group>"; };
 		145DE2872CE95CE700F9F1D2 /* ZippedRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZippedRange.h; sourceTree = "<group>"; };
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
@@ -2085,9 +2084,6 @@
 		5D247B5714689B8600E78B76 = {
 			isa = PBXGroup;
 			children = (
-				1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */,
-				144EB7452CBC94B100926E1B /* AbstractRefCounted.h */,
-				140ECC352C9906DF00473E19 /* RefCountedAndCanMakeWeakPtr.h */,
 				5D247B6D14689C4700E78B76 /* Configurations */,
 				DDE9931F278D0FAA00F60D26 /* Frameworks */,
 				5D247B6314689B8600E78B76 /* Products */,
@@ -2193,6 +2189,8 @@
 				A8A4731B151A825B004123FF /* text */,
 				A8A47339151A825B004123FF /* threads */,
 				A8A47348151A825B004123FF /* unicode */,
+				144EB7452CBC94B100926E1B /* AbstractRefCounted.h */,
+				1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */,
 				5363861E2CFE391C0034E883 /* AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h */,
 				E3B8E6012961EA7600A8AEE3 /* AccessibleAddress.h */,
 				CDCC9BC422382FCE00FFB51C /* AggregateLogger.h */,

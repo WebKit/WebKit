@@ -27,23 +27,40 @@
 #include "config.h"
 #include "PerfLog.h"
 
-#if ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
+#if ENABLE(ASSEMBLER)
 
 #include "Options.h"
 #include <array>
 #include <fcntl.h>
 #include <mutex>
-#include <sys/mman.h>
 #include <sys/stat.h>
-#include <sys/syscall.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <wtf/DataLog.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if OS(LINUX)
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
+
+#if OS(WINDOWS)
+#include <io.h>
+
+inline static int open(const char* filename, int oflag, int pmode)
+{
+    return _open(filename, oflag, pmode);
+}
+
+inline static FILE* fdopen(int fd, const char* mode)
+{
+    return _fdopen(fd, mode);
+}
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -152,7 +169,7 @@ static inline uint32_t getCurrentThreadID()
     pthread_threadid_np(NULL, &thread);
     return static_cast<uint32_t>(thread);
 #else
-#error unsupported platform
+    return 0;
 #endif
 }
 
@@ -238,4 +255,4 @@ void PerfLog::log(CString&& name, MacroAssemblerCodeRef<LinkBufferPtrTag> code)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
+#endif // ENABLE(ASSEMBLER)

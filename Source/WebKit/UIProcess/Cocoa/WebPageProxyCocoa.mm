@@ -285,19 +285,27 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
 void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
 {
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "WebPageProxy::createSandboxExtensionsIfNeeded: %zu files", files.size());
+
     if (!files.size())
         return;
+
+    auto createSandboxExtension = [protectedThis = Ref { *this }] (const String& path) {
+        auto token = protectedThis->protectedLegacyMainFrameProcess()->protectedConnection()->getAuditToken();
+        ASSERT(token);
+
+        if (token) {
+            if (auto handle = SandboxExtension::createHandleForReadByAuditToken(path, *token))
+                return WTFMove(*handle);
+        } else if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
+            return WTFMove(*handle);
+        return SandboxExtension::Handle();
+    };
 
     if (files.size() == 1) {
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
-            auto token = protectedLegacyMainFrameProcess()->protectedConnection()->getAuditToken();
-            ASSERT(token);
-            if (token) {
-                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *token))
-                    fileReadHandle = WTFMove(*handle);
-            } else if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly))
-                fileReadHandle = WTFMove(*handle);
+            fileReadHandle = createSandboxExtension("/"_s);
             willAcquireUniversalFileReadSandboxExtension(m_legacyMainFrameProcess);
         }
     }
@@ -305,8 +313,7 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     for (auto& file : files) {
         if (![[NSFileManager defaultManager] fileExistsAtPath:file])
             continue;
-        if (auto handle = SandboxExtension::createHandle(file, SandboxExtension::Type::ReadOnly))
-            fileUploadHandles.append(WTFMove(*handle));
+        fileUploadHandles.append(createSandboxExtension(file));
     }
 }
 
@@ -1524,13 +1531,6 @@ bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession:
 }
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
-
-#if HAVE(HOSTED_CORE_ANIMATION)
-WTF::MachSendRight WebPageProxy::createMachSendRightForRemoteLayerServer()
-{
-    return MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
-}
-#endif
 
 void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(Expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {

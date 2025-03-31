@@ -33,10 +33,10 @@
     void getEnabledRulesets([Optional, CallbackHandler] function callback);
 
     [RaisesException] void updateDynamicRules([NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    void getDynamicRules([Optional, CallbackHandler] function callback);
+    void getDynamicRules([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void updateSessionRules([NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    void getSessionRules([Optional, CallbackHandler] function callback);
+    void getSessionRules([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void getMatchedRules([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
 

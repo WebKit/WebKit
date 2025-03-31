@@ -116,13 +116,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
 void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 {
     auto notificationName = notificationPlatformName(AXNotification::AnnouncementRequested).createNSString();
-    NSString *nsMessage = static_cast<NSString *>(message);
+    RetainPtr nsMessage = message.createNSString();
     if (RefPtr root = getOrCreate(m_document->view())) {
         [root->wrapper() accessibilityOverrideProcessNotification:notificationName.get() notificationData:[nsMessage dataUsingEncoding:NSUTF8StringEncoding]];
 
         // To simulate AX notifications for LayoutTests on the simulator, call
         // the wrapper's accessibilityPostedNotification.
-        [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : nsMessage }];
+        [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : nsMessage.get() }];
     }
 }
 

@@ -182,7 +182,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 };
 
                 auto videoFrame = WebCodecsVideoFrame::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.frame), WTFMove(init));
-                decoder.m_output->handleEvent(WTFMove(videoFrame));
+                decoder.m_output->invoke(WTFMove(videoFrame));
             });
         });
 
@@ -288,7 +288,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)
     setState(WebCodecsCodecState::Closed);
     m_internalDecoder = nullptr;
     if (exception.code() != ExceptionCode::AbortError)
-        m_error->handleEvent(DOMException::create(WTFMove(exception)));
+        m_error->invoke(DOMException::create(WTFMove(exception)));
 
     return { };
 }

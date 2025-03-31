@@ -50,12 +50,7 @@ struct WebViewRepresentable {
 
         webView.allowsBackForwardNavigationGestures = environment.webViewAllowsBackForwardNavigationGestures.value != .disabled
         webView.allowsLinkPreview = environment.webViewAllowsLinkPreview.value != .disabled
-
-#if os(macOS)
-        webView.allowsMagnification = environment.webViewMagnificationGestures.value == .enabled // automatic -> false
-#else
-        webView.allowsMagnification = environment.webViewMagnificationGestures.value != .disabled // automatic -> true
-#endif
+        webView.allowsMagnification = environment.webViewMagnificationGestures.value != .disabled
 
         let isOpaque = environment.webViewContentBackground != .hidden
 

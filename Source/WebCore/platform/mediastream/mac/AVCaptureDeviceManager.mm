@@ -62,10 +62,13 @@ namespace WebCore {
 void AVCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     if (!m_isInitialized) {
-        refreshCaptureDevicesInternal([this, callback = WTFMove(callback)]() mutable {
-            m_isInitialized = true;
-            callback();
-        }, ShouldSetUserPreferredCamera::Yes);
+        registerForDeviceNotifications();
+        setUserPreferredCamera([callback = WTFMove(callback)]() mutable {
+            AVCaptureDeviceManager::singleton().refreshCaptureDevices([callback = WTFMove(callback)]() mutable {
+                AVCaptureDeviceManager::singleton().m_isInitialized = true;
+                callback();
+            });
+        });
         return;
     }
     callback();
@@ -172,10 +175,8 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     if (!isAvailable())
         return { };
 
-    if (!m_avCaptureDevices) {
+    if (!m_avCaptureDevices)
         m_avCaptureDevices = adoptNS([[NSMutableArray alloc] init]);
-        registerForDeviceNotifications();
-    }
 
     updateCachedAVCaptureDevices();
 
@@ -226,28 +227,33 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     return deviceList;
 }
 
-void AVCaptureDeviceManager::refreshCaptureDevicesInternal(CompletionHandler<void()>&& callback, ShouldSetUserPreferredCamera shouldSetUserPreferredCamera)
+void AVCaptureDeviceManager::processRefreshedCaptureDevices(CompletionHandler<void()>&& callback, Vector<CaptureDevice>&& deviceList)
 {
-    m_dispatchQueue->dispatch([this, callback = WTFMove(callback), shouldSetUserPreferredCamera]() mutable {
-        if (shouldSetUserPreferredCamera == ShouldSetUserPreferredCamera::Yes)
-            setUserPreferredCamera();
-        RunLoop::protectedMain()->dispatch([this, callback = WTFMove(callback), deviceList = crossThreadCopy(retrieveCaptureDevices())]() mutable {
-            bool deviceHasChanged = m_devices.size() != deviceList.size();
-            if (!deviceHasChanged) {
-                for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {
-                    if (m_devices[cptr].persistentId() != deviceList[cptr].persistentId() || m_devices[cptr].enabled() != deviceList[cptr].enabled()) {
-                        deviceHasChanged = true;
-                        break;
-                    }
-                }
-            }
+    ASSERT(isMainThread());
 
-            if (deviceHasChanged) {
-                m_devices = WTFMove(deviceList);
-                if (m_isInitialized)
-                    deviceChanged();
+    bool deviceHasChanged = m_devices.size() != deviceList.size();
+    if (!deviceHasChanged) {
+        for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {
+            if (m_devices[cptr].persistentId() != deviceList[cptr].persistentId() || m_devices[cptr].enabled() != deviceList[cptr].enabled()) {
+                deviceHasChanged = true;
+                break;
             }
-            callback();
+        }
+    }
+
+    if (deviceHasChanged) {
+        m_devices = WTFMove(deviceList);
+        if (m_isInitialized)
+            deviceChanged();
+    }
+    callback();
+}
+
+void AVCaptureDeviceManager::refreshCaptureDevices(CompletionHandler<void()>&& callback)
+{
+    m_dispatchQueue->dispatch([callback = WTFMove(callback)]() mutable {
+        RunLoop::protectedMain()->dispatch([callback = WTFMove(callback), deviceList = crossThreadCopy(AVCaptureDeviceManager::singleton().retrieveCaptureDevices())]() mutable {
+            AVCaptureDeviceManager::singleton().processRefreshedCaptureDevices(WTFMove(callback), WTFMove(deviceList));
         });
     });
 }
@@ -284,19 +290,24 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
 #endif
 }
 
-void AVCaptureDeviceManager::setUserPreferredCamera()
+void AVCaptureDeviceManager::setUserPreferredCamera(CompletionHandler<void()>&& callback)
 {
 #if HAVE(AVCAPTUREDEVICE) && PLATFORM(IOS_FAMILY)
     if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(setUserPreferredCamera:)]) {
-        auto currentDevices = currentCameras();
-        for (AVCaptureDevice *platformDevice in currentDevices.get()) {
-            if (isVideoDevice(platformDevice) && [platformDevice position] == AVCaptureDevicePositionFront) {
-                [PAL::getAVCaptureDeviceClass() setUserPreferredCamera:platformDevice];
-                break;
+        m_dispatchQueue->dispatch([callback = WTFMove(callback)]() mutable {
+            auto currentDevices = AVCaptureDeviceManager::singleton().currentCameras();
+            for (AVCaptureDevice *platformDevice in currentDevices.get()) {
+                if (isVideoDevice(platformDevice) && [platformDevice position] == AVCaptureDevicePositionFront) {
+                    [PAL::getAVCaptureDeviceClass() setUserPreferredCamera:platformDevice];
+                    break;
+                }
             }
-        }
+            RunLoop::protectedMain()->dispatch(WTFMove(callback));
+        });
+        return;
     }
 #endif
+    callback();
 }
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()

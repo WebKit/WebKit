@@ -101,6 +101,7 @@ public:
     virtual void beginStageModeTransform(const TransformationMatrix&);
     virtual void updateStageModeTransform(const TransformationMatrix&);
     virtual void endStageModeInteraction();
+    virtual void renderingAbruptlyStopped();
 #endif
 };
 

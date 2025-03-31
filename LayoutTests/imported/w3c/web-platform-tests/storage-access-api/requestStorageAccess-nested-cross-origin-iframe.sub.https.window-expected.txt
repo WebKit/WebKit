@@ -1,0 +1,5 @@
+Blocked access to external URL https://www.localhost:9443/storage-access-api/resources/requestStorageAccess-iframe.https.html?testCase=nested-cross-origin-frame
+
+Harness Error (TIMEOUT), message = null
+
+

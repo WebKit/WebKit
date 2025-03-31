@@ -53,6 +53,8 @@
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
 #include "WebCoreOpaqueRootInlines.h"
+#include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -1546,6 +1548,15 @@ void IDBTransaction::autoCommit()
     if (!m_openRequests.isEmpty())
         return;
     ASSERT(!m_currentlyCompletingRequest);
+
+    RefPtr context = scriptExecutionContext();
+    RefPtr scope = context ? dynamicDowncast<WorkerOrWorkletGlobalScope>(*context) : nullptr;
+    CheckedPtr scriptController = scope ? scope->script() : nullptr;
+    if (scriptController && scriptController->isTerminatingExecution() && scriptController->isExecutionForbidden()) {
+        // In this case, transaction should be aborted when context is destroyed.
+        RELEASE_LOG(Storage, "IDBTransaction::autoCommit: Disabled as script execution is terminated");
+        return;
+    }
 
     commitInternal();
 }

@@ -47,8 +47,6 @@ public:
     bool isColumnHeader() const final;
     bool isRowHeader() const final;
 
-    std::optional<AXID> rowGroupAncestorID() const final;
-
     virtual AccessibilityTable* parentTable() const;
 
     // Returns the start location and row span of the cell.
@@ -58,8 +56,8 @@ public:
 
     AccessibilityChildrenVector rowHeaders() final;
 
-    int axColumnIndex() const final;
-    int axRowIndex() const final;
+    std::optional<unsigned> axColumnIndex() const final;
+    std::optional<unsigned> axRowIndex() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
     void incrementEffectiveRowSpan() { ++m_effectiveRowSpan; }

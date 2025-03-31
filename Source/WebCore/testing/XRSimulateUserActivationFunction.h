@@ -39,8 +39,8 @@ class XRSimulateUserActivationFunction : public RefCounted<XRSimulateUserActivat
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(void) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(void) = 0;
+    virtual CallbackResult<void> invoke(void) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(void) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

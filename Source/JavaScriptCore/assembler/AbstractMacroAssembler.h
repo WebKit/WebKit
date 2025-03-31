@@ -445,6 +445,10 @@ public:
     public:
         Label() = default;
 
+        Label(AbstractMacroAssemblerType& masm)
+            : Label(&masm)
+        { }
+
         Label(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
         {
@@ -687,6 +691,7 @@ public:
             return result;
         }
 
+        void link(AbstractMacroAssemblerType& masm) const { link(&masm); }
         void link(AbstractMacroAssemblerType* masm) const
         {
             masm->invalidateAllTempRegisters();
@@ -709,8 +714,7 @@ public:
 #endif
         }
 
-        void link(AbstractMacroAssemblerType& masm) const { link(&masm); }
-        
+        void linkTo(Label label, AbstractMacroAssemblerType& masm) const { linkTo(label, &masm); }
         void linkTo(Label label, AbstractMacroAssemblerType* masm) const
         {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
@@ -802,6 +806,7 @@ public:
                 append(jump);
         }
 
+        void link(AbstractMacroAssemblerType& masm) const { link(&masm); }
         void link(AbstractMacroAssemblerType* masm) const
         {
             size_t size = m_jumps.size();

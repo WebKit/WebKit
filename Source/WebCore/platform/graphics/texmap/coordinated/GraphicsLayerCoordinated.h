@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include "Damage.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
 #include "TextureMapperAnimation.h"
@@ -171,10 +172,6 @@ private:
     IntRect transformedRect(const FloatRect&) const;
     IntRect transformedRectIncludingFuture(const FloatRect&) const;
     void updateGeometry(float pageScaleFactor, const FloatPoint&);
-#if ENABLE(DAMAGE_TRACKING)
-    void updateDamage(const FloatSize&);
-#endif
-    void updateDirtyRegion(const FloatSize&);
     void updateBackdropFilters();
     void updateBackdropFiltersRect();
     void updateAnimations();
@@ -201,10 +198,7 @@ private:
     bool m_hasDescendantsWithPendingTilesCreation { false };
     bool m_hasDescendantsWithRunningTransformAnimations { false };
     FloatSize m_pixelAlignmentOffset;
-    struct {
-        bool fullRepaint { false };
-        Vector<FloatRect> rects;
-    } m_dirtyRegion;
+    std::optional<Damage> m_dirtyRegion;
     FloatRect m_visibleRect;
     struct {
         GraphicsLayerTransform current;

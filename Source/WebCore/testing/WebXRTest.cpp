@@ -116,7 +116,7 @@ void WebXRTest::simulateUserActivation(Document& document, XRSimulateUserActivat
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulateuseractivation
     // Invoke function as if it had transient activation.
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &document);
-    function.handleEvent();
+    function.invoke();
 }
 
 void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)

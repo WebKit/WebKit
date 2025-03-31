@@ -520,7 +520,7 @@ void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& e
 {
     list.clear();
 
-    auto keyframeRules = keyframeRulesForName(list.animationName(), defaultTimingFunction);
+    auto keyframeRules = keyframeRulesForName(list.keyframesName(), defaultTimingFunction);
     if (keyframeRules.isEmpty())
         return;
 

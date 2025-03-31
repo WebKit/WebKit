@@ -47,8 +47,8 @@ public:
 
     virtual bool hasCallback() const = 0;
 
-    virtual CallbackResult<void> handleEvent(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
+    virtual CallbackResult<void> invoke(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
 };
 
 } // namespace WebCore

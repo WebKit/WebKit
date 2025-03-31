@@ -94,9 +94,9 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
 /*!
  @abstract A key command representation of the web extension command for use in the responder chain.
  @discussion Provides a ``UIKeyCommand`` instance representing the web extension command, ready for integration in the app.
- The key command is fully configured with the necessary input key and modifier flags to perform the associated command upon activation.
- It can be included in a view controller or other responder's ``keyCommands`` property, enabling keyboard activation and discoverability
- of the web extension command.
+ The property is `nil` if no shortcut is defined. Otherwise, the key command is fully configured with the necessary input key and modifier flags
+ to perform the associated command upon activation. It can be included in a view controller or other responder's ``keyCommands`` property, enabling
+ keyboard activation and discoverability of the web extension command.
  */
 @property (nonatomic, readonly, copy, nullable) UIKeyCommand *keyCommand;
 #endif // TARGET_OS_IPHONE

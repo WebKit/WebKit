@@ -122,7 +122,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
                 if (foundCallback == playback.m_callbackMap.end())
                     return;
 
-                foundCallback->value->handleEvent(available);
+                foundCallback->value->invoke(available);
             });
 
             // 8.2 Run the algorithm to monitor the list of available remote playback devices.
@@ -433,7 +433,7 @@ void RemotePlayback::availabilityChanged(bool available)
 
         // Protect m_callbackMap against mutation while it's being iterated over.
         for (auto& callback : copyToVector(playback.m_callbackMap.values()))
-            callback->handleEvent(available);
+            callback->invoke(available);
     });
 }
 

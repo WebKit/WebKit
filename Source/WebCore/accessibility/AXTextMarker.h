@@ -347,6 +347,8 @@ public:
     // The index of the line this text marker is on relative to the nearest editable ancestor (or start of the page if there are no editable ancestors).
     // Returns -1 if the line couldn't be computed (i.e. because `this` is invalid).
     int lineIndex() const;
+    // After resolving this marker to a text-run marker, what line does the offset point to?
+    AXTextRunLineID lineID() const;
     // Returns the line number for the character index within the descendants of this marker's object.
     // Returns -1 if the index is out of bounds, or this marker isn't valid.
     int lineNumberForIndex(unsigned) const;
@@ -359,8 +361,6 @@ public:
 private:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     const AXTextRuns* runs() const;
-    // After resolving this marker to a text-run marker, what line does the offset point to?
-    AXTextRunLineID lineID() const;
     // Are we at the start or end of a line?
     bool atLineBoundaryForDirection(AXDirection) const;
     // Fast path to calcuate line boundary when a callsite already has the runs and runIndex available.
@@ -477,6 +477,10 @@ inline bool operator>=(const AXTextMarkerRange& range1, const AXTextMarkerRange&
 {
     return range1 == range2 || range1 > range2;
 }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+String listMarkerTextOnSameLine(const AXTextMarker&);
+#endif
 
 namespace Accessibility {
 

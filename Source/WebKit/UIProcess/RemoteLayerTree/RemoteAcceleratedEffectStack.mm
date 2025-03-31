@@ -139,15 +139,15 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
     }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity)) {
-        auto *opacity = @(computedValues.opacity);
-        m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity additive:NO group:m_presentationModifierGroup.get()]);
+        RetainPtr opacity = @(computedValues.opacity);
+        m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity.get() additive:NO group:m_presentationModifierGroup.get()]);
         [layer addPresentationModifier:m_opacityPresentationModifier.get()];
     }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
-        auto *transform = [NSValue valueWithCATransform3D:computedTransform];
-        m_transformPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"transform" initialValue:transform additive:NO group:m_presentationModifierGroup.get()]);
+        RetainPtr transform = [NSValue valueWithCATransform3D:computedTransform];
+        m_transformPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"transform" initialValue:transform.get() additive:NO group:m_presentationModifierGroup.get()]);
         [layer addPresentationModifier:m_transformPresentationModifier.get()];
     }
 
@@ -164,14 +164,14 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
         WebCore::PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
-        auto *opacity = @(computedValues.opacity);
-        [m_opacityPresentationModifier setValue:opacity];
+        RetainPtr opacity = @(computedValues.opacity);
+        [m_opacityPresentationModifier setValue:opacity.get()];
     }
 
     if (m_transformPresentationModifier) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
-        auto *transform = [NSValue valueWithCATransform3D:computedTransform];
-        [m_transformPresentationModifier setValue:transform];
+        RetainPtr transform = [NSValue valueWithCATransform3D:computedTransform];
+        [m_transformPresentationModifier setValue:transform.get()];
     }
 
     [m_presentationModifierGroup flush];

@@ -110,13 +110,13 @@ bool checkUsageDescriptionStringForSpeechRecognition()
     return dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
 }
 
-static NSString* visibleDomain(const String& host)
+static RetainPtr<NSString> visibleDomain(const String& host)
 {
     auto domain = WTF::URLHelpers::userVisibleURL(host.utf8());
-    return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString().autorelease() : static_cast<NSString *>(domain);
+    return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString() : domain.createNSString();
 }
 
-NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
+RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
 {
     if (origin.protocol() != "http"_s && origin.protocol() != "https"_s)
         return nil;
@@ -134,25 +134,25 @@ NSString *applicationVisibleName()
 
 static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)
 {
-    NSString *visibleOrigin = applicationVisibleNameFromOrigin(origin);
+    RetainPtr visibleOrigin = applicationVisibleNameFromOrigin(origin);
     if (!visibleOrigin)
         visibleOrigin = applicationVisibleName();
 
     switch (reason) {
     case MediaPermissionReason::Camera:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin.get()];
     case MediaPermissionReason::CameraAndMicrophone:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin.get()];
     case MediaPermissionReason::Microphone:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin.get()];
     case MediaPermissionReason::ScreenCapture:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe your screen?", @"Message for screen sharing prompt"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe your screen?", @"Message for screen sharing prompt"), visibleOrigin.get()];
     case MediaPermissionReason::DeviceOrientation:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), visibleOrigin.get()];
     case MediaPermissionReason::Geolocation:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleOrigin];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleOrigin.get()];
     case MediaPermissionReason::SpeechRecognition:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host())];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host()).get()];
     }
 }
 

@@ -67,7 +67,7 @@ bool checkSandboxRequirementForType(MediaPermissionType);
 bool checkUsageDescriptionStringForType(MediaPermissionType);
 bool checkUsageDescriptionStringForSpeechRecognition();
 
-NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
+RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
 NSString *applicationVisibleName();
 void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 

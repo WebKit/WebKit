@@ -254,37 +254,6 @@
     [% END %]
 
   [% END %]
-  <script>
-    const commentDateTimeFormatter = new Intl.RelativeTimeFormat(undefined, {numeric: 'auto'});
-    const DIVISIONS = [
-      { amount: 60, name: "seconds" },
-      { amount: 60, name: "minutes" },
-      { amount: 24, name: "hours" },
-      { amount: 7, name: "days" }
-    ];
-    function formatTimeAgo(date) {
-      let duration = (date - new Date()) / 1000
-    
-      for (let i = 0; i < DIVISIONS.length; i++) {
-        const division = DIVISIONS[i]
-        if (Math.abs(duration) < division.amount) {
-          return commentDateTimeFormatter.format(Math.round(duration), division.name)
-        }
-        duration /= division.amount
-      }
-      
-      return date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }) + " " + date.toLocaleTimeString(undefined, { timeZoneName: "short" });
-    }
-    [...document.getElementsByClassName("torelativedatetime")].forEach(element => {
-      let commentDateTime = new Date(element.getAttribute('data-ts').replace(' ','T') + '.000-0800');
-      element.innerHTML = formatTimeAgo(commentDateTime);
-    });
-  </script>
   
   [% IF user.settings.comment_box_position.value == 'after_comments' %]
       [% PROCESS comment_box %]

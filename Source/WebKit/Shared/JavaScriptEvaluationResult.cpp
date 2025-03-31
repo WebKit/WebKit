@@ -60,6 +60,11 @@ JavaScriptEvaluationResult::JavaScriptEvaluationResult(JSGlobalContextRef contex
     , m_wireBytes(m_valueFromJS ? m_valueFromJS->wireBytes().span() : std::span<const uint8_t>())
 {
 }
+
+std::optional<JavaScriptEvaluationResult> JavaScriptEvaluationResult::extract(JSGlobalContextRef context, JSValueRef value)
+{
+    return JavaScriptEvaluationResult { context, value };
+}
 #endif
 
 JavaScriptEvaluationResult::JavaScriptEvaluationResult(JavaScriptEvaluationResult&&) = default;

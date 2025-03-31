@@ -32,6 +32,6 @@ assertThrowsInstanceOf(() => iter.forEach(1), TypeError);
 
 assert.compareArray(
   log,
-  ["get: forEach"]
+  ["get: forEach", "get: return"]
 );
 

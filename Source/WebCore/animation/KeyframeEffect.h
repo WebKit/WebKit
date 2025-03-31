@@ -298,8 +298,7 @@ private:
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
-    AtomString m_keyframesName;
-    BlendingKeyframes m_blendingKeyframes { emptyAtom() };
+    BlendingKeyframes m_blendingKeyframes { };
     UncheckedKeyHashSet<AnimatableCSSProperty> m_animatedProperties;
     UncheckedKeyHashSet<AnimatableCSSProperty> m_acceleratedProperties;
     UncheckedKeyHashSet<AnimatableCSSProperty> m_acceleratedPropertiesWithImplicitKeyframe;

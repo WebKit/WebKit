@@ -44,7 +44,6 @@ WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
 WebProcess/Network/webrtc/LibWebRTCProvider.cpp
 WebProcess/Network/webrtc/WebMDNSRegister.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
-WebProcess/Plugins/WebPluginInfoProvider.cpp
 WebProcess/Storage/WebSWClientConnection.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
 WebProcess/UserContent/WebUserContentController.cpp

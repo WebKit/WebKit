@@ -39,8 +39,8 @@ class NotificationPermissionCallback : public RefCounted<NotificationPermissionC
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(Notification::Permission) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(Notification::Permission) = 0;
+    virtual CallbackResult<void> invoke(Notification::Permission) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(Notification::Permission) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

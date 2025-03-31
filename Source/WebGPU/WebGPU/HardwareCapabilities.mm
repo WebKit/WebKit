@@ -97,11 +97,12 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     }
 #endif
 
-    return {
+    return HardwareCapabilities::BaseCapabilities {
         .argumentBuffersTier = [device argumentBuffersSupport],
-        .supportsNonPrivateDepthStencilTextures = false, // To be filled in by the caller.
         .timestampCounterSet = timestampCounterSet,
         .statisticCounterSet = statisticCounterSet,
+        .memoryBarrierLimit = std::numeric_limits<decltype(HardwareCapabilities::BaseCapabilities::memoryBarrierLimit)>::max(),
+        .supportsNonPrivateDepthStencilTextures = false, // To be filled in by the caller.
         .canPresentRGB10A2PixelFormats = false, // To be filled in by the caller.
         .supportsResidencySets = false,
     };
@@ -154,6 +155,7 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
+    baseCapabilities.memoryBarrierLimit = std::numeric_limits<decltype(baseCapabilities.memoryBarrierLimit)>::max();
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -320,6 +322,10 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = false;
     baseCapabilities.canPresentRGB10A2PixelFormats = true;
+    if (![device supportsFamily:MTLGPUFamilyApple4])
+        baseCapabilities.memoryBarrierLimit = 0;
+    else if (![device supportsFamily:MTLGPUFamilyApple8])
+        baseCapabilities.memoryBarrierLimit = 512;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -441,13 +447,14 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
     ASSERT(previous.argumentBuffersTier == next.argumentBuffersTier);
     ASSERT((!previous.timestampCounterSet && !next.timestampCounterSet) || [previous.timestampCounterSet isEqual:next.timestampCounterSet]);
     ASSERT(!previous.statisticCounterSet || [previous.statisticCounterSet isEqual:next.statisticCounterSet]);
-    return {
-        previous.argumentBuffersTier,
-        previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
-        previous.timestampCounterSet,
-        previous.statisticCounterSet,
-        previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
-        previous.supportsResidencySets || next.supportsResidencySets,
+    return HardwareCapabilities::BaseCapabilities {
+        .argumentBuffersTier = previous.argumentBuffersTier,
+        .timestampCounterSet = previous.timestampCounterSet,
+        .statisticCounterSet = previous.statisticCounterSet,
+        .memoryBarrierLimit = std::min(previous.memoryBarrierLimit, next.memoryBarrierLimit),
+        .supportsNonPrivateDepthStencilTextures = previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
+        .canPresentRGB10A2PixelFormats = previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
+        .supportsResidencySets = previous.supportsResidencySets || next.supportsResidencySets,
     };
 }
 

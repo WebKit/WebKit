@@ -842,10 +842,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     updateActivityState();
     updateThrottleState();
     updateHiddenPageThrottlingAutoIncreases();
-    
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    internals().layerHostingMode = isInWindow() ? WebPageProxy::protectedPageClient()->viewLayerHostingMode() : LayerHostingMode::OutOfProcess;
-#endif
 
     platformInitialize();
 
@@ -916,8 +912,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->setPresentingApplicationAuditToken(process.coreProcessIdentifier(), m_webPageID, m_presentingApplicationAuditToken);
 #endif
-
-    setURLSchemeHandlerForScheme(m_aboutSchemeHandler, AboutSchemeHandler::scheme);
 }
 
 WebPageProxy::~WebPageProxy()
@@ -1881,7 +1875,17 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     if (process.isLaunching() || process.wasTerminated())
         return completionHandler(std::nullopt);
 #endif
-    SandboxExtension::Handle sandboxExtensionHandle;
+
+    auto createSandboxExtension = [protectedProcess = Ref { process }] (const String& path) {
+#if HAVE(AUDIT_TOKEN)
+        auto token = protectedProcess->protectedConnection()->getAuditToken();
+        ASSERT(token);
+        if (token)
+            return SandboxExtension::createHandleForReadByAuditToken(path, *token);
+#endif
+        return SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
+    };
+
     if (!resourceDirectoryURL.isEmpty()) {
         if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL)) {
 #if PLATFORM(COCOA)
@@ -1891,26 +1895,8 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
             return completionHandler(std::nullopt);
         }
 
-        bool createdExtension = false;
-#if HAVE(AUDIT_TOKEN)
-        auto token = process.protectedConnection()->getAuditToken();
-        ASSERT(token);
-        if (token) {
-            if (auto handle = SandboxExtension::createHandleForReadByAuditToken(resourceDirectoryURL.fileSystemPath(), *token)) {
-                sandboxExtensionHandle = WTFMove(*handle);
-                createdExtension = true;
-            }
-        } else
-#endif
-        {
-            if (auto handle = SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly)) {
-                sandboxExtensionHandle = WTFMove(*handle);
-                createdExtension = true;
-            }
-        }
-
-        if (createdExtension) {
-            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string(), [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
+        if (auto sandboxExtensionHandle = createSandboxExtension(resourceDirectoryURL.fileSystemPath())) {
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string(), [sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(WTFMove(sandboxExtensionHandle));
             });
             return;
@@ -1923,27 +1909,11 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
-    bool createdExtension = false;
-#if HAVE(AUDIT_TOKEN)
-    if (auto token = process.protectedConnection()->getAuditToken()) {
-        if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *token)) {
-            createdExtension = true;
-            sandboxExtensionHandle = WTFMove(*handle);
-        }
-    } else
-#endif
-    {
-        if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly)) {
-            createdExtension = true;
-            sandboxExtensionHandle = WTFMove(*handle);
-        }
-    }
-
-    if (createdExtension) {
+    if (auto sandboxExtensionHandle = createSandboxExtension("/"_s)) {
         willAcquireUniversalFileReadSandboxExtension(process);
         auto baseURL = url.truncatedForUseAsBase();
         auto basePath = baseURL.fileSystemPath();
-        process.assumeReadAccessToBaseURL(*this, basePath, [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
+        process.assumeReadAccessToBaseURL(*this, basePath, [sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(WTFMove(sandboxExtensionHandle));
         });
         return;
@@ -1959,27 +1929,25 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     auto basePath = baseURL.fileSystemPath();
     if (basePath.isNull())
         return completionHandler(std::nullopt);
-#if HAVE(AUDIT_TOKEN)
-    if (auto token = process.protectedConnection()->getAuditToken()) {
-        if (auto handle = SandboxExtension::createHandleForReadByAuditToken(basePath, *token)) {
-            sandboxExtensionHandle = WTFMove(*handle);
-            createdExtension = true;
-        }
-    } else
-#endif
-    {
-        if (auto handle = SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly)) {
-            sandboxExtensionHandle = WTFMove(*handle);
-            createdExtension = true;
-        }
-    }
 
-    if (createdExtension)
-        process.assumeReadAccessToBaseURL(*this, baseURL.string(), [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] mutable {
+    if (auto sandboxExtensionHandle = createSandboxExtension(basePath)) {
+        process.assumeReadAccessToBaseURL(*this, baseURL.string(), [sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] mutable {
             completionHandler(WTFMove(sandboxExtensionHandle));
         });
-    else
-        completionHandler(std::nullopt);
+        return;
+    }
+
+    // We failed to issue read access to the base path, fall back to issuing one for the full URL instead.
+    auto fullPath = url.fileSystemPath();
+    if (fullPath.isNull())
+        return completionHandler(std::nullopt);
+
+    if (auto sandboxExtensionHandle = createSandboxExtension(fullPath)) {
+        completionHandler(WTFMove(*sandboxExtensionHandle));
+        return;
+    }
+
+    completionHandler(std::nullopt);
 }
 
 void WebPageProxy::prepareToLoadWebPage(WebProcessProxy& process, LoadParameters& parameters)
@@ -2100,7 +2068,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.advancedPrivacyProtections = navigation.originatorAdvancedPrivacyProtections();
     loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
     loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
-    loadParameters.isHandledByAboutSchemeHandler = protectedAboutSchemeHandler()->canHandleURL(url);
+    loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(url);
     if (RefPtr networkProcess = protectedWebsiteDataStore()->networkProcessIfExists())
         loadParameters.requiredCookiesVersion = networkProcess->cookiesVersion();
 
@@ -2326,7 +2294,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     loadParameters.lockBackForwardList = navigation->lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation->clientRedirectSourceForHistory();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain();
-    loadParameters.isHandledByAboutSchemeHandler = protectedAboutSchemeHandler()->canHandleURL(loadParameters.request.url());
+    loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
 
     simulatedResponse.setExpectedContentLength(loadParameters.data->size());
     simulatedResponse.includeCertificateInfo();
@@ -3050,12 +3018,6 @@ void WebPageProxy::viewDidLeaveWindow()
 
 void WebPageProxy::viewDidEnterWindow()
 {
-    LayerHostingMode layerHostingMode = protectedPageClient()->viewLayerHostingMode();
-    if (internals().layerHostingMode != layerHostingMode) {
-        internals().layerHostingMode = layerHostingMode;
-        send(Messages::WebPage::SetLayerHostingMode(layerHostingMode));
-    }
-
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateDefaultSpatialTrackingLabel();
 #endif
@@ -3277,20 +3239,6 @@ void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
         internals().hiddenPageDOMTimerThrottlingAutoIncreasesCount = nullptr;
     else if (!internals().hiddenPageDOMTimerThrottlingAutoIncreasesCount)
         internals().hiddenPageDOMTimerThrottlingAutoIncreasesCount = m_legacyMainFrameProcess->protectedProcessPool()->hiddenPageThrottlingAutoIncreasesCount();
-}
-
-void WebPageProxy::layerHostingModeDidChange()
-{
-    RefPtr pageClient = this->pageClient();
-    if (!pageClient)
-        return;
-
-    LayerHostingMode layerHostingMode = pageClient->viewLayerHostingMode();
-    if (internals().layerHostingMode == layerHostingMode)
-        return;
-    internals().layerHostingMode = layerHostingMode;
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetLayerHostingMode(layerHostingMode));
 }
 
 void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityStateChangeID)
@@ -4795,7 +4743,7 @@ void WebPageProxy::clearServiceWorkerEntitlementOverride(CompletionHandler<void(
 
 void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& processInitiatingNavigation, PolicyAction policyAction, API::Navigation* navigation, Ref<API::NavigationAction>&& navigationAction, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, const FrameInfoData& frameInfo, WasNavigationIntercepted wasNavigationIntercepted, const URL& requestURL, std::optional<PolicyDecisionConsoleMessage>&& message, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64 ", policyAction=%u", frame.frameID().object().toUInt64(), frame.isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, (unsigned)policyAction);
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64 ", policyAction=%" PUBLIC_LOG_STRING, frame.frameID().object().toUInt64(), frame.isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters());
 
     Ref websiteDataStore = m_websiteDataStore;
     bool isPolicyDataStore { false };
@@ -4984,7 +4932,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.navigationID = navigation->navigationID();
             loadParameters.ownerPermissionsPolicy = navigation->ownerPermissionsPolicy();
             loadParameters.isPerformingHTTPFallback = navigationAction->data().isPerformingHTTPFallback;
-            loadParameters.isHandledByAboutSchemeHandler = protectedAboutSchemeHandler()->canHandleURL(loadParameters.request.url());
+            loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageIDInProcess(processNavigatingTo));
         }
 
@@ -5173,7 +5121,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.lockBackForwardList = !!navigation.backForwardFrameLoadType() ? LockBackForwardList::Yes : LockBackForwardList::No;
         loadParameters.ownerPermissionsPolicy = navigation.ownerPermissionsPolicy();
         loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
-        loadParameters.isHandledByAboutSchemeHandler = protectedAboutSchemeHandler()->canHandleURL(loadParameters.request.url());
+        loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
 
         if (navigation.isInitialFrameSrcLoad())
             frame.setIsPendingInitialHistoryItem(true);
@@ -7938,7 +7886,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         requestURL = request.url(),
         protectedPageClient = RefPtr { pageClient() }
     ] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<BrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%u, safeBrowsingWarning=%d, isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%" PUBLIC_LOG_STRING ", safeBrowsingWarning=%d, isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters(), !!safeBrowsingWarning, !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
 
         navigation->setWebsitePolicies(WTFMove(policies));
         auto completionHandlerWrapper = [
@@ -9896,6 +9844,33 @@ void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint
 #endif
 }
 
+void WebPageProxy::updateTextIndicatorFromFrame(FrameIdentifier frameID, WebCore::TextIndicatorData&& indicatorData)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    auto rect = indicatorData.textBoundingRectInRootViewCoordinates;
+    convertRectToMainFrameCoordinates(rect, frame->rootFrame().frameID(), [weakThis = WeakPtr { *this }, indicatorData = WTFMove(indicatorData)] (std::optional<FloatRect> convertedRect) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !convertedRect)
+            return;
+        indicatorData.textBoundingRectInRootViewCoordinates = *convertedRect;
+        protectedThis->updateTextIndicator(WTFMove(indicatorData));
+    });
+}
+
+void WebPageProxy::updateTextIndicator(const TextIndicatorData& indicatorData)
+{
+    // FIXME: Make TextIndicatorWindow a platform-independent presentational thing ("TextIndicatorPresentation"?).
+#if PLATFORM(COCOA)
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->updateTextIndicator(TextIndicator::create(indicatorData));
+#else
+    notImplemented();
+#endif
+}
+
 void WebPageProxy::clearTextIndicator()
 {
 #if PLATFORM(COCOA)
@@ -11608,7 +11583,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     else
         parameters.scrollbarOverlayStyle = std::nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
-    parameters.layerHostingMode = internals().layerHostingMode;
     parameters.controlledByAutomation = m_controlledByAutomation;
     parameters.isProcessSwap = isProcessSwap;
     parameters.useDarkAppearance = useDarkAppearance();
@@ -11665,9 +11639,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         auto handle = SandboxExtension::createHandleForMachLookup("com.apple.CARenderServer"_s, std::nullopt);
         if (handle)
             parameters.renderServerMachExtensionHandle = WTFMove(*handle);
-#if HAVE(HOSTED_CORE_ANIMATION)
-        parameters.acceleratedCompositingPort = createMachSendRightForRemoteLayerServer();
-#endif // HAVE(HOSTED_CORE_ANIMATION)
     }
 #endif // PLATFORM(MAC)
 

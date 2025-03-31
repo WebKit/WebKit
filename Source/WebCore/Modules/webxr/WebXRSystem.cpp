@@ -634,15 +634,15 @@ private:
     {
     }
 
-    CallbackResult<void> handleEvent(double) final
+    CallbackResult<void> invoke(double) final
     {
         m_callback();
         return { };
     }
 
-    CallbackResult<void> handleEventRethrowingException(double now) final
+    CallbackResult<void> invokeRethrowingException(double now) final
     {
-        return handleEvent(now);
+        return invoke(now);
     }
 
     Function<void()> m_callback;

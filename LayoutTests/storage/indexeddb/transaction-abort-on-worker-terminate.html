@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+const objectStoreName = 'object-store';
+const databaseName = 'transaction-abort-on-worker-terminate';
+const recordKey = 'record-key';
+
+var transaction = null;
+
+function checkRecord()
+{
+    const openRequest = indexedDB.open(databaseName);
+    openRequest.onsuccess = (event) => {
+        const database = event.target.result;
+        transaction = database.transaction(objectStoreName);
+        shouldBeEqualToString("String(transaction)", "[object IDBTransaction]");
+        const request = transaction.objectStore(objectStoreName).get(recordKey);
+        request.onsuccess = (event) => {
+            // The record should not exist if transaction aborts correctly.
+            shouldBe("event.target.result", "");
+            finishJSTest();
+        };
+        request.onerror = unexpectedErrorCallback;
+    }
+    openRequest.onerror = unexpectedErrorCallback;
+}
+
+worker = startWorker('resources/transaction-abort-on-worker-terminate.js');
+worker.onmessage = function(event) {
+    shouldBeEqualToString("event.data", "continue");
+    worker.terminate();
+    checkRecord();
+};
+</script>
+</body>
+</html>

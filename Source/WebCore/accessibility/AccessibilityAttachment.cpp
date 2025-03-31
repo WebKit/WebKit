@@ -71,7 +71,7 @@ HTMLAttachmentElement* AccessibilityAttachment::attachmentElement() const
     return dynamicDowncast<HTMLAttachmentElement>(node());
 }
     
-String AccessibilityAttachment::roleDescription() const
+String AccessibilityAttachment::roleDescription()
 {
     return AXAttachmentRoleText();
 }

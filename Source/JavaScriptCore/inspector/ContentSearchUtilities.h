@@ -39,8 +39,14 @@ namespace Inspector {
 
 namespace ContentSearchUtilities {
 
-enum class SearchStringType { Regex, ExactString, ContainsString };
-JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createRegularExpressionForSearchString(const String& searchString, bool caseSensitive, SearchStringType);
+enum class SearchType { Regex, ExactString, ContainsString };
+enum class SearchCaseSensitive { No, Yes };
+
+using Searcher = std::variant<String, JSC::Yarr::RegularExpression>;
+JS_EXPORT_PRIVATE Searcher createSearcherForString(const String&, SearchType, SearchCaseSensitive);
+JS_EXPORT_PRIVATE bool searcherMatchesText(const Searcher&, const String& text);
+
+JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createRegularExpressionForString(const String&, SearchType, SearchCaseSensitive);
 
 JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
 JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);

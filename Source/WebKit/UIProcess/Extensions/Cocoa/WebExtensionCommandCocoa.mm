@@ -297,6 +297,9 @@ CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 #if PLATFORM(IOS_FAMILY)
 UIKeyCommand *WebExtensionCommand::keyCommand() const
 {
+    if (activationKey().isEmpty())
+        return nil;
+
     return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() identifier:identifier()];
 }
 

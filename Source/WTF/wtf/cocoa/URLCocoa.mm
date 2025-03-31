@@ -50,11 +50,22 @@ URL::operator NSURL *() const
     return createCFURL().bridgingAutorelease();
 }
 
-RetainPtr<CFURLRef> URL::emptyCFURL()
+RetainPtr<NSURL> URL::createNSURL() const
+{
+    return bridge_cast(createCFURL());
+}
+
+CFURLRef URL::emptyCFURL()
 {
     // We use the toll-free bridge to create an empty value that is distinct from null that no CFURL function can create.
     // FIXME: When we originally wrote this, we thought that creating empty CF URLs was valuable; can we do without it now?
-    return bridge_cast(adoptNS([[NSURL alloc] initWithString:@""]));
+    return bridge_cast(emptyNSURL());
+}
+
+NSURL *URL::emptyNSURL()
+{
+    static const NeverDestroyed<RetainPtr<NSURL>> emptyURL = adoptNS([[NSURL alloc] initWithString:@""]);
+    return emptyURL.get().get();
 }
 
 bool URL::hostIsIPAddress(StringView host)

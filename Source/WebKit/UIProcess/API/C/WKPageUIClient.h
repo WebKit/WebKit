@@ -596,7 +596,7 @@ typedef struct WKPageUIClientV6 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 } WKPageUIClientV6;
 
 typedef struct WKPageUIClientV7 {
@@ -676,7 +676,7 @@ typedef struct WKPageUIClientV7 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -760,8 +760,8 @@ typedef struct WKPageUIClientV8 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
-    
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
+
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
     WKFullscreenMayReturnToInlineCallback                               fullscreenMayReturnToInline;
@@ -848,7 +848,7 @@ typedef struct WKPageUIClientV9 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -939,8 +939,8 @@ typedef struct WKPageUIClientV10 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
-    
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
+
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
     WKFullscreenMayReturnToInlineCallback                               fullscreenMayReturnToInline;
@@ -954,7 +954,7 @@ typedef struct WKPageUIClientV10 {
     
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 } WKPageUIClientV10;
 
 typedef struct WKPageUIClientV11 {
@@ -1034,7 +1034,7 @@ typedef struct WKPageUIClientV11 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1049,7 +1049,7 @@ typedef struct WKPageUIClientV11 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1132,8 +1132,8 @@ typedef struct WKPageUIClientV12 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
-    
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
+
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
     WKFullscreenMayReturnToInlineCallback                               fullscreenMayReturnToInline;
@@ -1147,7 +1147,7 @@ typedef struct WKPageUIClientV12 {
     
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
     
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1233,7 +1233,7 @@ typedef struct WKPageUIClientV13 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1248,7 +1248,7 @@ typedef struct WKPageUIClientV13 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1337,7 +1337,7 @@ typedef struct WKPageUIClientV14 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1352,7 +1352,7 @@ typedef struct WKPageUIClientV14 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1444,7 +1444,7 @@ typedef struct WKPageUIClientV15 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1459,7 +1459,7 @@ typedef struct WKPageUIClientV15 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1555,7 +1555,7 @@ typedef struct WKPageUIClientV16 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1570,7 +1570,7 @@ typedef struct WKPageUIClientV16 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1669,7 +1669,7 @@ typedef struct WKPageUIClientV17 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1684,7 +1684,7 @@ typedef struct WKPageUIClientV17 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1783,7 +1783,7 @@ typedef struct WKPageUIClientV18 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1798,7 +1798,7 @@ typedef struct WKPageUIClientV18 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1899,7 +1899,7 @@ typedef struct WKPageUIClientV19 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
-    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+    void*                                                               unused6; // Used to be checkUserMediaPermissionForOrigin.
 
     // Version 7.
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
@@ -1914,7 +1914,7 @@ typedef struct WKPageUIClientV19 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
+    void*                                                               unused7; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;

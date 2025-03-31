@@ -723,6 +723,15 @@ bool Quirks::shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const
     return false;
 }
 
+// slack.com rdar://138614711
+bool Quirks::shouldIgnoreViewportArgumentsToAvoidEnlargedView() const
+{
+#if ENABLE(META_VIEWPORT)
+    return needsQuirks() && m_quirksData.shouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk;
+#endif
+    return false;
+}
+
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199933
 bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 {
@@ -1959,6 +1968,18 @@ static void handleSkypeQuirks(QuirksData& quirksData, const URL& quirksURL, cons
     quirksData.needsIPadSkypeOverflowScrollQuirk = true;
 }
 
+static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
+{
+    if (quirksDomainString != "slack.com"_s)
+        return;
+
+    UNUSED_PARAM(quirksData);
+#if ENABLE(META_VIEWPORT)
+    // slack.com: rdar://138614711
+    quirksData.shouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk = true;
+#endif
+}
+
 static void handleWalmartQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& documentURL)
 {
     if (quirksDomainString != "walmart.com"_s)
@@ -2763,6 +2784,9 @@ void Quirks::determineRelevantQuirks()
         { "reddit"_s, & handleRedditQuirks },
 #endif
         { "sfusd"_s, &handleSFUSDQuirks },
+#if PLATFORM(IOS_FAMILY)
+        { "slack"_s, &handleSlackQuirks },
+#endif
         { "sharepoint"_s, &handleSharePointQuirks },
 #if PLATFORM(IOS_FAMILY)
         { "skype"_s, &handleSkypeQuirks },

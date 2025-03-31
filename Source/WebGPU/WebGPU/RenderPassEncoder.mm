@@ -76,14 +76,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(std::span { descriptor.colorAttachments, descriptor.colorAttachmentCount }) : Vector<WGPURenderPassColorAttachment>())
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
-#if CPU(X86_64)
     , m_metalDescriptor(metalDescriptor)
-#endif
     , m_maxDrawCount(maxDrawCount)
 {
-#if !CPU(X86_64)
-    UNUSED_PARAM(metalDescriptor);
-#endif
+    if (m_device->baseCapabilities().memoryBarrierLimit > maxDrawCount)
+        m_metalDescriptor = nil;
+
     if (m_descriptorColorAttachments.size())
         m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
     if (descriptor.depthStencilAttachment)
@@ -553,7 +551,6 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
         }
 
         Ref group = *weakBindGroup.get();
-#if CPU(X86_64)
         if (passWasSplit) {
             for (const auto& resource : group->resources()) {
                 if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
@@ -567,9 +564,6 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
                 }
             }
         }
-#else
-        UNUSED_PARAM(passWasSplit);
-#endif
 
         protectedParentEncoder()->addOnCommitHandler([group](CommandBuffer&) {
             return group->rebindSamplersIfNeeded();
@@ -701,6 +695,12 @@ std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCou
     });
 }
 
+void RenderPassEncoder::emitMemoryBarrier(id<MTLRenderCommandEncoder> renderCommandEncoder)
+{
+    ++m_memoryBarrierCount;
+    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+}
+
 std::pair<RenderPassEncoder::IndexCall, id<MTLBuffer>> RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, Buffer* apiIndexBuffer, uint32_t minVertexCount, uint32_t minInstanceCount, RenderPassEncoder& encoder, Device& device, uint32_t rasterSampleCount, MTLPrimitiveType primitiveType)
 {
     id<MTLBuffer> indexBuffer = apiIndexBuffer ? apiIndexBuffer->buffer() : nil;
@@ -752,7 +752,7 @@ std::pair<RenderPassEncoder::IndexCall, id<MTLBuffer>> RenderPassEncoder::clampI
     [renderCommandEncoder setVertexBytes:data length:sizeof(data) atIndex:2];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:indexCount];
 
-    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+    encoder.emitMemoryBarrier(renderCommandEncoder);
 
     auto encoderHandle = device.protectedQueue()->retainCounterSampleBuffer(encoder.protectedParentEncoder());
     [encoder.protectedParentEncoder()->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = Ref { device }, firstIndex, indexCount, firstInstance, effectiveMinVertexCount, indexType, refIndexBuffer = Ref { *apiIndexBuffer }, indexedIndirectBuffer](id<MTLCommandBuffer> completedCommandBuffer) {
@@ -829,7 +829,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     uint32_t indirectData[] = { indexBufferCount, minInstanceCount };
     [renderCommandEncoder setVertexBytes:indirectData length:sizeof(indirectData) atIndex:3];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
-    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+    encoder.emitMemoryBarrier(renderCommandEncoder);
 
     CHECKED_SET_PSO(renderCommandEncoder, device.indexBufferClampPipeline(indexType, rasterSampleCount), std::make_pair(nil, 0ull));
     [renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
@@ -837,7 +837,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     uint32_t data[] = { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
     [renderCommandEncoder setVertexBytes:data length:sizeof(data) atIndex:2];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:indirectBuffer indirectBufferOffset:0];
-    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+    encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
     indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount);
@@ -872,7 +872,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
     uint32_t data[] = { minVertexCount, minInstanceCount };
     [renderCommandEncoder setVertexBytes:data length:sizeof(data) atIndex:2];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
-    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+    encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
     indirectBuffer.indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount);
@@ -936,9 +936,9 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
 
     bool needsValidationLayerWorkaround;
     auto [useIndirectCall, indirectBuffer] = clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, needsValidationLayerWorkaround);
-    const bool passWasSplit = useIndirectCall == IndexCall::IndirectDraw;
+    bool passWasSplit = useIndirectCall == IndexCall::IndirectDraw;
     if (passWasSplit)
-        splitRenderPass();
+        passWasSplit = splitRenderPass();
 
     if (!executePreDrawCommands(0, 0, passWasSplit, nullptr, needsValidationLayerWorkaround))
         return;
@@ -993,7 +993,7 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
     id<MTLBuffer> mtlIndirectBuffer = result.first;
     uint64_t modifiedIndirectOffset = result.second;
     if (splitEncoder)
-        splitRenderPass();
+        splitEncoder = splitRenderPass();
 
     if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || m_indexBuffer->isDestroyed() || mtlIndirectBuffer.length < sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
         return;
@@ -1004,12 +1004,17 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
     [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
 }
 
-void RenderPassEncoder::splitRenderPass()
+bool RenderPassEncoder::splitRenderPass()
 {
-#if CPU(X86_64)
-    if (!m_renderCommandEncoder)
-        return;
+    if (m_memoryBarrierCount < m_device->baseCapabilities().memoryBarrierLimit || !m_renderCommandEncoder)
+        return false;
 
+    m_memoryBarrierCount = 0;
+#ifndef NDEBUG
+#if CPU(ARM64)
+    WTFLogAlways("WebGPU: Splitting render pass on ARM64 - severe performance penalty"); // NOLINT
+#endif
+#endif
     Ref parentEncoder = m_parentEncoder;
     id<MTLFence> fence = [m_device->device() newFence];
     [m_renderCommandEncoder updateFence:fence afterStages:MTLRenderStageVertex];
@@ -1032,7 +1037,8 @@ void RenderPassEncoder::splitRenderPass()
         [m_renderCommandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
     if (m_scissorRect)
         [m_renderCommandEncoder setScissorRect:*m_scissorRect];
-#endif
+
+    return true;
 }
 
 void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
@@ -1061,7 +1067,7 @@ void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOf
     bool splitEncoder = false;
     auto [mtlIndirectBuffer, adjustedIndirectBufferOffset] = clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, splitEncoder);
     if (splitEncoder)
-        splitRenderPass();
+        splitEncoder = splitRenderPass();
 
     if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || mtlIndirectBuffer.length < sizeof(MTLDrawPrimitivesIndirectArguments) || indirectBuffer.isDestroyed())
         return;
@@ -1212,8 +1218,8 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
                 }
             }
             if (splitPass) {
-                [commandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
-                splitRenderPass();
+                emitMemoryBarrier(commandEncoder);
+                splitPass = splitRenderPass();
                 commandEncoder = renderCommandEncoder();
             }
         }

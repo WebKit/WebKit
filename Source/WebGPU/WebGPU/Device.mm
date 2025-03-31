@@ -958,10 +958,11 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
         uint32_t minVertexCount { UINT_MAX };
         uint32_t minInstanceCount { UINT_MAX };
         device ushort* indexBuffer;
+        uint32_t indexBufferElementCountMinusOne;
         uint32_t indexCount { 0 };
         uint32_t instanceCount { 0 };
         uint32_t firstIndex { 0 };
-        int32_t baseVertex { 0 };
+        uint32_t baseVertex { 0 };
         uint32_t baseInstance { 0 };
         primitive_type primitiveType { primitive_type::triangle };
     };
@@ -970,10 +971,11 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
         uint32_t minVertexCount { UINT_MAX };
         uint32_t minInstanceCount { UINT_MAX };
         device uint* indexBuffer;
+        uint32_t indexBufferElementCountMinusOne;
         uint32_t indexCount { 0 };
         uint32_t instanceCount { 0 };
         uint32_t firstIndex { 0 };
-        int32_t baseVertex { 0 };
+        uint32_t baseVertex { 0 };
         uint32_t baseInstance { 0 };
         primitive_type primitiveType { primitive_type::triangle };
     };
@@ -988,7 +990,7 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     {
         device const IndexDataUint& data = *indexData;
         uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
-        uint32_t indexBufferValue = data.indexBuffer[indexId + data.firstIndex];
+        uint32_t indexBufferValue = data.indexBuffer[min(data.indexBufferElementCountMinusOne, indexId + data.firstIndex)];
         uint32_t vertexIndex = indexBufferValue + k;
         bool negativeCondition = data.baseVertex + k < data.baseVertex;
         if (negativeCondition || (data.baseVertex + vertexIndex >= data.minVertexCount + k)) {
@@ -1009,7 +1011,7 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     {
         device const IndexDataUshort& data = *indexData;
         uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
-        ushort indexBufferValue = data.indexBuffer[indexId + data.firstIndex];
+        ushort indexBufferValue = data.indexBuffer[min(data.indexBufferElementCountMinusOne, indexId + data.firstIndex)];
         ushort vertexIndex = indexBufferValue + k;
         bool negativeCondition = data.baseVertex + k < data.baseVertex;
         if (negativeCondition || (data.baseVertex + vertexIndex >= data.minVertexCount + k)) {

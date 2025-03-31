@@ -28,8 +28,8 @@
     DispatchedTo=GPU
 ]
 messages -> RemoteRenderingBackend Stream {
-    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier identifier, WebKit::RemoteDisplayListRecorderIdentifier contextIdentifier)
+    ReleaseImageBuffer(WebCore::RenderingResourceIdentifier identifier)
     GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
@@ -44,10 +44,10 @@ messages -> RemoteRenderingBackend Stream {
     ReleaseGradient(WebCore::RenderingResourceIdentifier identifier)
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
     ReleaseFilter(WebCore::RenderingResourceIdentifier identifier)
-    ReleaseAllDrawingResources()
-    ReleaseAllImageResources()
-    CreateRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)
-    ReleaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier)
+    ReleaseMemory()
+    ReleaseNativeImages()
+    CreateImageBufferSet(WebKit::RemoteImageBufferSetIdentifier identifier, WebKit::RemoteDisplayListRecorderIdentifier contextIdentifier)
+    ReleaseImageBufferSet(WebKit::RemoteImageBufferSetIdentifier identifier)
 
 #if PLATFORM(COCOA)
     // These messages also result in the 'DidPrepareForDisplay' message being
@@ -64,8 +64,8 @@ messages -> RemoteRenderingBackend Stream {
     Flush(IPC::Semaphore semaphore) NotStreamEncodable
 #endif
 
-    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
-    MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
+    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, WebKit::RemoteSerializedImageBufferIdentifier serializedIdentifier)
+    MoveToImageBuffer(WebKit::RemoteSerializedImageBufferIdentifier identifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebKit::RemoteDisplayListRecorderIdentifier contextIdentifier)
 
 #if PLATFORM(COCOA)
     DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier snapshotIdentifier)

@@ -617,6 +617,10 @@ void EmptyChromeClient::setTextIndicator(const TextIndicatorData&) const
 {
 }
 
+void EmptyChromeClient::updateTextIndicator(const TextIndicatorData&) const
+{
+}
+
 DisplayRefreshMonitorFactory* EmptyChromeClient::displayRefreshMonitorFactory() const
 {
     return EmptyDisplayRefreshMonitorFactory::sharedEmptyDisplayRefreshMonitorFactory();

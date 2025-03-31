@@ -368,10 +368,18 @@ inline CFHashCode safeCFHash(CFTypeRef a)
     return a ? CFHash(a) : 0;
 }
 
+template<typename T, typename U>
+ALWAYS_INLINE void lazyInitialize(const RetainPtr<T>& ptr, RetainPtr<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<RetainPtr<T>&>(ptr) = std::move(obj);
+}
+
 } // namespace WTF
 
 using WTF::RetainPtr;
 using WTF::adoptCF;
+using WTF::lazyInitialize;
 using WTF::retainPtr;
 using WTF::safeCFEqual;
 using WTF::safeCFHash;

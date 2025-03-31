@@ -1001,6 +1001,43 @@ void HTMLElement::setEnterKeyHint(const AtomString& value)
     setAttributeWithoutSynchronization(enterkeyhintAttr, value);
 }
 
+// https://html.spec.whatwg.org/#dom-hidden
+std::optional<std::variant<bool, double, String>> HTMLElement::hidden() const
+{
+    auto value = attributeWithoutSynchronization(HTMLNames::hiddenAttr);
+    if (document().settings().hiddenUntilFoundEnabled() && equalIgnoringASCIICase(value, "until-found"_s))
+        return "until-found"_s;
+    return !value.isNull();
+}
+
+// https://html.spec.whatwg.org/#dom-hidden
+void HTMLElement::setHidden(const std::optional<std::variant<bool, double, String>>& value)
+{
+    if (!value) {
+        removeAttribute(hiddenAttr);
+        return;
+    }
+
+    WTF::switchOn(*value, [&](bool boolean) {
+        if (!boolean)
+            removeAttribute(hiddenAttr);
+        else
+            setAttributeWithoutSynchronization(hiddenAttr, emptyAtom());
+    }, [&](double number) {
+        if (number == 0.0 || std::isnan(number))
+            removeAttribute(hiddenAttr);
+        else
+            setAttributeWithoutSynchronization(hiddenAttr, emptyAtom());
+    }, [&](const String& string) {
+        if (document().settings().hiddenUntilFoundEnabled() && equalIgnoringASCIICase(string, "until-found"_s))
+            setAttributeWithoutSynchronization(hiddenAttr, "until-found"_s);
+        else if (string.isEmpty())
+            removeAttribute(hiddenAttr);
+        else
+            setAttributeWithoutSynchronization(hiddenAttr, emptyAtom());
+    });
+}
+
 bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
 {
     if (auto range = selectionBeforeUpdate.range(); range && ImageOverlay::isInsideOverlay(*range))

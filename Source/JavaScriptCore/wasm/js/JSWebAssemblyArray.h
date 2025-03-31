@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmFormat.h"
+#include "WasmLimits.h"
 #include "WasmOps.h"
 #include "WasmTypeDefinition.h"
 #include "WebAssemblyGCObjectBase.h"
@@ -46,24 +47,14 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return vm.heap.webAssemblyArraySpace<mode>();
+        return &vm.heap.variableSizedCellSpace;
     }
 
     DECLARE_INFO;
 
     static inline WebAssemblyGCStructure* createStructure(VM&, JSGlobalObject*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
 
-    static JSWebAssemblyArray* tryCreate(VM& vm, WebAssemblyGCStructure* structure, unsigned size)
-    {
-        auto allocationSize = allocationSizeInBytes(elementType(structure), size);
-#if USE(JSVALUE32_64)
-        if (allocationSize.hasOverflowed())
-            return nullptr;
-#endif
-        auto* object = new (NotNull, allocateCell<JSWebAssemblyArray>(vm, allocationSize)) JSWebAssemblyArray(vm, structure, size);
-        object->finishCreation(vm);
-        return object;
-    }
+    static JSWebAssemblyArray* tryCreate(VM& vm, WebAssemblyGCStructure* structure, unsigned size);
 
     DECLARE_VISIT_CHILDREN;
 
@@ -100,17 +91,14 @@ public:
     // Note: Technically this isn't needed since the GC/malloc always allocates 16 byte chunks so for non-precise v128 allocations
     // there will be a 8 spare bytes at the end. This is just a bit more explicit and shouldn't make a difference.
     static constexpr ptrdiff_t v128AlignmentShift = 8;
-#if USE(JSVALUE64)
-    static size_t allocationSizeInBytes(Wasm::FieldType fieldType, unsigned size)
+    static std::optional<unsigned> allocationSizeInBytes(Wasm::FieldType fieldType, unsigned size)
     {
-        return sizeof(JSWebAssemblyArray) + size * fieldType.type.elementSize() + (needsAlignmentCheck(fieldType.type) * v128AlignmentShift);
+        unsigned elementSize = fieldType.type.elementSize();
+        if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > Wasm::maxArraySizeInBytes))
+            return std::nullopt;
+        return sizeof(JSWebAssemblyArray) + size * elementSize + static_cast<size_t>(needsAlignmentCheck(fieldType.type) * v128AlignmentShift);
     }
-#else
-    static CheckedSize allocationSizeInBytes(Wasm::FieldType fieldType, unsigned size)
-    {
-        return CheckedSize(sizeof(JSWebAssemblyArray)) + size * fieldType.type.elementSize() + (needsAlignmentCheck(fieldType.type) * v128AlignmentShift);
-    }
-#endif
+
     static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
     static constexpr ptrdiff_t offsetOfData() { return sizeof(JSWebAssemblyArray); }
 

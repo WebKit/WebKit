@@ -68,7 +68,7 @@ private:
         JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        auto result = protectedCallback()->handleEventRethrowingException(m_accumulator.getValue(), value, m_index++);
+        auto result = protectedCallback()->invokeRethrowingException(m_accumulator.getValue(), value, m_index++);
 
         JSC::Exception* exception = scope.exception();
         if (UNLIKELY(exception)) {

@@ -73,7 +73,7 @@ private:
     FloatPoint computeOffsetFromOwningScroller(RenderObject&);
     LocalFrameView& frameView();
 
-    ScrollableArea& m_owningScrollableArea;
+    CheckedRef<ScrollableArea> m_owningScrollableArea;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
     FloatPoint m_lastOffsetForAnchorElement;
     bool m_midUpdatingScrollPositionForAnchorElement { false };

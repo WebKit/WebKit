@@ -79,19 +79,27 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCoordinated::primaryLayerID(
 
 void GraphicsLayerCoordinated::setNeedsDisplay()
 {
-    if (!m_drawsContent || !m_contentsVisible || m_size.isEmpty() || m_dirtyRegion.fullRepaint)
+    if (!m_drawsContent || !m_contentsVisible || m_size.isEmpty())
         return;
 
-    m_dirtyRegion.fullRepaint = true;
-    m_dirtyRegion.rects.clear();
-    noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
+    if (m_dirtyRegion) {
+        if (m_dirtyRegion->mode() == Damage::Mode::Full)
+            return;
 
+        m_dirtyRegion->makeFull(m_size);
+    } else
+        m_dirtyRegion = Damage(m_size, Damage::Mode::Full);
+
+    noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
     addRepaintRect({ { }, m_size });
 }
 
 void GraphicsLayerCoordinated::setNeedsDisplayInRect(const FloatRect& initialRect, ShouldClipToLayer shouldClip)
 {
-    if (!m_drawsContent || !m_contentsVisible || m_size.isEmpty() || m_dirtyRegion.fullRepaint)
+    if (!m_drawsContent || !m_contentsVisible || m_size.isEmpty())
+        return;
+
+    if (m_dirtyRegion && m_dirtyRegion->mode() == Damage::Mode::Full)
         return;
 
     auto rect = initialRect;
@@ -101,17 +109,16 @@ void GraphicsLayerCoordinated::setNeedsDisplayInRect(const FloatRect& initialRec
     if (rect.isEmpty())
         return;
 
-    auto& rects = m_dirtyRegion.rects;
-    bool alreadyRecorded = std::any_of(rects.begin(), rects.end(), [&](auto& dirtyRect) {
-        return dirtyRect.contains(rect);
-    });
-    if (alreadyRecorded)
-        return;
-
-    rects.append(rect);
-    noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
-
     addRepaintRect(rect);
+
+    if (!m_dirtyRegion) {
+        static constexpr FloatSize minDamageSize = { 512, 512 };
+        auto viewVisibleSize = client().enclosingFrameViewVisibleSize();
+        m_dirtyRegion = Damage(m_size.constrainedBetween(minDamageSize, viewVisibleSize));
+    }
+
+    if (m_dirtyRegion->add(rect))
+        noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
 }
 
 void GraphicsLayerCoordinated::setPosition(const FloatPoint& position)
@@ -891,48 +898,6 @@ void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
     m_platformLayer->setTransformedVisibleRect(WTFMove(visibleRect), WTFMove(visibleRectFuture));
 }
 
-#if ENABLE(DAMAGE_TRACKING)
-void GraphicsLayerCoordinated::updateDamage(const FloatSize& visibleSize)
-{
-    if (!m_platformLayer->damagePropagation())
-        return;
-
-    if (m_dirtyRegion.fullRepaint) {
-        m_platformLayer->setDamage(Damage(m_size, Damage::Mode::Full));
-        return;
-    }
-
-    static constexpr FloatSize minDamageSize = { 512, 512 };
-    Damage damage(m_size.constrainedBetween(minDamageSize, visibleSize));
-    for (const auto& rect : m_dirtyRegion.rects)
-        damage.add(rect);
-    m_platformLayer->setDamage(WTFMove(damage));
-}
-#endif
-
-void GraphicsLayerCoordinated::updateDirtyRegion(const FloatSize& visibleSize)
-{
-#if ENABLE(DAMAGE_TRACKING)
-    updateDamage(visibleSize);
-#else
-    UNUSED_PARAM(visibleSize);
-#endif
-
-    IntRect contentsRect(IntPoint::zero(), IntSize(m_size));
-    Vector<IntRect, 1> dirtyRegion;
-    if (!m_dirtyRegion.fullRepaint) {
-        dirtyRegion = m_dirtyRegion.rects.map<Vector<IntRect, 1>>([](const FloatRect& rect) {
-            return enclosingIntRect(rect);
-        });
-    } else
-        dirtyRegion = { contentsRect };
-
-    m_dirtyRegion.fullRepaint = false;
-    m_dirtyRegion.rects.clear();
-
-    m_platformLayer->setDirtyRegion(WTFMove(dirtyRegion));
-}
-
 void GraphicsLayerCoordinated::updateBackdropFilters()
 {
     bool canHaveBackdropFilters = needsBackdrop();
@@ -1092,8 +1057,10 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
     if (m_pendingChanges.contains(Change::ContentsColor))
         m_platformLayer->setContentsColor(m_contentsColor);
 
-    if (m_pendingChanges.contains(Change::DirtyRegion))
-        updateDirtyRegion(commitState.visibleRect.size());
+    if (m_pendingChanges.contains(Change::DirtyRegion)) {
+        ASSERT(m_dirtyRegion.has_value());
+        m_platformLayer->setDirtyRegion(*std::exchange(m_dirtyRegion, std::nullopt));
+    }
 
     if (m_pendingChanges.contains(Change::Filters))
         m_platformLayer->setFilters(m_filters);

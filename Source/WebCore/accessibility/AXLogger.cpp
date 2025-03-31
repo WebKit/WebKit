@@ -653,9 +653,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::AncestorFlags:
         stream << "AncestorFlags";
         break;
-    case AXProperty::AutoCompleteValue:
-        stream << "AutoCompleteValue";
-        break;
     case AXProperty::BackgroundColor:
         stream << "BackgroundColor";
         break;
@@ -748,8 +745,23 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::ExpandedTextValue:
         stream << "ExpandedTextValue";
         break;
+    case AXProperty::ExplicitAutoCompleteValue:
+        stream << "ExplicitAutoCompleteValue";
+        break;
+    case AXProperty::ExplicitInvalidStatus:
+        stream << "ExplicitInvalidStatus";
+        break;
+    case AXProperty::ExplicitLiveRegionRelevant:
+        stream << "ExplicitLiveRegionRelevant";
+        break;
+    case AXProperty::ExplicitLiveRegionStatus:
+        stream << "ExplicitLiveRegionStatus";
+        break;
     case AXProperty::ExplicitOrientation:
         stream << "ExplicitOrientation";
+        break;
+    case AXProperty::ExplicitPopupValue:
+        stream << "ExplicitPopupValue";
         break;
     case AXProperty::ExtendedDescription:
         stream << "ExtendedDescription";
@@ -773,9 +785,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
         break;
     case AXProperty::HasClickHandler:
         stream << "HasClickHandler";
-        break;
-    case AXProperty::HasHighlighting:
-        stream << "HasHighlighting";
         break;
     case AXProperty::HasItalicFont:
         stream << "HasItalicFont";
@@ -828,14 +837,14 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::InsideLink:
         stream << "InsideLink";
         break;
-    case AXProperty::InvalidStatus:
-        stream << "InvalidStatus";
-        break;
     case AXProperty::IsGrabbed:
         stream << "IsGrabbed";
         break;
     case AXProperty::IsARIATreeGridRow:
         stream << "IsARIATreeGridRow";
+        break;
+    case AXProperty::IsAnonymousMathOperator:
+        stream << "IsAnonymousMathOperator";
         break;
     case AXProperty::IsAttachment:
         stream << "IsAttachment";
@@ -995,12 +1004,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::LiveRegionAtomic:
         stream << "LiveRegionAtomic";
         break;
-    case AXProperty::LiveRegionRelevant:
-        stream << "LiveRegionRelevant";
-        break;
-    case AXProperty::LiveRegionStatus:
-        stream << "LiveRegionStatus";
-        break;
     case AXProperty::LocalizedActionVerb:
         stream << "LocalizedActionVerb";
         break;
@@ -1064,9 +1067,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::PlaceholderValue:
         stream << "PlaceholderValue";
         break;
-    case AXProperty::PopupValue:
-        stream << "PopupValue";
-        break;
     case AXProperty::PosInSet:
         stream << "PosInSet";
         break;
@@ -1094,9 +1094,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::Rows:
         stream << "Rows";
         break;
-    case AXProperty::RowGroupAncestorID:
-        stream << "RowGroupAncestorID";
-        break;
     case AXProperty::RowHeader:
         stream << "RowHeader";
         break;
@@ -1121,8 +1118,8 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::SortDirection:
         stream << "SortDirection";
         break;
-    case AXProperty::SpeechHint:
-        stream << "SpeechHint";
+    case AXProperty::SpeakAs:
+        stream << "SpeakAs";
         break;
     case AXProperty::StringValue:
         stream << "StringValue";
@@ -1162,9 +1159,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
         break;
     case AXProperty::SupportsPosInSet:
         stream << "SupportsPosInSet";
-        break;
-    case AXProperty::SupportsRangeValue:
-        stream << "SupportsRangeValue";
         break;
     case AXProperty::SupportsSetSize:
         stream << "SupportsSetSize";

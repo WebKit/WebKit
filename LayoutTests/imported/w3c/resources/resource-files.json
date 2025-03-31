@@ -8715,6 +8715,8 @@
         "web-platform-tests/html/canvas/element/manual/line-styles/lineto_ref.html",
         "web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002-ref.htm",
         "web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors-expected.html",
+        "web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction-ref.html",
+        "web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.dynamic-ref.html",
         "web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected-ref.html",
         "web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch-ref.html",
         "web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang-ref.html",

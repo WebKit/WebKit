@@ -34,6 +34,7 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/NSStringExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -48,19 +49,19 @@ static std::unique_ptr<HashSet<String>>& internalClassNamesExemptFromSecureCodin
         if (isInAuxiliaryProcess())
             return;
 
-        id object = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCrashOnSecureCodingWithExemptClassesKey"];
+        RetainPtr<id> object = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCrashOnSecureCodingWithExemptClassesKey"];
         if (!object)
             return;
 
         exemptClassNames.get() = WTF::makeUnique<HashSet<String>>();
 
-        if (![object isKindOfClass:NSArray.class])
+        RetainPtr array = dynamic_objc_cast<NSArray>(object.get());
+        if (!array)
             return;
 
-        for (id value in (NSArray *)object) {
-            if (![value isKindOfClass:[NSString class]])
-                continue;
-            exemptClassNames.get()->add((NSString *)object);
+        for (id value in array.get()) {
+            if (RetainPtr string = dynamic_objc_cast<NSString>(value))
+                exemptClassNames.get()->add(string.get());
         }
     });
 

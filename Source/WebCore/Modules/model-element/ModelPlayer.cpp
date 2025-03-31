@@ -131,6 +131,10 @@ void ModelPlayer::endStageModeInteraction()
 {
 }
 
+void ModelPlayer::renderingAbruptlyStopped()
+{
+}
+
 #endif // ENABLE(MODEL_PROCESS)
 
 }

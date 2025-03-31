@@ -62,11 +62,6 @@ static void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrame
     wasPrompted = true;
 }
 
-static void checkUserMediaPermissionCallback(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionCheckRef permissionRequest, const void*)
-{
-    WKUserMediaPermissionCheckSetUserMediaAccessInfo(permissionRequest, WKStringCreateWithUTF8CString("0x123456789"), false);
-}
-
 TEST(WebKit, UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
@@ -75,8 +70,7 @@ TEST(WebKit, UserMediaBasic)
     zeroBytes(uiClient);
     uiClient.base.version = 6;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
-    uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
-    
+
     PlatformWebView webView(context.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
@@ -119,7 +113,6 @@ TEST(WebKit, OnDeviceChangeCrash)
     zeroBytes(uiClient);
     uiClient.base.version = 6;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
-    uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
 
     PlatformWebView webView(configuration.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);

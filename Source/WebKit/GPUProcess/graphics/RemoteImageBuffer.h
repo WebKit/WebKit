@@ -28,6 +28,8 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "IPCEvent.h"
+#include "RemoteDisplayListRecorderIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
@@ -44,17 +46,18 @@ class StreamConnectionWorkQueue;
 
 namespace WebKit {
 
+class RemoteDisplayListRecorder;
 class RemoteRenderingBackend;
 
 class RemoteImageBuffer : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteImageBuffer> create(Ref<WebCore::ImageBuffer>, RemoteRenderingBackend&);
+    static Ref<RemoteImageBuffer> create(Ref<WebCore::ImageBuffer>&&, WebCore::RenderingResourceIdentifier, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
     ~RemoteImageBuffer();
     void stopListeningForIPC();
-    WebCore::RenderingResourceIdentifier identifier() const { return m_imageBuffer->renderingResourceIdentifier(); }
     Ref<WebCore::ImageBuffer> imageBuffer() const { return m_imageBuffer; }
+    static Ref<WebCore::ImageBuffer> sinkIntoImageBuffer(Ref<RemoteImageBuffer>&&);
 private:
-    RemoteImageBuffer(Ref<WebCore::ImageBuffer>, RemoteRenderingBackend&);
+    RemoteImageBuffer(Ref<WebCore::ImageBuffer>&&, WebCore::RenderingResourceIdentifier, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
     void startListeningForIPC();
     IPC::StreamConnectionWorkQueue& workQueue() const;
 
@@ -77,8 +80,10 @@ private:
     void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
 #endif
 
-    RefPtr<RemoteRenderingBackend> m_backend;
-    Ref<WebCore::ImageBuffer> m_imageBuffer;
+    const Ref<WebCore::ImageBuffer> m_imageBuffer;
+    const WebCore::RenderingResourceIdentifier m_identifier;
+    const Ref<RemoteRenderingBackend> m_renderingBackend;
+    IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_context;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
 };
 

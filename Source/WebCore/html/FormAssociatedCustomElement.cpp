@@ -101,7 +101,8 @@ void FormAssociatedCustomElement::setFormValue(CustomElementFormValue&& submissi
 HTMLElement* FormAssociatedCustomElement::validationAnchorElement()
 {
     ASSERT(m_element->isDefinedCustomElement());
-    return m_validationAnchor.get();
+    auto anchor = m_validationAnchor.get();
+    return anchor ? anchor : m_element.get();
 }
 
 bool FormAssociatedCustomElement::computeValidity() const

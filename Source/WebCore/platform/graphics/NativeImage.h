@@ -55,7 +55,7 @@ public:
     bool hasAlpha() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
-    Headroom headroom() const;
+    WEBCORE_EXPORT Headroom headroom() const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();

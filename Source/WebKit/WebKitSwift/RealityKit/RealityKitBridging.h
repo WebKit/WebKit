@@ -50,6 +50,7 @@ typedef struct {
 
 @property (nonatomic, readonly) simd_float3 boundingBoxExtents;
 @property (nonatomic, readonly) simd_float3 boundingBoxCenter;
+@property (nonatomic, readonly) float boundingRadius;
 @property (nonatomic, readonly) simd_float3 interactionPivotPoint;
 @property (nonatomic) WKEntityTransform transform;
 @property (nonatomic) float opacity;
@@ -66,6 +67,7 @@ typedef struct {
 - (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
 - (void)applyIBLData:(NSData *)data withCompletion:(void (^)(BOOL success))completion;
 - (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform NS_SWIFT_NAME(interactionContainerDidRecenter(_:));
+- (void)recenterEntityAtTransform:(WKEntityTransform)transform NS_SWIFT_NAME(recenterEntity(at:));
 - (void)applyDefaultIBL NS_SWIFT_NAME(applyDefaultIBL());
 @end
 

@@ -583,7 +583,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_internals(makeUniqueRef<Internals>())
     , m_identifier(pageID)
     , m_viewSize(parameters.viewSize)
-    , m_layerHostingMode(parameters.layerHostingMode)
     , m_drawingArea(DrawingArea::create(*this, parameters))
     , m_webPageTesting(WebPageTesting::create(*this))
     , m_mainFrame(WebFrame::create(*this, parameters.mainFrameIdentifier))
@@ -863,11 +862,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
-#if HAVE(HOSTED_CORE_ANIMATION)
-    if (parameters.acceleratedCompositingPort)
-        WebProcess::singleton().setCompositingRenderServerPort(WTFMove(parameters.acceleratedCompositingPort));
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     pageConfiguration.canShowWhileLocked = parameters.canShowWhileLocked;
 #endif
@@ -1123,7 +1117,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW) && !HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
+    m_contextForVisibilityPropagation = LayerHostingContext::create({
         canShowWhileLocked()
     });
     WEBPAGE_RELEASE_LOG(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
@@ -1382,8 +1376,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
-    if (m_layerHostingMode != parameters.layerHostingMode)
-        setLayerHostingMode(parameters.layerHostingMode);
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
@@ -4216,13 +4208,6 @@ void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityS
         windowActivityDidChange();
 }
 
-void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
-{
-    m_layerHostingMode = layerHostingMode;
-
-    protectedDrawingArea()->setLayerHostingMode(m_layerHostingMode);
-}
-
 void WebPage::didStartPageTransition()
 {
     freezeLayerTree(LayerTreeFreezeReason::PageTransition);
@@ -4453,15 +4438,15 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         JSGlobalContextRef context = frame->jsContextForWorld(world.ptr());
         JSValueRef jsValue = toRef(coreFrame->script().globalObject(Ref { world->coreWorld() }), result.value());
 #if PLATFORM(COCOA)
-        completionHandler(JavaScriptEvaluationResult::extract(context, jsValue));
+        if (auto result = JavaScriptEvaluationResult::extract(context, jsValue))
+            return completionHandler(WTFMove(*result));
 #else
         if (RefPtr serializedResultValue = SerializedScriptValue::create(context, jsValue, nullptr)) {
             if (auto wireBytes = serializedResultValue->wireBytes(); !wireBytes.isEmpty())
                 return completionHandler(JavaScriptEvaluationResult { wireBytes });
-            return completionHandler(makeUnexpected(std::nullopt));
         }
-        return completionHandler(makeUnexpected(std::nullopt));
 #endif
+        return completionHandler(makeUnexpected(std::nullopt));
     };
 
     auto mapArguments = [] (auto&& vector) -> std::optional<HashMap<String, Function<JSC::JSValue(JSC::JSGlobalObject&)>>> {
@@ -5202,8 +5187,8 @@ void WebPage::didCompleteRenderingFrame()
 void WebPage::releaseMemory(Critical)
 {
 #if ENABLE(GPU_PROCESS)
-    if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseMemory();
+    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
+        renderingBackend->releaseMemory();
 #endif
 
     m_foundTextRangeController->clearCachedRanges();
@@ -5212,8 +5197,8 @@ void WebPage::releaseMemory(Critical)
 void WebPage::willDestroyDecodedDataForAllImages()
 {
 #if ENABLE(GPU_PROCESS)
-    if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseAllImageResources();
+    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
+        renderingBackend->releaseNativeImages();
 #endif
 
     if (RefPtr drawingArea = m_drawingArea)
@@ -5223,12 +5208,10 @@ void WebPage::willDestroyDecodedDataForAllImages()
 unsigned WebPage::remoteImagesCountForTesting() const
 {
 #if ENABLE(GPU_PROCESS)
-    if (!m_remoteRenderingBackendProxy)
-        return 0;
-    return m_remoteRenderingBackendProxy->remoteResourceCacheProxy().imagesCountForTesting();
-#else
-    return 0;
+    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
+        return renderingBackend->nativeImageCountForTesting();
 #endif
+return 0;
 }
 
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
@@ -5781,6 +5764,11 @@ void WebPage::setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&
 void WebPage::setTextIndicator(const WebCore::TextIndicatorData& indicatorData)
 {
     send(Messages::WebPageProxy::SetTextIndicatorFromFrame(m_mainFrame->frameID(), indicatorData, static_cast<uint64_t>(WebCore::TextIndicatorLifetime::Temporary)));
+}
+
+void WebPage::updateTextIndicator(const WebCore::TextIndicatorData& indicatorData)
+{
+    send(Messages::WebPageProxy::UpdateTextIndicatorFromFrame(m_mainFrame->frameID(), indicatorData));
 }
 
 void WebPage::replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly)
@@ -7811,6 +7799,12 @@ static void setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(ViewportCo
     if (auto* document = frame ? frame->document() : nullptr; document && document->quirks().shouldIgnoreViewportArgumentsToAvoidExcessiveZoom())
         configuration.setCanIgnoreViewportArgumentsToAvoidExcessiveZoom(shouldIgnoreMetaViewport);
 }
+
+static void setCanIgnoreViewportArgumentsToAvoidEnlargedViewIfNeeded(ViewportConfiguration& configuration, LocalFrame* frame)
+{
+    if (auto* document = frame ? frame->document() : nullptr; document && document->quirks().shouldIgnoreViewportArgumentsToAvoidEnlargedView())
+        configuration.setCanIgnoreViewportArgumentsToAvoidEnlargedView(true);
+}
 #endif
 
 void WebPage::didCommitLoad(WebFrame* frame)
@@ -7909,6 +7903,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     bool viewportChanged = false;
 
     setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(m_viewportConfiguration, coreFrame.get(), shouldIgnoreMetaViewport());
+    setCanIgnoreViewportArgumentsToAvoidEnlargedViewIfNeeded(m_viewportConfiguration, coreFrame.get());
+
     m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
@@ -8211,6 +8207,7 @@ void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 
 #if ENABLE(META_VIEWPORT)
     setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(m_viewportConfiguration, localMainFrame.get(), shouldIgnoreMetaViewport());
+    setCanIgnoreViewportArgumentsToAvoidEnlargedViewIfNeeded(m_viewportConfiguration, localMainFrame.get());
 #endif
 }
 

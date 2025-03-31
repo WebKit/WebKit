@@ -52,7 +52,7 @@ JSTestCallbackFunctionGenerateIsReachable::~JSTestCallbackFunctionGenerateIsReac
 #endif
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionGenerateIsReachable::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionGenerateIsReachable::invoke(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -84,7 +84,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionGenerateIsReachable::handleEventRethrowingException(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionGenerateIsReachable::invokeRethrowingException(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

@@ -53,6 +53,18 @@ JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, WebAssemblyGCStructure* structure
         zeroSpan(bytes());
 }
 
+JSWebAssemblyArray* JSWebAssemblyArray::tryCreate(VM& vm, WebAssemblyGCStructure* structure, unsigned size)
+{
+    Wasm::FieldType fieldType = elementType(structure);
+    std::optional<unsigned> allocationSize = allocationSizeInBytes(fieldType, size);
+    if (UNLIKELY(!allocationSize))
+        return nullptr;
+
+    auto* array = new (NotNull, allocateCell<JSWebAssemblyArray>(vm, allocationSize.value())) JSWebAssemblyArray(vm, structure, size);
+    array->finishCreation(vm);
+    return array;
+}
+
 void JSWebAssemblyArray::fill(VM& vm, uint32_t offset, uint64_t value, uint32_t size)
 {
     // Handle ref types separately to ensure write barriers are in effect.
@@ -100,8 +112,14 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    if (thisObject->elementsAreRefTypes())
-        visitor.appendValues(std::bit_cast<WriteBarrier<Unknown>*>(thisObject->refTypeSpan().data()), thisObject->size());
+    if (thisObject->elementsAreRefTypes()) {
+        auto span = thisObject->refTypeSpan();
+#if ASSERT_ENABLED
+        for (uint64_t value : span)
+            validateWasmValue(value, thisObject->elementType().type.unpacked());
+#endif
+        visitor.appendValues(std::bit_cast<WriteBarrier<Unknown>*>(span.data()), span.size());
+    }
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyArray);

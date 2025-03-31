@@ -33,13 +33,12 @@
 
 namespace WebKit {
 
-using RemoteSerializedImageBufferIdentifier = WebCore::RenderingResourceIdentifier;
+enum class RemoteSerializedImageBufferIdentifierType { };
+using RemoteSerializedImageBufferIdentifier = AtomicObjectIdentifier<RemoteSerializedImageBufferIdentifierType>;
 using RemoteSerializedImageBufferReadReference = IPC::ObjectIdentifierReadReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferWriteReference = IPC::ObjectIdentifierWriteReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferReference = IPC::ObjectIdentifierReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferReferenceTracker = IPC::ObjectIdentifierReferenceTracker<RemoteSerializedImageBufferIdentifier>;
-
-
 
 } // namespace WebKit
 

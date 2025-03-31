@@ -37,7 +37,7 @@ public:
     static Ref<AccessibilityLabel> create(AXID, RenderObject&);
     virtual ~AccessibilityLabel();
 
-    bool containsOnlyStaticText() const;
+    bool containsOnlyStaticText() const final;
 private:
     explicit AccessibilityLabel(AXID, RenderObject&);
     bool computeIsIgnored() const final { return isIgnoredByDefault(); }

@@ -118,7 +118,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     }
 
-    auto result = callback->handleEvent(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
+    auto result = callback->invoke(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

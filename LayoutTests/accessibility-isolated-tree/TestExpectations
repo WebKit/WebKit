@@ -5,7 +5,6 @@ accessibility/isolated-tree [ Pass ]
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
-accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
 accessibility/mac/document-attributes.html [ Failure ]
@@ -34,7 +33,7 @@ accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
 # accessibility/mac/text-marker-from-typing-notification.html
 
 # Used to be a timeout until https://github.com/WebKit/WebKit/commit/c69e4c0caaf5368db791652eee3a057ed2751144, now is a text failure.
-accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+accessibility/frame-disconnect-textmarker-cache-crash.html [ Pass Failure ]
 
 # Test times out without ITM, so we need to reconcile behavior here.
 accessibility/mac/style-range.html [ Pass ]
@@ -57,11 +56,9 @@ accessibility/mac/character-offset-from-upstream-position.html [ Failure ]
 accessibility/mac/content-editable-attributed-string.html [ Failure ]
 accessibility/mac/insertion-point-line-number.html [ Failure ]
 accessibility/mac/line-index-for-textmarker.html [ Failure ]
-accessibility/mac/line-text-marker-range-in-list-item.html [ Failure ]
 accessibility/mac/misspelled-attributed-string.html [ Failure ]
 accessibility/mac/object-replacement-with-no-rendered-children-at-node-start.html [ Failure ]
 accessibility/mac/object-replacement-with-rendered-children-at-node-start.html [ Failure ]
-accessibility/mac/range-for-line-index.html [ Failure ]
 accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
 accessibility/mac/text-marker-for-index.html [ Failure ]
 accessibility/mac/text-marker-p-tags.html [ Failure ]

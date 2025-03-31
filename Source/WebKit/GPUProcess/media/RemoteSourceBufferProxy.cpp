@@ -388,22 +388,25 @@ std::optional<InitializationSegmentInfo> RemoteSourceBufferProxy::createInitiali
     segmentInfo.duration = segment.duration;
 
     segmentInfo.audioTracks = segment.audioTracks.map([&](const InitializationSegment::AudioTrackInformation& audioTrackInfo) {
-        auto id = audioTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.protectedTrack());
+        RefPtr track = audioTrackInfo.track;
+        auto id = track->id();
+        remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*track);
         m_mediaDescriptions.try_emplace(id, *audioTrackInfo.protectedDescription());
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), id };
     });
 
     segmentInfo.videoTracks = segment.videoTracks.map([&](const InitializationSegment::VideoTrackInformation& videoTrackInfo) {
-        auto id = videoTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.protectedTrack());
+        RefPtr track = videoTrackInfo.track;
+        auto id = track->id();
+        remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*track);
         m_mediaDescriptions.try_emplace(id, *videoTrackInfo.protectedDescription());
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), id };
     });
 
     segmentInfo.textTracks = segment.textTracks.map([&](const InitializationSegment::TextTrackInformation& textTrackInfo) {
-        auto id = textTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.protectedTrack());
+        RefPtr track = textTrackInfo.track;
+        auto id = track->id();
+        remoteMediaPlayerProxy->addRemoteTextTrackProxy(*track);
         m_mediaDescriptions.try_emplace(id, *textTrackInfo.protectedDescription());
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), id };
     });

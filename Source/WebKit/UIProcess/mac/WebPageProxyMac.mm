@@ -520,7 +520,7 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
 
     // The NSFileManager expects a path string, while NSWorkspace uses file URLs, and will decode any percent encoding
     // in its passed URLs before loading from disk. Create the files using decoded file paths so they match up.
-    NSString *path = [[pdfDirectoryPath stringByAppendingPathComponent:suggestedFilename.protectedNSString().get()] stringByRemovingPercentEncoding];
+    NSString *path = [[pdfDirectoryPath stringByAppendingPathComponent:suggestedFilename.createNSString().get()] stringByRemovingPercentEncoding];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path]) {

@@ -1,0 +1,15 @@
+Blocked access to external URL http://www.localhost:8800/storage-access-api/resources/hasStorageAccess-iframe.html?testCase=cross-origin-frame
+Blocked access to external URL http://www.localhost:8800/storage-access-api/resources/hasStorageAccess-iframe.html?testCase=nested-cross-origin-frame
+
+Harness Error (TIMEOUT), message = null
+
+PASS [top-level-context] document.hasStorageAccess() should be supported on the document interface
+FAIL [top-level-context] document.hasStorageAccess() should be disallowed in insecure contexts assert_false: Access should be disallowed in insecure contexts expected false got true
+PASS [top-level-context] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [same-origin-frame] document.hasStorageAccess() should be supported on the document interface
+FAIL [same-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts assert_false: Access should be disallowed in insecure contexts expected false got true
+PASS [same-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [nested-same-origin-frame] document.hasStorageAccess() should be supported on the document interface
+FAIL [nested-same-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts assert_false: Access should be disallowed in insecure contexts expected false got true
+PASS [nested-same-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+

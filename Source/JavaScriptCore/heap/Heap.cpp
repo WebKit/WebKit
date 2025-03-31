@@ -123,13 +123,19 @@ double maxPauseMS(double thisPauseMS)
 
 size_t minHeapSize(HeapType heapType, size_t ramSize)
 {
-    if (heapType == HeapType::Large) {
-        double result = std::min(
+    switch (heapType) {
+    case HeapType::Large:
+        return static_cast<size_t>(std::min(
             static_cast<double>(Options::largeHeapSize()),
-            ramSize * Options::smallHeapRAMFraction());
-        return static_cast<size_t>(result);
+            ramSize * Options::smallHeapRAMFraction()));
+    case HeapType::Medium:
+        return Options::mediumHeapSize();
+    case HeapType::Small:
+        return Options::smallHeapSize();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
-    return Options::smallHeapSize();
 }
 
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
@@ -3398,7 +3404,6 @@ DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructi
 
 #undef DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW
 
-// FIXME: We should figure out how to adapt IsoAlignedMemoryAllocators for these so they're at least somewhat isolated.
 #define DEFINE_DYNAMIC_NON_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type, SubspaceType) \
     SubspaceType* Heap::name##Slow() \
     { \

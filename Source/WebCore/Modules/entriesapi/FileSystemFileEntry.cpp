@@ -58,10 +58,10 @@ void FileSystemFileEntry::file(ScriptExecutionContext& context, Ref<FileCallback
         document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
             if (result.hasException()) {
                 if (errorCallback)
-                    errorCallback->handleEvent(DOMException::create(result.releaseException()));
+                    errorCallback->invoke(DOMException::create(result.releaseException()));
                 return;
             }
-            successCallback->handleEvent(result.releaseReturnValue());
+            successCallback->invoke(result.releaseReturnValue());
         });
     });
 }

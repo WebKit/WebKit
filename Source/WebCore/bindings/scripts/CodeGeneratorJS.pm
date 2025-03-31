@@ -6776,8 +6776,7 @@ sub GenerateCallbackHeaderContent
 
             my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $operation->type) . "::CallbackReturnType>";
             
-            # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
-            my $functionName = $operation->extendedAttributes->{ImplementedAs} || $operation->name || "handleEvent";
+            my $functionName = $operation->extendedAttributes->{ImplementedAs} || $operation->name || "invoke";
             push(@$contentRef, "    ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ") override;\n");
 
             # Unless the callback function returns a promise, also generate a version that rethrows any exception it might encounter.
@@ -6823,8 +6822,7 @@ sub GenerateCallbackImplementationOperationBody
 
     my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $operation->type) . "::CallbackReturnType>";
 
-    # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
-    my $functionName = $operation->name || "handleEvent";
+    my $functionName = $operation->name || "invoke";
 
     my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $functionName;
     $functionImplementationName .= "RethrowingException" if $isForRethrowingHandler;

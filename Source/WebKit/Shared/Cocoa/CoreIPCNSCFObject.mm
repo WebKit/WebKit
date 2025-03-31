@@ -140,21 +140,24 @@ RetainPtr<id> CoreIPCNSCFObject::toID() const
 
 bool CoreIPCNSCFObject::valueIsAllowed(IPC::Decoder& decoder, ObjectValue& value)
 {
+#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(value);
+    return true;
+#else
     // The Decoder always has a set of allowedClasses,
     // but we only check that set when considering SecureCoding classes
     Class objectClass;
     WTF::switchOn(value,
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
         [&](CoreIPCSecureCoding& object) {
             objectClass = object.objectClass();
-        },
-#endif
-        [&](auto& object) {
+        }, [&](auto& object) {
             objectClass = nullptr;
         }
     );
 
     return !objectClass || decoder.allowedClasses().contains(objectClass);
+#endif
 }
 
 } // namespace WebKit

@@ -68,6 +68,7 @@ public:
     bool hasAttachmentTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::attachment; }
     bool hasBodyTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::body; }
     bool hasMarkTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::mark; }
+    bool hasRowGroupTag() const final;
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
@@ -208,12 +209,11 @@ private:
     std::pair<unsigned, unsigned> rowIndexRange() const final { return indexRangePairAttributeValue(AXProperty::RowIndexRange); }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const final { return indexRangePairAttributeValue(AXProperty::ColumnIndexRange); }
-    int axColumnIndex() const final { return intAttributeValue(AXProperty::AXColumnIndex); }
-    int axRowIndex() const final { return intAttributeValue(AXProperty::AXRowIndex); }
+    std::optional<unsigned> axColumnIndex() const final { return propertyValue<std::optional<unsigned>>(AXProperty::AXColumnIndex); }
+    std::optional<unsigned> axRowIndex() const final { return propertyValue<std::optional<unsigned>>(AXProperty::AXRowIndex); }
     bool isColumnHeader() const final { return boolAttributeValue(AXProperty::IsColumnHeader); }
     bool isRowHeader() const final { return boolAttributeValue(AXProperty::IsRowHeader); }
     String cellScope() const final { return stringAttributeValue(AXProperty::CellScope); }
-    std::optional<AXID> rowGroupAncestorID() const final { return propertyValue<Markable<AXID>>(AXProperty::RowGroupAncestorID); }
 
     // Table column support.
     unsigned columnIndex() const final { return unsignedAttributeValue(AXProperty::ColumnIndex); }
@@ -261,12 +261,11 @@ private:
     int layoutCount() const final;
     double loadingProgress() const final { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const final { return boolAttributeValue(AXProperty::SupportsARIAOwns); }
-    String popupValue() const final { return stringAttributeValue(AXProperty::PopupValue); }
+    String explicitPopupValue() const final { return stringAttributeValue(AXProperty::ExplicitPopupValue); }
     bool pressedIsPresent() const final;
-    String invalidStatus() const final { return stringAttributeValue(AXProperty::InvalidStatus); }
+    String explicitInvalidStatus() const final { return stringAttributeValue(AXProperty::ExplicitInvalidStatus); }
     bool supportsExpanded() const final { return boolAttributeValue(AXProperty::SupportsExpanded); }
     AccessibilitySortDirection sortDirection() const final { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXProperty::SortDirection)); }
-    bool supportsRangeValue() const final { return boolAttributeValue(AXProperty::SupportsRangeValue); }
     String identifierAttribute() const final;
     String linkRelValue() const final;
     Vector<String> classList() const final;
@@ -291,8 +290,7 @@ private:
     String expandedTextValue() const final { return stringAttributeValue(AXProperty::ExpandedTextValue); }
     bool supportsExpandedTextValue() const final { return boolAttributeValue(AXProperty::SupportsExpandedTextValue); }
     SRGBA<uint8_t> colorValue() const final;
-    String rolePlatformString() const final { return stringAttributeValue(AXProperty::RolePlatformString); }
-    String roleDescription() const final { return stringAttributeValue(AXProperty::RoleDescription); }
+    String roleDescription() final { return stringAttributeValue(AXProperty::RoleDescription); }
     String subrolePlatformString() const final { return stringAttributeValue(AXProperty::SubrolePlatformString); }
     LayoutRect elementRect() const final;
     IntPoint clickPoint() final;
@@ -309,7 +307,7 @@ private:
     String accessKey() const final { return stringAttributeValueNullIfMissing(AXProperty::AccessKey); }
     String localizedActionVerb() const final { return stringAttributeValue(AXProperty::LocalizedActionVerb); }
     String actionVerb() const final { return stringAttributeValue(AXProperty::ActionVerb); }
-    String autoCompleteValue() const final { return stringAttributeValue(AXProperty::AutoCompleteValue); }
+    String explicitAutoCompleteValue() const final { return stringAttributeValue(AXProperty::ExplicitAutoCompleteValue); }
     bool isMathElement() const final { return boolAttributeValue(AXProperty::IsMathElement); }
     bool isMathFraction() const final { return boolAttributeValue(AXProperty::IsMathFraction); }
     bool isMathFenced() const final { return boolAttributeValue(AXProperty::IsMathFenced); }
@@ -323,6 +321,7 @@ private:
     bool isMathTableCell() const final { return boolAttributeValue(AXProperty::IsMathTableCell); }
     bool isMathMultiscript() const final { return boolAttributeValue(AXProperty::IsMathMultiscript); }
     bool isMathToken() const final { return boolAttributeValue(AXProperty::IsMathToken); }
+    bool isAnonymousMathOperator() const final { return boolAttributeValue(AXProperty::IsAnonymousMathOperator); }
     std::optional<AccessibilityChildrenVector> mathRadicand() final;
     AXIsolatedObject* mathRootIndexObject() final { return objectAttributeValue(AXProperty::MathRootIndexObject); }
     AXIsolatedObject* mathUnderObject() final { return objectAttributeValue(AXProperty::MathUnderObject); }
@@ -338,7 +337,7 @@ private:
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) final;
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) final;
 #if PLATFORM(COCOA)
-    String speechHintAttributeValue() const final { return stringAttributeValue(AXProperty::SpeechHint); }
+    OptionSet<SpeakAs> speakAs() const final { return optionSetAttributeValue<SpeakAs>(AXProperty::SpeakAs); }
 #endif
     bool fileUploadButtonReturnsValueInTitle() const final;
 #if PLATFORM(MAC)
@@ -359,8 +358,8 @@ private:
     void setChildrenIDs(Vector<AXID>&&);
     bool isDetachedFromParent() final;
     AXIsolatedObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
-    const String liveRegionStatus() const final { return stringAttributeValue(AXProperty::LiveRegionStatus); }
-    const String liveRegionRelevant() const final { return stringAttributeValue(AXProperty::LiveRegionRelevant); }
+    const String explicitLiveRegionStatus() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionStatus); }
+    const String explicitLiveRegionRelevant() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionRelevant); }
     bool liveRegionAtomic() const final { return boolAttributeValue(AXProperty::LiveRegionAtomic); }
     bool isBusy() const final { return boolAttributeValue(AXProperty::IsBusy); }
     bool isInlineText() const final { return boolAttributeValue(AXProperty::IsInlineText); }
@@ -485,7 +484,6 @@ private:
     bool hasSameFontColor(AXCoreObject&) final;
     bool hasSameStyle(AXCoreObject&) final;
     bool hasUnderline() const final { return boolAttributeValue(AXProperty::HasUnderline); }
-    bool hasHighlighting() const final { return boolAttributeValue(AXProperty::HasHighlighting); }
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
     Element* element() const final;
     Node* node() const final;
@@ -537,7 +535,7 @@ private:
     ScrollView* scrollView() const final;
     void detachFromParent() final;
 
-    OptionSet<AXAncestorFlag> ancestorFlags() const;
+    OptionSet<AXAncestorFlag> ancestorFlags() const { return optionSetAttributeValue<AXAncestorFlag>(AXProperty::AncestorFlags); }
 
     bool hasDocumentRoleAncestor() const final { return ancestorFlags().contains(AXAncestorFlag::HasDocumentRoleAncestor); }
     bool hasWebApplicationAncestor() const final { return ancestorFlags().contains(AXAncestorFlag::HasWebApplicationAncestor); }

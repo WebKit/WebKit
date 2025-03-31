@@ -370,6 +370,12 @@ void ModelProcessModelPlayer::endStageModeInteraction()
     send(Messages::ModelProcessModelPlayerProxy::EndStageModeInteraction());
 }
 
+void ModelProcessModelPlayer::renderingAbruptlyStopped()
+{
+    if (m_client)
+        m_client->renderingAbruptlyStopped();
+}
+
 }
 
 #endif // ENABLE(MODEL_PROCESS)

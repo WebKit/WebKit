@@ -256,7 +256,7 @@ void ViewTransition::callUpdateCallback()
         Ref { promiseAndWrapper.second }->resolve();
         callbackPromise = WTFMove(promiseAndWrapper.first);
     } else {
-        auto result = RefPtr { m_updateCallback }->handleEvent();
+        auto result = RefPtr { m_updateCallback }->invoke();
         callbackPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
         if (!callbackPromise || callbackPromise->isSuspended()) {
             auto promiseAndWrapper = createPromiseAndWrapper(document);

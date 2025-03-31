@@ -371,6 +371,7 @@ public:
 #if PLATFORM(COCOA)
     static void fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<WTF::UUID>&&)>&&);
     static void removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&&);
+    static void removeDataStoreWithIdentifierImpl(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&&);
     static String defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier);
     static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
     static String defaultSearchFieldHistoryDirectory(const String& baseDataDirectory = nullString());

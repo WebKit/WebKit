@@ -960,6 +960,7 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
     -Wno-psabi
     -Wno-redundant-move
     -Wno-suggest-attribute=format
+    -Wno-nontrivial-memcall
     -Wno-undef
     -Wno-uninitialized
     -Wno-unused-parameter

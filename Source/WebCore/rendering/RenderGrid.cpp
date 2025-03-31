@@ -1115,16 +1115,6 @@ LayoutUnit RenderGrid::masonryContentSize() const
     return m_masonryLayout.gridContentSize();
 }
 
-Vector<LayoutRect> RenderGrid::gridItemsLayoutRects()
-{
-    Vector<LayoutRect> items;
-
-    for (RenderBox* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next())
-        items.append(gridItem->frameRect());
-
-    return items;
-}
-
 void RenderGrid::performPreLayoutForGridItems(const GridTrackSizingAlgorithm& algorithm, const ShouldUpdateGridAreaLogicalSize shouldUpdateGridAreaLogicalSize) const
 {
     ASSERT(!algorithm.grid().needsItemsPlacement());

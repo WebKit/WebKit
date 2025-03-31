@@ -2346,7 +2346,7 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
     auto urlString = element.imageSourceURL();
 
     auto suggestedName = [&] -> String {
-        RetainPtr url = static_cast<NSURL *>(element.document().completeURL(urlString));
+        RetainPtr url = element.document().completeURL(urlString).createNSURL();
         if (!url)
             url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 

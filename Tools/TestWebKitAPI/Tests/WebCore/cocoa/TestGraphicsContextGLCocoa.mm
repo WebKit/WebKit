@@ -34,6 +34,7 @@
 #import <WebCore/GraphicsContextGLCocoa.h>
 #import <WebCore/ProcessIdentity.h>
 #import <atomic>
+#import <limits>
 #import <optional>
 #import <wtf/HashSet.h>
 #import <wtf/MemoryFootprint.h>
@@ -679,6 +680,54 @@ TEST_F(GraphicsContextGLCocoaReadPixelsTest, readPixelsWithStatusTooLargeRect)
     Color actualColor { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
     EXPECT_NE(m_expectedColor, actualColor);
     EXPECT_EQ(GCGLErrorCode::InvalidOperation, m_context->getErrors());
+}
+
+class GraphicsContextGLCocoaReshapeTest : public ::testing::Test {
+protected:
+    static constexpr int INITIAL_WIDTH = 20;
+    static constexpr int INITIAL_HEIGHT = 20;
+
+    void SetUp() override // NOLINT
+    {
+        GraphicsContextGLAttributes attributes;
+        m_context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+        m_context->reshape(INITIAL_WIDTH, INITIAL_HEIGHT);
+    }
+
+    RefPtr<TestedGraphicsContextGLCocoa> m_context { nullptr };
+};
+
+TEST_F(GraphicsContextGLCocoaReshapeTest, reshapeSuccess)
+{
+    const IntSize framebufferSize { 200, 200 };
+
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), INITIAL_WIDTH);
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
+    m_context->reshape(framebufferSize.width(), framebufferSize.height());
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), framebufferSize.width());
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), framebufferSize.height());
+}
+
+TEST_F(GraphicsContextGLCocoaReshapeTest, reshapeWidthTooLarge)
+{
+    const IntSize framebufferSize { std::numeric_limits<int>::max(), 200 };
+
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), INITIAL_WIDTH);
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
+    m_context->reshape(framebufferSize.width(), framebufferSize.height());
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), INITIAL_WIDTH);
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
+}
+
+TEST_F(GraphicsContextGLCocoaReshapeTest, reshapeHeightTooLarge)
+{
+    const IntSize framebufferSize { 200, std::numeric_limits<int>::max() };
+
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), INITIAL_WIDTH);
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
+    m_context->reshape(framebufferSize.width(), framebufferSize.height());
+    EXPECT_EQ(m_context->getInternalFramebufferSize().width(), INITIAL_WIDTH);
+    EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
 }
 
 }

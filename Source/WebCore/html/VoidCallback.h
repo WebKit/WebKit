@@ -36,8 +36,8 @@ class VoidCallback : public RefCounted<VoidCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent() = 0;
-    virtual CallbackResult<void> handleEventRethrowingException() = 0;
+    virtual CallbackResult<void> invoke() = 0;
+    virtual CallbackResult<void> invokeRethrowingException() = 0;
 
 private:
     virtual bool hasCallback() const = 0;

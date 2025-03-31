@@ -83,6 +83,9 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
     case MessageSource::CSS:
         sourceString = "CSS"_s;
         break;
+    case MessageSource::Accessibility:
+        sourceString = "Accessibility"_s;
+        break;
     case MessageSource::Security:
         sourceString = "SECURITY"_s;
         break;

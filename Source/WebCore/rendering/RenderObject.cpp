@@ -519,57 +519,67 @@ RenderBox* RenderObject::enclosingScrollableContainer() const
 static CheckedPtr<RenderElement> nearestBaselineContextAncestor(const RenderElement& renderer)
 {
     for (CheckedPtr container = renderer.containingBlock(); container; container = container->containingBlock()) {
-        if (container->childrenInline() || container->isFlexibleBoxIncludingDeprecated() || container->isRenderGrid())
+        if (container->childrenInline() || container->isFlexibleBoxIncludingDeprecated() || container->isRenderGrid() || container->isRenderTableRow())
             return container;
     }
     return nullptr;
 }
 
-static inline bool isLayoutBoundary(const RenderElement& renderer, std::optional<CheckedPtr<RenderElement>>& cachedBaselineContextAncestor)
+enum class RelayoutBoundary {
+    No,
+    OverflowOnly,
+    Yes,
+};
+
+static inline RelayoutBoundary isLayoutBoundary(const RenderElement& renderer, std::optional<CheckedPtr<RenderElement>>& cachedBaselineContextAncestor)
 {
     // FIXME: In future it may be possible to broaden these conditions in order to improve performance.
     if (renderer.isRenderView())
-        return true;
+        return RelayoutBoundary::Yes;
 
     auto& style = renderer.style();
     if (CheckedPtr textControl = dynamicDowncast<RenderTextControl>(renderer)) {
         if (!textControl->isFlexItem() && !textControl->isGridItem() && style.fieldSizing() != FieldSizing::Content) {
             // Flexing type of layout systems may compute different size than what input's preferred width is which won't happen unless they run their layout as well.
-            return true;
+            return RelayoutBoundary::Yes;
         }
     }
 
     if (renderer.shouldApplyLayoutContainment() && renderer.shouldApplySizeContainment())
-        return true;
+        return RelayoutBoundary::Yes;
 
     if (renderer.isRenderOrLegacyRenderSVGRoot())
-        return true;
-
-    if (!renderer.hasNonVisibleOverflow()) {
-        // While createsNewFormattingContext (a few lines below) covers this case, overflow visible is a super common value so we should be able
-        // to bail out here fast.
-        return false;
-    }
+        return RelayoutBoundary::Yes;
 
     if (style.width().isIntrinsicOrAuto() || style.height().isIntrinsicOrAuto() || style.height().isPercentOrCalculated() || style.width().isPercentOrCalculated())
-        return false;
+        return RelayoutBoundary::No;
 
     if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer())
-        return false;
+        return RelayoutBoundary::No;
 
     // Table parts can't be relayout roots since the table is responsible for layouting all the parts.
     if (renderer.isTablePart())
-        return false;
+        return RelayoutBoundary::No;
 
-    if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer); !renderBlock->createsNewFormattingContext())
-        return false;
+    // Tables size to their contents, even with a fixed height.
+    if (renderer.isRenderTable())
+        return RelayoutBoundary::No;
 
     if (!cachedBaselineContextAncestor.has_value())
         cachedBaselineContextAncestor = nearestBaselineContextAncestor(renderer);
     if (cachedBaselineContextAncestor.value())
-        return false;
+        return RelayoutBoundary::No;
 
-    return true;
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
+        if (!block->createsNewFormattingContext())
+            return RelayoutBoundary::No;
+        return renderer.hasNonVisibleOverflow() ? RelayoutBoundary::Yes : RelayoutBoundary::OverflowOnly;
+    }
+
+    if (!renderer.hasNonVisibleOverflow())
+        return RelayoutBoundary::No;
+
+    return RelayoutBoundary::Yes;
 }
 
 void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
@@ -656,8 +666,16 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             // Having a valid layout root also mean we should not stop at layout boundaries.
             if (ancestor == layoutRoot)
                 return layoutRoot;
-        } else if (isLayoutBoundary(*ancestor, nearestBaselineContextAncestor))
-            return ancestor.get();
+
+            if (isLayoutBoundary(*ancestor, nearestBaselineContextAncestor) > RelayoutBoundary::No)
+                simplifiedNormalFlowLayout = true;
+        } else {
+            auto boundary = isLayoutBoundary(*ancestor, nearestBaselineContextAncestor);
+            if (boundary == RelayoutBoundary::Yes)
+                return ancestor.get();
+            if (boundary == RelayoutBoundary::OverflowOnly)
+                simplifiedNormalFlowLayout = true;
+        }
 
         hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
         ancestor = WTFMove(container);
@@ -1044,7 +1062,8 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
 
     if (view().usesCompositing()) {
         ASSERT(repaintContainer->isComposited());
-        repaintContainer->checkedLayer()->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
+        if (CheckedPtr layer = repaintContainer->layer())
+            layer->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
     }
 }
 

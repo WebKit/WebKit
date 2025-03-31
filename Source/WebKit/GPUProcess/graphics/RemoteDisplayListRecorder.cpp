@@ -52,9 +52,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, RenderingResourceIdentifier imageBufferIdentifier, RemoteRenderingBackend& renderingBackend)
+Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(WebCore::ImageBuffer& imageBuffer, RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
+{
+    auto instance = adoptRef(*new RemoteDisplayListRecorder(imageBuffer, identifier, renderingBackend));
+    instance->startListeningForIPC();
+    return instance;
+}
+
+RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
     : m_imageBuffer(imageBuffer)
-    , m_imageBufferIdentifier(imageBufferIdentifier)
+    , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
     , m_sharedResourceCache(renderingBackend.sharedResourceCache())
 {
@@ -85,12 +92,12 @@ std::optional<SourceImage> RemoteDisplayListRecorder::sourceImage(RenderingResou
 
 void RemoteDisplayListRecorder::startListeningForIPC()
 {
-    m_renderingBackend->protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
+    m_renderingBackend->protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteDisplayListRecorder::stopListeningForIPC()
 {
-    m_renderingBackend->protectedStreamConnection()->stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
+    m_renderingBackend->protectedStreamConnection()->stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteDisplayListRecorder::save()

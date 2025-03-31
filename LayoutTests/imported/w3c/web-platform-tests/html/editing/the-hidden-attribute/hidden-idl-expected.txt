@@ -7,9 +7,9 @@ PASS div.hidden = "false"
 PASS div.hidden = ""
 PASS div.setAttribute('hidden', "false") should make div.hidden return true
 PASS div.setAttribute('hidden', "foo") should make div.hidden return true
-FAIL div.hidden = "until-found" assert_equals: div.hidden = "until-found" should return "until-found" expected (string) "until-found" but got (boolean) true
-FAIL div.hidden = "UNTIL-FOUND" assert_equals: div.hidden = "UNTIL-FOUND" should return "until-found" expected (string) "until-found" but got (boolean) true
-FAIL div.hidden = "UnTiL-FoUnD" assert_equals: div.hidden = "UnTiL-FoUnD" should return "until-found" expected (string) "until-found" but got (boolean) true
+PASS div.hidden = "until-found"
+PASS div.hidden = "UNTIL-FOUND"
+PASS div.hidden = "UnTiL-FoUnD"
 PASS div.hidden = "untıl-found"
 PASS div.hidden = "untİl-found"
 PASS div.hidden = null

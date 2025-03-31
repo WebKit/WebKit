@@ -28,7 +28,8 @@
 #include <VideoToolbox/VideoToolbox.h>
 #include <wtf/SoftLinking.h>
 
-typedef struct OpaqueVTVideoDecoder VTVideoDecoderRef;
+// FIXME: CoreMedia doesn't specify CF_BRIDGED_TYPE to VTVideoDecoderRef. See rdar://148155269.
+typedef struct CF_BRIDGED_TYPE(id) OpaqueVTVideoDecoder* VTVideoDecoderRef;
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
 typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
@@ -39,7 +40,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSessionCopyProperty, OSSt
 #define VTSessionCopyProperty softLink_VideoToolbox_VTSessionCopyProperty
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSessionSetProperties, OSStatus, (VTSessionRef session, CFDictionaryRef propertyDictionary), (session, propertyDictionary))
 #define VTSessionSetProperties softLink_VideoToolbox_VTSessionSetProperties
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTDecompressionSessionCreate, OSStatus, (CFAllocatorRef allocator, CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef videoDecoderSpecification, CFDictionaryRef destinationImageBufferAttributes, const VTDecompressionOutputCallbackRecord* outputCallback, VTDecompressionSessionRef* decompressionSessionOut), (allocator, videoFormatDescription, videoDecoderSpecification, destinationImageBufferAttributes, outputCallback, decompressionSessionOut))
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTDecompressionSessionCreate, OSStatus, (CFAllocatorRef allocator, CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef videoDecoderSpecification, CFDictionaryRef destinationImageBufferAttributes, const VTDecompressionOutputCallbackRecord* outputCallback, CF_RETURNS_RETAINED VTDecompressionSessionRef* decompressionSessionOut), (allocator, videoFormatDescription, videoDecoderSpecification, destinationImageBufferAttributes, outputCallback, decompressionSessionOut))
 #define VTDecompressionSessionCreate softLink_VideoToolbox_VTDecompressionSessionCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTDecompressionSessionInvalidate, void, (VTDecompressionSessionRef session), (session))
 #define VTDecompressionSessionInvalidate softLink_VideoToolbox_VTDecompressionSessionInvalidate
@@ -51,7 +52,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTDecompressionSessionDecod
 #define VTDecompressionSessionDecodeFrameWithOutputHandler softLink_VideoToolbox_VTDecompressionSessionDecodeFrameWithOutputHandler
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTDecompressionSessionDecodeFrame, OSStatus, (VTDecompressionSessionRef session, CMSampleBufferRef sampleBuffer, VTDecodeFrameFlags decodeFlags, void* sourceFrameRefCon, VTDecodeInfoFlags* infoFlagsOut), (session, sampleBuffer, decodeFlags, sourceFrameRefCon, infoFlagsOut))
 #define VTDecompressionSessionDecodeFrame softLink_VideoToolbox_VTDecompressionSessionDecodeFrame
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTImageRotationSessionCreate, OSStatus, (CFAllocatorRef allocator, uint32_t rotationDegrees, VTImageRotationSessionRef* imageRotationSessionOut), (allocator, rotationDegrees, imageRotationSessionOut))
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTImageRotationSessionCreate, OSStatus, (CFAllocatorRef allocator, uint32_t rotationDegrees, CF_RETURNS_RETAINED VTImageRotationSessionRef* imageRotationSessionOut), (allocator, rotationDegrees, imageRotationSessionOut))
 #define VTImageRotationSessionCreate softLink_VideoToolbox_VTImageRotationSessionCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTImageRotationSessionSetProperty, OSStatus, (VTImageRotationSessionRef session, CFStringRef propertyKey, CFTypeRef propertyValue), (session, propertyKey, propertyValue))
 #define VTImageRotationSessionSetProperty softLink_VideoToolbox_VTImageRotationSessionSetProperty
@@ -61,7 +62,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTIsHardwareDecode
 #define VTIsHardwareDecodeSupported softLink_VideoToolbox_VTIsHardwareDecodeSupported
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTGetGVADecoderAvailability, OSStatus, (uint32_t* totalInstanceCountOut, uint32_t* freeInstanceCountOut), (totalInstanceCountOut, freeInstanceCountOut))
 #define VTGetGVADecoderAvailability softLink_VideoToolbox_VTGetGVADecoderAvailability
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTCreateCGImageFromCVPixelBuffer, OSStatus, (CVPixelBufferRef pixelBuffer, CFDictionaryRef options, CGImageRef* imageOut), (pixelBuffer, options, imageOut))
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTCreateCGImageFromCVPixelBuffer, OSStatus, (CVPixelBufferRef pixelBuffer, CFDictionaryRef options, CF_RETURNS_RETAINED CGImageRef* imageOut), (pixelBuffer, options, imageOut))
 #define VTCreateCGImageFromCVPixelBuffer softLink_VideoToolbox_VTCreateCGImageFromCVPixelBuffer
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTCopyHEVCDecoderCapabilitiesDictionary, CFDictionaryRef, (), ())
 #define VTCopyHEVCDecoderCapabilitiesDictionary softLink_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary
@@ -69,7 +70,8 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTGetHEVCCapabilit
 #define VTGetHEVCCapabilitesForFormatDescription softLink_VideoToolbox_VTGetHEVCCapabilitesForFormatDescription
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTCopyAV1DecoderCapabilitiesDictionary, CFDictionaryRef, (), ())
 #define VTCopyAV1DecoderCapabilitiesDictionary softLink_VideoToolbox_VTCopyAV1DecoderCapabilitiesDictionary
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSelectAndCreateVideoDecoderInstance, OSStatus, (CMVideoCodecType codecType, CFAllocatorRef allocator, CFDictionaryRef videoDecoderSpecification, VTVideoDecoderRef *decoderInstanceOut), (codecType, allocator, videoDecoderSpecification, decoderInstanceOut))
+// CoreMedia does not specify CF_RETURNS_RETAINED. See rdar://148150143.
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSelectAndCreateVideoDecoderInstance, OSStatus, (CMVideoCodecType codecType, CFAllocatorRef allocator, CFDictionaryRef videoDecoderSpecification, CF_RETURNS_RETAINED VTVideoDecoderRef *decoderInstanceOut), (codecType, allocator, videoDecoderSpecification, decoderInstanceOut))
 #define VTSelectAndCreateVideoDecoderInstance softLink_VideoToolbox_VTSelectAndCreateVideoDecoderInstance
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder, CFStringRef)
 #define kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder get_VideoToolbox_kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder()
@@ -86,7 +88,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTImageRotationPropertyKey
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTImageRotationPropertyKey_FlipVerticalOrientation, CFStringRef)
 #define kVTImageRotationPropertyKey_FlipVerticalOrientation get_VideoToolbox_kVTImageRotationPropertyKey_FlipVerticalOrientation()
 
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelTransferSessionCreate, OSStatus, (CFAllocatorRef allocator, VTPixelTransferSessionRef* pixelTransferSessionOut), (allocator, pixelTransferSessionOut))
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelTransferSessionCreate, OSStatus, (CFAllocatorRef allocator, CF_RETURNS_RETAINED VTPixelTransferSessionRef* pixelTransferSessionOut), (allocator, pixelTransferSessionOut))
 #define VTPixelTransferSessionCreate softLink_VideoToolbox_VTPixelTransferSessionCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelTransferSessionTransferImage, OSStatus, (VTPixelTransferSessionRef session, CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer), (session, sourceBuffer, destinationBuffer))
 #define VTPixelTransferSessionTransferImage softLink_VideoToolbox_VTPixelTransferSessionTransferImage
@@ -141,10 +143,12 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, kVTDecoderCapabili
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, kVTDecoderCapability_ColorDepth, CFStringRef)
 #define kVTDecoderCapability_ColorDepth get_VideoToolbox_kVTDecoderCapability_ColorDepth()
 
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerCreateWithAttributes, OSStatus, (CFAllocatorRef allocator, CFDictionaryRef attributes, VTPixelBufferConformerRef* conformerOut), (allocator, attributes, conformerOut));
+// FIXME: CoreMedia doesn't specify CF_RETURNS_RETAINED. See <rdar://148150399>.
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerCreateWithAttributes, OSStatus, (CFAllocatorRef allocator, CFDictionaryRef attributes, CF_RETURNS_RETAINED VTPixelBufferConformerRef* conformerOut), (allocator, attributes, conformerOut));
 #define VTPixelBufferConformerCreateWithAttributes softLink_VideoToolbox_VTPixelBufferConformerCreateWithAttributes
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerIsConformantPixelBuffer, Boolean, (VTPixelBufferConformerRef conformer, CVPixelBufferRef pixBuf), (conformer, pixBuf))
 #define VTPixelBufferConformerIsConformantPixelBuffer softLink_VideoToolbox_VTPixelBufferConformerIsConformantPixelBuffer
+// FIXME: CoreMedia doesn't specify CF_RETURNS_RETAINED. See <rdar://148150446>.
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerCopyConformedPixelBuffer, OSStatus, (VTPixelBufferConformerRef conformer, CVPixelBufferRef sourceBuffer, Boolean ensureModifiable, CVPixelBufferRef* conformedBufferOut), (conformer, sourceBuffer, ensureModifiable, conformedBufferOut))
 #define VTPixelBufferConformerCopyConformedPixelBuffer softLink_VideoToolbox_VTPixelBufferConformerCopyConformedPixelBuffer
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTRegisterSupplementalVideoDecoderIfAvailable, void, (CMVideoCodecType codecType), (codecType))

@@ -143,6 +143,7 @@ struct WEBCORE_EXPORT QuirksData {
 
 #if ENABLE(META_VIEWPORT)
     bool shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk { false };
+    bool shouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk { false };
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)

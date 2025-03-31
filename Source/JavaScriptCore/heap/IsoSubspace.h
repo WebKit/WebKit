@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "AlignedMemoryAllocator.h"
 #include "BlockDirectory.h"
-#include "IsoMemoryAllocatorBase.h"
 #include "Subspace.h"
 #include "SubspaceAccess.h"
 #include <wtf/SinglyLinkedListWithTail.h>
@@ -43,7 +43,7 @@ class IsoSubspace;
 class IsoSubspace final : public Subspace {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IsoSubspace, JS_EXPORT_PRIVATE);
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<AlignedMemoryAllocator>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() final;
 
     size_t cellSize() { return m_directory.cellSize(); }
@@ -67,7 +67,7 @@ private:
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) final;
 
     BlockDirectory m_directory;
-    std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
+    std::unique_ptr<AlignedMemoryAllocator> m_allocator;
     SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_lowerTierPreciseFreeList;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };

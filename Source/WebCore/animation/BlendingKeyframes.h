@@ -104,18 +104,24 @@ private:
     bool m_containsDirectionAwareProperty { false };
 };
 
+using KeyframesIdentifier = std::variant<AtomString, uint64_t>;
+
 class BlendingKeyframes {
 public:
-    explicit BlendingKeyframes(const AtomString& animationName)
-        : m_animationName(animationName)
-    {
-    }
+    BlendingKeyframes()
+        : m_identifier(nextAnonymousIdentifier())
+    { }
+    explicit BlendingKeyframes(const KeyframesIdentifier& identifier)
+        : m_identifier(identifier)
+    { }
     ~BlendingKeyframes();
 
     BlendingKeyframes& operator=(BlendingKeyframes&&) = default;
     bool operator==(const BlendingKeyframes&) const;
 
-    const AtomString& animationName() const { return m_animationName; }
+    const KeyframesIdentifier& identifier() const { return m_identifier; }
+    const AtomString& keyframesName() const { return std::holds_alternative<AtomString>(m_identifier) ? std::get<AtomString>(m_identifier) : nullAtom(); }
+    const String& acceleratedAnimationName() const;
 
     void insert(BlendingKeyframe&&);
 
@@ -160,7 +166,10 @@ public:
 private:
     void analyzeKeyframe(const BlendingKeyframe&);
 
-    AtomString m_animationName;
+    static uint64_t nextAnonymousIdentifier();
+
+    KeyframesIdentifier m_identifier;
+    mutable String m_acceleratedAnimationName;
     Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
     UncheckedKeyHashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
     UncheckedKeyHashSet<AnimatableCSSProperty> m_explicitToProperties; // The properties with an explicit value for the 100% keyframe.

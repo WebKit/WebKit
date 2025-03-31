@@ -80,7 +80,7 @@ class ServoExecutor(ProcessTestExecutor):
         self.logger.error("Unable to find wpt-prefs.json")
         return default_path
 
-    def build_servo_command(self, test, extra_args=None, debug_opts="replace-surrogates"):
+    def build_servo_command(self, test, extra_args=None):
         args = [
             "--hard-fail", "-u", "Servo/wptrunner",
             # See https://github.com/servo/servo/issues/30080.
@@ -88,8 +88,6 @@ class ServoExecutor(ProcessTestExecutor):
             "--ignore-certificate-errors",
             "-z", self.test_url(test),
         ]
-        if debug_opts:
-            args += ["-Z", debug_opts]
         for stylesheet in self.browser.user_stylesheets:
             args += ["--user-stylesheet", stylesheet]
         for pref, value in self.environment.get('prefs', {}).items():
@@ -230,13 +228,12 @@ class ServoRefTestExecutor(ServoExecutor):
         with TempFilename(self.tempdir) as output_path:
             extra_args = ["--exit",
                           "--output=%s" % output_path,
-                          "--resolution", viewport_size or "800x600"]
-            debug_opts = "disable-text-aa,load-webfonts-synchronously,replace-surrogates"
+                          "--window-size", viewport_size or "800x600"]
 
             if dpi:
                 extra_args += ["--device-pixel-ratio", dpi]
 
-            self.command = self.build_servo_command(test, extra_args, debug_opts)
+            self.command = self.build_servo_command(test, extra_args)
 
             if not self.interactive:
                 self.proc = ProcessHandler(self.command,

@@ -66,8 +66,8 @@ void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 void GPUProcess::updateProcessName()
 {
 #if !PLATFORM(MACCATALYST)
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)m_uiProcessName];
-    auto result = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+    RetainPtr applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)m_uiProcessName];
+    auto result = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
     ASSERT_UNUSED(result, result == noErr);
 #endif
 }
@@ -76,7 +76,7 @@ void GPUProcess::updateProcessName()
 void GPUProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
-    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+    RetainPtr webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.GPUProcess" ofType:@"sb"]);
 

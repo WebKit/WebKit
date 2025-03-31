@@ -49,13 +49,13 @@ Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecuti
 void InternalObserverFromScript::next(JSC::JSValue value)
 {
     if (RefPtr next = m_next)
-        next->handleEvent(value);
+        next->invoke(value);
 }
 
 void InternalObserverFromScript::error(JSC::JSValue value)
 {
     if (RefPtr error = m_error) {
-        error->handleEvent(value);
+        error->invoke(value);
         return;
     }
 
@@ -65,7 +65,7 @@ void InternalObserverFromScript::error(JSC::JSValue value)
 void InternalObserverFromScript::complete()
 {
     if (RefPtr complete = m_complete)
-        complete->handleEvent();
+        complete->invoke();
 
     m_active = false;
 }

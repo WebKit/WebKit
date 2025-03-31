@@ -47,7 +47,7 @@ void CustomUndoStep::unapply()
     // edit commands. Should the page be allowed to specify a target in the DOM for undo and redo?
     Ref<UndoItem> protectedUndoItem(*m_undoItem);
     protectedUndoItem->protectedDocument()->updateLayoutIgnorePendingStylesheets();
-    protectedUndoItem->undoHandler().handleEvent();
+    protectedUndoItem->undoHandler().invoke();
 }
 
 void CustomUndoStep::reapply()
@@ -57,7 +57,7 @@ void CustomUndoStep::reapply()
 
     Ref<UndoItem> protectedUndoItem(*m_undoItem);
     protectedUndoItem->protectedDocument()->updateLayoutIgnorePendingStylesheets();
-    protectedUndoItem->redoHandler().handleEvent();
+    protectedUndoItem->redoHandler().invoke();
 }
 
 bool CustomUndoStep::isValid() const

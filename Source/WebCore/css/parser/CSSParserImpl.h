@@ -193,14 +193,18 @@ private:
         return m_nestingContextStack.last();
     }
 
-    bool isStyleNestedContext()
+    bool isStyleNestedContext() const
     {
-        return m_styleRuleNestingLevel;
+        return !m_ancestorRuleTypeStack.isEmpty();
+    }
+
+    bool hasStyleRuleAncestor() const
+    {
+        return m_ancestorRuleTypeStack.contains(CSSParserEnum::NestedContextType::Style);
     }
 
     // FIXME: we could unify all those into a single stack data structure.
     // https://bugs.webkit.org/show_bug.cgi?id=265566
-    unsigned m_styleRuleNestingLevel { 0 };
     unsigned m_ruleListNestingLevel { 0 };
     Vector<CSSParserEnum::NestedContextType, 16> m_ancestorRuleTypeStack;
     std::optional<CSSParserEnum::NestedContextType> lastAncestorRuleType() const

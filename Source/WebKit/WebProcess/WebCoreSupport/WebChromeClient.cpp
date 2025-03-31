@@ -1546,6 +1546,11 @@ void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicat
     protectedPage()->setTextIndicator(indicatorData);
 }
 
+void WebChromeClient::updateTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
+{
+    protectedPage()->updateTextIndicator(indicatorData);
+}
+
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
 void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)

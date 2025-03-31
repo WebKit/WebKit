@@ -80,11 +80,6 @@ float RemoteLayerTreeContext::deviceScaleFactor() const
     return m_webPage->deviceScaleFactor();
 }
 
-LayerHostingMode RemoteLayerTreeContext::layerHostingMode() const
-{
-    return m_webPage->layerHostingMode();
-}
-
 std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
 {
     if (!m_webPage->drawingArea())

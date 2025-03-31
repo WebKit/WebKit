@@ -37,7 +37,7 @@ const seconds = 8692288669465520;
 
   assert.sameValue(
     result, expectedMicroseconds,
-    "BalanceTimeDuration should implement floating-point calculation correctly for largestUnit milliseconds"
+    "BalanceTimeDuration should implement floating-point calculation correctly for largestUnit microseconds"
   );
 }
 

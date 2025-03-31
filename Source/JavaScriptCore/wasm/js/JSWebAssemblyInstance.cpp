@@ -107,7 +107,15 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
             m_passiveDataSegments.quickSet(dataSegmentIndex);
     }
 
-    memset(reinterpret_cast<char*>(&gcObjectStructure(0)), 0, moduleInformation.typeCount() * sizeof(std::decay_t<decltype(gcObjectStructure(0))>));
+    if (moduleInformation.hasGCObjectTypes()) {
+        memset(reinterpret_cast<char*>(&gcObjectStructure(0)), 0, moduleInformation.typeCount() * sizeof(std::decay_t<decltype(gcObjectStructure(0))>));
+
+        CompleteSubspace* subspace = JSWebAssemblyArray::subspaceFor<JSWebAssemblyArray, SubspaceAccess::OnMainThread>(vm);
+        CompleteSubspace* structSubspace = JSWebAssemblyStruct::subspaceFor<JSWebAssemblyStruct, SubspaceAccess::OnMainThread>(vm);
+        RELEASE_ASSERT(subspace == structSubspace);
+        subspace->prepareAllAllocators();
+        memcpySpan(unsafeMakeSpan(&allocatorForGCObject(0), MarkedSpace::numSizeClasses), subspace->allocatorsForSizeSteps());
+    }
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm)
@@ -172,8 +180,10 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.appendUnbarriered(JSValue::decode(thisObject->loadI64Global(i)));
 
     const auto& moduleInformation = thisObject->moduleInformation();
-    for (unsigned i = 0; i < moduleInformation.typeCount(); ++i)
-        visitor.append(thisObject->gcObjectStructure(thisObject->numImportFunctions(), moduleInformation.tableCount(), moduleInformation.globalCount(), i));
+    if (moduleInformation.hasGCObjectTypes()) {
+        for (unsigned i = 0; i < moduleInformation.typeCount(); ++i)
+            visitor.append(thisObject->gcObjectStructure(thisObject->numImportFunctions(), moduleInformation.tableCount(), moduleInformation.globalCount(), i));
+    }
 
     Locker locker { cell->cellLock() };
     for (auto& wrapper : thisObject->functionWrappers())
@@ -250,6 +260,22 @@ Identifier JSWebAssemblyInstance::createPrivateModuleKey()
     return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"_s));
 }
 
+size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info)
+{
+    Checked<size_t> size = offsetOfTail();
+    size += sizeof(WasmOrJSImportableFunctionCallLinkInfo) * info.importFunctionCount();
+    size += sizeof(Wasm::Table*) * info.tableCount();
+    size = roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(size);
+    size += sizeof(Wasm::Global::Value) * info.globalCount();
+    if (info.hasGCObjectTypes()) {
+        size += sizeof(WriteBarrier<Structure>) * info.typeCount();
+        size += sizeof(Allocator) * MarkedSpace::numSizeClasses;
+    }
+
+    return size;
+}
+
+
 JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -269,7 +295,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    void* cell = tryAllocateCell<JSWebAssemblyInstance>(vm, allocationSize(moduleInformation.importFunctionCount(), moduleInformation.tableCount(), moduleInformation.globalCount(), moduleInformation.typeCount()));
+    void* cell = tryAllocateCell<JSWebAssemblyInstance>(vm, allocationSize(moduleInformation));
     if (!cell) {
         throwOutOfMemoryError(globalObject, throwScope);
         return nullptr;

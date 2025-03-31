@@ -502,6 +502,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'atk') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'drm') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'headless') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'wayland') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),

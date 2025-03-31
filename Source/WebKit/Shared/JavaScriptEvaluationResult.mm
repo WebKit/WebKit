@@ -218,13 +218,13 @@ static std::optional<JSValueRef> roundTripThroughSerializedScriptValue(JSGlobalC
     return std::nullopt;
 }
 
-Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> JavaScriptEvaluationResult::extract(JSGlobalContextRef context, JSValueRef value)
+std::optional<JavaScriptEvaluationResult> JavaScriptEvaluationResult::extract(JSGlobalContextRef context, JSValueRef value)
 {
     JSRetainPtr deserializationContext = API::SerializedScriptValue::deserializationContext();
 
     auto result = roundTripThroughSerializedScriptValue(context, deserializationContext.get(), value);
     if (!result)
-        return makeUnexpected(std::nullopt);
+        return std::nullopt;
     return { JavaScriptEvaluationResult { deserializationContext.get(), *result } };
 }
 

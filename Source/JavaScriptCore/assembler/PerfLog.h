@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
+#if ENABLE(ASSEMBLER)
 
 #include "LinkBuffer.h"
 #include <stdio.h>
@@ -62,4 +62,4 @@ private:
 
 } // namespace JSC
 
-#endif  // ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
+#endif // ENABLE(ASSEMBLER)

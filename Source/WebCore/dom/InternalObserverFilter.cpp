@@ -53,7 +53,7 @@ public:
             return adoptRef(*new InternalObserverFilter::SubscriberCallbackFilter(context, source, predicate));
         }
 
-        CallbackResult<void> handleEvent(Subscriber& subscriber) final
+        CallbackResult<void> invoke(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -69,9 +69,9 @@ public:
             return { };
         }
 
-        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        CallbackResult<void> invokeRethrowingException(Subscriber& subscriber) final
         {
-            return handleEvent(subscriber);
+            return invoke(subscriber);
         }
 
     private:
@@ -104,7 +104,7 @@ private:
         JSC::Exception* previousException = nullptr;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = protectedPredicate()->handleEventRethrowingException(value, m_idx);
+            auto result = protectedPredicate()->invokeRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();

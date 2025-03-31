@@ -40,8 +40,8 @@ public:
 
     virtual bool hasCallback() const = 0;
 
-    virtual CallbackResult<void> handleEvent(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
+    virtual CallbackResult<void> invoke(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
 };
 
 } // namespace WebCore

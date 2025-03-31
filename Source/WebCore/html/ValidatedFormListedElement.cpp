@@ -66,7 +66,10 @@ ValidatedFormListedElement::ValidatedFormListedElement(HTMLFormElement* form)
     ASSERT(!supportsReadOnly() || readOnlyBarsFromConstraintValidation());
 }
 
-ValidatedFormListedElement::~ValidatedFormListedElement() = default;
+ValidatedFormListedElement::~ValidatedFormListedElement()
+{
+    ASSERT(!m_validationMessage);
+}
 
 bool ValidatedFormListedElement::willValidate() const
 {
@@ -97,7 +100,7 @@ bool ValidatedFormListedElement::computeWillValidate() const
 void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement> validationAnchor)
 {
     HTMLElement& element = asHTMLElement();
-    if (!element.document().page())
+    if (!element.document().page() || !element.isConnected())
         return;
     String message;
     if (element.renderer() && willValidate())
@@ -367,6 +370,8 @@ void ValidatedFormListedElement::removedFromAncestor(Node::RemovalType removalTy
 
     if (wasInsideDataList)
         updateWillValidateAndValidity();
+
+    ASSERT(!m_validationMessage);
 }
 
 bool ValidatedFormListedElement::computeIsDisabledByFieldsetAncestor() const

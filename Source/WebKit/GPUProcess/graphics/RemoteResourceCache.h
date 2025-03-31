@@ -75,8 +75,8 @@ public:
     RefPtr<WebCore::FontCustomPlatformData> cachedFontCustomPlatformData(WebCore::RenderingResourceIdentifier) const;
 
     void releaseAllResources();
-    void releaseAllDrawingResources();
-    void releaseAllImageResources();
+    void releaseMemory();
+    void releaseNativeImages();
 
 private:
     UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;

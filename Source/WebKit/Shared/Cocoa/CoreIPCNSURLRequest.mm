@@ -41,14 +41,14 @@
 namespace WebKit {
 
 #define SET_NSURLREQUESTDATA(NAME, CLASS, WRAPPER)  \
-    id NAME = dict[@#NAME];                 \
-    if ([NAME isKindOfClass:CLASS.class]) { \
-        auto var = WRAPPER(NAME);           \
-        m_data.NAME = WTFMove(var);         \
+    RetainPtr<id> NAME = dict.get()[@#NAME];        \
+    if ([NAME isKindOfClass:CLASS.class]) {         \
+        auto var = WRAPPER(NAME.get());             \
+        m_data.NAME = WTFMove(var);                 \
     }
 
 #define SET_NSURLREQUESTDATA_PRIMITIVE(NAME, CLASS, PRIMITIVE) \
-    id NAME = dict[@#NAME];                                    \
+    RetainPtr<id> NAME = dict.get()[@#NAME];                   \
     if ([NAME isKindOfClass:CLASS.class])                      \
         m_data.NAME = [NAME PRIMITIVE##Value];
 
@@ -73,20 +73,20 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLRequest);
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 {
-    auto dict = [request _webKitPropertyListData];
+    RetainPtr dict = [request _webKitPropertyListData];
 
     SET_NSURLREQUESTDATA(protocolProperties, NSDictionary, CoreIPCPlistDictionary);
     SET_NSURLREQUESTDATA_PRIMITIVE(isMutable, NSNumber, bool);
 
-    id url = dict[@"URL"];
+    RetainPtr<id> url = dict.get()[@"URL"];
     if ([url isKindOfClass:NSURL.class]) {
-        auto var = CoreIPCURL(url);
+        auto var = CoreIPCURL(url.get());
         m_data.url = WTFMove(var);
     }
 
     SET_NSURLREQUESTDATA_PRIMITIVE(timeout, NSNumber, double);
 
-    id cachePolicy = dict[@"cachePolicy"];
+    RetainPtr<id> cachePolicy = dict.get()[@"cachePolicy"];
     if ([cachePolicy isKindOfClass:[NSNumber class]]) {
         auto val = [cachePolicy unsignedCharValue];
         if (isValidEnum<NSURLRequestCachePolicy>(val))
@@ -96,7 +96,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA(mainDocumentURL, NSURL, CoreIPCURL);
     SET_NSURLREQUESTDATA_PRIMITIVE(shouldHandleHTTPCookies, NSNumber, bool);
 
-    id explicitFlags = dict[@"explicitFlags"];
+    RetainPtr<id> explicitFlags = dict.get()[@"explicitFlags"];
     if ([explicitFlags isKindOfClass:[NSNumber class]]) {
         auto val = [explicitFlags shortValue];
         auto optionSet = OptionSet<NSURLRequestFlags>::fromRaw(val);
@@ -109,7 +109,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(timeWindowDelay, NSNumber, double);
     SET_NSURLREQUESTDATA_PRIMITIVE(timeWindowDuration, NSNumber, double);
 
-    id networkServiceType = dict[@"networkServiceType"];
+    RetainPtr<id> networkServiceType = dict.get()[@"networkServiceType"];
     if ([networkServiceType isKindOfClass:[NSNumber class]]) {
         auto val = [networkServiceType unsignedCharValue];
         if (isValidEnum<NSURLRequestNetworkServiceType>(val))
@@ -120,24 +120,23 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(isHTTP, NSNumber, bool);
     SET_NSURLREQUESTDATA(httpMethod, NSString, CoreIPCString);
 
-    NSDictionary *headerFields = dict[@"headerFields"];
+    RetainPtr<NSDictionary> headerFields = dict.get()[@"headerFields"];
     if ([headerFields isKindOfClass:[NSDictionary class]]) {
         Vector<CoreIPCNSURLRequestData::HeaderField> vector;
-        vector.reserveInitialCapacity(headerFields.count);
-        for (id key in headerFields) {
-            id value = [headerFields objectForKey:key];
-            if ([value isKindOfClass:[NSArray class]]) {
-                NSArray *valueArray = value;
+        vector.reserveInitialCapacity(headerFields.get().count);
+        for (id key in headerFields.get()) {
+            RetainPtr<id> value = [headerFields objectForKey:key];
+            if (RetainPtr valueArray = dynamic_objc_cast<NSArray>(value.get())) {
                 Vector<String> valueVector;
-                valueVector.reserveInitialCapacity(valueArray.count);
-                for (id item in valueArray) {
-                    if (NSString *nsString = dynamic_objc_cast<NSString>(item))
-                        valueVector.append(nsString);
+                valueVector.reserveInitialCapacity(valueArray.get().count);
+                for (id item in valueArray.get()) {
+                    if (RetainPtr nsString = dynamic_objc_cast<NSString>(item))
+                        valueVector.append(nsString.get());
                 }
                 vector.append({ key, valueVector });
             }
-            if (NSString *nsString = dynamic_objc_cast<NSString>(value))
-                vector.append({ key, nsString });
+            if (RetainPtr nsString = dynamic_objc_cast<NSString>(value.get()))
+                vector.append({ key, nsString.get() });
         }
         vector.shrinkToFit();
         m_data.headerFields = WTFMove(vector);
@@ -145,11 +144,11 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 
     SET_NSURLREQUESTDATA(body, NSData, CoreIPCData);
 
-    NSArray *bodyParts = dict[@"bodyParts"];
+    RetainPtr<NSArray> bodyParts = dict.get()[@"bodyParts"];
     if ([bodyParts isKindOfClass:[NSArray class]]) {
         Vector<CoreIPCNSURLRequestData::BodyParts> vector;
-        vector.reserveInitialCapacity(bodyParts.count);
-        for (id element in bodyParts) {
+        vector.reserveInitialCapacity(bodyParts.get().count);
+        for (id element in bodyParts.get()) {
             if ([element isKindOfClass:[NSString class]]) {
                 CoreIPCString tooAdd(element);
                 vector.append(WTFMove(tooAdd));
@@ -167,7 +166,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(requiresShortConnectionTimeout, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(payloadTransmissionTimeout, NSNumber, double);
 
-    id allowedProtocolTypes = dict[@"allowedProtocolTypes"];
+    RetainPtr<id> allowedProtocolTypes = dict.get()[@"allowedProtocolTypes"];
     if ([allowedProtocolTypes isKindOfClass:[NSNumber class]]) {
         auto val = [allowedProtocolTypes unsignedCharValue];
         auto optionSet = OptionSet<NSURLRequestAllowedProtocolTypes>::fromRaw(val);
@@ -181,7 +180,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(allowsUCA, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(assumesHTTP3Capable, NSNumber, bool);
 
-    id attribution = dict[@"attribution"];
+    RetainPtr<id> attribution = dict.get()[@"attribution"];
     if ([attribution isKindOfClass:[NSNumber class]]) {
         auto val = [allowedProtocolTypes unsignedCharValue];
         if (isValidEnum<NSURLRequestAttribution>(val))
@@ -203,11 +202,11 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(isWebSearchContent, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(allowOnlyPartitionedCookies, NSNumber, bool);
 
-    NSArray *contentDispositionEncodingFallbackArray = dict[@"contentDispositionEncodingFallbackArray"];
+    RetainPtr<NSArray> contentDispositionEncodingFallbackArray = dict.get()[@"contentDispositionEncodingFallbackArray"];
     if ([contentDispositionEncodingFallbackArray isKindOfClass:[NSArray class]]) {
         Vector<CoreIPCNumber> vector;
-        vector.reserveInitialCapacity(contentDispositionEncodingFallbackArray.count);
-        for (id element in contentDispositionEncodingFallbackArray) {
+        vector.reserveInitialCapacity(contentDispositionEncodingFallbackArray.get().count);
+        for (id element in contentDispositionEncodingFallbackArray.get()) {
             if ([element isKindOfClass:[NSNumber class]])
                 vector.append(CoreIPCNumber(element));
         }
@@ -225,7 +224,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(const RetainPtr<NSURLRequest>& request)
 
 RetainPtr<id> CoreIPCNSURLRequest::toID() const
 {
-    auto dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:CoreIPCNSURLRequestData::numberOfFields]);
+    RetainPtr dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:CoreIPCNSURLRequestData::numberOfFields]);
 
     SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);

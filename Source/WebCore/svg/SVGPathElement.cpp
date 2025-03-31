@@ -180,14 +180,14 @@ void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode&
 
 float SVGPathElement::getTotalLength() const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     // Spec: If it is not able to compute the total length of path, then throw.
     if (pathByteStream().isEmpty())
@@ -202,7 +202,7 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 
 unsigned SVGPathElement::getPathSegAtLength(float length) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     return getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length);
 }
@@ -210,7 +210,7 @@ unsigned SVGPathElement::getPathSegAtLength(float length) const
 FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     if (styleUpdateStrategy == AllowStyleUpdate)
-        protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+        protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,

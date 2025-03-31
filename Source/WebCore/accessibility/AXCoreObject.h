@@ -589,11 +589,14 @@ enum class AccessibilityButtonState {
 enum class AXDirection : bool { Next, Previous };
 
 enum class AccessibilitySortDirection {
+    // It's important that Invalid is the first entry, as that means it is the "default value"
+    // according to AXIsolatedObject::setProperty, and thus won't be cached unless it's something
+    // other than Invalid.
+    Invalid,
     None,
     Ascending,
     Descending,
     Other,
-    Invalid,
 };
 
 enum class AccessibilitySearchTextStartFrom {
@@ -872,14 +875,14 @@ public:
     virtual bool isRowHeader() const { return false; }
     bool isTableCellInSameRowGroup(AXCoreObject&);
     bool isTableCellInSameColGroup(AXCoreObject*);
-    virtual std::optional<AXID> rowGroupAncestorID() const { return std::nullopt; }
+    std::optional<AXID> rowGroupAncestorID() const;
     virtual String cellScope() const { return { }; }
     // Returns the start location and row span of the cell.
     virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
     // Returns the start location and column span of the cell.
     virtual std::pair<unsigned, unsigned> columnIndexRange() const = 0;
-    virtual int axColumnIndex() const = 0;
-    virtual int axRowIndex() const = 0;
+    virtual std::optional<unsigned> axColumnIndex() const = 0;
+    virtual std::optional<unsigned> axRowIndex() const = 0;
 
     // Table column support.
     bool isTableColumn() const { return roleValue() == AccessibilityRole::Column; }
@@ -986,7 +989,7 @@ public:
     virtual bool hasSameStyle(AXCoreObject&) = 0;
     bool isStaticText() const { return roleValue() == AccessibilityRole::StaticText; }
     virtual bool hasUnderline() const = 0;
-    virtual bool hasHighlighting() const = 0;
+    bool hasHighlighting() const;
     virtual AXTextMarkerRange textInputMarkedTextMarkerRange() const = 0;
 
     virtual WallTime dateTimeValue() const = 0;
@@ -1053,17 +1056,21 @@ public:
     void appendRadioButtonDescendants(AXCoreObject&, AccessibilityChildrenVector&) const;
     virtual AccessibilityChildrenVector radioButtonGroup() const = 0;
 
+    virtual bool containsOnlyStaticText() const;
+
     bool hasPopup() const;
     bool selfOrAncestorLinkHasPopup() const;
-    virtual String popupValue() const = 0;
+    virtual String explicitPopupValue() const = 0;
+    String popupValue() const;
     virtual bool supportsHasPopup() const = 0;
     virtual bool pressedIsPresent() const = 0;
-    virtual String invalidStatus() const = 0;
+    virtual String explicitInvalidStatus() const = 0;
+    String invalidStatus() const;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
     virtual AccessibilitySortDirection sortDirection() const = 0;
     AccessibilitySortDirection sortDirectionIncludingAncestors() const;
-    virtual bool supportsRangeValue() const = 0;
+    bool supportsRangeValue() const;
     virtual String identifierAttribute() const = 0;
     virtual String linkRelValue() const = 0;
     virtual Vector<String> classList() const = 0;
@@ -1166,10 +1173,14 @@ public:
     virtual SRGBA<uint8_t> colorValue() const = 0;
 
     AccessibilityRole roleValue() const { return m_role; }
+#if PLATFORM(MAC)
     // Non-localized string associated with the object role.
-    virtual String rolePlatformString() const = 0;
+    String rolePlatformString();
+#else
+    String rolePlatformString() { return { }; }
+#endif // PLATFORM(MAC)
     // Localized string that describes the object's role.
-    virtual String roleDescription() const = 0;
+    virtual String roleDescription() = 0;
     // Localized string that describes ARIA landmark roles.
     String ariaLandmarkRoleDescription() const;
     // Non-localized string associated with the object's subrole.
@@ -1375,6 +1386,7 @@ public:
 
     // ARIA live-region features.
     static bool liveRegionStatusIsEnabled(const AtomString&);
+    static const String defaultLiveRegionStatusForRole(AccessibilityRole);
     bool supportsLiveRegion(bool excludeIfOff = true) const;
 #if PLATFORM(MAC)
     virtual AccessibilityChildrenVector allSortedLiveRegions() const = 0;
@@ -1382,11 +1394,14 @@ public:
     AccessibilityChildrenVector sortedDescendants(size_t limit, PreSortedObjectType) const;
 #endif // PLATFORM(MAC)
     virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
-    virtual const String liveRegionStatus() const = 0;
-    virtual const String liveRegionRelevant() const = 0;
+    virtual const String explicitLiveRegionStatus() const = 0;
+    const String liveRegionStatus() const;
+    virtual const String explicitLiveRegionRelevant() const = 0;
+    const String liveRegionRelevant() const;
     virtual bool liveRegionAtomic() const = 0;
     virtual bool isBusy() const = 0;
-    virtual String autoCompleteValue() const = 0;
+    virtual String explicitAutoCompleteValue() const = 0;
+    String autoCompleteValue() const;
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     virtual void scrollToMakeVisible() const = 0;
@@ -1411,6 +1426,7 @@ public:
     virtual bool isMathTableCell() const = 0;
     virtual bool isMathMultiscript() const = 0;
     virtual bool isMathToken() const = 0;
+    virtual bool isAnonymousMathOperator() const = 0;
 
     // Root components.
     virtual std::optional<AccessibilityChildrenVector> mathRadicand() = 0;
@@ -1456,7 +1472,8 @@ public:
 #if PLATFORM(COCOA)
     virtual bool preventKeyboardDOMEventDispatch() const = 0;
     virtual void setPreventKeyboardDOMEventDispatch(bool) = 0;
-    virtual String speechHintAttributeValue() const = 0;
+    virtual OptionSet<SpeakAs> speakAs() const = 0;
+    String speechHint() const;
     virtual bool fileUploadButtonReturnsValueInTitle() const = 0;
     String descriptionAttributeValue() const;
     bool shouldComputeDescriptionAttributeValue() const;
@@ -1486,6 +1503,8 @@ public:
     virtual bool hasAttachmentTag() const = 0;
     virtual bool hasBodyTag() const = 0;
     virtual bool hasMarkTag() const = 0;
+    virtual bool hasRowGroupTag() const = 0;
+
     virtual String innerHTML() const = 0;
     virtual String outerHTML() const = 0;
 
@@ -1493,7 +1512,7 @@ public:
     virtual Vector<RetainPtr<id>> modelElementChildren() = 0;
 #endif
 
-    String infoStringForTesting() const;
+    String infoStringForTesting();
 
 protected:
     AXCoreObject() = delete;
@@ -1550,9 +1569,39 @@ inline bool AXCoreObject::shouldComputeTitleAttributeValue() const
 }
 #endif // PLATFORM(COCOA)
 
+inline const String AXCoreObject::defaultLiveRegionStatusForRole(AccessibilityRole role)
+{
+    switch (role) {
+    case AccessibilityRole::ApplicationAlertDialog:
+    case AccessibilityRole::ApplicationAlert:
+        return "assertive"_s;
+    case AccessibilityRole::ApplicationLog:
+    case AccessibilityRole::ApplicationStatus:
+        return "polite"_s;
+    case AccessibilityRole::ApplicationTimer:
+    case AccessibilityRole::ApplicationMarquee:
+        return "off"_s;
+    default:
+        return nullAtom();
+    }
+}
+
 inline bool AXCoreObject::liveRegionStatusIsEnabled(const AtomString& liveRegionStatus)
 {
     return equalLettersIgnoringASCIICase(liveRegionStatus, "polite"_s) || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive"_s);
+}
+
+inline const String AXCoreObject::liveRegionRelevant() const
+{
+    auto explicitValue = explicitLiveRegionRelevant();
+    // Default aria-relevant = "additions text".
+    return explicitValue.isEmpty() ? "additions text"_s : explicitValue;
+}
+
+inline const String AXCoreObject::liveRegionStatus() const
+{
+    auto explicitStatus = explicitLiveRegionStatus();
+    return explicitStatus.isEmpty() ? defaultLiveRegionStatusForRole(roleValue()) : explicitStatus;
 }
 
 inline bool AXCoreObject::supportsLiveRegion(bool excludeIfOff) const
@@ -1821,6 +1870,12 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 #endif
 
 bool inRenderTreeOrStyleUpdate(const Document&);
+
+using PlatformRoleMap = UncheckedKeyHashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+
+void initializeRoleMap();
+PlatformRoleMap createPlatformRoleMap();
+String roleToPlatformString(AccessibilityRole);
 
 } // namespace Accessibility
 

@@ -37,28 +37,28 @@ bool CoreIPCError::hasValidUserInfo(const RetainPtr<CFDictionaryRef>& userInfo)
 {
     NSDictionary * info = bridge_cast(userInfo.get());
 
-    if (id object = [info objectForKey:@"NSErrorClientCertificateChainKey"]) {
+    if (RetainPtr<id> object = [info objectForKey:@"NSErrorClientCertificateChainKey"]) {
         if (![object isKindOfClass:[NSArray class]])
             return false;
-        for (id certificate in object) {
+        for (id certificate in object.get()) {
             if ((CFGetTypeID((__bridge CFTypeRef)certificate) != SecCertificateGetTypeID()))
                 return false;
         }
     }
 
-    if (id peerCertificateChain = [info objectForKey:@"NSErrorPeerCertificateChainKey"]) {
-        for (id object in peerCertificateChain) {
+    if (RetainPtr<id> peerCertificateChain = [info objectForKey:@"NSErrorPeerCertificateChainKey"]) {
+        for (id object in peerCertificateChain.get()) {
             if (CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID())
                 return false;
         }
     }
 
-    if (SecTrustRef peerTrust = (__bridge SecTrustRef)[info objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
-        if (CFGetTypeID((__bridge CFTypeRef)peerTrust) != SecTrustGetTypeID())
+    if (RetainPtr peerTrust = (__bridge SecTrustRef)[info objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
+        if (CFGetTypeID((__bridge CFTypeRef)peerTrust.get()) != SecTrustGetTypeID())
             return false;
     }
 
-    if (id underlyingError = [info objectForKey:NSUnderlyingErrorKey]) {
+    if (RetainPtr<id> underlyingError = [info objectForKey:NSUnderlyingErrorKey]) {
         if (![underlyingError isKindOfClass:[NSError class]])
             return false;
     }
@@ -121,11 +121,11 @@ CoreIPCError::CoreIPCError(NSError *nsError)
             CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFTypeRef)key, (__bridge CFTypeRef)value);
     }];
 
-    if (NSArray *clientIdentityAndCertificates = [userInfo objectForKey:@"NSErrorClientCertificateChainKey"]) {
+    if (RetainPtr<NSArray> clientIdentityAndCertificates = [userInfo objectForKey:@"NSErrorClientCertificateChainKey"]) {
         if ([clientIdentityAndCertificates isKindOfClass:[NSArray class]]) {
             // Turn SecIdentity members into SecCertificate to strip out private key information.
-            id clientCertificates = [NSMutableArray arrayWithCapacity:clientIdentityAndCertificates.count];
-            for (id object in clientIdentityAndCertificates) {
+            RetainPtr<id> clientCertificates = [NSMutableArray arrayWithCapacity:clientIdentityAndCertificates.get().count];
+            for (id object in clientIdentityAndCertificates.get()) {
                 // Only SecIdentity or SecCertificate types are expected in clientIdentityAndCertificates
                 if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID() && CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID())
                     continue;
@@ -145,40 +145,40 @@ CoreIPCError::CoreIPCError(NSError *nsError)
                 }
                 [clientCertificates addObject:(__bridge id)certificate];
             }
-            CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorClientCertificateChainKey"), (__bridge CFTypeRef)clientCertificates);
+            CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorClientCertificateChainKey"), (__bridge CFTypeRef)clientCertificates.get());
         }
     }
 
-    id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
+    RetainPtr<id> peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     if (!peerCertificateChain) {
-        if (id candidatePeerTrust = [userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
-            if (CFGetTypeID((__bridge CFTypeRef)candidatePeerTrust) == SecTrustGetTypeID())
-                peerCertificateChain = (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain((__bridge SecTrustRef)candidatePeerTrust)).autorelease();
+        if (RetainPtr<id> candidatePeerTrust = [userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
+            if (CFGetTypeID((__bridge CFTypeRef)candidatePeerTrust.get()) == SecTrustGetTypeID())
+                peerCertificateChain = (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain((__bridge SecTrustRef)candidatePeerTrust.get())).get();
         }
     }
 
     if (peerCertificateChain && [peerCertificateChain isKindOfClass:[NSArray class]]) {
         bool hasExpectedTypes = true;
-        for (id object in peerCertificateChain) {
+        for (id object in peerCertificateChain.get()) {
             if (CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID()) {
                 hasExpectedTypes = false;
                 break;
             }
         }
         if (hasExpectedTypes)
-            CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (__bridge CFTypeRef)peerCertificateChain);
+            CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (__bridge CFTypeRef)peerCertificateChain.get());
     }
 
-    if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
-        if (CFGetTypeID((__bridge CFTypeRef)peerTrust) == SecTrustGetTypeID())
-            CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFStringRef)NSURLErrorFailingURLPeerTrustErrorKey, peerTrust);
+    if (RetainPtr peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
+        if (CFGetTypeID((__bridge CFTypeRef)peerTrust.get()) == SecTrustGetTypeID())
+            CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFStringRef)NSURLErrorFailingURLPeerTrustErrorKey, peerTrust.get());
     }
 
     m_userInfo = static_cast<CFDictionaryRef>(filteredUserInfo.get());
 
-    if (id underlyingError = [userInfo objectForKey:NSUnderlyingErrorKey]) {
+    if (RetainPtr<id> underlyingError = [userInfo objectForKey:NSUnderlyingErrorKey]) {
         if ([underlyingError isKindOfClass:[NSError class]])
-            m_underlyingError = makeUnique<CoreIPCError>(underlyingError);
+            m_underlyingError = makeUnique<CoreIPCError>(underlyingError.get());
     }
 }
 

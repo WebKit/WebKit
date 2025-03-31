@@ -27,6 +27,7 @@
 #include "SkiaReplayCanvas.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#include "GLContext.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
 

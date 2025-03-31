@@ -137,7 +137,7 @@ bool RemoteLayerTreeHost::cssUnprefixedBackdropFilterEnabled() const
 #if PLATFORM(MAC)
 bool RemoteLayerTreeHost::updateBannerLayers(const RemoteLayerTreeTransaction& transaction)
 {
-    auto scrolledContentsLayer = layerForID(transaction.scrolledContentsLayerID());
+    RetainPtr scrolledContentsLayer = layerForID(transaction.scrolledContentsLayerID());
     if (!scrolledContentsLayer)
         return false;
 
@@ -156,8 +156,8 @@ bool RemoteLayerTreeHost::updateBannerLayers(const RemoteLayerTreeTransaction& t
     if (!page)
         return false;
 
-    bool headerBannerLayerChanged = updateBannerLayer(page->headerBannerLayer(), scrolledContentsLayer);
-    bool footerBannerLayerChanged = updateBannerLayer(page->footerBannerLayer(), scrolledContentsLayer);
+    bool headerBannerLayerChanged = updateBannerLayer(page->headerBannerLayer(), scrolledContentsLayer.get());
+    bool footerBannerLayerChanged = updateBannerLayer(page->footerBannerLayer(), scrolledContentsLayer.get());
     return headerBannerLayerChanged || footerBannerLayerChanged;
 }
 #endif
@@ -338,7 +338,7 @@ void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayer
     if (!m_drawingArea)
         return;
 
-    CALayer *layer = layerForID(layerID);
+    RetainPtr layer = layerForID(layerID);
     if (!layer)
         return;
 
@@ -359,7 +359,7 @@ void RemoteLayerTreeHost::animationDidEnd(std::optional<WebCore::PlatformLayerId
     if (!m_drawingArea)
         return;
 
-    CALayer *layer = layerForID(layerID);
+    RetainPtr layer = layerForID(layerID);
     if (!layer)
         return;
 

@@ -34,7 +34,7 @@ namespace WebCore {
 void BlobCallback::scheduleCallback(ScriptExecutionContext& context, RefPtr<Blob>&& blob)
 {
     context.postTask([this, protectedThis = Ref { *this }, blob = WTFMove(blob)](ScriptExecutionContext&) {
-        handleEvent(blob.get());
+        invoke(blob.get());
     });
 }
 

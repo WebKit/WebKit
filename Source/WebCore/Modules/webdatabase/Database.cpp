@@ -684,7 +684,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
             m_document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }]() {
-                errorCallback->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
+                errorCallback->invoke(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
             });
         }
         return;

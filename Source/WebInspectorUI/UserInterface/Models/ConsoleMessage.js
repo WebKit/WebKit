@@ -106,6 +106,7 @@ WI.ConsoleMessage.MessageSource = {
     Storage: "storage",
     Rendering: "rendering",
     CSS: "css",
+    Accessibility: "accessibility",
     Security: "security",
     Media: "media",
     MediaSource: "mediasource",

@@ -74,7 +74,7 @@ class TVOSMediaControls extends MediaControls
 
         this.showsStartButton = false;
 
-        for (let clickEvent of ["click", "mousedown", "mouseup", "pointerdown", "pointerup"]) {
+        for (let clickEvent of ["click", "mousedown", "mouseup", "pointerdown", "pointerup", "touchstart", "touchend"]) {
             this.element.addEventListener(clickEvent, (event) => {
                 event.stopPropagation();
             });

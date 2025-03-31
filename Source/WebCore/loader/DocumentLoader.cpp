@@ -1131,7 +1131,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     RefPtr frame = m_frame.get();
     if (!frame) {
-        DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: policyAction=%i received by DocumentLoader with null frame", (int)policy);
+        DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: policyAction=%" PUBLIC_LOG_STRING " received by DocumentLoader with null frame", toString(policy).characters());
         return;
     }
 

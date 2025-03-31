@@ -142,10 +142,10 @@ RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData
 void RemoteResourceCache::releaseAllResources()
 {
     m_imageBuffers.clear();
-    releaseAllDrawingResources();
+    releaseMemory();
 }
 
-void RemoteResourceCache::releaseAllDrawingResources()
+void RemoteResourceCache::releaseMemory()
 {
     m_nativeImages.clear();
     m_gradients.clear();
@@ -155,7 +155,7 @@ void RemoteResourceCache::releaseAllDrawingResources()
     m_fontCustomPlatformDatas.clear();
 }
 
-void RemoteResourceCache::releaseAllImageResources()
+void RemoteResourceCache::releaseNativeImages()
 {
     m_nativeImages.clear();
 }

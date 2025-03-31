@@ -616,6 +616,9 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<
 #endif
 
     if (auto session = m_networkSessions.take(sessionID)) {
+        auto dataStoreIdentifier = session->dataStoreIdentifier();
+        UNUSED_PARAM(dataStoreIdentifier);
+        RELEASE_LOG(Storage, "%p - NetworkProcess::destroySession sessionID=%" PRIu64 " identifier=%" PUBLIC_LOG_STRING, this, sessionID.toUInt64(), dataStoreIdentifier ? dataStoreIdentifier->toString().utf8().data() : "null"_s);
         session->invalidateAndCancel();
         Ref storageManager = session->storageManager();
         m_closingStorageManagers.add(storageManager.copyRef());
@@ -629,6 +632,17 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<
     m_sessionsControlledByAutomation.remove(sessionID);
     if (completionHandler)
         completionHandler();
+}
+
+void NetworkProcess::ensureSessionWithDataStoreIdentifierRemoved(WTF::UUID identifier, CompletionHandler<void()>&& completionHandler)
+{
+    RELEASE_LOG(Storage, "%p - NetworkProcess::ensureSessionWithDataStoreIdentifierRemoved identifier=%" PUBLIC_LOG_STRING, this, identifier.toString().utf8().data());
+    for (auto& session : m_networkSessions.values()) {
+        if (session->dataStoreIdentifier() == identifier)
+            RELEASE_LOG_ERROR(Storage, "NetworkProcess::ensureSessionWithDataStoreIdentifierRemoved session still exists for identifier %" PUBLIC_LOG_STRING, identifier.toString().utf8().data());
+    }
+
+    completionHandler();
 }
 
 void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)

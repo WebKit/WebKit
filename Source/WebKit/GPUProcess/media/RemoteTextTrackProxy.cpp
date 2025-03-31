@@ -58,29 +58,28 @@ RemoteTextTrackProxy::RemoteTextTrackProxy(GPUConnectionToWebProcess& connection
 
 RemoteTextTrackProxy::~RemoteTextTrackProxy()
 {
-    Ref { m_trackPrivate }->removeClient(m_clientId);
+    m_trackPrivate->removeClient(m_clientId);
 }
 
 TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
 {
     static NeverDestroyed<TextTrackPrivateRemoteConfiguration> configuration;
 
-    Ref trackPrivate = m_trackPrivate;
-    configuration->trackId = trackPrivate->id();
-    configuration->label = trackPrivate->label();
-    configuration->language = trackPrivate->language();
-    configuration->trackIndex = trackPrivate->trackIndex();
-    configuration->inBandMetadataTrackDispatchType = trackPrivate->inBandMetadataTrackDispatchType();
-    configuration->startTimeVariance = trackPrivate->startTimeVariance();
+    configuration->trackId = m_trackPrivate->id();
+    configuration->label = m_trackPrivate->label();
+    configuration->language = m_trackPrivate->language();
+    configuration->trackIndex = m_trackPrivate->trackIndex();
+    configuration->inBandMetadataTrackDispatchType = m_trackPrivate->inBandMetadataTrackDispatchType();
+    configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
 
-    configuration->cueFormat = trackPrivate->cueFormat();
-    configuration->isClosedCaptions = trackPrivate->isClosedCaptions();
-    configuration->isSDH = trackPrivate->isSDH();
-    configuration->containsOnlyForcedSubtitles = trackPrivate->containsOnlyForcedSubtitles();
-    configuration->isMainProgramContent = trackPrivate->isMainProgramContent();
-    configuration->isEasyToRead = trackPrivate->isEasyToRead();
-    configuration->isDefault = trackPrivate->isDefault();
-    configuration->kind = trackPrivate->kind();
+    configuration->cueFormat = m_trackPrivate->cueFormat();
+    configuration->isClosedCaptions = m_trackPrivate->isClosedCaptions();
+    configuration->isSDH = m_trackPrivate->isSDH();
+    configuration->containsOnlyForcedSubtitles = m_trackPrivate->containsOnlyForcedSubtitles();
+    configuration->isMainProgramContent = m_trackPrivate->isMainProgramContent();
+    configuration->isEasyToRead = m_trackPrivate->isEasyToRead();
+    configuration->isDefault = m_trackPrivate->isDefault();
+    configuration->kind = m_trackPrivate->kind();
 
     return configuration.get();
 }

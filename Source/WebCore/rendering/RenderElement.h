@@ -261,8 +261,8 @@ public:
     RenderPtr<RenderObject> detachRendererInternal(RenderObject&);
 
     virtual bool startAnimation(double /* timeOffset */, const Animation&, const BlendingKeyframes&) { return false; }
-    virtual void animationPaused(double /* timeOffset */, const String& /* name */) { }
-    virtual void animationFinished(const String& /* name */) { }
+    virtual void animationPaused(double /* timeOffset */, const BlendingKeyframes&) { }
+    virtual void animationFinished(const BlendingKeyframes&) { }
     virtual void transformRelatedPropertyDidChange() { }
 
     // https://www.w3.org/TR/css-transforms-1/#transform-box
@@ -458,7 +458,6 @@ private:
 inline int adjustForAbsoluteZoom(int, const RenderElement&);
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderElement&);
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderElement&);
-inline bool isSkippedContentRoot(const RenderElement&);
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {

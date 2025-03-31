@@ -72,19 +72,24 @@ RemoteSharedResourceCache::RemoteSharedResourceCache(GPUConnectionToWebProcess& 
 
 RemoteSharedResourceCache::~RemoteSharedResourceCache() = default;
 
-void RemoteSharedResourceCache::addSerializedImageBuffer(RenderingResourceIdentifier identifier, Ref<ImageBuffer> imageBuffer)
+bool RemoteSharedResourceCache::addSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier, Ref<ImageBuffer> imageBuffer)
 {
-    m_serializedImageBuffers.add({ identifier, 0 }, WTFMove(imageBuffer));
+    didCreateImageBuffer(imageBuffer->renderingPurpose(), imageBuffer->renderingMode());
+    return m_serializedImageBuffers.add({ identifier, 0 }, WTFMove(imageBuffer));
 }
 
-RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(RenderingResourceIdentifier identifier)
+RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier)
 {
-    return m_serializedImageBuffers.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
+    RefPtr imageBuffer = m_serializedImageBuffers.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
+    if (imageBuffer)
+        didReleaseImageBuffer(imageBuffer->renderingPurpose(), imageBuffer->renderingMode());
+    return imageBuffer;
 }
 
-void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier identifier)
+void RemoteSharedResourceCache::releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier)
 {
-    m_serializedImageBuffers.remove({ { identifier, 0 }, 0 });
+    // Must wait due to using current accounting mechanism.
+    takeSerializedImageBuffer(identifier);
 }
 
 void RemoteSharedResourceCache::lowMemoryHandler()

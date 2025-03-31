@@ -58,7 +58,7 @@ JSTestCallbackWithFunctionOrDict::~JSTestCallbackWithFunctionOrDict()
 #endif
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunctionOrDict::handleEvent(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunctionOrDict::invoke(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -86,7 +86,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunc
     return { };
 }
 
-CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunctionOrDict::handleEventRethrowingException(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunctionOrDict::invokeRethrowingException(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

@@ -96,5 +96,14 @@ exports:
                 _$s14LinearMediaKit8PlayablePAAE18overScenePublisher7Combine03AnyG0VySo7UISceneCSgSgs5NeverOGvg, _$s14LinearMediaKit8PlayablePAAE19videoAssetPublisher7Combine03AnyG0Vys13OpaquePointerVSgs5NeverOGvg,
                 _$s14LinearMediaKit8PlayablePAAE28fullscreenPlacementPublisher7Combine03AnyG0VyAA010FullscreenF0Os5NeverOGvg,
                 _$s14LinearMediaKit8PlayablePAAE29allowSceneAdjustmentPublisher7Combine03AnyH0VySbs5NeverOGvg, _$s14LinearMediaKit8PlayablePAAE35interstitialTimelineRangesPublisher7Combine03AnyH0VySaySNySdGGs5NeverOGvg,
-                _$s14LinearMediaKit8PlayablePAAE8setMuted_8metadataySb_AA12MuteMetadataVtF]
+                _$s14LinearMediaKit8PlayablePAAE8setMuted_8metadataySb_AA12MuteMetadataVtF,
+                _$s14LinearMediaKit11ContentTypeO17makeSpatialEntity13videoMetadata8extrudedAA12Peculiarable_07RealityC00H0CXcSgAA0g5VideoJ0VSg_SbtFZ,
+                _$s14LinearMediaKit12PeculiarModeO6portalyA2CmFWC,
+                _$s14LinearMediaKit12PeculiarModeO9immersiveyA2CmFWC,
+                _$s14LinearMediaKit12PeculiarModeOMa,
+                _$s14LinearMediaKit12PeculiarableP10screenModeAA08PeculiarF0OvsTj,
+                _$s14LinearMediaKit12PeculiarableP16setVideoMetaData2toyAA07SpatialF8MetadataVSg_tFTj,
+                _$s14LinearMediaKit20SpatialVideoMetadataVMa,
+                _$s14LinearMediaKit20SpatialVideoMetadataVMn,
+                _$s14LinearMediaKit20SpatialVideoMetadataV5width6height20horizontalFOVDegrees8baseline19disparityAdjustment25isRecommendedForImmersiveACs5Int32V_AKS3fSbtcfC]
 ...

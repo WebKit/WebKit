@@ -103,21 +103,21 @@ bool AffineTransform::isInvertible() const
 {
     double determinant = det(m_transform);
 
-    return std::isfinite(determinant) && determinant != 0;
+    return std::isnormal(determinant);
 }
 
 std::optional<AffineTransform> AffineTransform::inverse() const
 {
-    double determinant = det(m_transform);
-    if (!std::isfinite(determinant) || determinant == 0)
-        return std::nullopt;
-
     AffineTransform result;
     if (isIdentityOrTranslation()) {
         result.m_transform[4] = -m_transform[4];
         result.m_transform[5] = -m_transform[5];
         return result;
     }
+
+    double determinant = det(m_transform);
+    if (!std::isnormal(determinant))
+        return std::nullopt;
 
     result.m_transform[0] = m_transform[3] / determinant;
     result.m_transform[1] = -m_transform[1] / determinant;

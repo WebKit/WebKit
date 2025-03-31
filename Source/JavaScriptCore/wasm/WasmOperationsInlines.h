@@ -74,11 +74,7 @@ inline JSValue arrayNew(JSWebAssemblyInstance* instance, uint32_t typeIndex, uin
 
     size_t elementSize = fieldType.type.elementSize();
 
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
-        return jsNull();
-
     JSWebAssemblyArray* array = nullptr;
-
     switch (elementSize) {
     case sizeof(uint8_t): {
         array = tryFillArray<uint8_t>(instance, structure, size, static_cast<uint8_t>(encValue));
@@ -114,17 +110,12 @@ inline JSValue arrayNew(JSWebAssemblyInstance* instance, uint32_t typeIndex, uin
     const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
-    ASSERT(fieldType.type.unpacked() == Wasm::Types::V128);
-
-    RefPtr rtt = instance->module().moduleInformation().rtts[typeIndex];
-    size_t elementSize = fieldType.type.elementSize();
-
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
-        return jsNull();
+    ASSERT_UNUSED(fieldType, fieldType.type.unpacked() == Wasm::Types::V128);
 
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, size);
     if (UNLIKELY(!array))
         return jsNull();
+
     array->fill(vm, 0, value, size);
     return array;
 }
@@ -137,9 +128,9 @@ JSWebAssemblyArray* tryCopyElementsInReverse(JSWebAssemblyInstance* instance, We
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, size);
     if (UNLIKELY(!array))
         return array;
+
     if (!size)
         return array;
-
 
     ASSERT(arguments);
     auto span = array->span<T>();
@@ -282,22 +273,14 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
     if (UNLIKELY(calculatedArrayEnd.hasOverflowed() || calculatedArrayEnd > segmentLength))
         return JSValue::encode(jsNull());
 
-    StorageType storageType(element->elementType);
-    if (segmentLength) {
-        size_t elementTypeSize = typeSizeInBytes(storageType);
-        auto newArraySizeInBytes = CheckedSize { elementTypeSize } * arraySize;
-        if (UNLIKELY(newArraySizeInBytes.hasOverflowed() || newArraySizeInBytes > maxArraySizeInBytes))
-            return JSValue::encode(jsNull());
-    }
-
     VM& vm = instance->vm();
     StorageType arrayType = structure->typeDefinition().as<ArrayType>()->elementType().type;
-    ASSERT_UNUSED(arrayType, isSubtype(storageType, arrayType));
+    ASSERT_UNUSED(arrayType, isSubtype(StorageType(element->elementType), arrayType));
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, arraySize);
     if (UNLIKELY(!array))
         return JSValue::encode(jsNull());
     instance->copyElementSegment(array, instance->module().moduleInformation().elements[elemSegmentIndex], offset, arraySize, array->span<uint64_t>().data());
-    ASSERT(Wasm::isRefType(storageType.unpacked()));
+    ASSERT(Wasm::isRefType(element->elementType));
     vm.writeBarrier(array);
     return JSValue::encode(array);
 }

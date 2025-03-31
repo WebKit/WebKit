@@ -53,14 +53,15 @@ enum class DocumentCompatibilityMode : uint8_t {
 enum class LayoutOptions : uint8_t {
     RunPostLayoutTasksSynchronously = 1 << 0,
     IgnorePendingStylesheets = 1 << 1,
-    ContentVisibilityForceLayout = 1 << 2,
-    UpdateCompositingLayers = 1 << 3,
-    DoNotLayoutAncestorDocuments = 1 << 4,
+    TreatContentVisibilityHiddenAsVisible = 1 << 2,
+    TreatContentVisibilityAutoAsVisible = 1 << 3,
+    UpdateCompositingLayers = 1 << 4,
+    DoNotLayoutAncestorDocuments = 1 << 5,
     // Doesn't call RenderLayer::recursiveUpdateLayerPositionsAfterLayout if
     // possible. The caller should use a LocalFrameView::AutoPreventLayerAccess
     // for the scope that layout is expected to be flushed to stop any access to
     // the stale RenderLayers.
-    CanDeferUpdateLayerPositions = 1 << 5
+    CanDeferUpdateLayerPositions = 1 << 6
 };
 
 enum class CanNavigateState : uint8_t {

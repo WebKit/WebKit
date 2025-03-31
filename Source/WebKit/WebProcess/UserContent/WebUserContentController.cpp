@@ -304,7 +304,7 @@ private:
             return;
 
         JSRetainPtr context { JSContextGetGlobalContext(toRef(&globalObject)) };
-        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, JavaScriptEvaluationResult { context.get(), toRef(&globalObject, message) }), [completionHandler = WTFMove(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, JavaScriptEvaluationResult::extract(context.get(), toRef(&globalObject, message))), [completionHandler = WTFMove(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
             if (!result)
                 return completionHandler(JSC::jsUndefined(), result.error());
             completionHandler(toJS(toJS(context.get()), result->toJS(context.get())), { });

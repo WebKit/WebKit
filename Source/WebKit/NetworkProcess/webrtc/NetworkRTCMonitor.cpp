@@ -35,7 +35,6 @@
 #include <WebCore/Timer.h>
 #include <ifaddrs.h>
 #include <net/if.h>
-#include <wtf/BlockPtr.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -47,6 +46,7 @@
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/NetworkSPI.h>
+#include <wtf/BlockPtr.h>
 #endif
 
 namespace WebKit {
@@ -98,7 +98,9 @@ private:
 
     void updateNetworks();
     void updateNetworksOnQueue();
+#if PLATFORM(COCOA)
     void updateNetworksFromPath(nw_path_t);
+#endif
 
     void onGatheredNetworks(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&);
 
@@ -356,6 +358,7 @@ void NetworkManager::updateNetworks()
     });
 }
 
+#if PLATFORM(COCOA)
 void NetworkManager::updateNetworksFromPath(nw_path_t path)
 {
     auto status = nw_path_get_status(path);
@@ -368,6 +371,7 @@ void NetworkManager::updateNetworksFromPath(nw_path_t path)
     }).get());
     updateNetworks();
 }
+#endif
 
 static bool isEqual(const RTCNetwork::InterfaceAddress& a, const RTCNetwork::InterfaceAddress& b)
 {

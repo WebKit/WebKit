@@ -278,6 +278,7 @@ messages -> WebPageProxy {
 
     # Find messages
     SetTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, struct WebCore::TextIndicatorData indicator, uint64_t lifetime)
+    UpdateTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, struct WebCore::TextIndicatorData indicator)
     ClearTextIndicator()
     DidGetImageForFindMatch(struct WebCore::ImageBufferParameters parameters, WebCore::ShareableBitmapHandle contentImageHandle, uint32_t matchIndex)
 

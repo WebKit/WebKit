@@ -43,8 +43,8 @@ public:
         RefPtr<RTCPeerConnection> connection;
     };
 
-    virtual CallbackResult<void> handleEvent(const Logs&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(const Logs&) = 0;
+    virtual CallbackResult<void> invoke(const Logs&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(const Logs&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

@@ -35,8 +35,8 @@ WebCore::CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    auto descriptor = [WebCore::CocoaFontDescriptor fontDescriptorWithFontAttributes:attributes];
-    return [WebCore::CocoaFont fontWithDescriptor:descriptor size:size];
+    RetainPtr descriptor = [WebCore::CocoaFontDescriptor fontDescriptorWithFontAttributes:attributes];
+    return [WebCore::CocoaFont fontWithDescriptor:descriptor.get() size:size];
 
     END_BLOCK_OBJC_EXCEPTIONS
 

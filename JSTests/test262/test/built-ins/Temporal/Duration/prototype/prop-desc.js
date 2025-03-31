@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-duration-prototype
+esid: sec-temporal.duration.prototype
 description: The "prototype" property of Temporal.Duration
 includes: [propertyHelper.js]
 features: [Temporal]

@@ -40,7 +40,7 @@ function test() {
         throw "in lhs";
     }
     assertThrowsValue(function() {
-        for ((throwlhs()) of iterable)
+        for ((throwlhs().x) of iterable)
             continue;
     }, "in lhs");
     assert.sameValue(returnCalled, ++returnCalledExpected);

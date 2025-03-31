@@ -279,7 +279,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse()
     // Notably, this will affect a name suggested in "File Save As".
 
     didReceiveResponse(WTFMove(response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }](PolicyAction policyAction) {
-        LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse completionHandler (%u)", this, static_cast<unsigned>(policyAction));
+        LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse completionHandler (%s)", this, toString(policyAction).characters());
 
         if (m_state == State::Canceling || m_state == State::Completed) {
             clearStream();

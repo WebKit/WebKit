@@ -56,23 +56,22 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
 {
-    Ref { m_trackPrivate }->removeClient(m_clientRegistrationId);
+    m_trackPrivate->removeClient(m_clientRegistrationId);
 }
 
 VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 {
-    Ref trackPrivate = m_trackPrivate;
     return {
         {
-            trackPrivate->id(),
-            trackPrivate->label(),
-            trackPrivate->language(),
-            trackPrivate->startTimeVariance(),
-            trackPrivate->trackIndex(),
+            m_trackPrivate->id(),
+            m_trackPrivate->label(),
+            m_trackPrivate->language(),
+            m_trackPrivate->startTimeVariance(),
+            m_trackPrivate->trackIndex(),
         },
-        trackPrivate->selected(),
-        trackPrivate->kind(),
-        trackPrivate->configuration(),
+        m_trackPrivate->selected(),
+        m_trackPrivate->kind(),
+        m_trackPrivate->configuration(),
     };
 }
 

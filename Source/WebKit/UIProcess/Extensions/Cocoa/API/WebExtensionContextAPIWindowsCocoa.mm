@@ -93,7 +93,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
                 [tabs addObject:tab->delegate()];
             } else if (tabParameters.url)
-                [urls addObject:static_cast<NSURL *>(tabParameters.url.value())];
+                [urls addObject:tabParameters.url.value().createNSURL().get()];
         }
     }
 

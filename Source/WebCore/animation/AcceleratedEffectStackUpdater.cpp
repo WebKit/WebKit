@@ -28,7 +28,6 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AnimationMalloc.h"
 #include "Document.h"
 #include "LocalDOMWindow.h"
 #include "Page.h"

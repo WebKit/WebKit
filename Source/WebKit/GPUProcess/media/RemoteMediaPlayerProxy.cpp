@@ -106,6 +106,9 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     RefPtr player = m_player;
     player->setResourceOwner(resourceOwner);
     player->setPresentationSize(m_configuration.presentationSize);
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    player->setPrefersSpatialAudioExperience(m_configuration.prefersSpatialAudioExperience);
+#endif
 }
 
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()

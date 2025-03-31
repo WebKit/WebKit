@@ -44,10 +44,10 @@ public:
     void getEnabledRulesets(Ref<WebExtensionCallbackHandler>&&);
 
     void updateDynamicRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getDynamicRules(Ref<WebExtensionCallbackHandler>&&);
+    void getDynamicRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&);
 
     void updateSessionRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getSessionRules(Ref<WebExtensionCallbackHandler>&&);
+    void getSessionRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&);
 
     void getMatchedRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 

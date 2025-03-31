@@ -54,8 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 // Invalidates all connections to this proxy.
 - (void)invalidate;
 // Creates new SecKey/SecIdentity object which forwards all operations to the target SecKey identified by endpoint. Returned SecKeyRef can be used as long as target SecKeyProxy instance is kept alive.
-+ (nullable SecKeyRef)createKeyFromEndpoint:(NSXPCListenerEndpoint *)endpoint error:(NSError **)error;
-+ (nullable SecIdentityRef)createIdentityFromEndpoint:(NSXPCListenerEndpoint *)endpoint error:(NSError **)error;
+// FIXME: These functions don't have CF_RETURNS_RETAINED in Security. See <rdar://148176115>.
++ (nullable SecKeyRef)createKeyFromEndpoint:(NSXPCListenerEndpoint *)endpoint error:(NSError **)error CF_RETURNS_RETAINED;
++ (nullable SecIdentityRef)createIdentityFromEndpoint:(NSXPCListenerEndpoint *)endpoint error:(NSError **)error CF_RETURNS_RETAINED;
 @end
 NS_ASSUME_NONNULL_END
 

@@ -92,7 +92,7 @@ This test ensures elements with CSS display: contents have the correct role.
     AXSubrole: AXInsertStyleGroup
 
 <label class="testcase" id="label"></label>
-    AXRole: AXGroup
+    AXRole: AXStaticText
 
 <main class="testcase" id="main"></main>
     AXRole: AXGroup

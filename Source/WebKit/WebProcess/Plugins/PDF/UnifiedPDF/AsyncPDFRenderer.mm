@@ -463,11 +463,10 @@ void AsyncPDFRenderer::willRemoveGrid(TiledBacking&, TileGridIdentifier gridIden
 
 void AsyncPDFRenderer::clearRequestsAndCachedTiles()
 {
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "\nAsyncPDFRenderer::clearRequestsAndCachedTiles - have " << m_rendereredTiles.size() << " rendered tiles");
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "\nAsyncPDFRenderer::clearRequestsAndCachedTiles - have " << m_pendingTileRenders.size() << " pending tile renders");
 
     m_pendingTileRenderOrder.clear();
     m_pendingTileRenders.clear();
-//    m_rendereredTiles.clear();
 }
 
 AffineTransform AsyncPDFRenderer::tileToPaintingTransform(float tilingScaleFactor)

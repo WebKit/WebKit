@@ -283,7 +283,10 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
 
         JSC::JSValue resultPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "result"_s));
 
-        completionHandler(JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)), std::nullopt);
+        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)))
+            completionHandler(WTFMove(*extracted), std::nullopt);
+        else
+            completionHandler(makeUnexpected(std::nullopt), std::nullopt);
     });
 }
 
@@ -462,7 +465,10 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
 
         JSC::JSValue resultPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "result"_s));
 
-        completionHandler(JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)), std::nullopt);
+        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)))
+            completionHandler(WTFMove(*extracted), std::nullopt);
+        else
+            completionHandler(makeUnexpected(std::nullopt), std::nullopt);
     });
 }
 

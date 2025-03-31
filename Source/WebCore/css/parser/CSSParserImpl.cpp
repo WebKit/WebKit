@@ -97,12 +97,8 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& stri
     , m_observerWrapper(wrapper)
 {
     // With CSSOM, we might want the parser to start in an already nested state.
-    if (nestedContext) {
-        if (*nestedContext== CSSParserEnum::NestedContextType::Style)
-            m_styleRuleNestingLevel++;
-
+    if (nestedContext)
         m_ancestorRuleTypeStack.append(*nestedContext);
-    }
 }
 
 CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, IsImportant important, const CSSParserContext& context)
@@ -477,7 +473,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     const auto initialRange = range;
 
     auto isNestedStyleRule = [&] {
-        return isStyleNestedContext() && allowedRules <= AllowedRules::RegularRules;
+        return hasStyleRuleAncestor() && allowedRules <= AllowedRules::RegularRules;
     };
 
     auto preludeStart = range;
@@ -677,7 +673,7 @@ Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserToken
         return { };
 
     Vector<Ref<StyleRuleBase>> rules;
-    if (isStyleNestedContext()) {
+    if (hasStyleRuleAncestor()) {
         runInNewNestingContext([&] {
             consumeStyleBlock(block, StyleRuleType::Style, ParsingStyleDeclarationsInRuleList::Yes);
 
@@ -1368,7 +1364,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
 
     runInNewNestingContext([&] {
         {
-            NestingLevelIncrementer incrementer { m_styleRuleNestingLevel };
             m_ancestorRuleTypeStack.append(CSSParserEnum::NestedContextType::Style);
             consumeStyleBlock(block, StyleRuleType::Style);
             m_ancestorRuleTypeStack.removeLast();
@@ -1392,7 +1387,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
 void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType ruleType, OnlyDeclarations onlyDeclarations, ParsingStyleDeclarationsInRuleList isParsingStyleDeclarationsInRuleList)
 {
     auto nestedRulesAllowed = [&] {
-        return isStyleNestedContext() && onlyDeclarations == OnlyDeclarations::No;
+        return hasStyleRuleAncestor() && onlyDeclarations == OnlyDeclarations::No;
     };
 
     ASSERT(topContext().m_parsedProperties.isEmpty());

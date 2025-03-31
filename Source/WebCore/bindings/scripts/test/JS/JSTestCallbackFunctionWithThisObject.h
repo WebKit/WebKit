@@ -40,8 +40,8 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLUndefined::CallbackReturnType> handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
-    CallbackResult<typename IDLUndefined::CallbackReturnType> handleEventRethrowingException(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> invoke(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> invokeRethrowingException(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
 
 private:
     JSTestCallbackFunctionWithThisObject(JSC::JSObject*, JSDOMGlobalObject*);

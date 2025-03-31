@@ -282,8 +282,6 @@ public:
         if (!g_strcmp0(test->m_expectedQueryPermissionReply, "denied"))
             state = WEBKIT_PERMISSION_STATE_DENIED;
 
-        g_assert_cmpstr(webkit_permission_state_query_get_name(query), ==, "screen-wake-lock");
-
         GUniquePtr<gchar> origin(webkit_security_origin_to_string(webkit_permission_state_query_get_security_origin(query)));
         g_assert_cmpstr(origin.get(), ==, "https://foo.com");
 
@@ -1112,12 +1110,12 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     test->m_verifyMediaTypes = TRUE;
 
     // Test denying a permission request.
-    test->m_allowPermissionRequests = false;
+    test->m_expectedQueryPermissionReply = "denied";
     test->loadHtml(userMediaRequestHTML, "https://foo.com/bar");
     test->waitUntilTitleChangedTo("Permission denied");
 
     // Test allowing a permission request.
-    test->m_allowPermissionRequests = true;
+    test->m_expectedQueryPermissionReply = "granted";
     test->loadHtml(userMediaRequestHTML, "https://foo.com/bar");
     test->waitUntilTitleChangedTo("OK");
 

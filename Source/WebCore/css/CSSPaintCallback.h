@@ -43,8 +43,8 @@ class CSSPaintCallback : public RefCountedAndCanMakeWeakPtr<CSSPaintCallback>, p
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
+    virtual CallbackResult<void> invoke(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
 
     virtual ~CSSPaintCallback()
     {

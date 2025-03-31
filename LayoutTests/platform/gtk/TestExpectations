@@ -202,8 +202,10 @@ webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selectio
 webkit.org/b/266349 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 webkit.org/b/266349 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.html [ Crash ]
-webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.inherit.html [ Crash ]
+webkit.org/b/290522 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.direction.html [ ImageOnlyFailure Crash ]
+webkit.org/b/290522 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.direction.inherit.html [ ImageOnlyFailure Crash ]
+webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.html [ ImageOnlyFailure Crash ]
+webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.inherit.html [ ImageOnlyFailure Crash ]
 
 # Download
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
@@ -1956,3 +1958,8 @@ imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-dur
 webkit.org/b/213782 webanimations/accelerated-animation-with-easing.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-escape-scroller-004.html [ ImageOnlyFailure ]
+webkit.org/b/290133 svg/dom/SVGGeometry-isPointInFill-with-null-path.html [ Skip ]
+
+webkit.org/b/290449 imported/w3c/web-platform-tests/svg/fonts/zero-font-size-adjust-no-glyphs-font.html [ Failure ]
+webkit.org/b/290449 imported/w3c/web-platform-tests/svg/fonts/zero-font-size-adjust-no-glyphs-zero-height-font.html [ Failure ]
+webkit.org/b/290449 imported/w3c/web-platform-tests/svg/fonts/zero-font-size-adjust.html [ Failure ]

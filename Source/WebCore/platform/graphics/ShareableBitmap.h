@@ -139,7 +139,6 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImagePixels(NativeImage&);
 #endif
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(NativeImage&);
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(NativeImage&, const DestinationColorSpace&);
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(NativeImage&, const DestinationColorSpace&, const IntSize&);
 

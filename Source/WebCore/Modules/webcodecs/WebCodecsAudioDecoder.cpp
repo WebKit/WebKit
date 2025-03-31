@@ -147,7 +147,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
 
                 auto decodedResult = WTFMove(result).value();
                 auto audioData = WebCodecsAudioData::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.data));
-                decoder.m_output->handleEvent(WTFMove(audioData));
+                decoder.m_output->invoke(WTFMove(audioData));
             });
         });
 
@@ -253,7 +253,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::closeDecoder(Exception&& exception)
     setState(WebCodecsCodecState::Closed);
     m_internalDecoder = nullptr;
     if (exception.code() != ExceptionCode::AbortError)
-        m_error->handleEvent(DOMException::create(WTFMove(exception)));
+        m_error->invoke(DOMException::create(WTFMove(exception)));
 
     return { };
 }

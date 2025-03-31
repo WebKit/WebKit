@@ -64,14 +64,14 @@ public:
     using Variant = std::variant<NullType, bool, CoreIPCNumber, String, Seconds, Vector<JSObjectID>, HashMap<JSObjectID, JSObjectID>>;
 
     JavaScriptEvaluationResult(JSObjectID, HashMap<JSObjectID, Variant>&&);
-    static Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> extract(JSGlobalContextRef, JSValueRef);
     static std::optional<JavaScriptEvaluationResult> extract(id);
 #else
     JavaScriptEvaluationResult(std::span<const uint8_t> wireBytes)
         : m_wireBytes(wireBytes) { }
 #endif
 
-    JavaScriptEvaluationResult(JSGlobalContextRef, JSValueRef);
+    static std::optional<JavaScriptEvaluationResult> extract(JSGlobalContextRef, JSValueRef);
+
     JavaScriptEvaluationResult(JavaScriptEvaluationResult&&);
     JavaScriptEvaluationResult& operator=(JavaScriptEvaluationResult&&);
     ~JavaScriptEvaluationResult();
@@ -91,6 +91,8 @@ public:
     JSValueRef toJS(JSGlobalContextRef);
 
 private:
+    JavaScriptEvaluationResult(JSGlobalContextRef, JSValueRef);
+
 #if PLATFORM(COCOA)
     JavaScriptEvaluationResult(id);
 

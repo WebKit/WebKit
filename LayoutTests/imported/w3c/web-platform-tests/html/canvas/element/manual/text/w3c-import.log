@@ -14,6 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.disconnected.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.disconnected.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.document-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.dynamic.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.dynamic.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected.html

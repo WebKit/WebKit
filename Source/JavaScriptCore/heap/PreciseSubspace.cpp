@@ -27,7 +27,6 @@
 #include "PreciseSubspace.h"
 
 #include "AllocatingScope.h"
-#include "IsoAlignedMemoryAllocator.h"
 #include "IsoCellSetInlines.h"
 #include "JSCellInlines.h"
 #include "MarkedSpaceInlines.h"

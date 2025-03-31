@@ -1,7 +1,5 @@
 AutomationProtocolObjects.h
 Shared/API/c/cf/WKStringCF.mm
 Shared/API/c/cf/WKURLCF.mm
-Shared/Cocoa/WKNSURL.mm
 UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
 WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp
-WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm

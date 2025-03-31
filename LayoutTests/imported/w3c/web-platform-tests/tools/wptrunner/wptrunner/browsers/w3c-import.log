@@ -36,3 +36,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/webkit.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/webkitgtk_minibrowser.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/wktr.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/wpewebkit_minibrowser.py

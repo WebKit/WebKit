@@ -107,7 +107,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
         // These properties are cached for all objects, ignored and unignored.
         setProperty(AXProperty::HasClickHandler, object.hasClickHandler());
-        auto tag = object.tagName();
+        const auto& tag = object.tagName();
         if (tag == bodyTag)
             setProperty(AXProperty::TagName, TagName::body);
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -115,6 +115,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::TagName, TagName::mark);
         else if (tag == attachmentTag)
             setProperty(AXProperty::TagName, TagName::attachment);
+        else if (tag == theadTag)
+            setProperty(AXProperty::TagName, TagName::thead);
+        else if (tag == tbodyTag)
+            setProperty(AXProperty::TagName, TagName::tbody);
+        else if (tag == tfootTag)
+            setProperty(AXProperty::TagName, TagName::tfoot);
 
         setProperty(AXProperty::TextRuns, object.textRuns());
         setProperty(AXProperty::TextEmissionBehavior, object.textEmissionBehavior());
@@ -130,7 +136,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     };
 
     // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
-    constexpr unsigned unignoredSizeToReserve = 10;
+    constexpr unsigned unignoredSizeToReserve = 2;
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     if (object.includeIgnoredInCoreTree()) {
         bool isIgnored = object.isIgnored();
@@ -177,7 +183,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXProperty::InsideLink, object.insideLink());
     setProperty(AXProperty::IsValueAutofillAvailable, object.isValueAutofillAvailable());
     setProperty(AXProperty::RoleDescription, object.roleDescription().isolatedCopy());
-    setProperty(AXProperty::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXProperty::SubrolePlatformString, object.subrolePlatformString().isolatedCopy());
     setProperty(AXProperty::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXProperty::CanSetValueAttribute, object.canSetValueAttribute());
@@ -188,11 +193,10 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXProperty::MaxValueForRange, object.maxValueForRange());
     setProperty(AXProperty::MinValueForRange, object.minValueForRange());
     setProperty(AXProperty::SupportsARIAOwns, object.supportsARIAOwns());
-    setProperty(AXProperty::PopupValue, object.popupValue().isolatedCopy());
-    setProperty(AXProperty::InvalidStatus, object.invalidStatus().isolatedCopy());
+    setProperty(AXProperty::ExplicitPopupValue, object.explicitPopupValue().isolatedCopy());
+    setProperty(AXProperty::ExplicitInvalidStatus, object.explicitInvalidStatus().isolatedCopy());
     setProperty(AXProperty::SupportsExpanded, object.supportsExpanded());
     setProperty(AXProperty::SortDirection, static_cast<int>(object.sortDirection()));
-    setProperty(AXProperty::SupportsRangeValue, object.supportsRangeValue());
 #if !LOG_DISABLED
     // Eagerly cache ID when logging is enabled so that we can log isolated objects without constant deadlocks.
     // Don't cache ID when logging is disabled because we don't expect non-test AX clients to actually request it.
@@ -206,25 +210,24 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXProperty::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXProperty::URL, std::make_shared<URL>(object.url().isolatedCopy()));
     setProperty(AXProperty::AccessKey, object.accessKey().isolatedCopy());
-    setProperty(AXProperty::AutoCompleteValue, object.autoCompleteValue().isolatedCopy());
+    setProperty(AXProperty::ExplicitAutoCompleteValue, object.explicitAutoCompleteValue().isolatedCopy());
     setProperty(AXProperty::ColorValue, object.colorValue());
     setProperty(AXProperty::ExplicitOrientation, object.explicitOrientation());
     setProperty(AXProperty::HierarchicalLevel, object.hierarchicalLevel());
-    setProperty(AXProperty::LiveRegionStatus, object.liveRegionStatus().isolatedCopy());
-    setProperty(AXProperty::LiveRegionRelevant, object.liveRegionRelevant().isolatedCopy());
+    setProperty(AXProperty::ExplicitLiveRegionStatus, object.explicitLiveRegionStatus().isolatedCopy());
+    setProperty(AXProperty::ExplicitLiveRegionRelevant, object.explicitLiveRegionRelevant().isolatedCopy());
     setProperty(AXProperty::LiveRegionAtomic, object.liveRegionAtomic());
-    setProperty(AXProperty::HasHighlighting, object.hasHighlighting());
     setProperty(AXProperty::HasBoldFont, object.hasBoldFont());
     setProperty(AXProperty::HasItalicFont, object.hasItalicFont());
     setProperty(AXProperty::HasPlainText, object.hasPlainText());
 #if !ENABLE(AX_THREAD_TEXT_APIS)
     setProperty(AXProperty::HasUnderline, object.hasUnderline());
+    setProperty(AXProperty::TextContentPrefixFromListMarker, object.textContentPrefixFromListMarker());
 #endif
     setProperty(AXProperty::IsKeyboardFocusable, object.isKeyboardFocusable());
     setProperty(AXProperty::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXProperty::BrailleLabel, object.brailleLabel().isolatedCopy());
     setProperty(AXProperty::IsNonLayerSVGObject, object.isNonLayerSVGObject());
-    setProperty(AXProperty::TextContentPrefixFromListMarker, object.textContentPrefixFromListMarker());
 
     bool isWebArea = axObject->isWebArea();
     bool isScrollArea = axObject->isScrollView();
@@ -316,7 +319,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::IsColumnHeader, object.isColumnHeader());
         setProperty(AXProperty::IsRowHeader, object.isRowHeader());
         setProperty(AXProperty::CellScope, object.cellScope().isolatedCopy());
-        setProperty(AXProperty::RowGroupAncestorID, object.rowGroupAncestorID());
     }
 
     if (object.isTableColumn())
@@ -380,6 +382,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::MathFencedOpenString, object.mathFencedOpenString().isolatedCopy());
         setProperty(AXProperty::MathFencedCloseString, object.mathFencedCloseString().isolatedCopy());
         setProperty(AXProperty::MathLineThickness, object.mathLineThickness());
+        setProperty(AXProperty::IsAnonymousMathOperator, object.isAnonymousMathOperator());
 
         bool isMathRoot = object.isMathRoot();
         setProperty(AXProperty::IsMathRoot, isMathRoot);
@@ -595,9 +598,11 @@ void AXIsolatedObject::setProperty(AXProperty propertyName, AXPropertyValueVaria
         [](std::nullptr_t&) { return true; },
         [](Markable<AXID> typedValue) { return !typedValue; },
         [&](String& typedValue) {
+#if !ENABLE(AX_THREAD_TEXT_APIS)
             // We use a null stringValue to indicate when the string value is different than the text content.
             if (propertyName == AXProperty::StringValue)
                 return typedValue == emptyString(); // Only compares empty, not null
+#endif // !ENABLE(AX_THREAD_TEXT_APIS)
             return typedValue.isEmpty(); // null or empty
         },
         [](bool typedValue) { return !typedValue; },
@@ -607,7 +612,11 @@ void AXIsolatedObject::setProperty(AXProperty propertyName, AXPropertyValueVaria
         [](float typedValue) { return typedValue == 0.0; },
         [](uint64_t typedValue) { return !typedValue; },
         [](AccessibilityButtonState& typedValue) { return typedValue == AccessibilityButtonState::Off; },
-        [](Color& typedValue) { return typedValue == Color(); },
+        [&](Color& typedValue) {
+            if (propertyName == AXProperty::ColorValue)
+                return typedValue == Color::black;
+            return typedValue.toColorTypeLossy<SRGBA<uint8_t>>() == Color().toColorTypeLossy<SRGBA<uint8_t>>();
+        },
         [](std::shared_ptr<URL>& typedValue) { return !typedValue || *typedValue == URL(); },
         [](LayoutRect& typedValue) { return typedValue == LayoutRect(); },
         [](IntPoint& typedValue) { return typedValue == IntPoint(); },
@@ -645,6 +654,8 @@ void AXIsolatedObject::setProperty(AXProperty propertyName, AXPropertyValueVaria
         [] (TagName& tag) { return tag == TagName::Unknown; },
         [] (DateComponentsType& typedValue) { return typedValue == DateComponentsType::Invalid; },
         [] (std::optional<AccessibilityOrientation>& typedValue) { return !typedValue; },
+        [] (std::optional<unsigned>& typedValue) { return !typedValue; },
+        [] (OptionSet<SpeakAs>& typedValue) { return typedValue.isEmpty(); },
         [](auto&) {
             ASSERT_NOT_REACHED();
             return false;
@@ -959,7 +970,20 @@ void AXIsolatedObject::setSelectedTextRange(CharacterRange&& range)
 
 SRGBA<uint8_t> AXIsolatedObject::colorValue() const
 {
-    return colorAttributeValue(AXProperty::ColorValue).toColorTypeLossy<SRGBA<uint8_t>>();
+    auto it = m_propertyMap.find(AXProperty::ColorValue);
+    if (it == m_propertyMap.end()) {
+        // Don't fallback to returning the default Color() value, as that is transparent black,
+        // but we want to return opaque black as a default for this property.
+        return Color::black;
+    }
+
+    return WTF::switchOn(it->value,
+        [] (const Color& typedValue) -> SRGBA<uint8_t> { return typedValue.toColorTypeLossy<SRGBA<uint8_t>>(); },
+        [] (const auto&) -> SRGBA<uint8_t> {
+            ASSERT_NOT_REACHED();
+            return Color().toColorTypeLossy<SRGBA<uint8_t>>();
+        }
+    );
 }
 
 AXIsolatedObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
@@ -1022,7 +1046,7 @@ OptionSet<T> AXIsolatedObject::optionSetAttributeValue(AXProperty propertyName) 
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (T& typedValue) -> OptionSet<T> { return typedValue; },
+        [] (OptionSet<T>& typedValue) -> OptionSet<T> { return typedValue; },
         [] (auto&) { return OptionSet<T>(); }
     );
 }
@@ -1825,6 +1849,12 @@ Vector<AXTextMarkerRange> AXIsolatedObject::misspellingRanges() const
     });
 }
 
+bool AXIsolatedObject::hasRowGroupTag() const
+{
+    auto tag = propertyValue<TagName>(AXProperty::TagName);
+    return tag == TagName::thead || tag == TagName::tbody || tag == TagName::tfoot;
+}
+
 bool AXIsolatedObject::hasSameFont(AXCoreObject& otherObject)
 {
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -2000,11 +2030,15 @@ String AXIsolatedObject::titleAttributeValue() const
 
 String AXIsolatedObject::stringValue() const
 {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    return stringAttributeValue(AXProperty::StringValue);
+#else
     if (m_propertyMap.contains(AXProperty::StringValue))
         return stringAttributeValue(AXProperty::StringValue);
     if (auto value = platformStringValue())
         return *value;
     return { };
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 }
 
 String AXIsolatedObject::text() const
@@ -2099,15 +2133,6 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRel
     if (auto relatedObjectIDs = tree()->relatedObjectIDsFor(*this, relationType))
         return tree()->objectsForIDs(*relatedObjectIDs);
     return { };
-}
-
-OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
-{
-    auto value = m_propertyMap.get(AXProperty::AncestorFlags);
-    return WTF::switchOn(value,
-        [] (OptionSet<AXAncestorFlag>& typedValue) -> OptionSet<AXAncestorFlag> { return typedValue; },
-        [] (auto&) { return OptionSet<AXAncestorFlag>(); }
-    );
 }
 
 String AXIsolatedObject::innerHTML() const

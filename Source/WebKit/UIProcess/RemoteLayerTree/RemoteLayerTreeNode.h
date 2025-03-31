@@ -162,7 +162,7 @@ private:
 
     void initializeLayer();
 
-    WebCore::PlatformLayerIdentifier m_layerID;
+    const WebCore::PlatformLayerIdentifier m_layerID;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostingIdentifier;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 

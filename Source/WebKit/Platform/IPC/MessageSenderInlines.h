@@ -76,13 +76,13 @@ static void cancelReplyWithoutUsingConnection(C&& completionHandler)
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
 }
 
-template<typename T, typename C>
+template<typename T, typename Decoder, typename C>
 static void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHandler)
 {
     if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)
         completionHandler();
     else {
-        if (auto arguments = decoder.decode<typename T::ReplyArguments>())
+        if (auto arguments = decoder.template decode<typename T::ReplyArguments>())
             return std::apply(std::forward<C>(completionHandler), WTFMove(*arguments));
         cancelReplyWithoutUsingConnection<T>(std::forward<C>(completionHandler));
     }

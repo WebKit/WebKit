@@ -38,8 +38,8 @@ public:
 
     virtual bool hasCallback() const = 0;
 
-    virtual CallbackResult<String> handleEvent(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
-    virtual CallbackResult<String> handleEventRethrowingException(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
+    virtual CallbackResult<String> invoke(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
+    virtual CallbackResult<String> invokeRethrowingException(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
 };
 
 } // namespace WebCore

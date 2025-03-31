@@ -55,7 +55,6 @@ OBJC_CLASS WKWebViewConfiguration;
 namespace WTR {
 
 class EventSenderProxy;
-class OriginSettings;
 class PlatformWebView;
 class TestInvocation;
 class TestOptions;
@@ -146,12 +145,11 @@ public:
     void setCameraPermission(bool);
     void setMicrophonePermission(bool);
     void resetUserMediaPermission();
-    void setUserMediaPersistentPermissionForOrigin(bool, WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
+    void delayUserMediaRequestDecision();
+    unsigned userMediaPermissionRequestCount();
+    void resetUserMediaPermissionRequestCount();
+
     void handleUserMediaPermissionRequest(WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
-    void handleCheckOfUserMediaPermissionForOrigin(WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, const WKUserMediaPermissionCheckRef&);
-    OriginSettings& settingsForOrigin(const String&);
-    unsigned userMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
-    void resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
 
     // Device Orientation / Motion.
     bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef, WKFrameInfoRef);
@@ -729,14 +727,13 @@ private:
     bool m_isGeolocationPermissionAllowed { false };
     std::optional<bool> m_screenWakeLockPermission;
 
-    HashMap<String, RefPtr<OriginSettings>> m_cachedUserMediaPermissions;
-
-    typedef Vector<std::pair<String, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
+    typedef Vector<WKRetainPtr<WKUserMediaPermissionRequestRef>> PermissionRequestList;
     PermissionRequestList m_userMediaPermissionRequests;
 
-    bool m_isUserMediaPermissionSet { false };
-    bool m_isCameraPermissionAllowed { false };
-    bool m_isMicrophonePermissionAllowed { false };
+    bool m_canDecideUserMediaRequest { true };
+    unsigned m_requestCount { 0 };
+    std::optional<bool> m_isCameraPermissionAllowed;
+    std::optional<bool> m_isMicrophonePermissionAllowed;
 
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };

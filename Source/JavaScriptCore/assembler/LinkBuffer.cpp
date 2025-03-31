@@ -74,7 +74,6 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassembly
 
 void LinkBuffer::logJITCodeForPerf(CodeRef<LinkBufferPtrTag>& codeRef, ASCIILiteral simpleName)
 {
-#if OS(LINUX) || OS(DARWIN)
     auto dumpSimpleName = [&](StringPrintStream& out, ASCIILiteral simpleName) {
         if (simpleName.isNull())
             out.print("unspecified");
@@ -119,10 +118,6 @@ void LinkBuffer::logJITCodeForPerf(CodeRef<LinkBufferPtrTag>& codeRef, ASCIILite
     }
     if (!m_isRewriting)
         PerfLog::log(out.toCString(), codeRef);
-#else
-    UNUSED_PARAM(codeRef);
-    UNUSED_PARAM(simpleName);
-#endif
 }
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, ASCIILiteral simpleName, const char* format, ...)

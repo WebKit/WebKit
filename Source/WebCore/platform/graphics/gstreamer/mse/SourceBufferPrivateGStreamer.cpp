@@ -165,6 +165,13 @@ void SourceBufferPrivateGStreamer::flush(TrackID trackId)
         return;
     }
 
+    if (track->type() == TrackPrivateBaseGStreamer::Text) {
+        if (player)
+            GST_DEBUG_OBJECT(player->pipeline(), "Track is a text stream, so we only need to clear the queue. trackId = '%" PRIu64 "'", track->id());
+        track->clearQueue();
+        return;
+    }
+
     if (!player)
         return;
     GST_DEBUG_OBJECT(player->pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%" PRIu64 "'", track->id());

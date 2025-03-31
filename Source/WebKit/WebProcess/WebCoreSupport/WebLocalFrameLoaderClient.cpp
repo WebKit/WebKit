@@ -1893,20 +1893,19 @@ void WebLocalFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<voi
     NetworkResourceLoadParameters parameters {
         webPage->webPageProxyIdentifier(),
         webPage->identifier(),
-        m_frame->frameID()
+        m_frame->frameID(),
+        ResourceRequest(url)
     };
-    parameters.request = ResourceRequest(url);
+    parameters.createSandboxExtensionHandlesIfNecessary();
+
     parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
     parameters.parentPID = legacyPresentingApplicationPID();
-#if HAVE(AUDIT_TOKEN)
-    parameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
-#endif
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.options.destination = FetchOptions::Destination::EmptyString;
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.isNavigatingToAppBoundDomain = m_frame->isTopFrameNavigatingToAppBoundDomain();
 #endif
-    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(parameters), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(WTFMove(parameters)), WTFMove(completionHandler));
 }
 
 void WebLocalFrameLoaderClient::didRestoreScrollPosition()

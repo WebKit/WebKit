@@ -39,6 +39,7 @@
 #include "LocalFrameViewLayoutContext.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
+#include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"

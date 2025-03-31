@@ -49,6 +49,22 @@ enum class PolicyAction : uint8_t {
     LoadWillContinueInAnotherProcess
 };
 
+inline ASCIILiteral toString(PolicyAction action)
+{
+    switch (action) {
+    using enum PolicyAction;
+    case Download:
+        return "Download"_s;
+    case Ignore:
+        return "Ignore"_s;
+    case LoadWillContinueInAnotherProcess:
+        return "LoadWillContinueInAnotherProcess"_s;
+    case Use:
+        break;
+    }
+    return "Use"_s;
+}
+
 enum class ReloadOption : uint8_t {
     ExpiredOnly = 1 << 0,
     FromOrigin  = 1 << 1,

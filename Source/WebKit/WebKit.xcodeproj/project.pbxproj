@@ -5377,7 +5377,7 @@
 		41FBE824206DA79C000F0741 /* NetworkContentRuleListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManager.cpp; sourceTree = "<group>"; };
 		41FCD6B323CDC60400C62567 /* SampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBufferDisplayLayer.h; sourceTree = "<group>"; };
 		41FCD6B423CDCAC200C62567 /* RemoteSampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSampleBufferDisplayLayer.h; sourceTree = "<group>"; };
-		41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
+		41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampleBufferDisplayLayer.mm; sourceTree = "<group>"; };
 		41FCD6B623CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteSampleBufferDisplayLayer.messages.in; sourceTree = "<group>"; };
 		41FCD6B723CDE53D00C62567 /* SampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
 		41FCD6B823CDE53E00C62567 /* SampleBufferDisplayLayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleBufferDisplayLayer.messages.in; sourceTree = "<group>"; };
@@ -6595,6 +6595,7 @@
 		7B22007129B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.h; sourceTree = "<group>"; };
 		7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterProxy.h; sourceTree = "<group>"; };
 		7B2E73472CA2C611002C1A84 /* SyncRequestID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncRequestID.h; sourceTree = "<group>"; };
+		7B43C1292D79B0EA00B119F7 /* RemoteDisplayListRecorderIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderIdentifier.h; sourceTree = "<group>"; };
 		7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueueMap.h; sourceTree = "<group>"; };
 		7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueue.h; sourceTree = "<group>"; };
 		7B483F1D25CDDA9B00120486 /* MessageReceiveQueueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageReceiveQueueMap.cpp; sourceTree = "<group>"; };
@@ -7229,6 +7230,8 @@
 		A188D2E22B6B0F4E00E65A08 /* WKVisibilityPropagationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKVisibilityPropagationView.h; path = ios/WKVisibilityPropagationView.h; sourceTree = "<group>"; };
 		A188D2E32B6B0F4E00E65A08 /* WKVisibilityPropagationView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKVisibilityPropagationView.mm; path = ios/WKVisibilityPropagationView.mm; sourceTree = "<group>"; };
 		A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatterInternal.h; sourceTree = "<group>"; };
+		A1A207432D8A7A92003B1A13 /* LinearMediaKit.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = LinearMediaKit.swiftinterface; sourceTree = "<group>"; };
+		A1A207442D8A7A92003B1A13 /* QuickLook_SPI.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = QuickLook_SPI.swiftinterface; sourceTree = "<group>"; };
 		A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownload.h; sourceTree = "<group>"; };
 		A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKDownload.mm; sourceTree = "<group>"; };
 		A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadInternal.h; sourceTree = "<group>"; };
@@ -12494,9 +12497,9 @@
 				41C3B89126493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp */,
 				41C3B89026493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.h */,
 				41C3B89426493B7C004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in */,
-				41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.cpp */,
 				41FCD6B423CDCAC200C62567 /* RemoteSampleBufferDisplayLayer.h */,
 				41FCD6B623CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.messages.in */,
+				41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.mm */,
 				41FCD6BE23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.cpp */,
 				41FCD6BF23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.h */,
 				41FCD6BD23CE043F00C62567 /* RemoteSampleBufferDisplayLayerManager.messages.in */,
@@ -13032,6 +13035,7 @@
 				0FC5FB6529C4ECEE001EDFE5 /* PrepareBackingStoreBuffersData.cpp */,
 				0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */,
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
+				7B43C1292D79B0EA00B119F7 /* RemoteDisplayListRecorderIdentifier.h */,
 				F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */,
 				F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
@@ -16290,7 +16294,9 @@
 		E5BF52E02A44A5D9005B2848 /* visionos */ = {
 			isa = PBXGroup;
 			children = (
+				A1A207432D8A7A92003B1A13 /* LinearMediaKit.swiftinterface */,
 				E539DFEA2A44A69100769F09 /* MRUIKitSPI.h */,
+				A1A207442D8A7A92003B1A13 /* QuickLook_SPI.swiftinterface */,
 				E539DFEC2A44A78600769F09 /* RealitySimulationServicesSPI.h */,
 				DD6E58C42BE004DE0000C264 /* RealitySystemSupportSPI.h */,
 			);

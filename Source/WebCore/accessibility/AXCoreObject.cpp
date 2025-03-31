@@ -164,6 +164,15 @@ bool AXCoreObject::isGroup() const
     }
 }
 
+bool AXCoreObject::hasHighlighting() const
+{
+    for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentObject()) {
+        if (ancestor->hasMarkTag())
+            return true;
+    }
+    return false;
+}
+
 bool AXCoreObject::hasGridRole() const
 {
     auto role = roleValue();
@@ -381,6 +390,19 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
     if (auto* nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
         return nextSibling;
     return parent.get();
+}
+
+String AXCoreObject::autoCompleteValue() const
+{
+    String explicitValue = explicitAutoCompleteValue();
+    return explicitValue.isEmpty() ? "none"_s : explicitValue;
+}
+
+String AXCoreObject::invalidStatus() const
+{
+    auto explicitValue = explicitInvalidStatus();
+    // "false" is the default if no invalid status is explicitly provided (e.g. via aria-invalid).
+    return explicitValue.isEmpty() ? "false"_s : explicitValue;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
@@ -704,6 +726,16 @@ bool AXCoreObject::isActiveDescendantOfFocusedContainer() const
     return false;
 }
 
+bool AXCoreObject::supportsRangeValue() const
+{
+    return isProgressIndicator()
+        || isSlider()
+        || isScrollbar()
+        || isSpinButton()
+        || (isSplitter() && canSetFocusAttribute())
+        || hasAttachmentTag();
+}
+
 bool AXCoreObject::supportsRequiredAttribute() const
 {
     switch (roleValue()) {
@@ -740,6 +772,22 @@ bool AXCoreObject::isRootWebArea() const
     RefPtr parent = parentObject();
     // If the parent is a scroll area, and the scroll area has no parent, we are at the root web area.
     return parent && parent->roleValue() == AccessibilityRole::ScrollArea && !parent->parentObject();
+}
+
+String AXCoreObject::popupValue() const
+{
+    String explicitValue = explicitPopupValue();
+    if (!explicitValue.isEmpty())
+        return explicitValue;
+
+    // In ARIA 1.1, the implicit value for combobox became "listbox."
+    if (isComboBox())
+        return "listbox"_s;
+
+    // The spec states that "User agents must treat any value of aria-haspopup that is not
+    // included in the list of allowed values, including an empty string, as if the value
+    // false had been provided."
+    return "false"_s;
 }
 
 bool AXCoreObject::hasPopup() const
@@ -865,6 +913,20 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::columnHeaders()
     return headers;
 }
 
+std::optional<AXID> AXCoreObject::rowGroupAncestorID() const
+{
+    if (!hasCellRole())
+        return { };
+
+    auto* rowGroup = Accessibility::findAncestor<AXCoreObject>(*this, /* includeSelf */ false, [] (const auto& ancestor) {
+        return ancestor.hasRowGroupTag();
+    });
+
+    if (!rowGroup)
+        return std::nullopt;
+    return rowGroup->objectID();
+}
+
 bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject& otherTableCell)
 {
     auto ancestorID = rowGroupAncestorID();
@@ -894,6 +956,24 @@ bool AXCoreObject::isReplacedElement() const
     default:
         return isWidget() || hasAttachmentTag();
     }
+}
+
+bool AXCoreObject::containsOnlyStaticText() const
+{
+    bool hasText = false;
+    auto* nonTextDescendant = Accessibility::findUnignoredDescendant(const_cast<AXCoreObject&>(*this), /* includeSelf */ false, [&] (auto& descendant) {
+        if (descendant.isGroup()) {
+            // Skip through groups to keep looking for text.
+            return false;
+        }
+
+        if (descendant.isStaticText()) {
+            hasText = hasText || !descendant.isIgnored();
+            return false;
+        }
+        return true;
+    });
+    return hasText && !nonTextDescendant;
 }
 
 String AXCoreObject::ariaLandmarkRoleDescription() const
@@ -1309,12 +1389,32 @@ String LineDecorationStyle::debugDescription() const
     );
 }
 
-String AXCoreObject::infoStringForTesting() const
+String AXCoreObject::infoStringForTesting()
 {
     return makeString("Role: "_s, rolePlatformString(), ", Value: "_s, stringValue());
 }
 
 namespace Accessibility {
+
+#if !PLATFORM(MAC) && !USE(ATSPI)
+// FIXME: implement in other platforms.
+PlatformRoleMap createPlatformRoleMap() { return PlatformRoleMap(); }
+#endif
+
+void initializeRoleMap()
+{
+    roleToPlatformString(AccessibilityRole::Button);
+}
+
+String roleToPlatformString(AccessibilityRole role)
+{
+    // This map can be read from multiple threads at once. This is fine,
+    // as we don't mutate it after creation, and never allow it to be destroyed.
+    // The only thing we need to make thread-safe is its initialization, accomplished
+    // by expliciting initializing the map before the accessibility thread is started.
+    static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
+    return roleMap->get(enumToUnderlyingType(role));
+}
 
 bool inRenderTreeOrStyleUpdate(const Document& document)
 {

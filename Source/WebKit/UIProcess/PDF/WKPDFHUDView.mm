@@ -36,6 +36,7 @@
 #import <pal/spi/mac/NSImageSPI.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 
 //  The HUD items should have the following spacing:
 //  -------------------------------------------------
@@ -70,15 +71,19 @@ static const CGFloat layerFadeInTimeInterval = 0.25;
 static const CGFloat layerFadeOutTimeInterval = 0.5;
 static const CGFloat initialHideTimeInterval = 3.0;
 
+static bool isInRecoveryOS()
+{
+    return os_variant_is_basesystem("WebKit");
+}
+
 static NSArray<NSString *> *controlArray()
 {
-    return @[
-        PDFHUDZoomOutControl,
-        PDFHUDZoomInControl,
-        PDFHUDSeparatorControl,
-        PDFHUDLaunchPreviewControl,
-        PDFHUDSavePDFControl
-    ];
+    NSArray<NSString *> *controls = @[ PDFHUDZoomOutControl, PDFHUDZoomInControl ];
+
+    if (isInRecoveryOS())
+        return controls;
+
+    return [controls arrayByAddingObjectsFromArray:@[ PDFHUDSeparatorControl, PDFHUDLaunchPreviewControl, PDFHUDSavePDFControl ]];
 }
 
 @implementation WKPDFHUDView {

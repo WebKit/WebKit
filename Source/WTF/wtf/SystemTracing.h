@@ -361,14 +361,14 @@ enum WTFOSSignpostType {
 
 #define WTFEmitSignpostDirectlyWithType(emitMacro, pointer, name, format, ...) \
     do { \
-        os_log_t wtfHandle = WTFSignpostLogHandle(); \
+        RetainPtr<os_log_t> wtfHandle = WTFSignpostLogHandle(); \
         const void *wtfPointer = (pointer); \
-        os_signpost_id_t wtfSignpostID = wtfPointer ? os_signpost_id_make_with_pointer(wtfHandle, wtfPointer) : OS_SIGNPOST_ID_EXCLUSIVE; \
-        emitMacro(wtfHandle, wtfSignpostID, #name, format, ##__VA_ARGS__); \
+        os_signpost_id_t wtfSignpostID = wtfPointer ? os_signpost_id_make_with_pointer(wtfHandle.get(), wtfPointer) : OS_SIGNPOST_ID_EXCLUSIVE; \
+        emitMacro(wtfHandle.get(), wtfSignpostID, #name, format, ##__VA_ARGS__); \
     } while (0)
 
 #define WTFEmitSignpostIndirectlyWithType(type, pointer, name, timeDelta, format, ...) \
-    os_log(WTFSignpostLogHandle(), "type=%d name=%d p=%" PRIuPTR " ts=%llu " format, type, WTFOSSignpostName ## name, reinterpret_cast<uintptr_t>(pointer), WTFCurrentContinuousTime(timeDelta), ##__VA_ARGS__)
+    SUPPRESS_UNCOUNTED_LOCAL os_log(WTFSignpostLogHandle(), "type=%d name=%d p=%" PRIuPTR " ts=%llu " format, type, WTFOSSignpostName ## name, reinterpret_cast<uintptr_t>(pointer), WTFCurrentContinuousTime(timeDelta), ##__VA_ARGS__)
 
 #elif USE(SYSPROF_CAPTURE)
 

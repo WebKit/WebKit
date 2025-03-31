@@ -146,14 +146,15 @@ public:
     {
     }
 
-    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage) final
+    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, std::optional<WebKit::JavaScriptEvaluationResult>&& jsMessage) final
     {
         @autoreleasepool {
             RetainPtr webView = page.cocoaView();
             if (!webView)
                 return;
+            RetainPtr body = jsMessage ? jsMessage->toID() : NSNull.null;
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:jsMessage.toID().get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
+            auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body.get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
             [(id<WKScriptMessageHandler>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
         }
     }
@@ -163,7 +164,7 @@ public:
         return m_supportsAsyncReply;
     }
 
-    void didPostMessageWithAsyncReply(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage, Function<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
+    void didPostMessageWithAsyncReply(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, std::optional<WebKit::JavaScriptEvaluationResult>&& jsMessage, Function<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
     {
         ASSERT(m_supportsAsyncReply);
 
@@ -177,8 +178,9 @@ public:
         __block auto handler = CompletionHandlerWithFinalizer<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>(WTFMove(replyHandler), WTFMove(finalizer));
 
         @autoreleasepool {
+            RetainPtr body = jsMessage ? jsMessage->toID() : NSNull.null;
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:jsMessage.toID().get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
+            auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body.get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
 
             [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {
                 if (!handler)

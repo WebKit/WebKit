@@ -320,7 +320,6 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
 
 void WebResourceLoadStatisticsStore::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(subFrameDomain != topFrameDomain);
     ASSERT(RunLoop::isMain());
 
     if (isEphemeral())

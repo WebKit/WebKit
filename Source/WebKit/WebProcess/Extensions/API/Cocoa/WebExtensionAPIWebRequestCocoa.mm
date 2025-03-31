@@ -183,16 +183,16 @@ static NSString *toWebAPI(const WebCore::FormData& formData, const String& conte
                 auto dataString = String::fromUTF8(data->span());
 
                 for (auto& pair : URLParser::parseURLEncodedForm(dataString)) {
-                    auto *key = static_cast<NSString *>(pair.key);
-                    auto *value = static_cast<NSString *>(pair.value);
+                    RetainPtr key = pair.key.createNSString();
+                    RetainPtr value = pair.value.createNSString();
 
-                    NSMutableArray *array = formDataDictionary[key];
+                    NSMutableArray *array = formDataDictionary[key.get()];
                     if (!array) {
                         array = [NSMutableArray array];
-                        formDataDictionary[key] = array;
+                        formDataDictionary[key.get()] = array;
                     }
 
-                    [array addObject:value ?: @""];
+                    [array addObject:value.get() ?: @""];
                 }
             } else {
                 auto typedArray = JSObjectMakeTypedArray(context, kJSTypedArrayTypeUint8Array, data->size(), nullptr);

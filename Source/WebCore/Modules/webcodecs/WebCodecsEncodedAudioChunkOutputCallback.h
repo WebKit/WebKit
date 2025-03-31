@@ -42,8 +42,8 @@ class WebCodecsEncodedAudioChunkOutputCallback : public RefCounted<WebCodecsEnco
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
-    virtual CallbackResult<void> handleEventRethrowingException(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
+    virtual CallbackResult<void> invoke(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

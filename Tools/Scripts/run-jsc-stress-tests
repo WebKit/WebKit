@@ -1898,6 +1898,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-slow-memory", "--useWasmFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq-no-consts", "--useWasmLLInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
         if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
           run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
@@ -1930,6 +1931,7 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-slow-memory", "--useWasmFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq-no-consts", "--useWasmLLInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
         if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
           run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
@@ -2043,9 +2045,11 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
     runWithOutputHandler("default-wasm" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
         runWithOutputHandler("wasm-no-cjit" + (postfix || ''), noisyOutputHandler, specHarnessJsPath,  *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        # FIXME: We should probably only run these two for GC spec tests.
         runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWithOutputHandler("wasm-bbq-no-consts" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isOMGPlatform
             runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end

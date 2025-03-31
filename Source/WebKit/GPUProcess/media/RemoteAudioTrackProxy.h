@@ -63,7 +63,7 @@ public:
     void setEnabled(bool enabled)
     {
         m_enabled = enabled;
-        Ref { m_trackPrivate }->setEnabled(enabled);
+        m_trackPrivate->setEnabled(enabled);
     }
     bool operator==(const WebCore::AudioTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 
@@ -84,7 +84,7 @@ private:
     void configurationChanged();
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
+    const Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_enabled { false };

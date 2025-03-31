@@ -60,6 +60,7 @@ public:
     virtual void setIndicating(bool) { } // Default is to do nothing.
 
     virtual bool automaticInspectionAllowed() const { return false; }
+    virtual bool automaticInspectionAllowedInSameProcess() const { return false; }
     JS_EXPORT_PRIVATE virtual void pauseWaitingForAutomaticInspection();
     JS_EXPORT_PRIVATE virtual void unpauseForResolvedAutomaticInspection();
 

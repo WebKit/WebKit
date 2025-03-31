@@ -110,7 +110,7 @@ public:
     static std::pair<id<MTLBuffer>, uint64_t> clampIndirectBufferToValidValues(Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, bool& splitEncoder);
     enum class IndexCall { Draw, IndirectDraw, Skip, CachedIndirectDraw };
     static std::pair<IndexCall, id<MTLBuffer>> clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes, Buffer*, uint32_t minVertexCount, uint32_t minInstanceCount, RenderPassEncoder&, Device&, uint32_t rasterSampleCount, MTLPrimitiveType);
-    void splitRenderPass();
+    bool WARN_UNUSED_RETURN splitRenderPass();
     static std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount(const RenderPipeline*, bool& needsValidationLayerWorkaround, uint64_t (^)(uint32_t));
 
 private:
@@ -139,6 +139,7 @@ private:
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectBufferToValidValues(Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
     void setCachedRenderPassState(id<MTLRenderCommandEncoder>);
+    void emitMemoryBarrier(id<MTLRenderCommandEncoder>);
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -175,6 +176,7 @@ private:
     uint32_t m_renderTargetWidth { 0 };
     uint32_t m_renderTargetHeight { 0 };
     uint32_t m_rasterSampleCount { 1 };
+    uint32_t m_memoryBarrierCount { 0 };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
     id<MTLTexture> m_depthStencilAttachmentToClear { nil };
     WGPURenderPassDescriptor m_descriptor;
@@ -190,9 +192,7 @@ private:
     HashMap<uint32_t, BufferAndOffset, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_vertexBuffers;
     HashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
     NSString* m_lastErrorString { nil };
-#if CPU(X86_64)
     MTLRenderPassDescriptor* m_metalDescriptor { nil };
-#endif
     std::optional<WGPUColor> m_blendColor;
     std::optional<MTLScissorRect> m_scissorRect;
     std::optional<uint32_t> m_stencilReferenceValue;

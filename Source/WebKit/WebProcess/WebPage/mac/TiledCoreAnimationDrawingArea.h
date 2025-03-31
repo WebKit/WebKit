@@ -110,7 +110,6 @@ private:
     void setDeviceScaleFactor(float, CompletionHandler<void()>&&) override;
     void suspendPainting();
     void resumePainting();
-    void setLayerHostingMode(LayerHostingMode) override;
     void setColorSpace(std::optional<WebCore::DestinationColorSpace>) override;
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
     void addFence(const WTF::MachSendRight&) override;

@@ -34,7 +34,7 @@ namespace WebCore {
 void FileSystemEntriesCallback::scheduleCallback(ScriptExecutionContext& context, const Vector<Ref<FileSystemEntry>>& entries)
 {
     context.postTask([protectedThis = Ref { *this }, entries] (ScriptExecutionContext&) {
-        protectedThis->handleEvent(entries);
+        protectedThis->invoke(entries);
     });
 }
 

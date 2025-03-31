@@ -485,6 +485,8 @@
     void getFloatv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
+        if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
+            valueSize = 16;
         Vector<GCGLfloat, 16> value(valueSize, 0);
         protectedContext()->getFloatv(pname, value);
         completionHandler(spanReinterpretCast<const float>(value.span()));
@@ -492,6 +494,8 @@
     void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
+        if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
+            valueSize = 4;
         Vector<GCGLint, 4> value(valueSize, 0);
         protectedContext()->getIntegerv(pname, value);
         completionHandler(spanReinterpretCast<const int32_t>(value.span()));
@@ -533,6 +537,8 @@
     void getBooleanv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
+        if (!WTF::isValidCapacityForVector<GCGLboolean>(valueSize))
+            valueSize = 4;
         Vector<GCGLboolean, 4> value(valueSize, 0);
         protectedContext()->getBooleanv(pname, value);
         completionHandler(spanReinterpretCast<const bool>(value.span()));
@@ -634,6 +640,8 @@
         }
         if (program)
             program = m_objectNames.get(program);
+        if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
+            valueSize = 16;
         Vector<GCGLfloat, 16> value(valueSize, 0);
         protectedContext()->getUniformfv(program, location, value);
         completionHandler(spanReinterpretCast<const float>(value.span()));
@@ -647,6 +655,8 @@
         }
         if (program)
             program = m_objectNames.get(program);
+        if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
+            valueSize = 4;
         Vector<GCGLint, 4> value(valueSize, 0);
         protectedContext()->getUniformiv(program, location, value);
         completionHandler(spanReinterpretCast<const int32_t>(value.span()));
@@ -660,6 +670,8 @@
         }
         if (program)
             program = m_objectNames.get(program);
+        if (!WTF::isValidCapacityForVector<GCGLuint>(valueSize))
+            valueSize = 4;
         Vector<GCGLuint, 4> value(valueSize, 0);
         protectedContext()->getUniformuiv(program, location, value);
         completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
@@ -1779,6 +1791,8 @@
         }
         if (program)
             program = m_objectNames.get(program);
+        if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
+            paramsSize = 4;
         Vector<GCGLint, 4> params(paramsSize, 0);
         protectedContext()->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
         completionHandler(spanReinterpretCast<const int32_t>(params.span()));
@@ -1977,6 +1991,8 @@
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
+        if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
+            paramsSize = 4;
         Vector<GCGLint, 4> params(paramsSize, 0);
         protectedContext()->getInternalformativ(target, internalformat, pname, params);
         completionHandler(spanReinterpretCast<const int32_t>(params.span()));

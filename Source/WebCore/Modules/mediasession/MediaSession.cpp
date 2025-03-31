@@ -331,7 +331,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
             maybeGestureIndicator.emplace(IsProcessingUserGesture::Yes, document());
-        handler->handleEvent(actionDetails);
+        handler->invoke(actionDetails);
         return true;
     }
     auto element = activeMediaElement();

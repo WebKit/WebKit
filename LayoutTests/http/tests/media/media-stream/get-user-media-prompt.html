@@ -9,7 +9,7 @@
 
             function numberOfTimesGetUserMediaPromptHasBeenCalled()
             {
-                return testRunner.userMediaPermissionRequestCountForOrigin(document.location.href, document.location.href);
+                return testRunner.userMediaPermissionRequestCount();
             }
 
             function gotStream3(s)
@@ -49,7 +49,7 @@
             {
                 description("Tests that user is only prompted once per device in the current browsing context.");
 
-                testRunner.resetUserMediaPermissionRequestCountForOrigin(document.location.href, document.location.href);
+                testRunner.resetUserMediaPermissionRequestCount();
                 shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "0");
 
                 debug("<br>** Request an audio-only stream, the user should be prompted **");

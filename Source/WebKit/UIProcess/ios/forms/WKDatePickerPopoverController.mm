@@ -41,6 +41,15 @@ using WKDatePickerToolbarView = UIToolbar;
 using WKDatePickerToolbarView = UIView;
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKDatePickerPopoverControllerAdditions.mm>)
+#import <WebKitAdditions/WKDatePickerPopoverControllerAdditions.mm>
+#else
+static double adjustedMarginIfNeeded(double margin)
+{
+    return margin;
+}
+#endif
+
 const CGFloat toolbarBottomMarginSmall = 2;
 
 @interface WKDatePickerPopoverView : UIView
@@ -51,7 +60,6 @@ const CGFloat toolbarBottomMarginSmall = 2;
 @end
 
 @implementation WKDatePickerPopoverView {
-    RetainPtr<UIVisualEffectView> _backgroundView;
     __weak UIDatePicker *_datePicker;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
     __weak UICalendarView *_calendarView;
@@ -63,19 +71,13 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 - (void)setupView:(UIView *)pickerView toolbarBottomMargin:(CGFloat)toolbarBottomMargin
 {
-    UIBlurEffect *blurEffect = nil;
-#if !PLATFORM(APPLETV)
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
-#endif
-    _backgroundView = adoptNS([[UIVisualEffectView alloc] initWithEffect:blurEffect]);
     _accessoryView = adoptNS([WKDatePickerToolbarView new]);
-    [_backgroundView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self addSubview:_backgroundView.get()];
+    [self setTranslatesAutoresizingMaskIntoConstraints:NO];
     static constexpr auto marginSize = 16;
     pickerView.translatesAutoresizingMaskIntoConstraints = NO;
     pickerView.layoutMargins = UIEdgeInsetsMake(marginSize, marginSize, marginSize, marginSize);
     [pickerView sizeToFit];
-    [[_backgroundView contentView] addSubview:pickerView];
+    [self addSubview:pickerView];
 
     [_accessoryView setTranslatesAutoresizingMaskIntoConstraints:NO];
 #if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
@@ -86,7 +88,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
     }()];
     [_accessoryView sizeToFit];
 #endif
-    [[_backgroundView contentView] addSubview:_accessoryView.get()];
+    [self addSubview:_accessoryView.get()];
 
     auto pickerViewSize = [pickerView bounds].size;
     auto accessoryViewSize = [_accessoryView bounds].size;
@@ -99,10 +101,6 @@ const CGFloat toolbarBottomMarginSmall = 2;
     [NSLayoutConstraint activateConstraints:@[
         [self.widthAnchor constraintEqualToConstant:_contentSize.width],
         [self.heightAnchor constraintEqualToConstant:_contentSize.height],
-        [[_backgroundView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
-        [[_backgroundView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
-        [[_backgroundView topAnchor] constraintEqualToAnchor:self.topAnchor],
-        [[_backgroundView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor constant:-toolbarBottomMargin],
         [[pickerView heightAnchor] constraintEqualToConstant:pickerViewSize.height],
         [[pickerView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
         [[pickerView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
@@ -113,8 +111,14 @@ const CGFloat toolbarBottomMarginSmall = 2;
 #if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
         [[_accessoryView heightAnchor] constraintEqualToConstant:accessoryViewSize.height],
 #endif
-        [[_accessoryView bottomAnchor] constraintEqualToAnchor:[_backgroundView bottomAnchor]],
+        [[_accessoryView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor constant:-toolbarBottomMargin],
     ]];
+}
+
+- (CGFloat)bottomMarginForToolbar
+{
+    auto margin = _datePicker.datePickerMode == UIDatePickerModeDateAndTime ? 8 : toolbarBottomMarginSmall;
+    return adjustedMarginIfNeeded(margin);
 }
 
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
@@ -141,8 +145,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
         return nil;
 
     _datePicker = datePicker;
-    CGFloat toolbarBottomMargin = _datePicker.datePickerMode == UIDatePickerModeDateAndTime ? 8 : toolbarBottomMarginSmall;
-    [self setupView:datePicker toolbarBottomMargin:toolbarBottomMargin];
+    [self setupView:datePicker toolbarBottomMargin:[self bottomMarginForToolbar]];
 
     return self;
 }
@@ -168,7 +171,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 - (CGSize)estimatedMaximumPopoverSize
 {
-    static constexpr auto additionalHeightToAvoidClippingToolbar = 80;
+    auto additionalHeightToAvoidClippingToolbar = 80 + [self bottomMarginForToolbar];
     return CGSize {
         _contentSize.width,
         _contentSize.height + additionalHeightToAvoidClippingToolbar

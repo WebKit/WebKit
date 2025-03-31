@@ -40,8 +40,8 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
+static int delegateCounter = 0;
 static bool okToProceed = false;
-static bool shouldReleaseInEnumerate = false;
 
 @interface GetUserMeidaNavigationMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -69,11 +69,17 @@ static bool shouldReleaseInEnumerate = false;
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
 {
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    if (shouldReleaseInEnumerate)
-        [webView release];
-    okToProceed = true;
-    decisionHandler(@"0x987654321", YES);
+    ASSERT_NOT_REACHED();
+    delegateCounter = -10;
+}
+
+- (void)_webView:(WKWebView *)webView queryPermission:(NSString*)name forOrigin:(WKSecurityOrigin*)origin completionHandler:(void (^)(WKPermissionDecision permissionState))completionHandler
+{
+    if ([name isEqualToString:@"camera"] || [name isEqualToString:@"microphone"]) {
+        if (++delegateCounter == 2)
+            okToProceed = true;
+    }
+    completionHandler(WKPermissionDecisionPrompt);
 }
 @end
 
@@ -101,7 +107,7 @@ TEST(WebKit, NavigateDuringGetUserMediaPrompt)
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    shouldReleaseInEnumerate = false;
+    okToProceed = false;
     [webView loadTestPageNamed:@"getUserMedia"];
     TestWebKitAPI::Util::run(&okToProceed);
 }
@@ -115,7 +121,7 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    shouldReleaseInEnumerate = true;
+    okToProceed = false;
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
     TestWebKitAPI::Util::run(&okToProceed);
 }

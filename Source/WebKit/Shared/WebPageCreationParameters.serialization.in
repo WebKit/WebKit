@@ -95,8 +95,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool backgroundExtendsBeyondPage;
 
-    WebKit::LayerHostingMode layerHostingMode;
-
     bool hasResourceLoadClient;
 
     Vector<String> mimeTypesWithCustomContentProviders;
@@ -145,9 +143,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles;
-#endif
-#if HAVE(HOSTED_CORE_ANIMATION)
-    MachSendRight acceleratedCompositingPort;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;

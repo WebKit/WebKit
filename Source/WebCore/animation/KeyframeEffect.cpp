@@ -851,8 +851,7 @@ Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, const std::opt
 }
 
 KeyframeEffect::KeyframeEffect(Element* target, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
-    : m_keyframesName(makeAtomString("keyframe-effect-"_s, WTF::UUID::createVersion4Weak()))
-    , m_target(target)
+    : m_target(target)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {
     if (m_target)
@@ -891,7 +890,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setIterationStart(source->iterationStart());
     setIterationDuration(source->specifiedIterationDuration());
 
-    BlendingKeyframes blendingKeyframes(m_keyframesName);
+    BlendingKeyframes blendingKeyframes(m_blendingKeyframes.identifier());
     blendingKeyframes.copyKeyframes(source->m_blendingKeyframes);
     setBlendingKeyframes(WTFMove(blendingKeyframes));
 }
@@ -935,7 +934,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     ComputedStyleExtractor computedStyleExtractor { target, false, m_pseudoElementIdentifier };
 
-    BlendingKeyframes computedBlendingKeyframes(m_blendingKeyframes.animationName());
+    BlendingKeyframes computedBlendingKeyframes(m_blendingKeyframes.identifier());
     computedBlendingKeyframes.copyKeyframes(m_blendingKeyframes);
 
     if (computedBlendingKeyframes.hasKeyframeNotUsingRangeOffset() || activeViewTimeline())
@@ -954,7 +953,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         if (!styleScope)
             return { };
 
-        return styleScope->resolver().keyframeRulesForName(computedBlendingKeyframes.animationName(), backingAnimation.timingFunction());
+        return styleScope->resolver().keyframeRulesForName(computedBlendingKeyframes.keyframesName(), backingAnimation.timingFunction());
     }();
 
     auto matchingStyleRuleKeyframe = [&](const BlendingKeyframe& keyframe) -> StyleRuleKeyframe* {
@@ -1252,7 +1251,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     if (!m_blendingKeyframes.isEmpty() || !m_target)
         return;
 
-    BlendingKeyframes blendingKeyframes(m_keyframesName);
+    BlendingKeyframes blendingKeyframes(m_blendingKeyframes.identifier());
     auto& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
@@ -1472,7 +1471,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& ol
     if (m_target)
         Style::loadPendingResources(*toStyle, *document(), m_target.get());
 
-    BlendingKeyframes blendingKeyframes(m_keyframesName);
+    BlendingKeyframes blendingKeyframes(m_blendingKeyframes.identifier());
 
     BlendingKeyframe fromBlendingKeyframe(0, RenderStyle::clonePtr(oldStyle));
     fromBlendingKeyframe.addProperty(property);
@@ -2342,7 +2341,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
 
     auto startAnimation = [&]() -> RunningAccelerated {
         if (isRunningAccelerated())
-            renderer->animationFinished(m_blendingKeyframes.animationName());
+            renderer->animationFinished(m_blendingKeyframes);
 
         ASSERT(m_target);
         auto* effectStack = m_target->keyframeEffectStack(m_pseudoElementIdentifier);
@@ -2374,7 +2373,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
                 effect->setAnimatedPropertiesInStyle(*underlyingStyle, computedTiming);
         }
 
-        BlendingKeyframes explicitKeyframes(m_blendingKeyframes.animationName());
+        BlendingKeyframes explicitKeyframes(m_blendingKeyframes.identifier());
         explicitKeyframes.copyKeyframes(m_blendingKeyframes);
         explicitKeyframes.fillImplicitKeyframes(*this, *underlyingStyle);
         return renderer->startAnimation(timeOffset(), backingAnimationForCompositedRenderer(), explicitKeyframes) ? RunningAccelerated::Yes : RunningAccelerated::Failed;
@@ -2384,24 +2383,24 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         switch (action) {
         case AcceleratedAction::Play:
             m_runningAccelerated = startAnimation();
-            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.animationName() << " Play, started accelerated: " << isRunningAccelerated());
+            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.acceleratedAnimationName() << " Play, started accelerated: " << isRunningAccelerated());
             if (!isRunningAccelerated()) {
                 m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
                 return;
             }
             break;
         case AcceleratedAction::Pause:
-            renderer->animationPaused(timeOffset(), m_blendingKeyframes.animationName());
+            renderer->animationPaused(timeOffset(), m_blendingKeyframes);
             break;
         case AcceleratedAction::UpdateProperties:
             m_runningAccelerated = startAnimation();
-            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.animationName() << " UpdateProperties, started accelerated: " << isRunningAccelerated());
+            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.acceleratedAnimationName() << " UpdateProperties, started accelerated: " << isRunningAccelerated());
             if (animation()->playState() == WebAnimation::PlayState::Paused)
-                renderer->animationPaused(timeOffset(), m_blendingKeyframes.animationName());
+                renderer->animationPaused(timeOffset(), m_blendingKeyframes);
             break;
         case AcceleratedAction::Stop:
             ASSERT(document());
-            renderer->animationFinished(m_blendingKeyframes.animationName());
+            renderer->animationFinished(m_blendingKeyframes);
             if (!document()->renderTreeBeingDestroyed())
                 m_target->invalidateStyleAndLayerComposition();
             m_runningAccelerated = canBeAccelerated() ? RunningAccelerated::NotStarted : RunningAccelerated::Prevented;

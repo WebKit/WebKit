@@ -63,7 +63,7 @@ public:
     void setSelected(bool selected)
     {
         m_selected = selected;
-        Ref { m_trackPrivate }->setSelected(selected);
+        m_trackPrivate->setSelected(selected);
     }
     bool operator==(const WebCore::VideoTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 
@@ -84,7 +84,7 @@ private:
     void updateConfiguration();
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    Ref<WebCore::VideoTrackPrivate> m_trackPrivate;
+    const Ref<WebCore::VideoTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_selected { false };

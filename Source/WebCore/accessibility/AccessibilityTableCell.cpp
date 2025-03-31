@@ -240,17 +240,6 @@ bool AccessibilityTableCell::isRowHeader() const
     return false;
 }
     
-std::optional<AXID> AccessibilityTableCell::rowGroupAncestorID() const
-{
-    auto* rowGroup = Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
-        return ancestor.hasTagName(theadTag) || ancestor.hasTagName(tbodyTag) || ancestor.hasTagName(tfootTag);
-    });
-    if (!rowGroup)
-        return std::nullopt;
-
-    return rowGroup->objectID();
-}
-    
 String AccessibilityTableCell::expandedTextValue() const
 {
     return getAttribute(abbrAttr);
@@ -369,7 +358,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     return axObjectCache()->getOrCreate(*headerCell);
 }
     
-int AccessibilityTableCell::axColumnIndex() const
+std::optional<unsigned> AccessibilityTableCell::axColumnIndex() const
 {
     if (int value = getIntegralAttribute(aria_colindexAttr); value >= 1)
         return value;
@@ -380,10 +369,10 @@ int AccessibilityTableCell::axColumnIndex() const
     if (m_axColIndexFromRow != -1 && parentRow())
         return m_axColIndexFromRow;
 
-    return -1;
+    return { };
 }
     
-int AccessibilityTableCell::axRowIndex() const
+std::optional<unsigned> AccessibilityTableCell::axRowIndex() const
 {
     // ARIA 1.1: Authors should place aria-rowindex on each row. Authors may also place
     // aria-rowindex on all of the children or owned elements of each row.
@@ -393,7 +382,7 @@ int AccessibilityTableCell::axRowIndex() const
     if (RefPtr parentRow = this->parentRow())
         return parentRow->axRowIndex();
 
-    return -1;
+    return { };
 }
 
 unsigned AccessibilityTableCell::rowSpan() const

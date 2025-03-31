@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <script src="../../../../resources/accessibility-helper.js"></script>
+  <script src="../../../../resources/js-test.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <input id="combobox1" role="combobox" aria-controls="x-listbox1" aria-activedescendant="x-listbox1">
+    <x-listbox1 id="x-listbox1" role="listbox">
+        <template shadowrootmode="closed" shadowrootreferencetarget="option-2">
+            <div role="option" id="option-1">Option 1</div>
+            <div role="option" id="option-2">Option 2</div>
+            <div role="option" id="option-3">Option 3</div>
+        </template>
+    </x-listbox1>
+</div>
+
+
+<script>
+customElements.define(
+    "x-listbox2",
+    class XListbox2 extends HTMLElement {
+        constructor() {
+            super();
+            this.shadowRoot_ = this.attachShadow({ mode: "closed" });
+            this.shadowRoot_.innerHTML = `
+            <div id="real-listbox" role="listbox">
+                <div id="option-a" role="option">Option A</div>
+                <div id="option-b" role="option">Option B</div>
+                <div id="option-c" role="option">Option C</div>
+            </div>
+            `;
+            this.shadowRoot_.referenceTarget = "option-c";
+        }
+
+        setReferenceTarget(target) {
+            this.shadowRoot_.referenceTarget = target;
+        }
+
+        referenceTargetElement() {
+            return this.shadowRoot_.getElementById(this.shadowRoot_.referenceTarget);
+        }
+    }
+);
+</script>
+
+<div class="container">
+    <input id="combobox2" role="combobox" aria-controls="x-listbox2" aria-activedescendant="x-listbox2">
+    <x-listbox2 id="x-listbox2" role="listbox"></x-listbox2>
+</div>
+
+<script>
+customElements.define(
+    "x-input",
+    class FancyInput extends HTMLElement {
+        static observedAttributes = ["fancylistbox"];
+
+        constructor() {
+            super();
+            this.shadowRoot_ = this.attachShadow({
+                mode: "closed",
+            });
+            this.shadowRoot_.innerHTML = `<input id="real-input">`;
+            this.realInput_ = this.shadowRoot_.getElementById("real-input");
+        }
+
+        attributeChangedCallback(attr, oldValue, newValue) {
+            if (attr === "fancylistbox") {
+                const fancyListbox = newValue ? document.getElementById(newValue) : null;
+                this.realInput_.ariaActiveDescendantElement = fancyListbox;
+            }
+        }
+    }
+);
+</script>
+
+<div class="container">
+    <x-listbox2 id="fancy-listbox" role="listbox"></x-listbox2>
+    <x-input role="combobox" fancylistbox="fancy-listbox"></x-input>
+</div>
+
+<script>
+description("This tests the basic interaction between referenceTarget and aria-activedescendant.");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    let output = "aria-activedescendant targeting a custom element with shadowrootreferencetarget.\n"
+    var combobox1 = accessibilityController.accessibleElementById("combobox1");
+    output += expect("combobox1.selectedChildrenCount", "1");
+    output += expect("combobox1.selectedChildAtIndex(0).title", "'AXTitle: Option 2'");
+    output += "\n";
+
+    output += "ShadowRoot.referenceTarget property works on an imperatively defined custom element.\n";
+    var combobox2 = accessibilityController.accessibleElementById("combobox2");
+    output += expect("combobox2.selectedChildrenCount", "1");
+    output += expect("combobox2.selectedChildAtIndex(0).title", "'AXTitle: Option C'");
+    output += "\n";
+
+    output += "Modifying a ShadowRoot's referenceTarget also updates the accessibility object.\n";
+    const listboxElement = document.getElementById("x-listbox2");
+    listboxElement.setReferenceTarget("option-a");
+    output += expect("combobox2.selectedChildrenCount", "1");
+    output += expect("combobox2.selectedChildAtIndex(0).title", "'AXTitle: Option A'");
+    output += "\n";
+
+    output += "Modifying a ShadowRoot's referenceTarget's ID also updates the accessibility object.\n";
+    let referenceTargetElement = listboxElement.referenceTargetElement();
+    referenceTargetElement.id = "option-d";
+    output += expect("combobox2.selectedChildrenCount", "0");
+    referenceTargetElement.nextElementSibling.id = "option-a";
+    output += expect("combobox2.selectedChildrenCount", "1");
+    output += expect("combobox2.selectedChildAtIndex(0).title", "'AXTitle: Option B'");
+    output += "\n";
+
+    output += "aria-activedescendant works when the linkage is created across two sibling shadow trees.\n";
+    var realInput = accessibilityController.accessibleElementById("real-input");
+    output += expect("realInput.selectedChildrenCount", "1");
+    output += expect("realInput.selectedChildAtIndex(0).title", "'AXTitle: Option C'");
+    output += "\n";
+
+    output += "Modifying a ShadowRoot's referenceTarget also updates the accessibility object when the linkage is created across two sibling shadow trees.\n";
+    const fancyListboxElement = document.getElementById("fancy-listbox");
+    fancyListboxElement.setReferenceTarget("option-b");
+    output += expect("realInput.selectedChildrenCount", "1");
+    output += expect("realInput.selectedChildAtIndex(0).title", "'AXTitle: Option B'");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+
+</html>

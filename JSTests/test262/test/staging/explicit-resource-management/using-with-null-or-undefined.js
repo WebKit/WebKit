@@ -7,20 +7,20 @@ includes: [compareArray.js]
 features: [explicit-resource-management]
 ---*/
 
-// Use using with null --------------
+// Use using with null does not throw --------------
 let withNullvalues = [];
 
 (function TestUsingWithNull() {
-  let using = null;
+  using x = null;
   withNullvalues.push(42);
 })();
 assert.compareArray(withNullvalues, [42]);
 
-// Use using with undefined --------------
+// Use using with undefined does not throw --------------
 let withUndefinedvalues = [];
 
 (function TestUsingWithUndefined() {
-  let using = undefined;
+  using x = undefined;
   withUndefinedvalues.push(42);
 })();
 assert.compareArray(withUndefinedvalues, [42]);

@@ -908,6 +908,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didCommitLoadForMainFrame;
 
 - (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
+- (void)updateTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
 - (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 

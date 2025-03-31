@@ -138,7 +138,7 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
         return;
     }
 
-    auto pixelBuffer = videoFrame->pixelBuffer();
+    RetainPtr pixelBuffer = videoFrame->pixelBuffer();
     ASSERT(pixelBuffer);
     completionHandler(WTFMove(pixelBuffer));
 }

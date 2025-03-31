@@ -1388,7 +1388,7 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
     ASSERT(!m_pdfTestCallback);
 
     if (m_pdfDocument && callback)
-        callback->handleEvent();
+        callback->invoke();
     else
         m_pdfTestCallback = WTFMove(callback);
 }

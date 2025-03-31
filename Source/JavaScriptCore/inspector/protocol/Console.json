@@ -16,6 +16,7 @@
                 "appcache",
                 "rendering",
                 "css",
+                "accessibility",
                 "security",
                 "content-blocker",
                 "media",

@@ -634,7 +634,7 @@ void PDFPlugin::installPDFDocument()
 
     auto handlePDFTestCallback = makeScopeExit([testCallback = WTFMove(m_pdfTestCallback)] {
         if (testCallback)
-            testCallback->handleEvent();
+            testCallback->invoke();
     });
 
 #if HAVE(INCREMENTAL_PDF_APIS)

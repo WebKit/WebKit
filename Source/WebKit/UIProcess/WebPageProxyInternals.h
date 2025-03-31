@@ -304,7 +304,6 @@ public:
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
     Deque<NativeWebKeyboardEvent> keyEventQueue;
-    LayerHostingMode layerHostingMode { LayerHostingMode::InProcess };
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
     WebCore::LayoutPoint maxStableLayoutViewportOrigin;
     WebCore::FloatSize maximumUnobscuredSize;

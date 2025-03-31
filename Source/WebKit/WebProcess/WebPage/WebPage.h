@@ -438,7 +438,6 @@ enum class DragControllerAction : uint8_t;
 enum class DrawingAreaType : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
-enum class LayerHostingMode : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
 enum class MediaPlaybackState : uint8_t;
 enum class SnapshotOption : uint16_t;
@@ -740,6 +739,7 @@ public:
     void replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
 
     void setTextIndicator(const WebCore::TextIndicatorData&);
+    void updateTextIndicator(const WebCore::TextIndicatorData&);
 
     WebFrame& mainWebFrame() const { return m_mainFrame; }
 
@@ -865,9 +865,6 @@ public:
 
     OptionSet<WebCore::ActivityState> activityState() const { return m_activityState; }
     bool isThrottleable() const;
-
-    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
-    void setLayerHostingMode(LayerHostingMode);
 
 #if PLATFORM(COCOA)
     void updatePluginsActiveAndFocusedState();
@@ -2537,7 +2534,6 @@ private:
     RefPtr<WebCore::Page> m_page;
 
     WebCore::IntSize m_viewSize;
-    LayerHostingMode m_layerHostingMode;
     RefPtr<DrawingArea> m_drawingArea;
 
     RefPtr<WebPageTesting> m_webPageTesting;

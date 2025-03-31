@@ -766,8 +766,8 @@ void AXIsolatedTree::updateNodeProperties(AccessibilityObject& axObject, const A
         case AXProperty::SortDirection:
             propertyMap.set(AXProperty::SortDirection, static_cast<int>(axObject.sortDirection()));
             break;
-        case AXProperty::SpeechHint:
-            propertyMap.set(AXProperty::SpeechHint, axObject.speechHintAttributeValue().isolatedCopy());
+        case AXProperty::SpeakAs:
+            propertyMap.set(AXProperty::SpeakAs, axObject.speakAs());
             break;
         case AXProperty::KeyShortcuts:
             propertyMap.set(AXProperty::SupportsKeyShortcuts, axObject.supportsKeyShortcuts());

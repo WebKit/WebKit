@@ -304,7 +304,6 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/DidNotHandleKeyDown.cpp
         Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp
         Tests/WebKit/DownloadDecideDestinationCrash.cpp
-        Tests/WebKit/EnumerateMediaDevices.cpp
         Tests/WebKit/EvaluateJavaScript.cpp
         Tests/WebKit/FailedLoad.cpp
         Tests/WebKit/Find.cpp

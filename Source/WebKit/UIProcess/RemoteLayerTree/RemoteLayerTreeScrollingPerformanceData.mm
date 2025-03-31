@@ -115,8 +115,8 @@ static CALayer *findTileGridContainerLayer(CALayer *layer)
         if (layerName == TileController::tileGridContainerLayerName())
             return currLayer;
 
-        if (CALayer *foundLayer = findTileGridContainerLayer(currLayer))
-            return foundLayer;
+        if (RetainPtr foundLayer = findTileGridContainerLayer(currLayer))
+            return foundLayer.autorelease();
     }
 
     return nil;
@@ -124,9 +124,9 @@ static CALayer *findTileGridContainerLayer(CALayer *layer)
 
 unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRect& visibleRect) const
 {
-    CALayer *rootLayer = m_drawingArea->remoteLayerTreeHost().rootLayer();
+    RetainPtr rootLayer = m_drawingArea->remoteLayerTreeHost().rootLayer();
 
-    CALayer *tileGridContainer = findTileGridContainerLayer(rootLayer);
+    RetainPtr tileGridContainer = findTileGridContainerLayer(rootLayer.get());
     if (!tileGridContainer) {
         NSLog(@"Failed to find TileGrid Container Layer");
         return UINT_MAX;
@@ -139,7 +139,7 @@ unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRec
     Region paintedVisibleTileRegion;
 
     for (CALayer *tileLayer : [tileGridContainer sublayers]) {
-        FloatRect tileRect = [tileLayer convertRect:[tileLayer bounds] toLayer:tileGridContainer];
+        FloatRect tileRect = [tileLayer convertRect:[tileLayer bounds] toLayer:tileGridContainer.get()];
     
         tileRect.intersect(visibleRectExcludingToolbar);
         

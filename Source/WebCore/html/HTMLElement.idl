@@ -40,7 +40,7 @@
     [CEReactions=Needed, Reflect] attribute boolean cuebackground;
 
     // user interaction
-    [CEReactions=Needed, Reflect] attribute boolean hidden;
+    [CEReactions=Needed] attribute (boolean or unrestricted double or DOMString)? hidden;
     undefined click();
     [CEReactions=Needed, Reflect] attribute DOMString accessKey;
     readonly attribute DOMString accessKeyLabel;

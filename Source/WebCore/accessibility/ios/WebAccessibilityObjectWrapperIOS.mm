@@ -1375,8 +1375,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSNotFound;
     
-    NSInteger rowIndex = tableCell->axRowIndex();
-    return rowIndex > 0 ? rowIndex : NSNotFound;
+    std::optional rowIndex = tableCell->axRowIndex();
+    return rowIndex ? *rowIndex : NSNotFound;
 }
 
 - (NSUInteger)accessibilityARIAColumnIndex
@@ -1387,8 +1387,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSNotFound;
     
-    NSInteger columnIndex = tableCell->axColumnIndex();
-    return columnIndex > 0 ? columnIndex : NSNotFound;
+    std::optional columnIndex = tableCell->axColumnIndex();
+    return columnIndex ? *columnIndex : NSNotFound;
 }
 
 - (NSRange)accessibilityRowRange
@@ -2118,7 +2118,7 @@ static RenderObject* rendererForView(WAKView* view)
     // Use this to check if an object is the child of a summary object.
     // And return the summary's parent, which is the expandable details object.
     return Accessibility::findAncestor<AccessibilityObject>(object, true, [&] (const AccessibilityObject& object) {
-        auto tag = object.tagName();
+        const auto& tag = object.tagName();
         if (tag == summaryTag)
             foundSummary = true;
 

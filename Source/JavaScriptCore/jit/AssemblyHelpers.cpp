@@ -971,7 +971,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     static_assert(FreeList::offsetOfNextInterval() - FreeList::offsetOfIntervalEnd() == sizeof(uintptr_t));
     static_assert(FreeList::offsetOfSecret() - FreeList::offsetOfNextInterval() == sizeof(uintptr_t));
 
-    // Bump allocation (fast path)
+    JIT_COMMENT(*this, "Bump allocation (fast path)");
     loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR, scratchGPR);
     popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
     auto bumpLabel = label();
@@ -984,7 +984,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     done = jump();
 
-    // Get next interval (slower path)
+    JIT_COMMENT(*this, "Get next interval (slower path)");
     popPath.link(this);
     loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR, scratchGPR);
     zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
@@ -997,7 +997,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // On x86_64, we can leverage better support for memory operands to directly interact with the free 
     // list instead of relying on registers as much.
 
-    // Bump allocation (fast path)
+    JIT_COMMENT(*this, "Bump allocation (fast path)");
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR);
     popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
     auto bumpLabel = label();
@@ -1009,7 +1009,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     }
     done = jump();
 
-    // Get next interval (slower path)
+    JIT_COMMENT(*this, "Get next interval (slower path)");
     popPath.link(this);
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR);
     zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
@@ -1068,17 +1068,24 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
 
 void AssemblyHelpers::emitAllocate(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath, SlowAllocationResult slowAllocationResult)
 {
-    if (allocator.isConstant()) {
+    switch (allocator.kind()) {
+    case JITAllocator::Constant:
         if (!allocator.allocator()) {
             slowPath.append(jump());
             return;
         }
-    } else
+        break;
+    case JITAllocator::Variable:
         slowPath.append(branchTestPtr(Zero, allocatorGPR));
+        break;
+    case JITAllocator::VariableNonNull:
+        break;
+    }
+
     emitAllocateWithNonNullAllocator(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath, slowAllocationResult);
 }
 
-void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspace& subspace, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath, SlowAllocationResult slowAllocationResult)
+void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, const JITAllocator& allocator, Address subspaceAllocatorsBase, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath, SlowAllocationResult slowAllocationResult)
 {
     static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
 
@@ -1087,10 +1094,17 @@ void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspa
     add32(TrustedImm32(MarkedSpace::sizeStep - 1), allocationSize, scratchGPR1);
     urshift32(TrustedImm32(stepShift), scratchGPR1);
     slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
-    move(TrustedImmPtr(subspace.allocatorForSizeStep()), scratchGPR2);
-    loadPtr(BaseIndex(scratchGPR2, scratchGPR1, ScalePtr), scratchGPR1);
+    JIT_COMMENT(*this, "Load the Allocator from the CompleteSubspace's buffer");
+    loadPtr(subspaceAllocatorsBase.indexedBy(scratchGPR1, ScalePtr), scratchGPR1);
 
-    emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath, slowAllocationResult);
+    emitAllocate(resultGPR, allocator, scratchGPR1, scratchGPR2, slowPath, slowAllocationResult);
+}
+
+void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspace& subspace, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath, SlowAllocationResult slowAllocationResult)
+{
+    JIT_COMMENT(*this, "Materialize Allocator buffer base");
+    move(TrustedImmPtr(subspace.allocatorsForSizeSteps().data()), scratchGPR2);
+    emitAllocateVariableSized(resultGPR, JITAllocator::variable(), Address(scratchGPR2, 0), allocationSize, scratchGPR1, scratchGPR2, slowPath, slowAllocationResult);
 }
 
 void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)

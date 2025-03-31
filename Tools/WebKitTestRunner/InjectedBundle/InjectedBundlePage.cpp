@@ -182,7 +182,7 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL)
         mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
 
     String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
-    String mainFrameURLPathString = toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get())));
+    String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
     auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind(divider) + 1);
     
     if (!basePath.isEmpty() && pathString.startsWith(basePath))

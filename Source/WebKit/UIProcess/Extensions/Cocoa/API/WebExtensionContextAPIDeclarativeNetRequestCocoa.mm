@@ -350,9 +350,13 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtens
     }).get()];
 }
 
-void WebExtensionContext::declarativeNetRequestGetDynamicRules(CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
-    [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
+    auto *ruleIDs = createNSArray(filter, [this](auto ruleID) -> NSNumber * {
+        return m_dynamicRulesIDs.contains(ruleID) ? @(ruleID) : nil;
+    }).get();
+
+    [declarativeNetRequestDynamicRulesStore() getRulesWithRuleIDs:ruleIDs completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(@"declarativeNetRequest.getDynamicRules()", nullString(), errorMessage));
             return;
@@ -388,9 +392,13 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
     updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), @"dynamic", apiName, rulesToAdd, ruleIDsToDelete, WTFMove(completionHandler));
 }
 
-void WebExtensionContext::declarativeNetRequestGetSessionRules(CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
-    [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
+    auto *ruleIDs = createNSArray(filter, [this](auto ruleID) -> NSNumber * {
+        return m_sessionRulesIDs.contains(ruleID) ? @(ruleID) : nil;
+    }).get();
+
+    [declarativeNetRequestSessionRulesStore() getRulesWithRuleIDs:ruleIDs completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(@"declarativeNetRequest.getSessionRules()", nullString(), errorMessage));
             return;

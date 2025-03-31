@@ -2427,3 +2427,5 @@ imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.s
 # webkit.org/b/289495 REGRESSION(291808@main): [ macOS ] 2x svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-*-context.svg are constant failures.
 svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg [ Failure ]
 svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg [ Failure ]
+
+webkit.org/b/290546 [ Debug ] imported/w3c/web-platform-tests/workers/abrupt-completion.html [ Pass Crash ]

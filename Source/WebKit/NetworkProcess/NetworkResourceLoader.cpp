@@ -1795,11 +1795,19 @@ void NetworkResourceLoader::consumeSandboxExtensions()
 {
     ASSERT(!m_didConsumeSandboxExtensions);
 
-    for (auto& extension : m_parameters.requestBodySandboxExtensions)
-        extension->consume();
+    for (auto& handle : std::exchange(m_parameters.requestBodySandboxExtensions, { })) {
+        if (auto extension = SandboxExtension::create(WTFMove(handle))) {
+            extension->consume();
+            m_extensionsToRevoke.append(extension.releaseNonNull());
+        }
+    }
 
-    if (auto& extension = m_parameters.resourceSandboxExtension)
-        extension->consume();
+    if (auto handle = std::exchange(m_parameters.resourceSandboxExtension, { })) {
+        if (auto extension = SandboxExtension::create(WTFMove(*handle))) {
+            extension->consume();
+            m_extensionsToRevoke.append(extension.releaseNonNull());
+        }
+    }
 
     for (auto& fileReference : m_fileReferences)
         fileReference->prepareForFileAccess();
@@ -1810,10 +1818,9 @@ void NetworkResourceLoader::consumeSandboxExtensions()
 void NetworkResourceLoader::invalidateSandboxExtensions()
 {
     if (m_didConsumeSandboxExtensions) {
-        for (auto& extension : m_parameters.requestBodySandboxExtensions)
+        for (auto extension : std::exchange(m_extensionsToRevoke, { }))
             extension->revoke();
-        if (auto& extension = m_parameters.resourceSandboxExtension)
-            extension->revoke();
+
         for (auto& fileReference : m_fileReferences)
             fileReference->revokeFileAccess();
 

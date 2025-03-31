@@ -313,7 +313,7 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     auto handlePDFTestCallback = makeScopeExit([testCallback = WTFMove(m_pdfTestCallback)] {
         if (testCallback)
-            testCallback->handleEvent();
+            testCallback->invoke();
     });
 
     m_documentLayout.setPDFDocument(m_pdfDocument.get());
@@ -3954,13 +3954,13 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
             return;
 
 #if HAVE(PDFDOCUMENT_RESET_FORM_FIELDS)
-        if ([action isKindOfClass:getPDFActionResetFormClass()])
-            [m_pdfDocument resetFormFields:static_cast<PDFActionResetForm *>(action)];
+        if (RetainPtr resetAction = dynamic_objc_cast<PDFActionResetForm>(action))
+            [m_pdfDocument resetFormFields:resetAction.get()];
 #endif
 
         RetainPtr actionType = [action type];
         if ([actionType isEqualToString:@"Named"]) {
-            auto actionName = [static_cast<PDFActionNamed *>(action) name];
+            auto actionName = [checked_objc_cast<PDFActionNamed>(action) name];
             switch (actionName) {
             case kPDFActionNamedNextPage:
                 if (currentPageIndex + 1 < m_documentLayout.pageCount())

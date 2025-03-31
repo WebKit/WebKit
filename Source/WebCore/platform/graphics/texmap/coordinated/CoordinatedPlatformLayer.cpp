@@ -548,28 +548,28 @@ void CoordinatedPlatformLayer::setContentsTilePhase(const FloatSize& contentsTil
     notifyCompositionRequired();
 }
 
-void CoordinatedPlatformLayer::setDirtyRegion(Vector<IntRect, 1>&& dirtyRegion)
+void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 {
     ASSERT(m_lock.isHeld());
-    if (m_dirtyRegion == dirtyRegion)
-        return;
-
-    m_dirtyRegion = WTFMove(dirtyRegion);
-    notifyCompositionRequired();
-}
+    // FIXME: add a way to remove the empty rects from Damage class.
+    auto dirtyRegion = WTF::compactMap(damage.rects(), [](const auto& value) -> std::optional<IntRect> {
+        if (value.isEmpty())
+            return std::nullopt;
+        return value;
+    });
+    if (m_dirtyRegion != dirtyRegion) {
+        m_dirtyRegion = WTFMove(dirtyRegion);
+        notifyCompositionRequired();
+    }
 
 #if ENABLE(DAMAGE_TRACKING)
-void CoordinatedPlatformLayer::setDamage(Damage&& damage)
-{
-    ASSERT(m_lock.isHeld());
-
     if (!m_damage)
         m_damage = WTFMove(damage);
     else
         m_damage->add(damage);
     m_pendingChanges.add(Change::Damage);
-}
 #endif
+}
 
 void CoordinatedPlatformLayer::setFilters(const FilterOperations& filters)
 {

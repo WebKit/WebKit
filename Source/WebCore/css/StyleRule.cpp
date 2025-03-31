@@ -63,6 +63,7 @@ static_assert(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), "StyleRu
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleNestedDeclarations);
 
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet& parentSheet) const
 {

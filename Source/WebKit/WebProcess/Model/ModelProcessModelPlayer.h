@@ -50,6 +50,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    void renderingAbruptlyStopped() final;
+
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; };
 
 private:

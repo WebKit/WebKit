@@ -57,6 +57,15 @@ static inline void adjustViewportArgumentsToAvoidExcessiveZooming(ViewportArgume
     arguments.width = zoomedWidthFromArguments / arguments.zoom;
 }
 
+static inline void ignoreViewportArgumentsToAvoidEnlargedView(ViewportArguments& arguments, FloatSize viewLayoutSize)
+{
+    if (!viewportArgumentValueIsValid(arguments.width))
+        return;
+
+    if (arguments.width < viewLayoutSize.width())
+        arguments.width = 0;
+}
+
 constexpr double defaultDesktopViewportWidth = 980;
 constexpr double minimumShrinkToFitWidthWhenPreferringHorizontalScrolling = 820;
 
@@ -207,6 +216,9 @@ bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewpo
 
     if (m_canIgnoreViewportArgumentsToAvoidExcessiveZoom)
         adjustViewportArgumentsToAvoidExcessiveZooming(m_viewportArguments);
+
+    if (m_canIgnoreViewportArgumentsToAvoidEnlargedView)
+        ignoreViewportArgumentsToAvoidEnlargedView(m_viewportArguments, m_viewLayoutSize);
 
     updateDefaultConfiguration();
     updateMinimumLayoutSize();
@@ -765,7 +777,8 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("known to lay out wider than viewport"_s, m_isKnownToLayOutWiderThanViewport ? "true"_s : "false"_s);
     ts.dumpProperty("prefers horizontal scrolling"_s, m_prefersHorizontalScrollingBelowDesktopViewportWidths ? "true"_s : "false"_s);
     ts.dumpProperty("can ignore viewport width and zoom"_s, m_canIgnoreViewportArgumentsToAvoidExcessiveZoom ? "true"_s : "false"_s);
-    
+    ts.dumpProperty("can ignore viewport width"_s, m_canIgnoreViewportArgumentsToAvoidEnlargedView ? "true"_s : "false"_s);
+
     ts.endGroup();
 
     return ts.release();

@@ -156,8 +156,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     if (!webPageProxy)
         return;
 
-    auto* headerBannerLayer = webPageProxy->headerBannerLayer();
-    auto* footerBannerLayer = webPageProxy->footerBannerLayer();
+    RetainPtr headerBannerLayer = webPageProxy->headerBannerLayer();
+    RetainPtr footerBannerLayer = webPageProxy->footerBannerLayer();
     if (!headerBannerLayer && !footerBannerLayer)
         return;
 
@@ -177,17 +177,17 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     auto scrollPosition = webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
     
     if (headerBannerLayer) {
-        auto headerHeight = headerBannerLayer.frame.size.height;
+        auto headerHeight = headerBannerLayer.get().frame.size.height;
         totalContentsHeight += headerHeight;
         auto y = LocalFrameView::yPositionForHeaderLayer(scrollPosition, topInset);
-        layoutBannerLayer(headerBannerLayer, y, size().width());
+        layoutBannerLayer(headerBannerLayer.get(), y, size().width());
     }
 
     if (footerBannerLayer) {
-        auto footerHeight = footerBannerLayer.frame.size.height;
-        totalContentsHeight += footerBannerLayer.frame.size.height;
+        auto footerHeight = footerBannerLayer.get().frame.size.height;
+        totalContentsHeight += footerBannerLayer.get().frame.size.height;
         auto y = LocalFrameView::yPositionForFooterLayer(scrollPosition, topInset, totalContentsHeight, footerHeight);
-        layoutBannerLayer(footerBannerLayer, y, size().width());
+        layoutBannerLayer(footerBannerLayer.get(), y, size().width());
     }
 }
 
@@ -245,9 +245,9 @@ static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const
 {
     auto animation = fillFowardsAnimationWithKeyPath(@"transform");
 
-    NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
-    [animation setFromValue:transformValue];
-    [animation setToValue:transformValue];
+    RetainPtr transformValue = [NSValue valueWithCATransform3D:transform];
+    [animation setFromValue:transformValue.get()];
+    [animation setToValue:transformValue.get()];
 
     return animation;
 }
@@ -257,7 +257,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
     ASSERT(m_transientZoomScale);
     ASSERT(m_transientZoomOrigin);
 
-    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
     if (!layerForPageScale)
         return;
 
@@ -274,7 +274,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
 
 void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
 {
-    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
     if (!layerForPageScale)
         return;
 
@@ -342,16 +342,16 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
 
     [CATransaction begin];
 
-    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
     auto renderViewAnimationCA = DrawingArea::transientZoomSnapAnimationForKeyPath("transform"_s);
-    NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
-    [renderViewAnimationCA setToValue:transformValue];
+    RetainPtr transformValue = [NSValue valueWithCATransform3D:transform];
+    [renderViewAnimationCA setToValue:transformValue.get()];
 
-    CALayer *layerForPageScrolling = remoteLayerTreeHost().layerForID(m_pageScrollingLayerID);
+    RetainPtr layerForPageScrolling = remoteLayerTreeHost().layerForID(m_pageScrollingLayerID);
     auto scrollPositionOverrideAnimation = fillFowardsAnimationWithKeyPath(@"position");
-    NSValue *pointValue = [NSValue valueWithPoint:NSPointFromCGPoint(layerForPageScrolling.position)];
-    [scrollPositionOverrideAnimation setFromValue:pointValue];
-    [scrollPositionOverrideAnimation setToValue:pointValue];
+    RetainPtr pointValue = [NSValue valueWithPoint:NSPointFromCGPoint(layerForPageScrolling.get().position)];
+    [scrollPositionOverrideAnimation setFromValue:pointValue.get()];
+    [scrollPositionOverrideAnimation setToValue:pointValue.get()];
     [layerForPageScrolling addAnimation:scrollPositionOverrideAnimation.get() forKey:transientZoomScrollPositionOverrideAnimationKey];
 
     [CATransaction setCompletionBlock:[scale, constrainedOrigin, rootScrollingNodeID, protectedWebPageProxy = page] () {
@@ -364,12 +364,12 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
                 return;
 
             BEGIN_BLOCK_OBJC_EXCEPTIONS
-            if (CALayer *layerForPageScale = drawingArea->remoteLayerTreeHost().layerForID(drawingArea->pageScalingLayerID())) {
+            if (RetainPtr layerForPageScale = drawingArea->remoteLayerTreeHost().layerForID(drawingArea->pageScalingLayerID())) {
                 [layerForPageScale removeAnimationForKey:transientZoomAnimationKey];
                 [layerForPageScale removeAnimationForKey:transientZoomCommitAnimationKey];
             }
 
-            if (CALayer *layerForPageScrolling = drawingArea->remoteLayerTreeHost().layerForID(drawingArea->m_pageScrollingLayerID))
+            if (RetainPtr layerForPageScrolling = drawingArea->remoteLayerTreeHost().layerForID(drawingArea->m_pageScrollingLayerID))
                 [layerForPageScrolling removeAnimationForKey:transientZoomScrollPositionOverrideAnimationKey];
 
             END_BLOCK_OBJC_EXCEPTIONS

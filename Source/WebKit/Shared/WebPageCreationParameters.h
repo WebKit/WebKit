@@ -175,8 +175,6 @@ struct WebPageCreationParameters {
 
     bool backgroundExtendsBeyondPage { false };
 
-    LayerHostingMode layerHostingMode { LayerHostingMode::InProcess };
-
     bool hasResourceLoadClient { false };
 
     Vector<String> mimeTypesWithCustomContentProviders { };
@@ -225,9 +223,6 @@ struct WebPageCreationParameters {
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<SandboxExtension::Handle> fontMachExtensionHandles { };
-#endif
-#if HAVE(HOSTED_CORE_ANIMATION)
-    WTF::MachSendRight acceleratedCompositingPort { };
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor { };

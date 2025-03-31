@@ -1,0 +1,4 @@
+
+PASS [non-fully-active] document.requestStorageAccess() should not resolve when run in a detached frame
+PASS [non-fully-active] document.requestStorageAccess() should not resolve when run in a detached DOMParser document
+

@@ -171,9 +171,13 @@ void RemoteImageBufferSetProxy::didBecomeUnresponsive() const
     backend->didBecomeUnresponsive();
 }
 
+Ref<RemoteImageBufferSetProxy> RemoteImageBufferSetProxy::create(RemoteRenderingBackendProxy& renderingBackend)
+{
+    return adoptRef(*new RemoteImageBufferSetProxy(renderingBackend));
+}
+
 RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-    , m_displayListIdentifier(RenderingResourceIdentifier::generate())
 {
 }
 
@@ -243,7 +247,7 @@ void RemoteImageBufferSetProxy::close()
         m_streamConnection = nullptr;
     }
     if (RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get())
-        remoteRenderingBackendProxy->releaseRemoteImageBufferSet(*this);
+        remoteRenderingBackendProxy->releaseImageBufferSet(*this);
 }
 
 void RemoteImageBufferSetProxy::setConfiguration(RemoteImageBufferSetConfiguration&& configuration)
@@ -274,10 +278,15 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
     if (!connection)
         return;
 
+    RefPtr renderingBackend = m_remoteRenderingBackendProxy.get();
+    if (!renderingBackend)
+        return;
+
     if (m_remoteNeedsConfigurationUpdate) {
         send(Messages::RemoteImageBufferSet::UpdateConfiguration(m_configuration));
-
-        m_displayListRecorder = Ref { *m_remoteRenderingBackendProxy }->createDisplayListRecorder(m_displayListIdentifier, m_configuration.logicalSize, m_configuration.renderingMode, m_configuration.renderingPurpose, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.pixelFormat);
+        ImageBufferParameters parameters { m_configuration.logicalSize, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.pixelFormat, m_configuration.renderingPurpose };
+        auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters));
+        m_context.emplace(m_configuration.colorSpace, m_configuration.contentsFormat, m_configuration.renderingMode, FloatRect { { }, m_configuration.logicalSize }, transform, m_contextIdentifier, *renderingBackend);
     }
     m_remoteNeedsConfigurationUpdate = false;
 
@@ -290,7 +299,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
     m_prepareForDisplayIsPending = true;
 }
 
-void RemoteImageBufferSetProxy::remoteBufferSetWasDestroyed()
+void RemoteImageBufferSetProxy::disconnect()
 {
     Locker locker { m_lock };
     if (RefPtr pendingFlush = m_pendingFlush) {
@@ -308,8 +317,8 @@ void RemoteImageBufferSetProxy::remoteBufferSetWasDestroyed()
 
 GraphicsContext& RemoteImageBufferSetProxy::context()
 {
-    RELEASE_ASSERT(m_displayListRecorder);
-    return *m_displayListRecorder;
+    RELEASE_ASSERT(m_context);
+    return *m_context;
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

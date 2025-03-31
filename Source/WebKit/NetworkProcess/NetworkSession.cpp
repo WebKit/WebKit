@@ -178,6 +178,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_resourceMonitorThrottlerDirectory(parameters.resourceMonitorThrottlerDirectory)
 #endif
+    , m_dataStoreIdentifier(parameters.dataStoreIdentifier)
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;

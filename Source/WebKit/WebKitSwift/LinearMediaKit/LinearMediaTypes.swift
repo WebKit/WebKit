@@ -235,17 +235,13 @@ extension WKSLinearMediaTimeRange {
     }
 }
 
-#if canImport(LinearMediaKit, _version: 205)
 @_spi(Internal) extension WKSLinearMediaTrack: @retroactive Track {
 }
-#endif
 
 extension WKSLinearMediaSpatialVideoMetadata {
-#if canImport(LinearMediaKit, _version: 211.60.3)
     var metadata: SpatialVideoMetadata {
         return SpatialVideoMetadata(width: self.width, height: self.height, horizontalFOVDegrees: self.horizontalFOVDegrees, baseline: self.baseline, disparityAdjustment: self.disparityAdjustment, isRecommendedForImmersive: true)
     }
-#endif
 }
 
 #endif // os(visionOS)

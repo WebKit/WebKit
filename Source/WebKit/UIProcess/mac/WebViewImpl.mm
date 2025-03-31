@@ -355,7 +355,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowWillBeginSheet:) name:NSWindowWillBeginSheetNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:) name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:) name:NSWindowDidChangeScreenNotification object:window];
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeOcclusionState:) name:NSWindowDidChangeOcclusionStateNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
 
@@ -513,12 +512,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     if (_impl)
         _impl->windowDidChangeScreen();
-}
-
-- (void)_windowDidChangeLayerHosting:(NSNotification *)notification
-{
-    if (_impl)
-        _impl->windowDidChangeLayerHosting();
 }
 
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
@@ -2163,11 +2156,6 @@ void WebViewImpl::windowDidChangeScreen()
     m_page->windowScreenDidChange(displayID);
 }
 
-void WebViewImpl::windowDidChangeLayerHosting()
-{
-    m_page->layerHostingModeDidChange();
-}
-
 void WebViewImpl::windowDidChangeOcclusionState()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidChangeOcclusionState", this, m_page->identifier().toUInt64());
@@ -2334,9 +2322,6 @@ void WebViewImpl::viewDidMoveToWindow()
         m_page->activityStateDidChange(activityStateChanges);
 
         updateWindowAndViewFrames();
-
-        // FIXME(135509) This call becomes unnecessary once 135509 is fixed; remove.
-        m_page->layerHostingModeDidChange();
 
         accessibilityRegisterUIProcessTokens();
 
@@ -3508,7 +3493,18 @@ void WebViewImpl::setTextIndicator(WebCore::TextIndicator& textIndicator, WebCor
         m_textIndicatorWindow = makeUnique<WebCore::TextIndicatorWindow>(m_view.getAutoreleased());
 
     NSRect textBoundingRectInScreenCoordinates = [[m_view window] convertRectToScreen:[m_view convertRect:textIndicator.textBoundingRectInRootViewCoordinates() toView:nil]];
+
     m_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates), lifetime);
+}
+
+void WebViewImpl::updateTextIndicator(WebCore::TextIndicator& textIndicator)
+{
+    if (!m_textIndicatorWindow)
+        m_textIndicatorWindow = makeUnique<WebCore::TextIndicatorWindow>(m_view.getAutoreleased());
+
+    NSRect textBoundingRectInScreenCoordinates = [[m_view window] convertRectToScreen:[m_view convertRect:textIndicator.textBoundingRectInRootViewCoordinates() toView:nil]];
+
+    m_textIndicatorWindow->updateTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates));
 }
 
 void WebViewImpl::clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation animation)

@@ -184,8 +184,8 @@ void ResourceRequest::doUpdateResourceRequest()
 
     m_requestData.m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
 
-    if (NSString* method = [m_nsRequest HTTPMethod])
-        m_requestData.m_httpMethod = method;
+    if (RetainPtr method = [m_nsRequest HTTPMethod])
+        m_requestData.m_httpMethod = method.get();
     m_requestData.m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
 
     if (resourcePrioritiesEnabled())
@@ -197,7 +197,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }];
 
     m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
-    NSArray *encodingFallbacks = [m_nsRequest contentDispositionEncodingFallbackArray];
+    RetainPtr<NSArray> encodingFallbacks = [m_nsRequest contentDispositionEncodingFallbackArray];
     m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
     for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
@@ -206,9 +206,9 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
     if (m_nsRequest) {
-        NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)_kCFURLCachePartitionKey inRequest:m_nsRequest.get()];
+        RetainPtr<NSString> cachePartition = [NSURLProtocol propertyForKey:(NSString *)_kCFURLCachePartitionKey inRequest:m_nsRequest.get()];
         if (cachePartition)
-            m_cachePartition = cachePartition;
+            m_cachePartition = cachePartition.get();
     }
 }
 
@@ -234,8 +234,7 @@ static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, N
     case ResourceRequest::SameSiteDisposition::SameSite:
         return url;
     case ResourceRequest::SameSiteDisposition::CrossSite:
-        static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
-        return emptyURL;
+        return URL::emptyNSURL();
     }
 }
 
@@ -325,8 +324,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
-        NSString *partitionValue = [NSString stringWithUTF8String:partition.utf8().data()];
-        [NSURLProtocol setProperty:partitionValue forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest.get()];
+        RetainPtr partitionValue = adoptNS([[NSString alloc] initWithUTF8String:partition.utf8().data()]);
+        [NSURLProtocol setProperty:partitionValue.get() forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest.get()];
     }
 
 #if PLATFORM(MAC)
@@ -363,14 +362,14 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest.get(), WTFMove(formData));
 
-    if (NSInputStream *bodyStream = [nsRequest HTTPBodyStream]) {
+    if (RetainPtr bodyStream = [nsRequest HTTPBodyStream]) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
-        NSString *lengthString = [bodyStream propertyForKey:(__bridge NSString *)formDataStreamLengthPropertyName()];
+        RetainPtr<NSString> lengthString = [bodyStream propertyForKey:(__bridge NSString *)formDataStreamLengthPropertyName()];
         if (lengthString) {
-            [nsRequest setValue:lengthString forHTTPHeaderField:@"Content-Length"];
+            [nsRequest setValue:lengthString.get() forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString);
+            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString.get());
         }
     }
 

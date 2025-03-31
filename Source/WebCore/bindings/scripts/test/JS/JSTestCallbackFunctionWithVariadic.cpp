@@ -51,7 +51,7 @@ JSTestCallbackFunctionWithVariadic::~JSTestCallbackFunctionWithVariadic()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionWithVariadic::handleEvent(VariadicArguments<IDLAny>&& arguments)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionWithVariadic::invoke(VariadicArguments<IDLAny>&& arguments)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -85,7 +85,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionWithVariadic::handleEventRethrowingException(VariadicArguments<IDLAny>&& arguments)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionWithVariadic::invokeRethrowingException(VariadicArguments<IDLAny>&& arguments)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

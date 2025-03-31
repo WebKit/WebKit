@@ -351,20 +351,19 @@ FlexPercentResolveDisabler::~FlexPercentResolveDisabler()
     m_layoutContext->enablePercentHeightResolveFor(m_flexItem);
 }
 
-ContentVisibilityForceLayoutScope::ContentVisibilityForceLayoutScope(LocalFrameViewLayoutContext& layoutContext, const Element* element)
+ContentVisibilityOverrideScope::ContentVisibilityOverrideScope(LocalFrameViewLayoutContext& layoutContext, OptionSet<OverrideType> overrideTypes)
     : m_layoutContext(layoutContext)
-    , m_element(element)
 {
-    if (element)
-        m_layoutContext->setNeedsSkippedContentLayout(true);
+    if (overrideTypes.contains(OverrideType::Hidden))
+        layoutContext.setIsVisiblityHiddenIgnored(true);
+    if (overrideTypes.contains(OverrideType::Auto))
+        layoutContext.setIsVisiblityAutoIgnored(true);
 }
 
-ContentVisibilityForceLayoutScope::~ContentVisibilityForceLayoutScope()
+ContentVisibilityOverrideScope::~ContentVisibilityOverrideScope()
 {
-    if (m_element) {
-        ASSERT(m_layoutContext->needsSkippedContentLayout());
-        m_layoutContext->setNeedsSkippedContentLayout(false);
-    }
+    m_layoutContext->setIsVisiblityHiddenIgnored(false);
+    m_layoutContext->setIsVisiblityAutoIgnored(false);
 }
 
 } // namespace WebCore

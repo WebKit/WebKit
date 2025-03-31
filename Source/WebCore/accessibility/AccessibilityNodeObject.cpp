@@ -703,13 +703,10 @@ bool AccessibilityNodeObject::computeIsIgnored() const
     return role == AccessibilityRole::Ignored || role == AccessibilityRole::Unknown;
 }
 
-bool AccessibilityNodeObject::canvasHasFallbackContent() const
+bool AccessibilityNodeObject::hasElementDescendant() const
 {
-    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node());
-    // If it has any children that are elements, we'll assume it might be fallback
-    // content. If it has no children or its only children are not elements
-    // (e.g. just text nodes), it doesn't have fallback content.
-    return canvasElement && childrenOfType<Element>(*canvasElement).first();
+    RefPtr element = dynamicDowncast<Element>(node());
+    return element && childrenOfType<Element>(*element).first();
 }
 
 bool AccessibilityNodeObject::isNativeTextControl() const
@@ -972,31 +969,24 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::radioButtonGr
 unsigned AccessibilityNodeObject::headingLevel() const
 {
     // headings can be in block flow and non-block flow
-    Node* node = this->node();
-    if (!node)
-        return 0;
-
     if (isHeading()) {
-        if (auto level = getIntegralAttribute(aria_levelAttr); level > 0)
+        int level = getIntegralAttribute(aria_levelAttr);
+        if (level > 0)
             return level;
     }
 
-    if (node->hasTagName(h1Tag))
+    const auto& tag = tagName();
+    if (tag == h1Tag)
         return 1;
-
-    if (node->hasTagName(h2Tag))
+    if (tag == h2Tag)
         return 2;
-
-    if (node->hasTagName(h3Tag))
+    if (tag == h3Tag)
         return 3;
-
-    if (node->hasTagName(h4Tag))
+    if (tag == h4Tag)
         return 4;
-
-    if (node->hasTagName(h5Tag))
+    if (tag == h5Tag)
         return 5;
-
-    if (node->hasTagName(h6Tag))
+    if (tag == h6Tag)
         return 6;
 
     return 0;
@@ -1436,25 +1426,6 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
 bool AccessibilityNodeObject::elementAttributeValue(const QualifiedName& attributeName) const
 {
     return equalLettersIgnoringASCIICase(getAttribute(attributeName), "true"_s);
-}
-
-const String AccessibilityNodeObject::liveRegionStatus() const
-{
-    const auto& liveRegionStatus = getAttribute(aria_liveAttr);
-    if (liveRegionStatus.isEmpty())
-        return defaultLiveRegionStatusForRole(roleValue());
-
-    return liveRegionStatus;
-}
-
-const String AccessibilityNodeObject::liveRegionRelevant() const
-{
-    const auto& relevant = getAttribute(aria_relevantAttr);
-    // Default aria-relevant = "additions text".
-    if (relevant.isEmpty())
-        return "additions text"_s;
-
-    return relevant;
 }
 
 bool AccessibilityNodeObject::liveRegionAtomic() const
@@ -2244,7 +2215,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
 {
     RefPtr node = this->node();
     if (auto* text = dynamicDowncast<Text>(node.get()))
-        return !mode.isHidden() ? text->wholeText() : emptyString();
+        return !mode.isHidden() ? text->data() : emptyString();
 
     const auto* style = this->style();
     mode.inHiddenSubtree = WebCore::isRenderHidden(style);

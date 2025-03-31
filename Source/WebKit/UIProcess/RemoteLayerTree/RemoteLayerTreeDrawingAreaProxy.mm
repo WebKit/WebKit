@@ -500,7 +500,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator()
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale, const IntPoint& scrollPosition)
 {
     // Make sure we're the last sublayer.
-    CALayer *rootLayer = m_remoteLayerTreeHost->rootLayer();
+    RetainPtr rootLayer = m_remoteLayerTreeHost->rootLayer();
     [m_tileMapHostLayer removeFromSuperlayer];
     [rootLayer addSublayer:m_tileMapHostLayer.get()];
 
@@ -549,14 +549,14 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
     [m_tileMapHostLayer setMasksToBounds:YES];
     [m_tileMapHostLayer setBorderWidth:2];
 
-    CGColorSpaceRef colorSpace = sRGBColorSpaceRef();
+    RetainPtr colorSpace = sRGBColorSpaceRef();
     {
         const CGFloat components[] = { 1, 1, 1, 0.6 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace, components));
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
         [m_tileMapHostLayer setBackgroundColor:color.get()];
 
         const CGFloat borderComponents[] = { 0, 0, 0, 1 };
-        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace, borderComponents));
+        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderComponents));
         [m_tileMapHostLayer setBorderColor:borderColor.get()];
     }
     
@@ -566,7 +566,7 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
     {
         const CGFloat components[] = { 0, 1, 0, 1 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace, components));
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
         [m_exposedRectIndicatorLayer setBorderColor:color.get()];
     }
 }
@@ -652,7 +652,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
         didRefreshDisplay(connection.ptr());
 
     static Seconds activityStateUpdateTimeout = [] {
-        if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
+        if (RetainPtr<id> value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
             return Seconds([value doubleValue]);
         return Seconds::fromMilliseconds(250);
     }();

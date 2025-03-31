@@ -215,9 +215,4 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
 
-inline bool isSkippedContentRoot(const RenderElement& renderer)
-{
-    return renderer.element() && WebCore::isSkippedContentRoot(renderer.style(), *renderer.element());
-}
-
 } // namespace WebCore

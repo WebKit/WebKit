@@ -5060,6 +5060,7 @@
 		BCBFB53D0DCD29CF0019B3E5 /* JSWindowProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC090E82D4477FA00B672AA /* CalculationRange.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC090E72D4477F500B672AA /* CalculationRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0E8761BFE70E9008F7F50 /* HTMLPictureElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */; };
+		BCC0F3CA2D98568E0065B859 /* LayoutRange.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0F3BD2D9850DA0065B859 /* LayoutRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */; };
 		BCCBAD410C18C14200CE890F /* JSHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5572,7 +5573,6 @@
 		D98DB1B328CFEE6F00369DDE /* MainThreadPermissionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = D98DB1AF28CFEE3C00369DDE /* MainThreadPermissionObserver.h */; };
 		DAED203116F244480070EC0F /* PageConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = DAACB3DA16F2416400666135 /* PageConsoleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
-		DC4EBF7F2D8E0561003DF001 /* LayoutRange.h in Headers */ = {isa = PBXBuildFile; fileRef = DC4EBF7E2D8E0561003DF001 /* LayoutRange.h */; };
 		DCA7EDF52C655235000F16C7 /* BoxSides.h in Headers */ = {isa = PBXBuildFile; fileRef = DCA7EDF42C655235000F16C7 /* BoxSides.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD05637D29B6B88100A98258 /* InlineDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05637C29B6B88100A98258 /* InlineDisplayContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18553,6 +18553,7 @@
 		BCC090E72D4477F500B672AA /* CalculationRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalculationRange.h; sourceTree = "<group>"; };
 		BCC0E8731BFE70E9008F7F50 /* HTMLPictureElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPictureElement.cpp; sourceTree = "<group>"; };
 		BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPictureElement.h; sourceTree = "<group>"; };
+		BCC0F3BD2D9850DA0065B859 /* LayoutRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutRange.h; sourceTree = "<group>"; };
 		BCC38E8E2C25E0270013821F /* CSSPropertyParserConsumer+Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+Image.cpp"; sourceTree = "<group>"; };
 		BCC38E8F2C25E0270013821F /* CSSPropertyParserConsumer+Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Image.h"; sourceTree = "<group>"; };
 		BCC38E902C25E1A80013821F /* CSSPropertyParserConsumer+URL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+URL.cpp"; sourceTree = "<group>"; };
@@ -19693,7 +19694,6 @@
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLSpace.cpp; sourceTree = "<group>"; };
 		DBFCB0EBFF5CD77EBEB3595F /* RenderMathMLPadded.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLPadded.cpp; sourceTree = "<group>"; };
-		DC4EBF7E2D8E0561003DF001 /* LayoutRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LayoutRange.h; path = platform/graphics/LayoutRange.h; sourceTree = "<group>"; };
 		DCA7EDF42C655235000F16C7 /* BoxSides.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoxSides.h; sourceTree = "<group>"; };
 		DD05637C29B6B88100A98258 /* InlineDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineDisplayContent.h; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
@@ -22513,7 +22513,6 @@
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
-				DC4EBF7E2D8E0561003DF001 /* LayoutRange.h */,
 			);
 			name = WebCore;
 			sourceTree = "<group>";
@@ -34119,6 +34118,7 @@
 				0F736ECA26CCB97A000AD7CA /* LayerTreeAsTextOptions.h */,
 				0F36E7361BD1837A002DB891 /* LayoutPoint.cpp */,
 				141DC04B164834B900371E5A /* LayoutPoint.h */,
+				BCC0F3BD2D9850DA0065B859 /* LayoutRange.h */,
 				141DC04C164834B900371E5A /* LayoutRect.cpp */,
 				141DC04D164834B900371E5A /* LayoutRect.h */,
 				0F36E7381BD184B9002DB891 /* LayoutSize.cpp */,
@@ -42837,7 +42837,7 @@
 				931D72F615FE695300C4C07E /* LayoutMilestone.h in Headers */,
 				F45EAC872A8C1A65009B986E /* LayoutMilestones.serialization.in in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
-				DC4EBF7F2D8E0561003DF001 /* LayoutRange.h in Headers */,
+				BCC0F3CA2D98568E0065B859 /* LayoutRange.h in Headers */,
 				141DC053164834B900371E5A /* LayoutRect.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				FD45A94F175D3F3E00C21EC8 /* LayoutShape.h in Headers */,

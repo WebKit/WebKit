@@ -891,7 +891,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
         String name = String::fromUTF8(nw_interface_get_name(interface));
         [interfaces addObject:@{
             @"type" : description(nw_interface_get_type(interface)),
-            @"name" : static_cast<NSString *>(name) ?: @"",
+            @"name" : name.createNSString().get() ?: @"",
         }];
         return true;
     });
@@ -900,9 +900,9 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     String provider = String::fromUTF8(nw_resolution_report_get_provider_name(report));
     String extraText = String::fromUTF8(nw_resolution_report_get_extended_dns_error_extra_text(report));
     return @{
-        @"provider" : static_cast<NSString *>(provider) ?: @"",
+        @"provider" : provider.createNSString().get() ?: @"",
         @"dnsFailureReason" : description(nw_resolution_report_get_dns_failure_reason(report)),
-        @"extendedDNSErrorExtraText" : static_cast<NSString *>(extraText) ?: @"",
+        @"extendedDNSErrorExtraText" : extraText.createNSString().get() ?: @"",
         @"interfaces" : interfaces.get(),
     };
 }
@@ -1111,14 +1111,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
         RetainPtr<NSURLSessionTaskMetrics> taskMetrics = dataTask._incompleteTaskMetrics;
 
-        NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.get().transactionMetrics.lastObject;
+        RetainPtr<NSURLSessionTaskTransactionMetrics> metrics = taskMetrics.get().transactionMetrics.lastObject;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-        auto privateRelayed = metrics._privacyStance == nw_connection_privacy_stance_direct
-            || metrics._privacyStance == nw_connection_privacy_stance_not_eligible
+        auto privateRelayed = metrics.get()._privacyStance == nw_connection_privacy_stance_direct
+            || metrics.get()._privacyStance == nw_connection_privacy_stance_not_eligible
             ? PrivateRelayed::No : PrivateRelayed::Yes;
         String proxyName;
-        if (metrics._establishmentReport) {
-            if (RetainPtr endpoint = adoptNS(nw_establishment_report_copy_proxy_endpoint(metrics._establishmentReport))) {
+        if (metrics.get()._establishmentReport) {
+            if (RetainPtr endpoint = adoptNS(nw_establishment_report_copy_proxy_endpoint(metrics.get()._establishmentReport))) {
                 if (const char *hostname = nw_endpoint_get_hostname(endpoint.get()))
                     proxyName = String::fromUTF8(unsafeSpan(hostname));
             }
@@ -1127,7 +1127,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         auto privateRelayed = PrivateRelayed::No;
 #endif
-        negotiatedLegacyTLS = checkForLegacyTLS(metrics);
+        negotiatedLegacyTLS = checkForLegacyTLS(metrics.get());
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         RetainPtr httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(response);
@@ -1150,7 +1150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         resourceResponse.setProxyName(WTFMove(proxyName));
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, privateRelayed, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED
-            LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);
+            LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%s)", taskIdentifier, toString(policyAction).characters());
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif

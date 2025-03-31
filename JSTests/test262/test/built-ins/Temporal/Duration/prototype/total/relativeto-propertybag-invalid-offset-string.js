@@ -24,6 +24,6 @@ badOffsets.forEach((offset) => {
   assert.throws(
     typeof(offset) === 'string' ? RangeError : TypeError,
     () => instance.total({ unit: "days", relativeTo }),
-    `"${offset} is not a valid offset string`
+    `"${offset}" is not a valid offset string`
   );
 });

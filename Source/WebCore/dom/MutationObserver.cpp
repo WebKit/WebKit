@@ -218,7 +218,7 @@ void MutationObserver::deliver()
             return;
 
         InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
-        protectedCallback()->handleEvent(*this, records, *this);
+        protectedCallback()->invoke(*this, records, *this);
         InspectorInstrumentation::didFireObserverCallback(*context);
     }
 }

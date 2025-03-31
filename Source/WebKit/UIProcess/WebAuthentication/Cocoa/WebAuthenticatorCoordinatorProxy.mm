@@ -317,7 +317,8 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
 
     RetainPtr<ASPublicKeyCredentialClientData> clientData = adoptNS([allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:callerOrigin.toString()]);
     if (includePlatformRequest) {
-        RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
+        RetainPtr provider = adoptNS([allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rp.id]);
+        RetainPtr request = adoptNS([provider createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
 
         if (m_isConditionalMediation && [request respondsToSelector:@selector(setRequestStyle:)])
             request.get().requestStyle = ASAuthorizationPlatformPublicKeyCredentialRegistrationRequestStyleConditional;
@@ -417,7 +418,8 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         clientData.get().topOrigin = parentOrigin->toString();
     }
     if ([platformAllowedCredentials count] || ![crossPlatformAllowedCredentials count]) {
-        RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId] createCredentialAssertionRequestWithClientData:clientData.get()]);
+        RetainPtr provider = adoptNS([allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId]);
+        RetainPtr request = adoptNS([provider createCredentialAssertionRequestWithClientData:clientData.get()]);
         if (platformAllowedCredentials)
             request.get().allowedCredentials = platformAllowedCredentials.get();
         if (options.extensions && options.extensions->largeBlob) {

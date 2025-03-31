@@ -110,6 +110,7 @@ public:
 #else // RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER (std::nullopt)
+#define LOGIDENTIFIER_WITH_THIS(thisPtr) (UNUSED_PARAM(thisPtr))
 
 #define ALWAYS_LOG(channelName, ...)  (UNUSED_PARAM(channelName))
 #define ERROR_LOG(channelName, ...)   (UNUSED_PARAM(channelName))

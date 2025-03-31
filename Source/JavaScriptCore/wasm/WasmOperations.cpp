@@ -1604,7 +1604,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(typeIndex).get();
-    return JSValue::encode(JSWebAssemblyStruct::create(vm, structure));
+    auto* result = JSWebAssemblyStruct::tryCreate(vm, structure);
+    if (UNLIKELY(!result))
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
@@ -1817,15 +1820,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (J
 
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(typeIndex).get();
-    Wasm::FieldType fieldType = structure->typeDefinition().as<ArrayType>()->elementType();
-
-    size_t elementSize = fieldType.type.elementSize();
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
-        return JSValue::encode(jsNull());
-
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, size);
     if (UNLIKELY(!array))
         return JSValue::encode(jsNull());
+
     // Create a default-initialized array with the right element type and length
     return JSValue::encode(array);
 }

@@ -119,7 +119,7 @@ FixedElementsLayoutRelativeToFrame:
 
 FontFallbackPrefersPictographs:
   type: bool
-  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  webcoreOnChange: fontFallbackPrefersPictographsChanged
   defaultValue:
     WebCore:
       default: false

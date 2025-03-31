@@ -562,6 +562,11 @@ void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore:
     [contentView() setUpTextIndicator:textIndicator];
 }
 
+void PageClientImpl::updateTextIndicator(Ref<TextIndicator> textIndicator)
+{
+    [contentView() updateTextIndicator:textIndicator];
+}
+
 void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation dismissalAnimation)
 {
     [contentView() clearTextIndicator:dismissalAnimation];

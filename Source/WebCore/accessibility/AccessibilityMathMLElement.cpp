@@ -165,11 +165,6 @@ bool AccessibilityMathMLElement::isMathOperator() const
     return m_renderer && m_renderer->isRenderMathMLOperator();
 }
 
-bool AccessibilityMathMLElement::isAnonymousMathOperator() const
-{
-    return m_isAnonymousOperator;
-}
-
 bool AccessibilityMathMLElement::isMathFenceOperator() const
 {
     auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());

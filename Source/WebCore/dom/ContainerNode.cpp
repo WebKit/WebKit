@@ -1021,6 +1021,9 @@ void ContainerNode::childrenChanged(const ChildChange& change)
                 lists->clearChildNodeListCache();
         }
     }
+
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->childrenChanged(*this);
 }
 
 void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* registry, ContainerNode& clone, size_t currentDepth)

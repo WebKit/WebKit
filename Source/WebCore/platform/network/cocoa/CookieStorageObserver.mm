@@ -107,7 +107,7 @@ void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
 
     if (!m_hasRegisteredInternalsForNotifications) {
         if (m_cookieStorage.get() != [NSHTTPCookieStorage sharedHTTPCookieStorage]) {
-            auto internalObject = (static_cast<WebNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
+            RetainPtr internalObject = (static_cast<WebNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
             [internalObject registerForPostingNotificationsWithContext:m_cookieStorage.get()];
         }
 

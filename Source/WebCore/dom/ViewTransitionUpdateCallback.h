@@ -38,7 +38,7 @@ class ViewTransitionUpdateCallback : public RefCounted<ViewTransitionUpdateCallb
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<RefPtr<DOMPromise>> handleEvent() = 0;
+    virtual CallbackResult<RefPtr<DOMPromise>> invoke() = 0;
 
 private:
     virtual bool hasCallback() const = 0;

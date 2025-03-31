@@ -818,6 +818,8 @@ http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.htm
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
 
 http/tests/storageAccess/ [ Pass ]
+imported/w3c/web-platform-tests/storage-access-api/ [ Pass ]
+imported/w3c/web-platform-tests/storage-access-api/hasStorageAccess.sub.https.window.html [ Skip ]
 #http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 
@@ -1666,6 +1668,45 @@ http/tests/webgpu/webgpu/shader/execution/expression/access/vector/components.ht
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/refract.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/functions/alias_analysis.html [ Skip ]
 
+# test output is out of order
+http/tests/webgpu/webgpu/shader/validation/decl/context_dependent_resolution.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/binary/add_sub_mul.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/binary/div_rem.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/asin.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/acos.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/cross.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/degrees.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/distance.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/atanh.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/acosh.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/cosh.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/exp2.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/inverseSqrt.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/exp.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/dot.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/extractBits.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/pow.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/ldexp.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/log.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/normalize.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/log2.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/refract.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/sinh.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/smoothstep.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/textureSample.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/quantizeToF16.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleGrad.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/sqrt.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/unpack2x16float.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/diagnostic.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/shadow_builtins.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/group_and_binding.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/uniformity/uniformity.html [ Skip ]
+
 # timeout on Intel Macs due to difference in handling infinite loops
 [ x86_64 ] fast/webgpu/regression/repro_283595-for.html [ Skip ]
 [ x86_64 ] fast/webgpu/regression/repro_283595-loop.html [ Skip ]
@@ -1718,6 +1759,7 @@ webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/htm
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/cross-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
+http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 http/wpt/opener/same-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 
 webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
@@ -1873,9 +1915,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
 [ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ]
 [ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]
-
-# webkit.org/b/280832 [ Sequoia wk2 ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html is a constant failure.
-[ Sequoia+ ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
 
 # webkit.org/b/280922 REGRESSION(284532@main): [ macOS wk2 ] 2x tiled-drawing/* test are flaky failing. (280922)
 tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed.html [ Pass Failure ]
@@ -2074,9 +2113,6 @@ imported/w3c/web-platform-tests/css/css-position/block-axis-constraint-changes-f
 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-escape-scroller-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling-002.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/290012 REGRESSION(291808@main): [macOS Debug]: ASSERTION FAILED: !index in CSSFontSelector::fallbackFontAt
-[ Debug ] fonts/font-fallback-prefers-pictographs.html [ Skip ]
-
 webkit.org/b/290346 [ arm64 ] gamepad/gamepad-event-handlers.html [ Pass Timeout ]
 
-webkit.org/b/290398 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass Failure ]
+webkit.org/b/290564 [ Sequoia Debug ] imported/w3c/web-platform-tests/css/css-viewport/computedStyle-zoom.html [ Pass Timeout ]

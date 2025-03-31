@@ -1,16 +1,7 @@
 AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
-GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/media/RemoteAudioTrackProxy.cpp
-GPUProcess/media/RemoteAudioTrackProxy.h
-GPUProcess/media/RemoteSourceBufferProxy.cpp
-GPUProcess/media/RemoteTextTrackProxy.cpp
-GPUProcess/media/RemoteTextTrackProxy.h
-GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/media/RemoteVideoTrackProxy.h
 GeneratedSerializers.mm
-NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/Connection.cpp
 Platform/IPC/Connection.h
@@ -104,7 +95,6 @@ UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/Downloads/DownloadProxy.cpp
-UIProcess/RemoteLayerTree/RemoteScrollingTree.h
 UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/WebsiteData/WebsiteDataStore.cpp
 UIProcess/mac/WebContextMenuProxyMac.mm
@@ -222,7 +212,6 @@ WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
-WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/FindController.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm

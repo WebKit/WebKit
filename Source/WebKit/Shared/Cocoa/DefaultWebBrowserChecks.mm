@@ -211,7 +211,7 @@ bool hasProhibitedUsageStrings()
     if (hasCheckedUsageStrings)
         return hasProhibitedUsageStrings;
 
-    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    RetainPtr<NSDictionary> infoDictionary = [[NSBundle mainBundle] infoDictionary];
     RELEASE_ASSERT(infoDictionary);
 
     // See <rdar://problem/59979468> for details about how this list was selected.
@@ -279,11 +279,11 @@ bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
     static bool fullWebBrowser;
     static std::once_flag once;
     std::call_once(once, [] {
-        NSURL *currentURL = [[NSBundle mainBundle] bundleURL];
-        NSArray<NSURL *> *httpURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"http:"]];
-        bool canOpenHTTP = [httpURLs containsObject:currentURL];
-        NSArray<NSURL *> *httpsURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"https:"]];
-        bool canOpenHTTPS = [httpsURLs containsObject:currentURL];
+        RetainPtr<NSURL> currentURL = [[NSBundle mainBundle] bundleURL];
+        RetainPtr<NSArray<NSURL *>> httpURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"http:"]];
+        bool canOpenHTTP = [httpURLs containsObject:currentURL.get()];
+        RetainPtr<NSArray<NSURL *>> httpsURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"https:"]];
+        bool canOpenHTTPS = [httpsURLs containsObject:currentURL.get()];
         fullWebBrowser = canOpenHTTPS && canOpenHTTP;
     });
 #else

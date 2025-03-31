@@ -97,24 +97,11 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALaye
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(layerType, owner, context)
 {
-    switch (context.layerHostingMode()) {
-    case LayerHostingMode::InProcess:
-#if HAVE(HOSTED_CORE_ANIMATION)
-        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::singleton().compositingRenderServerPort());
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-        break;
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    case LayerHostingMode::OutOfProcess:
-        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess({
+    m_layerHostingContext = LayerHostingContext::create({
 #if PLATFORM(IOS_FAMILY)
-            context.canShowWhileLocked()
+        context.canShowWhileLocked()
 #endif
-        });
-        break;
-#endif
-    }
+    });
 
     m_layerHostingContext->setRootLayer(customLayer);
     [customLayer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];

@@ -226,11 +226,6 @@ public:
 
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
 
-#if HAVE(HOSTED_CORE_ANIMATION)
-    const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
-    void setCompositingRenderServerPort(WTF::MachSendRight&& port) { m_compositingRenderServerPort = WTFMove(port); }
-#endif
-
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
@@ -742,10 +737,6 @@ private:
 
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
-
-#if HAVE(HOSTED_CORE_ANIMATION)
-    WTF::MachSendRight m_compositingRenderServerPort;
-#endif
 
     bool m_fullKeyboardAccessEnabled { false };
 

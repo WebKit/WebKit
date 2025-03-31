@@ -70,8 +70,6 @@ public:
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 
     float deviceScaleFactor() const;
-
-    LayerHostingMode layerHostingMode() const;
     
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 

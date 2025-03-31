@@ -1003,8 +1003,6 @@ public:
     void waitForDidUpdateActivityState(ActivityStateChangeID);
     void didUpdateActivityState() { m_waitingForDidUpdateActivityState = false; }
 
-    void layerHostingModeDidChange();
-
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const;
     bool isViewFocused() const;
@@ -1551,6 +1549,7 @@ public:
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void setTextIndicator(const WebCore::TextIndicatorData&, uint64_t /* WebCore::TextIndicatorLifetime */ lifetime = 0 /* Permanent */);
+    void updateTextIndicator(const WebCore::TextIndicatorData&);
     void setTextIndicatorAnimationProgress(float);
     void clearTextIndicator();
 
@@ -3332,6 +3331,7 @@ private:
     void documentURLForConsoleLog(WebCore::FrameIdentifier, CompletionHandler<void(const URL&)>&&);
 
     void setTextIndicatorFromFrame(WebCore::FrameIdentifier, WebCore::TextIndicatorData&&, uint64_t);
+    void updateTextIndicatorFromFrame(WebCore::FrameIdentifier, WebCore::TextIndicatorData&&);
 
     void frameNameChanged(IPC::Connection&, WebCore::FrameIdentifier, const String& frameName);
 
@@ -3348,10 +3348,6 @@ private:
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
-
-#if HAVE(HOSTED_CORE_ANIMATION)
-    static WTF::MachSendRight createMachSendRightForRemoteLayerServer();
-#endif
 
     void takeVisibleActivity();
     void takeAudibleActivity();
@@ -3899,7 +3895,7 @@ private:
     std::optional<audit_token_t> m_presentingApplicationAuditToken;
 #endif
 
-    Ref<AboutSchemeHandler> m_aboutSchemeHandler;
+    const Ref<AboutSchemeHandler> m_aboutSchemeHandler;
     RefPtr<WebPageProxyTesting> m_pageForTesting;
 };
 

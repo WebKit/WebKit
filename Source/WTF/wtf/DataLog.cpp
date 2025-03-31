@@ -134,15 +134,15 @@ static void initializeLogFile()
 void setDataFile(const char* path)
 {
     FilePrintStream* file = nullptr;
-    char formattedPath[maxPathLength + 1];
+    std::array<char, maxPathLength + 1> formattedPath;
     const char* pathToOpen = path;
 
     if (path) {
         auto pathSpan = unsafeSpan(path);
         if (size_t pidIndex = find(pathSpan, "%pid"_span); pidIndex != notFound) {
             size_t pathCharactersAvailable = std::min(maxPathLength, pidIndex);
-            strncpy(formattedPath, path, pathCharactersAvailable);
-            char* nextDest = formattedPath + pathCharactersAvailable;
+            strncpy(formattedPath.data(), path, pathCharactersAvailable);
+            char* nextDest = formattedPath.data() + pathCharactersAvailable;
             pathCharactersAvailable = maxPathLength - pathCharactersAvailable;
             if (pathCharactersAvailable) {
                 int pidTextLength = snprintf(nextDest, pathCharactersAvailable, "%d", getCurrentProcessID());
@@ -154,7 +154,7 @@ void setDataFile(const char* path)
                 }
             }
             formattedPath[maxPathLength] = '\0';
-            pathToOpen = formattedPath;
+            pathToOpen = formattedPath.data();
         }
 
         file = FilePrintStream::open(pathToOpen, "w").release();

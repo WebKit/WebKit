@@ -32,6 +32,6 @@ assertThrowsInstanceOf(() => iter.find(1), TypeError);
 
 assert.compareArray(
   log,
-  ["get: find"]
+  ["get: find", "get: return"]
 );
 

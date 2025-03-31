@@ -53,13 +53,8 @@ public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
 
-    void cacheImageBuffer(RemoteImageBufferProxy&);
-    RefPtr<RemoteImageBufferProxy> cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
-    void forgetImageBuffer(WebCore::RenderingResourceIdentifier);
-
-    void recordNativeImageUse(WebCore::NativeImage&);
+    void recordNativeImageUse(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
     void recordFontUse(WebCore::Font&);
-    void recordImageBufferUse(WebCore::ImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
@@ -67,13 +62,10 @@ public:
 
     void didPaintLayers();
 
-    void remoteResourceCacheWasDestroyed();
     void releaseMemory();
-    void releaseAllImageResources();
+    void releaseNativeImages();
     
-    unsigned imagesCountForTesting() const { return m_nativeImages.size(); }
-
-    void clear();
+    unsigned nativeImageCountForTesting() const { return m_nativeImages.size(); }
 
 private:
     // WebCore::RenderingResourceObserver.
@@ -84,13 +76,9 @@ private:
 
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
-    void clearFontMap();
-    void clearFontCustomPlatformDataMap();
-    void clearImageBufferBackends();
-    void clearRenderingResources();
-    void clearNativeImages();
+    void releaseFonts();
+    void releaseFontCustomPlatformDatas();
 
-    HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>> m_imageBuffers;
     HashSet<WebCore::RenderingResourceIdentifier> m_nativeImages;
     HashSet<WebCore::RenderingResourceIdentifier> m_gradients;
     HashSet<WebCore::RenderingResourceIdentifier> m_decomposedGlyphs;

@@ -200,5 +200,14 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
     return allocation->cell();
 }
 
+void CompleteSubspace::prepareAllAllocators()
+{
+    for (unsigned i = MarkedSpace::numSizeClasses - 1; i--;) {
+        if (!m_allocatorForSizeStep[i])
+            allocatorForSlow(MarkedSpace::s_sizeClassForSizeStep[i]);
+        ASSERT(m_allocatorForSizeStep[i]);
+    }
+}
+
 } // namespace JSC
 

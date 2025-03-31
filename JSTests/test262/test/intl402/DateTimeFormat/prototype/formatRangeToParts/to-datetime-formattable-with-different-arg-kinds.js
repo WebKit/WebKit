@@ -10,8 +10,8 @@ info: |
   Intl.DateTimeFormat.prototype.formatRangeToParts ( startDate, endDate )
 
   ...
-  4. Let x be ? ToNumberToDateTimeFormattable(startDate).
-  5. Let y be ? ToNumberToDateTimeFormattable(endDate).
+  4. Let x be ? ToDateTimeFormattable(startDate).
+  5. Let y be ? ToDateTimeFormattable(endDate).
   6. Return ? FormatDateTimeRangeToParts(dtf, x, y).
 
   ToDateTimeFormattable ( value )
@@ -26,8 +26,7 @@ info: |
 
   PartitionDateTimeRangePattern ( dateTimeFormat, x, y )
 
-  ...
-  5. If IsTemporalObject(x) is true or IsTemporalObject(y) is true, then
+  1. If IsTemporalObject(x) is true or IsTemporalObject(y) is true, then
     a. If SameTemporalType(x, y) is false, throw a TypeError exception.
   ...
 features: [Temporal]

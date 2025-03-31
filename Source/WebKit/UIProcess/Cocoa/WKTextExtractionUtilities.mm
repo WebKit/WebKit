@@ -88,7 +88,7 @@ inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExt
         if (UNLIKELY(range.location + range.length > data.content.length()))
             return { };
 
-        RetainPtr nsURL = static_cast<NSURL *>(url);
+        RetainPtr nsURL = url.createNSURL();
         if (!nsURL)
             return { };
 
