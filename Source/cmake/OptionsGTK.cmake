@@ -67,6 +67,7 @@ WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
 WEBKIT_OPTION_DEFINE(USE_SPIEL "Whether to enable usage of LibSpiel for speech synthesis." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
+WEBKIT_OPTION_DEFINE(ENABLE_DAMAGE_TRACKING "Wether to enable damage region tracking in the compositor" PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
 

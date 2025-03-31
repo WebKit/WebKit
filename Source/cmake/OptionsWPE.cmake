@@ -111,6 +111,7 @@ WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for 
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(ENABLE_JSC_RESTRICTED_OPTIONS_BY_DEFAULT "Whether to enable dangerous development options in JSC by default." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(ENABLE_DAMAGE_TRACKING "Wether to enable damage region tracking in the compositor" PRIVATE OFF)
 
 WEBKIT_OPTION_CONFLICT(ENABLE_WPE_PLATFORM ENABLE_WPE_1_1_API)
 
@@ -201,6 +202,12 @@ set(WebCore_LIBRARY_TYPE OBJECT)
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
 set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
 set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/wpe-webkit-${WPE_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
+
+if (ENABLE_WPE_PLATFORM)
+  SET_AND_EXPOSE_TO_BUILD(ENABLE_DAMAGE_TRACKING ON)
+else ()
+  SET_AND_EXPOSE_TO_BUILD(ENABLE_DAMAGE_TRACKING OFF)
+endif ()
 
 if (USE_ATK)
     find_package(ATK 2.16.0)
