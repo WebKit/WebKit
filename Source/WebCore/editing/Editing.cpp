@@ -1202,7 +1202,8 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
 
     LayoutRect localRect(rect);
     rendererForCaretPainting->flipForWritingMode(localRect);
-    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), UseTransforms, insideFixed).enclosingBoundingBox();
+    auto absoluteQuad = rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), UseTransforms, insideFixed);
+    return roundedIntRect(absoluteQuad.boundingBox());
 }
 
 HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange& range)
