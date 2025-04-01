@@ -136,6 +136,14 @@ Node* CloneHelper::cloneNodeImpl(BasicBlock* into, Node* node)
             clone->child1() = cloneEdge(node->child1());
             return clone;
         }
+        case Switch: {
+            Node* clone = into->cloneAndAppend(m_graph, node);
+            SwitchData& cloneData = *m_graph.m_switchData.add();
+            cloneData = *clone->switchData();
+            clone->setOpInfo(OpInfo(&cloneData));
+            clone->child1() = cloneEdge(node->child1());
+            return clone;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;

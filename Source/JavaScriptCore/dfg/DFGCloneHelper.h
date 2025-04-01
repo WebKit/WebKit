@@ -116,6 +116,8 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
 }
 
 #define FOR_EACH_NODE_CLONE_STATUS(CLONE_STATUS) \
+    CLONE_STATUS(AllocatePropertyStorage, Common) /* alias of Transition */ \
+    CLONE_STATUS(ArithAbs, Common) \
     CLONE_STATUS(ArithAdd, Common) \
     CLONE_STATUS(ArithBitAnd, Common) \
     CLONE_STATUS(ArithBitLShift, Common) \
@@ -123,47 +125,237 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(ArithBitOr, Common) \
     CLONE_STATUS(ArithBitRShift, Common) \
     CLONE_STATUS(ArithBitXor, Common) \
+    CLONE_STATUS(ArithCeil, Common) \
+    CLONE_STATUS(ArithClz32, Common) \
     CLONE_STATUS(ArithDiv, Common) \
+    CLONE_STATUS(ArithF16Round, Common) \
+    CLONE_STATUS(ArithFloor, Common) \
+    CLONE_STATUS(ArithFRound, Common) \
+    CLONE_STATUS(ArithIMul, Common) \
+    CLONE_STATUS(ArithMax, Common) \
+    CLONE_STATUS(ArithMin, Common) \
     CLONE_STATUS(ArithMod, Common) \
     CLONE_STATUS(ArithMul, Common) \
+    CLONE_STATUS(ArithNegate, Common) \
+    CLONE_STATUS(ArithPow, Common) \
+    CLONE_STATUS(ArithRandom, Common) \
+    CLONE_STATUS(ArithRound, Common) \
+    CLONE_STATUS(ArithSqrt, Common) \
     CLONE_STATUS(ArithSub, Common) \
+    CLONE_STATUS(ArithTrunc, Common) \
+    CLONE_STATUS(ArithUnary, Common) \
+    CLONE_STATUS(ArrayIncludes, Common) \
+    CLONE_STATUS(ArrayIndexOf, Common) \
+    CLONE_STATUS(ArrayPop, Common) \
+    CLONE_STATUS(ArrayPush, Common) \
+    CLONE_STATUS(ArraySlice, Common) \
+    CLONE_STATUS(ArraySplice, Common) \
+    CLONE_STATUS(Arrayify, Common) \
     CLONE_STATUS(ArrayifyToStructure, Common) \
     CLONE_STATUS(AssertNotEmpty, Common) \
     CLONE_STATUS(BitURShift, Common) \
+    CLONE_STATUS(BooleanToNumber, Common) \
+    CLONE_STATUS(BottomValue, Common) \
     CLONE_STATUS(Branch, Special) \
+    CLONE_STATUS(Call, Common) \
+    CLONE_STATUS(CallCustomAccessorGetter, Common) /* alias of CallCustomAccessorData */ \
+    CLONE_STATUS(CallDirectEval, Common) \
+    CLONE_STATUS(CallVarargs, Common) /* alias of CallVarargsData */ \
     CLONE_STATUS(Check, Common) \
     CLONE_STATUS(CheckArray, Common) \
+    CLONE_STATUS(CheckBadValue, Common) \
+    CLONE_STATUS(CheckIdent, Common) \
+    CLONE_STATUS(CheckIsConstant, Common) \
+    CLONE_STATUS(CheckNotEmpty, Common) \
     CLONE_STATUS(CheckStructure, Common) \
+    CLONE_STATUS(CheckStructureOrEmpty, Common) \
     CLONE_STATUS(CheckVarargs, Common) \
+    CLONE_STATUS(CompareBelow, Common) \
+    CLONE_STATUS(CompareBelowEq, Common) \
     CLONE_STATUS(CompareEq, Common) \
+    CLONE_STATUS(CompareEqPtr, Common) \
     CLONE_STATUS(CompareGreater, Common) \
     CLONE_STATUS(CompareGreaterEq, Common) \
     CLONE_STATUS(CompareLess, Common) \
     CLONE_STATUS(CompareLessEq, Common) \
     CLONE_STATUS(CompareStrictEq, Common) \
+    CLONE_STATUS(ConstantStoragePointer, Common) \
+    CLONE_STATUS(Construct, Common) \
+    CLONE_STATUS(ConstructVarargs, Common) /* alias of CallVarargsData */ \
+    CLONE_STATUS(CreateActivation, Common) \
+    CLONE_STATUS(CreateDirectArguments, Common) \
+    CLONE_STATUS(CreateRest, Common) \
+    CLONE_STATUS(DataViewGetByteLength, Common) \
+    CLONE_STATUS(DataViewGetByteLengthAsInt52, Common) \
+    CLONE_STATUS(DataViewGetFloat, Common) \
+    CLONE_STATUS(DataViewGetInt, Common) \
+    CLONE_STATUS(DataViewSet, Common) /* alias of DataViewData */ \
+    CLONE_STATUS(DateGetTime, Common) \
+    CLONE_STATUS(DateSetTime, Common) \
+    CLONE_STATUS(Dec, Common) \
+    CLONE_STATUS(DeleteById, Common) \
+    CLONE_STATUS(DirectCall, Common) \
+    CLONE_STATUS(DirectConstruct, Common) \
+    CLONE_STATUS(DirectTailCallInlinedCaller, Common) \
+    CLONE_STATUS(DoubleAsInt32, Common) \
+    CLONE_STATUS(DoubleConstant, Common) \
     CLONE_STATUS(DoubleRep, Common) \
+    CLONE_STATUS(EnumeratorGetByVal, Common) \
+    CLONE_STATUS(EnumeratorHasOwnProperty, Common) \
+    CLONE_STATUS(EnumeratorNextUpdateIndexAndMode, Common) \
+    CLONE_STATUS(EnumeratorNextUpdatePropertyName, Common) \
+    CLONE_STATUS(EnumeratorPutByVal, Common) \
     CLONE_STATUS(ExitOK, Common) \
+    CLONE_STATUS(ExtractFromTuple, Common) \
     CLONE_STATUS(FilterCallLinkStatus, Common) \
+    CLONE_STATUS(FilterGetByStatus, Common) /* alias of GetByStatus */ \
+    CLONE_STATUS(FilterInByStatus, Common) /* alias of InByStatus */ \
+    CLONE_STATUS(FilterPutByStatus, Common) /* alias of PutByStatus */ \
     CLONE_STATUS(Flush, Common) \
+    CLONE_STATUS(GetArrayLength, Common) \
     CLONE_STATUS(GetButterfly, Common) \
+    CLONE_STATUS(GetById, Common) /* alias GetByIdData */ \
+    CLONE_STATUS(GetByIdFlush, Common) /* alias GetByIdData */ \
+    CLONE_STATUS(GetByIdMegamorphic, Common) /* alias of GetByIdData */ \
+    CLONE_STATUS(GetByIdWithThis, Common) /* alias of GetByIdData */ \
+    CLONE_STATUS(GetByIdWithThisMegamorphic, Common) /* alias of GetByIdData */ \
+    CLONE_STATUS(GetByOffset, Common) /* alias of StorageAccessData */ \
     CLONE_STATUS(GetByVal, Common) \
+    CLONE_STATUS(GetByValMegamorphic, Common) \
+    CLONE_STATUS(GetByValWithThis, Common) \
+    CLONE_STATUS(GetByValWithThisMegamorphic, Common) \
+    CLONE_STATUS(GetClosureVar, Common) \
+    CLONE_STATUS(GetExecutable, Common) \
+    CLONE_STATUS(GetGlobalLexicalVariable, Common) \
+    CLONE_STATUS(GetGlobalVar, Common) \
+    CLONE_STATUS(GetIndexedPropertyStorage, Common) \
+    CLONE_STATUS(GetInternalField, Common) \
     CLONE_STATUS(GetLocal, Common) \
+    CLONE_STATUS(GetPropertyEnumerator, Common) \
+    CLONE_STATUS(GetPrototypeOf, Common) \
+    CLONE_STATUS(GetRegExpObjectLastIndex, Common) \
+    CLONE_STATUS(GetRestLength, Common) \
+    CLONE_STATUS(GetScope, Common) \
+    CLONE_STATUS(GetUndetachedTypeArrayLength, Common) \
+    CLONE_STATUS(GlobalIsNaN, Common) \
+    CLONE_STATUS(HasOwnProperty, Common) \
+    CLONE_STATUS(HasIndexedProperty, Common) \
+    CLONE_STATUS(InById, Common) \
+    CLONE_STATUS(InByVal, Common) \
+    CLONE_STATUS(InByValMegamorphic, Common) \
+    CLONE_STATUS(Inc, Common) \
+    CLONE_STATUS(InstanceOf, Common) \
+    CLONE_STATUS(InstanceOfCustom, Common) \
+    CLONE_STATUS(InstanceOfMegamorphic, Common) \
+    CLONE_STATUS(Int52Constant, Common) \
+    CLONE_STATUS(Int52Rep, Common) \
     CLONE_STATUS(InvalidationPoint, Common) \
+    CLONE_STATUS(IsCellWithType, Common) \
+    CLONE_STATUS(IsEmptyStorage, Common) \
+    CLONE_STATUS(IsNumber, Common) \
+    CLONE_STATUS(IsObject, Common) \
     CLONE_STATUS(JSConstant, Common) \
     CLONE_STATUS(Jump, Common) \
+    CLONE_STATUS(LoadMapValue, Common) \
+    CLONE_STATUS(LoadVarargs, Common) /* alias of LoadVarargsData */ \
+    CLONE_STATUS(LogicalNot, Common) \
     CLONE_STATUS(LoopHint, Common) \
+    CLONE_STATUS(MakeAtomString, Common) \
+    CLONE_STATUS(MakeRope, Common) \
+    CLONE_STATUS(MapGet, Common) \
+    CLONE_STATUS(MapHash, Common) \
+    CLONE_STATUS(MapIteratorKey, Common) \
+    CLONE_STATUS(MapIteratorNext, Common) \
+    CLONE_STATUS(MapIteratorValue, Common) \
+    CLONE_STATUS(MapSet, Common) \
+    CLONE_STATUS(MatchStructure, Common) /* alias of MatchStructureData */ \
     CLONE_STATUS(MovHint, Common) \
+    CLONE_STATUS(MultiGetByOffset, Common) /* alias of MultiGetByOffsetData */ \
+    CLONE_STATUS(MultiPutByOffset, Common) /* alias of MultiPutByOffsetData */ \
+    CLONE_STATUS(NewArray, Common) \
+    CLONE_STATUS(NewArrayBuffer, Common) \
     CLONE_STATUS(NewArrayWithConstantSize, Common) \
     CLONE_STATUS(NewArrayWithSize, Common) \
+    CLONE_STATUS(NewArrayWithSpread, Common) /* alias of BitVector */ \
+    CLONE_STATUS(NewFunction, Common) \
+    CLONE_STATUS(NewInternalFieldObject, Common) \
+    CLONE_STATUS(NewMap, Common) \
+    CLONE_STATUS(NewObject, Common) \
+    CLONE_STATUS(NewRegExp, Common) \
+    CLONE_STATUS(NewRegExpUntyped, Common) \
+    CLONE_STATUS(NewSet, Common) \
+    CLONE_STATUS(NormalizeMapKey, Common) \
+    CLONE_STATUS(NumberToStringWithValidRadixConstant, Common) \
+    CLONE_STATUS(NukeStructureAndSetButterfly, Common) \
+    CLONE_STATUS(ObjectAssign, Common) \
+    CLONE_STATUS(ObjectKeys, Common) \
+    CLONE_STATUS(ObjectToString, Common) \
+    CLONE_STATUS(ParseInt, Common) \
     CLONE_STATUS(PhantomLocal, Common) \
     CLONE_STATUS(Phi, PreCloned) \
     CLONE_STATUS(PurifyNaN, Common) \
+    CLONE_STATUS(PutById, Common) \
+    CLONE_STATUS(PutByIdFlush, Common) \
+    CLONE_STATUS(PutByIdMegamorphic, Common) \
+    CLONE_STATUS(PutByIdWithThis, Common) \
+    CLONE_STATUS(PutByOffset, Common) /* alias of StorageAccessData */ \
     CLONE_STATUS(PutByVal, Common) \
     CLONE_STATUS(PutByValAlias, Common) \
-    CLONE_STATUS(SetArgumentDefinitely, Common) \
+    CLONE_STATUS(PutByValDirect, Common) \
+    CLONE_STATUS(PutByValWithThis, Common) \
+    CLONE_STATUS(PutClosureVar, Common) \
+    CLONE_STATUS(PutGlobalVariable, Common) \
+    CLONE_STATUS(PutInternalField, Common) \
+    CLONE_STATUS(PutStructure, Common) /* alias of Transition */ \
+    CLONE_STATUS(ReallocatePropertyStorage, Common) /* alias of Transition */ \
+    CLONE_STATUS(RegExpTest, Common) \
+    CLONE_STATUS(RegExpTestInline, Common) \
+    CLONE_STATUS(ResolveRope, Common) \
+    CLONE_STATUS(SameValue, Common) \
+    CLONE_STATUS(SetAdd, Common) \
+    CLONE_STATUS(SetArgumentCountIncludingThis, Common) \
+    CLONE_STATUS(SetArgumentDefinitely, Common) /* alias of VariableAccessData */ \
+    CLONE_STATUS(SetArgumentMaybe, Common) /* alias of VariableAccessData */ \
+    CLONE_STATUS(SetCallee, Common) \
     CLONE_STATUS(SetLocal, Common) \
+    CLONE_STATUS(SkipScope, Common) \
+    CLONE_STATUS(Spread, Common) \
+    CLONE_STATUS(StringCharAt, Common) \
+    CLONE_STATUS(StringCharCodeAt, Common) \
+    CLONE_STATUS(StringCodePointAt, Common) \
+    CLONE_STATUS(StringFromCharCode, Common) \
+    CLONE_STATUS(StringIndexOf, Common) \
+    CLONE_STATUS(StringLocaleCompare, Common) \
+    CLONE_STATUS(StringReplace, Common) \
+    CLONE_STATUS(StringReplaceString, Common) \
+    CLONE_STATUS(StringSlice, Common) \
+    CLONE_STATUS(StringSubstring, Common) \
+    CLONE_STATUS(StrCat, Common) \
+    CLONE_STATUS(Switch, Special) \
+    CLONE_STATUS(TailCallForwardVarargsInlinedCaller, Common) /* alias of CallVarargsData */ \
+    CLONE_STATUS(TailCallInlinedCaller, Common) \
+    CLONE_STATUS(TailCallVarargsInlinedCaller, Common) /* alias of CallVarargsData */ \
+    CLONE_STATUS(ToLength, Common) \
+    CLONE_STATUS(ToLowerCase, Common) \
+    CLONE_STATUS(ToPrimitive, Common) \
+    CLONE_STATUS(ToString, Common) \
+    CLONE_STATUS(ToThis, Common) \
+    CLONE_STATUS(TypeOf, Common) \
+    CLONE_STATUS(TypeOfIsFunction, Common) \
+    CLONE_STATUS(TypeOfIsObject, Common) \
+    CLONE_STATUS(TypeOfIsUndefined, Common) \
+    CLONE_STATUS(UInt32ToNumber, Common) \
+    CLONE_STATUS(ValueAdd, Common) \
+    CLONE_STATUS(ValueBitAnd, Common) \
+    CLONE_STATUS(ValueBitLShift, Common) \
+    CLONE_STATUS(ValueBitOr, Common) \
+    CLONE_STATUS(ValueBitRShift, Common) \
+    CLONE_STATUS(ValueBitXor, Common) \
+    CLONE_STATUS(ValueNegate, Common) \
     CLONE_STATUS(ValueRep, Common) \
+    CLONE_STATUS(ValueSub, Common) \
     CLONE_STATUS(ValueToInt32, Common) \
+    CLONE_STATUS(VarargsLength, Common) /* alias of LoadVarargsData */ \
     CLONE_STATUS(ZombieHint, Common)
 
 } } // namespace JSC::DFG

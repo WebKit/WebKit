@@ -450,6 +450,9 @@ public:
 
                 if (!CloneHelper::isNodeCloneable(m_graph, cloneableCache, node)) {
                     dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since D@", node->index(), " with op ", node->op(), " is not cloneable");
+                    if (node->op() != ForceOSRExit) {
+                        // dataLogLn("Function: ", m_graph.m_codeBlock->inferredNameAndHashAsString(), " skipping loop with header ", *data.header(), " since D@", node->index(), " with op ", node->op(), " is not cloneable");
+                    }
                     return false;
                 }
             }
