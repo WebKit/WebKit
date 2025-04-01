@@ -35,6 +35,7 @@
 #include <wtf/text/StringHash.h>
 
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
+typedef struct __CVBuffer* CVPixelBufferRef;
 
 OBJC_CLASS AVCaptureConnection;
 OBJC_CLASS AVCaptureDevice;
@@ -55,6 +56,7 @@ OBJC_CLASS WebCoreAVVideoCaptureSourceObserver;
 
 namespace WebCore {
 
+class ImageRotationSessionVT;
 class ImageTransferSessionVT;
 
 enum class VideoFrameRotation : uint16_t;
@@ -111,6 +113,11 @@ private:
     void applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
+    bool setShouldApplyRotation(bool value) final
+    {
+        m_shouldApplyRotation = value;
+        return true;
+    }
 
     void setSessionSizeFrameRateAndZoom();
     bool setPreset(NSString*);
@@ -121,7 +128,6 @@ private:
     // OrientationNotifier::Observer API
     void orientationChanged(IntDegrees orientation) final;
     void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) final;
-
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
     bool areSettingsMatching() const;
@@ -160,6 +166,8 @@ private:
     RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&);
     IntSize maxPhotoSizeForCurrentPreset(IntSize requestedSize) const;
     AVCapturePhotoOutput* photoOutput();
+
+    RetainPtr<CVPixelBufferRef> rotatePixelBuffer(CVPixelBufferRef, VideoFrameRotation);
 
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
@@ -205,6 +213,13 @@ private:
     int64_t m_defaultTorchMode { 0 };
     OptionSet<RealtimeMediaSourceSettings::Flag> m_pendingSettingsChanges;
     bool m_useSensorAndDeviceOrientation { true };
+
+    bool m_shouldApplyRotation { false };
+    std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
+    VideoFrameRotation m_currentRotationSessionAngle;
+    size_t m_rotatedWidth { 0 };
+    size_t m_rotatedHeight { 0 };
+    OSType m_rotatedFormat { 0 };
 };
 
 } // namespace WebCore

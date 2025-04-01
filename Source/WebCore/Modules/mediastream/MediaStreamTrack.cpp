@@ -32,6 +32,7 @@
 
 #include "CommonAtomStrings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -54,6 +55,7 @@
 #include "Page.h"
 #include "PhotoCapabilities.h"
 #include "PlatformMediaSessionManager.h"
+#include "Quirks.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
@@ -98,6 +100,11 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     if (m_private->isAudio())
         PlatformMediaSessionManager::singleton().addAudioCaptureSource(*this);
+    else {
+        Ref document = downcast<Document>(context);
+        if (document->quirks().shouldCameraTracksApplyRotationQuirk())
+            m_private->source().setShouldApplyRotation(true);
+    }
 }
 
 MediaStreamTrack::~MediaStreamTrack()

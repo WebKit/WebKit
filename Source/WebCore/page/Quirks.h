@@ -139,6 +139,7 @@ public:
     bool shouldEnableLegacyGetUserMediaQuirk() const;
     bool shouldDisableImageCaptureQuirk() const;
     bool shouldEnableSpeakerSelectionPermissionsPolicyQuirk() const;
+    bool shouldCameraTracksApplyRotationQuirk() const;
 #endif
 
     bool needsCanPlayAfterSeekedQuirk() const;
