@@ -444,6 +444,9 @@ public:
 
                 if (!CloneHelper::isNodeCloneable(m_graph, cloneableCache, node)) {
                     dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since D@", node->index(), " with op ", node->op(), " is not cloneable");
+                    if (node->op() != ForceOSRExit) {
+                        // dataLogLn("Function: ", m_graph.m_codeBlock->inferredNameAndHashAsString(), " skipping loop with header ", *data.header(), " since D@", node->index(), " with op ", node->op(), " is not cloneable");
+                    }
                     return false;
                 }
             }
@@ -494,7 +497,7 @@ public:
         //  BodyGraph_1 -----       -- BodyGraph_1  |
         //   |T                         |F          |
         //  Next                       Next <--------
-        auto convertTailBranchToNextJump = [&](BasicBlock* tail, BasicBlock* taken) {
+        auto updateTailBranch = [&](BasicBlock* tail, BasicBlock* taken) {
             BasicBlock* notTaken = next;
             auto* terminal = tail->terminal();
             if (data.isOperandConstant()) {
@@ -510,7 +513,8 @@ public:
                 tail->insertBeforeTerminal(constant);
                 terminal->child1() = Edge(constant, KnownBooleanUse);
                 notTaken = header;
-            }
+            } else if (data.inverseCondition.value())
+                std::swap(taken, notTaken);
 
             terminal->branchData()->taken = BranchTarget(taken);
             terminal->branchData()->notTaken = BranchTarget(notTaken);
@@ -565,7 +569,7 @@ public:
                 if (body == tail) {
                     ASSERT(tail->terminal()->isBranch());
                     bool isTakenNextInPartialMode = taken == next && !data.isOperandConstant();
-                    convertTailBranchToNextJump(clone, isTakenNextInPartialMode ? header : taken);
+                    updateTailBranch(clone, isTakenNextInPartialMode ? header : taken);
                 } else {
                     for (uint32_t i = 0; i < body->numSuccessors(); ++i) {
                         auto& successor = clone->successor(i);
@@ -580,7 +584,7 @@ public:
         }
 
         // 6. Replace the original loop tail branch with a jump to the last header clone.
-        convertTailBranchToNextJump(tail, taken);
+        updateTailBranch(tail, taken);
 
         // Done clone.
         if (!m_blockInsertionSet.execute()) {

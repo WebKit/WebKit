@@ -145,6 +145,7 @@ public:
     UnlinkedCodeBlock* unlinkedCodeBlock() const { return m_unlinkedCode.get(); }
 
     CString inferredName() const;
+    String inferredNameAndHashAsString() const;
     CodeBlockHash hash() const;
     bool hasHash() const;
     bool isSafeToComputeHash() const;
