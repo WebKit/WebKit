@@ -58,6 +58,12 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
 {
     ASSERT_ARG(font, font);
     m_font = font;
+    // If the CTFont size doesn't match the specified size, we must create a new
+    // CTFont with the specified size to avoid inconsistent line spacing incurred
+    // by the original CTFont's attributes.
+    if (CTFontGetSize(m_font.get()) != size)
+        updateSize(size);
+
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font.get()) & kCTFontColorGlyphsTrait;
     m_isSystemFont = WebCore::isSystemFont(font.get());
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font.get(), kCTFontVariationAttribute)));
