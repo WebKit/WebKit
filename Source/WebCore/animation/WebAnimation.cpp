@@ -1123,16 +1123,15 @@ void WebAnimation::finishNotificationSteps()
     //    queue along with its target, animation. For the scheduled event time, use the result of converting animation's target
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
-    if (hasEventListeners(eventNames().finishEvent)) {
-        auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
-            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
-                if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
-                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
-            }
-            return std::nullopt;
-        }();
-        enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), scheduledTime);
-    }
+    auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
+        if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+            if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
+                return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
+        }
+        return std::nullopt;
+    }();
+    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), scheduledTime);
+
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get())) {
         if (RefPtr target = keyframeEffect->target()) {
             if (auto* page = target->document().page())
