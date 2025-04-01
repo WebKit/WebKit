@@ -203,11 +203,12 @@ class SCM:
         self._subclass_must_implement()
 
     def discard_untracked_files(self, discard_ignored_files=False, keep_webkitbuild_directory=False):
+        excluded_files = set(['Tools/Scripts/libraries/autoinstalled', '.vscode'])
         for filename in self.untracked_files(discard_ignored_files):
             if self._filesystem.isdir(filename):
                 if keep_webkitbuild_directory and filename == "WebKitBuild":
                     continue
-                if filename == 'Tools/Scripts/libraries/autoinstalled':
+                if filename in excluded_files:
                     continue
                 self._filesystem.rmtree(filename)
             else:
