@@ -2412,9 +2412,11 @@ void RenderBlockFlow::addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const
         toBlockFlow.createFloatingObjects();
 
     for (auto& floatingObject : m_floatingObjects->set()) {
-        if (toBlockFlow.containsFloat(floatingObject->renderer()))
-            continue;
-        toBlockFlow.m_floatingObjects->add(floatingObject->cloneForNewParent());
+        if (floatingObject->hasValidRenderer()) {
+            auto& renderer = floatingObject->renderer();
+            if (!toBlockFlow.containsFloat(renderer))
+                toBlockFlow.m_floatingObjects->add(floatingObject->cloneForNewParent());
+        }
     }
 }
 

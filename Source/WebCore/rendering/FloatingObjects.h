@@ -53,6 +53,7 @@ public:
 
     Type type() const { return static_cast<Type>(m_type); }
     RenderBox& renderer() const { ASSERT(m_renderer); return *m_renderer; }
+    bool hasValidRenderer() const { return m_renderer.get() != nullptr; }
 
     bool isPlaced() const { return m_isPlaced; }
     void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
