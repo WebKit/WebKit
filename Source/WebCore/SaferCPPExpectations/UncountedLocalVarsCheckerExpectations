@@ -742,7 +742,6 @@ testing/MockCDMFactory.cpp
 testing/MockPageOverlayClient.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
-workers/AbstractWorker.cpp
 workers/Worker.cpp
 workers/WorkerConsoleClient.cpp
 workers/WorkerGlobalScope.cpp

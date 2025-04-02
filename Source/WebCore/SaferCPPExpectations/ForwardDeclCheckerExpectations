@@ -153,7 +153,6 @@ platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 platform/mediastream/mac/CoreAudioSharedUnit.h
 platform/network/cocoa/CredentialCocoa.h
 platform/network/cocoa/ProtectionSpaceCocoa.h
-platform/network/mac/FormDataStreamMac.mm
 platform/sql/SQLiteDatabase.cpp
 platform/sql/SQLiteDatabase.h
 platform/sql/SQLiteStatement.cpp
