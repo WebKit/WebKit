@@ -24,6 +24,7 @@
 import os
 import argparse
 import sys
+from collections import deque
 
 
 def parser():
@@ -41,7 +42,6 @@ def parser():
 
     return parser.parse_args()
 
-
 def filter_jsc_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
     with open(log_file, 'w') as f:
@@ -53,10 +53,9 @@ def filter_jsc_tests(log_file_name):
             elif line.startswith('** The following JSC') or line.startswith('Results'):
                 print_line = True
                 print(line, end='')
+    return print_line
 
-
-def filter_layout_tests(log_file_name):
-    log_file = os.path.abspath(f'{log_file_name}')
+def filter_layout_tests(log_file):
     with open(log_file, 'w') as f:
         print_line = False
         for line in sys.stdin:
@@ -66,10 +65,9 @@ def filter_layout_tests(log_file_name):
             elif line.startswith('=> Results') or 'Exiting early' in line or 'leaks found' in line:
                 print_line = True
                 print(line, end='')
+    return print_line
 
-
-def filter_scan_build(log_file_name):
-    log_file = os.path.abspath(f'{log_file_name}')
+def filter_scan_build(log_file):
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
@@ -82,9 +80,9 @@ def filter_scan_build(log_file_name):
             if line.startswith('**'):
                 print_all_lines = True
                 print(line, end='')
+    return print_all_lines
 
-def filter_webdriver_tests(log_file_name):
-    log_file = os.path.abspath(f'{log_file_name}')
+def filter_webdriver_tests(log_file):
     with open(log_file, 'w') as f:
         print_line = False
         for line in sys.stdin:
@@ -94,18 +92,24 @@ def filter_webdriver_tests(log_file_name):
             if 'tests ran as expected' in line:
                 print_line = True
                 print(line, end='')
+    return print_line
 
 def main():
     args = parser()
+    log_file = os.path.abspath(f'{args.output}')
     if args.filter_type == 'jsc':
-        filter_jsc_tests(args.output)
+        printed_results = filter_jsc_tests(log_file)
     elif args.filter_type == 'layout':
-        filter_layout_tests(args.output)
+        printed_results = filter_layout_tests(log_file)
     elif args.filter_type == 'scan-build':
-        filter_scan_build(args.output)
+        printed_results = filter_scan_build(log_file)
     elif args.filter_type == 'webdriver':
-        filter_webdriver_tests(args.output)
-
+        printed_results = filter_webdriver_tests(args.output)
+    if not printed_results:
+        with open(log_file, 'r') as raw_output:
+            for l in iter(deque(raw_output, maxlen=500)):
+                sys.stdout.write(l)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
