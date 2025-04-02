@@ -6132,12 +6132,13 @@ enum class WebCore::AllowsContentJavaScript : bool
     HTTPSFirst,
     HTTPSOnly,
     HTTPSOnlyExplicitlyBypassedForDomain,
-    FailClosed,
+    FailClosedForUnreachableHosts,
     WebSearchContent,
     FingerprintingProtections,
     EnhancedNetworkPrivacy,
     LinkDecorationFiltering,
     ScriptTelemetry,
+    FailClosedForAllHosts,
 };
 
 enum class WebCore::ViolationReportType : uint8_t {

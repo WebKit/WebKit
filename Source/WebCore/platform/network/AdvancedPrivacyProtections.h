@@ -34,12 +34,13 @@ enum class AdvancedPrivacyProtections : uint16_t {
     HTTPSFirst = 1 << 1,
     HTTPSOnly = 1 << 2,
     HTTPSOnlyExplicitlyBypassedForDomain = 1 << 3,
-    FailClosed = 1 << 4,
+    FailClosedForUnreachableHosts = 1 << 4,
     WebSearchContent = 1 << 5,
     FingerprintingProtections = 1 << 6,
     EnhancedNetworkPrivacy = 1 << 7,
     LinkDecorationFiltering = 1 << 8,
     ScriptTelemetry = 1 << 9,
+    FailClosedForAllHosts = 1 << 10,
 };
 
 }

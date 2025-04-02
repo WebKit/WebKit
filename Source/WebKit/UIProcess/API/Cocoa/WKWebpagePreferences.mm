@@ -650,8 +650,11 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     if (webCorePolicy.contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
 
-    if (webCorePolicy.contains(WebCore::AdvancedPrivacyProtections::FailClosed))
+    if (webCorePolicy.contains(WebCore::AdvancedPrivacyProtections::FailClosedForUnreachableHosts))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed;
+
+    if (webCorePolicy.contains(WebCore::AdvancedPrivacyProtections::FailClosedForAllHosts))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyFailClosedForAllHosts;
 
     if (webCorePolicy.contains(WebCore::AdvancedPrivacyProtections::WebSearchContent))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyWebSearchContent;
@@ -685,7 +688,10 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
         webCorePolicy.add(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
 
     if (advancedPrivacyProtections & _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed)
-        webCorePolicy.add(WebCore::AdvancedPrivacyProtections::FailClosed);
+        webCorePolicy.add(WebCore::AdvancedPrivacyProtections::FailClosedForUnreachableHosts);
+
+    if (advancedPrivacyProtections & _WKWebsiteNetworkConnectionIntegrityPolicyFailClosedForAllHosts)
+        webCorePolicy.add(WebCore::AdvancedPrivacyProtections::FailClosedForAllHosts);
 
     if (advancedPrivacyProtections & _WKWebsiteNetworkConnectionIntegrityPolicyWebSearchContent)
         webCorePolicy.add(WebCore::AdvancedPrivacyProtections::WebSearchContent);
