@@ -56,9 +56,9 @@ public:
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;
-    BasicEffectTiming getBasicTiming(std::optional<WebAnimationTime> = std::nullopt);
+    BasicEffectTiming getBasicTiming();
     ComputedEffectTiming getBindingsComputedTiming();
-    ComputedEffectTiming getComputedTiming(std::optional<WebAnimationTime> = std::nullopt);
+    ComputedEffectTiming getComputedTiming();
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -118,7 +118,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    AnimationEffectTiming::ResolutionData resolutionData(std::optional<WebAnimationTime>) const;
+    AnimationEffectTiming::ResolutionData resolutionData() const;
     void updateComputedTimingPropertiesIfNeeded();
 
     AnimationEffectTiming m_timing;

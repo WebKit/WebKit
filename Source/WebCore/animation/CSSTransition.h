@@ -49,7 +49,6 @@ public:
     const AtomString transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
-    std::optional<Seconds> timelineTimeAtCreation() const { return m_timelineTimeAtCreation; }
     const RenderStyle& targetStyle() const { return *m_targetStyle; }
     const RenderStyle& currentStyle() const { return *m_currentStyle; }
     const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
@@ -59,13 +58,12 @@ private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
-    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
+    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
 
     AnimatableCSSProperty m_property;
     MonotonicTime m_generationTime;
-    Markable<Seconds, Seconds::MarkableTraits> m_timelineTimeAtCreation;
     std::unique_ptr<RenderStyle> m_targetStyle;
     std::unique_ptr<RenderStyle> m_currentStyle;
     std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;

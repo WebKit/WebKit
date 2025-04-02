@@ -133,7 +133,7 @@ public:
     void setBindingsComposite(CompositeOperation);
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    OptionSet<AnimationImpact> apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt);
+    OptionSet<AnimationImpact> apply(RenderStyle& targetStyle, const Style::ResolutionContext&);
     void invalidate();
 
     void animationRelevancyDidChange();

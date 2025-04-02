@@ -53,7 +53,6 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
     : StyleOriginatedAnimation(styleable, backingAnimation)
     , m_property(property)
     , m_generationTime(generationTime)
-    , m_timelineTimeAtCreation(styleable.element.document().timeline().currentTime())
     , m_targetStyle(RenderStyle::clonePtr(targetStyle))
     , m_currentStyle(RenderStyle::clonePtr(oldStyle))
     , m_reversingAdjustedStartStyle(RenderStyle::clonePtr(reversingAdjustedStartStyle))
@@ -63,9 +62,9 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
 
 CSSTransition::~CSSTransition() = default;
 
-OptionSet<AnimationImpact> CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
 {
-    auto impact = StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
+    auto impact = StyleOriginatedAnimation::resolve(targetStyle, resolutionContext);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
     return impact;
 }

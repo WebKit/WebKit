@@ -77,7 +77,7 @@ EffectTiming AnimationEffect::getBindingsTiming() const
     return timing;
 }
 
-AnimationEffectTiming::ResolutionData AnimationEffect::resolutionData(std::optional<WebAnimationTime> startTime) const
+AnimationEffectTiming::ResolutionData AnimationEffect::resolutionData() const
 {
     if (!m_animation)
         return { };
@@ -87,16 +87,16 @@ AnimationEffectTiming::ResolutionData AnimationEffect::resolutionData(std::optio
     return {
         timeline ? timeline->currentTime() : std::nullopt,
         timeline ? timeline->duration() : std::nullopt,
-        startTime ? startTime : animation->startTime(),
-        animation->currentTime(startTime),
+        animation->startTime(),
+        animation->currentTime(),
         animation->playbackRate()
     };
 }
 
-BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<WebAnimationTime> startTime)
+BasicEffectTiming AnimationEffect::getBasicTiming()
 {
     updateComputedTimingPropertiesIfNeeded();
-    return m_timing.getBasicTiming(resolutionData(startTime));
+    return m_timing.getBasicTiming(resolutionData());
 }
 
 ComputedEffectTiming AnimationEffect::getBindingsComputedTiming()
@@ -106,11 +106,11 @@ ComputedEffectTiming AnimationEffect::getBindingsComputedTiming()
     return getComputedTiming();
 }
 
-ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<WebAnimationTime> startTime)
+ComputedEffectTiming AnimationEffect::getComputedTiming()
 {
     updateComputedTimingPropertiesIfNeeded();
 
-    auto data = resolutionData(startTime);
+    auto data = resolutionData();
     auto resolvedTiming = m_timing.resolve(data);
 
     // https://drafts.csswg.org/web-animations-2/#dom-animationeffect-getcomputedtiming

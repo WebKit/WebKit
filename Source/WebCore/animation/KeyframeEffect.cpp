@@ -1649,7 +1649,7 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
         newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
     if (!m_target)
@@ -1657,16 +1657,15 @@ OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const
 
     updateBlendingKeyframes(targetStyle, resolutionContext);
 
-    auto computedTiming = getComputedTiming(startTime);
-    if (!startTime) {
-        if (m_phaseAtLastApplication != computedTiming.phase) {
-            m_phaseAtLastApplication = computedTiming.phase;
-            impact.add(AnimationImpact::RequiresRecomposite);
-        }
+    auto computedTiming = getComputedTiming();
 
-        if (auto target = targetStyleable())
-            InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
+    if (m_phaseAtLastApplication != computedTiming.phase) {
+        m_phaseAtLastApplication = computedTiming.phase;
+        impact.add(AnimationImpact::RequiresRecomposite);
     }
+
+    if (auto target = targetStyleable())
+        InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
 
     if (!computedTiming.progress)
         return impact;

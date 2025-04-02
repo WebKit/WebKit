@@ -594,13 +594,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             auto style = RenderStyle::clone(*lastStyleChangeEventStyle);
             if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
                 for (const auto& effect : keyframeEffectStack->sortedEffects()) {
-                    if (!effectTargetsProperty(*effect))
-                        continue;
-                    auto* effectAnimation = effect->animation();
-                    auto* cssTransition = dynamicDowncast<CSSTransition>(effectAnimation);
-                    ASSERT(document.timeline().currentTime());
-                    bool shouldUseTimelineTimeAtCreation = cssTransition && (!effectAnimation->startTime() || effectAnimation->startTime() == document.timeline().currentTime());
-                    effectAnimation->resolve(style, { nullptr }, shouldUseTimelineTimeAtCreation ? cssTransition->timelineTimeAtCreation() : std::nullopt);
+                    if (effectTargetsProperty(*effect))
+                        Ref { *effect->animation() }->resolve(style, { nullptr });
                 }
             }
             return style;

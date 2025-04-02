@@ -466,12 +466,12 @@ ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<WebAn
     return setCurrentTime(currentTime);
 }
 
-std::optional<WebAnimationTime> WebAnimation::currentTime(std::optional<WebAnimationTime> startTime) const
+std::optional<WebAnimationTime> WebAnimation::currentTime() const
 {
-    return currentTime(RespectHoldTime::Yes, startTime);
+    return currentTime(RespectHoldTime::Yes);
 }
 
-std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<WebAnimationTime> startTime) const
+std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respectHoldTime) const
 {
     // 3.4.4. The current time of an animation
     // https://drafts.csswg.org/web-animations-1/#the-current-time-of-an-animation
@@ -491,7 +491,7 @@ std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respec
         return std::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (*m_timeline->currentTime() - startTime.value_or(*m_startTime)) * m_playbackRate;
+    return (*m_timeline->currentTime() - *m_startTime) * m_playbackRate;
 }
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<WebAnimationTime> seekTime)
@@ -1569,14 +1569,14 @@ void WebAnimation::markAsReady()
     m_pendingStartTime = std::nullopt;
 }
 
-OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
-        return keyframeEffect->apply(targetStyle, resolutionContext, startTime);
+        return keyframeEffect->apply(targetStyle, resolutionContext);
     return { };
 }
 
