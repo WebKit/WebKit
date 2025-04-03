@@ -4325,7 +4325,9 @@
                 "style-builder-custom": "All",
                 "svg": true,
                 "color-property": true,
-                "parser-grammar": "none | <color> | [ <url> [ none | <color> ]? ]",
+                "parser-function": "consumePaint",
+                "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
+                "parser-grammar-unused-reason": "Performance issues.",
                 "parser-grammar-comment": "Current spec grammar is 'none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke'",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
             },
@@ -7315,7 +7317,9 @@
                 "style-builder-custom": "All",
                 "svg": true,
                 "color-property": true,
-                "parser-grammar": "none | <color> | [ <url> [ none | <color> ]? ]",
+                "parser-function": "consumePaint",
+                "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
+                "parser-grammar-unused-reason": "Performance issues.",
                 "parser-grammar-comment": "Current spec grammar is 'none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke'",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
             },
@@ -10485,8 +10489,9 @@
                 "aliases": [
                     "-webkit-text-decoration-line"
                 ],
-                "parser-grammar": "none | [ underline || overline || line-through || blink ]@(no-single-item-opt)",
-                "parser-exported": true
+                "parser-function": "consumeTextDecorationLine",
+                "parser-grammar-unused": "none | [ underline || overline || line-through || blink ]",
+                "parser-grammar-unused-reason": "Performance issues."
             },
             "specification": {
                 "category": "css-text-decor",
@@ -10625,7 +10630,9 @@
             "inherited": true,
             "codegen-properties": {
                 "skip-style-builder": true,
-                "parser-grammar": "none | [ underline || overline || line-through || blink ]@(no-single-item-opt)",
+                "parser-function": "consumeTextDecorationLine",
+                "parser-grammar-unused": "none | [ underline || overline || line-through || blink ]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "comment": "FIXME: Should this be an alias of text-decoration-line?"
             },
             "status": "non-standard"
