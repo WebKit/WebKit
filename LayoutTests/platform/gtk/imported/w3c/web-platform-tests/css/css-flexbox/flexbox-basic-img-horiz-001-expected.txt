@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x200
+  RenderBlock {html} at (0,0) size 800x200
+    RenderBody {body} at (8,8) size 784x184
+      RenderFlexibleBox {div} at (0,0) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 12x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,27) size 200x22 [bgcolor=#90EE90]
+        RenderBlock (anonymous) at (0,0) size 76x22
+          RenderText {#text} at (0,-5) size 76x17
+            text run at (0,-5) width 76: "some words"
+        RenderImage {img} at (188,0) size 12x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,54) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 125x22 [border: (1px dotted #008000)]
+        RenderImage {img} at (124,0) size 76x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,81) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 95x22 [border: (1px dotted #008000)]
+        RenderImage {img} at (95,0) size 105x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,108) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 116x22 [border: (1px dotted #008000)]
+        RenderImage {img} at (116,0) size 84x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,135) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 108x22 [border: (1px dotted #008000)]
+        RenderImage {img} at (108,0) size 92x22 [border: (1px dotted #008000)]
+      RenderFlexibleBox {div} at (0,162) size 200x22 [bgcolor=#90EE90]
+        RenderImage {img} at (0,0) size 48x22 [border: (1px dotted #008000)]
+        RenderImage {img} at (48,0) size 152x22 [border: (1px dotted #008000)]

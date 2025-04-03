@@ -1,0 +1,6 @@
+
+FAIL e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-basis assert_equals: flex-basis should be canonical expected "0%" but got ""
+FAIL e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-grow assert_equals: flex-grow should be canonical expected "sign(1em - 1px)" but got ""
+FAIL e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-shrink assert_equals: flex-shrink should be canonical expected "sibling-index()" but got ""
+FAIL e.style['flex'] = "sign(1em - 1px) sibling-index()" should not set unrelated longhands assert_true: expected true got false
+

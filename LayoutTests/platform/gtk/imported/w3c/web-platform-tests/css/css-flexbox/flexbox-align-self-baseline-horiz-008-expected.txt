@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x387
+  RenderBlock {html} at (0,0) size 800x387
+    RenderBody {body} at (8,8) size 784x0
+      RenderFlexibleBox {div} at (0,0) size 82x379 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (11,1) size 16x87 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 16x87
+            text run at (0,0) width 87: "one line (first)"
+        RenderBlock {div} at (62,88) size 16x86 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 16x86
+            text run at (0,0) width 86: "one line (last)"
+        RenderBlock {div} at (46,174) size 32x132 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 16x22
+            text run at (0,0) width 22: "two"
+          RenderBR {br} at (0,22) size 16x0
+          RenderText {#text} at (16,0) size 16x132
+            text run at (16,0) width 132: "lines and offset (last)"
+        RenderBlock {div} at (11,305) size 16x73 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 16x72
+            text run at (0,0) width 72: "offset (first)"
+      RenderFlexibleBox {div} at (82,0) size 82x379 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (62,1) size 16x87 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 16x87
+            text run at (0,0) width 87: "one line (first)"
+        RenderBlock {div} at (27,88) size 16x86 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 16x86
+            text run at (0,0) width 86: "one line (last)"
+        RenderBlock {div} at (11,174) size 32x132 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 16x22
+            text run at (0,0) width 22: "two"
+          RenderBR {br} at (0,22) size 16x0
+          RenderText {#text} at (16,0) size 16x132
+            text run at (16,0) width 132: "lines and offset (last)"
+        RenderBlock {div} at (62,305) size 16x73 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 16x72
+            text run at (0,0) width 72: "offset (first)"

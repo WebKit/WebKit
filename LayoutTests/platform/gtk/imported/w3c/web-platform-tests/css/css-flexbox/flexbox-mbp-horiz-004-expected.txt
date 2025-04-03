@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x230
+  RenderBlock {html} at (0,0) size 800x230
+    RenderBody {body} at (8,8) size 784x214
+      RenderFlexibleBox {div} at (0,0) size 202x52 [border: (1px dotted #000000)]
+        RenderBlock {div} at (1,1) size 26x34 [bgcolor=#90EE90]
+          RenderBlock {div} at (4,16) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (27,1) size 50x42 [bgcolor=#800080]
+          RenderBlock {div} at (24,12) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (85,21) size 10x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (139,17) size 10x10 [bgcolor=#800080]
+      RenderFlexibleBox {div} at (0,54) size 202x52 [border: (1px dotted #000000)]
+        RenderBlock {div} at (1,1) size 26x34 [bgcolor=#90EE90]
+          RenderBlock {div} at (4,16) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (27,1) size 50x42 [bgcolor=#800080]
+          RenderBlock {div} at (24,12) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (85,21) size 10x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (139,17) size 10x10 [bgcolor=#800080]
+      RenderFlexibleBox {div} at (0,108) size 202x52 [border: (1px dotted #000000)]
+        RenderBlock {div} at (1,17) size 26x34 [bgcolor=#90EE90]
+          RenderBlock {div} at (4,16) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (27,9) size 50x42 [bgcolor=#800080]
+          RenderBlock {div} at (24,12) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (85,29) size 10x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (139,17) size 10x10 [bgcolor=#800080]
+      RenderFlexibleBox {div} at (0,162) size 202x52 [border: (1px dotted #000000)]
+        RenderBlock {div} at (9,21) size 26x34 [bgcolor=#90EE90]
+          RenderBlock {div} at (4,16) size 10x10 [bgcolor=#D3D3D3]
+        RenderBlock {div} at (79,17) size 50x42 [bgcolor=#800080]
+          RenderBlock {div} at (24,12) size 10x10 [bgcolor=#D3D3D3]

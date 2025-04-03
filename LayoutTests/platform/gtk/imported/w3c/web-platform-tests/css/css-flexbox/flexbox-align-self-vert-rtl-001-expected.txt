@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x324
+  RenderBlock {html} at (0,0) size 800x324
+    RenderBody {body} at (8,8) size 784x308
+      RenderFlexibleBox {div} at (0,0) size 202x308 [border: (1px solid #0000FF)]
+        RenderBlock {div} at (181,1) size 20x11 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 20x11
+            text run at (0,0) width 20: "start"
+        RenderBlock {div} at (151,12) size 50x46 [bgcolor=#00FF00]
+          RenderText {#text} at (6,0) size 44x45
+            text run at (6,0) width 44: "a b c"
+            text run at (10,23) width 40: "d e f"
+        RenderBlock {div} at (1,58) size 18x11 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 18x11
+            text run at (0,0) width 18: "end"
+        RenderBlock {div} at (1,69) size 50x46 [bgcolor=#FFA500]
+          RenderText {#text} at (6,0) size 44x45
+            text run at (6,0) width 44: "a b c"
+            text run at (10,23) width 40: "d e f"
+        RenderBlock {div} at (86,115) size 30x11 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,0) size 29x11
+            text run at (0,0) width 29: "center"
+        RenderBlock {div} at (76,126) size 50x46 [bgcolor=#ADD8E6]
+          RenderText {#text} at (6,0) size 44x45
+            text run at (6,0) width 44: "a b c"
+            text run at (10,23) width 40: "d e f"
+        RenderBlock {div} at (28,172) size 23x11 [bgcolor=#008080]
+          RenderText {#text} at (0,0) size 23x11
+            text run at (0,0) width 23: "base"
+        RenderBlock {div} at (1,183) size 50x23 [bgcolor=#008080]
+          RenderText {#text} at (18,0) size 32x22
+            text run at (18,0) width 32: "abc"
+        RenderBlock {div} at (1,206) size 200x11 [bgcolor=#FFC0CB]
+          RenderText {#text} at (169,0) size 31x11
+            text run at (169,0) width 31: "stretch"
+        RenderBlock {div} at (151,217) size 50x46 [bgcolor=#FFC0CB]
+          RenderText {#text} at (6,0) size 44x45
+            text run at (6,0) width 44: "a b c"
+            text run at (10,23) width 40: "d e f"
+        RenderBlock {div} at (90,263) size 22x11 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 21x11
+            text run at (0,0) width 21: "auto"
+        RenderBlock {div} at (84,274) size 34x11 [bgcolor=#90EE90]
+          RenderText {#text} at (0,0) size 34x11
+            text run at (0,0) width 34: "unspec"
+        RenderBlock {div} at (89,285) size 24x11 [bgcolor=#00FFFF]
+          RenderText {#text} at (0,0) size 23x11
+            text run at (0,0) width 23: "initial"
+        RenderBlock {div} at (1,296) size 28x11 [bgcolor=#EE82EE]
+          RenderText {#text} at (0,0) size 28x11
+            text run at (0,0) width 28: "inherit"

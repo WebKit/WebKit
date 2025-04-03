@@ -1,0 +1,95 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x218
+  RenderBlock {html} at (0,0) size 800x218
+    RenderBody {body} at (8,8) size 784x202
+      RenderFlexibleBox {div} at (0,0) size 562x202 [border: (1px dashed #0000FF)]
+        RenderTable {div} at (1,1) size 40x10 [bgcolor=#00FF00]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 17x11
+                  text run at (0,-1) width 17: "start"
+        RenderTable {div} at (41,1) size 40x100 [bgcolor=#00FF00]
+          RenderTableSection (anonymous) at (0,0) size 40x100
+            RenderTableRow (anonymous) at (0,0) size 40x100
+              RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 38x42
+                  text run at (0,-1) width 38: "a b c"
+                  text run at (0,19) width 36: "d e f"
+        RenderTable {div} at (81,191) size 40x10 [bgcolor=#FFA500]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 14x11
+                  text run at (0,-1) width 14: "end"
+        RenderTable {div} at (121,101) size 40x100 [bgcolor=#FFA500]
+          RenderTableSection (anonymous) at (0,0) size 40x100
+            RenderTableRow (anonymous) at (0,0) size 40x100
+              RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 38x42
+                  text run at (0,-1) width 38: "a b c"
+                  text run at (0,19) width 36: "d e f"
+        RenderTable {div} at (161,96) size 40x10 [bgcolor=#ADD8E6]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 23x11
+                  text run at (0,-1) width 23: "center"
+        RenderTable {div} at (201,51) size 40x100 [bgcolor=#ADD8E6]
+          RenderTableSection (anonymous) at (0,0) size 40x100
+            RenderTableRow (anonymous) at (0,0) size 40x100
+              RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 38x42
+                  text run at (0,-1) width 38: "a b c"
+                  text run at (0,19) width 36: "d e f"
+        RenderTable {div} at (241,10) size 40x10 [bgcolor=#008080]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 17x11
+                  text run at (0,-1) width 17: "base"
+        RenderTable {div} at (281,1) size 40x100 [bgcolor=#008080]
+          RenderTableSection (anonymous) at (0,0) size 40x100
+            RenderTableRow (anonymous) at (0,0) size 40x100
+              RenderTableCell (anonymous) at (0,0) size 40x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 28x22
+                  text run at (0,-1) width 28: "abc"
+        RenderTable {div} at (321,1) size 40x200 [bgcolor=#FFC0CB]
+          RenderTableSection (anonymous) at (0,0) size 40x200
+            RenderTableRow (anonymous) at (0,0) size 40x200
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 26x11
+                  text run at (0,-1) width 26: "stretch"
+        RenderTable {div} at (361,1) size 40x100 [bgcolor=#FFC0CB]
+          RenderTableSection (anonymous) at (0,0) size 40x100
+            RenderTableRow (anonymous) at (0,0) size 40x100
+              RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 38x42
+                  text run at (0,-1) width 38: "a b c"
+                  text run at (0,19) width 36: "d e f"
+        RenderTable {div} at (401,96) size 40x10 [bgcolor=#FFFF00]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 17x11
+                  text run at (0,-1) width 17: "auto"
+        RenderTable {div} at (441,96) size 40x10 [bgcolor=#90EE90]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 27x11
+                  text run at (0,-1) width 27: "unspec"
+        RenderTable {div} at (481,96) size 40x10 [bgcolor=#00FFFF]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 24x11
+                  text run at (0,-1) width 24: "initial"
+        RenderTable {div} at (521,191) size 40x10 [bgcolor=#EE82EE]
+          RenderTableSection (anonymous) at (0,0) size 40x10
+            RenderTableRow (anonymous) at (0,0) size 40x10
+              RenderTableCell (anonymous) at (0,0) size 40x10 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,-1) size 26x11
+                  text run at (0,-1) width 26: "inherit"
+      RenderText {#text} at (0,0) size 0x0

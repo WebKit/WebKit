@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {html} at (0,0) size 800x120
+    RenderBody {body} at (8,8) size 784x104
+      RenderFlexibleBox {div} at (0,0) size 784x52 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 17x40 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 16x33
+            text run at (0,0) width 33: "ortho"
+        RenderBlock {div} at (18,28) size 50x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 50x16
+            text run at (0,0) width 50: "one line"
+        RenderBlock {div} at (68,28) size 29x32 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 22x16
+            text run at (0,0) width 22: "two"
+          RenderBR {br} at (22,0) size 0x16
+          RenderText {#text} at (0,16) size 29x16
+            text run at (0,16) width 29: "lines"
+        RenderBlock {div} at (97,28) size 35x16 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 35x16
+            text run at (0,0) width 35: "offset"
+      RenderFlexibleBox {div} at (0,52) size 784x52 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,5) size 17x40 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 16x33
+            text run at (0,0) width 33: "ortho"
+        RenderBlock {div} at (18,32) size 50x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 50x16
+            text run at (0,0) width 50: "one line"
+        RenderBlock {div} at (68,16) size 29x32 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 22x16
+            text run at (0,0) width 22: "two"
+          RenderBR {br} at (22,0) size 0x16
+          RenderText {#text} at (0,16) size 29x16
+            text run at (0,16) width 29: "lines"
+        RenderBlock {div} at (97,32) size 35x16 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 35x16
+            text run at (0,0) width 35: "offset"

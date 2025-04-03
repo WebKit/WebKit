@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {html} at (0,0) size 800x120
+    RenderBody {body} at (8,8) size 784x104
+      RenderFlexibleBox {div} at (0,0) size 90x104
+        RenderBlock {div} at (0,0) size 30x30 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 13x27
+            text run at (1,1) width 13: "a"
+        RenderBlock {div} at (30,15) size 30x11 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 4x9
+            text run at (1,1) width 4: "b"
+        RenderBlock {div} at (60,9) size 30x18 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 7x16
+            text run at (1,1) width 7: "c"
+        RenderBlock {div} at (0,30) size 30x28 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,11) size 8x16
+            text run at (1,11) width 8: "d"
+        RenderBlock {div} at (30,40) size 30x18 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 8x16
+            text run at (1,1) width 8: "e"
+        RenderBlock {div} at (60,30) size 30x36 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 4x16
+            text run at (1,1) width 4: "f"
+        RenderBlock {div} at (0,86) size 30x11 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 4x9
+            text run at (1,1) width 4: "g"
+        RenderBlock {div} at (30,71) size 30x30 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 13x27
+            text run at (1,1) width 13: "h"
+        RenderBlock {div} at (60,80) size 30x24 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 3x16
+            text run at (1,1) width 3: "i"

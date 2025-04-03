@@ -1,0 +1,113 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x464
+  RenderBlock {html} at (0,0) size 800x464
+    RenderBody {body} at (8,8) size 784x446
+      RenderFlexibleBox {div} at (0,0) size 402x142 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,131) size 40x10 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "start"
+        RenderBlock {div} at (41,61) size 40x80 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (81,131) size 40x10 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 14x11
+            text run at (0,-1) width 14: "end"
+        RenderBlock {div} at (121,61) size 40x80 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (161,131) size 40x10 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 23x11
+            text run at (0,-1) width 23: "center"
+        RenderBlock {div} at (201,61) size 40x80 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (241,131) size 40x10 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "base"
+        RenderBlock {div} at (281,61) size 40x80 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (321,131) size 40x10 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 26x11
+            text run at (0,-1) width 26: "stretch"
+        RenderBlock {div} at (361,61) size 40x80 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+      RenderFlexibleBox {div} at (0,152) size 402x142 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 40x10 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "start"
+        RenderBlock {div} at (41,1) size 40x80 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (81,1) size 40x10 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 14x11
+            text run at (0,-1) width 14: "end"
+        RenderBlock {div} at (121,1) size 40x80 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (161,1) size 40x10 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 23x11
+            text run at (0,-1) width 23: "center"
+        RenderBlock {div} at (201,1) size 40x80 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (241,1) size 40x10 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "base"
+        RenderBlock {div} at (281,1) size 40x80 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (321,1) size 40x10 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 26x11
+            text run at (0,-1) width 26: "stretch"
+        RenderBlock {div} at (361,1) size 40x80 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+      RenderFlexibleBox {div} at (0,304) size 402x142 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,66) size 40x10 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "start"
+        RenderBlock {div} at (41,31) size 40x80 [bgcolor=#00FF00]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (81,66) size 40x10 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 14x11
+            text run at (0,-1) width 14: "end"
+        RenderBlock {div} at (121,31) size 40x80 [bgcolor=#FFA500]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (161,66) size 40x10 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 23x11
+            text run at (0,-1) width 23: "center"
+        RenderBlock {div} at (201,31) size 40x80 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (241,66) size 40x10 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 17x11
+            text run at (0,-1) width 17: "base"
+        RenderBlock {div} at (281,31) size 40x80 [bgcolor=#008080]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"
+        RenderBlock {div} at (321,66) size 40x10 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 26x11
+            text run at (0,-1) width 26: "stretch"
+        RenderBlock {div} at (361,31) size 40x80 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 38x42
+            text run at (0,-1) width 38: "a b c"
+            text run at (0,19) width 36: "d e f"

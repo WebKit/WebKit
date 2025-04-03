@@ -1,0 +1,71 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x260
+  RenderBlock {html} at (0,0) size 800x260
+    RenderBody {body} at (8,8) size 784x244
+      RenderFlexibleBox {div} at (0,0) size 784x122 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,30) size 56x16 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 56x16
+            text run at (0,0) width 56: "blk_1line"
+        RenderBlock {div} at (57,30) size 37x32 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 18x16
+            text run at (0,0) width 18: "blk"
+          RenderBR {br} at (18,0) size 0x16
+          RenderText {#text} at (0,16) size 37x16
+            text run at (0,16) width 37: "2lines"
+        RenderBlock {div} at (94,27) size 31x20 [bgcolor=#FFA500]
+          RenderInline {span} at (0,0) size 31x14
+            RenderText {#text} at (0,0) size 31x14
+              text run at (0,0) width 31: "super"
+        RenderBlock {div} at (125,30) size 20x20 [bgcolor=#FFC0CB]
+          RenderInline {span} at (0,5) size 20x15
+            RenderText {#text} at (0,5) size 20x15
+              text run at (0,5) width 20: "sub"
+        RenderBlock {div} at (145,21) size 61x100 [bgcolor=#00FFFF]
+          RenderText {#text} at (0,0) size 31x27
+            text run at (0,0) width 31: "big"
+          RenderBR {br} at (31,0) size 0x27
+          RenderText {#text} at (0,28) size 39x27
+            text run at (0,28) width 39: "text"
+          RenderBR {br} at (39,28) size 0x27
+          RenderText {#text} at (0,56) size 61x27
+            text run at (0,56) width 61: "3lines"
+        RenderBlock {i} at (206,30) size 18x32 [bgcolor=#D2B48C]
+          RenderText {#text} at (0,0) size 18x16
+            text run at (0,0) width 18: "ital"
+          RenderBR {br} at (18,0) size 0x16
+          RenderText {#text} at (0,16) size 10x16
+            text run at (0,16) width 10: "ic"
+      RenderFlexibleBox {div} at (0,122) size 784x122 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,86) size 56x16 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 56x16
+            text run at (0,0) width 56: "blk_1line"
+        RenderBlock {div} at (57,70) size 37x32 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 18x16
+            text run at (0,0) width 18: "blk"
+          RenderBR {br} at (18,0) size 0x16
+          RenderText {#text} at (0,16) size 37x16
+            text run at (0,16) width 37: "2lines"
+        RenderBlock {div} at (94,83) size 31x20 [bgcolor=#FFA500]
+          RenderInline {span} at (0,0) size 31x14
+            RenderText {#text} at (0,0) size 31x14
+              text run at (0,0) width 31: "super"
+        RenderBlock {div} at (125,86) size 20x20 [bgcolor=#FFC0CB]
+          RenderInline {span} at (0,5) size 20x15
+            RenderText {#text} at (0,5) size 20x15
+              text run at (0,5) width 20: "sub"
+        RenderBlock {div} at (145,21) size 61x100 [bgcolor=#00FFFF]
+          RenderText {#text} at (0,0) size 31x27
+            text run at (0,0) width 31: "big"
+          RenderBR {br} at (31,0) size 0x27
+          RenderText {#text} at (0,28) size 39x27
+            text run at (0,28) width 39: "text"
+          RenderBR {br} at (39,28) size 0x27
+          RenderText {#text} at (0,56) size 61x27
+            text run at (0,56) width 61: "3lines"
+        RenderBlock {i} at (206,70) size 18x32 [bgcolor=#D2B48C]
+          RenderText {#text} at (0,0) size 18x16
+            text run at (0,0) width 18: "ital"
+          RenderBR {br} at (18,0) size 0x16
+          RenderText {#text} at (0,16) size 10x16
+            text run at (0,16) width 10: "ic"

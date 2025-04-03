@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {html} at (0,0) size 800x76
+    RenderBody {body} at (8,8) size 784x60
+      RenderFlexibleBox {div} at (0,0) size 202x20 [border: (1px dashed #0000FF)]
+        RenderBlock {td} at (27,1) size 48x18 [bgcolor=#90EE90]
+          RenderText {#text} at (0,0) size 30x17
+            text run at (0,0) width 30: "cell1"
+        RenderBlock {td} at (127,1) size 48x18 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 30x17
+            text run at (0,0) width 30: "cell2"
+      RenderFlexibleBox {div} at (0,20) size 202x20 [border: (1px dashed #0000FF)]
+        RenderBlock {td} at (27,1) size 48x18 [bgcolor=#90EE90]
+          RenderText {#text} at (0,0) size 30x17
+            text run at (0,0) width 30: "cell1"
+        RenderBlock {tbody} at (127,1) size 48x18 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 4x17
+            text run at (0,0) width 4: "t"
+      RenderFlexibleBox {div} at (0,40) size 202x20 [border: (1px dashed #0000FF)]
+        RenderBlock {td} at (39,1) size 0x18
+        RenderBlock {td} at (115,1) size 48x18 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 30x17
+            text run at (0,0) width 30: "cell1"

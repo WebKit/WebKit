@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x322
+  RenderBlock {html} at (0,0) size 800x322
+    RenderBody {body} at (8,8) size 784x306
+      RenderFlexibleBox {div} at (0,0) size 202x102 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (86,1) size 30x100 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,102) size 202x102 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (38,1) size 31x100 [bgcolor=#90EE90]
+        RenderBlock {div} at (143,1) size 21x100 [bgcolor=#ADD8E6]
+      RenderFlexibleBox {div} at (0,204) size 202x102 [border: (1px dashed #0000FF)]
+        RenderImage {img} at (31,1) size 40x100
+        RenderImage {img} at (131,1) size 40x100

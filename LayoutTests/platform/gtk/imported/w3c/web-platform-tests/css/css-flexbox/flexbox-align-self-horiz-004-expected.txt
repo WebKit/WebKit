@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x320
+  RenderBlock {html} at (0,0) size 800x320
+    RenderBody {body} at (8,8) size 784x304
+      RenderFlexibleBox {div} at (0,20) size 392x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (8,5) size 58x24 [bgcolor=#00FF00] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 20x11
+            text run at (11,4) width 20: "start"
+        RenderBlock {div} at (72,5) size 58x114 [bgcolor=#00FF00] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 28x62
+            text run at (11,4) width 28: "a b"
+            text run at (11,24) width 27: "c d"
+            text run at (11,44) width 23: "e f"
+        RenderBlock {div} at (136,-19) size 58x24 [bgcolor=#FFA500] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 18x11
+            text run at (11,4) width 18: "end"
+        RenderBlock {div} at (200,-109) size 58x114 [bgcolor=#FFA500] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 28x62
+            text run at (11,4) width 28: "a b"
+            text run at (11,24) width 27: "c d"
+            text run at (11,44) width 23: "e f"
+        RenderBlock {div} at (264,-7) size 58x24 [bgcolor=#ADD8E6] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 29x11
+            text run at (11,4) width 29: "center"
+        RenderBlock {div} at (328,-52) size 58x114 [bgcolor=#ADD8E6] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 28x62
+            text run at (11,4) width 28: "a b"
+            text run at (11,24) width 27: "c d"
+            text run at (11,44) width 23: "e f"
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {br} at (392,0) size 0x17
+      RenderFlexibleBox {div} at (0,172) size 264x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (8,14) size 58x24 [bgcolor=#008080] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 23x11
+            text run at (11,4) width 23: "base"
+        RenderBlock {div} at (72,5) size 58x114 [bgcolor=#008080] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 32x22
+            text run at (11,4) width 32: "abc"
+        RenderBlock {div} at (136,5) size 58x16 [bgcolor=#FFC0CB] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 31x11
+            text run at (11,4) width 31: "stretch"
+        RenderBlock {div} at (200,5) size 58x114 [bgcolor=#FFC0CB] [border: (2px dotted #000000) (3px dotted #000000) (4px dotted #000000) (5px dotted #000000)]
+          RenderText {#text} at (11,4) size 28x62
+            text run at (11,4) width 28: "a b"
+            text run at (11,24) width 27: "c d"
+            text run at (11,44) width 23: "e f"
+      RenderText {#text} at (0,0) size 0x0

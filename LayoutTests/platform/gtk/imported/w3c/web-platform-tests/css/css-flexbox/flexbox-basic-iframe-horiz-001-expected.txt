@@ -1,0 +1,87 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x200
+  RenderBlock {html} at (0,0) size 800x200
+    RenderBody {body} at (8,8) size 784x184
+      RenderFlexibleBox {div} at (0,0) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 12x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 10x20
+            RenderView at (0,0) size 10x20
+          layer at (0,0) size 10x20
+            RenderBlock {HTML} at (0,0) size 10x20
+              RenderBody {BODY} at (8,8) size 0x4
+      RenderFlexibleBox {div} at (0,27) size 200x22 [bgcolor=#90EE90]
+        RenderBlock (anonymous) at (0,0) size 76x22
+          RenderText {#text} at (0,-5) size 76x17
+            text run at (0,-5) width 76: "some words"
+        RenderIFrame {iframe} at (188,0) size 12x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 10x20
+            RenderView at (0,0) size 10x20
+          layer at (0,0) size 10x20
+            RenderBlock {HTML} at (0,0) size 10x20
+              RenderBody {BODY} at (8,8) size 0x4
+      RenderFlexibleBox {div} at (0,54) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 125x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 123x20
+            RenderView at (0,0) size 123x20
+          layer at (0,0) size 123x20
+            RenderBlock {HTML} at (0,0) size 123x20
+              RenderBody {BODY} at (8,8) size 107x4
+        RenderIFrame {iframe} at (124,0) size 76x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 74x20
+            RenderView at (0,0) size 74x20
+          layer at (0,0) size 74x20
+            RenderBlock {HTML} at (0,0) size 74x20
+              RenderBody {BODY} at (8,8) size 58x4
+      RenderFlexibleBox {div} at (0,81) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 95x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 93x20
+            RenderView at (0,0) size 93x20
+          layer at (0,0) size 93x20
+            RenderBlock {HTML} at (0,0) size 93x20
+              RenderBody {BODY} at (8,8) size 77x4
+        RenderIFrame {iframe} at (95,0) size 105x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 103x20
+            RenderView at (0,0) size 103x20
+          layer at (0,0) size 103x20
+            RenderBlock {HTML} at (0,0) size 103x20
+              RenderBody {BODY} at (8,8) size 87x4
+      RenderFlexibleBox {div} at (0,108) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 116x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 114x20
+            RenderView at (0,0) size 114x20
+          layer at (0,0) size 114x20
+            RenderBlock {HTML} at (0,0) size 114x20
+              RenderBody {BODY} at (8,8) size 98x4
+        RenderIFrame {iframe} at (116,0) size 84x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 82x20
+            RenderView at (0,0) size 82x20
+          layer at (0,0) size 82x20
+            RenderBlock {HTML} at (0,0) size 82x20
+              RenderBody {BODY} at (8,8) size 66x4
+      RenderFlexibleBox {div} at (0,135) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 108x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 106x20
+            RenderView at (0,0) size 106x20
+          layer at (0,0) size 106x20
+            RenderBlock {HTML} at (0,0) size 106x20
+              RenderBody {BODY} at (8,8) size 90x4
+        RenderIFrame {iframe} at (108,0) size 92x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 90x20
+            RenderView at (0,0) size 90x20
+          layer at (0,0) size 90x20
+            RenderBlock {HTML} at (0,0) size 90x20
+              RenderBody {BODY} at (8,8) size 74x4
+      RenderFlexibleBox {div} at (0,162) size 200x22 [bgcolor=#90EE90]
+        RenderIFrame {iframe} at (0,0) size 48x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 46x20
+            RenderView at (0,0) size 46x20
+          layer at (0,0) size 46x20
+            RenderBlock {HTML} at (0,0) size 46x20
+              RenderBody {BODY} at (8,8) size 30x4
+        RenderIFrame {iframe} at (48,0) size 152x22 [border: (1px dotted #008000)]
+          layer at (0,0) size 150x20
+            RenderView at (0,0) size 150x20
+          layer at (0,0) size 150x20
+            RenderBlock {HTML} at (0,0) size 150x20
+              RenderBody {BODY} at (8,8) size 134x4

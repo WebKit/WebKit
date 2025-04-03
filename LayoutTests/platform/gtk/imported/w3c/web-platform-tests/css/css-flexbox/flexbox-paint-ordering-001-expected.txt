@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {html} at (0,0) size 800x116
+    RenderBody {body} at (8,8) size 784x100
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderFlexibleBox {div} at (0,0) size 44x18 [border: (2px solid #008000)]
+          RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+            RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+          RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderFlexibleBox {div} at (0,20) size 44x18 [border: (2px solid #008000)]
+        RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+          RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+        RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]
+      RenderFlexibleBox {div} at (0,40) size 44x18 [border: (2px solid #008000)]
+        RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+          RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+        RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]
+      RenderBlock {div} at (0,60) size 784x0
+      RenderBlock {div} at (0,80) size 784x20
+layer at (8,68) size 44x18
+  RenderFlexibleBox {div} at (0,60) size 44x18 [border: (2px solid #008000)]
+    RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+      RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+    RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]
+layer at (8,88) size 44x18
+  RenderFlexibleBox {div} at (8,88) size 44x18 [border: (2px solid #008000)]
+    RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+      RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+    RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]
+layer at (8,108) size 44x18
+  RenderFlexibleBox {div} at (8,108) size 44x18 [border: (2px solid #008000)]
+    RenderBlock {div} at (2,2) size 20x14 [bgcolor=#0000FF] [border: (2px solid #ADD8E6)]
+      RenderBlock {div} at (12,4) size 18x8 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+    RenderBlock {div} at (22,2) size 20x14 [bgcolor=#800080] [border: (2px solid #6A5ACD)]

@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x152
+  RenderBlock {html} at (0,0) size 800x152
+    RenderBody {body} at (8,8) size 784x136
+      RenderFlexibleBox {div} at (0,0) size 202x13 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x11
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"
+      RenderFlexibleBox {div} at (0,18) size 202x13 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x11
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"
+      RenderFlexibleBox {div} at (0,36) size 202x13 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x11
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"
+      RenderFlexibleBox {div} at (0,54) size 202x32 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x30
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"
+      RenderFlexibleBox {div} at (0,91) size 202x8 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x6
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"
+      RenderFlexibleBox {div} at (0,104) size 202x32 [bgcolor=#90EE90] [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 200x30
+          RenderText {#text} at (0,0) size 15x11
+            text run at (0,0) width 15: "text"

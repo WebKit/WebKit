@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x178
+  RenderBlock {html} at (0,0) size 800x178
+    RenderBody {body} at (8,8) size 784x162
+      RenderFlexibleBox {div} at (80,0) size 6x162 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (-15,1) size 20x11 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 20x11
+            text run at (0,0) width 20: "start"
+        RenderBlock {div} at (-45,12) size 50x21 [bgcolor=#00FF00]
+          RenderText {#text} at (25,0) size 25x20
+            text run at (25,0) width 25: "a b"
+        RenderBlock {div} at (1,33) size 18x11 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 18x11
+            text run at (0,0) width 18: "end"
+        RenderBlock {div} at (1,44) size 50x21 [bgcolor=#FFA500]
+          RenderText {#text} at (25,0) size 25x20
+            text run at (25,0) width 25: "a b"
+        RenderBlock {div} at (-12,65) size 30x11 [bgcolor=#ADD8E6]
+          RenderText {#text} at (0,0) size 29x11
+            text run at (0,0) width 29: "center"
+        RenderBlock {div} at (-22,76) size 50x21 [bgcolor=#ADD8E6]
+          RenderText {#text} at (25,0) size 25x20
+            text run at (25,0) width 25: "a b"
+        RenderBlock {div} at (28,97) size 23x11 [bgcolor=#008080]
+          RenderText {#text} at (0,0) size 23x11
+            text run at (0,0) width 23: "base"
+        RenderBlock {div} at (1,108) size 50x21 [bgcolor=#008080]
+          RenderText {#text} at (21,0) size 29x20
+            text run at (21,0) width 29: "abc"
+        RenderBlock {div} at (1,129) size 4x11 [bgcolor=#FFC0CB]
+          RenderText {#text} at (-27,0) size 31x11
+            text run at (-27,0) width 31: "stretch"
+        RenderBlock {div} at (-45,140) size 50x21 [bgcolor=#FFC0CB]
+          RenderText {#text} at (25,0) size 25x20
+            text run at (25,0) width 25: "a b"

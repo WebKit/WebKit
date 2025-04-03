@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x112
+  RenderBlock {html} at (0,0) size 800x112
+    RenderBody {body} at (8,8) size 784x96
+      RenderFlexibleBox {div} at (0,0) size 784x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 60x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (61,1) size 60x10 [bgcolor=#800080]
+        RenderBlock {div} at (121,1) size 60x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,14) size 784x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 60x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (61,1) size 60x10 [bgcolor=#800080]
+        RenderBlock {div} at (121,1) size 60x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,28) size 302x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 60x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (61,1) size 60x10 [bgcolor=#800080]
+        RenderBlock {div} at (121,1) size 60x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,42) size 72x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 10x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (11,1) size 40x10 [bgcolor=#800080]
+        RenderBlock {div} at (51,1) size 20x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,56) size 22x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 0x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (1,1) size 40x10 [bgcolor=#800080]
+        RenderBlock {div} at (41,1) size 10x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,70) size 60x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 6x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (7,1) size 40x10 [bgcolor=#800080]
+        RenderBlock {div} at (47,1) size 12x10 [bgcolor=#FFA500]
+      RenderFlexibleBox {div} at (0,84) size 142x12 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,1) size 40x10 [bgcolor=#90EE90]
+        RenderBlock {div} at (41,1) size 40x10 [bgcolor=#800080]
+        RenderBlock {div} at (81,1) size 60x10 [bgcolor=#FFA500]

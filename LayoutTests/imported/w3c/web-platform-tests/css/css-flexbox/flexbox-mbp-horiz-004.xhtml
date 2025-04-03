@@ -54,21 +54,35 @@
          margin/padding resolution, since they resolve against container's
          inline-size, i.e. its width in this case. -->
     <div class="flexbox"
-         ><div class="child1 paddingA"><div class="filler"/></div><div class="child2 paddingB"><div class="filler"/></div><div class="child1 marginA"></div><div class="child2 marginB"></div></div>
+         ><div class="child1 paddingA"><div class="filler"/></div
+         ><div class="child2 paddingB"><div class="filler"/></div
+         ><div class="child1 marginA"></div
+         ><div class="child2 marginB"></div
+    ></div>
 
     <!-- Flex container has height: 50px - again, this shouldn't impact percent
          margin/padding resolution, since they resolve against container's
          inline-size, i.e. its width in this case. -->
     <div class="flexbox height50"
-         ><div class="child1 paddingA"><div class="filler"/></div><div class="child2 paddingB"><div class="filler"/></div><div class="child1 marginA"></div><div class="child2 marginB"></div></div>
+         ><div class="child1 paddingA"><div class="filler"/></div
+         ><div class="child2 paddingB"><div class="filler"/></div
+         ><div class="child1 marginA"></div
+         ><div class="child2 marginB"></div
+    ></div>
 
     <!-- ...and now with align-items: flex-end, so we can see the margin-bottom
          in action -->
     <div class="flexbox height50" style="align-items: flex-end"
-         ><div class="child1 paddingA"><div class="filler"/></div><div class="child2 paddingB"><div class="filler"/></div><div class="child1 marginA"></div><div class="child2 marginB"></div></div>
+         ><div class="child1 paddingA"><div class="filler"/></div
+         ><div class="child2 paddingB"><div class="filler"/></div
+         ><div class="child1 marginA"></div
+         ><div class="child2 marginB"></div
+    ></div>
 
     <!-- ...and finally, with margin and padding applied to the same items -->
     <div class="flexbox height50"
-         ><div class="child1 paddingA marginA"><div class="filler"/></div><div class="child2 paddingB marginB"><div class="filler"/></div></div>
+         ><div class="child1 paddingA marginA"><div class="filler"/></div
+         ><div class="child2 paddingB marginB"><div class="filler"/></div
+    ></div>
   </body>
 </html>

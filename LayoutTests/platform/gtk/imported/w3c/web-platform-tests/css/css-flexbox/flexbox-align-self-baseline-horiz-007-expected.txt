@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {html} at (0,0) size 800x68
+    RenderBody {body} at (8,8) size 784x52
+      RenderFlexibleBox {div} at (0,0) size 784x52 [border: (1px dashed #0000FF)]
+        RenderBlock {div} at (1,11) size 87x16 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 87x16
+            text run at (0,0) width 87: "one line (first)"
+        RenderBlock {div} at (88,32) size 86x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 86x16
+            text run at (0,0) width 86: "one line (last)"
+        RenderBlock {div} at (174,16) size 132x32 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 22x16
+            text run at (0,0) width 22: "two"
+          RenderBR {br} at (22,0) size 0x16
+          RenderText {#text} at (0,16) size 132x16
+            text run at (0,16) width 132: "lines and offset (last)"
+        RenderBlock {div} at (305,11) size 73x16 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 72x16
+            text run at (0,0) width 72: "offset (first)"

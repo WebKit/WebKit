@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x200
+  RenderBlock {html} at (0,0) size 800x200
+    RenderBody {body} at (8,8) size 784x184
+      RenderFlexibleBox {div} at (0,0) size 200x22 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,27) size 200x22 [bgcolor=#90EE90]
+        RenderBlock (anonymous) at (0,0) size 76x22
+          RenderText {#text} at (0,-5) size 76x17
+            text run at (0,-5) width 76: "some words"
+      RenderFlexibleBox {div} at (0,54) size 200x22 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,81) size 200x22 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,108) size 200x22 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,135) size 200x22 [bgcolor=#90EE90]
+      RenderFlexibleBox {div} at (0,162) size 200x22 [bgcolor=#90EE90]
+layer at (8,8) size 12x22
+  RenderVideo {video} at (0,0) size 12x22 [border: (1px dotted #008000)]
+layer at (196,35) size 12x22
+  RenderVideo {video} at (188,0) size 12x22 [border: (1px dotted #008000)]
+layer at (8,62) size 125x22
+  RenderVideo {video} at (0,0) size 125x22 [border: (1px dotted #008000)]
+layer at (133,62) size 75x22
+  RenderVideo {video} at (124,0) size 76x22 [border: (1px dotted #008000)]
+layer at (8,89) size 95x22
+  RenderVideo {video} at (0,0) size 95x22 [border: (1px dotted #008000)]
+layer at (103,89) size 105x22
+  RenderVideo {video} at (95,0) size 105x22 [border: (1px dotted #008000)]
+layer at (8,116) size 116x22
+  RenderVideo {video} at (0,0) size 116x22 [border: (1px dotted #008000)]
+layer at (124,116) size 84x22
+  RenderVideo {video} at (116,0) size 84x22 [border: (1px dotted #008000)]
+layer at (8,143) size 108x22
+  RenderVideo {video} at (0,0) size 108x22 [border: (1px dotted #008000)]
+layer at (116,143) size 92x22
+  RenderVideo {video} at (108,0) size 92x22 [border: (1px dotted #008000)]
+layer at (8,170) size 48x22
+  RenderVideo {video} at (0,0) size 48x22 [border: (1px dotted #008000)]
+layer at (56,170) size 152x22
+  RenderVideo {video} at (48,0) size 152x22 [border: (1px dotted #008000)]
