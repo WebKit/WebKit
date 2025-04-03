@@ -178,7 +178,7 @@ const TestFeatures& TestOptions::defaults()
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },
-            { "allowTestOnlyIPC", false },
+            { "allowTestOnlyIPC", true },
             { "appHighlightsEnabled", false },
             { "dumpJSConsoleLogInStdErr", false },
             { "editable", false },

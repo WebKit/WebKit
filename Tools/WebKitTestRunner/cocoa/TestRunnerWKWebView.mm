@@ -30,6 +30,7 @@
 #import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFormInputSession.h>
 #import <wtf/Assertions.h>
@@ -108,6 +109,7 @@ IGNORE_WARNINGS_END
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
+    [configuration _setAllowTestOnlyIPC:YES];
     if (self = [super initWithFrame:frame configuration:configuration]) {
         NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
 #if PLATFORM(MAC)

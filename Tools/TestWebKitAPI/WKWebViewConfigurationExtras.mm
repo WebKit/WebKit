@@ -28,6 +28,7 @@
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
@@ -49,6 +50,7 @@
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration _setAllowTestOnlyIPC:YES];
 
     return webViewConfiguration.autorelease();
 }

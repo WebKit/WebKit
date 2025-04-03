@@ -40,6 +40,7 @@ void PlatformWebView::initialize(WKPageConfigurationRef pageConfiguration)
 {
     NSRect rect = NSMakeRect(0, 0, 800, 600);
 
+    [(__bridge WKWebViewConfiguration *)pageConfiguration _setAllowTestOnlyIPC:true];
     m_view = [[WKWebView alloc] initWithFrame:rect configuration:(__bridge WKWebViewConfiguration *)pageConfiguration];
     [m_view _setWindowOcclusionDetectionEnabled:NO];
 
