@@ -46,7 +46,6 @@ import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.user import User
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
 from urllib.parse import quote as urlquote
 
