@@ -94,7 +94,7 @@ public:
     void recordParse(CodeFeatures, LexicallyScopedFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn);
     void installCode(CodeBlock*);
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind, Profiler::JettisonReason);
-    CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*);
+    CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSScope*);
     CodeBlock* newReplacementCodeBlockFor(CodeSpecializationKind);
 
     void clearCode(IsoCellSet&);
@@ -120,14 +120,14 @@ public:
     // to point to it. This forces callers to have a CodeBlock* in a register or on the stack that will be marked
     // by conservative GC if a GC happens after we create the CodeBlock.
     template <typename ExecutableType>
-    void prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
+    void prepareForExecution(VM&, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
     ScriptExecutable* topLevelExecutable();
     JSArray* createTemplateObject(JSGlobalObject*, JSTemplateObjectDescriptor*);
 
 private:
     friend class ExecutableBase;
-    void prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
+    void prepareForExecutionImpl(VM&, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
     bool hasClearableCode() const;
 

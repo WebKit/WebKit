@@ -48,6 +48,7 @@
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "RegExpObject.h"
+#include "RepatchInlines.h"
 #include "ResourceExhaustion.h"
 #include "VMTrapsInlines.h"
 #include <wtf/Assertions.h>

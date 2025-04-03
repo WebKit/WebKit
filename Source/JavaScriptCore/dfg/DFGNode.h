@@ -1021,7 +1021,7 @@ public:
         return m_opInfo2.as<FrozenValue*>()->value();
     }
 
-    bool hasArgumentsChild()
+    bool hasArgumentsChild() const
     {
         switch (op()) {
         case GetMyArgumentByVal:
@@ -2044,6 +2044,7 @@ public:
         case GetPrivateName:
         case GetPrivateNameById:
         case Call:
+        case VirtualCall:
         case DirectCall:
         case TailCallInlinedCaller:
         case DirectTailCallInlinedCaller:
@@ -3461,7 +3462,14 @@ public:
     {
         // Note that this does not include TailCall node types intentionally.
         // CallDOM node types are always converted from Call.
-        return op() == Call || op() == CallDOM;
+        switch (op()) {
+        case Call:
+        case VirtualCall:
+        case CallDOM:
+            return true;
+        default:
+            return false;
+        }
     }
 
     const DOMJIT::Signature* signature()
@@ -3550,6 +3558,51 @@ public:
     bool hasBucketOwnerType()
     {
         return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage || op() == MapStorageOrSentinel;
+    }
+
+
+    bool hasNumberOfPassedArguments() const
+    {
+        switch (op()) {
+        case Call:
+        case VirtualCall:
+        case TailCall:
+        case TailCallInlinedCaller:
+        case Construct:
+        case CallDirectEval:
+        case DirectCall:
+        case DirectConstruct:
+        case DirectTailCall:
+        case DirectTailCallInlinedCaller:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    unsigned numberOfPassedArguments()
+    {
+        ASSERT(hasNumberOfPassedArguments());
+        switch (op()) {
+        case Call:
+        case TailCall:
+        case TailCallInlinedCaller:
+        case Construct:
+        case DirectCall:
+        case DirectConstruct:
+        case DirectTailCall:
+        case DirectTailCallInlinedCaller:
+            return numChildren() - 1;
+        case VirtualCall:
+            // It holds |executable| additionally in varargs tail.
+            return numChildren() - 1 - 1;
+        case CallDirectEval:
+            // It holds |this| and |scope| additionally in varargs tail.
+            return numChildren() - 1 - 2;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
 
     unsigned numberOfBoundArguments()

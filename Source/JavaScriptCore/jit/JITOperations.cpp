@@ -194,7 +194,7 @@ static inline UGPRPair materializeTargetCode(VM& vm, JSFunction* targetFunction)
         if (!executable->isHostFunction()) {
             JSScope* scope = targetFunction->scopeUnchecked();
             FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-            functionExecutable->prepareForExecution<FunctionExecutable>(vm, targetFunction, scope, CodeForCall, codeBlockSlot);
+            functionExecutable->prepareForExecution<FunctionExecutable>(vm, scope, CodeForCall, codeBlockSlot);
             RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, nullptr));
         }
         return encodeResult(executable->entrypointFor(CodeForCall, MustCheckArity).taggedPtr(), codeBlockSlot);

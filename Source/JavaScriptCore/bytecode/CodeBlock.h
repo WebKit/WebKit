@@ -990,7 +990,7 @@ static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>
-void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+void ScriptExecutable::prepareForExecution(VM& vm, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
         if constexpr (std::is_same<ExecutableType, EvalExecutable>::value)
@@ -1006,7 +1006,7 @@ void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope
         return;
     }
 
-    prepareForExecutionImpl(vm, function, scope, kind, resultCodeBlock);
+    prepareForExecutionImpl(vm, scope, kind, resultCodeBlock);
 }
 
 #define CODEBLOCK_LOG_EVENT(codeBlock, summary, details) \

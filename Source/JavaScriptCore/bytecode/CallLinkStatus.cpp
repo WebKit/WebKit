@@ -45,8 +45,6 @@ static constexpr bool verbose = false;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CallLinkStatus);
 
 CallLinkStatus::CallLinkStatus(JSValue value)
-    : m_couldTakeSlowPath(false)
-    , m_isProved(false)
 {
     if (!value || !value.isCell()) {
         m_couldTakeSlowPath = true;
@@ -73,12 +71,12 @@ CallLinkStatus CallLinkStatus::computeFor(
     // m_jitData is nullptr when it is tied to LLInt (not Baseline).
     if (callLinkInfo->type() == CallLinkInfo::Type::DataOnly && !profiledBlock->m_jitData) {
         if (exitSiteData.takesSlowPath)
-            return takesSlowPath();
+            return takesSlowPath(callLinkInfo->clearedByVirtual());
 #if ENABLE(DFG_JIT)
         if (profiledBlock->unlinkedCodeBlock()->hasExitSite(DFG::FrequentExitSite(bytecodeIndex, BadConstantValue))) {
             // We could force this to be a closure call, but instead we'll just assume that it
             // takes slow path.
-            return takesSlowPath();
+            return takesSlowPath(callLinkInfo->clearedByVirtual());
         }
 #endif
     }
@@ -141,8 +139,8 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     const ConcurrentJSLocker&, CallLinkInfo& callLinkInfo)
 {
     if (callLinkInfo.clearedByGC() || callLinkInfo.clearedByVirtual())
-        return takesSlowPath();
-    
+        return takesSlowPath(callLinkInfo.clearedByVirtual());
+
     // Note that despite requiring that the locker is held, this code is racy with respect
     // to the CallLinkInfo: it may get cleared while this code runs! This is because
     // CallLinkInfoBase::unlinkOrUpgrade() may be called from a different CodeBlock than the one that owns
@@ -171,7 +169,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
             //
             // Either way, this is telling us that the FTL had been led to believe that it's
             // profitable not to inline anything.
-            return takesSlowPath();
+            return takesSlowPath(callLinkInfo.clearedByVirtual());
         }
         
         CallEdgeList edges = stub->edges();
@@ -211,11 +209,11 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         // Bail if we didn't find any calls that qualified.
         RELEASE_ASSERT(!!totalCallsToKnown == !!variants.size());
         if (variants.isEmpty())
-            return takesSlowPath();
+            return takesSlowPath(callLinkInfo.clearedByVirtual());
         
         // We require that the distribution of callees is skewed towards a handful of common ones.
         if (totalCallsToKnown / totalCallsToUnknown < Options::minimumCallToKnownRate())
-            return takesSlowPath();
+            return takesSlowPath(callLinkInfo.clearedByVirtual());
         
         RELEASE_ASSERT(totalCallsToKnown);
         RELEASE_ASSERT(variants.size());
@@ -372,6 +370,7 @@ void CallLinkStatus::setProvenConstantCallee(CallVariant variant)
 {
     m_variants = CallVariantList{ variant };
     m_couldTakeSlowPath = false;
+    m_isVirtualCall = false;
     m_isProved = true;
 }
 
@@ -401,6 +400,7 @@ bool CallLinkStatus::finalize(VM& vm)
 void CallLinkStatus::merge(const CallLinkStatus& other)
 {
     m_couldTakeSlowPath |= other.m_couldTakeSlowPath;
+    m_isVirtualCall |= other.m_isVirtualCall;
     
     for (const CallVariant& otherVariant : other.m_variants) {
         bool found = false;
@@ -430,23 +430,8 @@ void CallLinkStatus::dump(PrintStream& out) const
         out.print("Not Set"_s);
         return;
     }
-    
-    CommaPrinter comma;
-    
-    if (m_isProved)
-        out.print(comma, "Statically Proved"_s);
-    
-    if (m_couldTakeSlowPath)
-        out.print(comma, "Could Take Slow Path"_s);
-    
-    if (m_isBasedOnStub)
-        out.print(comma, "Based On Stub"_s);
-    
-    if (!m_variants.isEmpty())
-        out.print(comma, listDump(m_variants));
-    
-    if (m_maxArgumentCountIncludingThisForVarargs)
-        out.print(comma, "maxArgumentCountIncludingThisForVarargs = "_s, m_maxArgumentCountIncludingThisForVarargs);
+
+    out.print("isProved:(", m_isProved, "),couldTakeSlowPath:(", m_couldTakeSlowPath, "),isBasedOnStub:(", m_isBasedOnStub, "),isVirtualCall:(", m_isVirtualCall, "),maxArgumentCountIncludingThisForVarargs:(", m_maxArgumentCountIncludingThisForVarargs, "),", listDump(m_variants));
 }
 
 } // namespace JSC

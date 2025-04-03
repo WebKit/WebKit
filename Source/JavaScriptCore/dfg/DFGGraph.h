@@ -1354,6 +1354,7 @@ public:
 
     UncheckedKeyHashSet<Node*> m_slowGetByVal;
     UncheckedKeyHashSet<Node*> m_slowPutByVal;
+    UncheckedKeyHashSet<Node*> m_slowCall;
 
 private:
     template<typename Visitor> void visitChildrenImpl(Visitor&);

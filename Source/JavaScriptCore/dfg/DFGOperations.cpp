@@ -5185,7 +5185,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo* cal
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
 
-        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, jsScope, kind, codeBlock);
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsScope, kind, codeBlock);
         OPERATION_RETURN_IF_EXCEPTION(scope);
 
         unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
@@ -5633,6 +5633,29 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM* vmPoi
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered triggerOSREntryNow with executeCounter = ", codeBlock->dfgJITData()->tierUpCounter());
 
     return tierUpCommon(vm, callFrame, bytecodeIndex, true);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationVirtualCallWithoutFeedback, ExecutableBase*, (JSGlobalObject* globalObject, JSFunction* callee, ExecutableBase* executable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    DeferTraps deferTraps(vm); // We can't jettison if we're going to call this CodeBlock.
+    if (!executable->isHostFunction()) {
+        FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
+        CodeBlock* codeBlockSlot = nullptr;
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee->scope(), CodeForCall, codeBlockSlot);
+        OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
+    // FIXME: Support wasm IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=220339
+    executable->entrypointFor(CodeForCall, MustCheckArity);
+    if (UNLIKELY(scope.exception()))
+        OPERATION_RETURN(scope, nullptr);
+    OPERATION_RETURN(scope, executable);
 }
 
 #endif // ENABLE(FTL_JIT)

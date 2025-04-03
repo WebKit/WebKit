@@ -1451,6 +1451,7 @@ private:
         case Call:
         case TailCallInlinedCaller:
         case Construct:
+        case VirtualCall:
             compileCallOrConstruct();
             break;
         case DirectCall:
@@ -11835,9 +11836,10 @@ IGNORE_CLANG_WARNINGS_END
     void compileCallOrConstruct()
     {
         Node* node = m_node;
-        unsigned numArgs = node->numChildren() - 1;
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        unsigned numArgs = node->numberOfPassedArguments();
 
-        LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
+        LValue jsCallee = lowJSValue(m_graph.child(node, 0));
 
         unsigned frameSize = (CallFrame::headerSizeInRegisters + numArgs) * sizeof(EncodedJSValue);
         unsigned alignedFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize);
@@ -11859,6 +11861,8 @@ IGNORE_CLANG_WARNINGS_END
         // Make sure that the callee goes into GPR0 because that's where the slow path thunks expect the
         // callee to be.
         arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(BaselineJITRegisters::Call::calleeGPR)));
+        if (m_node->op() == VirtualCall)
+            arguments.append(ConstrainedValue(lowCell(m_graph.child(node, 1 + numArgs)), ValueRep::SomeRegister));
 
         auto addArgument = [&] (LValue value, VirtualRegister reg, int offset) {
             intptr_t offsetFromSP =
@@ -11869,13 +11873,14 @@ IGNORE_CLANG_WARNINGS_END
         addArgument(jsCallee, VirtualRegister(CallFrameSlot::callee), 0);
         addArgument(m_out.constInt32(numArgs), VirtualRegister(CallFrameSlot::argumentCountIncludingThis), PayloadOffset);
         for (unsigned i = 0; i < numArgs; ++i)
-            addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgumentIncludingThis(i), 0);
+            addArgument(lowJSValue(m_graph.child(node, 1 + i)), virtualRegisterForArgumentIncludingThis(i), 0);
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendVector(arguments);
+        if (m_node->op() == VirtualCall)
+            patchpoint->numGPScratchRegisters = 1;
 
-        RefPtr<PatchpointExceptionHandle> exceptionHandle =
-            preparePatchpointForExceptions(patchpoint);
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
@@ -11895,15 +11900,58 @@ IGNORE_CLANG_WARNINGS_END
 
                 exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
 
-                jit.store32(
-                    CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                    CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+                jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-                auto* callLinkInfo = state->addCallLinkInfo(nodeSemanticOrigin);
-                callLinkInfo->setUpCall(nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call);
+                switch (nodeOp) {
+                case Construct: {
+                    auto* callLinkInfo = state->addCallLinkInfo(nodeSemanticOrigin);
+                    callLinkInfo->setUpCall(CallLinkInfo::Construct);
+                    CallLinkInfo::emitFastPath(jit, callLinkInfo);
+                    jit.addPtr(CCallHelpers::TrustedImm32(-params.proc().frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+                    break;
+                }
+                case Call:
+                case TailCallInlinedCaller: {
+                    auto* callLinkInfo = state->addCallLinkInfo(nodeSemanticOrigin);
+                    callLinkInfo->setUpCall(CallLinkInfo::Call);
+                    CallLinkInfo::emitFastPath(jit, callLinkInfo);
+                    jit.addPtr(CCallHelpers::TrustedImm32(-params.proc().frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+                    break;
+                }
+                case VirtualCall: {
+                    Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+                    GPRReg calleeGPR = params[1].gpr();
+                    GPRReg executableGPR = params[2].gpr();
+                    GPRReg scratchGPR = params.gpScratch(0);
 
-                CallLinkInfo::emitFastPath(jit, callLinkInfo);
-                jit.addPtr(CCallHelpers::TrustedImm32(-params.proc().frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+                    jit.loadPtr(CCallHelpers::Address(executableGPR, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)), scratchGPR);
+                    auto slow = jit.branchTestPtr(CCallHelpers::Zero, scratchGPR);
+
+                    CCallHelpers::Label mainPath = jit.label();
+                    auto isNative = jit.branchIfNotType(executableGPR, FunctionExecutableType);
+                    jit.transferPtr(CCallHelpers::Address(executableGPR, FunctionExecutable::offsetOfCodeBlockFor(CodeForCall)), CCallHelpers::calleeFrameCodeBlockBeforeCall());
+                    isNative.link(&jit);
+                    jit.call(scratchGPR, JSEntryPtrTag);
+                    jit.addPtr(CCallHelpers::TrustedImm32(-params.proc().frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+
+                    params.addLatePath(
+                        [=](CCallHelpers& jit) {
+                            AllowMacroScratchRegisterUsage allowScratch(jit);
+                            slow.link(&jit);
+                            jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+                            callOperation(
+                                *state, params.unavailableRegisters(), jit,
+                                codeOrigin, exceptions.get(), operationVirtualCallWithoutFeedback,
+                                executableGPR, CCallHelpers::TrustedImmPtr(globalObject), calleeGPR, executableGPR).call();
+                            jit.loadPtr(CCallHelpers::Address(executableGPR, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)), scratchGPR);
+                            jit.jump().linkTo(mainPath, &jit);
+                        });
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
             });
 
         setJSValue(patchpoint);
@@ -11918,7 +11966,7 @@ IGNORE_CLANG_WARNINGS_END
         ExecutableBase* executable = node->castOperand<ExecutableBase*>();
         FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable);
 
-        unsigned numPassedArgs = node->numChildren() - 1;
+        unsigned numPassedArgs = node->numberOfPassedArguments();
         unsigned numAllocatedArgs = numPassedArgs;
 
         if (functionExecutable) {
@@ -12152,7 +12200,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileTailCall()
     {
         Node* node = m_node;
-        unsigned numArgs = node->numChildren() - 1;
+        unsigned numArgs = node->numberOfPassedArguments();
 
         // It seems counterintuitive that this is needed given that tail calls don't create a new frame
         // on the stack. However, the tail call slow path builds the frame at SP instead of FP before
@@ -12853,7 +12901,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileCallDirectEval()
     {
         Node* node = m_node;
-        unsigned numArgs = node->numChildren() - 3; // callee, thisValue, scope
+        unsigned numArgs = node->numberOfPassedArguments(); // callee, thisValue, scope
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
         LValue thisValue = lowJSValue(m_graph.varArgChild(node, node->numChildren() - 2));

@@ -609,6 +609,9 @@ void SpeculativeJIT::emitCall(Node* node)
     case DFG::Call:
         callType = CallLinkInfo::Call;
         break;
+    case VirtualCall:
+        callType = CallLinkInfo::Call;
+        break;
     case CallDirectEval:
         callType = CallLinkInfo::Call;
         break;
@@ -685,7 +688,6 @@ void SpeculativeJIT::emitCall(Node* node)
         DFG_CRASH(m_graph, node, "bad node type");
         break;
     }
-    UNUSED_VARIABLE(isConstruct);
 
     GPRReg calleeGPR = InvalidGPRReg;
     GPRReg callLinkInfoGPR = InvalidGPRReg;
@@ -794,7 +796,7 @@ void SpeculativeJIT::emitCall(Node* node)
     } else {
         // The call instruction's first child is the function; the subsequent children are the
         // arguments.
-        numPassedArgs = node->op() == CallDirectEval ? node->numChildren() - 3 : node->numChildren() - 1;
+        numPassedArgs = node->numberOfPassedArguments();
         numAllocatedArgs = numPassedArgs;
         
         if (functionExecutable) {
@@ -852,7 +854,7 @@ void SpeculativeJIT::emitCall(Node* node)
             shuffleData.numParameters = codeBlock()->numParameters();
             
             for (unsigned i = 0; i < numPassedArgs; ++i) {
-                Edge argEdge = m_graph.varArgChild(node, i + 1);
+                Edge argEdge = m_graph.child(node, i + 1);
                 GenerationInfo& info = generationInfo(argEdge.node());
                 if (!isDirect)
                     use(argEdge);
@@ -5552,6 +5554,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case DFG::Call:
+    case VirtualCall:
     case TailCall:
     case TailCallInlinedCaller:
     case Construct:

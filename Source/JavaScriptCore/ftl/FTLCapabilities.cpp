@@ -186,6 +186,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StoreBarrier:
     case FencedStoreBarrier:
     case Call:
+    case VirtualCall:
     case DirectCall:
     case TailCall:
     case DirectTailCall:

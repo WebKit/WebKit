@@ -186,7 +186,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
         }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, scope, kind, *codeBlockSlot);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
 
         codeBlock = *codeBlockSlot;
@@ -257,7 +257,7 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
         }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, scope, kind, *codeBlockSlot);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
 

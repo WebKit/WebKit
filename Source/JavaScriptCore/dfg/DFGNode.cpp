@@ -299,6 +299,7 @@ void Node::convertToDirectCall(FrozenValue* executable)
     NodeType newOp = LastNodeType;
     switch (op()) {
     case Call:
+    case VirtualCall:
         newOp = DirectCall;
         break;
     case Construct:
@@ -327,7 +328,7 @@ void Node::convertToCallWasm(FrozenValue* callee)
 
 void Node::convertToCallDOM(Graph& graph)
 {
-    ASSERT(op() == Call);
+    ASSERT(op() == Call || op() == VirtualCall);
     ASSERT(signature());
 
     Edge edges[3];

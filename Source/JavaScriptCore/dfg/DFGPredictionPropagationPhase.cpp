@@ -1037,6 +1037,7 @@ private:
         case MultiGetByOffset:
         case Call:
         case DirectCall:
+        case VirtualCall:
         case TailCallInlinedCaller:
         case DirectTailCallInlinedCaller:
         case Construct:

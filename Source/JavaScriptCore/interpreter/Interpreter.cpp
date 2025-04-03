@@ -1180,7 +1180,7 @@ failedJSONP:
         ProgramCodeBlock* codeBlock;
         {
             CodeBlock* tempCodeBlock;
-            program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+            program->prepareForExecution<ProgramExecutable>(vm, scope, CodeForCall, tempCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
@@ -1275,7 +1275,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
         CodeBlock* newCodeBlock = nullptr;
         if (isJSCall) {
             // Compile the callee:
-            functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), functionScope, CodeForCall, newCodeBlock);
+            functionExecutable->prepareForExecution<FunctionExecutable>(vm, functionScope, CodeForCall, newCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
             ASSERT(newCodeBlock);
             newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -1374,7 +1374,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
         CodeBlock* newCodeBlock = nullptr;
         if (isJSConstruct) {
             // Compile the callee:
-            constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
+            constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, scope, CodeForConstruct, newCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, nullptr);
             ASSERT(newCodeBlock);
             newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -1402,7 +1402,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
     return asObject(JSValue::decode(result));
 }
 
-CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction* function)
+CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall)
 {
     VM& vm = this->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -1410,7 +1410,7 @@ CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction*
 
     // Compile the callee:
     CodeBlock* newCodeBlock;
-    cachedCall.functionExecutable()->prepareForExecution<FunctionExecutable>(vm, function, cachedCall.scope(), CodeForCall, newCodeBlock);
+    cachedCall.functionExecutable()->prepareForExecution<FunctionExecutable>(vm, cachedCall.scope(), CodeForCall, newCodeBlock);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     ASSERT(newCodeBlock);
@@ -1476,7 +1476,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     EvalCodeBlock* codeBlock;
     {
         CodeBlock* tempCodeBlock;
-        eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        eval->prepareForExecution<EvalExecutable>(vm, scope, CodeForCall, tempCodeBlock);
         RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
         codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
         ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
@@ -1593,7 +1593,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
         // Reload CodeBlock. It is possible that we replaced CodeBlock while setting up the environment.
         {
             CodeBlock* tempCodeBlock;
-            eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+            eval->prepareForExecution<EvalExecutable>(vm, scope, CodeForCall, tempCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
@@ -1661,7 +1661,7 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
         ModuleProgramCodeBlock* codeBlock;
         {
             CodeBlock* tempCodeBlock;
-            executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+            executable->prepareForExecution<ModuleProgramExecutable>(vm, scope, CodeForCall, tempCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == numberOfArguments + 1);

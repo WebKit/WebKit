@@ -3091,7 +3091,10 @@ private:
         }
 
         case Call: {
-            attemptToMakeCallDOM(node);
+            if (attemptToMakeCallDOM(node))
+                break;
+            if (attemptToMakeVirtualCall(node))
+                break;
             break;
         }
 
@@ -3403,6 +3406,7 @@ private:
         case MakeAtomString:
         case CallCustomAccessorGetter:
         case CallCustomAccessorSetter:
+        case VirtualCall:
             break;
 #else // not ASSERT_ENABLED
         default:
@@ -4820,6 +4824,39 @@ private:
         fixupCheckJSCast(checkSubClass);
         fixupCallDOM(node);
         RELEASE_ASSERT(node->child1().node() == thisNode);
+        return true;
+    }
+
+    bool attemptToMakeVirtualCall(Node* node)
+    {
+        // If the Call is placed in the top-level function (not inlined function),
+        // then IC's feedback will be the same since nothing will narrow candidates down.
+        // Thus we can use VirtualCall even in DFG.
+        // if (node->origin.semantic.inlineCallFrame()) {
+        //     // While node is placed in inlined function, the feedback says that it is a virtual call.
+        //     // If it is in DFG, then it is possible that feedback is coming from Baseline so we still
+        //     // have a chance to narrow candidates down, but if it is in FTL, we no longer have such an
+        //     // opportunity. Thus we can just use virtual call.
+        //     if (!m_graph.m_plan.isFTL())
+        //         return false;
+        // }
+
+        if (!m_graph.m_plan.isFTL())
+            return false;
+
+        if (!m_graph.m_slowCall.contains(node))
+            return false;
+
+        Edge& callee = m_graph.child(node, 0);
+        if (!callee->shouldSpeculateFunction())
+            return false;
+
+        auto* executable = m_insertionSet.insertNode(m_indexInBlock, SpecNone, GetExecutable, node->origin, Edge(callee.node(), FunctionUse));
+        node->setOp(VirtualCall);
+        AdjacencyList adjacencyList = m_graph.copyVarargChildren(node);
+        m_graph.m_varArgChildren.append(Edge(executable, KnownCellUse));
+        adjacencyList.setNumChildren(adjacencyList.numChildren() + 1);
+        node->children = adjacencyList;
         return true;
     }
 

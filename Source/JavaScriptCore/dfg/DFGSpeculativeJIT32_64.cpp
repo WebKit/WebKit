@@ -506,6 +506,9 @@ void SpeculativeJIT::emitCall(Node* node)
     case CallDirectEval:
         callType = CallLinkInfo::Call;
         break;
+    case VirtualCall:
+        callType = CallLinkInfo::Call;
+        break;
     case TailCall:
         callType = CallLinkInfo::TailCall;
         isTail = true;
@@ -688,7 +691,7 @@ void SpeculativeJIT::emitCall(Node* node)
     } else {
         // The call instruction's first child is either the function (normal call) or the
         // receiver (method call). subsequent children are the arguments.
-        numPassedArgs = node->op() == CallDirectEval ? node->numChildren() - 3 : node->numChildren() - 1;
+        numPassedArgs = node->numberOfPassedArguments();
         numAllocatedArgs = numPassedArgs;
         
         if (functionExecutable) {
@@ -3961,6 +3964,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case DFG::Call:
+    case VirtualCall:
     case TailCall:
     case TailCallInlinedCaller:
     case Construct:

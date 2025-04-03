@@ -373,6 +373,7 @@ namespace JSC { namespace DFG {
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(DirectCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(VirtualCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(DirectConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(CallVarargs, NodeResultJS | NodeMustGenerate) \
