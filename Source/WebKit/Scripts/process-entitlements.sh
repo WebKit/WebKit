@@ -79,6 +79,7 @@ function mac_process_gpu_entitlements()
 {
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -137,6 +138,7 @@ function mac_process_network_entitlements()
 {
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -293,6 +295,8 @@ function mac_process_webcontent_shared_entitlements()
     then
         notify_entitlements
     fi
+
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 function mac_process_webpushd_entitlements()
@@ -307,6 +311,8 @@ function mac_process_webpushd_entitlements()
         plistbuddy Add :com.apple.private.security.restricted-application-groups array
         plistbuddy Add :com.apple.private.security.restricted-application-groups:0 string group.com.apple.webkit.webpushd
     fi
+
+   plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 # ========================================
@@ -322,6 +328,7 @@ function maccatalyst_process_webcontent_entitlements()
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
@@ -354,6 +361,7 @@ function maccatalyst_process_webcontent_captiveportal_entitlements()
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     plistbuddy Add :com.apple.imageio.allowabletypes array
     plistbuddy Add :com.apple.imageio.allowabletypes:0 string org.webmproject.webp
@@ -402,6 +410,7 @@ function maccatalyst_process_gpu_entitlements()
     plistbuddy Add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.private.coremedia.allow-fps-attachment bool YES
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -422,6 +431,7 @@ function maccatalyst_process_network_entitlements()
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:0 string kTCCServiceWebKitIntelligentTrackingPrevention
@@ -469,6 +479,7 @@ fi
     plistbuddy add :com.apple.coreaudio.LoadDecodersInProcess bool YES
     plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 
     notify_entitlements
     webcontent_sandbox_entitlements
@@ -566,6 +577,7 @@ fi
     plistbuddy Add :com.apple.developer.hardened-process bool YES
 
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 function ios_family_process_model_entitlements()
@@ -579,11 +591,13 @@ function ios_family_process_model_entitlements()
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebKitModel
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 function ios_family_process_webpushd_entitlements()
@@ -600,6 +614,7 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.private.security.storage.os_eligibility.readonly bool YES
     plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only array
     plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only:0 string /private/var/db/os_eligibility/eligibility.plist
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 function ios_family_process_network_entitlements()
@@ -639,6 +654,7 @@ fi
     plistbuddy Add :com.apple.private.assets.accessible-asset-types array
     plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+    plistbuddy Add :com.apple.sqlite.defensive integer 1
 }
 
 rm -f "${WK_PROCESSED_XCENT_FILE}"
