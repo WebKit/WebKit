@@ -42,5 +42,9 @@ namespace CSSPropertyParserHelpers {
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: <'text-decoration-line'> consuming
+// https://drafts.csswg.org/css-text-decor-3/#text-decoration-line-property
+RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

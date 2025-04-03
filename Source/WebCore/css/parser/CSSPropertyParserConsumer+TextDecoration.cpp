@@ -140,5 +140,31 @@ RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange& range, CSS::PropertyPars
     return nullptr;
 }
 
+RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range, CSS::PropertyParserState&)
+{
+    // <'text-decoration-line'> = none | [ underline || overline || line-through || blink ]
+    // https://drafts.csswg.org/css-text-decor-3/#text-decoration-line-property
+
+    CSSValueID id = range.peek().id();
+    if (id == CSSValueNone)
+        return consumeIdent(range);
+
+    Vector<CSSValueID, 4> list;
+    while (true) {
+        auto ident = consumeIdentRaw<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough>(range);
+        if (!ident)
+            break;
+        if (list.contains(*ident))
+            return nullptr;
+        list.append(*ident);
+    }
+    if (list.isEmpty())
+        return nullptr;
+    CSSValueListBuilder builder;
+    for (auto ident : list)
+        builder.append(CSSPrimitiveValue::create(ident));
+    return CSSValueList::createSpaceSeparated(WTFMove(builder));
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
