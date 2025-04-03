@@ -549,7 +549,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     _createRemoteObjectIfNeeded(parameter)
     {
-        // FIXME: Only pass RemoteObjects here so we can avoid this work.
         if (parameter instanceof WI.RemoteObject)
             return parameter;
 
