@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           text run at (739,0) width 5: "."
       RenderTable {TABLE} at (0,44) size 317x307
         RenderTableSection {TBODY} at (0,0) size 317x307
-          RenderTableRow {TR} at (0,2) size 317x303
+          RenderTableRow {TR} at (2,2) size 313x303
             RenderTableCell {TD} at (2,2) size 77x303 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (11,11) size 55x87 [border: none]
                 RenderTableSection {THEAD} at (0,0) size 54x21

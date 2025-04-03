@@ -29,21 +29,21 @@ layer at (0,0) size 800x186
 layer at (120,550) size 120x50
   RenderTable {TABLE} at (120,550) size 120x50 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x48
-      RenderTableRow {TR} at (0,2) size 118x44
+      RenderTableRow {TR} at (2,2) size 114x44
         RenderTableCell {TD} at (2,14) size 114x20 [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (1,13) size 60x18
             text run at (1,1) width 60: "Tall table"
 layer at (240,574) size 120x26
   RenderTable {TABLE} at (240,574) size 120x26 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x24
-      RenderTableRow {TR} at (0,2) size 118x20
+      RenderTableRow {TR} at (2,2) size 114x20
         RenderTableCell {TD} at (2,2) size 114x20 [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (1,1) size 84x18
             text run at (1,1) width 84: "Normal table"
 layer at (360,574) size 120x26
   RenderTable {TABLE} at (360,574) size 120x26 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x24
-      RenderTableRow {TR} at (0,2) size 118x20
+      RenderTableRow {TR} at (2,2) size 114x20
         RenderTableCell {TD} at (2,2) size 114x20 [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (1,1) size 70x18
             text run at (1,1) width 70: "Short table"

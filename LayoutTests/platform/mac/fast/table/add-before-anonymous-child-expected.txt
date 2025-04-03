@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
           text run at (409,0) width 324: "The green square should be above the blue square."
       RenderTable {TABLE} at (0,96) size 104x204
         RenderTableSection {TBODY} at (0,0) size 104x204
-          RenderTableRow (anonymous) at (0,2) size 104x200
+          RenderTableRow (anonymous) at (2,2) size 100x200
             RenderTableCell (anonymous) at (2,2) size 100x200 [r=0 c=0 rs=1 cs=1]
               RenderBlock {TR} at (0,0) size 100x100 [bgcolor=#008000]
               RenderBlock {TR} at (0,100) size 100x100 [bgcolor=#0000FF]

@@ -11,7 +11,7 @@ layer at (0,0) size 800x358
           text run at (0,0) width 547: "In each of the following tables the cells with 'Data' should all have the same baseline:"
       RenderTable {TABLE} at (0,92) size 459x119
         RenderTableSection {TBODY} at (0,0) size 459x118
-          RenderTableRow {TR} at (0,2) size 459x114
+          RenderTableRow {TR} at (2,2) size 455x114
             RenderTableCell {TD} at (2,74) size 35x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,74) size 31x18
                 text run at (2,2) width 31: "Data"
@@ -32,7 +32,7 @@ layer at (0,0) size 800x358
                 text run at (2,2) width 49: "Bottom"
       RenderTable {TABLE} at (0,210) size 459x119
         RenderTableSection {TBODY} at (0,0) size 459x118
-          RenderTableRow {TR} at (0,2) size 459x114
+          RenderTableRow {TR} at (2,2) size 455x114
             RenderTableCell {TD} at (2,2) size 29x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 25x18
                 text run at (2,2) width 25: "Top"

@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
                       RenderBlock {DIV} at (0,0) size 310x24
                         RenderTable {TABLE} at (0,0) size 310x24 [bgcolor=#008000]
                           RenderTableSection {TBODY} at (0,0) size 310x24
-                            RenderTableRow {TR} at (0,2) size 310x20
+                            RenderTableRow {TR} at (2,2) size 306x20
                               RenderTableCell {TD} at (2,11) size 302x2 [r=0 c=0 rs=1 cs=1]
                               RenderTableCell {TD} at (306,11) size 2x2 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (755,0) size 25x24 [r=0 c=1 rs=1 cs=1]

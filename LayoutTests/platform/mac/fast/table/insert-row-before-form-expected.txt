@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
           text run at (0,0) width 274: "There should be a line of green text below."
       RenderTable {TABLE} at (0,68) size 150x30 [color=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 150x30
-          RenderTableRow {TR} at (0,2) size 150x26
+          RenderTableRow {TR} at (2,2) size 146x26
             RenderTableCell {TD} at (2,2) size 146x26 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 144x24 [color=#008000]
                 RenderTableSection {TBODY} at (0,0) size 144x24
-                  RenderTableRow {TR} at (0,2) size 144x20
+                  RenderTableRow {TR} at (2,2) size 140x20
                     RenderTableCell {TD} at (2,2) size 140x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 138x18
                         text run at (1,1) width 138: "This should be green."

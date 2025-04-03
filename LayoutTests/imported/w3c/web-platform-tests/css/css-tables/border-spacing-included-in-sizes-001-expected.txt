@@ -28,10 +28,5 @@ FAIL tbody 3 assert_equals:
     </tr>
   </tbody>
 height expected 100 but got 110
-FAIL tfoot tr 4 assert_equals:
-<tr style="outline: 2px dashed black" data-expected-width="210" data-expected-height="100">
-      <td></td>
-      <td></td>
-    </tr>
-width expected 210 but got 230
+PASS tfoot tr 4
 

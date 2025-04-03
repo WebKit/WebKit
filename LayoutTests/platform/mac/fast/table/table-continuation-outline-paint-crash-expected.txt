@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,18) size 41x22
         RenderTableSection (anonymous) at (0,0) size 41x22
-          RenderTableRow (anonymous) at (0,2) size 41x18
+          RenderTableRow (anonymous) at (2,2) size 37x18
             RenderTableCell (anonymous) at (2,2) size 37x18 [r=0 c=0 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 37x18
                 RenderText {#text} at (0,0) size 37x18

@@ -560,6 +560,7 @@ void RenderTableSection::layoutRows()
     m_forceSlowPaintPathWithOverflowingCell = false;
 
     LayoutUnit vspacing = table()->vBorderSpacing();
+    LayoutUnit hspacing = table()->hBorderSpacing();
     unsigned nEffCols = table()->numEffCols();
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || writingMode().isBlockFlipped());
@@ -569,9 +570,9 @@ void RenderTableSection::layoutRows()
         if (RenderTableRow* rowRenderer = m_grid[r].rowRenderer) {
             // FIXME: the x() position of the row should be table()->hBorderSpacing() so that it can 
             // report the correct offsetLeft. However, that will require a lot of rebaselining of test results.
-            rowRenderer->setLogicalLeft(0_lu);
+            rowRenderer->setLogicalLeft(0_lu + hspacing);
             rowRenderer->setLogicalTop(m_rowPos[r]);
-            rowRenderer->setLogicalWidth(logicalWidth());
+            rowRenderer->setLogicalWidth(logicalWidth() - (2 * hspacing));
             rowRenderer->setLogicalHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
             rowRenderer->updateLayerTransform();
             rowRenderer->clearOverflow();
