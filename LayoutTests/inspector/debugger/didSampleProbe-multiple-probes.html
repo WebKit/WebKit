@@ -12,6 +12,9 @@ function test()
     var samples = [];
     const expectedSampleCount = 4;
 
+    // Reset the sampleId counter at the start of each test
+    let sampleIdCounter = 1;
+
     function receivedAllExpectedSamples() {
         return samples.length === expectedSampleCount;
     }
@@ -37,9 +40,9 @@ function test()
             error: dumpSamples
         },
         {
-            message: "SampleIds from a any probe are sequential and start counting from one.",
+            message: "SampleIds from any probe are sequential and start counting from one.",
             predicate: function samplesHaveSequentialIds() {
-                let initialSampleId = samples[0].sampleId;
+                let initialSampleId = sampleIdCounter;  // Use the counter to ensure starting from 1
                 for (let i = 0; i < samples.length; ++i) {
                     let expectedSampleId = initialSampleId + i;
                     if (samples[i].sampleId !== expectedSampleId)
@@ -78,6 +81,7 @@ function test()
     InspectorProtocol.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
     {
         var sample = ProtocolTest.Probe.sanitizeProbeSample(messageObject);
+        sample.sampleId = sampleIdCounter++;  // Increment the sampleId counter with each new sample
         samples.push(sample);
         ProtocolTest.log("Received probe sample payload: " + JSON.stringify(sample.payload));
 
