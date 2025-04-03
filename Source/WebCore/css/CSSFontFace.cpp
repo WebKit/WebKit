@@ -145,12 +145,9 @@ StyleRuleFontFace* CSSFontFace::cssConnection() const
     );
 }
 
-// FIXME: Don't use a list here and rename to setFamily. https://bugs.webkit.org/show_bug.cgi?id=196381
-void CSSFontFace::setFamilies(CSSValueList& family)
+void CSSFontFace::setFamily(CSSValue& family)
 {
-    ASSERT(family.length());
-
-    RefPtr oldFamily = std::exchange(m_families, &family);
+    RefPtr oldFamily = std::exchange(m_family, &family);
     mutableProperties().setProperty(CSSPropertyFontFamily, family);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
@@ -352,16 +349,10 @@ void CSSFontFace::setDisplay(CSSValue& loadingBehaviorValue)
 
 String CSSFontFace::family() const
 {
-    // Code to extract the name of the first family is needed because we incorrectly use a list of families.
-    // FIXME: Consider switching to getPropertyValue after https://bugs.webkit.org/show_bug.cgi?id=196381 is fixed.
-    auto family = properties().getPropertyCSSValue(CSSPropertyFontFamily);
-    auto familyList = dynamicDowncast<CSSValueList>(family.get());
-    if (!familyList)
+    auto family = dynamicDowncast<CSSPrimitiveValue>(familyPropertyValue());
+    if (!family || !family->isFontFamily())
         return { };
-    auto firstFamily = dynamicDowncast<CSSPrimitiveValue>(familyList->item(0));
-    if (!firstFamily || !firstFamily->isFontFamily())
-        return { };
-    return firstFamily->stringValue();
+    return family->stringValue();
 }
 
 String CSSFontFace::style() const
@@ -399,9 +390,9 @@ String CSSFontFace::display() const
     return properties().getPropertyValue(CSSPropertyFontDisplay);
 }
 
-RefPtr<CSSValueList> CSSFontFace::families() const
+RefPtr<CSSValue> CSSFontFace::familyPropertyValue() const
 {
-    return m_families;
+    return m_family;
 }
 
 bool CSSFontFace::rangesMatchCodePoint(char32_t character) const

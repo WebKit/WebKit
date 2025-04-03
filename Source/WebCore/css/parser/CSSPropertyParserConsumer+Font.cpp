@@ -501,12 +501,7 @@ RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range, CSS::Prop
     if (!name || !range.atEnd())
         return nullptr;
 
-    // FIXME-NEWPARSER: https://bugs.webkit.org/show_bug.cgi?id=196381 For compatibility with the old parser, we have to make
-    // a list here, even though the list always contains only a single family name.
-    // Once the old parser is gone, we can delete this function, make the caller
-    // use consumeFamilyName instead, and then patch the @font-face code to
-    // not expect a list with a single name in it.
-    return CSSValueList::createCommaSeparated(name.releaseNonNull());
+    return name;
 }
 
 // MARK: @font-face 'src'

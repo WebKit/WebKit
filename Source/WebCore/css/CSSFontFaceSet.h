@@ -106,14 +106,14 @@ public:
 private:
     CSSFontFaceSet(CSSFontSelector*);
 
-    void removeFromFacesLookupTable(const CSSFontFace&, const CSSValueList& familiesToSearchFor);
+    void removeFromFacesLookupTable(const CSSFontFace&, const CSSValue& familyToSearchFor);
     void addToFacesLookupTable(CSSFontFace&);
 
     void incrementActiveCount();
     void decrementActiveCount();
 
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
-    void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) final;
+    void fontPropertyChanged(CSSFontFace&, CSSValue* oldFamily = nullptr) final;
 
     void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
 

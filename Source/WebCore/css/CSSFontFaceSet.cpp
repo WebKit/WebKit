@@ -130,7 +130,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& f
         
         // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
         auto& pool = m_owningFontSelector->scriptExecutionContext()->cssValuePool();
-        face->setFamilies(CSSValueList::createCommaSeparated(pool.createFontFamilyValue(familyName)).get());
+        face->setFamily(pool.createFontFamilyValue(familyName).get());
         face->setFontSelectionCapabilities(item);
         face->adoptSource(makeUnique<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->computeFailureState());
@@ -168,30 +168,29 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
 
 void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
 {
-    auto families = face.families();
-    if (!families) {
+    auto family = face.familyPropertyValue();
+    if (!family) {
         // If the font has failed, there's no point in actually adding it to m_facesLookupTable,
         // because no font requests can actually use it for anything. So, let's just ... not add it.
         return;
     }
 
-    for (auto& item : *families) {
-        auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item)) };
-        if (familyName.isNull())
-            continue;
+    // auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item)) };
+    auto familyName = face.family();
+    if (familyName.isNull())
+        return;
 
-        auto addResult = m_facesLookupTable.add(familyName, Vector<Ref<CSSFontFace>>());
-        auto& familyFontFaces = addResult.iterator->value;
-        if (addResult.isNewEntry) {
-            // m_locallyInstalledFontFaces grows without bound, eventually encorporating every font installed on the system.
-            // This is by design.
-            if (m_owningFontSelector)
-                ensureLocalFontFacesForFamilyRegistered(familyName);
-            familyFontFaces = { };
-        }
-
-        familyFontFaces.append(face);
+    auto addResult = m_facesLookupTable.add(familyName, Vector<Ref<CSSFontFace>>());
+    auto& familyFontFaces = addResult.iterator->value;
+    if (addResult.isNewEntry) {
+        // m_locallyInstalledFontFaces grows without bound, eventually encorporating every font installed on the system.
+        // This is by design.
+        if (m_owningFontSelector)
+            ensureLocalFontFacesForFamilyRegistered(familyName.toExistingAtomString());
+        familyFontFaces = { };
     }
+
+    familyFontFaces.append(face);
 }
 
 void CSSFontFaceSet::add(CSSFontFace& face)
@@ -221,32 +220,30 @@ void CSSFontFaceSet::add(CSSFontFace& face)
     }
 }
 
-void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValueList& familiesToSearchFor)
+void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValue& familyToSearchFor)
 {
-    for (auto& item : familiesToSearchFor) {
-        String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item));
-        if (familyName.isNull())
-            continue;
+    auto familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(familyToSearchFor));
+    if (familyName.isNull())
+        return;
 
-        auto iterator = m_facesLookupTable.find(familyName);
-        if (iterator == m_facesLookupTable.end()) {
-            // The font may have failed even before addToFacesLookupTable() was called on it,
-            // which means we never added it (because there's no point in adding a failed font).
-            // So, if it was never added, removing it is free! Woohoo!
-            return;
-        }
-        bool found = false;
-        for (size_t i = 0; i < iterator->value.size(); ++i) {
-            if (iterator->value[i].ptr() == &face) {
-                found = true;
-                iterator->value.remove(i);
-                break;
-            }
-        }
-        ASSERT_UNUSED(found, found);
-        if (!iterator->value.size())
-            m_facesLookupTable.remove(iterator);
+    auto iterator = m_facesLookupTable.find(familyName);
+    if (iterator == m_facesLookupTable.end()) {
+        // The font may have failed even before addToFacesLookupTable() was called on it,
+        // which means we never added it (because there's no point in adding a failed font).
+        // So, if it was never added, removing it is free! Woohoo!
+        return;
     }
+    auto found = false;
+    for (size_t i = 0; i < iterator->value.size(); ++i) {
+        if (iterator->value[i].ptr() == &face) {
+            found = true;
+            iterator->value.remove(i);
+            break;
+        }
+    }
+    ASSERT_UNUSED(found, found);
+    if (!iterator->value.size())
+        m_facesLookupTable.remove(iterator);
 }
 
 void CSSFontFaceSet::remove(const CSSFontFace& face)
@@ -258,9 +255,9 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
     m_fontModifiedObservers.forEach([] (auto& observer) {
         observer();
     });
-    
-    if (auto families = face.families())
-        removeFromFacesLookupTable(face, *families);
+
+    if (auto family = face.familyPropertyValue())
+        removeFromFacesLookupTable(face, *family);
 
     if (face.cssConnection()) {
         ASSERT(m_constituentCSSConnections.get(face.cssConnection()) == &face);
@@ -562,12 +559,12 @@ void CSSFontFaceSet::fontStateChanged(CSSFontFace& face, CSSFontFace::Status old
     }
 }
 
-void CSSFontFaceSet::fontPropertyChanged(CSSFontFace& face, CSSValueList* oldFamilies)
+void CSSFontFaceSet::fontPropertyChanged(CSSFontFace& face, CSSValue* oldFamily)
 {
     m_cache.clear();
 
-    if (oldFamilies) {
-        removeFromFacesLookupTable(face, *oldFamilies);
+    if (oldFamily) {
+        removeFromFacesLookupTable(face, *oldFamily);
         addToFacesLookupTable(face);
     }
 
