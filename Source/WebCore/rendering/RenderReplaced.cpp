@@ -719,9 +719,10 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     return computeReplacedLogicalHeightRespectingMinMaxHeight(intrinsicLogicalHeight());
 }
 
-void RenderReplaced::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderReplaced::computeIntrinsicLogicalWidths() const
 {
-    minLogicalWidth = maxLogicalWidth = intrinsicLogicalWidth();
+    auto intrinsicLogicalWidth = this->intrinsicLogicalWidth();
+    return { intrinsicLogicalWidth, intrinsicLogicalWidth };
 }
 
 void RenderReplaced::computePreferredLogicalWidths()
@@ -730,9 +731,11 @@ void RenderReplaced::computePreferredLogicalWidths()
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (style().logicalWidth().isPercentOrCalculated())
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    else
+    if (style().logicalWidth().isPercentOrCalculated()) {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    } else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ShouldComputePreferred::ComputePreferred);
 
     bool ignoreMinMaxSizes = shouldIgnoreLogicalMinMaxWidthSizes();

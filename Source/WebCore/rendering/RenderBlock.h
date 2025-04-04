@@ -278,7 +278,7 @@ protected:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const override;
     void computePreferredLogicalWidths() override;
     
     std::optional<LayoutUnit> firstLineBaseline() const override;

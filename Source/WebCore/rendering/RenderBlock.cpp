@@ -2345,22 +2345,22 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
     offset = flipForWritingMode(offset);
 }
 
-void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderBlock::computeIntrinsicLogicalWidths() const
 {
     ASSERT(!childrenInline());
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = width.value();
-            maxLogicalWidth = width.value();
+            intrinsicLogicalWidths.minimum = width.value();
+            intrinsicLogicalWidths.maximum = width.value();
         }
     } else if (!shouldApplyInlineSizeContainment())
-        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        computeBlockPreferredLogicalWidths(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
 
-    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+    intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
 
-    int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    maxLogicalWidth += scrollbarWidth;
-    minLogicalWidth += scrollbarWidth;
+    intrinsicLogicalWidths += intrinsicScrollbarLogicalWidthIncludingGutter();
+    return intrinsicLogicalWidths;
 }
 
 void RenderBlock::computePreferredLogicalWidths()
@@ -2379,8 +2379,11 @@ void RenderBlock::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = (computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minPreferredLogicalWidth = std::max(0_lu, m_minPreferredLogicalWidth);
         m_maxPreferredLogicalWidth = std::max(0_lu, m_maxPreferredLogicalWidth);
-    } else 
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    } else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(styleToUse.logicalMinWidth(), styleToUse.logicalMaxWidth(), borderAndPaddingLogicalWidth());
 

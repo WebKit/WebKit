@@ -73,10 +73,8 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
         return renderer.minPreferredLogicalWidth();
     case LogicalWidthType::MaxContent:
     case LogicalWidthType::MinContent: {
-        auto minimunLogicalWidth = LayoutUnit { };
-        auto maximumLogicalWidth = LayoutUnit { };
-        renderer.computeIntrinsicLogicalWidths(minimunLogicalWidth, maximumLogicalWidth);
-        return logicalWidthType == LogicalWidthType::MaxContent ? maximumLogicalWidth : minimunLogicalWidth;
+        auto [minimumLogicalWidth, maximumLogicalWidth] = renderer.computeIntrinsicLogicalWidths();
+        return logicalWidthType == LogicalWidthType::MaxContent ? maximumLogicalWidth : minimumLogicalWidth;
     }
     default:
         ASSERT_NOT_REACHED();

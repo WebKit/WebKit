@@ -268,14 +268,12 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
     }
 }
 
-void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderFileUploadControl::computeIntrinsicLogicalWidths() const
 {
     if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = logicalWidth.value();
-            maxLogicalWidth = logicalWidth.value();
-        }
-        return;
+        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
+            return { *logicalWidth, *logicalWidth };
+        return { };
     }
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
@@ -290,13 +288,16 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
             defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
-    maxLogicalWidth = static_cast<int>(ceilf(std::max(minDefaultLabelWidth, defaultLabelWidth)));
+
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
+    intrinsicLogicalWidths.maximum = static_cast<int>(ceilf(std::max(minDefaultLabelWidth, defaultLabelWidth)));
 
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
+        intrinsicLogicalWidths.minimum = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
     else if (!logicalWidth.isPercent())
-        minLogicalWidth = maxLogicalWidth;
+        intrinsicLogicalWidths.minimum = intrinsicLogicalWidths.maximum;
+    return intrinsicLogicalWidths;
 }
 
 void RenderFileUploadControl::computePreferredLogicalWidths()
@@ -308,8 +309,11 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
 
     if (style().logicalWidth().isFixed() && style().logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), writingMode().isHorizontal() ? horizontalBorderAndPaddingExtent() : verticalBorderAndPaddingExtent());
 

@@ -210,21 +210,20 @@ static bool shouldScaleColumnsForParent(const RenderTable& table)
     return true;
 }
 
-void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics intrinsics)
+IntrinsicLogicalWidths AutoTableLayout::computeIntrinsicLogicalWidths(TableIntrinsics intrinsics)
 {
     fullRecalc();
 
     float spanMaxLogicalWidth = calcEffectiveLogicalWidth();
-    minWidth = 0;
-    maxWidth = 0;
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
     float maxPercent = 0;
     float maxNonPercent = 0;
     bool scaleColumnsForSelf = intrinsics == TableIntrinsics::ForLayout;
 
     float remainingPercent = 100;
     for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
-        minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
-        maxWidth += m_layoutStruct[i].effectiveMaxLogicalWidth;
+        intrinsicLogicalWidths.minimum += m_layoutStruct[i].effectiveMinLogicalWidth;
+        intrinsicLogicalWidths.maximum += m_layoutStruct[i].effectiveMaxLogicalWidth;
         if (scaleColumnsForSelf) {
             if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
                 float percent = std::min(m_layoutStruct[i].effectiveLogicalWidth.percent(), remainingPercent);
@@ -245,11 +244,12 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
         if (maxNonPercent > 0)
             maxNonPercent = (remainingPercent > 0) ? maxNonPercent * 100 / remainingPercent : tableMaxWidth;
         m_scaledWidthFromPercentColumns = std::min(LayoutUnit(tableMaxWidth), LayoutUnit(std::max(maxPercent, maxNonPercent)));
-        if (m_scaledWidthFromPercentColumns > maxWidth && shouldScaleColumnsForParent(*m_table))
-            maxWidth = m_scaledWidthFromPercentColumns;
+        if (m_scaledWidthFromPercentColumns > intrinsicLogicalWidths.maximum && shouldScaleColumnsForParent(*m_table))
+            intrinsicLogicalWidths.maximum = m_scaledWidthFromPercentColumns;
     }
 
-    maxWidth = std::max(maxWidth, LayoutUnit(spanMaxLogicalWidth));
+    intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.maximum, LayoutUnit(spanMaxLogicalWidth));
+    return intrinsicLogicalWidths;
 }
 
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const

@@ -70,7 +70,7 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderTextControl"_s; }
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const override;
     void computePreferredLogicalWidths() override;
     bool canHaveGeneratedChildren() const override { return false; }
     

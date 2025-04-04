@@ -85,4 +85,11 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintMask(paintInfo, adjustedPaintOffset);
 }
 
+
+IntrinsicLogicalWidths RenderReplica::computeIntrinsicLogicalWidths() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 } // namespace WebCore

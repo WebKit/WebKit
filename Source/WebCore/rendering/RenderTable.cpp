@@ -909,7 +909,7 @@ void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset
     paintMaskImages(paintInfo, rect);
 }
 
-void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics intrinsics) const
+IntrinsicLogicalWidths RenderTable::computeIntrinsicLogicalWidths(TableIntrinsics intrinsics) const
 {
     recalcSectionsIfNeeded();
     // FIXME: Do the recalc in borderStart/borderEnd and make those const_cast this call.
@@ -917,26 +917,28 @@ void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit
     // of reading out stale values.
     const_cast<RenderTable*>(this)->recalcBordersInRowDirection();
     // FIXME: Restructure the table layout code so that we can make this method const.
-    const_cast<RenderTable*>(this)->m_tableLayout->computeIntrinsicLogicalWidths(minWidth, maxWidth, intrinsics);
+    return const_cast<RenderTable*>(this)->m_tableLayout->computeIntrinsicLogicalWidths(intrinsics);
 
     // FIXME: We should include captions widths here like we do in computePreferredLogicalWidths.
 }
 
-void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+IntrinsicLogicalWidths RenderTable::computeIntrinsicLogicalWidths() const
 {
-    computeIntrinsicLogicalWidths(minWidth, maxWidth, TableIntrinsics::ForLayout);
+    return computeIntrinsicLogicalWidths(TableIntrinsics::ForLayout);
 }
 
-void RenderTable::computeIntrinsicKeywordLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+IntrinsicLogicalWidths RenderTable::computeIntrinsicKeywordLogicalWidths() const
 {
-    computeIntrinsicLogicalWidths(minWidth, maxWidth, TableIntrinsics::ForKeyword);
+    return computeIntrinsicLogicalWidths(TableIntrinsics::ForKeyword);
 }
 
 void RenderTable::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+    m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+    m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
 
     LayoutUnit bordersPaddingAndSpacing = bordersPaddingAndSpacingInRowDirection();
     m_minPreferredLogicalWidth += bordersPaddingAndSpacing;

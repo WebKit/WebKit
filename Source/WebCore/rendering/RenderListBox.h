@@ -95,7 +95,7 @@ private:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const override;
     void computePreferredLogicalWidths() override;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;

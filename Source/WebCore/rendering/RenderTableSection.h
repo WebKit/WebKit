@@ -183,7 +183,7 @@ private:
     LayoutUnit verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
     LayoutUnit horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
 
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const override { return { }; }
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 

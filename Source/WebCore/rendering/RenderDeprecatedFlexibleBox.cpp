@@ -199,8 +199,9 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
-void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths() const
 {
+    LayoutUnit minLogicalWidth, maxLogicalWidth;
     auto addScrollbarWidth = [&]() {
         LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
         maxLogicalWidth += scrollbarWidth;
@@ -213,7 +214,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
             maxLogicalWidth = width.value();
         }
         addScrollbarWidth();
-        return;
+        return { minLogicalWidth, maxLogicalWidth };
     }
 
     if (hasMultipleLines() || isVertical()) {
@@ -241,6 +242,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
     addScrollbarWidth();
+    return { minLogicalWidth, maxLogicalWidth };
 }
 
 void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
@@ -250,8 +252,11 @@ void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
     if (style().width().isFixed() && style().width().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().width());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().minWidth(), style().maxWidth(), borderAndPaddingLogicalWidth());
 

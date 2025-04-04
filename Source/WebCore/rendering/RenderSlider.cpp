@@ -71,21 +71,22 @@ LayoutUnit RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, Line
     return height() + marginTop();
 }
 
-void RenderSlider::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderSlider::computeIntrinsicLogicalWidths() const
 {
     if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto width = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = width.value();
-            maxLogicalWidth = width.value();
-        }
-        return;
+        if (auto width = explicitIntrinsicInnerLogicalWidth())
+            return { *width, *width };
+        return { };
     }
-    maxLogicalWidth = defaultTrackLength * style().usedZoom();
+
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
+    intrinsicLogicalWidths.maximum = defaultTrackLength * style().usedZoom();
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
+        intrinsicLogicalWidths.minimum = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
     else if (!logicalWidth.isPercent())
-        minLogicalWidth = maxLogicalWidth;
+        intrinsicLogicalWidths.minimum = intrinsicLogicalWidths.maximum;
+    return intrinsicLogicalWidths;
 }
 
 void RenderSlider::computePreferredLogicalWidths()
@@ -95,8 +96,11 @@ void RenderSlider::computePreferredLogicalWidths()
 
     if (style().logicalWidth().isFixed())
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), writingMode().isHorizontal() ? horizontalBorderAndPaddingExtent() : verticalBorderAndPaddingExtent());
 

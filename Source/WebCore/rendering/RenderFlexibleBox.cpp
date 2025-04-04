@@ -101,23 +101,17 @@ ASCIILiteral RenderFlexibleBox::renderName() const
     return "RenderFlexibleBox"_s;
 }
 
-void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderFlexibleBox::computeIntrinsicLogicalWidths() const
 {
-    auto addScrollbarWidth = [&]() {
-        LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
-        maxLogicalWidth += scrollbarWidth;
-        minLogicalWidth += scrollbarWidth;
-    };
-
     if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto width = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = width.value();
-            maxLogicalWidth = width.value();
-        }
-        addScrollbarWidth();
-        return;
+        auto scrollbarLogicalWidth = this->scrollbarLogicalWidth();
+        auto intrinsicLogicalWidths = IntrinsicLogicalWidths { scrollbarLogicalWidth, scrollbarLogicalWidth };
+        if (auto width = explicitIntrinsicInnerLogicalWidth())
+            intrinsicLogicalWidths += *width;
+        return intrinsicLogicalWidths;
     }
 
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
     LayoutUnit flexItemMinWidth;
     LayoutUnit flexItemMaxWidth;
     bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(flexItemMinWidth, flexItemMaxWidth);
@@ -146,39 +140,40 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         maxPreferredLogicalWidth += margin;
 
         if (!isColumnFlow()) {
-            maxLogicalWidth += maxPreferredLogicalWidth;
+            intrinsicLogicalWidths.maximum += maxPreferredLogicalWidth;
             if (isMultiline()) {
                 // For multiline, the min preferred width is if you put a break between
                 // each item.
-                minLogicalWidth = std::max(minLogicalWidth, minPreferredLogicalWidth);
+                intrinsicLogicalWidths.minimum = std::max(intrinsicLogicalWidths.minimum, minPreferredLogicalWidth);
             } else
-                minLogicalWidth += minPreferredLogicalWidth;
+                intrinsicLogicalWidths.minimum += minPreferredLogicalWidth;
         } else {
-            minLogicalWidth = std::max(minPreferredLogicalWidth, minLogicalWidth);
-            maxLogicalWidth = std::max(maxPreferredLogicalWidth, maxLogicalWidth);
+            intrinsicLogicalWidths.minimum = std::max(minPreferredLogicalWidth, intrinsicLogicalWidths.minimum);
+            intrinsicLogicalWidths.maximum = std::max(maxPreferredLogicalWidth, intrinsicLogicalWidths.maximum);
         }
     }
 
     if (!isColumnFlow() && numItemsWithNormalLayout > 1) {
         LayoutUnit inlineGapSize = (numItemsWithNormalLayout - 1) * computeGap(GapType::BetweenItems);
-        maxLogicalWidth += inlineGapSize;
+        intrinsicLogicalWidths.maximum += inlineGapSize;
         if (!isMultiline())
-            minLogicalWidth += inlineGapSize;
+            intrinsicLogicalWidths.minimum += inlineGapSize;
     }
 
-    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+    intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
     
     // Due to negative margins, it is possible that we calculated a negative
     // intrinsic width. Make sure that we never return a negative width.
-    minLogicalWidth = std::max(0_lu, minLogicalWidth);
-    maxLogicalWidth = std::max(0_lu, maxLogicalWidth);
+    intrinsicLogicalWidths.minimum = std::max({ }, intrinsicLogicalWidths.minimum);
+    intrinsicLogicalWidths.maximum = std::max({ }, intrinsicLogicalWidths.maximum);
     
     if (hadExcludedChildren) {
-        minLogicalWidth = std::max(minLogicalWidth, flexItemMinWidth);
-        maxLogicalWidth = std::max(maxLogicalWidth, flexItemMaxWidth);
+        intrinsicLogicalWidths.minimum = std::max(intrinsicLogicalWidths.minimum, flexItemMinWidth);
+        intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.maximum, flexItemMaxWidth);
     }
 
-    addScrollbarWidth();
+    intrinsicLogicalWidths += scrollbarLogicalWidth();
+    return intrinsicLogicalWidths;
 }
 
 #define SET_OR_CLEAR_OVERRIDING_SIZE(box, SizeType, size)       \

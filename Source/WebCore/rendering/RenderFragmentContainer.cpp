@@ -374,14 +374,11 @@ void RenderFragmentContainer::willBeRemovedFromTree()
     detachFragment();
 }
 
-void RenderFragmentContainer::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderFragmentContainer::computeIntrinsicLogicalWidths() const
 {
-    if (!isValid()) {
-        RenderBlockFlow::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
-        return;
-    }
-    maxLogicalWidth = { };
-    minLogicalWidth = { };
+    if (!isValid())
+        return RenderBlockFlow::computeIntrinsicLogicalWidths();
+    return { };
 }
 
 void RenderFragmentContainer::computePreferredLogicalWidths()
@@ -400,8 +397,11 @@ void RenderFragmentContainer::computePreferredLogicalWidths()
     const RenderStyle& styleToUse = style();
     if (styleToUse.logicalWidth().isFixed() && styleToUse.logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalWidth());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), borderAndPaddingLogicalWidth());
 

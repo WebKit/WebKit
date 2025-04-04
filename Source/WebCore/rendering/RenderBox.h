@@ -46,6 +46,13 @@ enum class ShouldComputePreferred : bool { ComputeActual, ComputePreferred };
 
 enum class StretchingMode { Any, Explicit };
 
+
+struct IntrinsicLogicalWidths {
+    IntrinsicLogicalWidths& operator +=(LayoutUnit);
+    LayoutUnit minimum;
+    LayoutUnit maximum;
+};
+
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBox);
@@ -271,7 +278,8 @@ public:
 
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const = 0;
+
+    virtual IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const = 0;
 
     std::optional<LayoutUnit> overridingBorderBoxLogicalWidth() const;
     std::optional<LayoutUnit> overridingBorderBoxLogicalHeight() const;
@@ -731,9 +739,9 @@ private:
     LayoutUnit fillAvailableMeasure(LayoutUnit availableLogicalWidth) const;
     LayoutUnit fillAvailableMeasure(LayoutUnit availableLogicalWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
 
-    virtual void computeIntrinsicKeywordLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+    virtual IntrinsicLogicalWidths computeIntrinsicKeywordLogicalWidths() const
     {
-        computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        return computeIntrinsicLogicalWidths();
     }
 
     // This function calculates the minimum and maximum preferred widths for an object.

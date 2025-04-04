@@ -63,4 +63,11 @@ ASCIILiteral RenderMultiColumnSpannerPlaceholder::renderName() const
     return "RenderMultiColumnSpannerPlaceholder"_s;
 }
 
+
+IntrinsicLogicalWidths RenderMultiColumnSpannerPlaceholder::computeIntrinsicLogicalWidths() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 } // namespace WebCore

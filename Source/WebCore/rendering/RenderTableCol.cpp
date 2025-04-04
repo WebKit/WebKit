@@ -253,4 +253,11 @@ LayoutUnit RenderTableCol::offsetHeight() const
     return table()->offsetHeightForColumn(*this);
 }
 
+
+IntrinsicLogicalWidths RenderTableCol::computeIntrinsicLogicalWidths() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 }

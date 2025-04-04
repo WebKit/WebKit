@@ -335,24 +335,26 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
     return intersection(outerBox, innerBox);
 }
 
-void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderMenuList::computeIntrinsicLogicalWidths() const
 {
     // FIXME: Fix field-sizing: content with size containment
     // https://bugs.webkit.org/show_bug.cgi?id=269169
     if (style().fieldSizing() == FieldSizing::Content)
-        return RenderFlexibleBox::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        return RenderFlexibleBox::computeIntrinsicLogicalWidths();
 
-    maxLogicalWidth = shouldApplySizeContainment() ? theme().minimumMenuListSize(style()) : std::max(m_optionsWidth, theme().minimumMenuListSize(style()));
-    maxLogicalWidth += m_innerBlock->paddingStart() + m_innerBlock->paddingEnd();
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
+    intrinsicLogicalWidths.maximum = shouldApplySizeContainment() ? theme().minimumMenuListSize(style()) : std::max(m_optionsWidth, theme().minimumMenuListSize(style()));
+    intrinsicLogicalWidths.maximum += m_innerBlock->paddingStart() + m_innerBlock->paddingEnd();
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
-            maxLogicalWidth = logicalWidth.value();
+            intrinsicLogicalWidths.maximum = logicalWidth.value();
     }
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
+        intrinsicLogicalWidths.minimum = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
     else if (!logicalWidth.isPercent())
-        minLogicalWidth = maxLogicalWidth;
+        intrinsicLogicalWidths.minimum = intrinsicLogicalWidths.maximum;
+    return intrinsicLogicalWidths;
 }
 
 void RenderMenuList::computePreferredLogicalWidths()
@@ -367,8 +369,11 @@ void RenderMenuList::computePreferredLogicalWidths()
     
     if (style().logicalWidth().isFixed() && style().logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), writingMode().isHorizontal() ? horizontalBorderAndPaddingExtent() : verticalBorderAndPaddingExtent());
 

@@ -50,7 +50,7 @@ public:
     bool canDropAnonymousBlockChild() const override { return false; }
 
 private:
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const override;
     void computePreferredLogicalWidths() override;
     void layoutSingleClampedFlexItem();
     bool hasClampingAndNoFlexing() const;

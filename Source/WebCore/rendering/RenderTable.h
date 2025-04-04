@@ -237,9 +237,9 @@ private:
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) final;
     void paintMask(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics) const;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const final;
-    void computeIntrinsicKeywordLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const final;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths(TableIntrinsics) const;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths() const final;
+    IntrinsicLogicalWidths computeIntrinsicKeywordLogicalWidths() const final;
     void computePreferredLogicalWidths() override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

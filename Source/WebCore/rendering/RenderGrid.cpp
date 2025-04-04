@@ -753,7 +753,7 @@ LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, unsigned 
     return gapAccumulator;
 }
 
-void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderGrid::computeIntrinsicLogicalWidths() const
 {
     GridLayoutState gridLayoutState;
 
@@ -777,33 +777,33 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         cacheBaselineAlignedGridItems(*this, algorithm, { GridTrackSizingDirection::ForColumns }, emptyCallback, !isSubgridRows());
     }
 
-    computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForColumns, gridLayoutState, &minLogicalWidth, &maxLogicalWidth);
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
+    computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForColumns, gridLayoutState, &intrinsicLogicalWidths.minimum, &intrinsicLogicalWidths.maximum);
 
     if (isMasonry(GridTrackSizingDirection::ForColumns)) {
         // The track sizing algorithm will only be run once in this case, since track sizing will not run in the masonry direction.
-        computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForRows, gridLayoutState, &minLogicalWidth, &maxLogicalWidth);
+        computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForRows, gridLayoutState, &intrinsicLogicalWidths.minimum, &intrinsicLogicalWidths.maximum);
 
         auto gridAxisTracksCountBeforeAutoPlacement = currentGrid().numTracks(GridTrackSizingDirection::ForRows);
 
         // To determine the width of the grid when we have a masonry layout in the column direction we need to perform a layout with the min and max
         // content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
         m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns, GridMasonryLayout::MasonryLayoutPhase::MinContentPhase);
-        minLogicalWidth = m_masonryLayout.gridContentSize();
+        intrinsicLogicalWidths.minimum = m_masonryLayout.gridContentSize();
 
         m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns, GridMasonryLayout::MasonryLayoutPhase::MaxContentPhase);
-        maxLogicalWidth = m_masonryLayout.gridContentSize();
+        intrinsicLogicalWidths.maximum = m_masonryLayout.gridContentSize();
     }
 
     m_grid.resetCurrentGrid();
 
     if (hadExcludedChildren) {
-        minLogicalWidth = std::max(minLogicalWidth, gridItemMinWidth);
-        maxLogicalWidth = std::max(maxLogicalWidth, gridItemMaxWidth);
+        intrinsicLogicalWidths.minimum = std::max(intrinsicLogicalWidths.minimum, gridItemMinWidth);
+        intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.maximum, gridItemMaxWidth);
     }
 
-    LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    minLogicalWidth += scrollbarWidth;
-    maxLogicalWidth += scrollbarWidth;
+    intrinsicLogicalWidths += intrinsicScrollbarLogicalWidthIncludingGutter();
+    return intrinsicLogicalWidths;
 }
 
 void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, GridLayoutState& gridLayoutState, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const

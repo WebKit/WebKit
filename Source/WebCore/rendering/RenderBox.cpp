@@ -2780,15 +2780,15 @@ LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLengt
     if (!logicalWidthLength.isMinIntrinsic() && shouldComputeLogicalWidthFromAspectRatio()) {
         minLogicalWidth = maxLogicalWidth = computeLogicalWidthFromAspectRatioInternal() - borderAndPadding;
         if (firstChild()) {
-            LayoutUnit minChildrenLogicalWidth;
-            LayoutUnit maxChildrenLogicalWidth;
-            computeIntrinsicKeywordLogicalWidths(minChildrenLogicalWidth, maxChildrenLogicalWidth);
-            minLogicalWidth = std::max(minLogicalWidth, minChildrenLogicalWidth);
-            maxLogicalWidth = std::max(maxLogicalWidth, maxChildrenLogicalWidth);
+            auto intrinsicLogicalWidths = computeIntrinsicKeywordLogicalWidths();
+            minLogicalWidth = std::max(minLogicalWidth, intrinsicLogicalWidths.minimum);
+            maxLogicalWidth = std::max(maxLogicalWidth, intrinsicLogicalWidths.maximum);
         }
-    } else
-        computeIntrinsicKeywordLogicalWidths(minLogicalWidth, maxLogicalWidth);
-
+    } else {
+        auto intrinsicLogicalWidths = computeIntrinsicKeywordLogicalWidths();
+        minLogicalWidth = intrinsicLogicalWidths.minimum;
+        maxLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
     if (logicalWidthLength.isMinContent() || logicalWidthLength.isMinIntrinsic())
         return minLogicalWidth + borderAndPadding;
 
@@ -4051,10 +4051,8 @@ LayoutUnit RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Len
     auto originalLogicalWidthType = logicalWidth.type();
     if (widthType == SizeType::MinSize && logicalWidth.isAuto()) {
         if (shouldComputeLogicalWidthFromAspectRatio()) {
-            LayoutUnit minLogicalWidth;
-            LayoutUnit maxLogicalWidth;
-            computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
-            logicalWidth = Length(minLogicalWidth, LengthType::Fixed);
+            auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+            logicalWidth = Length(intrinsicLogicalWidths.minimum, LengthType::Fixed);
         } else
             logicalWidth = Length(0, LengthType::Fixed);
     } else if (widthType == SizeType::MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
@@ -5163,6 +5161,13 @@ bool RenderBox::overflowChangesMayAffectLayout() const
 #endif
     return !ScrollbarTheme::theme().usesOverlayScrollbars();
 
+}
+
+IntrinsicLogicalWidths& IntrinsicLogicalWidths::operator+=(LayoutUnit value)
+{
+    minimum += value;
+    maximum += value;
+    return *this;
 }
 
 } // namespace WebCore

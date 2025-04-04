@@ -293,41 +293,41 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
     }
 }
 
-void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderBlockFlow::computeIntrinsicLogicalWidths() const
 {
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
     bool needAdjustIntrinsicLogicalWidthsForColumns = true;
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = width.value();
-            maxLogicalWidth = width.value();
+            intrinsicLogicalWidths.minimum = width.value();
+            intrinsicLogicalWidths.maximum = width.value();
             needAdjustIntrinsicLogicalWidthsForColumns = false;
         }
     } else if (childrenInline())
-        computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        computeInlinePreferredLogicalWidths(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
     else
-        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        computeBlockPreferredLogicalWidths(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
 
-    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+    intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
 
     if (needAdjustIntrinsicLogicalWidthsForColumns)
-        adjustIntrinsicLogicalWidthsForColumns(minLogicalWidth, maxLogicalWidth);
+        adjustIntrinsicLogicalWidthsForColumns(intrinsicLogicalWidths.minimum, intrinsicLogicalWidths.maximum);
 
     if (!style().autoWrap() && childrenInline()) {
         // A horizontal marquee with inline children has no minimum width.
         CheckedPtr scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
         if (scrollableArea && scrollableArea->marquee() && scrollableArea->marquee()->isHorizontal())
-            minLogicalWidth = 0;
+            intrinsicLogicalWidths.minimum = 0;
     }
 
     if (auto* cell = dynamicDowncast<RenderTableCell>(*this)) {
         Length tableCellWidth = cell->styleOrColLogicalWidth();
         if (tableCellWidth.isFixed() && tableCellWidth.value() > 0)
-            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth));
+            intrinsicLogicalWidths.maximum = std::max(intrinsicLogicalWidths.minimum, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth));
     }
 
-    int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    maxLogicalWidth += scrollbarWidth;
-    minLogicalWidth += scrollbarWidth;
+    intrinsicLogicalWidths += intrinsicScrollbarLogicalWidthIncludingGutter();
+    return intrinsicLogicalWidths;
 }
 
 bool RenderBlockFlow::recomputeLogicalWidthAndColumnWidth()

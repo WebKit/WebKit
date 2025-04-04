@@ -489,4 +489,11 @@ bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
     return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 
+
+IntrinsicLogicalWidths RenderListMarker::computeIntrinsicLogicalWidths() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 } // namespace WebCore

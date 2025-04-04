@@ -222,24 +222,26 @@ void RenderListBox::scrollToRevealSelection()
         scrollToRevealElementAtListIndex(firstIndex);
 }
 
-void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+IntrinsicLogicalWidths RenderListBox::computeIntrinsicLogicalWidths() const
 {
+    IntrinsicLogicalWidths intrinsicLogicalWidths;
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
-            maxLogicalWidth = logicalWidth.value();
+            intrinsicLogicalWidths.maximum = logicalWidth.value();
         else
-            maxLogicalWidth = 2 * optionsSpacingInlineStart;
+            intrinsicLogicalWidths.maximum = 2 * optionsSpacingInlineStart;
     } else
-        maxLogicalWidth = 2 * optionsSpacingInlineStart + m_optionsLogicalWidth;
+        intrinsicLogicalWidths.maximum = 2 * optionsSpacingInlineStart + m_optionsLogicalWidth;
 
     if (m_scrollbar)
-        maxLogicalWidth += m_scrollbar->orientation() == ScrollbarOrientation::Vertical ? m_scrollbar->width() : m_scrollbar->height();
+        intrinsicLogicalWidths.maximum += m_scrollbar->orientation() == ScrollbarOrientation::Vertical ? m_scrollbar->width() : m_scrollbar->height();
 
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
+        intrinsicLogicalWidths.minimum = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
     else if (!logicalWidth.isPercent())
-        minLogicalWidth = maxLogicalWidth;
+        intrinsicLogicalWidths.minimum = intrinsicLogicalWidths.maximum;
+    return intrinsicLogicalWidths;
 }
 
 void RenderListBox::computePreferredLogicalWidths()
@@ -252,8 +254,11 @@ void RenderListBox::computePreferredLogicalWidths()
 
     if (style().logicalWidth().isFixed() && style().logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else {
+        auto intrinsicLogicalWidths = computeIntrinsicLogicalWidths();
+        m_minPreferredLogicalWidth = intrinsicLogicalWidths.minimum;
+        m_maxPreferredLogicalWidth = intrinsicLogicalWidths.maximum;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), writingMode().isHorizontal() ? horizontalBorderAndPaddingExtent() : verticalBorderAndPaddingExtent());
 

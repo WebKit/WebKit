@@ -29,13 +29,14 @@ namespace WebCore {
 
 class RenderTable;
 class RenderTableCell;
+struct IntrinsicLogicalWidths;
 
 class AutoTableLayout final : public TableLayout {
 public:
     explicit AutoTableLayout(RenderTable*);
     virtual ~AutoTableLayout();
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics) override;
+    IntrinsicLogicalWidths computeIntrinsicLogicalWidths(TableIntrinsics) override;
     LayoutUnit scaledWidthFromPercentColumns() const override { return m_scaledWidthFromPercentColumns; }
     void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override;
     void layout() override;

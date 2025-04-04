@@ -173,9 +173,10 @@ float FixedTableLayout::calcWidthArray()
     return usedWidth;
 }
 
-void FixedTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics)
+IntrinsicLogicalWidths FixedTableLayout::computeIntrinsicLogicalWidths(TableIntrinsics)
 {
-    minWidth = maxWidth = calcWidthArray();
+    auto calcWidthArray = LayoutUnit { this->calcWidthArray() };
+    return { calcWidthArray, calcWidthArray };
 }
 
 void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
