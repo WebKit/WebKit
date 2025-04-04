@@ -794,7 +794,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     // FIXME: Add a load type check.
     auto& policyChecker = frameLoader()->policyChecker();
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || frame->loader().history().provisionalItem());
-    policyChecker.checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
+    policyChecker.checkNavigationPolicy(WTFMove(newRequest), redirectResponse, frameLoader()->mayNeedBeforeUnloadPrompt(), WTFMove(navigationPolicyCompletionHandler));
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6)

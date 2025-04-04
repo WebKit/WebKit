@@ -235,6 +235,8 @@ public:
     std::optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 #endif
 
+    void dispatchBeforeUnloadEventForCrossProcessNavigation(CompletionHandler<void(bool)>&&);
+
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;

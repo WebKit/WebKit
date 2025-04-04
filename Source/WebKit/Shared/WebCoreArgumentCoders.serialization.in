@@ -2769,6 +2769,8 @@ struct WebCore::EventTrackingRegions {
 
 enum class WebCore::HasInsecureContent : bool
 
+enum class WebCore::MayNeedBeforeUnloadPrompt : bool
+
 struct WebCore::TextManipulationItem {
     Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;

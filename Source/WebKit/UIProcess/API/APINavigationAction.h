@@ -75,6 +75,8 @@ public:
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
     RefPtr<Navigation> protectedMainFrameNavigation() const { return m_mainFrameNavigation; }
 
+    bool mayNeedBeforeUnloadPrompt() const { return m_navigationActionData.mayNeedBeforeUnloadPrompt == WebCore::MayNeedBeforeUnloadPrompt::Yes; }
+
 #if HAVE(APP_SSO)
     bool shouldPerformSOAuthorization() { return m_shouldPerformSOAuthorization; }
     void unsetShouldPerformSOAuthorization() { m_shouldPerformSOAuthorization = false; }

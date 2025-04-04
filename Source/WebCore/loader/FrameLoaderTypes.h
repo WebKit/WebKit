@@ -163,6 +163,7 @@ enum class LockBackForwardList : bool { No, Yes };
 enum class AllowNavigationToInvalidURL : bool { No, Yes };
 enum class HasInsecureContent : bool { No, Yes };
 enum class LoadWillContinueInAnotherProcess : bool { No, Yes };
+enum class MayNeedBeforeUnloadPrompt : bool { No, Yes };
 
 // FIXME: This should move to somewhere else. It no longer is related to frame loading.
 struct SystemPreviewInfo {

@@ -74,6 +74,7 @@ struct NavigationActionData {
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WTF::String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::MayNeedBeforeUnloadPrompt mayNeedBeforeUnloadPrompt;
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;

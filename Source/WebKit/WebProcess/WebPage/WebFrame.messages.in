@@ -28,4 +28,6 @@
 messages -> WebFrame {
     GetFrameInfo() -> (std::optional<WebKit::FrameInfoData> data)
     UpdateFrameSize(WebCore::IntSize newSize)
+
+    DispatchBeforeUnloadEventForCrossProcessNavigation() -> (bool shouldContinueLoad)
 }

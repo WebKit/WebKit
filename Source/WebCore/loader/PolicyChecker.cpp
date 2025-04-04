@@ -99,9 +99,9 @@ PolicyChecker::PolicyChecker(LocalFrame& frame)
 {
 }
 
-void PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&& function)
+void PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, MayNeedBeforeUnloadPrompt mayNeedBeforeUnloadPrompt, NavigationPolicyDecisionFunction&& function)
 {
-    checkNavigationPolicy(WTFMove(newRequest), redirectResponse, m_frame->loader().protectedActiveDocumentLoader().get(), { }, WTFMove(function));
+    checkNavigationPolicy(WTFMove(newRequest), redirectResponse, m_frame->loader().protectedActiveDocumentLoader().get(), { }, mayNeedBeforeUnloadPrompt, WTFMove(function));
 }
 
 URLKeepingBlobAlive PolicyChecker::extendBlobURLLifetimeIfNecessary(const ResourceRequest& request, const Document& document, PolicyDecisionMode mode) const
@@ -114,7 +114,7 @@ URLKeepingBlobAlive PolicyChecker::extendBlobURLLifetimeIfNecessary(const Resour
     return { request.url(), topOrigin };
 }
 
-void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<FormState>&& formState, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode)
+void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<FormState>&& formState, MayNeedBeforeUnloadPrompt mayNeedBeforeUnloadPrompt, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode)
 {
     NavigationAction action = loader->triggeringAction();
     Ref frame = m_frame.get();
@@ -298,10 +298,13 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     if (isInitialEmptyDocumentLoad) {
         // We ignore the response from the client for initial empty document loads and proceed with the load synchronously.
-        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, [](PolicyAction) { });
+        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID,
+            hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, mayNeedBeforeUnloadPrompt, policyDecisionMode, [](PolicyAction) { });
         decisionHandler(PolicyAction::Use);
-    } else
-        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, WTFMove(decisionHandler));
+    } else {
+        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID,
+            hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, mayNeedBeforeUnloadPrompt, policyDecisionMode, WTFMove(decisionHandler));
+    }
 }
 
 Ref<LocalFrame> PolicyChecker::protectedFrame() const

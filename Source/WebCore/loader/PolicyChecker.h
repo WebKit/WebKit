@@ -70,7 +70,7 @@ enum class NavigationPolicyDecision : uint8_t {
     LoadWillContinueInAnotherProcess,
 };
 
-enum class PolicyDecisionMode { Synchronous, Asynchronous };
+enum class PolicyDecisionMode : bool { Synchronous, Asynchronous };
 
 class PolicyChecker : public CanMakeWeakPtr<PolicyChecker> {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
@@ -81,8 +81,8 @@ public:
     using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, NavigationPolicyDecision)>;
     using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, WeakPtr<FormState>&&, const AtomString& frameName, const NavigationAction&, ShouldContinuePolicyCheck)>;
 
-    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<FormState>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
-    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&&);
+    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<FormState>&&, MayNeedBeforeUnloadPrompt, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
+    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, MayNeedBeforeUnloadPrompt, NavigationPolicyDecisionFunction&&);
     void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, RefPtr<FormState>&&, const AtomString& frameName, NewWindowPolicyDecisionFunction&&);
 
     void stopCheck();

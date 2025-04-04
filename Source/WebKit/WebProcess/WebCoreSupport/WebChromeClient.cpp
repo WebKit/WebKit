@@ -360,6 +360,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         frame.effectiveSandboxFlags(),
+        WebCore::MayNeedBeforeUnloadPrompt::No,
         std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */

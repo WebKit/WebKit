@@ -1321,6 +1321,12 @@ inline DocumentLoader* WebFrame::policySourceDocumentLoader() const
     return policySourceDocumentLoader.get();
 }
 
+void WebFrame::dispatchBeforeUnloadEventForCrossProcessNavigation(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr coreFrame = coreLocalFrame();
+    completionHandler(!coreFrame || coreFrame->protectedLoader()->shouldClose());
+}
+
 OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::advancedPrivacyProtections() const
 {
     RefPtr loader = policySourceDocumentLoader();

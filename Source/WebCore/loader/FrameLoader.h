@@ -304,6 +304,7 @@ public:
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
     WEBCORE_EXPORT bool shouldClose();
+    MayNeedBeforeUnloadPrompt mayNeedBeforeUnloadPrompt();
 
     enum class PageDismissalType { None, BeforeUnload, PageHide, Unload };
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
@@ -545,6 +546,7 @@ private:
     bool m_shouldRestoreScrollPositionAndViewState { false };
 
     bool m_errorOccurredInLoading { false };
+    std::optional<bool> m_shouldCloseValue { std::nullopt };
     bool m_doNotAbortNavigationAPI { false };
     uint64_t m_requiredCookiesVersion { 0 };
 };

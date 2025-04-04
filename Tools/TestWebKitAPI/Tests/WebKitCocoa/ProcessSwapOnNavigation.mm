@@ -7165,6 +7165,191 @@ TEST(ProcessSwap, LoadAlternativeHTML)
     done = false;
 }
 
+static const char* beforeUnloadPageBytes = R"PSONRESOURCE(
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener('beforeunload', (event) => {
+    event.preventDefault();
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.pson)
+        window.webkit.messageHandlers.pson.postMessage("DidFireBeforeUnload");
+    return event.returnValue = "Are you sure you want to exit?";
+});
+</script>
+</body>
+</html>
+)PSONRESOURCE";
+
+static const char* beforeUnloadFinishPageBytes = R"PSONRESOURCE(
+<!DOCTYPE html>
+<html>
+<body>
+</body>
+</html>
+)PSONRESOURCE";
+
+static bool shouldRejectClosingViaPrompt = false;
+static bool didRespondToPrompt = false;
+
+@interface BeforeUnloadPromptUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation BeforeUnloadPromptUIDelegate
+
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        completionHandler(shouldRejectClosingViaPrompt ? NO : YES);
+        didRespondToPrompt = true;
+    });
+}
+
+@end
+
+TEST(ProcessSwap, BeforeUnloadModalAlert)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:beforeUnloadPageBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/next.html" toData:beforeUnloadFinishPageBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto beforeUnloadPromptUIDelegate = adoptNS([[BeforeUnloadPromptUIDelegate alloc] init]);
+    [webView setUIDelegate:beforeUnloadPromptUIDelegate.get()];
+
+    auto preferences = [[webView configuration] preferences];
+    [preferences _setShouldIgnoreMetaViewport:YES];
+
+    auto* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+#if PLATFORM(MAC)
+    [webView sendClicksAtPoint:NSMakePoint(50, 50) numberOfClicks:1];
+#else
+    [webView activatedElementAtPosition:NSMakePoint(50, 50)];
+#endif
+    [webView waitForPendingMouseEvents];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/next.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_TRUE(didRespondToPrompt);
+    didRespondToPrompt = false;
+
+    EXPECT_EQ(1u, [receivedMessages count]);
+    EXPECT_WK_STREQ(@"DidFireBeforeUnload", receivedMessages.get()[0]);
+}
+
+TEST(ProcessSwap, BeforeUnloadPreventNavigation)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:beforeUnloadPageBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/next.html" toData:beforeUnloadFinishPageBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto beforeUnloadPromptUIDelegate = adoptNS([[BeforeUnloadPromptUIDelegate alloc] init]);
+    [webView setUIDelegate:beforeUnloadPromptUIDelegate.get()];
+
+    auto preferences = [[webView configuration] preferences];
+    [preferences _setShouldIgnoreMetaViewport:YES];
+
+    auto* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+#if PLATFORM(MAC)
+    [webView sendClicksAtPoint:NSMakePoint(50, 50) numberOfClicks:1];
+#else
+    [webView activatedElementAtPosition:NSMakePoint(50, 50)];
+#endif
+    [webView waitForPendingMouseEvents];
+
+    shouldRejectClosingViaPrompt = true;
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/next.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&didRespondToPrompt);
+    didRespondToPrompt = false;
+    shouldRejectClosingViaPrompt = false;
+
+    EXPECT_EQ(1u, [receivedMessages count]);
+    EXPECT_WK_STREQ(@"DidFireBeforeUnload", receivedMessages.get()[0]);
+}
+
+TEST(ProcessSwap, BeforeUnloadRunsWithoutUserInteraction)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:beforeUnloadPageBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/next.html" toData:beforeUnloadFinishPageBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto beforeUnloadPromptUIDelegate = adoptNS([[BeforeUnloadPromptUIDelegate alloc] init]);
+    [webView setUIDelegate:beforeUnloadPromptUIDelegate.get()];
+
+    auto preferences = [[webView configuration] preferences];
+    [preferences _setShouldIgnoreMetaViewport:YES];
+
+    auto* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/next.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_EQ(1u, [receivedMessages count]);
+    EXPECT_WK_STREQ(@"DidFireBeforeUnload", receivedMessages.get()[0]);
+}
+
 #if ENABLE(MEDIA_STREAM)
 
 static bool isCapturing = false;
