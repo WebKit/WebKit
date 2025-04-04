@@ -32,13 +32,12 @@
 #include "RTCIceCandidate.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/ice_transport_interface.h>
 #include <webrtc/p2p/base/ice_transport_internal.h>
-#include <webrtc/pc/webrtc_sdp.h>
 
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -174,7 +173,7 @@ void LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged(std::optional<r
 
 void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(const cricket::Candidate& local, const cricket::Candidate& remote)
 {
-    callOnMainThread([protectedThis = Ref { *this }, localSdp = fromStdString(webrtc::SdpSerializeCandidate(local)).isolatedCopy(), remoteSdp = fromStdString(webrtc::SdpSerializeCandidate(remote)).isolatedCopy(), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
+    callOnMainThread([protectedThis = Ref { *this }, localSdp = fromStdString(local.ToString()).isolatedCopy(), remoteSdp = fromStdString(remote.ToString()).isolatedCopy(), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
         if (!protectedThis->m_client)
             return;
 
