@@ -2489,6 +2489,7 @@ header: <WebCore/ScreenProperties.h>
     bool screenSupportsExtendedColor;
     bool screenHasInvertedColors;
     bool screenSupportsHighDynamicRange;
+    WebCore::Headroom currentHeadroom;
 #if PLATFORM(MAC)
     WebCore::FloatSize screenSize;
     bool screenIsMonochrome;

@@ -31,6 +31,7 @@
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "Chrome.h"
 #include "DocumentInlines.h"
 #include "FocusController.h"
 #include "FontCache.h"
@@ -740,6 +741,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #if USE(SKIA)
         StrictImageClamping::No,
 #endif
+        currentHeadroomForDisplay(page().chrome().displayID()),
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 

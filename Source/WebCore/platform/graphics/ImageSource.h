@@ -82,6 +82,7 @@ public:
     virtual std::optional<Color> singlePixelSolidColor() const = 0;
     virtual Headroom headroom() const = 0;
 
+    DecodingFormat decodingFormat() const { return headroom() > Headroom::None ? DecodingFormat::HDR : DecodingFormat::SDR; }
     bool hasSolidColor() const;
 
     virtual String uti() const { return String(); }

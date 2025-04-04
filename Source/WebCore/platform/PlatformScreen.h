@@ -62,6 +62,8 @@ class FloatRect;
 class FloatSize;
 class Widget;
 
+struct Headroom;
+
 using PlatformDisplayID = uint32_t;
 
 using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
@@ -116,6 +118,8 @@ WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
 WEBCORE_EXPORT void setScreenContentsFormatsForTesting(OptionSet<ContentsFormat>);
 OptionSet<ContentsFormat> screenContentsFormatsForTesting();
 #endif
+
+Headroom currentHeadroomForDisplay(PlatformDisplayID);
 
 #if PLATFORM(MAC)
 

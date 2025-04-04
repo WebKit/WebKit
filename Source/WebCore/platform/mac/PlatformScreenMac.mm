@@ -175,6 +175,7 @@ ScreenProperties collectScreenProperties()
         screenData.screenSize = FloatSize { CGDisplayScreenSize(displayID) };
         screenData.scaleFactor = screen.backingScaleFactor;
         screenData.screenSupportsHighDynamicRange = screenSupportsHighDynamicRange(displayID, screenData.preferredDynamicRangeMode);
+        screenData.currentHeadroom = screen.maximumExtendedDynamicRangeColorComponentValue;
 
         screenProperties.screenDataMap.set(displayID, WTFMove(screenData));
         if (!screenProperties.primaryDisplayID)

@@ -27,6 +27,7 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
+#include "ImageTypes.h"
 #include "PlatformScreen.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -43,6 +44,7 @@ struct ScreenData {
     bool screenSupportsExtendedColor { false };
     bool screenHasInvertedColors { false };
     bool screenSupportsHighDynamicRange { false };
+    Headroom currentHeadroom { Headroom::None };
 #if PLATFORM(MAC)
     FloatSize screenSize; // In millimeters.
     bool screenIsMonochrome { false };

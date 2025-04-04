@@ -250,6 +250,7 @@ ScreenProperties collectScreenProperties()
         screenData.screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
         screenData.screenHasInvertedColors = WebCore::screenHasInvertedColors();
         screenData.screenSupportsHighDynamicRange = WebCore::screenSupportsHighDynamicRange(nullptr);
+        screenData.currentHeadroom = screen.currentEDRHeadroom;
         screenData.scaleFactor = WebCore::screenPPIFactor();
 
         screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));

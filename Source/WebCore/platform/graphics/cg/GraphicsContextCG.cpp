@@ -378,21 +378,37 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
 
     auto headroom = options.headroom();
-    auto dynamicRangeLimit = options.dynamicRangeLimit();
-
     if (headroom == Headroom::FromImage)
         headroom = nativeImage.headroom();
 
-    // FIXME: Use CoreGraphics to constrain the brightness of the image more appropriately.
-    if (headroom > Headroom::None) {
-        static constexpr float maxConstrainedHeadroom = 2;
-        if (dynamicRangeLimit == PlatformDynamicRangeLimit::standard())
-            headroom = Headroom::None;
-        else if (dynamicRangeLimit == PlatformDynamicRangeLimit::constrainedHigh())
-            headroom = std::max<float>(Headroom::None, std::min<float>(headroom * dynamicRangeLimit.value(), maxConstrainedHeadroom));
-    }
-
     CGContextSetEDRTargetHeadroom(context, headroom);
+
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    auto oldToneMappingInfo = CGContextGetContentToneMappingInfo(context);
+
+    if (headroom > Headroom::None) {
+        auto dynamicRangeLimit = options.dynamicRangeLimit();
+
+        float edrStrength = dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit() ? 1 : 0;
+        float cdrStrength = dynamicRangeLimit == PlatformDynamicRangeLimit::constrainedHigh() ? 1 : 0;
+        unsigned averageLightLevel = CGImageGetContentAverageLightLevelNits(subImage.get());
+
+        if (!averageLightLevel)
+            averageLightLevel = CGImageCalculateContentAverageLightLevelNits(subImage.get());
+
+        RetainPtr edrStrengthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &edrStrength));
+        RetainPtr cdrStrengthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &cdrStrength));
+        RetainPtr averageLightLevelNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &averageLightLevel));
+
+        CFTypeRef toneMappingKeys[] = { kCGContentEDRStrength, kCGContentAverageLightLevel, kCGConstrainedDynamicRange };
+        CFTypeRef toneMappingValues[] = { edrStrengthNumber.get(), averageLightLevelNumber.get(), cdrStrengthNumber.get() };
+
+        RetainPtr toneMappingOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, toneMappingKeys, toneMappingValues, sizeof(toneMappingKeys) / sizeof(toneMappingKeys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+        CGContentToneMappingInfo toneMappingInfo = { kCGToneMappingDefault, toneMappingOptions.get() };
+        CGContextSetContentToneMappingInfo(context, toneMappingInfo);
+    }
+#endif
 #endif
 
     // Make the origin be at adjustedDestRect.location()
@@ -422,6 +438,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
 #if HAVE(SUPPORT_HDR_DISPLAY)
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+        CGContextSetContentToneMappingInfo(context, oldToneMappingInfo);
+#endif
         CGContextSetEDRTargetHeadroom(context, oldHeadroom);
 #endif
     }

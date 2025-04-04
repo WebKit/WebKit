@@ -82,6 +82,13 @@ OptionSet<ContentsFormat> screenContentsFormatsForTesting()
 }
 #endif
 
+Headroom currentHeadroomForDisplay(PlatformDisplayID displayID)
+{
+    if (auto data = screenData(displayID))
+        return data->currentHeadroom;
+    return Headroom::None;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))

@@ -63,11 +63,12 @@ const CFStringRef WebCoreCGImagePropertyDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyLoopCount = CFSTR("LoopCount");
 const CFStringRef WebCoreCGImagePropertyHeadroom = CFSTR("Headroom");
 
-const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
-
 #if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
 const CFStringRef kCGImageSourceCreateUnpremultipliedPNG = CFSTR("kCGImageSourceCreateUnpremultipliedPNG");
 #endif
+
+const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
+const CFStringRef kCGComputeHDRStats = CFSTR("kCGComputeHDRStats");
 
 static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 {
@@ -127,27 +128,47 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOptions(RetainPtr<CFMu
 {
     if (subsamplingLevel != SubsamplingLevel::Default)
         options = appendImageSourceOption(WTFMove(options), subsamplingLevel);
-    
+
     options = appendImageSourceOption(WTFMove(options), sizeForDrawing);
     return WTFMove(options);
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default)
+static RetainPtr<CFMutableDictionaryRef> appendImageSourceOptions(RetainPtr<CFMutableDictionaryRef>&& options, DecodingFormat decodingFormat)
 {
-    static const auto options = createImageSourceOptions().leakRef();
-    if (subsamplingLevel == SubsamplingLevel::Default)
-        return options;
-    return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel);
+    if (decodingFormat == DecodingFormat::SDR)
+        return WTFMove(options);
+
+    RetainPtr decodeRequestOptions = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFDictionarySetValue(decodeRequestOptions.get(), kCGComputeHDRStats, kCFBooleanTrue);
+
+    CFDictionarySetValue(options.get(), kCGImageSourceDecodeRequestOptions, decodeRequestOptions.get());
+    CFDictionarySetValue(options.get(), kCGImageSourceDecodeRequest, kCGImageSourceDecodeToHDR);
+
+    return WTFMove(options);
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
+static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default, DecodingFormat decodingFormat = DecodingFormat::SDR)
 {
-    static CFMutableDictionaryRef options;
+    static const auto basicOptions = createImageSourceOptions().leakRef();
+
+    RetainPtr options = appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, basicOptions)), subsamplingLevel);
+    options = appendImageSourceOptions(WTFMove(options), decodingFormat);
+
+    return options;
+}
+
+static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing, DecodingFormat decodingFormat)
+{
+    static CFMutableDictionaryRef basicOptions;
     static std::once_flag initializeThumbnailOptionsOnce;
     std::call_once(initializeThumbnailOptionsOnce, [] {
-        options = createImageSourceThumbnailOptions().leakRef();
+        basicOptions = createImageSourceThumbnailOptions().leakRef();
     });
-    return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
+
+    RetainPtr options = appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, basicOptions)), subsamplingLevel, sizeForDrawing);
+    options = appendImageSourceOptions(WTFMove(options), decodingFormat);
+
+    return options;
 }
 
 static IntSize frameSizeFromProperties(CFDictionaryRef properties)
@@ -587,7 +608,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 
     if (decodingOptions.decodingMode() == DecodingMode::Synchronous) {
         // Decode an image synchronously for its native size.
-        options = imageSourceOptions(subsamplingLevel);
+        options = imageSourceOptions(subsamplingLevel, decodingOptions.decodingFormat());
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
     } else {
         auto size = frameSizeAtIndex(index, SubsamplingLevel::Default);
@@ -599,7 +620,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
                 size = *sizeForDrawing;
         }
 
-        options = imageSourceThumbnailOptions(subsamplingLevel, size);
+        options = imageSourceThumbnailOptions(subsamplingLevel, size, decodingOptions.decodingFormat());
         image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
     }
     

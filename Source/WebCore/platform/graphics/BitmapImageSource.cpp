@@ -362,7 +362,7 @@ void BitmapImageSource::decode(Function<void(DecodingStatus)>&& decodeCallback)
         return;
     }
 
-    bool isCompatibleNativeImage = isCompatibleWithOptionsAtIndex(index, SubsamplingLevel::Default, DecodingMode::Asynchronous);
+    bool isCompatibleNativeImage = isCompatibleWithOptionsAtIndex(index, SubsamplingLevel::Default, { DecodingMode::Asynchronous, std::nullopt, decodingFormat() });
     RefPtr frameAnimator = this->frameAnimator();
 
     if (frameAnimator && (frameAnimator->hasEverAnimated() || isCompatibleNativeImage)) {
@@ -376,7 +376,7 @@ void BitmapImageSource::decode(Function<void(DecodingStatus)>&& decodeCallback)
 
     if (!isCompatibleNativeImage) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), index);
-        requestNativeImageAtIndex(index, SubsamplingLevel::Default, ImageAnimatingState::No, { DecodingMode::Asynchronous });
+        requestNativeImageAtIndex(index, SubsamplingLevel::Default, ImageAnimatingState::No, { DecodingMode::Asynchronous, std::nullopt, decodingFormat() });
         return;
     }
 
@@ -563,7 +563,7 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
     }
 
     if (!isCompatibleWithOptionsAtIndex(index, subsamplingLevel, options)) {
-        PlatformImagePtr platformImage = m_decoder->createFrameImageAtIndex(index, subsamplingLevel, DecodingMode::Synchronous);
+        PlatformImagePtr platformImage = m_decoder->createFrameImageAtIndex(index, subsamplingLevel, { DecodingMode::Synchronous, std::nullopt, decodingFormat() });
 
         RefPtr nativeImage = NativeImage::create(WTFMove(platformImage));
         if (!nativeImage)
@@ -608,12 +608,12 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::currentNativeImage
 {
     startAnimation(subsamplingLevel, options);
 
-    auto effectiveOptions = options;
+    auto effectiveOptions = DecodingOptions { options.decodingMode(), options.sizeForDrawing(), decodingFormat() };
 
     // If frame0 is displayed for the first time, startAnimation() has to request decoding frame1
     // asynchronously. A flicker will occur if we request decoding frame0 also asynchronously.
     if (options.decodingMode() == DecodingMode::Asynchronous && isAnimated() && !hasEverAnimated())
-        effectiveOptions = { DecodingMode::Synchronous, options.sizeForDrawing() };
+        effectiveOptions = { DecodingMode::Synchronous, options.sizeForDrawing(), decodingFormat() };
 
     return nativeImageAtIndexForDrawing(currentFrameIndex(), subsamplingLevel, effectiveOptions);
 }

@@ -97,7 +97,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     auto sizeForDrawing = expandedIntSize(sourceSize * scaleFactorForDrawing);
     auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, options.allowImageSubsampling());
 
-    auto nativeImage = m_source->currentNativeImageForDrawing(subsamplingLevel, { options.decodingMode(), sizeForDrawing });
+    auto nativeImage = m_source->currentNativeImageForDrawing(subsamplingLevel, { options.decodingMode(), sizeForDrawing, m_source->decodingFormat() });
 
     if (!nativeImage) {
         if (nativeImage.error() != DecodingStatus::Decoding)
@@ -122,7 +122,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             orientation = currentFrameOrientation();
 
         auto headroom = options.headroom();
-        if (headroom == Headroom::FromImage && hasHDRContentForTesting())
+        if (hasHDRContentForTesting())
             fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
         else {
             if (headroom == Headroom::FromImage)

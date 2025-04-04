@@ -111,4 +111,9 @@ bool screenSupportsExtendedColor(Widget*)
     return false;
 }
 
+Headroom currentHeadroomForDisplay(PlatformDisplayID)
+{
+    return Headroom::None;
+}
+
 } // namespace WebCore
