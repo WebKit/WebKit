@@ -45,7 +45,7 @@ inline RetainPtr<NSData> toNSData(std::span<const uint8_t> span)
 }
 #endif // #ifdef __OBJC__
 
-template<typename> class Function;
+template<typename, typename...> class Function;
 
 #ifdef __cplusplus
 extern "C" {

@@ -104,7 +104,7 @@ template<typename, size_t = 0> class Deque;
 template<typename Key, typename, Key> class EnumeratedArray;
 template<typename, typename = EmbeddedFixedVectorMalloc> class FixedVector;
 template<typename, size_t = 8, typename = SegmentedVectorMalloc> class SegmentedVector;
-template<typename> class Function;
+template<typename, typename...> class Function;
 template<typename> struct FlatteningVariantTraits;
 template<typename> struct IsSmartPtr;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
