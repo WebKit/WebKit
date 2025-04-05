@@ -2372,15 +2372,34 @@ void RenderBlock::computePreferredLogicalWidths()
 
     const RenderStyle& styleToUse = style();
     auto lengthToUse = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    if (!isRenderTableCell() && lengthToUse.isFixed() && lengthToUse.value() >= 0 && !(isDeprecatedFlexItem() && !lengthToUse.intValue())) {
-        m_minPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(lengthToUse);
-        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
-    } else if (shouldComputeLogicalWidthFromAspectRatio()) {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = (computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
-        m_minPreferredLogicalWidth = std::max(0_lu, m_minPreferredLogicalWidth);
-        m_maxPreferredLogicalWidth = std::max(0_lu, m_maxPreferredLogicalWidth);
-    } else 
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+
+    auto preferredLogicalWidths = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        switch (lengthToUse.type()) {
+        case LengthType::Fixed: {
+            if (isRenderTableCell() || lengthToUse.value() < 0 || (isDeprecatedFlexItem() && !lengthToUse.intValue()))
+                break;
+            auto contentBoxSize = adjustContentBoxLogicalWidthForBoxSizing(lengthToUse);
+            return { contentBoxSize, contentBoxSize };
+        }
+        case LengthType::Auto:
+        case LengthType::MinContent:
+        case LengthType::MaxContent:
+            break;
+        default:
+            ASSERT_NOT_REACHED_WITH_MESSAGE("Got invalid length type %u", static_cast<unsigned>(lengthToUse.type()));
+            break;
+        }
+
+        if (shouldComputeLogicalWidthFromAspectRatio()) {
+            auto logicalWidthFromAspectRatio = std::max({ }, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
+            return { logicalWidthFromAspectRatio, logicalWidthFromAspectRatio };
+        }
+        LayoutUnit minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth;
+        computeIntrinsicLogicalWidths(minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth);
+        return { minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth };
+    };
+
+    std::tie(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth) = preferredLogicalWidths();
 
     RenderBox::computePreferredLogicalWidths(styleToUse.logicalMinWidth(), styleToUse.logicalMaxWidth(), borderAndPaddingLogicalWidth());
 
