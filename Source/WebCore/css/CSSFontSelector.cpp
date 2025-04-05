@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,7 @@ CSSFontSelector::~CSSFontSelector()
         fontCache->removeClient(*this);
 }
 
-FontFaceSet* CSSFontSelector::fontFaceSetIfExists()
+RefPtr<FontFaceSet> CSSFontSelector::fontFaceSetIfExists()
 {
     return m_fontFaceSet.get();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
 
-    FontFaceSet* fontFaceSetIfExists();
+    RefPtr<FontFaceSet> fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
     CSSFontFaceSet& cssFontFaceSet() { return m_cssFontFaceSet; }
 
