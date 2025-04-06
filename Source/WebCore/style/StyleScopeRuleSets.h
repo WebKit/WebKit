@@ -29,6 +29,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
+
 
 namespace WebCore {
 
@@ -117,7 +119,7 @@ private:
     mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     RefPtr<RuleSet> m_userStyle;
 
-    Resolver& m_styleResolver;
+    WeakPtr<Resolver> m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_scopeBreakingHasPseudoClassInvalidationRuleSet;
     mutable UncheckedKeyHashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;

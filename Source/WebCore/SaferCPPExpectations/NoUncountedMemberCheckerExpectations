@@ -85,7 +85,6 @@ style/RuleSetBuilder.h
 style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleScope.h
-style/StyleScopeRuleSets.h
 style/Styleable.h
 svg/properties/SVGPropertyOwnerRegistry.h
 workers/WorkerAnimationController.h

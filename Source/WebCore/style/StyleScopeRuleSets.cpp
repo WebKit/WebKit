@@ -76,11 +76,11 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
 
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
-    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+    auto& mediaQueryEvaluator = m_styleResolver->mediaQueryEvaluator();
 
     m_userAgentMediaQueryStyle = RuleSet::create();
 
-    RuleSetBuilder builder(*m_userAgentMediaQueryStyle, mediaQueryEvaluator, &m_styleResolver);
+    RuleSetBuilder builder(*m_userAgentMediaQueryStyle, mediaQueryEvaluator, &m_styleResolver.get());
     builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
 }
 
@@ -92,7 +92,7 @@ RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
 RuleSet* ScopeRuleSets::userStyle() const
 {
     if (m_usesSharedUserStyle)
-        return m_styleResolver.document().styleScope().resolver().ruleSets().userStyle();
+        return m_styleResolver->document().styleScope().resolver().ruleSets().userStyle();
     return m_userStyle.get();
 }
 
@@ -115,21 +115,21 @@ RuleSet* ScopeRuleSets::styleForCascadeLevel(CascadeLevel level)
 
 void ScopeRuleSets::initializeUserStyle()
 {
-    CheckedRef extensionStyleSheets = m_styleResolver.document().extensionStyleSheets();
-    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+    CheckedRef extensionStyleSheets = m_styleResolver->document().extensionStyleSheets();
+    auto& mediaQueryEvaluator = m_styleResolver->mediaQueryEvaluator();
 
     auto userStyle = RuleSet::create();
 
     if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet()) {
-        RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+        RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver.get());
         builder.addRulesFromSheet(pageUserSheet->contents());
     }
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    auto* page = m_styleResolver.document().page();
+    auto* page = m_styleResolver->document().page();
     auto* localMainFrame = page ? dynamicDowncast<LocalFrame>(page->mainFrame()) : nullptr;
     if (!extensionStyleSheets->injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
-        m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
+        m_styleResolver->document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else {
         collectRulesFromUserStyleSheets(extensionStyleSheets->injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
         if (page && localMainFrame && !extensionStyleSheets->injectedUserStyleSheets().isEmpty())
@@ -146,7 +146,7 @@ void ScopeRuleSets::initializeUserStyle()
 
 void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
 {
-    RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+    RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver.get());
     for (auto& sheet : userSheets) {
         ASSERT(sheet->contents().isUserStyleSheet());
         builder.addRulesFromSheet(sheet->contents());
@@ -248,7 +248,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
 
 void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MQ::MediaQueryEvaluator* mediaQueryEvaluator, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
-    RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver, RuleSetBuilder::ShrinkToFit::Enable, RuleSetBuilder::ShouldResolveNesting::Yes);
+    RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver.get(), RuleSetBuilder::ShrinkToFit::Enable, RuleSetBuilder::ShouldResolveNesting::Yes);
 
     RefPtr<CSSStyleSheet> previous;
     for (auto& cssSheet : styleSheets) {
