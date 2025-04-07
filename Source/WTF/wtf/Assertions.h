@@ -680,11 +680,11 @@ static constexpr bool unreachableForValue = false;
 #define PUBLIC_LOG_STRING "{public}s"
 #define PRIVATE_LOG_STRING "{private}s"
 #define SENSITIVE_LOG_STRING "{sensitive}s"
-#define RELEASE_LOG(channel, ...) SUPPRESS_UNCOUNTED_LOCAL os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
-#define RELEASE_LOG_ERROR(channel, ...) SUPPRESS_UNCOUNTED_LOCAL os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
-#define RELEASE_LOG_FAULT(channel, ...) SUPPRESS_UNCOUNTED_LOCAL os_log_fault(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
-#define RELEASE_LOG_INFO(channel, ...) SUPPRESS_UNCOUNTED_LOCAL os_log_info(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
-#define RELEASE_LOG_DEBUG(channel, ...) SUPPRESS_UNCOUNTED_LOCAL os_log_debug(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
+#define RELEASE_LOG(channel, ...) do { WTF::assertMallocRestrictionForCurrentThreadScope(); SUPPRESS_UNCOUNTED_LOCAL os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR(channel, ...) do { WTF::assertMallocRestrictionForCurrentThreadScope(); SUPPRESS_UNCOUNTED_LOCAL os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_FAULT(channel, ...) do { WTF::assertMallocRestrictionForCurrentThreadScope(); SUPPRESS_UNCOUNTED_LOCAL os_log_fault(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_INFO(channel, ...) do { WTF::assertMallocRestrictionForCurrentThreadScope(); SUPPRESS_UNCOUNTED_LOCAL os_log_info(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_DEBUG(channel, ...) do { WTF::assertMallocRestrictionForCurrentThreadScope(); SUPPRESS_UNCOUNTED_LOCAL os_log_debug(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); } while (0)
 #define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
     if (LOG_CHANNEL(channel).level >= (logLevel)) \
         SUPPRESS_UNCOUNTED_LOCAL os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
