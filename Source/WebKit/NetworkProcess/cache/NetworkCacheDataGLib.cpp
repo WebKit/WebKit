@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/StdLibExtras.h>
 
 #if !PLATFORM(WIN)
 #include <gio/gfiledescriptorbased.h>
@@ -47,7 +48,7 @@ namespace NetworkCache {
 Data::Data(std::span<const uint8_t> data)
 {
     uint8_t* copiedData = static_cast<uint8_t*>(fastMalloc(data.size()));
-    memcpy(copiedData, data.data(), data.size());
+    memcpySpan(std::span(copiedData, data.size()), data);
     m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, data.size(), fastFree, copiedData));
 }
 
@@ -109,10 +110,10 @@ Data concatenate(const Data& a, const Data& b)
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gsize aLength;
     const auto* aData = g_bytes_get_data(a.bytes(), &aLength);
-    memcpy(data, aData, aLength);
+    memcpySpan(std::span(data, aLength), std::span(static_cast<const uint8_t*>(aData), aLength));
     gsize bLength;
     const auto* bData = g_bytes_get_data(b.bytes(), &bLength);
-    memcpy(data + aLength, bData, bLength);
+    memcpySpan(std::span(data + aLength, bLength), std::span(static_cast<const uint8_t*>(bData), bLength));
 
     return { adoptGRef(g_bytes_new_with_free_func(data, size, fastFree, data)) };
 }
