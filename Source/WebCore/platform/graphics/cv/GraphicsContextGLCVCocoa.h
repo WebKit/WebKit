@@ -54,7 +54,7 @@ private:
 
     RetainPtr<CVPixelBufferRef> convertPixelBuffer(CVPixelBufferRef);
 
-    GraphicsContextGLCocoa& m_owner;
+    Ref<GraphicsContextGLCocoa> m_owner;
     GCGLDisplay m_display { nullptr };
     GCGLContext m_context { nullptr };
     GCGLConfig m_config { nullptr };

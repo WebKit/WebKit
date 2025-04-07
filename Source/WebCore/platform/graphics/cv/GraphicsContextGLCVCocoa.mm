@@ -495,7 +495,7 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
         EGL_DestroyContext(display, context);
     });
 
-    const bool useTexture2D = m_owner.drawingBufferTextureTarget() == GL_TEXTURE_2D;
+    const bool useTexture2D = owner.drawingBufferTextureTarget() == GL_TEXTURE_2D;
 
 #if PLATFORM(MAC)
     if (!useTexture2D) {
@@ -582,9 +582,9 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
 bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& videoFrame, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY unpackFlipY)
 {
     RetainPtr<CVPixelBufferRef> convertedImage;
-    auto image = videoFrame.pixelBuffer();
+    RetainPtr<CVPixelBufferRef> image = videoFrame.pixelBuffer();
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
-    OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
+    OSType pixelFormat = CVPixelBufferGetPixelFormatType(image.get());
     if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange // NOLINT
         && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
 #if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
@@ -592,21 +592,21 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange
 #endif
         ) {
-        convertedImage = convertPixelBuffer(image);
+        convertedImage = convertPixelBuffer(image.get());
         if (!convertedImage) {
             LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());
             return false;
         }
         image = convertedImage.get();
-        pixelFormat = CVPixelBufferGetPixelFormatType(image);
+        pixelFormat = CVPixelBufferGetPixelFormatType(image.get());
         ASSERT(pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
     }
-    IOSurfaceRef surface = CVPixelBufferGetIOSurface(image);
+    RetainPtr<IOSurfaceRef> surface = CVPixelBufferGetIOSurface(image.get());
     if (!surface)
         return false;
 
     auto orientation = videoFrame.orientation();
-    TextureContent content { reinterpret_cast<intptr_t>(surface), IOSurfaceGetID(surface), IOSurfaceGetSeed(surface), level, internalFormat, format, type, unpackFlipY, orientation };
+    TextureContent content { reinterpret_cast<intptr_t>(surface.get()), IOSurfaceGetID(surface.get()), IOSurfaceGetSeed(surface.get()), level, internalFormat, format, type, unpackFlipY, orientation };
     auto it = m_knownContent.find(outputTexture);
     if (it != m_knownContent.end() && it->value == content) {
         // If the texture hasn't been modified since the last time we copied to it, and the
@@ -664,8 +664,8 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     if (unpackFlipY == FlipY::Yes)
         flipY = !flipY;
 
-    size_t sourceWidth = CVPixelBufferGetWidth(image);
-    size_t sourceHeight = CVPixelBufferGetHeight(image);
+    size_t sourceWidth = CVPixelBufferGetWidth(image.get());
+    size_t sourceHeight = CVPixelBufferGetHeight(image.get());
 
     size_t width = swapXY ? sourceHeight : sourceWidth;
     size_t height = swapXY ? sourceWidth : sourceHeight;
@@ -692,12 +692,12 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_BindTexture(GL_TEXTURE_2D, 0);
 
     // Bind and set up the textures for the video source.
-    auto yPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 0);
-    auto yPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 0);
-    auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
-    auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
+    auto yPlaneWidth = IOSurfaceGetWidthOfPlane(surface.get(), 0);
+    auto yPlaneHeight = IOSurfaceGetHeightOfPlane(surface.get(), 0);
+    auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface.get(), 1);
+    auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface.get(), 1);
 
-    GLenum videoTextureTarget = m_owner.drawingBufferTextureTarget();
+    GLenum videoTextureTarget = m_owner->drawingBufferTextureTarget();
 
     GLuint uvTexture = 0;
     GL_GenTextures(1, &uvTexture);
@@ -710,7 +710,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface, 1);
+    auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 1);
     if (!uvHandle)
         return false;
     auto uvHandleCleanup = makeScopeExit([display = m_display, uvHandle] {
@@ -728,7 +728,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface, 0);
+    auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 0);
     if (!yHandle)
         return false;
     auto yHandleCleanup = makeScopeExit([display = m_display, yHandle] {
@@ -745,7 +745,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_Uniform2f(m_uvTextureSizeUniformLocation, uvPlaneWidth, uvPlaneHeight);
 
     auto range = pixelRangeFromPixelFormat(pixelFormat);
-    auto transferFunction = transferFunctionFromString(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image, kCVImageBufferYCbCrMatrixKey, nil)));
+    auto transferFunction = transferFunctionFromString(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image.get(), kCVImageBufferYCbCrMatrixKey, nil)));
     auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
     GL_UniformMatrix4fv(m_colorMatrixUniformLocation, 1, GL_FALSE, colorMatrix);
 
