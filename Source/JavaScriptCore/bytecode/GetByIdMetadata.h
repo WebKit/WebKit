@@ -151,8 +151,12 @@ inline void GetByIdModeMetadata::setArrayLengthMode()
 
 inline void GetByIdModeMetadata::setProtoLoadMode(Structure* structure, PropertyOffset offset, JSObject* cachedSlot)
 {
+#if CPU(LITTLE_ENDIAN) && CPU(ADDRESS64)
     // We rely on ProtoLoad being 0, or else the high bits of the pointer would write the wrong mode and hit count
     static_assert(!static_cast<std::underlying_type_t<GetByIdMode>>(GetByIdMode::ProtoLoad)); // In 64bit architecture, this field is shared with protoLoadMode.cachedSlot.
+#else
+    mode = GetByIdMode::ProtoLoad;
+#endif
 
     protoLoadMode.structureID = structure->id();
     protoLoadMode.cachedOffset = offset;
