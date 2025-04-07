@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <sqlite3.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef int DatabaseResult;
@@ -45,9 +47,6 @@ typedef NS_ENUM(NSInteger, SQLiteDatabaseProtectionType) {
     SQLiteDatabaseProtectionTypeCompleteUnlessOpen,
     SQLiteDatabaseProtectionTypeComplete,
 };
-
-struct sqlite3;
-struct sqlite3_stmt;
 
 extern NSString * const _WKWebExtensionSQLiteErrorDomain;
 
