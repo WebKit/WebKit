@@ -51,6 +51,7 @@
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
+#include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBGL)
@@ -434,6 +435,8 @@ void OffscreenCanvas::createImageBuffer() const
 
 void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 {
+    ASSERT(!m_context || m_context->isBitmapRenderer());
+
     setHasCreatedImageBuffer(true);
     setImageBuffer(WTFMove(buffer));
 
