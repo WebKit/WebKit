@@ -76,70 +76,6 @@ void Recorder::commitRecording()
     appendStateChangeItemIfNecessary();
 }
 
-void Recorder::appendStateChangeItem(const GraphicsContextState& state)
-{
-    ASSERT(state.changes());
-
-    if (state.containsOnlyInlineChanges()) {
-        if (state.changes().contains(GraphicsContextState::Change::FillBrush))
-            recordSetInlineFillColor(*fillColor().tryGetAsPackedInline());
-
-        if (state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }))
-            recordSetInlineStroke(buildSetInlineStroke(state));
-        return;
-    }
-
-    if (state.changes().contains(GraphicsContextState::Change::FillBrush)) {
-        if (auto pattern = fillPattern())
-            recordResourceUse(pattern->tileImage());
-        else if (auto gradient = fillGradient()) {
-            if (gradient->hasValidRenderingResourceIdentifier())
-                recordResourceUse(*gradient);
-        }
-    }
-
-    if (state.changes().contains(GraphicsContextState::Change::StrokeBrush)) {
-        if (auto pattern = strokePattern())
-            recordResourceUse(pattern->tileImage());
-        else if (auto gradient = strokeGradient()) {
-            if (gradient->hasValidRenderingResourceIdentifier())
-                recordResourceUse(*gradient);
-        }
-    }
-
-    recordSetState(state);
-}
-
-void Recorder::appendStateChangeItemIfNecessary()
-{
-    // FIXME: This is currently invoked in an ad-hoc manner when recording drawing items. We should consider either
-    // splitting GraphicsContext state changes into individual display list items, or refactoring the code such that
-    // this method is automatically invoked when recording a drawing item.
-    auto& state = currentState().state;
-    if (!state.changes())
-        return;
-
-    LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << state);
-    appendStateChangeItem(state);
-    state.didApplyChanges();
-    currentState().lastDrawingState = state;
-}
-
-SetInlineStroke Recorder::buildSetInlineStroke(const GraphicsContextState& state)
-{
-    ASSERT(state.containsOnlyInlineChanges());
-    ASSERT(state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }));
-
-    if (!state.changes().contains(GraphicsContextState::Change::StrokeBrush))
-        return SetInlineStroke(strokeThickness());
-
-    ASSERT(strokeColor().tryGetAsPackedInline());
-    if (!state.changes().contains(GraphicsContextState::Change::StrokeThickness))
-        return SetInlineStroke(*strokeColor().tryGetAsPackedInline());
-
-    return SetInlineStroke(*strokeColor().tryGetAsPackedInline(), strokeThickness());
-}
-
 const GraphicsContextState& Recorder::state() const
 {
     return currentState().state;
@@ -348,69 +284,6 @@ void Recorder::updateStateForEndTransparencyLayer()
     GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
 }
 
-void Recorder::fillPath(const Path& path)
-{
-    appendStateChangeItemIfNecessary();
-
-    if (auto segment = path.singleSegment()) {
-#if ENABLE(INLINE_PATH_DATA)
-        if (auto line = path.singleDataLine())
-            recordFillLine(*line);
-        else if (auto arc = path.singleArc())
-            recordFillArc(*arc);
-        else if (auto closedArc = path.singleClosedArc())
-            recordFillClosedArc(*closedArc);
-        else if (auto curve = path.singleQuadCurve())
-            recordFillQuadCurve(*curve);
-        else if (auto curve = path.singleBezierCurve())
-            recordFillBezierCurve(*curve);
-        else
-#endif
-            recordFillPathSegment(*segment);
-        return;
-    }
-
-    recordFillPath(path);
-}
-
-
-void Recorder::strokePath(const Path& path)
-{
-#if ENABLE(INLINE_PATH_DATA)
-    auto& state = currentState().state;
-    if (state.containsOnlyInlineStrokeChanges()) {
-        if (auto line = path.singleDataLine()) {
-            recordStrokeLineWithColorAndThickness(*line, buildSetInlineStroke(state));
-            state.didApplyChanges();
-            currentState().lastDrawingState = state;
-            return;
-        }
-    }
-#endif
-
-    appendStateChangeItemIfNecessary();
-
-    if (auto segment = path.singleSegment()) {
-#if ENABLE(INLINE_PATH_DATA)
-        if (auto line = path.singleDataLine())
-            recordStrokeLine(*line);
-        else if (auto arc = path.singleArc())
-            recordStrokeArc(*arc);
-        else if (auto closedArc = path.singleClosedArc())
-            recordStrokeClosedArc(*closedArc);
-        else if (auto curve = path.singleQuadCurve())
-            recordStrokeQuadCurve(*curve);
-        else if (auto curve = path.singleBezierCurve())
-            recordStrokeBezierCurve(*curve);
-        else
-#endif
-            recordStrokePathSegment(*segment);
-        return;
-    }
-
-    recordStrokePath(path);
-}
-
 void Recorder::updateStateForResetClip()
 {
     currentState().clipBounds = m_initialClip;
@@ -478,18 +351,6 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
-}
-
-const Recorder::ContextState& Recorder::currentState() const
-{
-    ASSERT(m_stateStack.size());
-    return m_stateStack.last();
-}
-
-Recorder::ContextState& Recorder::currentState()
-{
-    ASSERT(m_stateStack.size());
-    return m_stateStack.last();
 }
 
 const AffineTransform& Recorder::ctm() const

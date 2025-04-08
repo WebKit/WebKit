@@ -75,10 +75,9 @@ RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingRe
     return m_decomposedGlyphs.get(identifier);
 }
 
-void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient)
+bool RemoteResourceCache::cacheGradient(RenderingResourceIdentifier identifier, Ref<Gradient>&& gradient)
 {
-    auto identifier = gradient->renderingResourceIdentifier();
-    m_gradients.add(identifier, WTFMove(gradient));
+    return m_gradients.add(identifier, WTFMove(gradient)).isNewEntry;
 }
 
 bool RemoteResourceCache::releaseGradient(RenderingResourceIdentifier identifier)

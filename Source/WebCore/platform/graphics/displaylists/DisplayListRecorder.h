@@ -78,41 +78,16 @@ public:
 protected:
     WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
 
-    virtual void recordSetInlineFillColor(PackedColor::RGBA) = 0;
-    virtual void recordSetInlineStroke(SetInlineStroke&&) = 0;
-    virtual void recordSetState(const GraphicsContextState&) = 0;
-    virtual void recordClearDropShadow() = 0;
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
     virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
     virtual void recordDrawSystemImage(SystemImage&, const FloatRect&) = 0;
     virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
-#if ENABLE(INLINE_PATH_DATA)
-    virtual void recordFillLine(const PathDataLine&) = 0;
-    virtual void recordFillArc(const PathArc&) = 0;
-    virtual void recordFillClosedArc(const PathClosedArc&) = 0;
-    virtual void recordFillQuadCurve(const PathDataQuadCurve&) = 0;
-    virtual void recordFillBezierCurve(const PathDataBezierCurve&) = 0;
-#endif
-    virtual void recordFillPathSegment(const PathSegment&) = 0;
-    virtual void recordFillPath(const Path&) = 0;
-#if ENABLE(INLINE_PATH_DATA)
-    virtual void recordStrokeLine(const PathDataLine&) = 0;
-    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) = 0;
-    virtual void recordStrokeArc(const PathArc&) = 0;
-    virtual void recordStrokeClosedArc(const PathClosedArc&) = 0;
-    virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
-    virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
-#endif
-    virtual void recordStrokePathSegment(const PathSegment&) = 0;
-    virtual void recordStrokePath(const Path&) = 0;
 
     virtual bool recordResourceUse(NativeImage&) = 0;
     virtual bool recordResourceUse(ImageBuffer&) = 0;
     virtual bool recordResourceUse(const SourceImage&) = 0;
-    virtual bool recordResourceUse(Gradient&) = 0;
-    virtual bool recordResourceUse(Filter&) = 0;
 
     struct ContextState {
         GraphicsContextState state;
@@ -160,7 +135,6 @@ protected:
     WEBCORE_EXPORT void updateStateForClipOut(const Path&);
     WEBCORE_EXPORT void updateStateForClipOutRoundedRect(const FloatRoundedRect&);
     WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
-    WEBCORE_EXPORT void appendStateChangeItemIfNecessary();
     FloatRect initialClip() const { return m_initialClip; }
 
     const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
@@ -179,8 +153,6 @@ private:
 
     WEBCORE_EXPORT void didUpdateState(GraphicsContextState&) final;
     WEBCORE_EXPORT void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
-    WEBCORE_EXPORT void fillPath(const Path&) final;
-    WEBCORE_EXPORT void strokePath(const Path&) final;
     WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
     WEBCORE_EXPORT void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode) final;
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
@@ -193,9 +165,7 @@ private:
     WEBCORE_EXPORT IntRect clipBounds() const final;
     WEBCORE_EXPORT void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 
-    void appendStateChangeItem(const GraphicsContextState&);
-
-    SetInlineStroke buildSetInlineStroke(const GraphicsContextState&);
+    virtual void appendStateChangeItemIfNecessary() = 0;
 
     const AffineTransform& ctm() const;
 
@@ -208,6 +178,18 @@ private:
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 #endif
 };
+
+inline const Recorder::ContextState& Recorder::currentState() const
+{
+    ASSERT(m_stateStack.size());
+    return m_stateStack.last();
+}
+
+inline Recorder::ContextState& Recorder::currentState()
+{
+    ASSERT(m_stateStack.size());
+    return m_stateStack.last();
+}
 
 } // namespace DisplayList
 } // namespace WebCore

@@ -3013,23 +3013,13 @@ class WebCore::TransformOperations {
     WebCore::ColorInterpolationMethod colorInterpolationMethod();
     WebCore::GradientSpreadMethod spreadMethod();
     WebCore::GradientColorStops stops();
-    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 }
 
-[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Pattern::Parameters {
+header: <WebCore/Pattern.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PatternParameters {
     bool repeatX;
     bool repeatY;
     WebCore::AffineTransform patternSpaceTransform;
-}
-
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Pattern {
-    WebCore::SourceImage tileImage();
-    WebCore::Pattern::Parameters parameters();
-}
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
-    WebCore::Color color();
-    std::variant<std::monostate, WebCore::SourceBrushLogicalGradient, Ref<WebCore::Pattern>> patternGradient();
 }
 
 header: <WebCore/ThreadSafeDataBuffer.h>
@@ -7586,62 +7576,7 @@ class WebCore::UserScript {
     WebCore::UserContentMatchParentFrame matchParentFrame();
 }
 
-header: <WebCore/GraphicsContextState.h>
-[Nested, OptionSet] enum class WebCore::GraphicsContextState::Change : uint32_t {
-    FillBrush,
-    FillRule,
-    StrokeBrush,
-    StrokeThickness,
-    StrokeStyle,
-    CompositeMode,
-    DropShadow,
-    Style,
-    Alpha,
-    TextDrawingMode,
-    ImageInterpolationQuality,
-    ShouldAntialias,
-    ShouldSmoothFonts,
-    ShouldSubpixelQuantizeFonts,
-    ShadowsIgnoreTransforms,
-    DrawLuminanceMask,
-    UseDarkAppearance,
-};
-
-header: <WebCore/GraphicsContextState.h>
-[Nested] enum class WebCore::GraphicsContextState::Purpose : uint8_t {
-    Initial,
-    SaveRestore,
-    TransparencyLayer,
-};
-
-[LegacyPopulateFromEmptyConstructor, AdditionalEncoder=StreamConnectionEncoder] class WebCore::GraphicsContextState {
-    WebCore::SourceBrush m_fillBrush;
-    WebCore::SourceBrush m_strokeBrush;
-    OptionSet<WebCore::GraphicsContextState::Change> m_changeFlags;
-    float m_strokeThickness;
-    WebCore::WindRule m_fillRule;
-    WebCore::StrokeStyle m_strokeStyle;
-    WebCore::CompositeMode m_compositeMode;
-    std::optional<WebCore::GraphicsDropShadow> m_dropShadow;
-    std::optional<WebCore::GraphicsStyle> m_style;
-    float m_alpha;
-    WebCore::InterpolationQuality m_imageInterpolationQuality;
-    OptionSet<WebCore::TextDrawingMode> m_textDrawingMode;
-    bool m_shouldAntialias;
-    bool m_shouldSmoothFonts;
-    bool m_shouldSubpixelQuantizeFonts;
-    bool m_shadowsIgnoreTransforms;
-    bool m_drawLuminanceMask;
-    bool m_useDarkAppearance;
-    WebCore::GraphicsContextState::Purpose m_purpose;
-};
-
 enum class WebCore::WindRule : bool
-
-[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SourceBrushLogicalGradient {
-    std::variant<Ref<WebCore::Gradient>, WebCore::RenderingResourceIdentifier> serializableGradient();
-    WebCore::AffineTransform spaceTransform;
-};
 
 enum class WebCore::ContentSecurityPolicyHeaderType : bool;
 

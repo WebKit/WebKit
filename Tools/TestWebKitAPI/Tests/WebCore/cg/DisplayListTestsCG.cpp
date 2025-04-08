@@ -62,7 +62,10 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     list.append(FillRect(contextBounds, GraphicsContext::RequiresClipToRect::Yes));
     list.append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
     list.append(SetInlineStroke(Color::red));
-    list.append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
+    Path path;
+    path.moveTo(FloatPoint { 0, contextHeight });
+    path.addLineTo(FloatPoint { contextWidth, 0 });
+    list.append(StrokePath(WTFMove(path)));
 
     {
         Replayer replayer { context, list };

@@ -181,11 +181,6 @@ void SetMiterLimit::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("mitre-limit"_s, miterLimit());
 }
 
-void ClearDropShadow::apply(GraphicsContext& context) const
-{
-    context.clearDropShadow();
-}
-
 void Clip::apply(GraphicsContext& context) const
 {
     context.clip(m_rect);
@@ -614,70 +609,6 @@ void FillRectWithRoundedHole::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("color"_s, color());
 }
 
-#if ENABLE(INLINE_PATH_DATA)
-
-void FillLine::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void FillArc::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void FillClosedArc::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void FillQuadCurve::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillQuadCurve::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void FillBezierCurve::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillBezierCurve::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-#endif // ENABLE(INLINE_PATH_DATA)
-
-void FillPathSegment::apply(GraphicsContext& context) const
-{
-    context.fillPath(path());
-}
-
-void FillPathSegment::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
 void FillPath::apply(GraphicsContext& context) const
 {
     context.fillPath(m_path);
@@ -719,16 +650,6 @@ void StrokePath::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("path"_s, path());
 }
 
-void StrokePathSegment::apply(GraphicsContext& context) const
-{
-    context.strokePath(path());
-}
-
-void StrokePathSegment::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
 void StrokeEllipse::apply(GraphicsContext& context) const
 {
     context.strokeEllipse(m_rect);
@@ -738,68 +659,6 @@ void StrokeEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("rect"_s, rect());
 }
-
-void StrokeLine::apply(GraphicsContext& context) const
-{
-#if ENABLE(INLINE_PATH_DATA)
-    auto path = Path({ PathSegment { PathDataLine { { start() }, { end() } } } });
-#else
-    Path path;
-    path.moveTo(start());
-    path.addLineTo(end());
-#endif
-    context.strokePath(path);
-}
-
-void StrokeLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("start"_s, start());
-    ts.dumpProperty("end"_s, end());
-}
-
-#if ENABLE(INLINE_PATH_DATA)
-
-void StrokeArc::apply(GraphicsContext& context) const
-{
-    context.strokePath(path());
-}
-
-void StrokeArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void StrokeClosedArc::apply(GraphicsContext& context) const
-{
-    context.strokePath(path());
-}
-
-void StrokeClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void StrokeQuadCurve::apply(GraphicsContext& context) const
-{
-    context.strokePath(path());
-}
-
-void StrokeQuadCurve::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-void StrokeBezierCurve::apply(GraphicsContext& context) const
-{
-    context.strokePath(path());
-}
-
-void StrokeBezierCurve::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("path"_s, path());
-}
-
-#endif // ENABLE(INLINE_PATH_DATA)
 
 void ClearRect::apply(GraphicsContext& context) const
 {

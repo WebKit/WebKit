@@ -57,8 +57,6 @@ public:
 
     void cacheImageBuffer(ImageBuffer&);
     void cacheNativeImage(NativeImage&);
-    void cacheGradient(Gradient&);
-    void cacheFilter(Filter&);
 
     WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;

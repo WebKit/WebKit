@@ -412,13 +412,11 @@ void RemoteRenderingBackend::releaseDecomposedGlyphs(RenderingResourceIdentifier
     MESSAGE_CHECK(success, "DecomposedGlyphs released before being cached.");
 }
 
-void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
+void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RenderingResourceIdentifier identifier)
 {
-    ASSERT(!RunLoop::isMain());
-    if (gradient->hasValidRenderingResourceIdentifier())
-        m_remoteResourceCache.cacheGradient(WTFMove(gradient));
-    else
-        LOG_WITH_STREAM(DisplayLists, stream << "Received a Gradient without a valid resource identifier");
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.cacheGradient(identifier, WTFMove(gradient));
+    MESSAGE_CHECK(success, "Gradient already cached.");
 }
 
 void RemoteRenderingBackend::releaseGradient(RenderingResourceIdentifier identifier)

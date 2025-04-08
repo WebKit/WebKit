@@ -80,12 +80,6 @@ private:
     void updateFillBrush(const SourceBrush&);
     void updateStrokeBrush(const SourceBrush&);
     void updateCTM(const AffineTransform&);
-    enum class ShadowsIgnoreTransforms {
-        Unspecified,
-        Yes,
-        No
-    };
-    void updateShadow(const std::optional<GraphicsDropShadow>&, ShadowsIgnoreTransforms);
     void updateFillColor(CGColorRef);
     void updateStrokeColor(CGColorRef);
     void updateShadow(CGStyleRef);

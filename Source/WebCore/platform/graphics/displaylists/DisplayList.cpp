@@ -72,16 +72,6 @@ void DisplayList::cacheNativeImage(NativeImage& image)
     m_resourceHeap.add(Ref { image });
 }
 
-void DisplayList::cacheGradient(Gradient& gradient)
-{
-    m_resourceHeap.add(Ref { gradient });
-}
-
-void DisplayList::cacheFilter(Filter& filter)
-{
-    m_resourceHeap.add(Ref { filter });
-}
-
 String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);

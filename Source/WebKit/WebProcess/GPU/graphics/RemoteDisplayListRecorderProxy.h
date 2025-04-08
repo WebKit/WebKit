@@ -94,6 +94,7 @@ private:
     void drawPath(const WebCore::Path&) final;
     void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
     void drawFocusRing(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
+    void fillPath(const WebCore::Path&) final;
     void fillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&) final;
     void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) final;
@@ -105,6 +106,7 @@ private:
 #if ENABLE(VIDEO)
     void drawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
+    void strokePath(const WebCore::Path&) final;
     void strokeRect(const WebCore::FloatRect&, float) final;
     void strokeEllipse(const WebCore::FloatRect&) final;
     void clearRect(const WebCore::FloatRect&) final;
@@ -122,43 +124,28 @@ private:
     void endPage() final;
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
-    void recordSetInlineFillColor(WebCore::PackedColor::RGBA) final;
-    void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
-    void recordSetState(const WebCore::GraphicsContextState&) final;
-    void recordClearDropShadow() final;
     void recordClipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
     void recordDrawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&) final;
     void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&);
     void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
-#if ENABLE(INLINE_PATH_DATA)
-    void recordFillLine(const WebCore::PathDataLine&) final;
-    void recordFillArc(const WebCore::PathArc&) final;
-    void recordFillClosedArc(const WebCore::PathClosedArc&) final;
-    void recordFillQuadCurve(const WebCore::PathDataQuadCurve&) final;
-    void recordFillBezierCurve(const WebCore::PathDataBezierCurve&) final;
-#endif
-    void recordFillPathSegment(const WebCore::PathSegment&) final;
-    void recordFillPath(const WebCore::Path&) final;
-#if ENABLE(INLINE_PATH_DATA)
-    void recordStrokeLine(const WebCore::PathDataLine&) final;
-    void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&) final;
-    void recordStrokeArc(const WebCore::PathArc&) final;
-    void recordStrokeClosedArc(const WebCore::PathClosedArc&) final;
-    void recordStrokeQuadCurve(const WebCore::PathDataQuadCurve&) final;
-    void recordStrokeBezierCurve(const WebCore::PathDataBezierCurve&) final;
-#endif
-    void recordStrokePathSegment(const WebCore::PathSegment&) final;
-    void recordStrokePath(const WebCore::Path&) final;
 
     bool recordResourceUse(WebCore::NativeImage&) final;
     bool recordResourceUse(WebCore::ImageBuffer&) final;
     bool recordResourceUse(const WebCore::SourceImage&) final;
     bool recordResourceUse(WebCore::Font&);
     bool recordResourceUse(WebCore::DecomposedGlyphs&);
-    bool recordResourceUse(WebCore::Gradient&) final;
-    bool recordResourceUse(WebCore::Filter&) final;
+    bool recordResourceUse(WebCore::Gradient&);
+    bool recordResourceUse(WebCore::Filter&);
+    // Synchronizes draw state.
+    void appendStateChangeItemIfNecessary() final;
+    struct InlineStrokeData {
+        std::optional<WebCore::PackedColor::RGBA> color;
+        std::optional<float> thickness;
+    };
+    // Synchronizes draw state and returns stroke state that needs to be sent inline with the stroke command.
+    InlineStrokeData appendStateChangeItemForInlineStrokeIfNecessary();
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;

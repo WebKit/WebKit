@@ -76,9 +76,9 @@ TEST(DisplayListTests, AppendItems)
         list.append(FillPath(path));
         list.append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
         list.append(SetInlineFillColor(Color::red));
-#if ENABLE(INLINE_PATH_DATA)
-        list.append(StrokeLine(PathDataLine { { 0., 0. }, { 10., 15. } }));
-#endif
+        Path path;
+        path.addLineTo({ 10., 15. });
+        list.append(StrokePath(WTFMove(path)));
     }
 
     EXPECT_FALSE(list.isEmpty());
@@ -95,11 +95,10 @@ TEST(DisplayListTests, AppendItems)
             EXPECT_EQ(item.gradient().ptr(), gradient.ptr());
         }, [&](const SetInlineFillColor& item) {
             EXPECT_EQ(item.color(), Color::red);
-#if ENABLE(INLINE_PATH_DATA)
-        }, [&](const StrokeLine& item) {
-            EXPECT_EQ(item.start(), FloatPoint(0, 0));
-            EXPECT_EQ(item.end(), FloatPoint(10., 15.));
-#endif
+        }, [&](const StrokePath& item) {
+            Path path;
+            path.addLineTo({ 10., 15. });
+            EXPECT_TRUE(item.path().definitelyEqual(path));
         }, [&](const auto& item) {
             observedUnexpectedItem = true;
         });

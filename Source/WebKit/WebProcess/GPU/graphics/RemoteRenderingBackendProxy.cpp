@@ -446,9 +446,9 @@ void RemoteRenderingBackendProxy::releaseDecomposedGlyphs(RenderingResourceIdent
     send(Messages::RemoteRenderingBackend::ReleaseDecomposedGlyphs(identifier));
 }
 
-void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
+void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient, RenderingResourceIdentifier identifier)
 {
-    send(Messages::RemoteRenderingBackend::CacheGradient(WTFMove(gradient)));
+    send(Messages::RemoteRenderingBackend::CacheGradient(WTFMove(gradient), identifier));
 }
 
 void RemoteRenderingBackendProxy::releaseGradient(RenderingResourceIdentifier identifier)

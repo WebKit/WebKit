@@ -166,7 +166,12 @@ void DrawGlyphsRecorder::concludeInternalContext()
     updateCTM(m_originalState.ctm);
     updateFillBrush(m_originalState.fillBrush);
     updateStrokeBrush(m_originalState.strokeBrush);
-    updateShadow(m_originalState.dropShadow, m_originalState.ignoreTransforms ? ShadowsIgnoreTransforms::Yes : ShadowsIgnoreTransforms::No);
+    // Note: due to bugs in GraphicsContext interface and GraphicsContextCG, we have to set this first.
+    m_owner.setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
+    if (m_originalState.dropShadow)
+        m_owner.setDropShadow(*m_originalState.dropShadow);
+    else
+        m_owner.clearDropShadow();
 }
 
 void DrawGlyphsRecorder::updateFillColor(CGColorRef fillColor)
@@ -213,22 +218,11 @@ void DrawGlyphsRecorder::updateCTM(const AffineTransform& ctm)
     if (auto inverseOfCurrentCTM = m_owner.getCTM().inverse())
         m_owner.concatCTM(*inverseOfCurrentCTM * ctm);
 }
-
-void DrawGlyphsRecorder::updateShadow(const std::optional<GraphicsDropShadow>& dropShadow, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
-{
-    if (dropShadow)
-        m_owner.setDropShadow(*dropShadow);
-    else
-        m_owner.clearDropShadow();
-
-    m_owner.setShadowsIgnoreTransforms(shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
-}
-
 void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
 {
     if (CGStyleGetType(style) != kCGStyleShadow) {
         // FIXME: Support more kinds of CGStyles.
-        updateShadow({ }, ShadowsIgnoreTransforms::Unspecified);
+        m_owner.clearDropShadow();
         return;
     }
 
@@ -237,7 +231,9 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
     auto shadowRadius = static_cast<float>(shadowStyle.radius);
     auto shadowColor = CGStyleGetColor(style);
-    updateShadow({ { shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor) } }, ShadowsIgnoreTransforms::Yes);
+    // Note: due to bugs in GraphicsContext interface and GraphicsContextCG, we have to set this first.
+    m_owner.setShadowsIgnoreTransforms(true);
+    m_owner.setDropShadow({ shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor) });
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)

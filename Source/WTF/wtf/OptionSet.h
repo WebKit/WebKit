@@ -125,6 +125,11 @@ public:
         return (*this & optionSet) == optionSet;
     }
 
+    constexpr bool containsOnly(OptionSet optionSet) const
+    {
+        return *this == (*this & optionSet);
+    }
+
     constexpr void add(OptionSet optionSet)
     {
         m_storage |= optionSet.m_storage;

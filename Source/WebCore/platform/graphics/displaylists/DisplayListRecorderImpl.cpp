@@ -104,21 +104,6 @@ void RecorderImpl::concatCTM(const AffineTransform& transform)
     append(ConcatenateCTM(transform));
 }
 
-void RecorderImpl::recordSetInlineFillColor(PackedColor::RGBA inlineColor)
-{
-    append(SetInlineFillColor(inlineColor));
-}
-
-void RecorderImpl::recordSetInlineStroke(SetInlineStroke&& strokeItem)
-{
-    append(strokeItem);
-}
-
-void RecorderImpl::recordSetState(const GraphicsContextState& state)
-{
-    append(SetState(state));
-}
-
 void RecorderImpl::setLineCap(LineCap lineCap)
 {
     append(SetLineCap(lineCap));
@@ -137,11 +122,6 @@ void RecorderImpl::setLineJoin(LineJoin join)
 void RecorderImpl::setMiterLimit(float limit)
 {
     append(SetMiterLimit(limit));
-}
-
-void RecorderImpl::recordClearDropShadow()
-{
-    append(ClearDropShadow());
 }
 
 void RecorderImpl::resetClip()
@@ -340,42 +320,9 @@ void RecorderImpl::fillRectWithRoundedHole(const FloatRect& rect, const FloatRou
     append(FillRectWithRoundedHole(rect, roundedRect, color));
 }
 
-#if ENABLE(INLINE_PATH_DATA)
-
-void RecorderImpl::recordFillLine(const PathDataLine& line)
+void RecorderImpl::fillPath(const Path& path)
 {
-    append(FillLine(line));
-}
-
-void RecorderImpl::recordFillArc(const PathArc& arc)
-{
-    append(FillArc(arc));
-}
-
-void RecorderImpl::recordFillClosedArc(const PathClosedArc& closedArc)
-{
-    append(FillClosedArc(closedArc));
-}
-
-void RecorderImpl::recordFillQuadCurve(const PathDataQuadCurve& curve)
-{
-    append(FillQuadCurve(curve));
-}
-
-void RecorderImpl::recordFillBezierCurve(const PathDataBezierCurve& curve)
-{
-    append(FillBezierCurve(curve));
-}
-
-#endif // ENABLE(INLINE_PATH_DATA)
-
-void RecorderImpl::recordFillPathSegment(const PathSegment& segment)
-{
-    append(FillPathSegment(segment));
-}
-
-void RecorderImpl::recordFillPath(const Path& path)
-{
+    appendStateChangeItemIfNecessary();
     append(FillPath(path));
 }
 
@@ -399,48 +346,9 @@ void RecorderImpl::strokeRect(const FloatRect& rect, float width)
     append(StrokeRect(rect, width));
 }
 
-#if ENABLE(INLINE_PATH_DATA)
-
-void RecorderImpl::recordStrokeLine(const PathDataLine& line)
+void RecorderImpl::strokePath(const Path& path)
 {
-    append(StrokeLine(line));
-}
-
-void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SetInlineStroke&& strokeItem)
-{
-    append(strokeItem);
-    append(StrokePathSegment(PathSegment { line }));
-}
-
-void RecorderImpl::recordStrokeArc(const PathArc& arc)
-{
-    append(StrokeArc(arc));
-}
-
-void RecorderImpl::recordStrokeClosedArc(const PathClosedArc& closedArc)
-{
-    append(StrokeClosedArc(closedArc));
-}
-
-void RecorderImpl::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
-{
-    append(StrokeQuadCurve(curve));
-}
-
-void RecorderImpl::recordStrokeBezierCurve(const PathDataBezierCurve& curve)
-{
-    append(StrokeBezierCurve(curve));
-}
-
-#endif // ENABLE(INLINE_PATH_DATA)
-
-void RecorderImpl::recordStrokePathSegment(const PathSegment& segment)
-{
-    append(StrokePathSegment(segment));
-}
-
-void RecorderImpl::recordStrokePath(const Path& path)
-{
+    appendStateChangeItemIfNecessary();
     append(StrokePath(path));
 }
 
@@ -525,16 +433,50 @@ bool RecorderImpl::recordResourceUse(const SourceImage& image)
     return true;
 }
 
-bool RecorderImpl::recordResourceUse(Gradient& gradient)
+void RecorderImpl::appendStateChangeItemIfNecessary()
 {
-    m_displayList.cacheGradient(gradient);
-    return true;
-}
+    auto& state = currentState().state;
+    if (!state.changes())
+        return;
 
-bool RecorderImpl::recordResourceUse(Filter& filter)
-{
-    m_displayList.cacheFilter(filter);
-    return true;
+    auto recordFullItem = [&] {
+        append(SetState(state));
+        state.didApplyChanges();
+        currentState().lastDrawingState = state;
+    };
+    auto changes = state.changes();
+
+    if (!changes.containsOnly({ GraphicsContextState::Change::FillBrush, GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness })) {
+        recordFullItem();
+        return;
+    }
+    std::optional<PackedColor::RGBA> fillColor;
+    if (changes.contains(GraphicsContextState::Change::FillBrush)) {
+        fillColor = state.fillBrush().packedColor();
+        if (!fillColor) {
+            recordFullItem();
+            return;
+        }
+    }
+    std::optional<PackedColor::RGBA> strokeColor;
+    if (changes.contains(GraphicsContextState::Change::StrokeBrush)) {
+        strokeColor = state.strokeBrush().packedColor();
+        if (!strokeColor) {
+            recordFullItem();
+            return;
+        }
+    }
+    std::optional<float> strokeThickness;
+    if (changes.contains(GraphicsContextState::Change::StrokeThickness))
+        strokeThickness = state.strokeThickness();
+
+    if (fillColor)
+        append(SetInlineFillColor(*fillColor));
+    if (strokeColor || strokeThickness)
+        append(SetInlineStroke(strokeColor, strokeThickness));
+
+    state.didApplyChanges();
+    currentState().lastDrawingState = state;
 }
 
 } // namespace DisplayList

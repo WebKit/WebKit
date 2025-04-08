@@ -37,23 +37,27 @@ public:
     using OptionalPatternGradient = std::variant<std::monostate, SourceBrushLogicalGradient, Ref<Pattern>>;
 
     SourceBrush() = default;
-    WEBCORE_EXPORT SourceBrush(const Color&, OptionalPatternGradient&& = std::monostate { });
+    SourceBrush(const Color& color)
+        : m_color(color)
+    {
+    }
 
+    // Color should be stored in the variant, in place of std::monospace. Currently a lot of code
+    // queries the color unconditionally, color is accessible unconditionally, returning incorrect
+    // but defined data.
     const Color& color() const { return m_color; }
     void setColor(const Color color) { m_color = color; }
-
-    const OptionalPatternGradient& patternGradient() const { return m_patternGradient; }
+    // Packed color accessor takes into account the discrimination between color, gradient, pattern.
+    std::optional<PackedColor::RGBA> packedColor() const;
 
     WEBCORE_EXPORT Gradient* gradient() const;
     WEBCORE_EXPORT Pattern* pattern() const;
-    RefPtr<Pattern> protectedPattern() const { return pattern(); }
     WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
     WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
-    void setPattern(Ref<Pattern>&&);
+    WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
 
-    bool isInlineColor() const { return !hasPatternOrGradient() && m_color.tryGetAsSRGBABytes(); }
     bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }
 
     bool hasPatternOrGradient() const { return !std::holds_alternative<std::monostate>(m_patternGradient); }
@@ -63,6 +67,13 @@ private:
     Color m_color { Color::black };
     OptionalPatternGradient m_patternGradient;
 };
+
+inline std::optional<PackedColor::RGBA> SourceBrush::packedColor() const
+{
+    if (hasPatternOrGradient())
+        return std::nullopt;
+    return m_color.tryGetAsPackedInline();
+}
 
 inline bool operator==(const SourceBrush& a, const SourceBrush& b)
 {

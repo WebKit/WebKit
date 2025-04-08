@@ -460,7 +460,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ContextMenuContextData.serialization.in
     Shared/CoordinateSystem.serialization.in
     Shared/DebuggableInfoData.serialization.in
-    Shared/DisplayListArgumentCoders.serialization.in
     Shared/DocumentEditingContext.serialization.in
     Shared/DragControllerAction.serialization.in
     Shared/DrawingAreaInfo.serialization.in

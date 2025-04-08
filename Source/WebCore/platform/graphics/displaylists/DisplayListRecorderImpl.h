@@ -71,6 +71,7 @@ public:
     void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
     void fillEllipse(const FloatRect&) final;
+    void fillPath(const Path&) final;
     void fillRect(const FloatRect&, RequiresClipToRect) final;
     void fillRect(const FloatRect&, const Color&) final;
     void fillRect(const FloatRect&, Gradient&) final;
@@ -85,6 +86,7 @@ public:
 #endif
     void strokeRect(const FloatRect&, float) final;
     void strokeEllipse(const FloatRect&) final;
+    void strokePath(const Path&) final;
     void clearRect(const FloatRect&) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 #if USE(CG)
@@ -99,41 +101,18 @@ public:
     void setURLForRect(const URL&, const FloatRect&) final;
 
 private:
-    void recordSetInlineFillColor(PackedColor::RGBA) final;
-    void recordSetInlineStroke(SetInlineStroke&&) final;
-    void recordSetState(const GraphicsContextState&) final;
-    void recordClearDropShadow() final;
     void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
     void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
-#if ENABLE(INLINE_PATH_DATA)
-    void recordFillLine(const PathDataLine&) final;
-    void recordFillArc(const PathArc&) final;
-    void recordFillClosedArc(const PathClosedArc&) final;
-    void recordFillQuadCurve(const PathDataQuadCurve&) final;
-    void recordFillBezierCurve(const PathDataBezierCurve&) final;
-#endif
-    void recordFillPathSegment(const PathSegment&) final;
-    void recordFillPath(const Path&) final;
-#if ENABLE(INLINE_PATH_DATA)
-    void recordStrokeLine(const PathDataLine&) final;
-    void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) final;
-    void recordStrokeArc(const PathArc&) final;
-    void recordStrokeClosedArc(const PathClosedArc&) final;
-    void recordStrokeQuadCurve(const PathDataQuadCurve&) final;
-    void recordStrokeBezierCurve(const PathDataBezierCurve&) final;
-#endif
-    void recordStrokePathSegment(const PathSegment&) final;
-    void recordStrokePath(const Path&) final;
 
     bool recordResourceUse(NativeImage&) final;
     bool recordResourceUse(ImageBuffer&) final;
     bool recordResourceUse(const SourceImage&) final;
-    bool recordResourceUse(Gradient&) final;
-    bool recordResourceUse(Filter&) final;
+
+    void appendStateChangeItemIfNecessary() final;
 
     void append(Item&& item)
     {

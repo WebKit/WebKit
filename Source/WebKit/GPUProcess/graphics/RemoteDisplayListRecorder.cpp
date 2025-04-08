@@ -135,53 +135,158 @@ void RemoteDisplayListRecorder::concatCTM(const AffineTransform& ctm)
     context().concatCTM(ctm);
 }
 
-void RemoteDisplayListRecorder::setInlineFillColor(PackedColor::RGBA color)
+void RemoteDisplayListRecorder::setFillPackedColor(PackedColor::RGBA color)
 {
     context().setFillColor(asSRGBA(color));
 }
 
-void RemoteDisplayListRecorder::setInlineStroke(std::optional<PackedColor::RGBA> color, std::optional<float> thickness)
+void RemoteDisplayListRecorder::setFillColor(const Color& color)
 {
-    if (color)
-        context().setStrokeColor(asSRGBA(*color));
-    if (thickness)
-        context().setStrokeThickness(*thickness);
+    context().setFillColor(color);
 }
 
-void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
+void RemoteDisplayListRecorder::setFillCachedGradient(RenderingResourceIdentifier identifier, const AffineTransform& spaceTransform)
 {
-    auto fixPatternTileImage = [&](Pattern* pattern) -> bool {
-        if (!pattern)
-            return true;
-        auto tileImage = sourceImage(pattern->tileImage().imageIdentifier());
-        if (!tileImage) {
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-        pattern->setTileImage(WTFMove(*tileImage));
-        return true;
-    };
-
-    auto fixBrushGradient = [&](SourceBrush& brush) -> bool {
-        auto gradientIdentifier = brush.gradientIdentifier();
-        if (!gradientIdentifier)
-            return true;
-        RefPtr gradient = resourceCache().cachedGradient(*gradientIdentifier);
-        if (!gradient) {
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-        brush.setGradient(*gradient, brush.gradientSpaceTransform());
-        return true;
-    };
-
-    if (!fixPatternTileImage(item.state().fillBrush().protectedPattern().get()) || !fixBrushGradient(item.state().fillBrush()))
+    RefPtr gradient = resourceCache().cachedGradient(identifier);
+    if (!gradient) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+    context().setFillGradient(gradient.releaseNonNull(), spaceTransform);
+}
 
-    if (!fixPatternTileImage(item.state().strokeBrush().protectedPattern().get()) || !fixBrushGradient(item.state().strokeBrush()))
+void RemoteDisplayListRecorder::setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+{
+    context().setFillGradient(WTFMove(gradient), spaceTransform);
+}
+
+void RemoteDisplayListRecorder::setFillPattern(RenderingResourceIdentifier tileImageIdentifier, const PatternParameters& parameters)
+{
+    auto tileImage = sourceImage(tileImageIdentifier);
+    if (!tileImage) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+    context().setFillPattern(Pattern::create(WTFMove(*tileImage), parameters));
+}
 
-    WTFMove(item).apply(context());
+void RemoteDisplayListRecorder::setFillRule(WindRule rule)
+{
+    context().setFillRule(rule);
+}
+
+void RemoteDisplayListRecorder::setStrokePackedColor(WebCore::PackedColor::RGBA color)
+{
+    context().setStrokeColor(asSRGBA(color));
+}
+
+void RemoteDisplayListRecorder::setStrokeColor(const WebCore::Color& color)
+{
+    context().setStrokeColor(color);
+}
+
+void RemoteDisplayListRecorder::setStrokeCachedGradient(RenderingResourceIdentifier identifier, const AffineTransform& spaceTransform)
+{
+    RefPtr gradient = resourceCache().cachedGradient(identifier);
+    if (!gradient) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    context().setStrokeGradient(gradient.releaseNonNull(), spaceTransform);
+}
+
+void RemoteDisplayListRecorder::setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+{
+    context().setStrokeGradient(WTFMove(gradient), spaceTransform);
+}
+
+void RemoteDisplayListRecorder::setStrokePattern(RenderingResourceIdentifier tileImageIdentifier, const PatternParameters& parameters)
+{
+    auto tileImage = sourceImage(tileImageIdentifier);
+    if (!tileImage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    context().setStrokePattern(Pattern::create(WTFMove(*tileImage), parameters));
+}
+
+void RemoteDisplayListRecorder::setStrokePackedColorAndThickness(PackedColor::RGBA color, float thickness)
+{
+    setStrokePackedColor(color);
+    setStrokeThickness(thickness);
+}
+
+void RemoteDisplayListRecorder::setStrokeThickness(float thickness)
+{
+    context().setStrokeThickness(thickness);
+}
+
+void RemoteDisplayListRecorder::setStrokeStyle(WebCore::StrokeStyle value)
+{
+    context().setStrokeStyle(value);
+}
+
+void RemoteDisplayListRecorder::setCompositeMode(WebCore::CompositeMode value)
+{
+    context().setCompositeMode(value);
+}
+
+void RemoteDisplayListRecorder::setDropShadow(std::optional<WebCore::GraphicsDropShadow> value)
+{
+    if (value)
+        context().setDropShadow(*value);
+    else
+        context().clearDropShadow();
+}
+
+void RemoteDisplayListRecorder::setStyle(std::optional<WebCore::GraphicsStyle> value)
+{
+    context().setStyle(value);
+}
+
+void RemoteDisplayListRecorder::setAlpha(float value)
+{
+    context().setAlpha(value);
+}
+
+void RemoteDisplayListRecorder::setTextDrawingMode(WebCore::TextDrawingModeFlags value)
+{
+    context().setTextDrawingMode(value);
+}
+
+void RemoteDisplayListRecorder::setImageInterpolationQuality(WebCore::InterpolationQuality value)
+{
+    context().setImageInterpolationQuality(value);
+}
+
+void RemoteDisplayListRecorder::setShouldAntialias(bool value)
+{
+    context().setShouldAntialias(value);
+}
+
+void RemoteDisplayListRecorder::setShouldSmoothFonts(bool value)
+{
+    context().setShouldSmoothFonts(value);
+}
+
+void RemoteDisplayListRecorder::setShouldSubpixelQuantizeFonts(bool value)
+{
+    context().setShouldSubpixelQuantizeFonts(value);
+}
+
+void RemoteDisplayListRecorder::setShadowsIgnoreTransforms(bool value)
+{
+    context().setShadowsIgnoreTransforms(value);
+}
+
+void RemoteDisplayListRecorder::setDrawLuminanceMask(bool value)
+{
+    context().setDrawLuminanceMask(value);
+}
+
+void RemoteDisplayListRecorder::setUseDarkAppearance(bool value)
+{
+    context().setUseDarkAppearance(value);
 }
 
 void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
@@ -202,11 +307,6 @@ void RemoteDisplayListRecorder::setLineJoin(LineJoin lineJoin)
 void RemoteDisplayListRecorder::setMiterLimit(float limit)
 {
     context().setMiterLimit(limit);
-}
-
-void RemoteDisplayListRecorder::clearDropShadow()
-{
-    context().clearDropShadow();
 }
 
 void RemoteDisplayListRecorder::clip(const FloatRect& rect)
@@ -572,7 +672,10 @@ void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
 
 void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, std::optional<PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness)
 {
-    setInlineStroke(strokeColor, strokeThickness);
+    if (strokeColor)
+        setStrokePackedColor(*strokeColor);
+    if (strokeThickness)
+        setStrokeThickness(*strokeThickness);
     strokeLine(line);
 }
 

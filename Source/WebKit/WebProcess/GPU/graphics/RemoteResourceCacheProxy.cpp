@@ -60,7 +60,7 @@ void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
 {
     if (m_gradients.add(gradient.renderingResourceIdentifier()).isNewEntry) {
         gradient.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
-        m_remoteRenderingBackendProxy->cacheGradient(gradient);
+        m_remoteRenderingBackendProxy->cacheGradient(gradient, gradient.renderingResourceIdentifier());
     }
 }
 

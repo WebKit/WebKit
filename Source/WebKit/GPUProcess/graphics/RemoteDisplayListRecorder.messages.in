@@ -35,14 +35,36 @@ messages -> RemoteDisplayListRecorder Stream {
     Scale(WebCore::FloatSize scale) StreamBatched
     SetCTM(WebCore::AffineTransform ctm) StreamBatched
     ConcatCTM(WebCore::AffineTransform ctm) StreamBatched
-    SetInlineFillColor(struct WebCore::PackedColor::RGBA fillColor) StreamBatched;
-    SetInlineStroke(std::optional<WebCore::PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness) StreamBatched;
-    SetState(WebCore::DisplayList::SetState item) StreamBatched
+    SetFillPackedColor(struct WebCore::PackedColor::RGBA color) StreamBatched
+    SetFillColor(WebCore::Color color) StreamBatched
+    SetFillCachedGradient(WebCore::RenderingResourceIdentifier gradientIdentifier, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetFillGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetFillPattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetFillRule(enum:bool WebCore::WindRule rule) StreamBatched
+    SetStrokePackedColor(WebCore::PackedColor::RGBA color) StreamBatched
+    SetStrokeColor(WebCore::Color color) StreamBatched
+    SetStrokeCachedGradient(WebCore::RenderingResourceIdentifier gradientIdentifier, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetStrokeGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetStrokePattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetStrokePackedColorAndThickness(WebCore::PackedColor::RGBA color, float thickness) StreamBatched
+    SetStrokeThickness(float thickness) StreamBatched
+    SetStrokeStyle(enum:uint8_t WebCore::StrokeStyle style) StreamBatched
+    SetCompositeMode(struct WebCore::CompositeMode mode) StreamBatched
+    SetDropShadow(std::optional<WebCore::GraphicsDropShadow> dropShadow) StreamBatched
+    SetStyle(std::optional<WebCore::GraphicsStyle> style) StreamBatched
+    SetAlpha(float alpha) StreamBatched
+    SetTextDrawingMode(enum:uint8_t WebCore::TextDrawingModeFlags mode) StreamBatched
+    SetImageInterpolationQuality(enum:uint8_t WebCore::InterpolationQuality quality) StreamBatched
+    SetShouldAntialias(bool shouldAntialias) StreamBatched
+    SetShouldSmoothFonts(bool shouldSmooth) StreamBatched
+    SetShouldSubpixelQuantizeFonts(bool shouldQuantize) StreamBatched
+    SetShadowsIgnoreTransforms(bool shouldIgnore) StreamBatched
+    SetDrawLuminanceMask(bool shouldDraw) StreamBatched
+    SetUseDarkAppearance(bool shouldUse) StreamBatched
     SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
     SetLineDash(WebCore::DashArray dashArray, float dashOffset) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
-    ClearDropShadow()
     Clip(WebCore::FloatRect rect)
     ClipRoundedRect(WebCore::FloatRoundedRect rect)
     ClipOut(WebCore::FloatRect rect)
