@@ -50,16 +50,18 @@ namespace Style {
 //      CSS:    [.specified = "foo/bar.png", .resolved = null-url]
 //      Style:  [.resolved = "foo/bar.png"]
 
-auto toStyleWithBaseURL(const CSS::URL& url, const WTF::URL& baseURL) -> URL
+auto toStyleWithScriptExecutionContext(const CSS::URL& url, const ScriptExecutionContext& context) -> URL
 {
     if (url.resolved.isNull()) {
         return {
-            .resolved = WTF::URL { baseURL, url.specified },
+            .resolved = context.completeURL(url.specified),
+            .modifiers = url.modifiers,
         };
     }
 
     return {
         .resolved = url.resolved,
+        .modifiers = url.modifiers,
     };
 }
 
@@ -68,19 +70,40 @@ auto ToCSS<URL>::operator()(const URL& url, const RenderStyle&) -> CSS::URL
     return {
         .specified = url.resolved.string(),
         .resolved = url.resolved,
+        .modifiers = url.modifiers,
     };
 }
 
 auto ToStyle<CSS::URL>::operator()(const CSS::URL& url, const BuilderState& state) -> URL
 {
-    return toStyleWithBaseURL(url, state.document().baseURL());
+    return toStyleWithScriptExecutionContext(url, state.document());
 }
 
 // MARK: - Logging
 
 TextStream& operator<<(TextStream& ts, const URL& value)
 {
-    return ts << "url(\""_s << value.resolved << "\""_s << ")"_s;
+    ts << "url(\""_s << value.resolved << "\"";
+
+    if (value.modifiers.crossorigin) {
+        ts << " crossorigin("_s;
+        WTF::switchOn(value.modifiers.crossorigin->parameters, [&](const auto& alternative) { ts << alternative; });
+        ts << ")"_s;
+    }
+    if (value.modifiers.integrity) {
+        ts << " integrity("_s;
+        ts << *value.modifiers.integrity;
+        ts << ")"_s;
+    }
+    if (value.modifiers.referrerpolicy) {
+        ts << " referrerpolicy("_s;
+        WTF::switchOn(value.modifiers.referrerpolicy->parameters, [&](const auto& alternative) { ts << alternative; });
+        ts << ")"_s;
+    }
+
+    ts << ")";
+
+    return ts;
 }
 
 } // namespace Style

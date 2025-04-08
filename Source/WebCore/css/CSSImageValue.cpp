@@ -43,11 +43,10 @@ CSSImageValue::CSSImageValue()
 {
 }
 
-CSSImageValue::CSSImageValue(CSS::URL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
+CSSImageValue::CSSImageValue(CSS::URL&& location, AtomString&& initiatorType)
     : CSSValue(ClassType::Image)
     , m_location(WTFMove(location))
     , m_initiatorType(WTFMove(initiatorType))
-    , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
 
@@ -56,14 +55,14 @@ Ref<CSSImageValue> CSSImageValue::create()
     return adoptRef(*new CSSImageValue);
 }
 
-Ref<CSSImageValue> CSSImageValue::create(CSS::URL location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
+Ref<CSSImageValue> CSSImageValue::create(CSS::URL location, AtomString initiatorType)
 {
-    return adoptRef(*new CSSImageValue(WTFMove(location), loadedFromOpaqueSource, WTFMove(initiatorType)));
+    return adoptRef(*new CSSImageValue(WTFMove(location), WTFMove(initiatorType)));
 }
 
-Ref<CSSImageValue> CSSImageValue::create(WTF::URL imageURL, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
+Ref<CSSImageValue> CSSImageValue::create(WTF::URL imageURL, AtomString initiatorType)
 {
-    return create(CSS::URL { .specified = imageURL.string(), .resolved = WTFMove(imageURL) }, loadedFromOpaqueSource, WTFMove(initiatorType));
+    return create(CSS::URL { .specified = imageURL.string(), .resolved = WTFMove(imageURL), .modifiers = { } }, WTFMove(initiatorType));
 }
 
 CSSImageValue::~CSSImageValue() = default;
@@ -73,11 +72,16 @@ Ref<CSSImageValue> CSSImageValue::copyForComputedStyle(const CSS::URL& resolvedU
     if (resolvedURL == m_location)
         return const_cast<CSSImageValue&>(*this);
 
-    auto result = create(resolvedURL, m_loadedFromOpaqueSource);
+    auto result = create(resolvedURL);
     result->m_cachedImage = m_cachedImage;
     result->m_initiatorType = m_initiatorType;
     result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
     return result;
+}
+
+bool CSSImageValue::isLoadedFromOpaqueSource() const
+{
+    return m_location.modifiers.loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes;
 }
 
 bool CSSImageValue::isPending() const
@@ -95,7 +99,7 @@ RefPtr<StyleImage> CSSImageValue::createStyleImage(const Style::BuilderState& st
 
     auto newLocation = m_location;
     newLocation.resolved = styleLocation.resolved;
-    auto result = create(WTFMove(newLocation), m_loadedFromOpaqueSource);
+    auto result = create(WTFMove(newLocation));
     result->m_cachedImage = m_cachedImage;
     result->m_initiatorType = m_initiatorType;
     result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
@@ -108,14 +112,18 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
         ASSERT(loader.document());
 
         ResourceLoaderOptions loadOptions = options;
-        loadOptions.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
+
+        CSS::applyModifiersToLoaderOptions(m_location.modifiers, loadOptions);
+
         CachedResourceRequest request(ResourceRequest(m_location.resolved), loadOptions);
         if (m_initiatorType.isEmpty())
             request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
         else
             request.setInitiatorType(m_initiatorType);
+
         if (options.mode == FetchOptions::Mode::Cors)
             request.updateForAccessControl(*loader.document());
+
         m_cachedImage = loader.requestImage(WTFMove(request)).value_or(nullptr);
         for (auto imageValue = this; (imageValue = imageValue->m_unresolvedValue.get()); )
             imageValue->m_cachedImage = m_cachedImage;

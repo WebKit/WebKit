@@ -1164,6 +1164,7 @@ css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.cpp
 css/values/primitives/CSSPrimitiveNumericUnits.cpp
 css/values/primitives/CSSSymbol.cpp
 css/values/primitives/CSSURL.cpp
+css/values/primitives/CSSURLModifiers.cpp
 css/values/primitives/CSSUnevaluatedCalc.cpp
 css/values/shapes/CSSCircleFunction.cpp
 css/values/shapes/CSSEllipseFunction.cpp

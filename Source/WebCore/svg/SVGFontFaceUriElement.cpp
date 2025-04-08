@@ -61,7 +61,7 @@ Ref<CSSFontFaceSrcResourceValue> SVGFontFaceUriElement::createSrcValue() const
 {
     auto location = CSS::completeURL(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), document()).value_or(CSS::URL::none());
     auto& format = attributeWithoutSynchronization(formatAttr);
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), format.isEmpty() ? "svg"_s : format.string(), { FontTechnology::ColorSvg }, LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), format.isEmpty() ? "svg"_s : format.string(), { FontTechnology::ColorSvg });
 }
 
 void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

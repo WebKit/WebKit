@@ -37,6 +37,7 @@
 #include "FetchOptions.h"
 #include "FetchingWorkerIdentifier.h"
 #include "HTTPHeaderNames.h"
+#include "LoadedFromOpaqueSource.h"
 #include "RequestPriority.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
@@ -157,9 +158,6 @@ static constexpr unsigned bitWidthOfPreflightPolicy = 2;
 
 enum class ShouldEnableContentExtensionsCheck : bool { No, Yes };
 static constexpr unsigned bitWidthOfShouldEnableContentExtensionsCheck = 1;
-
-enum class LoadedFromOpaqueSource : bool { No, Yes };
-static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 
 enum class LoadedFromPluginElement : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromPluginElement = 1;

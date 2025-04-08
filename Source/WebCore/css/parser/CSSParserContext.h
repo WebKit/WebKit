@@ -27,6 +27,7 @@
 
 #include "CSSParserMode.h"
 #include "CSSPropertyNames.h"
+#include "LoadedFromOpaqueSource.h"
 #include "StyleRuleType.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/HashFunctions.h>
@@ -49,7 +50,7 @@ struct CSSParserContext {
     // This is only needed to support getMatchedCSSRules.
     bool hasDocumentSecurityOrigin : 1 { false };
 
-    bool isContentOpaque : 1 { false };
+    LoadedFromOpaqueSource loadedFromOpaqueSource : 1 { LoadedFromOpaqueSource::No };
     bool useSystemAppearance : 1 { false };
     bool shouldIgnoreImportRules : 1 { false };
 
@@ -85,6 +86,7 @@ struct CSSParserContext {
     bool cssMediaProgressFunctionEnabled : 1 { false };
     bool cssContainerProgressFunctionEnabled : 1 { false };
     bool cssRandomFunctionEnabled : 1 { false };
+    bool cssURLModifiersEnabled : 1 { false };
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
 
     // Settings, those affecting properties.

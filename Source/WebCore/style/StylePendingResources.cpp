@@ -66,6 +66,8 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
             options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
             break;
         case LoadPolicy::NoCORS:
+            options.mode = FetchOptions::Mode::NoCors;
+            options.credentials = FetchOptions::Credentials::SameOrigin;
             break;
         }
     }

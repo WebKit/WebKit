@@ -24,7 +24,6 @@
 #include "CSSValue.h"
 #include "CSSValuePair.h"
 #include "IntPoint.h"
-#include "ResourceLoaderOptions.h"
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -38,8 +37,8 @@ class BuilderState;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, LoadedFromOpaqueSource);
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&, LoadedFromOpaqueSource);
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot);
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&);
     ~CSSCursorImageValue();
 
     const CSS::URL& originalURL() const { return m_originalURL; }
@@ -55,12 +54,11 @@ public:
     RefPtr<StyleCursorImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
-    CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&, LoadedFromOpaqueSource);
+    CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&);
 
     CSS::URL m_originalURL;
     Ref<CSSValue> m_imageValue;
     RefPtr<CSSValue> m_hotSpot;
-    LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 
 } // namespace WebCore

@@ -43,8 +43,8 @@ class BuilderState;
 class CSSImageValue final : public CSSValue {
 public:
     static Ref<CSSImageValue> create();
-    static Ref<CSSImageValue> create(CSS::URL, LoadedFromOpaqueSource, AtomString = { });
-    static Ref<CSSImageValue> create(WTF::URL, LoadedFromOpaqueSource, AtomString = { });
+    static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });
+    static Ref<CSSImageValue> create(WTF::URL, AtomString initiatorType = { });
     ~CSSImageValue();
 
     Ref<CSSImageValue> copyForComputedStyle(const CSS::URL& resolvedURL) const;
@@ -69,7 +69,7 @@ public:
 
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
-    bool isLoadedFromOpaqueSource() const { return m_loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes; }
+    bool isLoadedFromOpaqueSource() const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
@@ -82,12 +82,11 @@ public:
 
 private:
     CSSImageValue();
-    CSSImageValue(CSS::URL&&, LoadedFromOpaqueSource, AtomString&&);
+    CSSImageValue(CSS::URL&&, AtomString&&);
 
     CSS::URL m_location;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
     AtomString m_initiatorType;
-    LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
 };

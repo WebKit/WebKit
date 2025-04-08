@@ -115,6 +115,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssMediaProgressFunctionEnabled { document.settings().cssMediaProgressFunctionEnabled() }
     , cssContainerProgressFunctionEnabled { document.settings().cssContainerProgressFunctionEnabled() }
     , cssRandomFunctionEnabled { document.settings().cssRandomFunctionEnabled() }
+    , cssURLModifiersEnabled { document.settings().cssURLModifiersEnabled() }
     , webkitMediaTextTrackDisplayQuirkEnabled { document.quirks().needsWebKitMediaTextTrackDisplayQuirk() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
@@ -124,7 +125,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
 {
     uint32_t bits = context.isHTMLDocument                  << 0
         | context.hasDocumentSecurityOrigin                 << 1
-        | context.isContentOpaque                           << 2
+        | static_cast<bool>(context.loadedFromOpaqueSource) << 2
         | context.useSystemAppearance                       << 3
         | context.springTimingFunctionEnabled               << 4
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -154,8 +155,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssMediaProgressFunctionEnabled           << 25
         | context.cssContainerProgressFunctionEnabled       << 26
         | context.cssRandomFunctionEnabled                  << 27
-        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
-    add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
+        | context.cssURLModifiersEnabled                    << 28;
+    add(hasher, context.baseURL, context.charset, context.propertySettings, bits, context.mode);
 }
 
 void CSSParserContext::setUASheetMode()

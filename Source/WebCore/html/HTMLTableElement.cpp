@@ -329,7 +329,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         break;
     case AttributeNames::backgroundAttr:
         if (auto url = value.string().trim(isASCIIWhitespace); !url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url))));
         break;
     case AttributeNames::valignAttr:
         if (!value.isEmpty())

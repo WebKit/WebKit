@@ -84,8 +84,8 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
 
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
     m_styleSheet = StyleSheetContents::create(this, href, context);
-    if ((m_parentStyleSheet && m_parentStyleSheet->isContentOpaque()) || !cachedStyleSheet->isCORSSameOrigin())
-        m_styleSheet->setAsOpaque();
+    if ((m_parentStyleSheet && m_parentStyleSheet->loadedFromOpaqueSource() == LoadedFromOpaqueSource::Yes) || !cachedStyleSheet->isCORSSameOrigin())
+        m_styleSheet->setAsLoadedFromOpaqueSource();
 
     bool parseSucceeded = m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
 
@@ -154,14 +154,14 @@ void StyleRuleImport::requestStyleSheet()
             DefersLoadingPolicy::AllowDefersLoading,
             CachingPolicy::AllowCaching
         };
-        options.loadedFromOpaqueSource = m_parentStyleSheet->isContentOpaque() ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No;
+        options.loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource();
 
         request.setOptions(WTFMove(options));
 
         m_cachedSheet = document->protectedCachedResourceLoader()->requestUserCSSStyleSheet(*page, WTFMove(request));
     } else {
         auto options = request.options();
-        options.loadedFromOpaqueSource = m_parentStyleSheet->isContentOpaque() ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No;
+        options.loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource();
         request.setOptions(WTFMove(options));
         m_cachedSheet = document->protectedCachedResourceLoader()->requestCSSStyleSheet(WTFMove(request)).value_or(nullptr);
     }

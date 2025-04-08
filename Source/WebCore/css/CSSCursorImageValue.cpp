@@ -37,24 +37,23 @@
 
 namespace WebCore {
 
-Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, RefPtr<CSSValue>&& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, RefPtr<CSSValue>&& hotSpot)
 {
     auto* imageValue = dynamicDowncast<CSSImageValue>(value.get());
     auto originalURL = imageValue ? imageValue->url() : CSS::URL::none();
-    return adoptRef(*new CSSCursorImageValue(WTFMove(value), WTFMove(hotSpot), WTFMove(originalURL), loadedFromOpaqueSource));
+    return adoptRef(*new CSSCursorImageValue(WTFMove(value), WTFMove(hotSpot), WTFMove(originalURL)));
 }
 
-Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&& originalURL)
 {
-    return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), WTFMove(hotSpot), WTFMove(originalURL), loadedFromOpaqueSource));
+    return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), WTFMove(hotSpot), WTFMove(originalURL)));
 }
 
-CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&& originalURL)
     : CSSValue(ClassType::CursorImage)
     , m_originalURL(WTFMove(originalURL))
     , m_imageValue(WTFMove(imageValue))
     , m_hotSpot(WTFMove(hotSpot))
-    , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
 
@@ -88,7 +87,7 @@ RefPtr<StyleCursorImage> CSSCursorImageValue::createStyleImage(const Style::Buil
             static_cast<int>(downcast<CSSPrimitiveValue>(m_hotSpot->second()).resolveAsNumber(state.cssToLengthConversionData()))
         };
     }
-    return StyleCursorImage::create(styleImage.releaseNonNull(), hotSpot, Style::toStyle(m_originalURL, state), m_loadedFromOpaqueSource);
+    return StyleCursorImage::create(styleImage.releaseNonNull(), hotSpot, Style::toStyle(m_originalURL, state));
 }
 
 } // namespace WebCore

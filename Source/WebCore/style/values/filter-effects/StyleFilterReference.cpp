@@ -39,7 +39,7 @@ CSS::FilterReference toCSSFilterReference(Ref<ReferenceFilterOperation> operatio
 
 Ref<FilterOperation> createFilterOperation(const CSS::FilterReference& filter, const Document& document, RenderStyle&, const CSSToLengthConversionData&)
 {
-    auto url = toStyleWithBaseURL(filter.url, document.baseURL());
+    auto url = toStyleWithScriptExecutionContext(filter.url, document);
 
     // FIXME: Unify all the fragment accessing/construction.
     auto fragment = url.resolved.string().startsWith('#')

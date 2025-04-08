@@ -57,7 +57,7 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, CSS::PropertyParserSt
                 return nullptr;
             hotSpot = CSSValuePair::createNoncoalescing(x.releaseNonNull(), y.releaseNonNull());
         }
-        list.append(CSSCursorImageValue::create(image.releaseNonNull(), WTFMove(hotSpot), state.context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
+        list.append(CSSCursorImageValue::create(image.releaseNonNull(), WTFMove(hotSpot)));
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }

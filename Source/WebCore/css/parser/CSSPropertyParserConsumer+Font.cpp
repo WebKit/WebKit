@@ -590,7 +590,7 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(*location), WTFMove(format), WTFMove(technologies), state.context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(*location), WTFMove(format), WTFMove(technologies));
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range, CSS::PropertyParserState&)

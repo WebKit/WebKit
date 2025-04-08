@@ -44,31 +44,29 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleCursorImage);
 
-Ref<StyleCursorImage> StyleCursorImage::create(const Ref<StyleImage>& image, std::optional<IntPoint> hotSpot, const Style::URL& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<StyleCursorImage> StyleCursorImage::create(const Ref<StyleImage>& image, std::optional<IntPoint> hotSpot, const Style::URL& originalURL)
 {
-    return adoptRef(*new StyleCursorImage(image, hotSpot, originalURL, loadedFromOpaqueSource));
+    return adoptRef(*new StyleCursorImage(image, hotSpot, originalURL));
 }
 
-Ref<StyleCursorImage> StyleCursorImage::create(Ref<StyleImage>&& image, std::optional<IntPoint> hotSpot, Style::URL&& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<StyleCursorImage> StyleCursorImage::create(Ref<StyleImage>&& image, std::optional<IntPoint> hotSpot, Style::URL&& originalURL)
 {
-    return adoptRef(*new StyleCursorImage(WTFMove(image), hotSpot, WTFMove(originalURL), loadedFromOpaqueSource));
+    return adoptRef(*new StyleCursorImage(WTFMove(image), hotSpot, WTFMove(originalURL)));
 }
 
-StyleCursorImage::StyleCursorImage(const Ref<StyleImage>& image, std::optional<IntPoint> hotSpot, const Style::URL& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+StyleCursorImage::StyleCursorImage(const Ref<StyleImage>& image, std::optional<IntPoint> hotSpot, const Style::URL& originalURL)
     : StyleMultiImage { Type::CursorImage }
     , m_image { image }
     , m_hotSpot { hotSpot }
     , m_originalURL { originalURL }
-    , m_loadedFromOpaqueSource { loadedFromOpaqueSource }
 {
 }
 
-StyleCursorImage::StyleCursorImage(Ref<StyleImage>&& image, std::optional<IntPoint> hotSpot, Style::URL&& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+StyleCursorImage::StyleCursorImage(Ref<StyleImage>&& image, std::optional<IntPoint> hotSpot, Style::URL&& originalURL)
     : StyleMultiImage { Type::CursorImage }
     , m_image { WTFMove(image) }
     , m_hotSpot { hotSpot }
     , m_originalURL { WTFMove(originalURL) }
-    , m_loadedFromOpaqueSource { loadedFromOpaqueSource }
 {
 }
 
@@ -100,7 +98,7 @@ Ref<CSSValue> StyleCursorImage::computedStyleValue(const RenderStyle& style) con
     if (m_hotSpot)
         hotSpot = CSSValuePair::createNoncoalescing(CSSPrimitiveValue::create(m_hotSpot->x()), CSSPrimitiveValue::create(m_hotSpot->y()));
 
-    return CSSCursorImageValue::create(m_image->computedStyleValue(style), WTFMove(hotSpot), Style::toCSS(m_originalURL, style), m_loadedFromOpaqueSource );
+    return CSSCursorImageValue::create(m_image->computedStyleValue(style), WTFMove(hotSpot), Style::toCSS(m_originalURL, style));
 }
 
 ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
@@ -115,7 +113,7 @@ ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
 
             if (existingImageURL != updatedImageURL) {
                 auto styleURL = Style::URL { .resolved = updatedImageURL };
-                m_image = StyleCachedImage::create(styleURL, CSSImageValue::create(WTFMove(updatedImageURL), m_loadedFromOpaqueSource));
+                m_image = StyleCachedImage::create(styleURL, CSSImageValue::create(WTFMove(updatedImageURL)));
             }
         }
     }

@@ -51,6 +51,19 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
     } else
         serializeString(value.specified, builder);
 
+    if (value.modifiers.crossorigin) {
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.modifiers.crossorigin);
+    }
+    if (value.modifiers.integrity) {
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.modifiers.integrity);
+    }
+    if (value.modifiers.referrerpolicy) {
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.modifiers.referrerpolicy);
+    }
+
     builder.append(')');
 }
 
@@ -59,10 +72,10 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
 static URL completeURL(const String& string, const WTF::URL& baseURL)
 {
     if (string.isEmpty() || string.startsWith('#'))
-        return URL { .specified = string, .resolved = WTF::URL { string } };
+        return URL { .specified = string, .resolved = WTF::URL { string }, .modifiers = { } };
     if (baseURL.isNull())
-        return URL { .specified = string, .resolved = WTF::URL { } };
-    return URL { .specified = string, .resolved = WTF::URL { baseURL, string } };
+        return URL { .specified = string, .resolved = WTF::URL { }, .modifiers = { } };
+    return URL { .specified = string, .resolved = WTF::URL { baseURL, string }, .modifiers = { } };
 }
 
 std::optional<URL> completeURL(const String& string, const CSSParserContext& context)
@@ -73,6 +86,8 @@ std::optional<URL> completeURL(const String& string, const CSSParserContext& con
     auto result = completeURL(string, context.baseURL);
     if (context.mode == WebVTTMode && !result.resolved.protocolIsData())
         return { };
+
+    result.modifiers.loadedFromOpaqueSource = context.loadedFromOpaqueSource;
 
     return result;
 }

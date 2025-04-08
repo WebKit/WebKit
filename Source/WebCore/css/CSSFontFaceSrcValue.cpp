@@ -74,18 +74,17 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
     return m_fontFaceName == other.m_fontFaceName;
 }
 
-CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, String&& format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
+CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, String&& format, Vector<FontTechnology>&& technologies)
     : CSSValue(ClassType::FontFaceSrcResource)
     , m_location(CSS::resolve(WTFMove(location)))
     , m_format(WTFMove(format))
     , m_technologies(WTFMove(technologies))
-    , m_loadedFromOpaqueSource(source)
 {
 }
 
-Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL location, String format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
+Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL location, String format, Vector<FontTechnology>&& technologies)
 {
-    return adoptRef(*new CSSFontFaceSrcResourceValue { WTFMove(location), WTFMove(format), WTFMove(technologies), source });
+    return adoptRef(*new CSSFontFaceSrcResourceValue { WTFMove(location), WTFMove(format), WTFMove(technologies) });
 }
 
 std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
@@ -113,7 +112,7 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
         }
     }
 
-    auto request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_loadedFromOpaqueSource);
+    auto request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_location.modifiers.loadedFromOpaqueSource);
     if (auto* cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
         m_cachedFont = &cachedRequest->cachedFont();
 
@@ -155,8 +154,7 @@ bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& othe
 {
     return m_location == other.m_location
         && m_format == other.m_format
-        && m_technologies == other.m_technologies
-        && m_loadedFromOpaqueSource == other.m_loadedFromOpaqueSource;
+        && m_technologies == other.m_technologies;
 }
 
 }

@@ -1737,6 +1737,20 @@ CSSTypedOMColorEnabled:
     WebCore:
       default: false
 
+CSSURLModifiersEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS URL Modifiers"
+  humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 URL modifiers"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSUnprefixedBackdropFilterEnabled:
   type: bool
   status: Backdropfilter_feature_status

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSValueTypes.h"
+#include "CSSURLModifiers.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -38,8 +38,9 @@ namespace CSS {
 struct URL {
     WTF::String specified;
     WTF::URL resolved;
+    URLModifiers modifiers;
 
-    static URL none() { return { .specified = { }, .resolved = { } }; }
+    static URL none() { return { .specified = { }, .resolved = { }, .modifiers = { } }; }
     bool isNone() const { return specified.isNull(); }
 
     bool operator==(const URL&) const = default;
@@ -51,6 +52,8 @@ template<size_t I> const auto& get(const URL& value)
         return value.specified;
     if constexpr (I == 1)
         return value.resolved;
+    if constexpr (I == 2)
+        return value.modifiers;
 }
 
 template<> struct Serialize<URL> { void operator()(StringBuilder&, const SerializationContext&, const URL&); };
@@ -65,4 +68,4 @@ bool mayDependOnBaseURL(const URL&);
 } // namespace CSS
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::URL, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::URL, 3)

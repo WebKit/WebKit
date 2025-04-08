@@ -28,12 +28,16 @@
 #include "StyleValueTypes.h"
 
 namespace WebCore {
+
+class ScriptExecutionContext;
+
 namespace Style {
 
 struct URL {
     WTF::URL resolved;
+    CSS::URLModifiers modifiers;
 
-    static URL none() { return { .resolved = { } }; }
+    static URL none() { return { .resolved = { }, .modifiers = { } }; }
     bool isNone() const { return resolved.isNull(); }
 
     bool operator==(const URL&) const = default;
@@ -41,13 +45,16 @@ struct URL {
 
 template<size_t I> const auto& get(const URL& value)
 {
-    return value.resolved;
+    if constexpr (!I)
+        return value.resolved;
+    if constexpr (I == 1)
+        return value.modifiers;
 }
 
 // MARK: Conversion
 
-// Special conversion function for use by filters code.
-URL toStyleWithBaseURL(const CSS::URL&, const WTF::URL& baseURL);
+// Special conversion function for use by filters and font-face code.
+URL toStyleWithScriptExecutionContext(const CSS::URL&, const ScriptExecutionContext&);
 
 template<> struct ToCSS<URL> { auto operator()(const URL&, const RenderStyle&) -> CSS::URL; };
 template<> struct ToStyle<CSS::URL> { auto operator()(const CSS::URL&, const BuilderState&) -> URL; };
@@ -59,4 +66,4 @@ TextStream& operator<<(TextStream&, const URL&);
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::URL, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::URL, 2)

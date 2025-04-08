@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-CachedSVGDocumentReference::CachedSVGDocumentReference(const String& url)
-    : m_url(url)
+CachedSVGDocumentReference::CachedSVGDocumentReference(const Style::URL& location)
+    : m_location { location }
 {
 }
 
@@ -51,14 +51,22 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
         return;
 
     auto fetchOptions = options;
+
+    CSS::applyModifiersToLoaderOptions(m_location.modifiers, fetchOptions);
+
+    // FIXME: CSS::applyModifiersToLoaderOptions will set `fetchOptions.mode` to `FetchOptions::Mode::Cors` if `modifiers.crossorigin` is set. This will immediately be undone here. Which should win?
+
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
-    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), fetchOptions);
+
+    CachedResourceRequest request(ResourceRequest(m_location.resolved), fetchOptions);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
+
     m_document = loader.requestSVGDocument(WTFMove(request)).value_or(nullptr);
+
     if (CachedResourceHandle document = m_document)
         document->addClient(*this);
 
     m_loadRequested = true;
 }
 
-}
+} // namespace WebCore

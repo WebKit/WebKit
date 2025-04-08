@@ -87,10 +87,8 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     switch (name.nodeName()) {
     case AttributeNames::backgroundAttr: {
         auto url = value.string().trim(isASCIIWhitespace);
-        if (!url.isEmpty()) {
-            auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
-        }
+        if (!url.isEmpty())
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), localName())));
         break;
     }
     case AttributeNames::marginwidthAttr:

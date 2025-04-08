@@ -594,7 +594,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
         m_sheet->setTitle(title());
 
     if (!m_sheet->canAccessRules())
-        m_sheet->contents().setAsOpaque();
+        m_sheet->contents().setAsLoadedFromOpaqueSource();
 }
 
 void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet* cachedStyleSheet)

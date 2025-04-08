@@ -4884,6 +4884,8 @@
 		BC348BD40DB7F804004ABABA /* WebCoreJSBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BD20DB7F804004ABABA /* WebCoreJSBuiltins.h */; };
 		BC348BD40DB7F804004ABABB /* WebCoreJSBuiltinInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BD20DB7F804004ABABB /* WebCoreJSBuiltinInternals.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3A00C82754496D0047C0E5 /* ColorInterpolation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDC642527517B040038FB39 /* ColorInterpolation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC3AA25C2DA2DD2F00BC27C6 /* CSSURLModifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3AA25A2DA2DD2300BC27C6 /* CSSURLModifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC3AA25E2DA2F14700BC27C6 /* LoadedFromOpaqueSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3AA25D2DA2F14700BC27C6 /* LoadedFromOpaqueSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BC29B0E91AB0F00835588 /* HostWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE9910E9C1C7C00835588 /* RenderScrollbar.h */; };
@@ -18070,6 +18072,9 @@
 		BC394A392C766D4C001A629A /* CSSAbsoluteColorSerialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSAbsoluteColorSerialization.h; sourceTree = "<group>"; };
 		BC394A422C779379001A629A /* CSSCalcTree+Copy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSCalcTree+Copy.cpp"; sourceTree = "<group>"; };
 		BC394A432C779379001A629A /* CSSCalcTree+Copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSCalcTree+Copy.h"; sourceTree = "<group>"; };
+		BC3AA25A2DA2DD2300BC27C6 /* CSSURLModifiers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSURLModifiers.h; sourceTree = "<group>"; };
+		BC3AA25B2DA2DD2300BC27C6 /* CSSURLModifiers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSURLModifiers.cpp; sourceTree = "<group>"; };
+		BC3AA25D2DA2F14700BC27C6 /* LoadedFromOpaqueSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadedFromOpaqueSource.h; sourceTree = "<group>"; };
 		BC3BC29B0E91AB0F00835588 /* HostWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostWindow.h; sourceTree = "<group>"; };
 		BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuStyle.h; sourceTree = "<group>"; };
 		BC3BE9900E9C1C7C00835588 /* RenderScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderScrollbar.cpp; sourceTree = "<group>"; };
@@ -35209,6 +35214,7 @@
 				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */,
 				CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */,
+				BC3AA25D2DA2F14700BC27C6 /* LoadedFromOpaqueSource.h */,
 				45B5D85E2A968620004C85A0 /* LoaderMalloc.cpp */,
 				45B5D85F2A968620004C85A0 /* LoaderMalloc.h */,
 				51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */,
@@ -35408,6 +35414,8 @@
 				BCB271E42CC0142C00265123 /* CSSUnevaluatedCalc.h */,
 				BCC0F3D32D99A9DC0065B859 /* CSSURL.cpp */,
 				BCC0F3D12D99A2270065B859 /* CSSURL.h */,
+				BC3AA25B2DA2DD2300BC27C6 /* CSSURLModifiers.cpp */,
+				BC3AA25A2DA2DD2300BC27C6 /* CSSURLModifiers.h */,
 			);
 			path = primitives;
 			sourceTree = "<group>";
@@ -40836,6 +40844,7 @@
 				4BAFD0E1219242A000C0AB64 /* CSSUnitValue.h in Headers */,
 				4BAFD0D921921EA000C0AB64 /* CSSUnparsedValue.h in Headers */,
 				BCC0F3D22D99A2270065B859 /* CSSURL.h in Headers */,
+				BC3AA25C2DA2DD2F00BC27C6 /* CSSURLModifiers.h in Headers */,
 				BCC0F3D62D99BDD90065B859 /* CSSURLValue.h in Headers */,
 				A80E6CEE0A1989CA007FB8C5 /* CSSValue.h in Headers */,
 				BC4AF44A2CFB85EE0037C65C /* CSSValueAggregates.h in Headers */,
@@ -42975,6 +42984,7 @@
 				E3B2F0EE1D7F4CA900B0C9D1 /* LoadableScriptClient.h in Headers */,
 				46C0D8E628F1E70300BDE218 /* LoadableScriptError.h in Headers */,
 				9759E94914EF1D490026A2DD /* LoadableTextTrack.h in Headers */,
+				BC3AA25E2DA2F14700BC27C6 /* LoadedFromOpaqueSource.h in Headers */,
 				45B5D8612A968620004C85A0 /* LoaderMalloc.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
