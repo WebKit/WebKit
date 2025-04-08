@@ -1,10 +1,10 @@
 
-FAIL Initially 6th sibling assert_equals: expected 60 but got 784
-FAIL 5th sibling after removal assert_equals: expected 50 but got 784
-FAIL Initially 6 siblings assert_equals: expected 60 but got 0
-FAIL 5 siblings after removal assert_equals: expected 50 but got 0
-FAIL Initially 6th slotted sibling assert_equals: expected 60 but got 784
-FAIL 5th sibling after slot change assert_equals: expected 50 but got 784
-FAIL Initially 6 slotted siblings assert_equals: expected 60 but got 0
-FAIL 5 siblings after slot change assert_equals: expected 50 but got 0
+PASS Initially 6th sibling
+FAIL 5th sibling after removal assert_equals: expected 50 but got 60
+PASS Initially 6 siblings
+FAIL 5 siblings after removal assert_equals: expected 50 but got 60
+PASS Initially 6th slotted sibling
+FAIL 5th sibling after slot change assert_equals: expected 50 but got 60
+PASS Initially 6 slotted siblings
+FAIL 5 siblings after slot change assert_equals: expected 50 but got 60
 

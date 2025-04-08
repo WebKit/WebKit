@@ -74,6 +74,8 @@ struct ParenthesisSaver {
 // https://drafts.csswg.org/css-values-4/#serialize-a-math-function
 static void serializeMathFunction(StringBuilder&, const Child&, SerializationState&);
 static void serializeMathFunction(StringBuilder&, const Symbol&, SerializationState&);
+static void serializeMathFunction(StringBuilder&, const SiblingCount&, SerializationState&);
+static void serializeMathFunction(StringBuilder&, const SiblingIndex&, SerializationState&);
 template<Numeric Op> static void serializeMathFunction(StringBuilder&, const Op&, SerializationState&);
 template<typename Op> static void serializeMathFunction(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
 
@@ -102,6 +104,8 @@ static void serializeCalculationTree(StringBuilder&, const Child&, Serialization
 static void serializeCalculationTree(StringBuilder&, const ChildOrNone&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const CSS::Keyword::None&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const Symbol&, SerializationState&);
+static void serializeCalculationTree(StringBuilder&, const SiblingCount&, SerializationState&);
+static void serializeCalculationTree(StringBuilder&, const SiblingIndex&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Negate>&, SerializationState&);
@@ -291,6 +295,16 @@ void serializeMathFunction(StringBuilder& builder, const Symbol& fn, Serializati
     builder.append("calc("_s);
     serializeCalculationTree(builder, fn, state);
     builder.append(')');
+}
+
+void serializeMathFunction(StringBuilder& builder, const SiblingCount& fn, SerializationState& state)
+{
+    serializeCalculationTree(builder, fn, state);
+}
+
+void serializeMathFunction(StringBuilder& builder, const SiblingIndex& fn, SerializationState& state)
+{
+    serializeCalculationTree(builder, fn, state);
 }
 
 template<typename Op> void serializeMathFunction(StringBuilder& builder, const IndirectNode<Op>& fn, SerializationState& state)
@@ -545,6 +559,20 @@ void serializeCalculationTree(StringBuilder& builder, const Symbol& root, Serial
     // 2. If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
 
     builder.append(nameLiteralForSerialization(root.id));
+}
+
+void serializeCalculationTree(StringBuilder& builder, const SiblingCount& root, SerializationState&)
+{
+    // 2. If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
+
+    builder.append(nameLiteralForSerialization(root.id), "()"_s);
+}
+
+void serializeCalculationTree(StringBuilder& builder, const SiblingIndex& root, SerializationState&)
+{
+    // 2. If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
+
+    builder.append(nameLiteralForSerialization(root.id), "()"_s);
 }
 
 void serializeCalculationTree(StringBuilder& builder, const IndirectNode<Sum>& root, SerializationState& state)

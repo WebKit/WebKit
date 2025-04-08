@@ -1,6 +1,6 @@
 
-FAIL basic sibling-index() test assert_equals: expected "2" but got "auto"
-FAIL basic sibling-count() test assert_equals: expected "foo 5" but got "none"
-FAIL sibling-index() in calc() with percentage assert_equals: expected "calc(10% + 200px)" but got "auto"
-FAIL sibling-count on pseudo-element assert_equals: expected "4" but got "auto"
+PASS basic sibling-index() test
+PASS basic sibling-count() test
+PASS sibling-index() in calc() with percentage
+PASS sibling-count on pseudo-element
 

@@ -115,6 +115,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssMediaProgressFunctionEnabled { document.settings().cssMediaProgressFunctionEnabled() }
     , cssContainerProgressFunctionEnabled { document.settings().cssContainerProgressFunctionEnabled() }
     , cssRandomFunctionEnabled { document.settings().cssRandomFunctionEnabled() }
+    , cssTreeCountingFunctionsEnabled { document.settings().cssTreeCountingFunctionsEnabled() }
     , webkitMediaTextTrackDisplayQuirkEnabled { document.quirks().needsWebKitMediaTextTrackDisplayQuirk() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
@@ -154,7 +155,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssMediaProgressFunctionEnabled           << 25
         | context.cssContainerProgressFunctionEnabled       << 26
         | context.cssRandomFunctionEnabled                  << 27
-        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
+        | context.cssTreeCountingFunctionsEnabled           << 28
+        | (uint32_t)context.mode                            << 29; // This is 3 bits, so one more bit and it needs to be hashed separately.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

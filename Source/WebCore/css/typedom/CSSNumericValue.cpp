@@ -101,6 +101,18 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Symb
     return Exception { ExceptionCode::UnknownError };
 }
 
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::SiblingCount&)
+{
+    // CSS Typed OM doesn't currently support unresolved sibling-count() functions.
+    return Exception { ExceptionCode::UnknownError };
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::SiblingIndex&)
+{
+    // CSS Typed OM doesn't currently support unresolved sibling-index() functions.
+    return Exception { ExceptionCode::UnknownError };
+}
+
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Sum>& root)
 {
     CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root->children));

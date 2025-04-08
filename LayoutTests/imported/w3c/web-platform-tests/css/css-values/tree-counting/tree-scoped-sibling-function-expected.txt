@@ -1,4 +1,4 @@
 
-FAIL sibling-index() and sibling-count() evaluates to 0 from outer tree with ::part assert_equals: z-index should be 0 expected "0" but got "auto"
-FAIL sibling-index() and sibling-count() evaluate as normal from inner tree assert_equals: :host is the third sibling expected "3" but got "auto"
+FAIL sibling-index() and sibling-count() evaluates to 0 from outer tree with ::part assert_equals: z-index should be 0 expected "0" but got "3"
+PASS sibling-index() and sibling-count() evaluate as normal from inner tree
 

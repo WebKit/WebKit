@@ -78,6 +78,8 @@ static auto toCalculationValue(const Percentage&, const ToConversionOptions&) ->
 static auto toCalculationValue(const CanonicalDimension&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const NonCanonicalDimension&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const Symbol&, const ToConversionOptions&) -> Calculation::Child;
+static auto toCalculationValue(const SiblingCount&, const ToConversionOptions&) -> Calculation::Child;
+static auto toCalculationValue(const SiblingIndex&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const IndirectNode<MediaProgress>&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const IndirectNode<ContainerProgress>&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const IndirectNode<Anchor>&, const ToConversionOptions&) -> Calculation::Child;
@@ -302,6 +304,18 @@ Calculation::Child toCalculationValue(const NonCanonicalDimension&, const ToConv
 Calculation::Child toCalculationValue(const Symbol&, const ToConversionOptions&)
 {
     ASSERT_NOT_REACHED("Unevaluated symbols are not supported in the Calculation::Tree");
+    return Calculation::number(0);
+}
+
+Calculation::Child toCalculationValue(const SiblingCount&, const ToConversionOptions&)
+{
+    ASSERT_NOT_REACHED("Unevaluated sibling-count() functions are not supported in the Calculation::Tree");
+    return Calculation::number(0);
+}
+
+Calculation::Child toCalculationValue(const SiblingIndex&, const ToConversionOptions&)
+{
+    ASSERT_NOT_REACHED("Unevaluated sibling-index() functions are not supported in the Calculation::Tree");
     return Calculation::number(0);
 }
 

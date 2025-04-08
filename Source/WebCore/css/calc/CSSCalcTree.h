@@ -161,6 +161,31 @@ struct Symbol {
     bool operator==(const Symbol&) const = default;
 };
 
+// Tree Counting Functions - https://drafts.csswg.org/css-values-5/#tree-counting
+// NOTE: As these functions don't have any parameters, they are leaf nodes.
+
+struct SiblingCount {
+    static constexpr bool isLeaf = true;
+    static constexpr auto id = CSSValueSiblingCount;
+
+    // <sibling-count()> = sibling-count()
+    //     - INPUT: none
+    //     - OUTPUT: integer
+
+    bool operator==(const SiblingCount&) const = default;
+};
+
+struct SiblingIndex {
+    static constexpr bool isLeaf = true;
+    static constexpr auto id = CSSValueSiblingIndex;
+
+    // <sibling-index()> = sibling-index()
+    //     - INPUT: none
+    //     - OUTPUT: integer
+
+    bool operator==(const SiblingIndex&) const = default;
+};
+
 template<typename Op> struct IndirectNode {
     Type type;
     UniqueRef<Op> op;
@@ -182,6 +207,8 @@ using Node = std::variant<
     CanonicalDimension,
     NonCanonicalDimension,
     Symbol,
+    SiblingCount,
+    SiblingIndex,
     IndirectNode<Sum>,
     IndirectNode<Product>,
     IndirectNode<Negate>,
@@ -873,34 +900,10 @@ template<typename Op> struct ChildConstruction {
     static Child make(Op&& op, Type type) { return Child { IndirectNode<Op> { type, makeUniqueRef<Op>(WTFMove(op)) } }; }
 };
 
-// Specialized implementation of ChildConstruction for Number, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Number> {
-    static Child make(Number&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(Number&& op) { return Child { WTFMove(op) }; }
-};
-
-// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Percentage> {
-    static Child make(Percentage&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
-};
-
-// Specialized implementation of ChildConstruction for CanonicalDimension, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<CanonicalDimension> {
-    static Child make(CanonicalDimension&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(CanonicalDimension&& op) { return Child { WTFMove(op) }; }
-};
-
-// Specialized implementation of ChildConstruction for NonCanonicalDimension, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<NonCanonicalDimension> {
-    static Child make(NonCanonicalDimension&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(NonCanonicalDimension&& op) { return Child { WTFMove(op) }; }
-};
-
-// Specialized implementation of ChildConstruction for Symbol, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Symbol> {
-    static Child make(Symbol&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(Symbol&& op) { return Child { WTFMove(op) }; }
+// Specialized implementation of ChildConstruction for leaf nodes, needed to avoid `makeUniqueRef`.
+template<Leaf T> struct ChildConstruction<T> {
+    static Child make(T&& op, Type) { return Child { WTFMove(op) }; }
+    static Child make(T&& op) { return Child { WTFMove(op) }; }
 };
 
 template<typename Op> Child makeChild(Op op)
@@ -930,6 +933,8 @@ Type getType(const Percentage&);
 Type getType(const NonCanonicalDimension&);
 Type getType(const CanonicalDimension&);
 Type getType(const Symbol&);
+Type getType(const SiblingCount&);
+Type getType(const SiblingIndex&);
 
 // Gets the Type of the child node.
 Type getType(const Child&);

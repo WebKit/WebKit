@@ -193,6 +193,8 @@ bool isCalcFunction(CSSValueID functionId)
     case CSSValueMediaProgress:
     case CSSValueContainerProgress:
     case CSSValueRandom:
+    case CSSValueSiblingCount:
+    case CSSValueSiblingIndex:
     case CSSValueAnchor:
     case CSSValueAnchorSize:
         return true;
@@ -202,6 +204,18 @@ bool isCalcFunction(CSSValueID functionId)
     return false;
 }
 
+template<typename Op> static std::optional<TypedChild> consumeZeroArguments(CSSParserTokenRange& tokens, int, ParserState&)
+{
+    if (!tokens.atEnd()) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - extraneous tokens found");
+        return std::nullopt;
+    }
+
+    auto child = Op { };
+    auto type = getType(child);
+
+    return TypedChild { makeChild(WTFMove(child)), type };
+}
 
 template<typename Op> static std::optional<TypedChild> consumeExactlyOneArgument(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
@@ -1443,6 +1457,26 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         //     - INPUT: dependent on type of <mf-name> feature.
         //     - OUTPUT: <number>
         return consumeContainerProgress(tokens, depth, state);
+
+    case CSSValueSiblingCount:
+        // <sibling-count()> = sibling-count()
+        //     - INPUT: none
+        //     - OUTPUT: <integer>
+        if (!state.propertyParserState.context.cssTreeCountingFunctionsEnabled)
+            return { };
+        if (state.propertyParserState.currentRule != StyleRuleType::Style || state.propertyParserState.currentProperty == CSSPropertyInvalid)
+            return { };
+        return consumeZeroArguments<SiblingCount>(tokens, depth, state);
+
+    case CSSValueSiblingIndex:
+        // <sibling-index()> = sibling-index()
+        //     - INPUT: none
+        //     - OUTPUT: <integer>
+        if (!state.propertyParserState.context.cssTreeCountingFunctionsEnabled)
+            return { };
+        if (state.propertyParserState.currentRule != StyleRuleType::Style || state.propertyParserState.currentProperty == CSSPropertyInvalid)
+            return { };
+        return consumeZeroArguments<SiblingIndex>(tokens, depth, state);
 
     case CSSValueAnchor:
         return consumeAnchor(tokens, depth, state);

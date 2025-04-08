@@ -537,6 +537,26 @@ std::optional<Child> simplify(Symbol& root, const SimplificationOptions& options
     return { };
 }
 
+std::optional<Child> simplify(SiblingCount&, const SimplificationOptions& options)
+{
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
+        return { };
+    if (!options.conversionData->styleBuilderState()->element())
+        return { };
+
+    return makeChild(Number { .value = static_cast<double>(options.conversionData->styleBuilderState()->siblingCount()) });
+}
+
+std::optional<Child> simplify(SiblingIndex&, const SimplificationOptions& options)
+{
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
+        return { };
+    if (!options.conversionData->styleBuilderState()->element())
+        return { };
+
+    return makeChild(Number { .value = static_cast<double>(options.conversionData->styleBuilderState()->siblingIndex()) });
+}
+
 std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
 {
     ASSERT(!root.children.isEmpty());

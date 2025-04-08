@@ -222,6 +222,16 @@ Type getType(const Symbol& root)
     return Type::determineType(root.unit);
 }
 
+Type getType(const SiblingCount&)
+{
+    return Type { };
+}
+
+Type getType(const SiblingIndex&)
+{
+    return Type { };
+}
+
 Type getType(const Child& child)
 {
     return WTF::switchOn(child, [&](const auto& root) { return getType(root); });

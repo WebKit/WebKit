@@ -1536,6 +1536,8 @@ media-progress
 container-progress
 random
 per-element
+sibling-count
+sibling-index
 // by
 infinity
 -infinity id=NegativeInfinity

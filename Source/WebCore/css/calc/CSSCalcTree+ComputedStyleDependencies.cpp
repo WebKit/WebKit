@@ -56,6 +56,12 @@ static void collectComputedStyleDependencies(const Child& root, ComputedStyleDep
             if (auto lengthUnit = CSS::toLengthUnit(root.unit))
                 CSS::collectComputedStyleDependencies(dependencies, *lengthUnit);
         },
+        [&](const SiblingCount&) {
+            // No potential dependencies.
+        },
+        [&](const SiblingIndex&) {
+            // No potential dependencies.
+        },
         [&](const IndirectNode<MediaProgress>& root) {
             root->feature->collectComputedStyleDependencies(dependencies);
             forAllChildNodes(*root, [&](const auto& root) { collectComputedStyleDependencies(root, dependencies); });
