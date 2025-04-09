@@ -4,10 +4,7 @@
 
 Most WebKit code is written in C++. But a reasonable question is, “Which version C++?”
 
-It’s C++17.
-We eventually plan to move forward to C++20 and beyond.
-Before we do that we make sure that compilers and libraries
-on the platforms that WebKit contributors are working on are ready.
+It’s C++23.
 
 The relevant compilers are versions of clang, gcc, and Visual Studio.
 The WebKit project has [a document explaining which version of gcc is required](https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement).
