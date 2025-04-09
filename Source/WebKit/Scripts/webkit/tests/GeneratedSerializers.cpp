@@ -60,10 +60,12 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/FloatPoint.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#include <WebCore/PathSegmentData.h>
 #if USE(APPKIT)
 #include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #endif
@@ -1524,6 +1526,34 @@ std::optional<WebCore::RectEdges<bool>> ArgumentCoder<WebCore::RectEdges<bool>>:
     };
 }
 
+static_assert(std::is_trivially_copyable<WebCore::FloatPoint>());
+static_assert(std::is_same_v<std::remove_cvref_t<decltype(std::declval<WebCore::FloatPoint&>().x())>, float>);
+static_assert(ArgumentCoder<float>::isTrivial);
+static_assert(std::is_trivially_copyable<WebCore::FloatPoint>());
+static_assert(std::is_same_v<std::remove_cvref_t<decltype(std::declval<WebCore::FloatPoint&>().y())>, float>);
+static_assert(ArgumentCoder<float>::isTrivial);
+namespace {
+struct ShouldBeSameSizeAsFloatPoint {
+    float x;
+    float y;
+};
+static_assert(sizeof(ShouldBeSameSizeAsFloatPoint) == sizeof(WebCore::FloatPoint));
+static_assert(alignof(ShouldBeSameSizeAsFloatPoint) == alignof(WebCore::FloatPoint));
+}
+static_assert(std::is_trivially_copyable<PathDataLine>());
+static_assert(std::is_same_v<decltype(PathDataLine::start), WebCore::FloatPoint>);
+static_assert(ArgumentCoder<WebCore::FloatPoint>::isTrivial);
+static_assert(std::is_trivially_copyable<PathDataLine>());
+static_assert(std::is_same_v<decltype(PathDataLine::end), WebCore::FloatPoint>);
+static_assert(ArgumentCoder<WebCore::FloatPoint>::isTrivial);
+namespace {
+struct ShouldBeSameSizeAsPathDataLine {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint end;
+};
+static_assert(sizeof(ShouldBeSameSizeAsPathDataLine) == sizeof(PathDataLine));
+static_assert(alignof(ShouldBeSameSizeAsPathDataLine) == alignof(PathDataLine));
+}
 } // namespace IPC
 
 namespace WTF {

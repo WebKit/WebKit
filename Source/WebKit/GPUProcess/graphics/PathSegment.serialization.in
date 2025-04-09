@@ -21,26 +21,26 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: <WebCore/PathSegmentData.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathMoveTo {
+[CustomHeader, Trivial] struct WebCore::PathMoveTo {
     WebCore::FloatPoint point;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathLineTo {
+[CustomHeader, Trivial] struct WebCore::PathLineTo {
     WebCore::FloatPoint point;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathQuadCurveTo {
+[CustomHeader, Trivial] struct WebCore::PathQuadCurveTo {
     WebCore::FloatPoint controlPoint;
     WebCore::FloatPoint endPoint;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathBezierCurveTo {
+[CustomHeader, Trivial] struct WebCore::PathBezierCurveTo {
     WebCore::FloatPoint controlPoint1;
     WebCore::FloatPoint controlPoint2;
     WebCore::FloatPoint endPoint;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathArcTo {
+[CustomHeader, Trivial] struct WebCore::PathArcTo {
     WebCore::FloatPoint controlPoint1;
     WebCore::FloatPoint controlPoint2;
     float radius;
@@ -68,11 +68,11 @@ header: <WebCore/PathSegmentData.h>
     WebCore::RotationDirection direction;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathEllipseInRect {
+[CustomHeader, Trivial] struct WebCore::PathEllipseInRect {
     WebCore::FloatRect rect;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathRect {
+[CustomHeader, Trivial] struct WebCore::PathRect {
     WebCore::FloatRect rect;
 };
 
@@ -86,7 +86,7 @@ header: <WebCore/PathSegmentData.h>
     WebCore::PathRoundedRect::Strategy strategy;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathContinuousRoundedRect {
+[CustomHeader, Trivial] struct WebCore::PathContinuousRoundedRect {
     WebCore::FloatRect rect;
     float cornerWidth;
     float cornerHeight;
@@ -96,20 +96,20 @@ header: <WebCore/PathSegmentData.h>
     std::span<const float, 4> span();
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataQuadCurve {
+[CustomHeader, Trivial] struct WebCore::PathDataQuadCurve {
     WebCore::FloatPoint start;
     WebCore::FloatPoint controlPoint;
     WebCore::FloatPoint endPoint;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataBezierCurve {
+[CustomHeader, Trivial] struct WebCore::PathDataBezierCurve {
     WebCore::FloatPoint start;
     WebCore::FloatPoint controlPoint1;
     WebCore::FloatPoint controlPoint2;
     WebCore::FloatPoint endPoint;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataArc {
+[CustomHeader, Trivial] struct WebCore::PathDataArc {
     WebCore::FloatPoint start;
     WebCore::FloatPoint controlPoint1;
     WebCore::FloatPoint controlPoint2;
@@ -117,7 +117,7 @@ header: <WebCore/PathSegmentData.h>
 };
 
 header: <WebCore/PathSegment.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathCloseSubpath {
+[CustomHeader, Trivial] struct WebCore::PathCloseSubpath {
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::PathSegment {

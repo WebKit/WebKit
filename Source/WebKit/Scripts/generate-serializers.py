@@ -45,6 +45,9 @@ import sys
 # CustomEncoder - Only generate the decoder, not the encoder.
 # WebKitSecureCodingClass - For webkit_secure_coding declarations that need a custom way of establishing the Obj-C class to instantiate (e.g. softlinked frameworks)
 # Wrapper - use a wrapper class to get members and to construct for an external type
+# Trivial - value is a trivially copyable value without IPC validation for all of the members. Members are
+#           to be listed in order to validate the assumptions. Trivial serializers are always available for
+#           all encoder types.
 #
 # Supported member attributes:
 #
@@ -97,6 +100,7 @@ class SerializedType(object):
         self.populate_from_empty_constructor = False
         self.nested = False
         self.rvalue = False
+        self.trivial = False
         self.webkit_platform = False
         self.members_are_subclasses = False
         self.custom_encoder = False
@@ -145,6 +149,8 @@ class SerializedType(object):
                         self.support_wkkeyedcoder = True
                     elif attribute == 'DebugDecodingFailure':
                         self.debug_decoding_failure = True
+                    elif attribute == 'Trivial':
+                        self.trivial = True
         self.templates = templates
         if other_metadata:
             if other_metadata == 'subclasses':
@@ -494,12 +500,11 @@ _license_header = """/*
 """
 
 
-def one_argument_coder_declaration_cf(type):
+def one_argument_coder_declaration_cf(type, name_with_template):
     result = []
     result.append('')
     if type.condition is not None:
         result.append(f'#if {type.condition}')
-    name_with_template = type.namespace_and_name()
     result.append(f'template<> struct ArgumentCoder<{name_with_template}> {{')
     for encoder in type.encoders:
         result.append(f'    static void encode({encoder}&, {name_with_template});')
@@ -517,16 +522,29 @@ def one_argument_coder_declaration_cf(type):
     return result
 
 
+def one_argument_coder_declaration_trivial(type, name_with_template):
+    result = []
+    if type.condition is not None:
+        result.append(f'#if {type.condition}')
+    result.append(f'template<> struct ArgumentCoder<{name_with_template}> : TrivialArgumentCoder<{name_with_template}> {{')
+    result.append(f'}};')
+    if type.condition is not None:
+        result.append('#endif')
+    return result
+
+
 def one_argument_coder_declaration(type, template_argument):
+    name_with_template = type.namespace_and_name()
+    if template_argument is not None:
+        name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
     if type.cf_type is not None:
-        return one_argument_coder_declaration_cf(type)
+        return one_argument_coder_declaration_cf(type, name_with_template)
+    if type.trivial:
+        return one_argument_coder_declaration_trivial(type, name_with_template)
     result = []
     result.append('')
     if type.condition is not None:
         result.append(f'#if {type.condition}')
-    name_with_template = type.namespace_and_name()
-    if template_argument is not None:
-        name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
     result.append(f'template<> struct ArgumentCoder<{name_with_template}> {{')
     for encoder in type.encoders:
         if type.rvalue:
@@ -715,6 +733,36 @@ def resolve_inheritance(serialized_types):
         result.append(serialized_type)
     return result
 
+
+def check_type_members_trivial(type, name_with_template):
+    result = []
+    for member in type.members:
+        if member.condition is not None:
+            result.append(f'#if {member.condition}')
+        result.append(f'static_assert(std::is_trivially_copyable<{name_with_template}>());')
+        if '()' in member.name:
+            result.append(f'static_assert(std::is_same_v<std::remove_cvref_t<decltype(std::declval<{name_with_template}&>().{member.name})>, {member.type}>);')
+        else:
+            result.append(f'static_assert(std::is_same_v<decltype({name_with_template}::{member.name}), {member.type}>);')
+        result.append(f'static_assert(ArgumentCoder<{member.type}>::isTrivial);')
+        if member.condition is not None:
+            result.append('#endif')
+    result.append(f'namespace {{')
+    result.append(f'struct ShouldBeSameSizeAs{type.name_as_identifier()} {{')
+    for member in type.members:
+        if member.condition is not None:
+            result.append(f'#if {member.condition}')
+        result.append(f'    {member.type} {sanitize_string_for_variable_name(member.name)};')
+        if member.condition is not None:
+            result.append('#endif')
+    for member in type.dictionary_members:
+        result.append(f'        {member.dictionary_type()} {member.type};')
+    result.append('};')
+    result.append(f'static_assert(sizeof(ShouldBeSameSizeAs{type.name_as_identifier()}) == sizeof({type.namespace_and_name()}));')
+    result.append(f'static_assert(alignof(ShouldBeSameSizeAs{type.name_as_identifier()}) == alignof({type.namespace_and_name()}));')
+    result.append(f'}}')
+
+    return result
 
 def check_type_members(type, checking_parent_class):
     result = []
@@ -989,11 +1037,19 @@ def construct_type(type, specialization, indentation):
     return result
 
 
-def generate_one_impl(type, template_argument):
+def generate_one_impl_trivial(type, name_with_template):
     result = []
+    result = result + check_type_members_trivial(type, name_with_template)
+    return result
+
+
+def generate_one_impl(type, template_argument):
     name_with_template = type.namespace_and_name()
     if template_argument is not None:
         name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
+    if type.trivial:
+        return generate_one_impl_trivial(type, name_with_template)
+    result = []
     if type.condition is not None:
         result.append(f'#if {type.condition}')
 

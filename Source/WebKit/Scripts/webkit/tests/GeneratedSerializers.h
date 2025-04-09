@@ -92,6 +92,7 @@ class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
 class AppKitControlSystemImage;
 #endif
 template<typename> class RectEdges;
+class FloatPoint;
 struct Amazing;
 }
 
@@ -123,6 +124,7 @@ struct RequestEncodedWithBodyRValue;
 #if USE(SKIA)
 class SkFooBar;
 #endif
+struct PathDataLine;
 
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
@@ -419,6 +421,10 @@ template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
+};
+template<> struct ArgumentCoder<WebCore::FloatPoint> : TrivialArgumentCoder<WebCore::FloatPoint> {
+};
+template<> struct ArgumentCoder<PathDataLine> : TrivialArgumentCoder<PathDataLine> {
 };
 
 } // namespace IPC

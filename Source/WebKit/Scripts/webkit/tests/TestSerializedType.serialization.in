@@ -363,3 +363,14 @@ using WebCore::ConditionalVariant = std::variant<
 >;
 
 using WebCore::NonConditionalVariant = std::variant<int, double>
+
+[Trivial] class WebCore::FloatPoint {
+    float x()
+    float y()
+};
+
+header: <WebCore/PathSegmentData.h>
+[CustomHeader, Trivial] struct PathDataLine {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint end;
+};
