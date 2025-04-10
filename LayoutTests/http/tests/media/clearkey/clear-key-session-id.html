@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>clear-key-session-id</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script src="support.js"></script>
+    <script>
+
+    var session1;
+    var session2;
+
+    async function runTest() {
+        let createTwoSessions = async () => {
+            const config = [{ "initDataTypes":["webm"], "audioCapabilities":[{"contentType":"audio/mp4"}]}];
+            let mediaKeySystem = await navigator.requestMediaKeySystemAccess("org.w3.clearkey", config);
+            let mediaKeys = await mediaKeySystem.createMediaKeys();
+
+            const e = new Uint8Array([0]);
+
+            session1 = await mediaKeys.createSession();
+            let request = await session1.generateRequest("webm", e);
+
+            testExpected('session1.sessionId', '0');
+
+            session2 = await mediaKeys.createSession();
+            request = await session2.generateRequest("webm", e);
+
+            testExpected('session2.sessionId', '1');
+        };
+
+        consoleWrite('-');
+        consoleWrite('Create the first pair of sessions');
+        await createTwoSessions();
+
+        consoleWrite('-');
+        consoleWrite('Create the second pair of sessions');
+        await createTwoSessions();
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>Test that ClearKey session identifiers do not persist across MediaKeySystem instances.</div>
+</body>
+</html>
