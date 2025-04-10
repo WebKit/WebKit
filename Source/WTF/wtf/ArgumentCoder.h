@@ -56,7 +56,8 @@ struct ArgumentCoder<bool> {
 };
 
 template<typename T>
-struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
+struct TrivialArgumentCoder {
+    static constexpr bool isTrivial = true;
     template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
@@ -68,6 +69,10 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
     {
         return decoder.template decodeObject<T>();
     }
+};
+
+template<typename T>
+struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> : TrivialArgumentCoder<T> {
 };
 
 template<typename T>

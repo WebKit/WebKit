@@ -61,10 +61,12 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/FloatPoint.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#include <WebCore/PathSegmentData.h>
 #if USE(APPKIT)
 #include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #endif
@@ -554,6 +556,26 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "bool"_s,
                 "left()"_s
+            },
+        } },
+        { "WebCore::FloatPoint"_s, {
+            {
+                "float"_s,
+                "x()"_s
+            },
+            {
+                "float"_s,
+                "y()"_s
+            },
+        } },
+        { "PathDataLine"_s, {
+            {
+                "WebCore::FloatPoint"_s,
+                "start"_s
+            },
+            {
+                "WebCore::FloatPoint"_s,
+                "end"_s
             },
         } },
 #if USE(PASSKIT)

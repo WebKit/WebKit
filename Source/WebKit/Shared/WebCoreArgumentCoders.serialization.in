@@ -489,18 +489,18 @@ struct WebCore::CharacterRange {
     std::span<const double, 6> span();
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint {
+[Trivial] class WebCore::FloatPoint {
     float x()
     float y()
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint3D {
+[Trivial] class WebCore::FloatPoint3D {
     float x()
     float y()
     float z()
 }
 
-class WebCore::FloatQuad {
+[Trivial] class WebCore::FloatQuad {
     WebCore::FloatPoint p1();
     WebCore::FloatPoint p2();
     WebCore::FloatPoint p3();
@@ -722,22 +722,22 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
 
 #if USE(CG)
 headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
+[WebKitPlatform, Trivial] struct CGSize {
     CGFloat width
     CGFloat height
 };
 
-[WebKitPlatform] struct CGPoint {
+[WebKitPlatform, Trivial] struct CGPoint {
     CGFloat x
     CGFloat y
 };
 
-[WebKitPlatform] struct CGRect {
+[WebKitPlatform, Trivial] struct CGRect {
     CGPoint origin
     CGSize size
 };
 
-struct CGAffineTransform {
+[Trivial] struct CGAffineTransform {
   CGFloat a
   CGFloat b
   CGFloat c
@@ -747,7 +747,7 @@ struct CGAffineTransform {
 };
 #endif
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRect {
+[Trivial] class WebCore::FloatRect {
     WebCore::FloatPoint location()
     WebCore::FloatSize size()
 }
@@ -972,17 +972,17 @@ header: <WebCore/RenderStyleConstants.h>
     [Validator='WebCore::IntRect { *location, *size }.isValid()'] WebCore::IntSize size();
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntPoint {
+[Trivial] class WebCore::IntPoint {
     int x();
     int y();
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntSize {
+[Trivial] class WebCore::IntSize {
     int width();
     int height();
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatSize {
+[Trivial] class WebCore::FloatSize {
     float width();
     float height();
 }
@@ -5299,7 +5299,7 @@ header: <WebCore/ImageTypes.h>
     WebCore::PlatformDynamicRangeLimit dynamicRangeLimit();
 };
 
-[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::FloatSegment {
+[Trivial] struct WebCore::FloatSegment {
     float begin;
     float end;
 };
