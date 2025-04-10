@@ -811,7 +811,9 @@ class CheckOutSource(git.Git):
     @defer.inlineCallbacks
     def run(self):
         self.branch = self.getProperty('github.base.ref') or self.branch
-
+        gitmirror = self.getProperty('gitmirror', None)
+        if gitmirror:
+            self.reference = gitmirror
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.env = dict(
             GIT_USER=username,
@@ -5943,7 +5945,7 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
         defer.returnValue(rc)
 
 
-class PrintConfiguration(steps.ShellSequence):
+class PrintAndSetConfiguration(steps.ShellSequence):
     name = 'configuration'
     description = ['configuration']
     haltOnFailure = False
@@ -5952,7 +5954,7 @@ class PrintConfiguration(steps.ShellSequence):
     logEnviron = False
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime'], ['/bin/sh', '-c', 'echo WEBKIT_MIRROR_PATH=${WEBKIT_MIRROR_PATH}']]
 
     def __init__(self, **kwargs):
         super().__init__(timeout=60, **kwargs)
@@ -5975,7 +5977,12 @@ class PrintConfiguration(steps.ShellSequence):
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
         rc = yield super().run()
         logs = self.log_observer.getStdout() + self.log_observer.getStderr()
-        self.parseAndValidate(logs)
+        if platform in ('gtk', 'wpe', 'jsc-only'):
+            match = re.search('WEBKIT_MIRROR_PATH=(/.+)\n', logs)
+            if match:
+                self.setProperty('gitmirror', match.group(1).strip())
+        else:
+            self.parseAndValidateApple(logs)
         defer.returnValue(rc)
 
     def convert_build_to_os_name(self, build):
@@ -5993,7 +6000,7 @@ class PrintConfiguration(steps.ShellSequence):
                 return value
         return 'Unknown'
 
-    def parseAndValidate(self, logText):
+    def parseAndValidateApple(self, logText):
         os_version, os_name, xcode_version = '', '', ''
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:

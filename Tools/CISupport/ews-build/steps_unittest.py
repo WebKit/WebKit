@@ -5696,7 +5696,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
+class TestPrintAndSetConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -5705,7 +5705,7 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success_mac(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('buildername', 'macOS-Sequoia-Release-WK2-Tests-EWS')
         self.setProperty('platform', 'mac-sequoia')
 
@@ -5748,7 +5748,7 @@ Build version 16A242d''')
         return self.runStep()
 
     def test_success_ios_simulator(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('buildername', 'Apple-iOS-17-Simulator-Release-WK2-Tests')
         self.setProperty('platform', 'ios-simulator-17')
 
@@ -5789,7 +5789,7 @@ Build version 15F31d''')
         return self.runStep()
 
     def test_success_webkitpy(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('platform', '*')
 
         self.expectRemoteCommands(
@@ -5810,8 +5810,9 @@ BuildVersion:	23F79'''),
         self.expectOutcome(result=SUCCESS, state_string='OS: Sonoma (14.5), Xcode: 15.4')
         return self.runStep()
 
+    @defer.inlineCallbacks
     def test_success_linux_wpe(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('platform', 'wpe')
 
         self.expectRemoteCommands(
@@ -5826,12 +5827,17 @@ BuildVersion:	23F79'''),
             + ExpectShell.log('stdio', stdout='''Linux kodama-ews 5.0.4-arch1-1-ARCH #1 SMP PREEMPT Sat Mar 23 21:00:33 UTC 2019 x86_64 GNU/Linux'''),
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo WEBKIT_MIRROR_PATH=${WEBKIT_MIRROR_PATH}'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='WEBKIT_MIRROR_PATH=/var/git/WebKit.git\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
-        return self.runStep()
+        rc = yield self.runStep()
+        self.assertEqual(self.getProperty('gitmirror'), '/var/git/WebKit.git')
+        defer.returnValue(rc)
 
+    @defer.inlineCallbacks
     def test_success_linux_gtk(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('platform', 'gtk')
 
         self.expectRemoteCommands(
@@ -5840,12 +5846,15 @@ BuildVersion:	23F79'''),
             ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['/bin/sh', '-c', 'echo WEBKIT_MIRROR_PATH=${WEBKIT_MIRROR_PATH}'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
-        return self.runStep()
+        rc = yield self.runStep()
+        self.assertEqual(self.getProperty('gitmirror'), None)
+        defer.returnValue(rc)
 
     def test_failure(self):
-        self.setupStep(PrintConfiguration())
+        self.setupStep(PrintAndSetConfiguration())
         self.setProperty('platform', 'ios-12')
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
@@ -7327,6 +7336,63 @@ class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
                 logEnviron=False,
                 env=self.ENV,
                 command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_success_with_git_mirror(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.setProperty('gitmirror', '/var/git/WebKit.git')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', '--reference', '/var/git/WebKit.git', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
             ) + 0,
             ExpectShell(
                 workdir='wkdir',

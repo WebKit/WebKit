@@ -34,7 +34,7 @@ class Factory(factory.BuildFactory):
     def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, device_model, triggers=None):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model, triggers=triggers))
-        self.addStep(PrintConfiguration())
+        self.addStep(PrintAndSetConfiguration())
         self.addStep(CheckOutSource())
         self.addStep(CheckOutSpecificRevision())
         self.addStep(ShowIdentifier())

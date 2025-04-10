@@ -243,6 +243,9 @@ class CheckOutSource(git.Git):
 
     @defer.inlineCallbacks
     def run(self):
+        gitmirror = self.getProperty('gitmirror', None)
+        if gitmirror:
+            self.reference = gitmirror
         try:
             # The "git fetch" command is executed by the git class with "abandonOnFailure=True"
             # which means that if the command fails a BuildStepFailed exception is raised here.
@@ -2045,7 +2048,7 @@ class ExtractStaticAnalyzerTestResults(ExtractTestResults):
         pass
 
 
-class PrintConfiguration(steps.ShellSequence):
+class PrintAndSetConfiguration(steps.ShellSequence):
     name = 'configuration'
     description = ['configuration']
     haltOnFailure = False
@@ -2054,10 +2057,10 @@ class PrintConfiguration(steps.ShellSequence):
     logEnviron = False
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime'], ['/bin/sh', '-c', 'echo WEBKIT_MIRROR_PATH=${WEBKIT_MIRROR_PATH}']]
 
     def __init__(self, **kwargs):
-        super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
+        super(PrintAndSetConfiguration, self).__init__(timeout=60, **kwargs)
         self.commands = []
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
@@ -2074,7 +2077,7 @@ class PrintConfiguration(steps.ShellSequence):
 
         for command in command_list:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
-        return super(PrintConfiguration, self).run()
+        return super(PrintAndSetConfiguration, self).run()
 
     def convert_build_to_os_name(self, build):
         if not build:
@@ -2094,8 +2097,14 @@ class PrintConfiguration(steps.ShellSequence):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to print configuration'}
+        platform = self.getProperty('platform', '*')
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         configuration = 'Printed configuration'
+        if platform in ('gtk', 'wpe', 'jsc-only'):
+            match = re.search('WEBKIT_MIRROR_PATH=(/.+)\n', logText)
+            if match:
+                self.setProperty('gitmirror', match.group(1).strip())
+            return {'step': configuration}
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
