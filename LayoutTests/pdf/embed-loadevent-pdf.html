@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/js-test.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+   <p id="result"> </p>
+</body>
+<script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+       
+        function onEmbedLoad() {
+            document.getElementById("result").textContent = "PASS: load event fired on embed.";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', async () => {
+            const embed = document.createElement("iframe");
+            embed.src = "./resources/fullscreen.pdf";
+            embed.addEventListener("load", onEmbedLoad, false);
+            embed.width = "600";
+            embed.height = "400";
+            document.body.appendChild(embed);
+        }, false);
+    </script>
+</html>

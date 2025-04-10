@@ -39,6 +39,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HTMLPlugInElement.h"
 #include "HTMLScriptElement.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -227,6 +228,12 @@ void PDFDocument::finishLoadingPDF()
     if (m_script) {
         m_script->removeEventListener(eventNames().loadEvent, *m_listener, { });
         m_script = nullptr;
+    }
+
+    if (frame() && frame()->ownerElement()) {
+        RefPtr pluginElement = downcast<HTMLPlugInElement>(frame()->ownerElement());
+        if (pluginElement)
+            pluginElement->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 
     m_listener = nullptr;
