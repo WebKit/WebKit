@@ -123,7 +123,7 @@ IDBError MemoryObjectStore::addIndex(MemoryBackingStoreTransaction& transaction,
     auto index = MemoryIndex::create(indexInfo, *this);
     index->writeTransactionStarted(transaction);
     m_info.addExistingIndex(indexInfo);
-    transaction.addNewIndex(index.get());
+    transaction.addNewIndex(indexInfo.get());
     registerIndex(WTFMove(index));
 
     return IDBError { };
