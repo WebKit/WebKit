@@ -32,6 +32,7 @@
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
@@ -818,6 +819,21 @@ TEST(WebKit, DecidePolicyForNavigationActionFragment)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadHTMLString:@"<script>window.location.href='#fragment';</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, NavigationActionFrames)
+{
+    TestWebKitAPI::HTTPServer server({ { "/"_s, { "hi"_s } } });
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_NOT_NULL(action.sourceFrame.request);
+        EXPECT_NOT_NULL(action.targetFrame.request);
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
 }
 
 #endif

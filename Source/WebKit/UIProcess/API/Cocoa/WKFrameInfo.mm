@@ -60,7 +60,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURLRequest *)request
 {
-    return _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) ?: [NSURLRequest requestWithURL:adoptNS([[NSURL alloc] initWithString:@""]).get()];
 }
 
 - (WKSecurityOrigin *)securityOrigin
