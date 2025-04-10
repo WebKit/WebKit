@@ -25,6 +25,7 @@
 #pragma once
 
 #include "FloatPoint.h"
+#include "Font.h"
 #include "GlyphBuffer.h"
 #include "TextSpacing.h"
 #include <wtf/HashSet.h>
@@ -49,7 +50,6 @@ class CachedTextBreakIterator;
 namespace WebCore {
 
 class FontCascade;
-class Font;
 class TextRun;
 
 enum class GlyphIterationStyle : bool { IncludePartialGlyphs, ByWholeGlyphs };
