@@ -243,6 +243,8 @@ class CheckOutSource(git.Git):
 
     @defer.inlineCallbacks
     def run(self):
+        if not self.reference:
+            self.reference = self.getProperty('gitmirror', None)
         try:
             # The "git fetch" command is executed by the git class with "abandonOnFailure=True"
             # which means that if the command fails a BuildStepFailed exception is raised here.
@@ -2054,7 +2056,7 @@ class PrintConfiguration(steps.ShellSequence):
     logEnviron = False
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime'], ['/bin/sh', '-c', 'echo WEBKIT_MIRROR_PATH=${WEBKIT_MIRROR_PATH}']]
 
     def __init__(self, **kwargs):
         super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
@@ -2094,25 +2096,31 @@ class PrintConfiguration(steps.ShellSequence):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to print configuration'}
+        platform = self.getProperty('platform', '*')
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         configuration = 'Printed configuration'
-        match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
-        if match:
-            os_version = match.group(1).strip()
-            os_name = self.convert_build_to_os_name(os_version)
-            configuration = f'OS: {os_name} ({os_version})'
-            self.setProperty('os_name', os_name)
-            self.setProperty('os_version', os_version)
-        match = re.search('BuildVersion:[ \t]*(.+?)\n', logText)
-        if match:
-            build_version = match.group(1).strip()
-            self.setProperty('build_version', build_version)
+        if platform in ('gtk', 'wpe', 'jsc-only'):
+            match = re.search('WEBKIT_MIRROR_PATH=(/.+)\n', logText)
+            if match:
+                self.setProperty('gitmirror', match.group(1).strip())
+        else:
+            match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
+            if match:
+                os_version = match.group(1).strip()
+                os_name = self.convert_build_to_os_name(os_version)
+                configuration = f'OS: {os_name} ({os_version})'
+                self.setProperty('os_name', os_name)
+                self.setProperty('os_version', os_version)
+            match = re.search('BuildVersion:[ \t]*(.+?)\n', logText)
+            if match:
+                build_version = match.group(1).strip()
+                self.setProperty('build_version', build_version)
 
-        xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
-        match = re.search(xcode_re, logText)
-        if match:
-            xcode_version = match.group(1).strip()
-            configuration += f', Xcode: {xcode_version}'
+            xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
+            match = re.search(xcode_re, logText)
+            if match:
+                xcode_version = match.group(1).strip()
+                configuration += f', Xcode: {xcode_version}'
         return {'step': configuration}
 
 
