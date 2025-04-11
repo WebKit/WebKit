@@ -408,3 +408,9 @@ const maxValue = new Temporal.Instant(86400_0000_0000_000_000_000n);
         shouldThrow(() => epoch.subtract({ [unit]: -Number.MAX_VALUE }), RangeError);
     });
 }
+
+// round()
+{
+    const pos = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, 999, 999999, 999999999);
+    shouldBe(pos.round({ largestUnit: "seconds" }).seconds, 2);
+}
