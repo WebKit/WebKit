@@ -973,7 +973,11 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_cast, int32_t heapType, bool allowNull, EncodedJS
     IPINT_RETURN(value);
 }
 
-static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex, Register* callee)
+/**
+ * Given a function index, determine the pointer to its executable code.
+ * Return a pair of the wasm instance pointer and the code pointer.
+ */
+static inline UGPRPair resolveWasmCall(JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex, Register* callee)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -1005,7 +1009,7 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::Functio
 
 WASM_IPINT_EXTERN_CPP_DECL(prepare_call, unsigned functionIndex, Register* callee)
 {
-    return doWasmCall(instance, Wasm::FunctionSpaceIndex(functionIndex), callee);
+    return resolveWasmCall(instance, Wasm::FunctionSpaceIndex(functionIndex), callee);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(prepare_call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call)

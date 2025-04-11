@@ -117,16 +117,16 @@ void EntryPlan::prepare()
 
     const auto& functions = m_moduleInformation->functions;
     m_numberOfFunctions = functions.size();
-    if (!tryReserveCapacity(m_wasmToWasmExitStubs, m_moduleInformation->importFunctionTypeIndices.size(), " WebAssembly to WebAssembly stubs"_s))
+    const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
+    if (!tryReserveCapacity(m_wasmToWasmExitStubs, importFunctionCount, " WebAssembly to WebAssembly stubs"_s))
         return;
-    if (!tryReserveCapacity(m_wasmToJSExitStubs, m_moduleInformation->importFunctionTypeIndices.size(), " WebAssembly to JavaScript stubs"_s))
+    if (!tryReserveCapacity(m_wasmToJSExitStubs, importFunctionCount, " WebAssembly to JavaScript stubs"_s))
         return;
     if (!tryReserveCapacity(m_unlinkedWasmToWasmCalls, functions.size(), " unlinked WebAssembly to WebAssembly calls"_s))
         return;
 
     m_unlinkedWasmToWasmCalls.resize(functions.size());
 
-    const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
     for (const auto& exp : m_moduleInformation->exports) {
         if (exp.kindIndex >= importFunctionCount)
             m_exportedFunctionIndices.add(exp.kindIndex - importFunctionCount);
@@ -327,8 +327,9 @@ bool EntryPlan::generateWasmToWasmStubs()
 
 bool EntryPlan::generateWasmToJSStubs()
 {
-    m_wasmToJSExitStubs.resize(m_moduleInformation->importFunctionCount());
-    for (unsigned importIndex = 0; importIndex < m_moduleInformation->importFunctionCount(); ++importIndex) {
+    uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
+    m_wasmToJSExitStubs.resize(importFunctionCount);
+    for (unsigned importIndex = 0; importIndex < importFunctionCount; ++importIndex) {
 #if ENABLE(JIT)
         Wasm::TypeIndex typeIndex = m_moduleInformation->importFunctionTypeIndices.at(importIndex);
         if (Options::useWasmJIT()) {

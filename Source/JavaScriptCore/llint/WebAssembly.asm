@@ -990,7 +990,7 @@ op(wasm_to_js_wrapper_entry, macro()
     # are still in the caller frame.
     # Load this before we create the stack frame, since we lose old cfr, which we wrote Callee to
 
-    # We repurpose this slot temporarily for a WasmCallableFunction* from doWasmCall and friends.
+    # We repurpose this slot temporarily for a WasmCallableFunction* from resolveWasmCall and friends.
     tagReturnAddress sp
     preserveCallerPCAndCFR()
 
