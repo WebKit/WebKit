@@ -349,9 +349,12 @@ void LayerTreeHost::ensureDrawing()
 void LayerTreeHost::sizeDidChange()
 {
     m_pendingResize = true;
-    if (m_isWaitingForRenderer)
+    if (m_isWaitingForRenderer) {
+        // Set m_isWaitingForRenderer to false, otherwise scheduleLayerFlush() will return without
+        // having scheduled anything.
+        m_isWaitingForRenderer = false;
         scheduleLayerFlush();
-    else {
+    } else {
         cancelPendingLayerFlush();
         flushLayers();
     }

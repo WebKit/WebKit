@@ -341,8 +341,13 @@ void ThreadedCompositor::renderLayerTree()
 #endif
     }
 
-    if (viewportSize.isEmpty())
+    if (viewportSize.isEmpty()) {
+        // Make sure the compositing runloop goes back to idle state. Otherwise sub-sequent
+        // compositing requests will not be scheduled (because the runloop would be stuck in
+        // InProgress state).
+        frameComplete();
         return;
+    }
 
     TransformationMatrix viewportTransform;
     viewportTransform.scale(deviceScaleFactor);
