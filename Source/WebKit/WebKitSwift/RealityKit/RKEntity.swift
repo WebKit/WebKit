@@ -392,6 +392,46 @@ public final class WKSRKEntity: NSObject {
         let offset = pivotPoint - interactionPivotPoint
         transform = WKEntityTransform(scale: newTransform.scale, rotation: newTransform.rotation, translation: newTransform.translation + offset)
     }
+    
+    private var preFitAnimationTransformMatrix: simd_float4x4? = nil
+    private var preFitAnimationController: AnimationPlaybackController? = nil
+    private var preFitAnimationCompletionSubscription: Cancellable? = nil
+    private var ignoreTransformUpdates: Bool = false
+    @objc(fitEntityWithinPortalBounds:isAnimated:withCompletion:) public func fitEntity(within bounds: simd_float2, animated: Bool, completion: (() -> Void)) {
+        let entityBounds = entity.visualBounds(relativeTo: nil)
+        let portalBounds = BoundingBox(min: .init(-bounds.x/2, -bounds.y/2, 0), max: .init(bounds.x/2, bounds.y/2, 2 * entityBounds.extents.z))
+        
+        let newScale = Float(min(portalBounds.extents.x/entityBounds.boundingRadius, portalBounds.extents.y/entityBounds.boundingRadius, 1)) * entity.scale(relativeTo: nil).x
+        let offset = (self.interactionPivotPoint - self.entity.position(relativeTo: nil)) * (newScale / entity.scale(relativeTo: nil).x)
+        let preLiftAnimationPosition = simd_float3(offset.x, offset.y, max(-entityBounds.boundingRadius, transform.translation.z))
+        let liftTargetTransform = Transform(scale: .init(repeating: newScale), rotation: transform.rotation, translation: -preLiftAnimationPosition)
+        let entityIsClipped = entityBounds.min.x < portalBounds.min.x || entityBounds.min.y < portalBounds.min.y || entityBounds.max.x > portalBounds.max.x || entityBounds.max.y > portalBounds.max.y
+        let entityInsetExceedsThreshold = transform.translation.z < -entityBounds.boundingRadius
+        
+        if (entityIsClipped || entityInsetExceedsThreshold) {
+            self.ignoreTransformUpdates = true
+            self.preFitAnimationTransformMatrix = self.entity.transformMatrix(relativeTo: nil)
+            self.preFitAnimationController = self.entity.move(to: liftTargetTransform, relativeTo: nil, duration: 0.3, timingFunction: .cubicBezier(controlPoint1: .init(0.08, 0.6), controlPoint2: .init(0.4, 1.0)))
+            self.preFitAnimationCompletionSubscription = self.entity.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self.entity) { _ in
+                self.ignoreTransformUpdates = false
+                completion()
+            }
+        }
+    }
+    
+    @objc(resetModelTransformAfterDrag) public func resetModelTransformAfterDrag() {
+        guard let preFitAnimationTransformMatrix else {
+            Logger.realityKitEntity.error("Unable to reset model transform after drag.")
+            return
+        }
+            
+        self.ignoreTransformUpdates = true
+        self.preFitAnimationController = self.entity.move(to: preFitAnimationTransformMatrix, relativeTo: nil, duration: 0.3, timingFunction: .cubicBezier(controlPoint1: .init(0.08, 0.6), controlPoint2: .init(0.4, 1.0)))
+        self.preFitAnimationCompletionSubscription = self.entity.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self.entity) { _ in
+            self.ignoreTransformUpdates = false
+        }
+        self.preFitAnimationTransformMatrix = nil
+    }
 }
 
 #endif // os(visionOS)
