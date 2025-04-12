@@ -86,6 +86,8 @@ private:
     std::array<double, numberOfTemporalUnits> m_data { };
 };
 
+class InternalDuration;
+
 class ExactTime {
     WTF_MAKE_TZONE_ALLOCATED(ExactTime);
 public:
@@ -152,7 +154,7 @@ public:
     friend constexpr auto operator<=>(const ExactTime&, const ExactTime&) = default;
 
     std::optional<ExactTime> add(Duration) const;
-    Int128 difference(JSGlobalObject* globalObject, ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
+    InternalDuration difference(JSGlobalObject*, ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
     std::optional<ExactTime> round(unsigned increment, TemporalUnit, RoundingMode) const;
 
     static ExactTime now();

@@ -1685,18 +1685,19 @@ InternalDuration InternalDuration::combineDateAndTimeDuration(JSGlobalObject* gl
 
 // DifferenceInstant ( ns1, ns2, roundingIncrement, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-differenceinstant
-Int128 ExactTime::difference(JSGlobalObject* globalObject, ExactTime other, unsigned roundingIncrement, TemporalUnit smallestUnit, RoundingMode roundingMode) const
+InternalDuration ExactTime::difference(JSGlobalObject* globalObject, ExactTime other, unsigned roundingIncrement, TemporalUnit smallestUnit, RoundingMode roundingMode) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Int128 diff = other.m_epochNanoseconds - m_epochNanoseconds;
-    std::optional<Int128> maybeRounded = round(diff, roundingIncrement, smallestUnit, roundingMode);
-    if (!maybeRounded) {
+    Int128 timeDuration = other.m_epochNanoseconds - m_epochNanoseconds;
+    std::optional<Int128> maybeTimeDuration = roundTimeDuration(timeDuration, roundingIncrement, smallestUnit, roundingMode);
+    if (!maybeTimeDuration) {
         throwRangeError(globalObject, scope, "Rounded duration exceeds the maximum time duration"_s);
         return { };
     }
-    return maybeRounded.value();
+    timeDuration = maybeTimeDuration.value();
+    return InternalDuration::combineDateAndTimeDuration(globalObject, ISO8601::Duration(), timeDuration);
 }
 
 std::optional<ExactTime> ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const

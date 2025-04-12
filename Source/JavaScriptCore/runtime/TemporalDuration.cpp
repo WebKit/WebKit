@@ -434,7 +434,6 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
     return result;
 }
 
-
 // https://tc39.es/proposal-temporal/#sec-temporal-tointernaldurationrecord
 ISO8601::InternalDuration TemporalDuration::toInternalDuration(JSGlobalObject* globalObject, ISO8601::Duration d)
 {

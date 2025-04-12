@@ -259,17 +259,10 @@ ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, Temp
     unsigned increment = temporalRoundingIncrement(globalObject, options, maxIncrement, false);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Int128 roundedDiff = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
+    ISO8601::InternalDuration internalDuration = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
     RETURN_IF_EXCEPTION(scope, { });
-    // NOTE: Duration fields are currently doubles, and the total number of
-    // nanoseconds may not fit in a double. This may need to change if the
-    // internal representation of Duration changes.
-    ASSERT(roundedDiff / 1'000'000'000 < INT64_MAX);
-    double seconds { static_cast<double>(static_cast<int64_t>(roundedDiff / 1'000'000'000)) };
-    double nanosecondsRemainder { static_cast<double>(static_cast<int64_t>(roundedDiff % 1'000'000'000)) };
-    ISO8601::Duration result { 0, 0, 0, 0, 0, 0, seconds, 0, 0, nanosecondsRemainder };
-
-    TemporalDuration::balance(result, largestUnit);
+    ISO8601::Duration result = TemporalDuration::temporalDurationFromInternal(internalDuration, largestUnit);
+    // Omitted step 6 as it's already in order
     return result;
 }
 
