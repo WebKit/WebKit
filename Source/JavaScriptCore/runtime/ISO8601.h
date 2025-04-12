@@ -315,6 +315,8 @@ String monthCode(uint32_t);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
+bool isValidISODate(double, double, double);
+PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
 

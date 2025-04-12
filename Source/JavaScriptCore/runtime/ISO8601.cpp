@@ -1621,6 +1621,22 @@ std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, Temp
     return roundTemporalInstant(quantity, increment, unit, roundingMode);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
+static std::optional<Int128> roundTimeDurationToIncrement(Int128 d, Int128 increment, RoundingMode roundingMode)
+{
+    Int128 rounded = roundNumberToIncrementInt128(d, increment, roundingMode);
+    if (absInt128(rounded) > InternalDuration::maxTimeDuration)
+        return std::nullopt;
+    return rounded;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimeduration
+std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    auto divisor = lengthInNanoseconds(unit);
+    return roundTimeDurationToIncrement(timeDuration, divisor * increment, roundingMode);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-datedurationsign
 static int32_t dateDurationSign(const Duration& d)
 {
@@ -1711,6 +1727,24 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearWithinLimits(double year)
 {
     return year >= minYear && year <= maxYear;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
+bool isValidISODate(double year, double month, double day)
+{
+    if (month < 1 || month > 12)
+        return false;
+    auto daysInMonth1 = daysInMonth(year, month);
+    if (day < 1 || day > daysInMonth1)
+        return false;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record
+PlainDate createISODateRecord(double year, double month, double day)
+{
+    ASSERT(isValidISODate(year, month, day));
+    return PlainDate(year, month, day);
 }
 
 } // namespace ISO8601

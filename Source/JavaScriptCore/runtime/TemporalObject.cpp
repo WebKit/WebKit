@@ -659,6 +659,46 @@ Int128 roundNumberToIncrementAsIfPositive(Int128 x, Int128 increment, RoundingMo
     return !even ? r1 * increment : r2 * increment;
 }
 
+// There are two different versions of this method due to the lack
+// of float128. The names are different (roundNumberToIncrementInt128() and
+// roundNumberToIncrementDouble()) to avoid confusion in the presence of
+// implicit casts.
+// https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrement
+Int128 roundNumberToIncrementInt128(Int128 x, Int128 increment, RoundingMode mode)
+{
+// This follows the polyfill code rather than the spec, in order to work around
+// being unable to apply floating-point division in x / increment.
+    Int128 quotient = x / increment;
+    Int128 remainder = x % increment;
+    bool isNegative = x < 0;
+    Int128 r1 = absInt128(quotient);
+    Int128 r2 = r1 + 1;
+    Int128 compareQuantity = absInt128(remainder * 2) - increment;
+    int32_t cmp = compareQuantity < 0 ? -1 : compareQuantity > 0 ? 1 : 0;
+    Int128 even = r1 % 2;
+    auto unsignedRoundingMode = getUnsignedRoundingMode(mode, isNegative);
+    Int128 rounded = 0;
+    if (absInt128(x) == r1 * increment)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
+        rounded = r2;
+    else if (cmp < 0)
+        rounded = r1;
+    else if (cmp > 0)
+        rounded = r2;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::HalfInfinity)
+        rounded = r2;
+    else
+        rounded = !even ? r1 : r2;
+    if (isNegative)
+        rounded = -rounded;
+    return rounded * increment;
+}
+
 TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* options)
 {
     return intlOption<TemporalOverflow>(globalObject, options, globalObject->vm().propertyNames->overflow,

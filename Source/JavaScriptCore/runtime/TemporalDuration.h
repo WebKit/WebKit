@@ -69,11 +69,17 @@ public:
     String toString(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject* globalObject, std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(globalObject, m_duration, precision); }
 
+    static ISO8601::InternalDuration toInternalDuration(JSGlobalObject*, ISO8601::Duration);
+    static ISO8601::InternalDuration toInternalDurationRecordWith24HourDays(JSGlobalObject*, ISO8601::Duration);
+    static ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit);
+    static Int128 timeDurationFromComponents(double, double, double, double, double, double);
+
     static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
     static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);
 
     static int sign(const ISO8601::Duration&);
     static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
+    static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
 
 private:

@@ -212,6 +212,21 @@ static double totalNanoseconds(ISO8601::Duration& duration)
     return 1000 * microseconds + duration.nanoseconds();
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-add24hourdaystonormalizedtimeduration
+static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Int128 daysInNanoseconds = ((Int128) days) * ISO8601::ExactTime::nsPerDay;
+    Int128 result = d + daysInNanoseconds;
+    if (absInt128(result) > ISO8601::InternalDuration::maxTimeDuration) {
+        throwRangeError(globalObject, scope, "Total time in duration is out of range"_s);
+        return { };
+    }
+    return result;
+}
+
 JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne, JSValue valueTwo)
 {
     VM& vm = globalObject->vm();
@@ -304,6 +319,47 @@ static TemporalUnit largestSubduration(const ISO8601::Duration& duration)
     return static_cast<TemporalUnit>(index);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-timedurationfromcomponents
+Int128 TemporalDuration::timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds)
+{
+    Int128 min = ((Int128) minutes) + ((Int128) hours) * 60;
+    Int128 sec = ((Int128) seconds) + min * 60;
+    Int128 millis = ((Int128) milliseconds) + sec * 1000;
+    Int128 micros = ((Int128) microseconds) + millis * 1000;
+    Int128 nanos = ((Int128) nanoseconds) + micros * 1000;
+    ASSERT(absInt128(nanos) <= ISO8601::InternalDuration::maxTimeDuration);
+    return nanos;
+}
+
+ISO8601::InternalDuration TemporalDuration::toInternalDurationRecordWith24HourDays(JSGlobalObject* globalObject, ISO8601::Duration d)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let timeDuration be TimeDurationFromComponents(duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]).
+    Int128 timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(), d.milliseconds(), d.microseconds(), d.nanoseconds());
+    // 2. Set timeDuration to ! Add24HourDaysToTimeDuration(timeDuration, duration.[[Days]]).
+    timeDuration = add24HourDaysToTimeDuration(globalObject, timeDuration, d.days());
+    RETURN_IF_EXCEPTION(scope, { });
+    // 3. Let dateDuration be ! CreateDateDurationRecord(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], 0).
+    ISO8601::Duration dateDuration = ISO8601::Duration { d.years(), d.months(), d.weeks(), 0, 0, 0, 0, 0, 0, 0 };
+    // 4. Return ! CombineDateAndTimeDuration(dateDuration, timeDuration).
+    return ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDuration, timeDuration);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-todatedurationrecordwithouttime
+// ToDateDurationRecordWithoutTime ( duration )
+ISO8601::Duration TemporalDuration::toDateDurationRecordWithoutTime(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto internalDuration = toInternalDurationRecordWith24HourDays(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto days = internalDuration.time() / ISO8601::ExactTime::nsPerDay;
+    return ISO8601::Duration { internalDuration.dateDuration().years(), internalDuration.dateDuration().months(), internalDuration.dateDuration().weeks(), (double) days, 0, 0, 0, 0, 0, 0 };
+}
+
 // BalanceDuration ( days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, largestUnit [ , relativeTo ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceduration
 std::optional<double> TemporalDuration::balance(ISO8601::Duration& duration, TemporalUnit largestUnit)
@@ -376,6 +432,101 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
 
     balance(result, largestUnit);
     return result;
+}
+
+
+// https://tc39.es/proposal-temporal/#sec-temporal-tointernaldurationrecord
+ISO8601::InternalDuration TemporalDuration::toInternalDuration(JSGlobalObject* globalObject, ISO8601::Duration d)
+{
+    auto timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(), d.milliseconds(), d.microseconds(), d.nanoseconds());
+    return ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, d, timeDuration);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationfrominternal
+ISO8601::Duration TemporalDuration::temporalDurationFromInternal(ISO8601::InternalDuration internalDuration,
+    TemporalUnit largestUnit)
+{
+    // 1. Let days, hours, minutes, seconds, milliseconds, and microseconds be 0.
+    double days = 0;
+    double hours = 0;
+    double minutes = 0;
+    double seconds = 0;
+    Int128 milliseconds = 0;
+    Int128 microseconds = 0;
+
+    // 2. Let sign be TimeDurationSign(internalDuration.[[Time]]).
+    int32_t sign = internalDuration.timeDurationSign();
+
+    // 3. Let nanoseconds be abs(internalDuration.[[Time]])
+    Int128 nanoseconds = absInt128(internalDuration.time());
+
+    // 4. If TemporalUnitCategory(largestUnit) is DATE, then
+    if (largestUnit <= TemporalUnit::Day) {
+        microseconds = nanoseconds / 1000;
+        nanoseconds = nanoseconds % 1000;
+        milliseconds = microseconds / 1000;
+        microseconds = microseconds % 1000;
+        seconds = (double) (milliseconds / 1000);
+        milliseconds = milliseconds % 1000;
+        minutes = std::trunc(seconds / 60);
+        seconds = std::fmod(seconds, 60);
+        hours = std::trunc(minutes / 60);
+        minutes = std::fmod(minutes, 60);
+        days = std::trunc(hours / 24);
+        hours = std::fmod(hours, 24);
+    } else if (largestUnit == TemporalUnit::Hour) {
+        microseconds = nanoseconds / 1000;
+        nanoseconds = nanoseconds % 1000;
+        milliseconds = microseconds / 1000;
+        microseconds = microseconds % 1000;
+        seconds = (double) (milliseconds / 1000);
+        milliseconds = milliseconds % 1000;
+        minutes = std::trunc(seconds / 60);
+        seconds = std::fmod(seconds, 60);
+        hours = std::trunc(minutes / 60);
+        minutes = std::fmod(minutes, 60);
+    } else if (largestUnit == TemporalUnit::Minute) {
+        microseconds = nanoseconds / 1000;
+        nanoseconds = nanoseconds % 1000;
+        milliseconds = microseconds / 1000;
+        microseconds = microseconds % 1000;
+        seconds = (double) (milliseconds / 1000);
+        milliseconds = milliseconds % 1000;
+        minutes = std::trunc(seconds / 60);
+        seconds = std::fmod(seconds, 60);
+    } else if (largestUnit == TemporalUnit::Second) {
+        microseconds = nanoseconds / 1000;
+        nanoseconds = nanoseconds % 1000;
+        milliseconds = microseconds / 1000;
+        microseconds = microseconds % 1000;
+        seconds = (double) (milliseconds / 1000);
+        milliseconds = milliseconds % 1000;
+    } else if (largestUnit == TemporalUnit::Millisecond) {
+        microseconds = nanoseconds / 1000;
+        nanoseconds = nanoseconds % 1000;
+        milliseconds = microseconds / 1000;
+        microseconds = microseconds % 1000;
+    } else if (largestUnit == TemporalUnit::Microsecond) {
+        microseconds = (Int128) std::trunc(std::fma<double, unsigned, double>(
+            seconds, 6, std::trunc(((double) nanoseconds) / 1000)));
+        nanoseconds = nanoseconds % 1000;
+    }
+    // Otherwise, unit is nanoseconds -- nothing to do
+
+    // Avoid negative 0
+    if (hours)
+        hours *= sign;
+    if (minutes)
+        minutes *= sign;
+    if (seconds)
+        seconds *= sign;
+    if (milliseconds)
+        milliseconds *= sign;
+    if (microseconds)
+        microseconds *= sign;
+    if (nanoseconds)
+        nanoseconds *= sign;
+    return ISO8601::Duration { internalDuration.dateDuration().years(), internalDuration.dateDuration().months(), internalDuration.dateDuration().weeks(), internalDuration.dateDuration().days() + days * sign, hours, minutes, (double) seconds, (double) milliseconds, (double) microseconds, (double) nanoseconds };
 }
 
 ISO8601::Duration TemporalDuration::subtract(JSGlobalObject* globalObject, JSValue otherValue) const

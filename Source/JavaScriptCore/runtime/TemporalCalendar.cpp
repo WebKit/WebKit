@@ -291,6 +291,18 @@ static bool balanceISODate(double& year, double& month, double& day)
     return true;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-adddurationtodate
+// AddDurationToDate ( operation, temporalDate, temporalDurationLike, options )
+ISO8601::PlainDate TemporalCalendar::addDurationToDate(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto dateDuration = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    return isoDateAdd(globalObject, plainDate, dateDuration, overflow);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-addisodate
 ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)
 {
