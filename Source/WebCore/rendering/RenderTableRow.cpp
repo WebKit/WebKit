@@ -131,7 +131,7 @@ void RenderTableRow::didInsertTableCell(RenderTableCell& child, RenderObject* be
     // Generated content can result in us having a null section so make sure to null check our parent.
     if (auto* section = this->section()) {
         section->addCell(&child, this);
-        if (beforeChild || nextRow())
+        if (beforeChild || nextRow() || !child.parseRowSpan())
             section->setNeedsCellRecalc();
     }
     if (auto* table = this->table())

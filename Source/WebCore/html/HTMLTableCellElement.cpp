@@ -65,8 +65,8 @@ unsigned HTMLTableCellElement::rowSpan() const
     // > For this attribute, the value zero means that the cell is
     // > to span all the remaining rows in the row group.
     if (!rowSpanValue)
-        return maxRowspan;
-    return std::max(1u, rowSpanValue);
+        return 0;
+    return rowSpanValue;
 }
 
 unsigned HTMLTableCellElement::rowSpanForBindings() const

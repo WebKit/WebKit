@@ -46,6 +46,7 @@ public:
     
     unsigned colSpan() const;
     unsigned rowSpan() const;
+    unsigned parseRowSpan() const;
 
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();
@@ -228,11 +229,21 @@ inline unsigned RenderTableCell::colSpan() const
     return parseColSpanFromDOM();
 }
 
-inline unsigned RenderTableCell::rowSpan() const
+inline unsigned RenderTableCell::parseRowSpan() const
 {
     if (!m_hasRowSpan)
         return 1;
     return parseRowSpanFromDOM();
+}
+
+inline unsigned RenderTableCell::rowSpan() const
+{
+    unsigned computedRowSpan = parseRowSpan();
+    if (!computedRowSpan) {
+        ASSERT(!section()->needsCellRecalc());
+        computedRowSpan = section()->numRows() - rowIndex();
+    }
+    return std::min(computedRowSpan, maxRowIndex);
 }
 
 inline void RenderTableCell::setCol(unsigned column)
