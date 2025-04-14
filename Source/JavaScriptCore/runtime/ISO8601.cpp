@@ -1668,6 +1668,14 @@ static int32_t dateDurationSign(const Duration& d)
     return 0;
 }
 
+int32_t ISO8601::InternalDuration::sign() const
+{
+    int32_t sign = dateDurationSign(m_dateDuration);
+    if (sign)
+        return sign;
+    return timeDurationSign();
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-combinedateandtimeduration
 InternalDuration InternalDuration::combineDateAndTimeDuration(JSGlobalObject* globalObject, Duration dateDuration, Int128 timeDuration)
 {

@@ -215,14 +215,6 @@ static double totalSubseconds(ISO8601::Duration& duration)
     return 1000 * microseconds + duration.nanoseconds();
 }
 
-int32_t ISO8601::InternalDuration::sign() const
-{
-    int32_t sign = TemporalDuration::sign(m_dateDuration);
-    if (sign)
-        return sign;
-    return timeDurationSign();
-}
-
 static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
 {
     VM& vm = globalObject->vm();
