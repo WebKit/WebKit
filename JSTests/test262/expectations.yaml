@@ -85,9 +85,6 @@ test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
 test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-test/built-ins/Temporal/Duration/from/argument-duration-max.js:
-  default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-  strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
 test/built-ins/Temporal/Duration/from/argument-duration-precision-exact-numerical-values.js:
   default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
   strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
@@ -217,30 +214,15 @@ test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration
 test/built-ins/Temporal/Duration/prototype/toString/total-of-duration-time-units-out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/total/balance-subseconds.js:
-  default: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
 test/built-ins/Temporal/Duration/prototype/total/incorrect-properties-ignored.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/no-dst-day-length.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
-test/built-ins/Temporal/Duration/prototype/total/no-precision-loss-for-small-units.js:
-  default: 'Test262Error: Expected SameValue(«0.0020310000000000003», «0.002031») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0.0020310000000000003», «0.002031») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-1.js:
-  default: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
-  strict mode: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-2.js:
-  default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-6.js:
-  default: 'Test262Error: hours=816, nanoseconds=2049187497660 Expected SameValue(«816.5692187493501», «816.56921874935») to be true'
-  strict mode: 'Test262Error: hours=816, nanoseconds=2049187497660 Expected SameValue(«816.5692187493501», «816.56921874935») to be true'
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js:
-  default: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
-  strict mode: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
+  default: 'Test262Error: milliseconds=9007199254740992, microseconds=1999 Expected SameValue(«9007199254740992», «9007199254740994») to be true'
+  strict mode: 'Test262Error: milliseconds=9007199254740992, microseconds=1999 Expected SameValue(«9007199254740992», «9007199254740994») to be true'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-plaindatetime.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
@@ -250,9 +232,6 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-
 test/built-ins/Temporal/Duration/prototype/total/relativeto-string-limits.js:
   default: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-plaindate-relative.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-zoneddatetime-relative.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"

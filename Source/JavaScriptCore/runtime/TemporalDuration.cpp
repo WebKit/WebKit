@@ -563,6 +563,59 @@ ISO8601::Duration TemporalDuration::subtract(JSGlobalObject* globalObject, JSVal
     return result;
 }
 
+static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, double value)
+{
+    ASSERT(std::isfinite(value));
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double absValue = std::abs(value);
+    if (LIKELY(absValue <= maxSafeInteger())) {
+        builder.append(absValue);
+        return;
+    }
+
+    auto* bigint = JSBigInt::createFrom(globalObject, absValue);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    String string = bigint->toString(globalObject, 10);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    builder.append(string);
+}
+
+static double totalTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, TemporalUnit unit)
+{
+    Int128 divisor = lengthInNanoseconds(unit);
+    Int128 quotient = timeDuration / divisor;
+    Int128 remainder = timeDuration % divisor;
+    // Perform long division to calculate the fractional part of the quotient
+    // remainder / n with more accuracy than 64-bit floating point division
+    size_t precision = 50;
+    size_t size = 0;
+    StringBuilder decimalDigits;
+    int32_t digit = 0;
+    int32_t sign = timeDuration < 0 ? -1 : 1;
+    while (remainder && size < precision) {
+        remainder *= 10;
+        digit = (int32_t) (remainder / divisor);
+        remainder = remainder % divisor;
+        appendInteger(globalObject, decimalDigits, std::abs(digit));
+        size++;
+    }
+    StringBuilder result;
+    appendInteger(globalObject, result, (double) absInt128(quotient));
+    result.append('.');
+    result.append(decimalDigits.toString());
+    // NOTE: if result.toString() == 9007199254740992.999,
+    // the result is rounded down to 9007199254740992.
+    // This causes the test262 test
+    // Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js
+    // to fail when unit=milliseconds, smallerUnit=microseconds, integer=2**53, fraction=1999.
+    return sign * result.toString().toDouble();
+}
+
 // RoundDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, increment, unit, roundingMode [ , relativeTo ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundduration
 double TemporalDuration::round(ISO8601::Duration& duration, double increment, TemporalUnit unit, RoundingMode mode)
@@ -706,17 +759,17 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     TemporalUnit unit = unitType.value();
 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
-    if (unit > TemporalUnit::Year && (years() || months() || weeks() || (days() && unit < TemporalUnit::Day))) {
+    if (unit == TemporalUnit::Week
+        || unit == TemporalUnit::Month
+        || unit == TemporalUnit::Year
+        || (years() || months() || weeks() || (days() && unit < TemporalUnit::Day))) {
         throwRangeError(globalObject, scope, "Cannot total a duration of years, months, or weeks without a relativeTo option"_s);
         return { };
     }
 
-    ISO8601::Duration newDuration = m_duration;
-    auto infiniteResult = balance(newDuration, unit);
-    if (infiniteResult)
-        return infiniteResult.value();
-    double remainder = round(newDuration, 1, unit, RoundingMode::Trunc);
-    return newDuration[static_cast<uint8_t>(unit)] + remainder;
+    auto internalDuration = toInternalDurationRecordWith24HourDays(globalObject, m_duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    return totalTimeDuration(globalObject, internalDuration.time(), unit);
 }
 
 String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -747,28 +800,6 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
     ISO8601::Duration newDuration = m_duration;
     round(newDuration, data.increment, data.unit, roundingMode);
     RELEASE_AND_RETURN(scope, toString(globalObject, newDuration, data.precision));
-}
-
-static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, double value)
-{
-    ASSERT(std::isfinite(value));
-
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    double absValue = std::abs(value);
-    if (LIKELY(absValue <= maxSafeInteger())) {
-        builder.append(absValue);
-        return;
-    }
-
-    auto* bigint = JSBigInt::createFrom(globalObject, absValue);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    String string = bigint->toString(globalObject, 10);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    builder.append(string);
 }
 
 // TemporalDurationToString ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, precision )

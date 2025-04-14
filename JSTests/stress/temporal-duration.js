@@ -240,6 +240,10 @@ shouldBe(posAbsolute.total({ unit: 'milliseconds' }), 93784005.006007);
 shouldBe(posAbsolute.total({ unit: 'microseconds' }), 93784005006.007);
 shouldBe(posAbsolute.total({ unit: 'nanoseconds' }), 93784005006007);
 shouldBe(Temporal.Duration.from('-PT123456789S').total({ unit: 'day' }), -1428.8980208333332);
+const posSubseconds = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, 999, 999999, 999999999);
+const negSubseconds = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, -999, -999999, -999999999);
+shouldBe(posSubseconds.total("seconds"), 2.998998999);
+shouldBe(negSubseconds.total("seconds"), -2.998998999);
 
 // At present, toLocaleString has the same behavior as toJSON or argumentless toString.
 for (const method of ['toString', 'toJSON', 'toLocaleString']) {    

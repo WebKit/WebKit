@@ -145,7 +145,6 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/total/does-not-accept-non-string-primitives-for-relativeTo.js
-    - test/built-ins/Temporal/Duration/prototype/total/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-leap-second.js
@@ -164,10 +163,6 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-zoneddatetime.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js
-    - test/built-ins/Temporal/Duration/prototype/total/rounds-calendar-units-in-durations-without-calendar-units.js
-    - test/built-ins/Temporal/Duration/prototype/total/rounds-durations-with-calendar-units.js
-    - test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-5.js
-    - test/built-ins/Temporal/Duration/prototype/total/throws-on-wrong-offset-for-zoneddatetime-relativeto.js
     - test/built-ins/Temporal/PlainDate/prototype/since/rounding-relative.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingincrement.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-ceil.js
