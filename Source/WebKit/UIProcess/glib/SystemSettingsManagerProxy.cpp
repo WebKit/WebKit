@@ -27,6 +27,7 @@
 #include "config.h"
 #include "SystemSettingsManagerProxy.h"
 
+#include "SystemSettingsManager.h"
 #include "SystemSettingsManagerMessages.h"
 #include "WebProcessPool.h"
 #include <WebCore/SystemSettings.h>
