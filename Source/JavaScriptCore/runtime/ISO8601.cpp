@@ -1621,6 +1621,7 @@ static int32_t dateDurationSign(const Duration& d)
     return 0;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-internaldurationsign
 int32_t ISO8601::InternalDuration::sign() const
 {
     int32_t sign = dateDurationSign(m_dateDuration);

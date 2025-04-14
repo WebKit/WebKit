@@ -199,11 +199,11 @@ private:
     // Time fields are ignored
     Duration m_dateDuration;
 
-/* A time duration is an integer in the inclusive interval from -maxTimeDuration
-   to maxTimeDuration, where
-   maxTimeDuration = 2**53 × 10**9 - 1 = 9,007,199,254,740,991,999,999,999.
-   It represents the portion of a Temporal.Duration object that deals with time
-   units, but as a combined value of total nanoseconds.  */
+    // A time duration is an integer in the inclusive interval from -maxTimeDuration
+    // to maxTimeDuration, where
+    // maxTimeDuration = 2**53 × 10**9 - 1 = 9,007,199,254,740,991,999,999,999.
+    // It represents the portion of a Temporal.Duration object that deals with time
+    // units, but as a combined value of total nanoseconds.
     Int128 m_time;
 };
 
