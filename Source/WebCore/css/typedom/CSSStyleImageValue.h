@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CSSImageValue.h"
 #include "CSSStyleValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -33,21 +32,25 @@
 
 namespace WebCore {
 
+class CSSImageValue;
+class CachedImage;
 class Document;
+class StyleImage;
 class WeakPtrImplWithEventTargetData;
 
 class CSSStyleImageValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleImageValue);
 public:
-    static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document* document)
+    static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document& document)
     {
         return adoptRef(*new CSSStyleImageValue(WTFMove(cssValue), document));
     }
+    virtual ~CSSStyleImageValue();
 
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
-    CachedImage* image() { return m_cssValue->cachedImage(); }
-    bool isLoadedFromOpaqueSource() const { return m_cssValue->isLoadedFromOpaqueSource(); }
+    CachedImage* image();
+    bool isLoadedFromOpaqueSource() const;
     Document* document() const;
     
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSStyleImageValue; }
@@ -55,9 +58,10 @@ public:
     RefPtr<CSSValue> toCSSValue() const final;
 
 private:
-    CSSStyleImageValue(Ref<CSSImageValue>&&, Document*);
+    CSSStyleImageValue(Ref<CSSImageValue>&&, Document&);
 
     Ref<CSSImageValue> m_cssValue;
+    Ref<StyleImage> m_styleImage;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 

@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CSSFunctionValue;
+class Document;
 
 template<typename> class ExceptionOr;
 
@@ -39,7 +40,7 @@ class CSSRotate : public CSSTransformComponent {
 public:
     static ExceptionOr<Ref<CSSRotate>> create(CSSNumberish, CSSNumberish, CSSNumberish, Ref<CSSNumericValue>);
     static ExceptionOr<Ref<CSSRotate>> create(Ref<CSSNumericValue>);
-    static ExceptionOr<Ref<CSSRotate>> create(Ref<const CSSFunctionValue>);
+    static ExceptionOr<Ref<CSSRotate>> create(Ref<const CSSFunctionValue>, Document&);
 
     CSSNumberish x() { return { m_x.ptr() }; }
     CSSNumberish y() { return { m_y.ptr() }; }

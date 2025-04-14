@@ -30,7 +30,6 @@
 namespace WebCore {
 
 class CSSValue;
-class CSSImageValue;
 class CachedImage;
 class Document;
 class LegacyRenderSVGResourceContainer;
@@ -41,8 +40,8 @@ class TreeScope;
 class StyleCachedImage final : public StyleImage {
     WTF_MAKE_TZONE_ALLOCATED(StyleCachedImage);
 public:
-    static Ref<StyleCachedImage> create(Style::URL&&, Ref<CSSImageValue>&&, float scaleFactor = 1);
-    static Ref<StyleCachedImage> create(const Style::URL&, const Ref<CSSImageValue>&, float scaleFactor = 1);
+    static Ref<StyleCachedImage> create(Style::URL&&, float scaleFactor = 1);
+    static Ref<StyleCachedImage> create(const Style::URL&, float scaleFactor = 1);
     static Ref<StyleCachedImage> copyOverridingScaleFactor(StyleCachedImage&, float scaleFactor);
     virtual ~StyleCachedImage();
 
@@ -78,8 +77,8 @@ public:
     Style::URL url() const final;
 
 private:
-    StyleCachedImage(Style::URL&&, Ref<CSSImageValue>&&, float);
-    StyleCachedImage(const Style::URL&, const Ref<CSSImageValue>&, float);
+    StyleCachedImage(Style::URL&&, float scaleFactor);
+    StyleCachedImage(const Style::URL&, float scaleFactor);
 
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
@@ -88,7 +87,6 @@ private:
     bool isRenderSVGResource(const RenderElement*) const;
 
     Style::URL m_url;
-    Ref<CSSImageValue> m_cssValue;
     bool m_isPending { true };
     mutable float m_scaleFactor { 1 };
     mutable CachedResourceHandle<CachedImage> m_cachedImage;

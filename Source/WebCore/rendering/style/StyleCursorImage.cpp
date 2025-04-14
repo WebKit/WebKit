@@ -111,10 +111,8 @@ ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
             auto existingImageURL = cachedImage->url().resolved;
             auto updatedImageURL = document.completeURL(cursorElement->href());
 
-            if (existingImageURL != updatedImageURL) {
-                auto styleURL = Style::URL { .resolved = updatedImageURL, .modifiers = { } };
-                m_image = StyleCachedImage::create(styleURL, CSSImageValue::create(WTFMove(updatedImageURL)));
-            }
+            if (existingImageURL != updatedImageURL)
+                m_image = StyleCachedImage::create(Style::URL { .resolved = updatedImageURL, .modifiers = { } });
         }
     }
 

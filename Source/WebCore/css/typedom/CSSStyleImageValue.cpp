@@ -30,24 +30,38 @@
 #include "config.h"
 #include "CSSStyleImageValue.h"
 
+#include "CSSImageValue.h"
 #include "CSSSerializationContext.h"
 #include "Document.h"
-
+#include "StyleCachedImage.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleImageValue);
 
-CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document* document)
+CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document& document)
     : m_cssValue(WTFMove(cssValue))
-    , m_document(document)
+    , m_styleImage(document.resourceStore()->ensureImage(Style::toStyleWithScriptExecutionContext(m_cssValue->url(), document)))
+    , m_document(&document)
 {
 }
+
+CSSStyleImageValue::~CSSStyleImageValue() = default;
 
 void CSSStyleImageValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     builder.append(m_cssValue->cssText(CSS::defaultSerializationContext()));
+}
+
+CachedImage* CSSStyleImageValue::image()
+{
+    return m_styleImage->cachedImage();
+}
+
+bool CSSStyleImageValue::isLoadedFromOpaqueSource() const
+{
+    return m_cssValue->isLoadedFromOpaqueSource();
 }
 
 Document* CSSStyleImageValue::document() const

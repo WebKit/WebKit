@@ -310,7 +310,11 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
         if (!cssValue)
             continue;
 
-        auto* image = cssValue->cachedImage();
+        auto styleImage = document->resourceStore()->image(Style::toStyleWithScriptExecutionContext(cssValue->url(), *document));
+        if (!styleImage)
+            continue;
+
+        auto* image = styleImage->cachedImage();
         if (!image)
             continue;
 

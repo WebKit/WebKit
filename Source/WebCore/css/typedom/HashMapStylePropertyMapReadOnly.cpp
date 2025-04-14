@@ -71,7 +71,7 @@ auto HashMapStylePropertyMapReadOnly::entries(ScriptExecutionContext* context) c
 
     return WTF::map(m_map, [&](auto& entry) -> StylePropertyMapEntry {
         auto& [propertyName, cssValue] = entry;
-        return makeKeyValuePair(propertyName,  Vector<RefPtr<CSSStyleValue>> { reifyValue(cssValue.get(), cssPropertyID(propertyName), *document) });
+        return makeKeyValuePair(propertyName,  Vector<RefPtr<CSSStyleValue>> { reifyValue(*document, cssValue.get(), cssPropertyID(propertyName)) });
     });
 }
 

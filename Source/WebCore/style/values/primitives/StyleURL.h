@@ -26,6 +26,7 @@
 
 #include "CSSURL.h"
 #include "StyleValueTypes.h"
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 
@@ -51,6 +52,11 @@ template<size_t I> const auto& get(const URL& value)
         return value.modifiers;
 }
 
+inline void add(Hasher& hasher, const URL& value)
+{
+    add(hasher, value.resolved, value.modifiers);
+}
+
 // MARK: Conversion
 
 // Special conversion function for use by filters and font-face code.
@@ -67,3 +73,48 @@ TextStream& operator<<(TextStream&, const URL&);
 } // namespace WebCore
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::URL, 2)
+
+namespace WTF {
+
+struct StyleURLHash {
+    static unsigned hash(const WebCore::Style::URL& value)
+    {
+        return computeHash(value);
+    }
+
+    static bool equal(const WebCore::Style::URL& a, const WebCore::Style::URL& b)
+    {
+        return a == b;
+    }
+
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<> struct HashTraits<WebCore::Style::URL> : GenericHashTraits<WebCore::Style::URL> {
+    static WebCore::Style::URL emptyValue()
+    {
+        return WebCore::Style::URL { .resolved = { }, .modifiers = { } };
+    }
+
+    static bool isEmptyValue(const WebCore::Style::URL& value)
+    {
+        return value.resolved.isNull();
+    }
+
+    static void constructDeletedValue(WebCore::Style::URL& slot)
+    {
+        new (NotNull, &slot.resolved) WTF::URL(WTF::HashTableDeletedValue);
+    }
+
+    static bool isDeletedValue(const WebCore::Style::URL& slot)
+    {
+        return slot.resolved.isHashTableDeletedValue();
+    }
+
+    static const bool hasIsEmptyValueFunction = true;
+    static const bool emptyValueIsZero = false;
+};
+
+template<> struct DefaultHash<WebCore::Style::URL> : StyleURLHash { };
+
+} // namespace WTF

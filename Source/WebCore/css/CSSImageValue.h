@@ -43,15 +43,10 @@ class BuilderState;
 class CSSImageValue final : public CSSValue {
 public:
     static Ref<CSSImageValue> create();
-    static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });
+    static Ref<CSSImageValue> create(CSS::URL);
     static Ref<CSSImageValue> create(WTF::URL, AtomString initiatorType = { });
     ~CSSImageValue();
 
-    Ref<CSSImageValue> copyForComputedStyle(const CSS::URL& resolvedURL) const;
-
-    bool isPending() const;
-    CachedImage* loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    CachedImage* cachedImage() const { return m_cachedImage ? m_cachedImage.value().get() : nullptr; }
 
     // Take care when using this, and read https://drafts.csswg.org/css-values/#relative-urls
     const CSS::URL& url() const { return m_location; }
@@ -60,12 +55,9 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
     bool customMayDependOnBaseURL() const;
 
     bool equals(const CSSImageValue&) const;
-
-    bool knownToBeOpaque(const RenderElement&) const;
 
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
@@ -82,11 +74,9 @@ public:
 
 private:
     CSSImageValue();
-    CSSImageValue(CSS::URL&&, AtomString&&);
+    CSSImageValue(CSS::URL&&);
 
     CSS::URL m_location;
-    std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
-    AtomString m_initiatorType;
     RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
 };

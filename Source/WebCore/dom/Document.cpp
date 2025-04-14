@@ -662,6 +662,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_isNonRenderedPlaceholder(constructionFlags.contains(ConstructionFlag::NonRenderedPlaceholder))
     , m_frameIdentifier(frame ? std::optional(frame->frameID()) : std::nullopt)
     , m_syncData(DocumentSyncData::create())
+    , m_resourceStore(Style::ResourceStore::create())
 {
     setEventTargetFlag(EventTargetFlag::IsConnected);
     addToDocumentsMap();

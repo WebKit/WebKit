@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,40 +24,31 @@
 
 #pragma once
 
-#include "CSSMatrixComponentOptions.h"
-#include "CSSTransformComponent.h"
-#include <wtf/TZoneMalloc.h>
+#include "StyleURL.h"
+#include <wtf/RefCounted.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
-class CSSFunctionValue;
-class DOMMatrixReadOnly;
-class Document;
-template<typename> class ExceptionOr;
+class StyleCachedImage;
 
-class CSSMatrixComponent : public CSSTransformComponent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMatrixComponent);
+namespace Style {
+
+// Document scoped store for resources referenced by styles.
+
+class ResourceStore : public RefCounted<ResourceStore> {
 public:
-    static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
-    static ExceptionOr<Ref<CSSTransformComponent>> create(Ref<const CSSFunctionValue>, Document&);
+    static Ref<ResourceStore> create();
+    ~ResourceStore();
 
-    DOMMatrix& matrix();
-    void setMatrix(Ref<DOMMatrix>&&);
-
-    void serialize(StringBuilder&) const final;
-    ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
-    
-    CSSTransformType getType() const final { return CSSTransformType::MatrixComponent; }
-
-    RefPtr<CSSValue> toCSSValue() const final;
+    RefPtr<StyleCachedImage> image(const URL&);
+    Ref<StyleCachedImage> ensureImage(const URL&);
 
 private:
-    CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, Is2D);
-    Ref<DOMMatrix> m_matrix;
+    ResourceStore();
+
+    HashMap<Style::URL, WeakPtr<StyleCachedImage>> m_images;
 };
 
+} // namespace Style
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMatrixComponent)
-    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::MatrixComponent; }
-SPECIALIZE_TYPE_TRAITS_END()

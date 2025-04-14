@@ -44,15 +44,15 @@
 
 namespace WebCore {
 
-RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(RefPtr<CSSValue>&& value, std::optional<CSSPropertyID> propertyID, Document& document)
+RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(Document& document, RefPtr<CSSValue>&& value, std::optional<CSSPropertyID> propertyID)
 {
     if (!value)
         return nullptr;
-    auto result = CSSStyleValueFactory::reifyValue(value.releaseNonNull(), propertyID, &document);
+    auto result = CSSStyleValueFactory::reifyValue(document, value.releaseNonNull(), propertyID);
     return (result.hasException() ? nullptr : RefPtr<CSSStyleValue> { result.releaseReturnValue() });
 }
 
-Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPtr<CSSValue>&& value, std::optional<CSSPropertyID> propertyID, Document& document)
+Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Document& document, RefPtr<CSSValue>&& value, std::optional<CSSPropertyID> propertyID)
 {
     if (!value)
         return { };
@@ -75,10 +75,10 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
 
     auto* valueList = dynamicDowncast<CSSValueList>(*value);
     if (!valueList || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
-        return { StylePropertyMapReadOnly::reifyValue(WTFMove(value), propertyID, document) };
+        return { StylePropertyMapReadOnly::reifyValue(document, WTFMove(value), propertyID) };
 
     return WTF::map(*valueList, [&](auto& item) {
-        return StylePropertyMapReadOnly::reifyValue(Ref { const_cast<CSSValue&>(item) }, propertyID, document);
+        return StylePropertyMapReadOnly::reifyValue(document, Ref { const_cast<CSSValue&>(item) }, propertyID);
     });
 }
 

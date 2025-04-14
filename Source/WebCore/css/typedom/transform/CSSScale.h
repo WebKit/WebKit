@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CSSFunctionValue;
+class Document;
 
 template<typename> class ExceptionOr;
 
@@ -38,7 +39,7 @@ class CSSScale : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSScale);
 public:
     static ExceptionOr<Ref<CSSScale>> create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish>&& z);
-    static ExceptionOr<Ref<CSSScale>> create(Ref<const CSSFunctionValue>);
+    static ExceptionOr<Ref<CSSScale>> create(Ref<const CSSFunctionValue>, Document&);
 
     void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
