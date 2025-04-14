@@ -1,0 +1,31 @@
+<style id="original"></style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    (async () => {
+        let sheet = document.styleSheets[0];
+
+        sheet.insertRule(`html { content-visibility: hidden; }`, 0);
+        sheet.insertRule(`style { -webkit-text-stroke-width: 2px; display: table-row-group; content-visibility: hidden; }`, 0);
+
+        let styleElement = document.createElement('style');
+        styleElement.id = "added";
+        document.documentElement.append(styleElement);
+
+        await new Promise(resolve => {
+            requestAnimationFrame(resolve);
+        })
+
+        sheet.insertRule(`style { opacity: 0.5; }`, 0);
+
+        styleElement.innerText = `#foobar { }`;
+        document.body.offsetLeft;
+        styleElement.innerText = `#foobar1 { }`;
+    })();
+    globalThis.testRunner?.notifyDone();
+</script>
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

@@ -930,7 +930,10 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     // avoid crashing on bugs that cause us to paint with dirty layout
     if (needsLayout())
         return;
-    
+
+    if (isSkippedContent())
+        return;
+
     unsigned totalRows = m_grid.size();
     unsigned totalCols = table()->columns().size();
 
