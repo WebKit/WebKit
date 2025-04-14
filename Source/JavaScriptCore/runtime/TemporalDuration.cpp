@@ -227,6 +227,7 @@ static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d
     return result;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.duration.compare
 JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne, JSValue valueTwo)
 {
     VM& vm = globalObject->vm();
@@ -244,9 +245,18 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
         return { };
     }
 
-    auto nsOne = totalNanoseconds(one->m_duration);
-    auto nsTwo = totalNanoseconds(two->m_duration);
-    return jsNumber(nsOne > nsTwo ? 1 : nsOne < nsTwo ? -1 : 0);
+    auto duration1 = toInternalDuration(globalObject, one->m_duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto duration2 = toInternalDuration(globalObject, two->m_duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto days1 = one->days();
+    auto days2 = two->days();
+    auto timeDuration1 = add24HourDaysToTimeDuration(globalObject, duration1.time(), days1);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto timeDuration2 = add24HourDaysToTimeDuration(globalObject, duration2.time(), days2);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return jsNumber(timeDuration1 > timeDuration2 ? 1 : timeDuration1 < timeDuration2 ? -1 : 0);
 }
 
 int TemporalDuration::sign(const ISO8601::Duration& duration)

@@ -67,9 +67,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Temporal/Duration/compare/compare-no-precision-loss.js:
-  default: 'Test262Error: Expected SameValue(«0», «0») to be false'
-  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be false'
 test/built-ins/Temporal/Duration/compare/exhaustive.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'

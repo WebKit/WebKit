@@ -116,6 +116,7 @@ shouldBe(Temporal.Duration.compare(posAbsolute, posAbsolute), 0);
 shouldBe(Temporal.Duration.compare(posAbsolute, zero), 1);
 shouldBe(Temporal.Duration.compare(zero, posAbsolute), -1);
 shouldBe(Temporal.Duration.compare('PT86400S', 'P1D'), 0);
+shouldBe(Temporal.Duration.compare({ days: 200 }, { days: 200, nanoseconds: 1 }), -1);
 
 shouldBe(Temporal.Duration.prototype.with.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.with.call({}, { years: 1 }), TypeError);
