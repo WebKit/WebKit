@@ -277,6 +277,14 @@ private:
 };
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
+class PlainYearMonth final {
+public:
+    double year;
+    double month;
+    PlainYearMonth(double y, double m)
+        : year(y), month(m) { }
+};
+
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring

@@ -189,6 +189,9 @@ for (const method of ['add', 'subtract']) {
 }
 shouldBe(Temporal.Duration.from('P1DT13H31M31S').add('P1DT13H31M31S').toString(), 'P3DT3H3M2S');
 shouldBe(Temporal.Duration.from('-PT1M59S').subtract('PT1M59S').toString(), '-PT3M58S');
+const duration1 = Temporal.Duration.from({microseconds: Number.MAX_SAFE_INTEGER + 1, nanoseconds: 0});
+const duration2 = Temporal.Duration.from({microseconds: -1, nanoseconds: -1000});
+shouldBe(duration1.subtract(duration2).toString(), 'PT9007199254.740994S');
 
 shouldBe(Temporal.Duration.prototype.round.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.round.call({}), TypeError);
