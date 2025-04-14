@@ -325,6 +325,8 @@ std::optional<ExactTime> parseInstant(StringView);
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 bool isYearWithinLimits(double year);
 
+std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
+
 } // namespace ISO8601
 
 static constexpr Int128 absInt128(const Int128& value)
