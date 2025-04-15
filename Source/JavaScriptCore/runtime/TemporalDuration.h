@@ -30,6 +30,25 @@
 
 namespace JSC {
 
+class NudgeResult final {
+    public:
+    ISO8601::InternalDuration m_duration;
+    Int128 m_nudgedEpochNs;
+    bool m_didExpandCalendarUnit;
+    NudgeResult() { }
+    NudgeResult(ISO8601::InternalDuration d, Int128 ns, bool expanded)
+        : m_duration(d), m_nudgedEpochNs(ns), m_didExpandCalendarUnit(expanded) { }
+};
+
+class Nudged final {
+    public:
+    NudgeResult m_nudgeResult;
+    double m_total;
+    Nudged() { }
+    Nudged(NudgeResult n, double t)
+        : m_nudgeResult(n), m_total(t) { }
+};
+
 class TemporalDuration final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -80,6 +99,7 @@ public:
 
     static int sign(const ISO8601::Duration&);
     static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
+    static void roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128, ISO8601::PlainDate, TemporalUnit, double, TemporalUnit, RoundingMode);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
@@ -95,5 +115,8 @@ private:
 
     ISO8601::Duration m_duration;
 };
+
+// TODO: Move to TemporalPlainDateTime once that's created
+Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
 
 } // namespace JSC

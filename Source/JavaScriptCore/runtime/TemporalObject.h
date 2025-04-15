@@ -199,4 +199,11 @@ enum class TemporalOverflow : bool {
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 
+enum class TemporalDisambiguation : uint8_t {
+    Compatible,
+    Earlier,
+    Later,
+    Reject,
+};
+
 } // namespace JSC

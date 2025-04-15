@@ -494,4 +494,78 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
+static ISO8601::Duration dateDuration(double y, double m, double w, double d)
+{
+    return ISO8601::Duration { y, m, w, d, 0, 0, 0, 0, 0, 0 };
+}
+
+static bool isoDateSurpasses(int32_t sign, double y1, double m1, double d1, const ISO8601::PlainDate& isoDate2)
+{
+    if (y1 != isoDate2.year()) {
+        if (sign * (y1 - isoDate2.year()) > 0)
+            return true;
+    } else if (m1 != isoDate2.month()) {
+        if (sign * (m1 - isoDate2.month()) > 0)
+            return true;
+    } else if (d1 != isoDate2.day()) {
+        if (sign * (d1 - isoDate2.day()) > 0)
+            return true;
+    }
+    return false;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
+// CalendarDateUntil ( calendar, one, two, largestUnit )
+ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
+{
+    auto sign = -1 * isoDateCompare(one, two);
+    if (!sign)
+        return { };
+
+// Follows polyfill rather than spec, for practicality reasons (avoiding the loop
+// in step 1(n)).
+    auto years = 0;
+    auto months = 0;
+
+    if (largestUnit == TemporalUnit::Year || largestUnit == TemporalUnit::Month) {
+        auto candidateYears = two.year() - one.year();
+        if (candidateYears)
+            candidateYears -= sign;
+        while (!isoDateSurpasses(sign, one.year() + candidateYears, one.month(), one.day(), two)) {
+            years = candidateYears;
+            candidateYears += sign;
+        }
+
+        auto candidateMonths = sign;
+        auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + candidateMonths);
+        while (!isoDateSurpasses(sign, intermediate.year, intermediate.month, one.day(), two)) {
+            months = candidateMonths;
+            candidateMonths += sign;
+            intermediate = balanceISOYearMonth(intermediate.year, intermediate.month + sign);
+        }
+
+        if (largestUnit == TemporalUnit::Month) {
+            months += years * 12;
+            years = 0;
+        }
+    }
+
+    auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + months);
+    auto constrained = TemporalDuration::regulateISODate(intermediate.year, intermediate.month, one.day(), TemporalOverflow::Constrain);
+    ASSERT(constrained); // regulateISODate() should succeed, because the overflow mode is Constrain
+
+    double weeks = 0;
+    double days = makeDay(two.year(), two.month() - 1, two.day()) -
+        makeDay(constrained->year(), constrained->month() - 1, constrained->day());
+
+    if (largestUnit == TemporalUnit::Week) {
+        weeks = std::trunc(std::abs(days) / 7.0);
+        days = std::trunc((double) (((Int128) std::trunc(days)) % 7));
+        if (weeks)
+            weeks *= sign; // Avoid -0
+    }
+
+    return dateDuration(years, months, weeks, days);
+}
+
 } // namespace JSC

@@ -29,6 +29,7 @@
 #include "ISO8601.h"
 #include "IntlObject.h"
 #include "JSObject.h"
+#include "TemporalDuration.h"
 
 namespace JSC {
 
@@ -56,6 +57,7 @@ public:
     static ISO8601::Duration isoDateDifference(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static ISO8601::PlainDate balanceISODate(double, double, double);
     static ISO8601::PlainYearMonth balanceISOYearMonth(double, double);
+    static ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static int32_t isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
 
     CalendarID identifier() const { return m_identifier; }
