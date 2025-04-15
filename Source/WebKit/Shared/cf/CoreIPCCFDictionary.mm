@@ -64,7 +64,8 @@ RetainPtr<CFDictionaryRef> CoreIPCCFDictionary::createCFDictionary() const
     for (auto& pair : *m_vector) {
         auto key = pair.key.toID();
         auto value = pair.value.toID();
-        if (key && value)
+        RetainPtr<Protocol> nsCopying = @protocol(NSCopying);
+        if (key && [key conformsToProtocol:nsCopying.get()] && value)
             [result setObject:value.get() forKey:key.get()];
     }
     return (__bridge CFDictionaryRef)result.get();
