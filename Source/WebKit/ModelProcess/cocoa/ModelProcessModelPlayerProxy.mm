@@ -375,9 +375,9 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
         srt.rotation = currentModelRotation;
 
         if (isPortal)
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxExtents.z / 2.0f);
+            srt.translation = simd_make_float3(0.0, 0.0, -boundingBoxExtents.z / 2.0f);
         else
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingBoxExtents.z / 2.0f);
+            srt.translation = simd_make_float3(0.0, 0.0, boundingBoxExtents.z / 2.0f);
     } else {
         float boundingSphereDiameter = boundingRadius * 2.0f;
         float layerBoundingEdge = simd_reduce_min(boundsOfLayerInMeters);
@@ -390,9 +390,9 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
         boundingBoxCenter = srt.scale * originalBoundingBoxCenter;
 
         if (isPortal)
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingSphereDiameter * minScale / 2.0f);
+            srt.translation = simd_make_float3(0.0, 0.0, -boundingSphereDiameter * minScale / 2.0f);
         else
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingSphereDiameter * minScale / 2.0f);
+            srt.translation = simd_make_float3(0.0, 0.0, boundingSphereDiameter * minScale / 2.0f);
     }
 
     return srt;
@@ -433,7 +433,7 @@ void ModelProcessModelPlayerProxy::updateTransform()
     if (!m_model || !m_layer)
         return;
 
-    [m_modelRKEntity setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
+    [m_rkContainerEntity setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
 }
 
 void ModelProcessModelPlayerProxy::updateOpacity()
@@ -491,6 +491,10 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     m_hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(m_hostingEntity.get(), "WebKit:EntityWithRootComponent");
 
+    m_containerEntity = adoptRE(REEntityCreate());
+    REEntitySetName(m_containerEntity.get(), "WebKit:ModelContainerEntity");
+    m_rkContainerEntity = adoptNS([allocWKSRKEntityInstance() initWithCoreEntity:m_containerEntity.get()]);
+
     REPtr<REComponentRef> layerComponent = adoptRE(RECALayerServiceCreateRootComponent(webDefaultLayerService(), CALayerGetContext(m_layer.get()), m_hostingEntity.get(), nil));
     RESceneAddEntity(m_scene.get(), m_hostingEntity.get());
 
@@ -507,16 +511,21 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     else
         REEntitySetName(m_model->rootEntity(), "WebKit:ModelRootEntity");
 
+    [m_rkContainerEntity setTransform:WKEntityTransform({ simd_make_float3(1.0f, 1.0f, 1.0f), simd_quaternion(0, simd_make_float3(1, 0, 0)), simd_make_float3(0.0f, 0.0f, -m_originalBoundingBoxExtents.z / 2.0f) })];
+    [m_modelRKEntity setTransform:WKEntityTransform({ simd_make_float3(1.0f, 1.0f, 1.0f), simd_quaternion(0, simd_make_float3(1, 0, 0)), simd_make_float3(-m_originalBoundingBoxCenter.x, -m_originalBoundingBoxCenter.y, 0.0f) })];
+
     if (canLoadWithRealityKit)
-        [m_model->rootRKEntity() setParentCoreEntity:clientComponentEntity preservingWorldTransform:NO];
+        [m_model->rootRKEntity() setParentCoreEntity:m_containerEntity.get() preservingWorldTransform:YES];
     else {
-        REEntitySetParent(m_model->rootEntity(), clientComponentEntity);
+        REEntitySetParent(m_model->rootEntity(), m_containerEntity.get());
     }
 
-    m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstance() initWithModel:m_modelRKEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
+    REEntitySetParent(m_containerEntity.get(), clientComponentEntity);
 
-    REEntitySubtreeAddNetworkComponentRecursive([m_stageModeInteractionDriver interactionContainerRef]);
-    RENetworkMarkEntityMetadataDirty([m_stageModeInteractionDriver interactionContainerRef]);
+    m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstance() initWithModel:m_rkContainerEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
+
+    REEntitySubtreeAddNetworkComponentRecursive(m_containerEntity.get());
+    RENetworkMarkEntityMetadataDirty(m_containerEntity.get());
 
     applyStageModeOperationToDriver();
 
@@ -806,8 +815,7 @@ void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stag
 
     if (stagemodeOp != WebCore::StageModeOperation::None) {
         computeTransform(false);
-        [m_modelRKEntity recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
-        updateTransformSRT();
+        updateTransform();
     }
 
     applyStageModeOperationToDriver();
@@ -815,7 +823,7 @@ void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stag
 
 void ModelProcessModelPlayerProxy::updateTransformSRT()
 {
-    WKEntityTransform entityTransform = [m_modelRKEntity transform];
+    WKEntityTransform entityTransform = [m_rkContainerEntity transform];
     m_transformSRT = RESRT {
         .scale = entityTransform.scale,
         .rotation = entityTransform.rotation,

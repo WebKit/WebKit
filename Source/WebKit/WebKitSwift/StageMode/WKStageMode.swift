@@ -83,11 +83,6 @@ final public class WKStageModeInteractionDriver: NSObject {
     }
     
     // MARK: ObjC Exposed API
-    @objc(interactionContainerRef)
-    var interactionContainerRef: REEntityRef {
-        self.interactionContainer.__coreEntity.__as(REEntityRef.self)
-    }
-    
     @objc(stageModeInteractionInProgress)
     var stageModeInteractionInProgress: Bool {
         self.driverInitialized && self.stageModeOperation != .none

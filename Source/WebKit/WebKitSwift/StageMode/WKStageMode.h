@@ -40,7 +40,6 @@ typedef NS_ENUM(NSInteger, WKStageModeOperation) {
 @end
 
 @interface WKStageModeInteractionDriver : NSObject
-@property (nonatomic, readonly) REEntityRef interactionContainerRef;
 @property (nonatomic, readonly) bool stageModeInteractionInProgress;
 
 - (instancetype)initWithModel:(WKSRKEntity *)model container:(REEntityRef)container delegate:(id<WKStageModeInteractionAware> _Nullable)delegate NS_SWIFT_NAME(init(with:container:delegate:));

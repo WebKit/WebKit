@@ -157,6 +157,7 @@ private:
     RefPtr<WebCore::REModelLoader> m_loader;
     RefPtr<WebCore::REModel> m_model;
     RetainPtr<WKSRKEntity> m_modelRKEntity;
+    RetainPtr<WKSRKEntity> m_rkContainerEntity;
     REPtr<RESceneRef> m_scene;
     REPtr<REEntityRef> m_hostingEntity;
     REPtr<REEntityRef> m_containerEntity;
