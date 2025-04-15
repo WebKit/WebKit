@@ -53,7 +53,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransformValue);
 
-static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<const CSSFunctionValue> functionValue)
+static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<const CSSFunctionValue> functionValue, Document& document)
 {
     auto makeTransformComponent = [&](auto exceptionOrTransformComponent) -> ExceptionOr<Ref<CSSTransformComponent>> {
         if (exceptionOrTransformComponent.hasException())
@@ -67,43 +67,43 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<cons
     case CSSValueTranslateZ:
     case CSSValueTranslate:
     case CSSValueTranslate3d:
-        return makeTransformComponent(CSSTranslate::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSTranslate::create(WTFMove(functionValue), document));
     case CSSValueScaleX:
     case CSSValueScaleY:
     case CSSValueScaleZ:
     case CSSValueScale:
     case CSSValueScale3d:
-        return makeTransformComponent(CSSScale::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSScale::create(WTFMove(functionValue), document));
     case CSSValueRotateX:
     case CSSValueRotateY:
     case CSSValueRotateZ:
     case CSSValueRotate:
     case CSSValueRotate3d:
-        return makeTransformComponent(CSSRotate::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSRotate::create(WTFMove(functionValue), document));
     case CSSValueSkewX:
-        return makeTransformComponent(CSSSkewX::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSSkewX::create(WTFMove(functionValue), document));
     case CSSValueSkewY:
-        return makeTransformComponent(CSSSkewY::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSSkewY::create(WTFMove(functionValue), document));
     case CSSValueSkew:
-        return makeTransformComponent(CSSSkew::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSSkew::create(WTFMove(functionValue), document));
     case CSSValuePerspective:
-        return makeTransformComponent(CSSPerspective::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSPerspective::create(WTFMove(functionValue), document));
     case CSSValueMatrix:
     case CSSValueMatrix3d:
-        return makeTransformComponent(CSSMatrixComponent::create(WTFMove(functionValue)));
+        return makeTransformComponent(CSSMatrixComponent::create(WTFMove(functionValue), document));
     default:
         return Exception { ExceptionCode::TypeError, "Unexpected function value type"_s };
     }
 }
 
-ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Ref<const CSSTransformListValue> list)
+ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Ref<const CSSTransformListValue> list, Document& document)
 {
     Vector<Ref<CSSTransformComponent>> components;
     for (auto& value : list.get()) {
         RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value);
         if (!functionValue)
             return Exception { ExceptionCode::TypeError, "Expected only function values in a transform list."_s };
-        auto component = createTransformComponent(functionValue.releaseNonNull());
+        auto component = createTransformComponent(functionValue.releaseNonNull(), document);
         if (component.hasException())
             return component.releaseException();
         components.append(component.releaseReturnValue());

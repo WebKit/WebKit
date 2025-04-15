@@ -83,7 +83,7 @@ auto InlineStylePropertyMap::entries(ScriptExecutionContext* context) const -> V
 
     auto& document = downcast<Document>(*context);
     return map(*inlineStyle, [&document] (auto property) {
-        return StylePropertyMapEntry(property.cssName(), reifyValueToVector(RefPtr<CSSValue> { property.value() }, property.id(), document));
+        return StylePropertyMapEntry(property.cssName(), reifyValueToVector(document, RefPtr<CSSValue> { property.value() }, property.id()));
     });
 }
 

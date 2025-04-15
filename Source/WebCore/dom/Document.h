@@ -51,6 +51,7 @@
 #include "ScriptExecutionContext.h"
 #include "SpatialBackdropSource.h"
 #include "StringWithDirection.h"
+#include "StyleResourceStore.h"
 #include "Supplementable.h"
 #include "TextIndicator.h"
 #include "Timer.h"
@@ -1998,6 +1999,7 @@ public:
     void attributeAddedToElement(const QualifiedName& attribute);
     void elementDisconnectedFromDocument(const Element&);
 
+    Ref<Style::ResourceStore> resourceStore() const { return m_resourceStore; }
 
 protected:
     enum class ConstructionFlag : uint8_t {
@@ -2731,6 +2733,8 @@ private:
     mutable RefPtr<CSSCalc::RandomCachingKeyMap> m_randomCachingKeyMap;
 
     Ref<DocumentSyncData> m_syncData;
+
+    Ref<Style::ResourceStore> m_resourceStore;
 }; // class Document
 
 Element* eventTargetElementForDocument(Document*);

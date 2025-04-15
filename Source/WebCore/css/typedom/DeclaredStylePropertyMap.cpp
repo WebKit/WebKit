@@ -67,7 +67,7 @@ auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const ->
 
     auto& document = downcast<Document>(*context);
     return map(styleRule->properties(), [&] (auto propertyReference) {
-        return StylePropertyMapEntry { propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, propertyReference.id(), document) };
+        return StylePropertyMapEntry { propertyReference.cssName(), reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, propertyReference.id()) };
     });
 }
 

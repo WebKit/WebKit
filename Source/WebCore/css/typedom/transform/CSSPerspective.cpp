@@ -71,7 +71,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSPerspectiveValue leng
     return adoptRef(*new CSSPerspective(checkedLength.releaseReturnValue()));
 }
 
-ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionValue> cssFunctionValue)
+ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
 {
     if (cssFunctionValue->name() != CSSValuePerspective) {
         ASSERT_NOT_REACHED();
@@ -83,7 +83,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionVal
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue->item(0), std::nullopt);
+    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(document, *cssFunctionValue->item(0), std::nullopt);
     if (keywordOrNumeric.hasException())
         return keywordOrNumeric.releaseException();
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();

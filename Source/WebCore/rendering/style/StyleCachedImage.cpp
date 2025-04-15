@@ -26,6 +26,9 @@
 
 #include "CSSImageValue.h"
 #include "CachedImage.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
@@ -42,43 +45,35 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleCachedImage);
 
-Ref<StyleCachedImage> StyleCachedImage::create(Style::URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor)
+Ref<StyleCachedImage> StyleCachedImage::create(Style::URL&& url, float scaleFactor)
 {
-    return adoptRef(*new StyleCachedImage(WTFMove(url), WTFMove(cssValue), scaleFactor));
+    return adoptRef(*new StyleCachedImage(WTFMove(url), scaleFactor));
 }
 
-Ref<StyleCachedImage> StyleCachedImage::create(const Style::URL& url, const Ref<CSSImageValue>& cssValue, float scaleFactor)
+Ref<StyleCachedImage> StyleCachedImage::create(const Style::URL& url, float scaleFactor)
 {
-    return adoptRef(*new StyleCachedImage(url, cssValue, scaleFactor));
+    return adoptRef(*new StyleCachedImage(url, scaleFactor));
 }
 
 Ref<StyleCachedImage> StyleCachedImage::copyOverridingScaleFactor(StyleCachedImage& other, float scaleFactor)
 {
     if (other.m_scaleFactor == scaleFactor)
         return other;
-    return StyleCachedImage::create(other.m_url, other.m_cssValue, scaleFactor);
+    return StyleCachedImage::create(other.m_url, scaleFactor);
 }
 
-StyleCachedImage::StyleCachedImage(Style::URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor)
+StyleCachedImage::StyleCachedImage(Style::URL&& url, float scaleFactor)
     : StyleImage { Type::CachedImage }
     , m_url { WTFMove(url) }
-    , m_cssValue { WTFMove(cssValue) }
     , m_scaleFactor { scaleFactor }
 {
-    m_cachedImage = m_cssValue->cachedImage();
-    if (m_cachedImage)
-        m_isPending = false;
 }
 
-StyleCachedImage::StyleCachedImage(const Style::URL& url, const Ref<CSSImageValue>& cssValue, float scaleFactor)
+StyleCachedImage::StyleCachedImage(const Style::URL& url, float scaleFactor)
     : StyleImage { Type::CachedImage }
     , m_url { url }
-    , m_cssValue { cssValue }
     , m_scaleFactor { scaleFactor }
 {
-    m_cachedImage = m_cssValue->cachedImage();
-    if (m_cachedImage)
-        m_isPending = false;
 }
 
 StyleCachedImage::~StyleCachedImage() = default;
@@ -95,8 +90,6 @@ bool StyleCachedImage::equals(const StyleCachedImage& other) const
         return true;
     if (m_scaleFactor != other.m_scaleFactor)
         return false;
-    if (m_cssValue.ptr() == other.m_cssValue.ptr() || m_cssValue->equals(other.m_cssValue.get()))
-        return true;
     if (m_cachedImage && m_cachedImage == other.m_cachedImage)
         return true;
     return false;
@@ -190,7 +183,22 @@ void StyleCachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOp
 {
     ASSERT(m_isPending);
     m_isPending = false;
-    m_cachedImage = m_cssValue->loadImage(loader, options);
+
+    if (!m_cachedImage) {
+        ASSERT(loader.document());
+
+        ResourceLoaderOptions loadOptions = options;
+        CSS::applyModifiersToLoaderOptions(m_url.modifiers, loadOptions);
+
+        CachedResourceRequest request(ResourceRequest(m_url.resolved), loadOptions);
+        if (m_url.modifiers.initiatorType.isEmpty())
+            request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
+        else
+            request.setInitiatorType(m_url.modifiers.initiatorType);
+        if (options.mode == FetchOptions::Mode::Cors)
+            request.updateForAccessControl(*loader.document());
+        m_cachedImage = loader.requestImage(WTFMove(request)).value_or(nullptr);
+    }
 }
 
 CachedImage* StyleCachedImage::cachedImage() const
@@ -200,7 +208,7 @@ CachedImage* StyleCachedImage::cachedImage() const
 
 Ref<CSSValue> StyleCachedImage::computedStyleValue(const RenderStyle& style) const
 {
-    return m_cssValue->copyForComputedStyle(Style::toCSS(m_url, style));
+    return CSSImageValue::create(Style::toCSS(m_url, style));
 }
 
 bool StyleCachedImage::canRender(const RenderElement* renderer, float multiplier) const

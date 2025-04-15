@@ -2701,6 +2701,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/ScopedName.h
     style/StyleChange.h
     style/StyleInterpolationClient.h
+    style/StyleResourceStore.h
     style/StyleScope.h
     style/StyleScopeOrdinal.h
     style/StyleUpdate.h

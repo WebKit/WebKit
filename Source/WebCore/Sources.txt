@@ -3128,6 +3128,7 @@ style/StyleRelations.cpp
 style/StyleResolveForDocument.cpp
 style/StyleResolveForFont.cpp
 style/StyleResolver.cpp
+style/StyleResourceStore.cpp
 style/StyleScope.cpp
 style/StyleScopeRuleSets.cpp
 style/StyleSheetContentsCache.cpp

@@ -44,10 +44,10 @@ class StylePropertyShorthand;
 
 class CSSStyleValueFactory {
 public:
-    static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const CSSValue&, std::optional<CSSPropertyID>, Document* = nullptr);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const AtomString&, const String&, bool parseMultiple, const CSSParserContext&);
-    static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(const String&, const CSSParserContext&);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values, const CSSParserContext&);
+    static ExceptionOr<Ref<CSSStyleValue>> reifyValue(Document&, const CSSValue&, std::optional<CSSPropertyID>);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(Document&, const AtomString&, const String&, bool parseMultiple);
+    static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(Document&, const String&);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(Document&, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&&);
 
     static RefPtr<CSSStyleValue> constructStyleValueForCustomPropertySyntaxValue(const CSSCustomPropertyValue::SyntaxValue&);
 
@@ -55,8 +55,8 @@ protected:
     CSSStyleValueFactory() = delete;
 
 private:
-    static ExceptionOr<RefPtr<CSSValue>> extractCSSValue(const CSSPropertyID&, const String&, const CSSParserContext&);
-    static ExceptionOr<RefPtr<CSSStyleValue>> extractShorthandCSSValues(const CSSPropertyID&, const String&, const CSSParserContext&);
+    static ExceptionOr<RefPtr<CSSValue>> extractCSSValue(Document&, const CSSPropertyID&, const String&);
+    static ExceptionOr<RefPtr<CSSStyleValue>> extractShorthandCSSValues(Document&, const CSSPropertyID&, const String&);
     static ExceptionOr<Ref<CSSUnparsedValue>> extractCustomCSSValues(const String&);
 };
 

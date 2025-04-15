@@ -34,12 +34,13 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 class CSSFunctionValue;
 using CSSPerspectiveValue = std::variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
+class Document;
 
 class CSSPerspective : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPerspective);
 public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
-    static ExceptionOr<Ref<CSSPerspective>> create(Ref<const CSSFunctionValue>);
+    static ExceptionOr<Ref<CSSPerspective>> create(Ref<const CSSFunctionValue>, Document&);
 
     virtual ~CSSPerspective();
 

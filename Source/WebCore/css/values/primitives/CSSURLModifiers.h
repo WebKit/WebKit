@@ -26,6 +26,7 @@
 
 #include "CSSValueTypes.h"
 #include "LoadedFromOpaqueSource.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -71,6 +72,9 @@ struct URLModifiers {
     // This is not a parsed value, but is implicit from context the modifiers were parsed with.
     LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 
+    // This is not a parsed value, but is added in some cases to override the default initiator type.
+    AtomString initiatorType { nullAtom() };
+
     bool operator==(const URLModifiers&) const = default;
 };
 
@@ -82,6 +86,24 @@ template<size_t I> const auto& get(const URLModifiers& value)
         return value.integrity;
     else if constexpr (I == 2)
         return value.referrerpolicy;
+}
+
+inline void add(Hasher& hasher, const URLModifiers& value)
+{
+    add(hasher, value.crossorigin.has_value());
+    if (value.crossorigin)
+        add(hasher, value.crossorigin->parameters.index());
+
+    add(hasher, value.integrity.has_value());
+    if (value.integrity)
+        add(hasher, value.integrity->parameters);
+
+    add(hasher, value.referrerpolicy.has_value());
+    if (value.referrerpolicy)
+        add(hasher, value.referrerpolicy->parameters.index());
+
+    add(hasher, value.loadedFromOpaqueSource);
+    add(hasher, value.initiatorType);
 }
 
 // Applies `URLModifiers` to `ResourceLoaderOptions`.
