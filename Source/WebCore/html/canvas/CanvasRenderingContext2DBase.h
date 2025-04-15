@@ -54,6 +54,9 @@
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 class ByteArrayPixelBuffer;
 class CachedImage;
 class CanvasLayerContextSwitcher;
@@ -72,8 +75,7 @@ class WebCodecsVideoFrame;
 
 struct DOMMatrix2DInit;
 
-
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>
     , RefPtr<SVGImageElement>
     , RefPtr<HTMLCanvasElement>
     , RefPtr<ImageBitmap>
@@ -213,7 +215,7 @@ public:
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
     void clearCanvas();
 
-    using StyleVariant = std::variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
+    using StyleVariant = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
     StyleVariant strokeStyle() const;
     void setStrokeStyle(StyleVariant&&);
     StyleVariant fillStyle() const;
@@ -502,7 +504,7 @@ private:
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
-    mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
+    mutable Variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
 };

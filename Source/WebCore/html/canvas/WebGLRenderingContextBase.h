@@ -85,6 +85,9 @@ class AbstractLocker;
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 class ANGLEInstancedArrays;
 class ByteArrayPixelBuffer;
 class EXTBlendMinMax;
@@ -159,9 +162,9 @@ class HTMLVideoElement;
 
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
-using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+using WebGLCanvas = Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
 #else
-using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
+using WebGLCanvas = Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -197,7 +200,7 @@ public:
     void blendFunc(GCGLenum sfactor, GCGLenum dfactor);
     void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha);
 
-    using BufferDataSource = std::variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
+    using BufferDataSource = Variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
     void bufferData(GCGLenum target, std::optional<BufferDataSource>&&, GCGLenum usage);
     void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
@@ -316,7 +319,7 @@ public:
     // These must be virtual so more validation can be added in WebGL 2.0.
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
 
-    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
+    using TexImageSource = Variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
 #if ENABLE(VIDEO)
         , RefPtr<HTMLVideoElement>
 #endif
@@ -340,7 +343,7 @@ public:
     template <class TypedArray, class DataType>
     class TypedList {
     public:
-        using VariantType = std::variant<RefPtr<TypedArray>, Vector<DataType>>;
+        using VariantType = Variant<RefPtr<TypedArray>, Vector<DataType>>;
 
         TypedList(VariantType&& variant)
             : m_variant(WTFMove(variant))

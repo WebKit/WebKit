@@ -34,11 +34,14 @@
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 struct DOMPointInit;
 
 class CanvasPath {
 public:
-    using RadiusVariant = std::variant<double, DOMPointInit>;
+    using RadiusVariant = Variant<double, DOMPointInit>;
     virtual ~CanvasPath() = default;
 
     void closePath();

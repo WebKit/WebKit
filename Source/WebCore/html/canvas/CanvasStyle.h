@@ -34,6 +34,9 @@
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 class CanvasBase;
 class Document;
 class GraphicsContext;
@@ -77,7 +80,7 @@ public:
     }
 
 private:
-    std::variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
+    Variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
 
 Color parseColor(const String& colorString, CanvasBase&);
@@ -85,23 +88,23 @@ Color parseColor(const String& colorString, ScriptExecutionContext&);
 
 inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
-    if (!std::holds_alternative<Ref<CanvasGradient>>(m_style))
+    if (!holds_alternative<Ref<CanvasGradient>>(m_style))
         return nullptr;
-    return std::get<Ref<CanvasGradient>>(m_style).ptr();
+    return get<Ref<CanvasGradient>>(m_style).ptr();
 }
 
 inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
-    if (!std::holds_alternative<Ref<CanvasPattern>>(m_style))
+    if (!holds_alternative<Ref<CanvasPattern>>(m_style))
         return nullptr;
-    return std::get<Ref<CanvasPattern>>(m_style).ptr();
+    return get<Ref<CanvasPattern>>(m_style).ptr();
 }
 
 inline String CanvasStyle::color() const
 {
-    if (!std::holds_alternative<Color>(m_style))
+    if (!holds_alternative<Color>(m_style))
         return String();
-    return serializationForHTML(std::get<Color>(m_style));
+    return serializationForHTML(get<Color>(m_style));
 }
 
 } // namespace WebCore

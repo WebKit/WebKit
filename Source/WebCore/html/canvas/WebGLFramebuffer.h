@@ -42,6 +42,9 @@ class AbstractLocker;
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 class WebGLRenderbuffer;
 class WebGLTexture;
 
@@ -66,13 +69,13 @@ public:
         GCGLint layer;
         friend bool operator==(const TextureLayerAttachment&, const TextureLayerAttachment&) = default;
     };
-    using AttachmentEntry = std::variant<RefPtr<WebGLRenderbuffer>, TextureAttachment, TextureLayerAttachment>;
+    using AttachmentEntry = Variant<RefPtr<WebGLRenderbuffer>, TextureAttachment, TextureLayerAttachment>;
 
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, AttachmentEntry);
 
     // Below are nonnull. RefPtr instead of Ref due to call site object identity
     // purposes, call site uses i.e pointer operator==.
-    using AttachmentObject = std::variant<RefPtr<WebGLRenderbuffer>, RefPtr<WebGLTexture>>;
+    using AttachmentObject = Variant<RefPtr<WebGLRenderbuffer>, RefPtr<WebGLTexture>>;
 
     // If an object is attached to the currently bound framebuffer, remove it.
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, AttachmentObject);

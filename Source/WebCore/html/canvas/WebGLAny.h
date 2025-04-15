@@ -36,6 +36,9 @@ class JSValue;
 
 namespace WebCore {
 
+template<typename... Types>
+using Variant = std::variant<Types...>;
+
 class JSDOMGlobalObject;
 class WebGLBuffer;
 class WebGLFramebuffer;
@@ -49,7 +52,7 @@ class WebGLTransformFeedback;
 class WebGLVertexArrayObject;
 class WebGLVertexArrayObjectOES;
 
-using WebGLAny = std::variant<
+using WebGLAny = Variant<
     std::nullptr_t,
     bool,
     int,
