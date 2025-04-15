@@ -163,6 +163,34 @@ public:
     {
         return terminal()->successors();
     }
+
+    PredecessorList nonJumpPadPredecessors()
+    {
+        PredecessorList result;
+        Deque<BasicBlock*> queue;
+        for (BasicBlock* predecessor : predecessors)
+            queue.append(predecessor);
+
+        while (!queue.isEmpty()) {
+            BasicBlock* current = queue.takeFirst();
+            if (current->isJumpPad()) {
+                for (BasicBlock* predecessor : current->predecessors)
+                    queue.append(predecessor);
+            } else
+                result.append(current);
+        }
+        return result;
+    }
+
+    BasicBlock* successorIfJumpPad()
+    {
+        BasicBlock* result = this;
+        while (result->isJumpPad())
+            result = result->successor(0);
+        return result;
+    }
+
+    bool isJumpPad() { return m_nodes.size() == 1 && m_nodes[0]->isJump(); }
     
     void removePredecessor(BasicBlock* block);
     void replacePredecessor(BasicBlock* from, BasicBlock* to);

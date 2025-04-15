@@ -46,6 +46,7 @@ public:
     BasicBlock* insertBefore(BasicBlock* before, float executionCount);
 
     bool execute();
+    bool isEmpty() { return !m_insertions.size(); }
 
 private:
     Graph& m_graph;

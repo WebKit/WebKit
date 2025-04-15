@@ -63,6 +63,9 @@ public:
             return nullptr;
         }
 
+        BasicBlock*& toLoop(BasicBlock* block) const { return block->successor(inverseCondition); }
+        BasicBlock*& outLoop(BasicBlock* block) const { return block->successor(!inverseCondition); }
+
         bool isInductionVariable(Node* node) { return node->operand() == inductionVariable->operand(); }
         void dump(PrintStream& out) const;
 
@@ -90,6 +93,8 @@ public:
 
     bool run()
     {
+        ASSERT(m_graph.m_form == ThreadedCPS);
+
         dataLogIf(Options::verboseLoopUnrolling(), "Graph before Loop Unrolling Phase:\n", m_graph);
 
         uint32_t unrolledCount = 0;
@@ -117,7 +122,10 @@ public:
                 break;
         }
 
-        dataLogLnIf(Options::verboseLoopUnrolling(), "Successfully unrolled ", unrolledCount, " loops.");
+        if (unrolledCount)
+            m_cloneHelper.breakCriticalEdge();
+
+        dataLogLnIf(Options::verboseLoopUnrolling(), "Successfully unrolled ", unrolledCount, " loops. Graph after breaking critical edges:", m_graph);
         return !!unrolledCount;
     }
 
@@ -215,14 +223,16 @@ public:
         BasicBlock* preHeader = nullptr;
         BasicBlock* header = data.header();
 
+        PredecessorList predecessors = header->nonJumpPadPredecessors();
+
         // This is guaranteed because we expect the CFG not to have unreachable code. Therefore, a
         // loop header must have a predecessor. (Also, we don't allow the root block to be a loop,
         // which cuts out the one other way of having a loop header with only one predecessor.)
-        DFG_ASSERT(m_graph, header->at(0), header->predecessors.size() > 1, header->predecessors.size());
+        DFG_ASSERT(m_graph, header->at(0), predecessors.size() > 1, predecessors.size());
 
         uint32_t preHeaderCount = 0;
-        for (uint32_t i = header->predecessors.size(); i--;) {
-            BasicBlock* predecessor = header->predecessors[i];
+        for (uint32_t i = predecessors.size(); i--;) {
+            BasicBlock* predecessor = predecessors[i];
             if (m_graph.m_cpsDominators->dominates(header, predecessor))
                 continue;
 
@@ -243,7 +253,7 @@ public:
 
         // TailBlock: A block that branches back to the header (i.e., loop back edge)
         BasicBlock* tail = nullptr;
-        for (BasicBlock* predecessor : header->predecessors) {
+        for (BasicBlock* predecessor : header->nonJumpPadPredecessors()) {
             if (!m_graph.m_cpsDominators->dominates(header, predecessor))
                 continue;
             if (tail) {
@@ -280,9 +290,10 @@ public:
         for (BasicBlock* successor : tail->successors()) {
             if (data.loop->contains(successor))
                 continue;
-            data.next = successor;
+            data.next = successor->successorIfJumpPad();
         }
         data.tail = tail;
+        ASSERT(tail->terminal()->op() == Branch && data.toLoop(tail)->isJumpPad());
 
         // PreHeader
         //  |
@@ -295,23 +306,15 @@ public:
         // Next
         //
         // Determine if the condition should be inverted based on whether the "not taken" branch points into the loop.
-        Node* terminal = tail->terminal();
-        ASSERT(terminal->op() == Branch);
-        if (data.loop->contains(terminal->branchData()->notTaken.block)) {
-            // If tail's branch is both jumping into the loop, then it is not a tail.
-            // This happens when we already unrolled this loop before.
-            if (data.loop->contains(terminal->branchData()->taken.block))
-                return false;
-            data.inverseCondition = true;
-        }
-
+        data.inverseCondition = data.loop->contains(tail->successor(1));
+        ASSERT(data.loop->contains(tail->successor(0)) == !data.inverseCondition);
         return true;
     }
 
     bool isSupportedConditionOp(NodeType op);
     bool isSupportedUpdateOp(NodeType op);
 
-    ComparisonFunction comparisonFunction(Node* condition, bool inverseCondition);
+    ComparisonFunction comparisonFunction(Node* condition, bool inverse);
     UpdateFunction updateFunction(Node* update);
 
     bool identifyInductionVariable(LoopData& data)
@@ -468,40 +471,29 @@ public:
         BasicBlock* const tail = data.tail;
         BasicBlock* const next = data.next;
 
-        dataLogLnIf(Options::verboseLoopUnrolling(), "tailTerminalOriginSemantic ", tail->terminal()->origin.semantic);
-
+        NodeOrigin tailTerminalOriginSemantic = data.tail->terminal()->origin;
         //  ### Constant ###         ### Partial ###
         //
         //  PreHeader                 PreHeader
         //   |                          |
-        //  BodyGraph_0 <----       -> BodyGraph_0 --
-        //   |    |      |  |       |   |           |
-        //   |T   --------  |F      |T  |T          |F
-        //   |       F      |       |   |           |
-        //  BodyGraph_1 -----       -- BodyGraph_1  |
-        //   |T                         |F          |
+        //  BodyGraph_0             -> BodyGraph_0 --
+        //   |                      |   |           |
+        //   |                      |T  |T          |F
+        //   |                      |   |           |
+        //  BodyGraph_1             -- BodyGraph_1  |
+        //   |                          |F          |
         //  Next                       Next <--------
         auto updateTailBranch = [&](BasicBlock* tail, BasicBlock* taken) {
-            BasicBlock* notTaken = next;
-            auto* terminal = tail->terminal();
             if (data.shouldFullyUnroll()) {
-                // Why don't we use Jump instead of Branch? The reason is tail's original terminal was Branch.
-                // If we change this from Branch to Jump, we need to preserve how variables are used (via GetLocal, MovHint, SetLocal)
-                // not to confuse these variables liveness, it involves what blocks are used for successors of this tail block.
-                // Here, we can simplify the problem by using Branch and using the original "header" successors as never-taken branch.
-                // FTL's subsequent pass will optimize this and convert this Branch to Jump and/or eliminate this Branch and merge
-                // multiple blocks easily since its condition is constant boolean True. But we do not need to do the complicated analysis
-                // here. So let's just use Branch.
-                ASSERT(tail->terminal()->isBranch());
-                auto* constant = m_graph.addNode(SpecBoolean, JSConstant, tail->terminal()->origin, OpInfo(m_graph.freezeStrong(jsBoolean(true))));
-                tail->insertBeforeTerminal(constant);
-                terminal->child1() = Edge(constant, KnownBooleanUse);
-                notTaken = header;
-            } else if (data.inverseCondition)
-                std::swap(taken, notTaken);
-
-            terminal->branchData()->taken = BranchTarget(taken);
-            terminal->branchData()->notTaken = BranchTarget(notTaken);
+                // We can directly use jump here as CPSRethreading phase (re)computes variablesAtHead/Tail for basic blocks.
+                tail->terminal()->removeWithoutChecks();
+                tail->appendNode(m_graph, SpecNone, Jump, tailTerminalOriginSemantic, OpInfo(taken));
+            } else {
+                // Since we copy loop body and append the clone in bottom up way, the first body clone should branch to the original header.
+                bool firstLoopBodyClone = taken == next;
+                data.toLoop(tail) = firstLoopBodyClone ? header : taken;
+                data.outLoop(tail) = next;
+            }
         };
 
 #if ASSERT_ENABLED
@@ -523,14 +515,18 @@ public:
                 if (block != tail)
                     return false;
                 ASSERT(tail->terminal()->isBranch());
-                bool isTakenNextInPartialMode = taken == next && !data.shouldFullyUnroll();
-                updateTailBranch(clone, isTakenNextInPartialMode ? header : taken);
+                updateTailBranch(clone, taken);
                 return true;
             });
 
 #if ASSERT_ENABLED
-            for (uint32_t i = 0; i < data.loopSize(); ++i)
-                ASSERT(m_cloneHelper.blockClone(data.loopBody(i)));
+            for (uint32_t i = 0; i < data.loopSize(); ++i) {
+                BasicBlock* body = data.loopBody(i);
+                // We break the critical edges from tail at the end of loop unrolling.
+                if (body == data.toLoop(tail) && body->isJumpPad())
+                    continue;
+                ASSERT(m_cloneHelper.blockClone(body));
+            }
 #endif
         }
         updateTailBranch(tail, taken);

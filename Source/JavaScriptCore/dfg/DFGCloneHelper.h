@@ -46,6 +46,7 @@ public:
     template<typename CustomizeSuccessors>
     BasicBlock* cloneBlock(BasicBlock* const, const CustomizeSuccessors&);
     BasicBlock* blockClone(BasicBlock*);
+    bool breakCriticalEdge();
 
     void clear();
     void finalize();
@@ -114,6 +115,8 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
 #endif
     return clone;
 }
+
+void copyVariablesAtHeadAsPhis(Graph&, BasicBlock* pad, BasicBlock* target);
 
 #define FOR_EACH_NODE_CLONE_STATUS(CLONE_STATUS) \
     CLONE_STATUS(AllocatePropertyStorage, Common) /* alias of Transition */ \

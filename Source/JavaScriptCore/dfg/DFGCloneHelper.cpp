@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlockInlines.h"
+#include "DFGCriticalEdgeBreakingPhase.h"
 
 namespace JSC { namespace DFG {
 
@@ -164,6 +165,7 @@ Node* CloneHelper::cloneNodeImpl(BasicBlock* into, Node* node)
 
 BasicBlock* CloneHelper::blockClone(BasicBlock* block)
 {
+    ASSERT(block);
     auto iter = m_blockClones.find(block);
     if (iter != m_blockClones.end())
         return iter->value;
@@ -185,6 +187,44 @@ void CloneHelper::clear()
 {
     m_blockClones.clear();
     m_nodeClones.clear();
+}
+
+void copyVariablesAtHeadAsPhis(Graph& graph, BasicBlock* pad, BasicBlock* target)
+{
+    for (unsigned i = target->variablesAtHead.size(); i--;) {
+        Node* node = target->variablesAtHead[i];
+        if (!node)
+            continue;
+
+        VariableAccessData* variable = node->variableAccessData();
+        Node* phi = graph.addNode(Phi, node->origin, OpInfo(variable));
+        pad->phis.append(phi);
+        switch (variable->operand().kind()) {
+        case OperandKind::Argument: {
+            size_t index = variable->operand().toArgument();
+            pad->variablesAtHead.atFor<OperandKind::Argument>(index) = phi;
+            pad->variablesAtTail.atFor<OperandKind::Argument>(index) = phi;
+            break;
+        }
+        case OperandKind::Local: {
+            size_t index = variable->operand().toLocal();
+            pad->variablesAtHead.atFor<OperandKind::Local>(index) = phi;
+            pad->variablesAtTail.atFor<OperandKind::Local>(index) = phi;
+            break;
+        }
+        case OperandKind::Tmp: {
+            size_t index = variable->operand().value();
+            pad->variablesAtHead.atFor<OperandKind::Tmp>(index) = phi;
+            pad->variablesAtTail.atFor<OperandKind::Tmp>(index) = phi;
+            break;
+        }
+        }
+    }
+}
+
+bool CloneHelper::breakCriticalEdge()
+{
+    return performCriticalEdgeBreaking(m_graph, m_blockInsertionSet, copyVariablesAtHeadAsPhis);
 }
 
 } } // namespace JSC::DFG

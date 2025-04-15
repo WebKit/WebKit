@@ -52,7 +52,8 @@ public:
     
     bool run()
     {
-        RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
+        // TODO
+        RELEASE_ASSERT(m_graph.m_form == ThreadedCPS || m_graph.m_form == LoadStore);
         RELEASE_ASSERT(!m_graph.m_isInSSAConversion);
         m_graph.m_isInSSAConversion = true;
         
@@ -482,7 +483,9 @@ private:
 
 bool performSSAConversion(Graph& graph)
 {
+    // dataLogLn("before SSA graph=", graph);
     bool result = runPhase<SSAConversionPhase>(graph);
+    // dataLogLn("after SSA graph=", graph);
     return result;
 }
 

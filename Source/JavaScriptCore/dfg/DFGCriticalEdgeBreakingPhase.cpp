@@ -46,8 +46,14 @@ public:
     
     bool run()
     {
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
+        return breakCriticalEdge(m_graph, m_insertionSet, nullptr);
+    }
+
+    static bool breakCriticalEdge(Graph& graph, BlockInsertionSet& insertionSet, PadSetupFunc functor)
+    {
+        ASSERT(insertionSet.isEmpty());
+        for (BlockIndex blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = graph.block(blockIndex);
             if (!block)
                 continue;
             
@@ -70,12 +76,14 @@ public:
                 auto iter = successorPads.find(*successor);
 
                 if (iter == successorPads.end()) {
-                    pad = m_insertionSet.insertBefore(*successor, (*successor)->executionCount);
+                    pad = insertionSet.insertBefore(*successor, (*successor)->executionCount);
                     pad->appendNode(
-                        m_graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
+                        graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
                     pad->predecessors.append(block);
                     (*successor)->replacePredecessor(block, pad);
                     successorPads.set(*successor, pad);
+                    if (functor)
+                        functor(graph, pad, *successor);
                 } else
                     pad = iter->value;
 
@@ -83,7 +91,7 @@ public:
             }
         }
         
-        return m_insertionSet.execute();
+        return insertionSet.execute();
     }
 
 private:
@@ -93,6 +101,11 @@ private:
 bool performCriticalEdgeBreaking(Graph& graph)
 {
     return runPhase<CriticalEdgeBreakingPhase>(graph);
+}
+
+bool performCriticalEdgeBreaking(Graph& graph, BlockInsertionSet& insertionSet, PadSetupFunc functor)
+{
+    return CriticalEdgeBreakingPhase::breakCriticalEdge(graph, insertionSet, functor);
 }
 
 } } // namespace JSC::DFG

@@ -363,15 +363,13 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
-
-        if (Options::useLoopUnrolling())
-            RUN_PHASE(performLoopUnrolling);
-        
         RUN_PHASE(performCleanUp); // Reduce the graph size a bit.
         RUN_PHASE(performCriticalEdgeBreaking);
         if (Options::createPreHeaders())
             RUN_PHASE(performLoopPreHeaderCreation);
         RUN_PHASE(performCPSRethreading);
+        if (Options::useLoopUnrolling())
+            RUN_PHASE(performLoopUnrolling);
         RUN_PHASE(performSSAConversion);
         RUN_PHASE(performSSALowering);
         
