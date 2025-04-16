@@ -69,7 +69,8 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     // When multiple animation-* properties are set simultaneously, animation-timeline
     // is updated first, so e.g. a change to animation-play-state applies to the
     // simultaneously-applied timeline specified in animation-timeline.
-    syncStyleOriginatedTimeline();
+    if (owningElement())
+        syncStyleOriginatedTimeline();
 
     Ref animation = backingAnimation();
     RefPtr animationEffect = effect();
@@ -158,7 +159,6 @@ void CSSAnimation::syncStyleOriginatedTimeline()
     suspendEffectInvalidation();
 
     ASSERT(owningElement());
-    Ref target = owningElement()->element;
     Ref document = owningElement()->element.document();
     auto& timeline = backingAnimation().timeline();
     WTF::switchOn(timeline,

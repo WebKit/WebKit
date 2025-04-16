@@ -1,0 +1,26 @@
+<style>
+    *:nth-child(odd) { auto;-webkit-animation-direction: alternate }
+    * { currentColor;-webkit-animation: keyframes4 1s }
+    @keyframes keyframes4 {
+</style>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function main() {
+        try { v17 = x2.getAnimations(); } catch { }
+        try { v82 = v17[33 % v17.length]; } catch { }
+        try { v92 = new KeyframeEffect(x31,{ "text-shadow": ["0.92em 1em", ], },200); } catch { }
+        try { v82.effect = v92; } catch { }
+        try { x11.outerHTML = "AAAAAAAAAAAAAAAA"; } catch { }
+    }
+</script>
+
+<body onload="main()">
+    <svg id="x11" match-source">
+        <animateTransform id="x31" additive="replace">
+        </animateTransform>
+    </svg>
+    <picture id="x2" contextmenu="x9">
+    <p>Test Passes if there is no crash</p>
+</body>
