@@ -1501,42 +1501,33 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         return;
 
     color = style.colorByApplyingColorFilter(color);
-
-    LayoutPoint adjustedPaintOffset = paintOffset;
-    if (backgroundObject != this)
-        adjustedPaintOffset.moveBy(location());
-
-    // Background images attached to the row or row group must span the row
-    // or row group. Draw them at the backgroundObject's dimensions, but
-    // clipped to this cell.
-    // FIXME: This should also apply to columns and column groups.
-    bool paintBackgroundObject = backgroundObject != this && bgLayers.hasImage() && !is<RenderTableCol>(backgroundObject);
-    // We have to clip here because the background would paint
-    // on top of the borders otherwise. This only matters for cells and rows.
-    bool shouldClip = paintBackgroundObject || (backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders());
-    GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
-    if (paintBackgroundObject)
-        paintInfo.context().clip({ adjustedPaintOffset, size() });
-    else if (shouldClip) {
-        LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
-            width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
-        paintInfo.context().clip(clipRect);
-    }
-    LayoutRect fillRect;
-    if (paintBackgroundObject) {
-        if (auto* tableSectionRenderer = dynamicDowncast<RenderTableSection>(backgroundObject))
-            fillRect = backgroundRectForSection(*tableSectionRenderer, *tableElt);
-        else
-            fillRect = backgroundRectForRow(*backgroundObject, *tableElt);
-        fillRect.moveBy(backgroundPaintOffset);
-    } else
-        fillRect = LayoutRect { adjustedPaintOffset, size() };
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
+
     BackgroundPainter painter { *this, paintInfo };
+
+    LayoutRect fillRect { paintOffset, size() };
     if (backgroundObject != this) {
+        fillRect.moveBy(location());
         painter.setOverrideClip(FillBox::BorderBox);
-        painter.setOverrideOrigin(FillBox::BorderBox);
+        // Background images attached to the row or row group must span the row
+        // or row group. Draw them at the backgroundObject's dimensions, but
+        // clipped to this cell.
+        // FIXME: This should also apply to columns and column groups.
+        if (bgLayers.hasImage() && !is<RenderTableCol>(backgroundObject)) {
+            LayoutRect imageRect;
+            if (auto* tableSectionRenderer = dynamicDowncast<RenderTableSection>(backgroundObject))
+                imageRect = backgroundRectForSection(*tableSectionRenderer, *tableElt);
+            else
+                imageRect = backgroundRectForRow(*backgroundObject, *tableElt);
+            imageRect.moveBy(backgroundPaintOffset);
+            painter.setImageRect(imageRect);
+        }
     }
+    // We shrink the fillRect here because the background would paint
+    // on top of the borders otherwise. This only matters for cells and rows.
+    if (backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders())
+        fillRect.contract(borderWidths());
+
     painter.paintFillLayers(color, bgLayers, fillRect, BleedAvoidance::None, compositeOp, backgroundObject);
 }
 
