@@ -412,6 +412,26 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
     return defaultPointsPerMeter;
 }
 
+static RESRT modelStandardizedTransformSRT(RESRT originalSRT)
+{
+    constexpr float defaultScaleFactor = 0.32f;
+
+    originalSRT.scale *= defaultScaleFactor;
+    originalSRT.translation *= defaultScaleFactor;
+
+    return originalSRT;
+}
+
+static RESRT modelLocalizedTransformSRT(RESRT originalSRT)
+{
+    constexpr float defaultScaleFactor = 0.32f;
+
+    originalSRT.scale /= defaultScaleFactor;
+    originalSRT.translation /= defaultScaleFactor;
+
+    return originalSRT;
+}
+
 void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
 {
     if (!m_model || !m_layer)
@@ -423,7 +443,8 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation);
     m_transformSRT = newSRT;
 
-    simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
+    newSRT = modelStandardizedTransformSRT(newSRT);
+    simd_float4x4 matrix = RESRTMatrix(newSRT);
     WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
     send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
 }
@@ -583,7 +604,8 @@ std::optional<WebCore::LayerHostingContextIdentifier> ModelProcessModelPlayerPro
 
 void ModelProcessModelPlayerProxy::setEntityTransform(WebCore::TransformationMatrix transform)
 {
-    m_transformSRT = REMakeSRTFromMatrix(transform);
+    RESRT newSRT = REMakeSRTFromMatrix(transform);
+    m_transformSRT = modelLocalizedTransformSRT(newSRT);
     updateTransform();
 }
 
@@ -816,13 +838,15 @@ void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stag
 void ModelProcessModelPlayerProxy::updateTransformSRT()
 {
     WKEntityTransform entityTransform = [m_modelRKEntity transform];
-    m_transformSRT = RESRT {
+    RESRT newSRT = RESRT {
         .scale = entityTransform.scale,
         .rotation = entityTransform.rotation,
         .translation = entityTransform.translation
     };
+    m_transformSRT = newSRT;
 
-    simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
+    newSRT = modelStandardizedTransformSRT(newSRT);
+    simd_float4x4 matrix = RESRTMatrix(newSRT);
     WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
     send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
 }
