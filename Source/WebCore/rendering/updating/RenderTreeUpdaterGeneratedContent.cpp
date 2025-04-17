@@ -212,8 +212,10 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
 {
     auto destroyBackdropIfNeeded = [&renderer, this]() {
-        if (WeakPtr backdropRenderer = renderer.backdropRenderer())
+        if (WeakPtr backdropRenderer = renderer.backdropRenderer()) {
+            renderer.clearBackdropRenderer();
             m_updater.m_builder.destroy(*backdropRenderer);
+        }
     };
 
     // Intentionally bail out early here to avoid computing the style.

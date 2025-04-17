@@ -3457,8 +3457,10 @@ void Document::destroyRenderTree()
     m_pendingRenderTreeUpdate = { };
     m_initialContainingBlockStyle = { };
 
-    if (RefPtr documentElement = m_documentElement)
+    if (RefPtr documentElement = m_documentElement) {
+        m_renderView->asyncRenderObjectDeletionQueue().deleteRenderObjectsNow(documentElement->document());
         RenderTreeUpdater::tearDownRenderers(*documentElement);
+    }
 
     clearChildNeedsStyleRecalc();
 

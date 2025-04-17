@@ -78,10 +78,13 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
     m_end = text().length();
     if (!m_firstLetter)
         return;
-    if (RenderTreeBuilder::current())
+    if (RenderTreeBuilder::current()) {
         RenderTreeBuilder::current()->destroy(*m_firstLetter);
-    else
+        m_firstLetter = nullptr;
+    } else {
         RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
+        m_firstLetter = nullptr;
+    }
     ASSERT(!m_firstLetter);
     ASSERT(!textNode() || textNode()->renderer() == this);
 }

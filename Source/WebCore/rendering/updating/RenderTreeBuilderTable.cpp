@@ -269,7 +269,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::Table::collapseAndDetachAnonymousNext
         return { };
     m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
     previousSibling->setChildrenInline(!previousSibling->firstInFlowChild() || previousSibling->firstInFlowChild()->isInline());
-    return m_builder.detach(*parent, *nextSibling, WillBeDestroyed::Yes);
+    auto toBeDestroyed = m_builder.detach(*parent, *nextSibling, WillBeDestroyed::Yes);
+    if (AsyncRenderObjectDeletionQueue::isEligibleForAsyncDeletion(*toBeDestroyed))
+        toBeDestroyed->view().didDetachRenderer();
+    return toBeDestroyed;
 }
 
 void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed)

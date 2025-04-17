@@ -42,7 +42,7 @@ RenderTreeBuilder::BlockFlow::BlockFlow(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (auto* multicolumnFlow = parent.multiColumnFlow()) {
+    if (auto* multicolumnFlow = parent.multiColumnFlow(); multicolumnFlow && !multicolumnFlow->beingDestroyed()) {
         auto legendAvoidsMulticolumn = parent.isFieldset() && child->isLegend();
         if (legendAvoidsMulticolumn)
             return m_builder.blockBuilder().attach(parent, WTFMove(child), nullptr);

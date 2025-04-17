@@ -2768,6 +2768,7 @@ plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
 rendering/AccessibilityRegionContext.cpp
 rendering/AncestorSubgridIterator.cpp
+rendering/AsyncRenderObjectDeletionQueue.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/BaselineAlignment.cpp

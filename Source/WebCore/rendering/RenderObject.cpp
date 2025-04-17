@@ -166,7 +166,8 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags,
 RenderObject::~RenderObject()
 {
     clearLayoutBox();
-    checkedView()->didDestroyRenderer();
+    if (!AsyncRenderObjectDeletionQueue::isEligibleForAsyncDeletion(*this))
+        checkedView()->didDestroyRenderer();
     ASSERT(!m_hasAXObject);
 #ifndef NDEBUG
     renderObjectCounter.decrement();
@@ -1105,6 +1106,8 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
     ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
+    if (beingDestroyed())
+        return;
 
     if (view().printing())
         return;
@@ -1839,6 +1842,20 @@ void RenderObject::willBeRemovedFromTree()
     checkedParent()->invalidateCachedBoundaries();
 }
 
+
+void RenderObject::setNextSiblingForAsyncDeletionQueue(RenderObject* next)
+{
+#ifndef NDEBUG
+    ASSERT(!next->previousSibling());
+    ASSERT(!next->nextSibling());
+    if (auto* renderElement = dynamicDowncast<RenderElement>(next)) {
+        ASSERT(!renderElement->firstChild());
+        ASSERT(!renderElement->lastChild());
+    }
+#endif
+    setNextSibling(next);
+}
+
 void RenderObject::destroy()
 {
     RELEASE_ASSERT(!m_parent);
@@ -1849,12 +1866,23 @@ void RenderObject::destroy()
     m_stateBitfields.setFlag(StateFlag::BeingDestroyed);
 
     willBeDestroyed();
+    deleteRenderObject();
+}
 
+void RenderObject::deleteRenderObject()
+{
     if (auto* widgetRenderer = dynamicDowncast<RenderWidget>(*this)) {
         widgetRenderer->deref();
         return;
     }
+
     delete this;
+}
+
+void RenderObject::willBeDestroyedAsync()
+{
+    m_stateBitfields.setFlag(StateFlag::BeingDestroyed);
+    willBeDestroyed();
 }
 
 Position RenderObject::positionForPoint(const LayoutPoint& point, HitTestSource source)

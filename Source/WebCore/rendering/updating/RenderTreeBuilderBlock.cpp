@@ -309,6 +309,8 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(anonymousBlock, *parent);
     auto toBeDestroyed = m_builder.detachFromRenderElement(*parent, anonymousBlock, WillBeDestroyed::Yes);
+    if (AsyncRenderObjectDeletionQueue::isEligibleForAsyncDeletion(*toBeDestroyed))
+        toBeDestroyed->view().didDetachRenderer();
     // anonymousBlock is dead here.
 }
 
@@ -361,15 +363,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             // the |prev| block.
             m_builder.moveAllChildrenIncludingFloats(nextBlock, prevBlock, RenderTreeBuilder::NormalizeAfterInsertion::No);
 
-            // Delete the now-empty block's lines and nuke it.
-            nextBlock.deleteLines();
             m_builder.destroy(nextBlock);
         }
     }
 
     if (canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && parent.canDropAnonymousBlockChild()) {
         RenderObject* child = prev ? prev.get() : next.get();
-        if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling()) {
+        if (canMergeAnonymousBlocks && child && !child->beingDestroyed() && !child->previousSibling() && !child->nextSibling()) {
             // The removal has knocked us down to containing only a single anonymous box. We can pull the content right back up into our box.
             dropAnonymousBoxChild(parent, downcast<RenderBlock>(*child));
         } else {
@@ -399,11 +399,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
         }
     }
 
-    if (!parent.firstChild()) {
-        // If this was our last child be sure to clear out our line boxes.
-        if (parent.childrenInline())
-            parent.deleteLines();
-    }
     return takenChild;
 }
 
@@ -415,16 +410,17 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(child, parent);
     auto toBeDeleted = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::Yes);
+    if (AsyncRenderObjectDeletionQueue::isEligibleForAsyncDeletion(*toBeDeleted))
+        toBeDeleted->view().didDetachRenderer();
 
     // Delete the now-empty block's lines and nuke it.
-    child.deleteLines();
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     if (!parent.renderTreeBeingDestroyed()) {
         auto* fragmentedFlow = parent.multiColumnFlow();
-        if (fragmentedFlow && fragmentedFlow != &child)
+        if (fragmentedFlow && !fragmentedFlow->beingDestroyed() && fragmentedFlow != &child)
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
     return detach(static_cast<RenderBlock&>(parent), child, willBeDestroyed, canCollapseAnonymousBlock);

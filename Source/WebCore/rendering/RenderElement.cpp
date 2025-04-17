@@ -2579,6 +2579,13 @@ void RenderElement::setBackdropRenderer(RenderBlockFlow& renderer)
     ensureRareData().backdropRenderer = renderer;
 }
 
+void RenderElement::clearBackdropRenderer()
+{
+    if (!hasRareData())
+        return;
+    ensureRareData().backdropRenderer = nullptr;
+}
+
 Overflow RenderElement::effectiveOverflowX() const
 {
     auto overflowX = style().overflowX();

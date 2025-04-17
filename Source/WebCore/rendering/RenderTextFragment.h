@@ -47,7 +47,8 @@ public:
     unsigned end() const { return m_end; }
 
     RenderBoxModelObject* firstLetter() const { return m_firstLetter.get(); }
-    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = firstLetter; }
+    void setFirstLetter(RenderBoxModelObject& firstLetter) { WTFReportBacktrace(); m_firstLetter = firstLetter; }
+    void clearFirstLetter() { m_firstLetter = nullptr; }
     
     RenderBlock* blockForAccompanyingFirstLetter();
 

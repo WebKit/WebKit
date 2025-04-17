@@ -277,6 +277,7 @@ public:
 
     SingleThreadWeakPtr<RenderBlockFlow> backdropRenderer() const;
     void setBackdropRenderer(RenderBlockFlow&);
+    void clearBackdropRenderer();
 
     ReferencedSVGResources& ensureReferencedSVGResources();
 

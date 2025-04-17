@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "AsyncRenderObjectDeletionQueue.h"
 #include "LocalFrameView.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
@@ -112,6 +113,8 @@ public:
     void setPageLogicalSize(LayoutSize);
     LayoutUnit pageOrViewLogicalHeight() const;
 
+    AsyncRenderObjectDeletionQueue& asyncRenderObjectDeletionQueue() { return m_asyncRenderObjectDeletionQueue; };
+
     // This method is used to assign a page number only when pagination modes have
     // a block progression. This happens with vertical-rl books for example, but it
     // doesn't happen for normal horizontal-tb books. This is a very specialized
@@ -176,6 +179,7 @@ public:
     uint64_t rendererCount() const { return m_rendererCount; }
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
+    void didDetachRenderer() { --m_rendererCount; }
 
     void updateVisibleViewportRect(const IntRect&);
     void registerForVisibleInViewportCallback(RenderElement&);
@@ -252,6 +256,8 @@ private:
     // Note that currently RenderView::layoutBox(), if it exists, is a child of m_initialContainingBlock.
     UniqueRef<Layout::InitialContainingBlock> m_initialContainingBlock;
     UniqueRef<Layout::LayoutState> m_layoutState;
+
+    AsyncRenderObjectDeletionQueue m_asyncRenderObjectDeletionQueue;
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     RenderSelection m_selection;
