@@ -226,6 +226,19 @@ shouldBe(Temporal.Duration.from('-PT31S').round({ smallestUnit: 'second', roundi
 shouldBe(Temporal.Duration.from('-PT31S').round({ smallestUnit: 'second', roundingIncrement: 30, roundingMode: 'floor' }).toString(), '-PT60S');
 shouldBe(Temporal.Duration.from('-PT45S').round({ smallestUnit: 'second', roundingIncrement: 30 }).toString(), '-PT60S');
 shouldBe(Temporal.Duration.from('-PT45S').round({ smallestUnit: 'second', roundingIncrement: 30, roundingMode: 'trunc' }).toString(), '-PT30S');
+// Rounding would exceed maxTimeDuration
+shouldThrow(() => Temporal.Duration.from({ seconds: Number.MAX_SAFE_INTEGER }).round({ smallestUnit: 'seconds', roundingMode: 'ceil', roundingIncrement: 30 }), RangeError);
+
+const seconds = 8692288669465520;
+const nanoseconds = 321_414_345;
+const d = new Temporal.Duration(0, 0, 0, 0, 0, 0, seconds, 0, 0, nanoseconds);
+const result = d.round({ largestUnit: "nanoseconds" });
+const expectedNanoseconds = Number(BigInt(seconds) * 1_000_000_000n + BigInt(nanoseconds));
+shouldBe(expectedNanoseconds, 8692288669465520_321_414_345);
+shouldBe(result.nanoseconds, expectedNanoseconds);
+
+// Rounding would exceed maxTimeDuration
+shouldThrow(() => Temporal.Duration.from({ seconds: Number.MAX_SAFE_INTEGER }).round({ smallestUnit: 'seconds', roundingMode: 'ceil', roundingIncrement: 30 }), RangeError);
 
 shouldBe(Temporal.Duration.prototype.total.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.total.call({}), TypeError);
@@ -300,6 +313,9 @@ shouldBe(pos.toString({ roundingMode: 'trunc' }), pos.toString());
 shouldBe(pos.toString({ fractionalSecondDigits: 7, roundingMode: 'ceil' }), 'P1Y2M3W4DT5H6M7.0080091S');
 shouldBe(pos.toString({ fractionalSecondDigits: 2, roundingMode: 'floor' }), 'P1Y2M3W4DT5H6M7.00S');
 shouldBe(pos.toString({ fractionalSecondDigits: 2, roundingMode: 'halfExpand' }), 'P1Y2M3W4DT5H6M7.01S');
+
+const maxSeconds = Temporal.Duration.from({ seconds: Number.MAX_SAFE_INTEGER, milliseconds: 999 });
+shouldThrow(() => maxSeconds.toString({ smallestUnit: "seconds", roundingMode: "ceil" }), RangeError);
 
 shouldBe(Temporal.Duration.prototype.valueOf.length, 0);
 shouldThrow(() => new Temporal.Duration().valueOf(), TypeError);

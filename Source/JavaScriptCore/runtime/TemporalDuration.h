@@ -98,7 +98,7 @@ public:
     static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);
 
     static int sign(const ISO8601::Duration&);
-    static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
+    static ISO8601::InternalDuration round(JSGlobalObject*, ISO8601::InternalDuration, double increment, TemporalUnit, RoundingMode);
     static void roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128, ISO8601::PlainDate, TemporalUnit, double, TemporalUnit, RoundingMode);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);

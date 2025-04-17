@@ -128,7 +128,6 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js
     - test/built-ins/Temporal/Duration/prototype/round/total-duration-nanoseconds-too-large-with-zoned-datetime.js
     - test/built-ins/Temporal/Duration/prototype/round/year-zero.js
-    - test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-time-duration.js
     - test/built-ins/Temporal/Duration/prototype/total/balances-days-up-to-both-years-and-months.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
@@ -236,8 +235,6 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-number.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-string-shorthand.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-always.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-critical.js

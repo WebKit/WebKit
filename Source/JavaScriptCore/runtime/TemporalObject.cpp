@@ -585,9 +585,10 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options
     return increment;
 }
 
+// TODO: See comment on roundNumberToIncrementInt128()
 // RoundNumberToIncrement ( x, increment, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrement
-double roundNumberToIncrement(double x, double increment, RoundingMode mode)
+double roundNumberToIncrementDouble(double x, double increment, RoundingMode mode)
 {
     auto quotient = x / increment;
     auto truncatedQuotient = std::trunc(quotient);

@@ -85,9 +85,6 @@ test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
 test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-test/built-ins/Temporal/Duration/from/argument-duration-precision-exact-numerical-values.js:
-  default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
-  strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
 test/built-ins/Temporal/Duration/prototype/round/accepts-datetime-strings-for-relative-to.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -130,9 +127,6 @@ test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-combin
 test/built-ins/Temporal/Duration/prototype/round/next-day-out-of-range.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-duration.js:
-  default: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
-  strict mode: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
 test/built-ins/Temporal/Duration/prototype/round/relative-to-required-for-rounding-durations-with-calendar-units.js:
   default: 'Test262Error: Expected a RangeError but got a Error'
   strict mode: 'Test262Error: Expected a RangeError but got a Error'
@@ -172,21 +166,9 @@ test/built-ins/Temporal/Duration/prototype/round/throws-on-wrong-offset-for-zone
 test/built-ins/Temporal/Duration/prototype/round/valid-increments.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/toString/max-value.js:
-  default: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'
-  strict mode: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/no-precision-loss.js:
-  default: 'Test262Error: Expected SameValue(«"PT9016206453995.732991S"», «"PT9016206453995.731991S"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"PT9016206453995.732991S"», «"PT9016206453995.731991S"») to be true'
 test/built-ins/Temporal/Duration/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Duration/prototype/toString/round-cross-unit-boundary.js:
-  default: 'Test262Error: 1:59:60 balances to 2 hours Expected SameValue(«"PT1H59M60S"», «"PT2H0S"») to be true'
-  strict mode: 'Test262Error: 1:59:60 balances to 2 hours Expected SameValue(«"PT1H59M60S"», «"PT2H0S"») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration-is-invalid.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/toString/total-of-duration-time-units-out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
