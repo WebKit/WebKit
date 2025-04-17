@@ -414,6 +414,11 @@ shouldBe(Temporal.PlainDate.prototype.until.length, 1);
     shouldBe(date.since('2020-02-12', { largestUnit: 'week' }).toString(), 'P2W2D');
     shouldBe(date.until('2020-02-12', { largestUnit: 'week' }).toString(), '-P2W2D');
 
+    const earlier = Temporal.PlainDate.from("2019-01-08");
+    const later = Temporal.PlainDate.from("2021-09-07");
+    shouldBe(later.since(earlier, { smallestUnit: "years", roundingIncrement: 4, roundingMode: "halfExpand" }).toString(), "P4Y");
+    shouldBe(earlier.until(later, { smallestUnit: "years", roundingIncrement: 4, roundingMode: "halfExpand" }).toString(), "P4Y");
+
     shouldThrow(() => { date.until('2019-02-28', { smallestUnit: 'hour' }); }, RangeError);
     shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'hour' }); }, RangeError);
     shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'day', smallestUnit: 'month' }); }, RangeError);

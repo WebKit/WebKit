@@ -412,12 +412,6 @@ test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-
 test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/round-cross-unit-boundary.js:
-  default: 'RangeError: unimplemented: depends on Duration relativeTo'
-  strict mode: 'RangeError: unimplemented: depends on Duration relativeTo'
-test/built-ins/Temporal/PlainDate/prototype/since/wrapping-at-end-of-month.js:
-  default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
-  strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/argument-duration-max.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
@@ -478,15 +472,6 @@ test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-
 test/built-ins/Temporal/PlainDate/prototype/until/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/until/largestunit-week.js:
-  default: 'Test262Error: negative one day: weeks result: Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: negative one day: weeks result: Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainDate/prototype/until/round-cross-unit-boundary.js:
-  default: 'RangeError: unimplemented: depends on Duration relativeTo'
-  strict mode: 'RangeError: unimplemented: depends on Duration relativeTo'
-test/built-ins/Temporal/PlainDate/prototype/until/wrapping-at-end-of-month.js:
-  default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/basic.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
