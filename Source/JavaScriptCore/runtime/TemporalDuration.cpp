@@ -454,14 +454,7 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
         return { };
     }
 
-    ISO8601::Duration result {
-        0, 0, 0, days() + other.days(),
-        hours() + other.hours(), minutes() + other.minutes(), seconds() + other.seconds(),
-        milliseconds() + other.milliseconds(), microseconds() + other.microseconds(), nanoseconds() + other.nanoseconds()
-    };
-
-    balance(result, largestUnit);
-    return result;
+    return addDurations(globalObject, true, other, largestUnit);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurations

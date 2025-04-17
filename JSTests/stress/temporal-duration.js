@@ -192,6 +192,8 @@ shouldBe(Temporal.Duration.from('-PT1M59S').subtract('PT1M59S').toString(), '-PT
 const duration1 = Temporal.Duration.from({microseconds: Number.MAX_SAFE_INTEGER + 1, nanoseconds: 0});
 const duration2 = Temporal.Duration.from({microseconds: -1, nanoseconds: -1000});
 shouldBe(duration1.subtract(duration2).toString(), 'PT9007199254.740994S');
+// Addition exceeds max duration
+shouldThrow(() => (new Temporal.Duration(0, 0, 0, 2, 0, 0, 0, 0, 0, 0)).add({ days: 104249991373 }), RangeError);
 
 shouldBe(Temporal.Duration.prototype.round.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.round.call({}), TypeError);
