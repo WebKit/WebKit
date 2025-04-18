@@ -63,14 +63,14 @@ WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionControlle
 void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
     auto *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, protectedThis = Ref { *this }, task = Ref { task }, page = Ref { page }]() {
-        URL frameDocumentURL = task->frameInfo().request().url();
+        Ref frameInfo = task->frameInfo();
+        URL frameDocumentURL = frameInfo->request().url();
         URL requestURL = task->request().url();
-
-        if (task->frameInfo().request().url().isEmpty() || task->frameInfo().request().url().isAboutBlank()) {
+        if (frameInfo->request().url().isEmpty() || frameInfo->request().url().isAboutBlank()) {
             frameDocumentURL = task->request().firstPartyForCookies();
 
-            if (!task->frameInfo().isMainFrame()) {
-                if (RefPtr parentFrameHandle = task->frameInfo().parentFrameHandle()) {
+            if (!frameInfo->isMainFrame()) {
+                if (RefPtr parentFrameHandle = frameInfo->parentFrameHandle()) {
                     if (RefPtr parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()))
                         frameDocumentURL = parent->url();
                 }
