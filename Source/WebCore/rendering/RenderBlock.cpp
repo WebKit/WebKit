@@ -64,6 +64,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayerFilters.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderListMarker.h"
@@ -3459,6 +3460,12 @@ void RenderBlock::updateDescendantTransformsAfterLayout()
         if (box && box->hasLayer())
             box->layer()->updateTransform();
     }
+}
+
+void RenderBlock::updateLayerFiltersAfterLayout()
+{
+    if (auto* layerFilters = style().layerFilters())
+        layerFilters->removeClient(*this);
 }
 
 } // namespace WebCore

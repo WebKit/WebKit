@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,6 @@
 #pragma once
 
 #include <WebCore/Filter.h>
-#include <WebCore/FilterResults.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/SVGFilterExpression.h>
 #include <WebCore/SVGUnitTypes.h>
@@ -39,7 +38,7 @@ class SVGFilterElement;
 class SVGFilterRenderer final : public Filter {
 public:
     static RefPtr<SVGFilterRenderer> create(SVGElement* contextElement, SVGFilterElement&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    WEBCORE_EXPORT static Ref<SVGFilterRenderer> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion);
+    WEBCORE_EXPORT static Ref<SVGFilterRenderer> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier>);
 
     static bool isIdentity(SVGFilterElement&);
     static IntOutsets calculateOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
@@ -52,9 +51,7 @@ public:
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
-    WEBCORE_EXPORT FilterResults& ensureResults(NOESCAPE const FilterResultsCreator&);
-    void clearEffectResult(FilterEffect&);
-    WEBCORE_EXPORT void mergeEffects(const FilterEffectVector&);
+    void mergeEffects(const Filter&) final;
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
@@ -66,7 +63,7 @@ public:
     WEBCORE_EXPORT static bool isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
 private:
     SVGFilterRenderer(const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier>);
-    SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>, const FloatSize& filterScale, const FloatRect& filterRegion);
+    SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier>);
 
     static std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> buildExpression(SVGElement* contextElement, SVGFilterElement&, const SVGFilterRenderer&, const GraphicsContext& destinationContext);
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
@@ -85,8 +82,6 @@ private:
 
     SVGFilterExpression m_expression;
     FilterEffectVector m_effects;
-
-    std::unique_ptr<FilterResults> m_results;
 };
 
 } // namespace WebCore

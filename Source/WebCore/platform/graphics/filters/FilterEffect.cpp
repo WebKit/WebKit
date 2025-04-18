@@ -162,7 +162,11 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, std::span<const Re
 
     auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputPrimitiveSubregions(inputs), geometry);
     auto imageRect = calculateImageRect(filter, inputImageRects(inputs), primitiveSubregion);
-    auto absoluteImageRect = enclosingIntRect(filter.scaledByFilterScale(imageRect));
+    auto scaledImageRect = filter.scaledByFilterScale(imageRect);
+
+    auto absoluteImageRect = enclosingIntRect(scaledImageRect);
+    if (ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()))
+        absoluteImageRect = IntRect(scaledImageRect);
 
     if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size())) {
         LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " apply(): " << *this << " absoluteImageRect " << absoluteImageRect << " is empty or needs clamping; bailing.");

@@ -383,6 +383,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren,
             layoutOutOfFlowBoxes(relayoutChildren);
 
         updateDescendantTransformsAfterLayout();
+        updateLayerFiltersAfterLayout();
 
         computeOverflow(oldClientAfterEdge);
     }

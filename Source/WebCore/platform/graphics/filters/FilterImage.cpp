@@ -47,6 +47,7 @@ RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, con
 
 RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
 {
+    ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
     return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer), allocator));
 }
 
@@ -201,9 +202,9 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
 
 static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
-    auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
-    auto convertedImageBuffer = allocator.createImageBuffer(clampedSize, colorSpace, RenderingMode::Unaccelerated);
-    
+    ASSERT(!ImageBuffer::sizeNeedsClamping(sourceRect.size()));
+
+    auto convertedImageBuffer = allocator.createImageBuffer(sourceRect.size(), colorSpace, RenderingMode::Unaccelerated);
     if (!convertedImageBuffer)
         return nullptr;
 
@@ -216,10 +217,11 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, Alp
 static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto sourceRect = IntRect { { } , sourcePixelBuffer.size() };
-    auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
-
     auto& sourceColorSpace = sourcePixelBuffer.format().colorSpace;
-    auto imageBuffer = allocator.createImageBuffer(clampedSize, sourceColorSpace, RenderingMode::Unaccelerated);
+
+    ASSERT(!ImageBuffer::sizeNeedsClamping(sourceRect.size()));
+
+    auto imageBuffer = allocator.createImageBuffer(sourceRect.size(), sourceColorSpace, RenderingMode::Unaccelerated);
     if (!imageBuffer)
         return nullptr;
 
@@ -262,7 +264,6 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
     }
 
     IntSize logicalSize(m_absoluteImageRect.size());
-    ASSERT(!ImageBuffer::sizeNeedsClamping(logicalSize));
 
     pixelBuffer = m_allocator.createPixelBuffer(format, logicalSize);
     if (!pixelBuffer)

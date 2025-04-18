@@ -483,6 +483,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         computeOverflow(layoutOverflowLogicalBottom(*this));
 
         updateDescendantTransformsAfterLayout();
+        updateLayerFiltersAfterLayout();
     }
 
     updateLayerTransform();

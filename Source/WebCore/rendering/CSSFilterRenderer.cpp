@@ -48,12 +48,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterRenderer);
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& renderer, const auto& filter, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& renderer, const auto& filter, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    bool hasFilterThatMovesPixels = filter.hasFilterThatMovesPixels();
-    bool hasFilterThatShouldBeRestrictedBySecurityOrigin = filter.hasFilterThatShouldBeRestrictedBySecurityOrigin();
-
-    auto filterRenderer = adoptRef(*new CSSFilterRenderer(filterScale, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+    auto filterRenderer = adoptRef(*new CSSFilterRenderer(filterScale, filterRegion, renderingResourceIdentifier));
 
     if (!filterRenderer->buildFilterFunctions(renderer, filter, preferredFilterRenderingModes, targetBoundingBox, destinationContext)) {
         LOG_WITH_STREAM(Filters, stream << "CSSFilterRenderer::create: failed to build filters " << filter);
@@ -67,15 +64,14 @@ RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& render
     return filterRenderer;
 }
 
-
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    return createGeneric(renderer, filter, preferredFilterRenderingModes, filterScale, targetBoundingBox, destinationContext);
+    return createGeneric(renderer, filter, preferredFilterRenderingModes, filterScale, filterRegion, targetBoundingBox, destinationContext, renderingResourceIdentifier);
 }
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    return createGeneric(renderer, operations, preferredFilterRenderingModes, filterScale, targetBoundingBox, destinationContext);
+    return createGeneric(renderer, operations, preferredFilterRenderingModes, filterScale, filterRegion, targetBoundingBox, destinationContext, renderingResourceIdentifier);
 }
 
 Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& functions)
@@ -83,19 +79,17 @@ Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& f
     return adoptRef(*new CSSFilterRenderer(WTFMove(functions)));
 }
 
-Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& functions, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion)
+Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& functions, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    Ref filter = adoptRef(*new CSSFilterRenderer(WTFMove(functions), filterScale, filterRegion));
+    Ref filter = adoptRef(*new CSSFilterRenderer(WTFMove(functions), filterScale, filterRegion, renderingResourceIdentifier));
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(filterRenderingModes);
     return filter;
 }
 
-CSSFilterRenderer::CSSFilterRenderer(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
-    : Filter(Filter::Type::CSSFilterRenderer, filterScale)
-    , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
-    , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
+CSSFilterRenderer::CSSFilterRenderer(const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : Filter(Type::CSSFilterRenderer, filterScale, filterRegion, renderingResourceIdentifier)
 {
 }
 
@@ -105,8 +99,8 @@ CSSFilterRenderer::CSSFilterRenderer(Vector<Ref<FilterFunction>>&& functions)
 {
 }
 
-CSSFilterRenderer::CSSFilterRenderer(Vector<Ref<FilterFunction>>&& functions, const FloatSize& filterScale, const FloatRect& filterRegion)
-    : Filter(Type::CSSFilterRenderer, filterScale, filterRegion)
+CSSFilterRenderer::CSSFilterRenderer(Vector<Ref<FilterFunction>>&& functions, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : Filter(Type::CSSFilterRenderer, filterScale, filterRegion, renderingResourceIdentifier)
     , m_functions(WTFMove(functions))
 {
     clampFilterRegionIfNeeded();
@@ -241,6 +235,12 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(CSSFilterRenderer& filter
     if (filterRegion.isEmpty())
         return nullptr;
 
+    auto filterScale = filter.filterScale();
+
+    // Ensure the reference SVGFilterRenderer has the same clamping ratio as the parent CSSFilter.
+    if (ImageBuffer::sizeNeedsClamping(filterRegion.size(), filterScale))
+        filterRegion = filter.filterRegion();
+
     return SVGFilterRenderer::create(contextElement.get(), *filterElement, preferredFilterRenderingModes, filter.filterScale(), filterRegion, targetBoundingBox, destinationContext);
 }
 
@@ -343,6 +343,35 @@ OptionSet<FilterRenderingMode> CSSFilterRenderer::supportedFilterRenderingModes(
     return modes;
 }
 
+void CSSFilterRenderer::mergeEffects(const Filter& otherFilter)
+{
+    RefPtr otherCssFilter = dynamicDowncast<CSSFilterRenderer>(otherFilter);
+    if (!otherCssFilter)
+        return;
+
+    auto& otherFunctions = otherCssFilter->functions();
+    ASSERT(m_functions.size() == otherFunctions.size());
+
+    for (unsigned index = 0; index < m_functions.size(); ++index) {
+        if (m_functions[index]->isSVGFilterRenderer()) {
+            RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(m_functions[index]);
+            RefPtr otherSVGFilter = dynamicDowncast<SVGFilterRenderer>(otherFunctions[index]);
+            if (!svgFilter || !otherSVGFilter)
+                return;
+
+            svgFilter->mergeEffects(*otherSVGFilter);
+            continue;
+        }
+
+        RefPtr effect = dynamicDowncast<FilterEffect>(m_functions[index]);
+        if (!effect)
+            return;
+
+        clearEffectResult(*effect);
+        m_functions[index] = otherFunctions[index];
+    }
+}
+
 RefPtr<FilterImage> CSSFilterRenderer::apply(FilterImage* sourceImage, FilterResults& results)
 {
     ASSERT(filterRenderingModes().contains(FilterRenderingMode::Software));
@@ -383,12 +412,6 @@ FilterStyleVector CSSFilterRenderer::createFilterStyles(GraphicsContext& context
     return styles;
 }
 
-void CSSFilterRenderer::setFilterRegion(const FloatRect& filterRegion)
-{
-    Filter::setFilterRegion(filterRegion);
-    clampFilterRegionIfNeeded();
-}
-
 bool CSSFilterRenderer::isIdentity(RenderElement& renderer, const Style::Filter& filter)
 {
     if (filter.hasFilterThatShouldBeRestrictedBySecurityOrigin())
@@ -408,6 +431,7 @@ bool CSSFilterRenderer::isIdentity(RenderElement& renderer, const Style::Filter&
 
     return true;
 }
+
 bool CSSFilterRenderer::isIdentity(RenderElement& renderer, const FilterOperations& operations)
 {
     if (operations.hasFilterThatShouldBeRestrictedBySecurityOrigin())

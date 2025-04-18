@@ -368,9 +368,7 @@ void RemoteGraphicsContext::drawFilteredImageBufferInternal(std::optional<Render
 
 void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter>&& filter)
 {
-    RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(filter);
-
-    if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
+    if (!filter->hasValidRenderingResourceIdentifier()) {
 #if HAVE(IOSURFACE)
         FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool()));
 #else
@@ -381,12 +379,10 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
     }
 
     RefPtr cachedFilter = resourceCache().cachedFilter(filter->renderingResourceIdentifier());
-    RefPtr cachedSVGFilter = dynamicDowncast<SVGFilterRenderer>(WTFMove(cachedFilter));
-    MESSAGE_CHECK(cachedSVGFilter);
 
-    cachedSVGFilter->mergeEffects(svgFilter->effects());
+    cachedFilter->mergeEffects(filter);
 
-    auto& results = cachedSVGFilter->ensureResults([&]() {
+    auto& results = cachedFilter->ensureResults([&]() {
 #if HAVE(IOSURFACE)
         auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool());
 #else
@@ -395,7 +391,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
         return makeUnique<FilterResults>(WTFMove(allocator));
     });
 
-    drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
+    drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedFilter, results);
 }
 
 void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)

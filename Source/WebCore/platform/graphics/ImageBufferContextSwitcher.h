@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,22 +35,17 @@ class ImageBuffer;
 class ImageBufferContextSwitcher final : public GraphicsContextSwitcher {
     WTF_MAKE_TZONE_ALLOCATED(ImageBufferContextSwitcher);
 public:
-    ImageBufferContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace&, RefPtr<Filter>&& = nullptr, FilterResults* = nullptr);
+    ImageBufferContextSwitcher(GraphicsContext& destinationContext, const DestinationColorSpace&, const FloatRect& sourceImageRect, RefPtr<Filter>&&, FilterResults* = nullptr);
 
 private:
-    GraphicsContext* drawingContext(GraphicsContext& destinationContext) const override;
+    GraphicsContext* drawingContext(GraphicsContext& destinationContext) const final;
+    bool hasSourceImage() const final { return m_sourceImage; }
 
-    bool hasSourceImage() const override { return m_sourceImage; }
-
-    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;
-    void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) override;
-
-    void beginDrawSourceImage(GraphicsContext&, float = 1.f) override { }
-    void endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) override;
+    SwitcherState beginDrawSourceImage(GraphicsContext&, std::optional<FloatRect> clipRect = std::nullopt, float = 1.f) final;
+    SwitcherState endDrawSourceImage(GraphicsContext& destinationContext) final;
+    void drawOutputImage(GraphicsContext& destinationContext, const DestinationColorSpace&) final;
 
     RefPtr<ImageBuffer> m_sourceImage;
-    FloatRect m_sourceImageRect;
-
     FilterResults* m_results { nullptr };
 };
 

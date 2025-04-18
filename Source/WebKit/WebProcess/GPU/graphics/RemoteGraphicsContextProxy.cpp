@@ -247,8 +247,7 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
         }
     }
 
-    RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(filter);
-    if (svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
+    if (filter.hasValidRenderingResourceIdentifier())
         recordResourceUse(filter);
 
     std::optional<RenderingResourceIdentifier> identifier;

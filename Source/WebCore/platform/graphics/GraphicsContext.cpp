@@ -225,7 +225,12 @@ static IntRect scaledImageBufferRect(const FloatRect& rect, const FloatSize& sca
 {
     auto scaledRect = rect;
     scaledRect.scale(scale);
-    return enclosingIntRect(scaledRect);
+
+    auto scaledImageBufferRect = enclosingIntRect(scaledRect);
+    if (ImageBuffer::sizeNeedsClamping(scaledImageBufferRect.size()))
+        scaledImageBufferRect = IntRect(scaledRect);
+
+    return scaledImageBufferRect;
 }
 
 static FloatSize clampingScaleForImageBufferSize(const FloatSize& size)

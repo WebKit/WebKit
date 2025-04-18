@@ -398,7 +398,7 @@ RenderLayer::~RenderLayer()
         removeReflection();
 
     clearLayerScrollableArea();
-    clearLayerFilters();
+    removeLayerFilterClient();
     clearLayerClipPath();
 
     // Child layers will be deleted by their corresponding render objects, so
@@ -1052,10 +1052,12 @@ bool RenderLayer::shouldPaintWithFilters(OptionSet<PaintBehavior> paintBehavior)
 
 bool RenderLayer::requiresFullLayerImageForFilters() const
 {
-    if (!shouldPaintWithFilters())
-        return false;
+    return shouldPaintWithFilters() && renderer().style().filter().hasFilterThatMovesPixels();
+}
 
-    return m_filters && m_filters->hasFilterThatMovesPixels();
+bool RenderLayer::requireSecurityOriginAccessForWidgets() const
+{
+    return shouldPaintWithFilters() && renderer().style().filter().hasFilterThatShouldBeRestrictedBySecurityOrigin();
 }
 
 OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLayerPositions(RenderLayer& startingLayer)
@@ -2518,7 +2520,6 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 {
     ASSERT(requiresFullLayerImageForFilters());
-    ASSERT(m_filters);
 
     if (rect.isEmpty())
         return;
@@ -2526,8 +2527,6 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
     LayoutRect rectForRepaint = rect;
     rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
 
-    m_filters->expandDirtySourceRect(rectForRepaint);
-    
     RenderLayer* parentLayer = enclosingFilterRepaintLayer();
     ASSERT(parentLayer);
     FloatQuad repaintQuad(rectForRepaint);
@@ -3415,7 +3414,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
         if (parent()) {
             auto options = paintFlags.contains(PaintLayerFlag::PaintingOverflowContents) ? clipRectOptionsForPaintingOverflowContents : clipRectDefaultOptions;
-            if (shouldHaveFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior))
+            if (shouldHaveLayerFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior))
                 options.add(ClipRectsOption::OutsideFilter);
             if (paintFlags & PaintLayerFlag::TemporaryClipRects)
                 options.add(ClipRectsOption::Temporary);
@@ -3607,7 +3606,7 @@ void RenderLayer::clearLayerClipPath()
         svgClipper->removeClientFromCache(renderer());
 }
 
-bool RenderLayer::shouldHaveFiltersForPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags, OptionSet<PaintBehavior> paintBehavior) const
+bool RenderLayer::shouldHaveLayerFiltersForPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags, OptionSet<PaintBehavior> paintBehavior) const
 {
     if (context.paintingDisabled())
         return false;
@@ -3621,53 +3620,66 @@ bool RenderLayer::shouldHaveFiltersForPainting(GraphicsContext& context, OptionS
     return true;
 }
 
-RenderLayerFilters* RenderLayer::filtersForPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags, OptionSet<PaintBehavior> paintBehavior)
+RenderLayerFilters* RenderLayer::layerFiltersForPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags, OptionSet<PaintBehavior> paintBehavior)
 {
-    if (!shouldHaveFiltersForPainting(context, paintFlags, paintBehavior))
+    if (!shouldHaveLayerFiltersForPainting(context, paintFlags, paintBehavior))
         return nullptr;
 
     return &ensureLayerFilters();
 }
 
-GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag>& paintFlags, const LayoutSize& offsetFromRoot, const ClipRect& backgroundRect)
+SwitcherState RenderLayer::beginFiltersDrawSourceImage(LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot, const LayoutRect& clipRect, GraphicsContext*& context)
 {
-    auto* paintingFilters = filtersForPainting(destinationContext, paintFlags, paintingInfo.paintBehavior);
-    if (!paintingFilters)
-        return nullptr;
-
-    LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
-    filterRepaintRect.move(offsetFromRoot);
+    auto* layerFilters = layerFiltersForPainting(*context, paintFlags, paintingInfo.paintBehavior);
+    if (!layerFilters)
+        return SwitcherState::None;
 
     auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { RenderLayer::PreserveAncestorFlags });
+    if (rootRelativeBounds.isEmpty())
+        return SwitcherState::None;
 
-    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), destinationContext, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect), backgroundRect.rect());
-    if (!filterContext)
-        return nullptr;
+    // If the filter needs the full source image, we need to avoid using the clip rectangles.
+    // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
+    // Note that we will still apply the clipping on the final rendering of the filter.
+    paintingInfo.requireSecurityOriginAccessForWidgets = requireSecurityOriginAccessForWidgets();
 
-    paintingInfo.paintDirtyRect = paintingFilters->repaintRect();
-    if (paintingFilters->hasFilterThatMovesPixels()) {
+    if (requiresFullLayerImageForFilters()) {
         m_suppressAncestorClippingInsideFilter = true;
         paintFlags.add(PaintLayerFlag::TemporaryClipRects);
     }
-    paintingInfo.requireSecurityOriginAccessForWidgets = paintingFilters->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    return filterContext;
+    auto state = layerFilters->beginDrawSourceImage(renderer(), rootRelativeBounds, clipRect, context);
+    if (state == SwitcherState::PaintingSource)
+        paintingInfo.paintDirtyRect = LayoutRect(layerFilters->filterRegion(renderer()));
+
+    return state;
 }
 
-void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, OptionSet<PaintBehavior> behavior, const ClipRect& backgroundRect)
+SwitcherState RenderLayer::endFiltersDrawSourceImage(GraphicsContext*& context)
 {
-    GraphicsContextStateSaver stateSaver(originalContext, false);
-    bool needsClipping = m_filters->hasSourceImage();
+    if (auto* layerFilters = this->layerFilters())
+        return layerFilters->endDrawSourceImage(renderer(), context);
+    return SwitcherState::None;
+}
+
+void RenderLayer::applyFilters(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintBehavior> behavior, const ClipRect& backgroundRect)
+{
+    auto* layerFilters = this->layerFilters();
+    if (!layerFilters)
+        return;
+
+    GraphicsContextStateSaver stateSaver(context, false);
+    bool needsClipping = layerFilters->hasSourceImage(renderer());
 
     m_suppressAncestorClippingInsideFilter = false;
 
     if (needsClipping) {
         RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
-        clipToRect(originalContext, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect);
+        clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect);
     }
 
-    m_filters->applyFilterEffect(originalContext);
+    layerFilters->applyFilter(renderer(), context);
 }
 
 void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
@@ -3812,7 +3824,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     // Apply clip-path to context.
     LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
-    if (renderer().enclosingFragmentedFlow() && (renderer().hasClipPath() || shouldHaveFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior)))
+    if (renderer().enclosingFragmentedFlow() && (renderer().hasClipPath() || shouldHaveLayerFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior)))
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     GraphicsContextStateSaver stateSaver(context, false);
@@ -3871,7 +3883,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     { // Scope for filter-related state changes.
         ClipRect backgroundRect;
 
-        if (shouldHaveFiltersForPainting(context, paintFlags, paintBehavior)) {
+        if (shouldHaveLayerFiltersForPainting(context, paintFlags, paintBehavior)) {
             // When we called collectFragments() last time, paintDirtyRect was reset to represent the filter bounds.
             // Now we need to compute the backgroundRect uncontaminated by filters, in order to clip the filtered result.
             // Note that we also use paintingInfo here, not localPaintingInfo which filters also contaminated.
@@ -3893,10 +3905,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         LayerPaintingInfo localPaintingInfo(paintingInfo);
-        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, columnAwareOffsetFromRoot, backgroundRect);
-        GraphicsContext& currentContext = filterContext ? *filterContext : context;
+        auto* currentContext = &context;
+        auto state = beginFiltersDrawSourceImage(localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, backgroundRect.rect(), currentContext);
 
-        if (filterContext)
+        if (state == SwitcherState::PaintingSource)
             localPaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
 
         // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
@@ -3919,52 +3931,56 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, offsetFromRoot);
             updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
         }
-        
+
         if (isPaintingCompositedBackground) {
             // Paint only the backgrounds for all of the fragments of the layer.
             if (shouldPaintContent && !selectionOnly) {
-                paintBackgroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency,
+                paintBackgroundForFragments(layerFragments, *currentContext, context, paintingInfo.paintDirtyRect, haveTransparency,
                     localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
             }
         }
 
         // Now walk the sorted list of children with negative z-indices.
         if (shouldPaintNegativeZIndexChildren)
-            paintList(negativeZOrderLayers(), currentContext, paintingInfo, localPaintFlags);
-        
+            paintList(negativeZOrderLayers(), *currentContext, paintingInfo, localPaintFlags);
+
         if (isPaintingCompositedForeground && shouldPaintContent)
-            paintForegroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
+            paintForegroundForFragments(layerFragments, *currentContext, context, paintingInfo.paintDirtyRect, haveTransparency, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
         if (isCollectingEventRegion && !isInsideSkippedSubtree)
-            collectEventRegionForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
+            collectEventRegionForFragments(layerFragments, *currentContext, localPaintingInfo, paintBehavior);
 
         if (isCollectingAccessibilityRegion)
-            collectAccessibilityRegionsForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
+            collectAccessibilityRegionsForFragments(layerFragments, *currentContext, localPaintingInfo, paintBehavior);
 
         if (shouldPaintOutline)
-            paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
+            paintOutlineForFragments(layerFragments, *currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
         if (isPaintingCompositedForeground) {
             // Paint any child layers that have overflow.
-            paintList(normalFlowLayers(), currentContext, paintingInfo, localPaintFlags);
+            paintList(normalFlowLayers(), *currentContext, paintingInfo, localPaintFlags);
 
             // Now walk the sorted list of children with positive z-indices.
-            paintList(positiveZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(positiveZOrderLayers(), *currentContext, localPaintingInfo, localPaintFlags);
         }
 
         if (m_scrollableArea) {
             if (isPaintingOverlayScrollbars && m_scrollableArea->hasScrollbars())
-                paintOverflowControlsForFragments(layerFragments, currentContext, localPaintingInfo);
+                paintOverflowControlsForFragments(layerFragments, *currentContext, localPaintingInfo);
         }
 
-        if (filterContext) {
-            applyFilters(context, paintingInfo, paintBehavior, backgroundRect);
+        if (state == SwitcherState::PaintingSource) {
+            state = endFiltersDrawSourceImage(currentContext);
+
+            if (state == SwitcherState::SourcePainted)
+                applyFilters(*currentContext, paintingInfo, paintBehavior, backgroundRect);
+
             // Painting a snapshot might have temporarily overriden the filter painting strategy,
             // make sure it gets reset.
             updateFilterPaintingStrategy();
         }
     }
-    
+
     if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
@@ -4238,7 +4254,7 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext& context, c
     LayoutRect transformedExtent = transparencyClipBox(*this, paginatedLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintingInfo.paintBehavior);
 
     auto clipRectOptions = paintFlags.contains(PaintLayerFlag::PaintingOverflowContents) ? clipRectOptionsForPaintingOverflowContents : clipRectDefaultOptions;
-    if (shouldHaveFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior))
+    if (shouldHaveLayerFiltersForPainting(context, paintFlags, paintingInfo.paintBehavior))
         clipRectOptions.add(ClipRectsOption::OutsideFilter);
     if (paintFlags & PaintLayerFlag::TemporaryClipRects)
         clipRectOptions.add(ClipRectsOption::Temporary);
@@ -6362,18 +6378,26 @@ RenderStyle RenderLayer::createReflectionStyle()
 
 RenderLayerFilters& RenderLayer::ensureLayerFilters()
 {
-    if (m_filters)
-        return *m_filters;
-    
-    m_filters = makeUnique<RenderLayerFilters>(*this);
-    m_filters->setPreferredFilterRenderingModes(renderer().page().preferredFilterRenderingModes());
-    m_filters->setFilterScale({ page().deviceScaleFactor(), page().deviceScaleFactor() });
-    return *m_filters;
+    auto& layerFilters = const_cast<RenderStyle&>(renderer().style()).ensureLayerFilters();
+    layerFilters.addReferenceFilterClient(*this);
+    return layerFilters;
 }
 
-void RenderLayer::clearLayerFilters()
+RenderLayerFilters* RenderLayer::layerFilters() const
 {
-    m_filters = nullptr;
+    return renderer().style().layerFilters();
+}
+
+void RenderLayer::removeReferenceFilterClients()
+{
+    if (auto* layerFilters = this->layerFilters())
+        layerFilters->removeReferenceFilterClient(*this);
+}
+
+void RenderLayer::removeLayerFilterClient()
+{
+    if (auto* layerFilters = this->layerFilters())
+        layerFilters->removeClient(renderer());
 }
 
 RenderLayerScrollableArea* RenderLayer::ensureLayerScrollableArea()
@@ -6404,14 +6428,14 @@ void RenderLayer::clearLayerScrollableArea()
 void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (renderer().style().filter().hasReferenceFilter())
-        ensureLayerFilters().updateReferenceFilterClients(renderer().style().filter());
+        ensureLayerFilters().addReferenceFilterClient(*this);
     else if (!shouldPaintWithFilters())
-        clearLayerFilters();
-    else if (m_filters)
-        m_filters->removeReferenceFilterClients();
+        removeLayerFilterClient();
+    else
+        removeReferenceFilterClients();
 
     auto filterChanged = [&] {
-        if (!m_filters)
+        if (!layerFilters())
             return false;
         if (diff < StyleDifference::RepaintLayer)
             return false;
@@ -6425,7 +6449,7 @@ void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const Rend
         return false;
     };
     if (filterChanged())
-        clearLayerFilters();
+        removeLayerFilterClient();
 }
 
 void RenderLayer::updateLayerScrollableArea()
@@ -6458,8 +6482,7 @@ void RenderLayer::updateFilterPaintingStrategy()
     if (!shouldPaintWithFilters()) {
         // Don't delete the whole filter info here, because we might use it
         // for loading SVG reference filter files.
-        if (m_filters)
-            m_filters->clearFilter();
+        removeLayerFilterClient();
 
         // Early-return only if we *don't* have reference filters.
         // For reference filters, we still want the FilterEffect graph built
@@ -6473,9 +6496,7 @@ void RenderLayer::updateFilterPaintingStrategy()
 
 IntOutsets RenderLayer::filterOutsets() const
 {
-    if (m_filters)
-        return m_filters->calculateOutsets(renderer(), localBoundingBox());
-    return renderer().style().filter().outsets();
+    return RenderLayerFilters::calculateOutsets(renderer(), localBoundingBox());
 }
 
 static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer)

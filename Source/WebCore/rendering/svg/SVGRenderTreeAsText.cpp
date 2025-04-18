@@ -63,6 +63,7 @@
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
+#include "SVGFilterRenderer.h"
 #include "SVGInlineTextBoxInlines.h"
 #include "SVGLineElement.h"
 #include "SVGPathElement.h"

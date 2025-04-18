@@ -41,6 +41,7 @@
 #include "PathTraversalState.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
+#include "RenderLayerFilters.h"
 #include "RenderStyleDifference.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
@@ -99,6 +100,7 @@ struct SameSizeAsRenderStyle : CanMakeCheckedPtr<SameSizeAsRenderStyle> {
     } m_inheritedFlags;
     void* pseudos;
     void* dataRefSvgStyle;
+    void* layerFilters;
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionCheck;
@@ -3814,6 +3816,13 @@ void RenderStyle::dumpDifferences(TextStream& ts, const RenderStyle& other) cons
 }
 #endif
 
+
+RenderLayerFilters& RenderStyle::ensureLayerFilters()
+{
+    if (!m_layerFilters)
+        m_layerFilters = makeUnique<RenderLayerFilters>();
+    return *m_layerFilters;
+}
 
 } // namespace WebCore
 

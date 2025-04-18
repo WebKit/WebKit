@@ -90,6 +90,8 @@ class RenderView;
 class Scrollbar;
 class TransformationMatrix;
 
+enum class SwitcherState : uint8_t;
+
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 enum CrossFrameBoundaries : bool { No, Yes };
@@ -915,6 +917,7 @@ public:
 
     bool shouldPaintWithFilters(OptionSet<PaintBehavior> = { }) const;
     bool requiresFullLayerImageForFilters() const;
+    bool requireSecurityOriginAccessForWidgets() const;
 
     Element* enclosingElement() const;
 
@@ -1180,15 +1183,18 @@ private:
     void clearLayerClipPath();
 
     RenderLayerFilters& ensureLayerFilters();
-    void clearLayerFilters();
+    RenderLayerFilters* layerFilters() const;
+    void removeReferenceFilterClients();
+    void removeLayerFilterClient();
 
     void updateLayerScrollableArea();
     void clearLayerScrollableArea();
 
-    bool shouldHaveFiltersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>) const;
-    RenderLayerFilters* filtersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>);
-    GraphicsContext* setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo&, OptionSet<PaintLayerFlag>&, const LayoutSize& offsetFromRoot, const ClipRect& backgroundRect);
-    void applyFilters(GraphicsContext& originalContext, const LayerPaintingInfo&, OptionSet<PaintBehavior>, const ClipRect& backgroundRect);
+    bool shouldHaveLayerFiltersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>) const;
+    RenderLayerFilters* layerFiltersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>);
+    SwitcherState beginFiltersDrawSourceImage(LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot, const LayoutRect& clipRect, GraphicsContext*&);
+    SwitcherState endFiltersDrawSourceImage(GraphicsContext*&);
+    void applyFilters(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, const ClipRect&);
 
     void paintLayer(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
     void paintLayerWithEffects(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
@@ -1466,7 +1472,6 @@ private:
 
     IntRect m_blockSelectionGapsBounds;
 
-    std::unique_ptr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
     std::unique_ptr<RenderLayerScrollableArea> m_scrollableArea;
 

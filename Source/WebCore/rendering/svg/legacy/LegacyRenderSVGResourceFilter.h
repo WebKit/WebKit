@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,74 +24,54 @@
 
 #pragma once
 
-#include "FilterResults.h"
-#include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceContainer.h"
-#include "SVGFilterRenderer.h"
+#include "RenderFilterResource.h"
 #include "SVGUnitTypes.h"
-#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class GraphicsContext;
 class SVGFilterElement;
 
-struct FilterData {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FilterData);
-    WTF_MAKE_NONCOPYABLE(FilterData);
-public:
-    enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
-
-    FilterData() = default;
-
-    RefPtr<SVGFilterRenderer> filter;
-
-    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
-    FloatRect sourceImageRect;
-
-    GraphicsContext* savedContext { nullptr };
-    FilterDataState state { PaintingSource };
-};
-
-class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
+class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer, public RenderFilterResource {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
     LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
-    virtual ~LegacyRenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;
     inline Ref<SVGFilterElement> protectedFilterElement() const;
-    bool isIdentity() const;
-
-    void removeAllClientsFromCache() override;
-    void removeClientFromCache(RenderElement&) override;
-
-    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
-    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
-
-    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     inline SVGUnitTypes::SVGUnitType filterUnits() const;
     inline SVGUnitTypes::SVGUnitType primitiveUnits() const;
 
+    RenderSVGResourceType resourceType() const final { return FilterResourceType; }
+
+    bool isIdentity() const;
+
+    FloatRect drawingRegion(RenderElement&) const;
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final;
+
+    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
+
     void markFilterForRepaint(FilterEffect&);
     void markFilterForRebuild();
 
-    RenderSVGResourceType resourceType() const override { return FilterResourceType; }
-
-    FloatRect drawingRegion(RenderObject&) const;
+    void removeAllClientsFromCache() final;
+    void removeClientFromCache(RenderElement&) final;
 
 private:
     void element() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
+    std::optional<std::tuple<Ref<Filter>, FloatRect>> createFilter(RenderElement&, const FloatRect& targetBoundingBox, GraphicsContext&) final;
+    DestinationColorSpace operatingColorSpace() const final;
+    DestinationColorSpace destinationColorSpace() const final { return DestinationColorSpace::LinearSRGB(); }
 
-    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+    ASCIILiteral renderName() const final { return "RenderSVGResourceFilter"_s; }
+
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterClient>> m_rendererFilterClientCache;
 };
-
-WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 
 } // namespace WebCore
 

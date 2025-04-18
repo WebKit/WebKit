@@ -401,7 +401,6 @@ rendering/RenderImageResource.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
-rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp

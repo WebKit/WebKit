@@ -673,7 +673,6 @@ rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilterPrimitive.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
 rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp

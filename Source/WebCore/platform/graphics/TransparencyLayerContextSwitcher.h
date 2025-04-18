@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,9 @@ public:
     TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, RefPtr<Filter>&&);
 
 private:
-    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;
-    void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace) override { endDrawSourceImage(destinationContext, colorSpace); }
-
-    void beginDrawSourceImage(GraphicsContext& destinationContext, float opacity = 1.f) override;
-    void endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) override;
+    SwitcherState beginDrawSourceImage(GraphicsContext& destinationContext, std::optional<FloatRect> clipRect = std::nullopt, float opacity = 1.f) final;
+    SwitcherState endDrawSourceImage(GraphicsContext& destinationContext) final;
+    void drawOutputImage(GraphicsContext& destinationContext, const DestinationColorSpace&) final;
 
     FilterStyleVector m_filterStyles;
 };
