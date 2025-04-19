@@ -43,6 +43,27 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
+RefPtr<CSSValue> consumePaint(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <paint> = none | <color> | <url> [none | <color>]? | context-fill | context-stroke
+    // https://svgwg.org/svg2-draft/painting.html#SpecifyingStrokePaint
+
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    auto url = consumeURL(range, state, { });
+    if (url) {
+        RefPtr<CSSValue> parsedValue;
+        if (range.peek().id() == CSSValueNone)
+            parsedValue = consumeIdent(range);
+        else
+            parsedValue = consumeColor(range, state);
+        if (parsedValue)
+            return CSSValueList::createSpaceSeparated(url.releaseNonNull(), parsedValue.releaseNonNull());
+        return url;
+    }
+    return consumeColor(range, state);
+}
+
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
     // <'paint-order'> = normal | [ fill || stroke || markers ]

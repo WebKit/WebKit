@@ -38,6 +38,10 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
+// MARK: <paint> consuming
+// https://svgwg.org/svg2-draft/painting.html#SpecifyingPaint
+RefPtr<CSSValue> consumePaint(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 // MARK: <'paint-order'> consuming
 // https://svgwg.org/svg2-draft/painting.html#PaintOrderProperty
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&, CSS::PropertyParserState&);

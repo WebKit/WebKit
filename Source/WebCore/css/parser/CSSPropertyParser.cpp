@@ -951,7 +951,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(CSS::PropertyParserState& st
             || numericParseResult == CSSFontVariantNumericParser::ParseResult::DisallowedValue)
             return false;
 
-        if (!eastAsianValue && (eastAsianValue = parseStylePropertyLonghand(CSSPropertyFontVariantEastAsian, state)))
+        if (!eastAsianValue && (eastAsianValue = consumeFontVariantEastAsian(m_range, state)))
             continue;
 
         if (m_context.propertySettings.cssFontVariantEmojiEnabled && !emojiValue && (emojiValue = parseStylePropertyLonghand(CSSPropertyFontVariantEmoji, state)))
@@ -1022,7 +1022,7 @@ bool CSSPropertyParser::consumeFontSynthesisShorthand(CSS::PropertyParserState& 
 
 bool CSSPropertyParser::consumeTextDecorationShorthand(CSS::PropertyParserState& state)
 {
-    auto line = CSSPropertyParsing::consumeTextDecorationLine(m_range);
+    auto line = consumeTextDecorationLine(m_range, state);
     if (!line || !m_range.atEnd())
         return false;
     addPropertyForCurrentShorthand(state, CSSPropertyTextDecorationLine, line.releaseNonNull());

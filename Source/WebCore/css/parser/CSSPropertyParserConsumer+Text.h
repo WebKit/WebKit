@@ -38,21 +38,21 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: <'text-shadow'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
-RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, CSS::PropertyParserState&);
+// MARK: <'text-indent'> consuming
+// https://drafts.csswg.org/css-text-3/#text-indent-property
+RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-// MARK: <'text-decoration-line'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-decoration-line-property
-RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&, CSS::PropertyParserState&);
+// MARK: <'text-transform'> consuming
+// https://drafts.csswg.org/css-text-3/#text-transform-property
+RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-// MARK: <'text-emphasis-style'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-emphasis-style-property
-RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&, CSS::PropertyParserState&);
+// MARK: <'hanging-punctuation'> consuming
+// https://drafts.csswg.org/css-text-3/#propdef-hanging-punctuation
+RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-// MARK: <'text-emphasis-position'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-emphasis-position-property
-RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&, CSS::PropertyParserState&);
+// MARK: <'text-autospace'> consuming
+// https://drafts.csswg.org/css-text-4/#text-autospace-property
+RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
