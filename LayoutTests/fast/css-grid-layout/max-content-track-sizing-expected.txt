@@ -1,0 +1,11 @@
+Test that resolving minmax(auto, <fixed>) with different width properties on grid items works properly under max-content constraints
+
+grid-template-columns: minmax(auto, 15px)
+
+XXXX
+PASS
+
+grid-template-columns: minmax(auto, 30px)
+
+XXXX
+PASS

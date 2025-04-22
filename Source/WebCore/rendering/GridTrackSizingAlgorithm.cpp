@@ -280,6 +280,14 @@ LayoutUnit GridTrackSizingAlgorithm::initialGrowthLimit(const GridTrackSize& tra
     return infinity;
 }
 
+bool GridTrackSizingAlgorithm::isUnderMaxContentConstraint() const
+{
+    // inline-grid sizes to its content by default, which is a max-content constraint
+    if (m_renderGrid->style().display() == DisplayType::InlineGrid)
+        return true;
+    return !availableSpace(m_direction).has_value();
+}
+
 void GridTrackSizingAlgorithm::sizeTrackToFitSingleSpanMasonryGroup(const GridSpan& span, MasonryMinMaxTrackSize& masonryIndefiniteItems, GridTrack& track)
 {
     auto trackPosition = span.startLine();
@@ -322,6 +330,14 @@ void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& spa
         if (trackSize.isFitContent())
             growthLimit = std::min(growthLimit, valueForLength(trackSize.fitContentTrackBreadth().length(), availableSpace().value_or(0)));
         track.setGrowthLimit(std::max(track.growthLimit(), growthLimit));
+    } else if (m_direction == GridTrackSizingDirection::ForColumns && isUnderMaxContentConstraint() && trackSize.hasIntrinsicMinTrackBreadth()) {
+        // Apply this logic only for columns to preserve original row sizing behavior
+        // Allow the track to grow to max-content under a max-content constraint if:
+        // The min track sizing function is intrinsic (e.g., auto, min-content, max-content).
+        // If the max track sizing function is fixed (e.g., 40px), only allow growth if the min track sizing function is 'auto'.
+        if (!trackSize.hasMinContentMaxTrackBreadth() && (!trackSize.hasFixedMaxTrackBreadth() || trackSize.hasAutoMinTrackBreadth()))
+
+            track.setGrowthLimit(std::max(track.growthLimit(), m_strategy->maxContentContributionForGridItem(gridItem, gridLayoutState)));
     }
 }
 
