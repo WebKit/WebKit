@@ -1,0 +1,22 @@
+function shouldBe(a, b) {
+    if (a !== b)
+        throw new Error(`Expected ${b} but got ${a}`);
+}
+
+let runs = 1e5;
+let called = 0;
+function test() {
+  const toString = String.prototype.toString;
+  try {
+    toString();
+  } catch {
+    called++;
+  }
+}
+noInline(test);
+
+for (let i = 0; i < runs; i++) {
+  test();
+}
+
+shouldBe(called, runs);

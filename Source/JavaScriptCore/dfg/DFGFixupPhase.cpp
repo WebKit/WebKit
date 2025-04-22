@@ -4071,14 +4071,6 @@ private:
             return;
         }
 
-        if (node->child1()->shouldSpeculateStringOrOther()) {
-            fixEdge<StringOrOtherUse>(node->child1());
-            node->convertToToString();
-            // It does not need to look up a toString property for the StringObject case. So we can clear NodeMustGenerate.
-            node->clearFlags(NodeMustGenerate);
-            return;
-        }
-
         if (node->child1()->shouldSpeculateStringObject()) {
             fixEdge<StringObjectUse>(node->child1());
             node->convertToToString();
