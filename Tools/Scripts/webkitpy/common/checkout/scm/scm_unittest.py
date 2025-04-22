@@ -47,17 +47,13 @@ from webkitpy.common.net.bugzilla import Attachment  # FIXME: This should not be
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.checkout.scm.git import Git, AmbiguousCommitError
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 
 from webkitpy.test.markers import xfail
 
 from webkitcorepy import OutputCapture
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
