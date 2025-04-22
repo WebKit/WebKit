@@ -55,12 +55,11 @@ public:
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
+    void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final;
     void drawRect(const FloatRect&, float borderThickness = 1) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
     void drawEllipse(const FloatRect&) final;
 
-    void applyStrokePattern() final;
-    void applyFillPattern() final;
     void drawPath(const Path&) final;
     void fillPath(const Path&) final;
     void strokePath(const Path&) final;
@@ -166,6 +165,9 @@ private:
     void setCGColorMatrix(const GraphicsColorMatrix&);
 #endif
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
+
+    void applyStrokePattern();
+    void applyFillPattern();
 
     // Returns the platform context for purposes of context state change, not draws.
     CGContextRef NODELETE contextForState() const;

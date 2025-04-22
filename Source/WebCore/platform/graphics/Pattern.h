@@ -91,6 +91,8 @@ public:
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }
 
+    Ref<Pattern> scaled(float scale);
+
 private:
     Pattern(SourceImage&&, const Parameters&);
 
@@ -98,5 +100,16 @@ private:
     Parameters m_parameters;
 };
 
+inline Ref<Pattern> Pattern::scaled(float scale)
+{
+    if (scale == 1.)
+        return Ref { *this };
+    auto parameters = m_parameters;
+    // The scale is prepended: patternSpaceTransform maps the tile into user space, and the caller
+    // has scaled user space by 1 / scale. Appending the scale would compensate the tile size but
+    // leave the tile origin divided by scale.
+    parameters.patternSpaceTransform = AffineTransform::makeScale({ scale, scale }) * m_parameters.patternSpaceTransform;
+    return Pattern::create(SourceImage { m_tileImage }, parameters);
+}
 
 } //namespace

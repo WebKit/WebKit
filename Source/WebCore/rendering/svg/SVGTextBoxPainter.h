@@ -61,6 +61,8 @@ private:
     void paintTextWithShadows(const Style::ComputedStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
     void paintText(const Style::ComputedStyle&, const Style::ComputedStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
+    void adjustPaintServerForTextScale(GraphicsContext&, float scalingFactor);
+
     bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, const RenderBoxModelObject&, const Style::ComputedStyle&);
     void releasePaintingResource(SVGPaintServerHandling&);
 
