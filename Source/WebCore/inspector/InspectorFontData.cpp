@@ -338,8 +338,6 @@ private:
     IntRect clipBounds() const final { return { }; }
 
 #if USE(CG)
-    void applyStrokePattern() final { }
-    void applyFillPattern() final { }
     void drawPath(const Path&) final { }
 #endif
 

@@ -354,6 +354,12 @@ fast/forms/validation-message-on-textarea.html [ Skip ]
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
+# Pattern-filled and pattern-stroked text under a scaling transform does not match the
+# shapes reference on Skia.
+webkit.org/b/291897 svg/transforms/transformed-text-decoration-fill-pattern.html [ ImageOnlyFailure ]
+webkit.org/b/291897 svg/transforms/transformed-text-fill-pattern-tile-origin.html [ ImageOnlyFailure ]
+webkit.org/b/291897 svg/transforms/transformed-text-stroke-pattern.html [ ImageOnlyFailure ]
+
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 

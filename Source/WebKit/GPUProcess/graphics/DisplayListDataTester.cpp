@@ -212,10 +212,6 @@ static void testValueItems(Tester& tester)
     items.append(DisplayList::StrokePath { testPath() });
     items.append(DisplayList::StrokeRect { rect, 2 });
     items.append(DisplayList::Translate { 3, 4 });
-#if USE(CG)
-    items.constructAndAppend(WTF::InPlaceType<DisplayList::ApplyFillPattern>);
-    items.constructAndAppend(WTF::InPlaceType<DisplayList::ApplyStrokePattern>);
-#endif
     items.append(DisplayList::BeginPage { rect });
     items.constructAndAppend(WTF::InPlaceType<DisplayList::EndPage>);
     items.append(DisplayList::SetURLForRect { URL { "https://webkit.org/"_s }, rect });

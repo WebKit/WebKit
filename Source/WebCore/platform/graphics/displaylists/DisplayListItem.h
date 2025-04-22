@@ -99,10 +99,6 @@ class StrokeEllipse;
 class StrokePath;
 class StrokeRect;
 class Translate;
-#if USE(CG)
-class ApplyFillPattern;
-class ApplyStrokePattern;
-#endif
 class BeginPage;
 class EndPage;
 class SetURLForRect;
@@ -170,10 +166,6 @@ using Item = Variant
     , StrokePath
     , StrokeRect
     , Translate
-#if USE(CG)
-    , ApplyFillPattern
-    , ApplyStrokePattern
-#endif
     , BeginPage
     , EndPage
     , SetURLForRect

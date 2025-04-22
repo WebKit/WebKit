@@ -2651,6 +2651,12 @@ webkit.org/b/139322 svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnly
 webkit.org/b/139322 svg/zoom/page/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnlyFailure ]
 webkit.org/b/139322 svg/text/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnlyFailure ]
 
+# Pattern-filled and pattern-stroked text under a scaling transform does not match the
+# shapes reference on Skia.
+webkit.org/b/291897 svg/transforms/transformed-text-decoration-fill-pattern.html [ ImageOnlyFailure ]
+webkit.org/b/291897 svg/transforms/transformed-text-fill-pattern-tile-origin.html [ ImageOnlyFailure ]
+webkit.org/b/291897 svg/transforms/transformed-text-stroke-pattern.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
