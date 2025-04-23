@@ -212,4 +212,10 @@ enum class TemporalDisambiguation : uint8_t {
     Reject,
 };
 
+enum class TemporalDateFormat : uint8_t {
+    Date,
+    YearMonth,
+    MonthDay
+};
+
 } // namespace JSC

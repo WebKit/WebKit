@@ -158,12 +158,10 @@ String TemporalPlainDate::toString(JSGlobalObject* globalObject, JSValue options
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaldate
-TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<TemporalOverflow> overflowValue)
+TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue itemValue, std::variant<JSObject*, TemporalOverflow> optionsOrOverflow)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto overflow = overflowValue.value_or(TemporalOverflow::Constrain);
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainDate>())
@@ -181,7 +179,8 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
             return { };
         }
 
-        auto plainDate = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), overflow);
+        auto overflow = TemporalOverflow::Constrain;
+        auto plainDate = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), TemporalDateFormat::Date, optionsOrOverflow, overflow);
         RETURN_IF_EXCEPTION(scope, { });
         return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate));
     }
@@ -295,16 +294,13 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
         return { };
     }
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
     double y = optionalYear.value_or(year());
     double m = optionalMonth.value_or(month());
     double d = optionalDay.value_or(day());
-    RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow));
+    RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, TemporalDateFormat::Date, y, m, d, overflow));
 }
 
 // https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds

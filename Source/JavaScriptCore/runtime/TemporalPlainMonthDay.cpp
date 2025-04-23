@@ -102,6 +102,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* g
     return TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(WTFMove(plainDate)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.with
 String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
@@ -117,6 +118,39 @@ String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue opt
     RETURN_IF_EXCEPTION(scope, { });
 
     return ISO8601::temporalMonthDayToString(m_plainMonthDay, calendarName);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.with
+ISO8601::PlainDate TemporalPlainMonthDay::with(JSGlobalObject* globalObject, JSObject* temporalMonthDayLike, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    rejectObjectWithCalendarOrTimeZone(globalObject, temporalMonthDayLike);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [optionalYear, optionalMonth, optionalDay] =
+        TemporalPlainDate::toPartialDate(globalObject, temporalMonthDayLike);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!optionalYear && !optionalMonth && !optionalDay) {
+        throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
+        return { };
+    }
+
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    double m = optionalMonth.value_or(month());
+    double d = optionalDay.value_or(day());
+    return TemporalCalendar::monthDayFromFields(globalObject, std::nullopt, m, d, overflow);
 }
 
 String TemporalPlainMonthDay::monthCode() const

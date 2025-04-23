@@ -133,13 +133,11 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateConstructorFuncFrom, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
     JSValue itemValue = callFrame->argument(0);
+
+    // Validate overflow
+    auto overflow = toTemporalOverflow(globalObject, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (itemValue.inherits<TemporalPlainDate>())
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), jsCast<TemporalPlainDate*>(itemValue)->plainDate())));
@@ -153,10 +151,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateConstructorFuncCompare, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* one = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* one = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* two = TemporalPlainDate::from(globalObject, callFrame->argument(1), std::nullopt);
+    auto* two = TemporalPlainDate::from(globalObject, callFrame->argument(1), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsNumber(TemporalCalendar::isoDateCompare(one->plainDate(), two->plainDate())));

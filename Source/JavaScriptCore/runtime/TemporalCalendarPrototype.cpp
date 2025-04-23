@@ -118,10 +118,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields, (JSGlobalO
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), overflow);
+    auto overflow = TemporalOverflow::Constrain;
+    ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), TemporalDateFormat::Date, options, overflow);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));
@@ -141,16 +139,13 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd, (JSGlobalObject* 
     if (!calendar->isISO8601())
         return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
 
-    auto* date = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* date = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(2));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, callFrame->argument(2));
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::PlainDate plainDate = calendar->addDurationToDate(globalObject, date->plainDate(), duration, overflow);
@@ -173,10 +168,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateUntil, (JSGlobalObject
     if (!calendar->isISO8601())
         return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
 
-    auto* date1 = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* date1 = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* date2 = TemporalPlainDate::from(globalObject, callFrame->argument(1), std::nullopt);
+    auto* date2 = TemporalPlainDate::from(globalObject, callFrame->argument(1), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(2));

@@ -356,6 +356,7 @@ String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
 String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
+bool validMonthCode(StringView);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);

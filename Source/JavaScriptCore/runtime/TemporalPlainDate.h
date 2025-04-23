@@ -51,7 +51,7 @@ public:
     static ISO8601::PlainDate toPlainDate(JSGlobalObject*, const ISO8601::Duration&);
     static std::array<std::optional<double>, 3> toPartialDate(JSGlobalObject*, JSObject*);
 
-    static TemporalPlainDate* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
+    static TemporalPlainDate* from(JSGlobalObject*, JSValue, std::variant<JSObject*, TemporalOverflow>);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
     ISO8601::PlainDate plainDate() const { return m_plainDate; }

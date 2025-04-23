@@ -44,3 +44,13 @@ const monthDay = new Temporal.PlainMonthDay(4, 29);
     shouldBe(monthDay.toLocaleString(), monthDay.toString());
 }
 
+shouldBe(Temporal.PlainMonthDay.prototype.with.length, 1);
+{
+    shouldBe(monthDay.with({ year: 2021, month: 3, day: 5 }).toString(), '03-05');
+    shouldBe(monthDay.with({ month: 3, day: 5 }).toString(), '03-05');
+    shouldBe(monthDay.with({ month: 3 }).toString(), '03-29');
+    shouldBe(monthDay.with({ day: 5 }).toString(), '04-05');
+
+    shouldBe(monthDay.with({ day: 31 }).toString(), '04-30');
+    shouldThrow(() => { monthDay.with({ day: 31 }, { overflow: 'reject' }); }, RangeError);
+}

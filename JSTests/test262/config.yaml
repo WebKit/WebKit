@@ -154,22 +154,6 @@ skip:
     - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/branding.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/prop-desc.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/with/basic.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/branding.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/builtin.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/copy-properties-not-undefined.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/length.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/name.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/not-a-constructor.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/options-object.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/options-undefined.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/options-wrong-type.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/order-of-operations.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/overflow-invalid-string.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/overflow-undefined.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/overflow-wrong-type.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/prop-desc.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/with/subclassing-ignored.js
 
     # Depends on Temporal.PlainYearMonth
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/basic.js
