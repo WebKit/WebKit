@@ -99,3 +99,13 @@ shouldBe(Temporal.PlainMonthDay.prototype.equals.length, 1);
     shouldBe(ones.equals(new Temporal.PlainMonthDay(2,1)), false);
     shouldBe(ones.equals(new Temporal.PlainMonthDay(1,2)), false);
 }
+
+shouldBe(Temporal.PlainMonthDay.prototype.toPlainDate.length, 1);
+{
+    shouldBe(monthDay.toPlainDate({ year: 2025 }).toString(), "2025-04-29");
+    shouldThrow(() => monthDay.toPlainDate({ notYear: 'whatever' }), TypeError);
+    const leapDay = new Temporal.PlainMonthDay(2, 29);
+    shouldBe(leapDay.toPlainDate({ year: 2020 }).toString(), "2020-02-29");
+    shouldBe(leapDay.toPlainDate({ year: 2025 }).toString(), "2025-02-28");
+
+}

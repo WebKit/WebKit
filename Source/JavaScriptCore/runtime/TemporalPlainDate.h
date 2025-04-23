@@ -49,7 +49,8 @@ public:
     DECLARE_INFO;
 
     static ISO8601::PlainDate toPlainDate(JSGlobalObject*, const ISO8601::Duration&);
-    static std::array<std::optional<double>, 3> toPartialDate(JSGlobalObject*, JSObject*);
+    static std::array<std::optional<double>, numberOfTemporalPlainDateUnits> toPartialDate(JSGlobalObject*, JSObject*);
+    static std::array<std::optional<double>, numberOfTemporalPlainYearMonthUnits> toYearMonth(JSGlobalObject*, JSObject*);
 
     static TemporalPlainDate* from(JSGlobalObject*, JSValue, std::variant<JSObject*, TemporalOverflow>);
 
