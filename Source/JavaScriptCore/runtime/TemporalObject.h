@@ -203,6 +203,7 @@ enum class TemporalOverflow : bool {
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
+String toTemporalCalendarName(JSGlobalObject*, JSObject*);
 
 enum class TemporalDisambiguation : uint8_t {
     Compatible,

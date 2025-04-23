@@ -102,6 +102,23 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* g
     return TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(WTFMove(plainDate)));
 }
 
+String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!options)
+        return toString();
+
+    String calendarName = toTemporalCalendarName(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return ISO8601::temporalMonthDayToString(m_plainMonthDay, calendarName);
+}
+
 String TemporalPlainMonthDay::monthCode() const
 {
     return ISO8601::monthCode(m_plainMonthDay.month());

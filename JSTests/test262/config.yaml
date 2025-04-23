@@ -80,7 +80,6 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/name.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/not-a-constructor.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/prop-desc.js
-    - test/built-ins/Temporal/PlainMonthDay/basic.js
     - test/built-ins/Temporal/PlainMonthDay/calendar-always.js
     - test/built-ins/Temporal/PlainMonthDay/from/argument-plainmonthday.js
     - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-string.js
@@ -141,15 +140,6 @@ skip:
     - test/built-ins/Temporal/PlainMonthDay/prototype/equals/not-a-constructor.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/equals/prop-desc.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/equals/year-zero.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/basic.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/branding.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/builtin.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/length.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/name.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/not-a-constructor.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/prop-desc.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toLocaleString/branding.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toLocaleString/prop-desc.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/basic.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/branding.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/builtin.js
@@ -160,13 +150,6 @@ skip:
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/name.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/not-a-constructor.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/prop-desc.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/branding.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-always.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-invalid-string.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-undefined.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/options-object.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/options-wrong-type.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/prop-desc.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/basic.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/branding.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/prop-desc.js
@@ -187,7 +170,6 @@ skip:
     - test/built-ins/Temporal/PlainMonthDay/prototype/with/overflow-wrong-type.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/with/prop-desc.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/with/subclassing-ignored.js
-    - test/built-ins/Temporal/PlainMonthDay/subclass.js
 
     # Depends on Temporal.PlainYearMonth
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/basic.js

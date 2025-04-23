@@ -723,6 +723,13 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSValue val)
     return toTemporalOverflow(globalObject, options);
 }
 
+String toTemporalCalendarName(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<String>(globalObject, options, globalObject->vm().propertyNames->calendarName,
+        { { ""_s, ""_s }, { "always"_s, "always"_s } },
+        "calendarName must be empty or \"always\""_s, ""_s);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-rejectobjectwithcalendarortimezone
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* object)
 {

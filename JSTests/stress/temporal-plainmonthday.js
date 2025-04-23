@@ -37,3 +37,10 @@ const monthDay = new Temporal.PlainMonthDay(4, 29);
     shouldThrow(() => new Temporal.PlainMonthDay(20, 1), RangeError);
     shouldThrow(() => new Temporal.PlainMonthDay(1, 40), RangeError);
 }
+
+{
+    shouldBe(monthDay.toString(), '04-29');
+    shouldBe(monthDay.toJSON(), monthDay.toString());
+    shouldBe(monthDay.toLocaleString(), monthDay.toString());
+}
+
