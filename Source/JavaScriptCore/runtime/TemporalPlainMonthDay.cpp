@@ -120,6 +120,94 @@ String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue opt
     return ISO8601::temporalMonthDayToString(m_plainMonthDay, calendarName);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporalmonthday
+TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSValue> optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    // Handle string case first so that string parsing errors (RangeError)
+    // can be thrown before options-related errors (TypeError);
+    // see step 4 of ToTemporalMonthDay
+    TemporalPlainMonthDay* result;
+    if (itemValue.isString()) {
+        auto string = itemValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        result = TemporalPlainMonthDay::from(globalObject, string);
+        RETURN_IF_EXCEPTION(scope, { });
+        // Overflow has to be validated even though it's not used;
+        // see step 9 of ToTemporalMonthDay
+        if (optionsValue)
+            toTemporalOverflow(globalObject, optionsValue.value());
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, result);
+    }
+
+    std::optional<JSObject*> options;
+    if (optionsValue) {
+        options = intlGetOptionsObject(globalObject, optionsValue.value());
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (itemValue.isObject()) {
+
+        if (itemValue.inherits<TemporalPlainMonthDay>())
+            return jsCast<TemporalPlainMonthDay*>(itemValue);
+
+        if (itemValue.inherits<TemporalPlainMonthDay>())
+            return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), jsCast<TemporalPlainMonthDay*>(itemValue)->plainMonthDay());
+
+        JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // FIXME: Implement after fleshing out Temporal.Calendar.
+        if (!calendar->inherits<TemporalCalendar>() || !jsCast<TemporalCalendar*>(calendar)->isISO8601()) {
+            throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
+            return { };
+        }
+
+        std::variant<JSObject*, TemporalOverflow> optionsOrOverflow = TemporalOverflow::Constrain;
+        if (options)
+            optionsOrOverflow = options.value();
+        auto overflow = TemporalOverflow::Constrain;
+        auto plainMonthDay = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), TemporalDateFormat::MonthDay, optionsOrOverflow, overflow);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto plainDate = ISO8601::PlainDate(1972, plainMonthDay.month(), plainMonthDay.day());
+        return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), WTFMove(plainDate));
+    }
+
+    throwTypeError(globalObject, scope, "can only convert to PlainMonthDay from object or string values"_s);
+    return { };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
+TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject, WTF::String string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaldatestring
+    // TemporalDateString :
+    //     CalendarDateTime
+    auto dateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::MonthDay);
+    if (dateTime) {
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
+        if (calendarOptional && StringView(calendarOptional->m_name) != String::fromLatin1("iso8601")) {
+            throwRangeError(globalObject, scope,
+                "MM-DD format is only valid with iso8601 calendar"_s);
+            return { };
+        }
+        auto dateWithoutYear = ISO8601::PlainDate(1972, plainDate.month(), plainDate.day());
+        if (!(timeZoneOptional && timeZoneOptional->m_z))
+            RELEASE_AND_RETURN(scope, TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTFMove(dateWithoutYear)));
+    }
+
+    throwRangeError(globalObject, scope,
+        makeString("Temporal.PlainMonthDay.from: invalid date string "_s, string));
+    return { };
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.with
 ISO8601::PlainDate TemporalPlainMonthDay::with(JSGlobalObject* globalObject, JSObject* temporalMonthDayLike, JSValue optionsValue)
 {

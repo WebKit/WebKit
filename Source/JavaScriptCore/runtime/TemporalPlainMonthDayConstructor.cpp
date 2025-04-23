@@ -35,6 +35,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalPlainMonthDayConstructor);
 
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainMonthDayConstructorFuncFrom);
+
 }
 
 #include "TemporalPlainMonthDayConstructor.lut.h"
@@ -45,6 +47,7 @@ const ClassInfo TemporalPlainMonthDayConstructor::s_info = { "Function"_s, &Base
 
 /* Source for TemporalPlainMonthDayConstructor.lut.h
 @begin temporalPlainMonthDayConstructorTable
+  from             temporalPlainMonthDayConstructorFuncFrom             DontEnum|Function 1
 @end
 */
 
@@ -127,6 +130,24 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalPlainMonthDay, (JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "PlainMonthDay"_s));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
+JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue itemValue = callFrame->argument(0);
+
+    if (itemValue.inherits<TemporalPlainMonthDay>()) {
+        // Overflow needs to be validated, although it's not used here
+        toTemporalOverflow(globalObject, callFrame->argument(1));
+        RETURN_IF_EXCEPTION(scope, { });
+
+        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), jsCast<TemporalPlainMonthDay*>(itemValue)->plainMonthDay())));
+    }
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainMonthDay::from(globalObject, itemValue, callFrame->argument(1))));
 }
 
 } // namespace JSC
