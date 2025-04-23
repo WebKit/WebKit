@@ -274,10 +274,16 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxDFGNodesInBasicBlockForPreciseAnalysis, 20000, Normal, "Disable precise but costly analysis and give conservative results if the number of DFG nodes in a block exceeds this threshold"_s) \
     \
     v(Bool, useConcurrentJIT, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread"_s) \
-    v(Unsigned, numberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
+    v(Unsigned, minNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
+    v(Unsigned, maxNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
+    v(Unsigned, numberOfBaselineCompilerThreads, computeNumberOfWorkerThreads(3, 2) - 1, Normal, nullptr) \
     v(Unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(3, 2) - 1, Normal, nullptr) \
     v(Unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS, 2) - 1, Normal, nullptr) \
     v(Unsigned, numberOfWasmCompilerThreads, computeNumberOfWorkerThreads(INT32_MAX, 2) - 1, Normal, nullptr) \
+    v(Unsigned, worklistLoadFactor, 1, Normal, nullptr) \
+    v(Unsigned, worklistBaselineLoadWeight, 1, Normal, nullptr) \
+    v(Unsigned, worklistDFGLoadWeight, 1, Normal, nullptr) \
+    v(Unsigned, worklistFTLLoadWeight, 1, Normal, nullptr) \
     v(Int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \

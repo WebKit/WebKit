@@ -88,6 +88,8 @@ public:
 private:
     JITWorklist();
 
+    void wakeThreads(const AbstractLocker&, unsigned enqueuedTier);
+
     size_t queueLength(const AbstractLocker&) const;
 
     void waitUntilAllPlansForVMAreReady(VM&);
@@ -102,6 +104,7 @@ private:
     unsigned m_numberOfActiveThreads { 0 };
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_ongoingCompilationsPerTier { 0, 0, 0 };
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_maximumNumberOfConcurrentCompilationsPerTier;
+    std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_loadWeightsPerTier;
 
     Vector<Ref<JITWorklistThread>> m_threads;
 

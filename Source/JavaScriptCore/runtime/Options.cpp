@@ -586,8 +586,16 @@ static void overrideDefaults()
 
 #if OS(DARWIN) && CPU(ARM64)
     Options::numberOfGCMarkers() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+
+    Options::minNumberOfWorklistThreads() = std::min<unsigned>(1, kernTCSMAwareNumberOfProcessorCores());
+    Options::maxNumberOfWorklistThreads() = std::min<unsigned>(6, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+    Options::worklistLoadFactor() = 4;
+    Options::worklistBaselineLoadWeight() = 1;
+    Options::worklistDFGLoadWeight() = 2;
+    Options::worklistFTLLoadWeight() = 4;
 #endif
 
 #if OS(LINUX) && CPU(ARM)

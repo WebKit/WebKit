@@ -80,7 +80,6 @@ auto JITWorklistThread::poll(const AbstractLocker& locker) -> PollResult
         auto& queue = m_worklist.m_queues[i];
         if (queue.isEmpty())
             continue;
-
         if (m_worklist.m_ongoingCompilationsPerTier[i] >= m_worklist.m_maximumNumberOfConcurrentCompilationsPerTier[i])
             continue;
 
