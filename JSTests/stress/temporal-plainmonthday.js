@@ -109,3 +109,8 @@ shouldBe(Temporal.PlainMonthDay.prototype.toPlainDate.length, 1);
     shouldBe(leapDay.toPlainDate({ year: 2025 }).toString(), "2025-02-28");
 
 }
+
+shouldBe(Temporal.PlainMonthDay.prototype.valueOf.length, 0);
+{
+    shouldThrow(() => monthDay.valueOf(), TypeError);
+}

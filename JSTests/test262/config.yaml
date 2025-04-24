@@ -80,9 +80,6 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/name.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/not-a-constructor.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/prop-desc.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/basic.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/branding.js
-    - test/built-ins/Temporal/PlainMonthDay/prototype/valueOf/prop-desc.js
 
     # Depends on Temporal.PlainYearMonth
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/basic.js
