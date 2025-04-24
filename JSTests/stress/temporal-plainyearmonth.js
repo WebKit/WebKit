@@ -37,3 +37,9 @@ const yearMonth = new Temporal.PlainYearMonth(2025, 4);
     shouldThrow(() => new Temporal.PlainYearMonth(275761, 1), RangeError);
     shouldThrow(() => new Temporal.PlainYearMonth(2025, 20), RangeError);
 }
+
+{
+    shouldBe(yearMonth.toString(), '2025-04');
+    shouldBe(yearMonth.toJSON(), yearMonth.toString());
+    shouldBe(yearMonth.toLocaleString(), yearMonth.toString());
+}

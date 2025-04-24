@@ -57,6 +57,12 @@ public:
 
     String monthCode() const;
 
+    String toString(JSGlobalObject*, JSValue options) const;
+    String toString() const
+    {
+        return ISO8601::temporalYearMonthToString(m_plainYearMonth, ""_s);
+    }
+
     DECLARE_VISIT_CHILDREN;
 
 private:

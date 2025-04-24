@@ -376,6 +376,7 @@ String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
+String temporalYearMonthToString(PlainYearMonth, StringView);
 String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
 bool validMonthCode(StringView);

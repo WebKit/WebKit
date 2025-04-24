@@ -1449,6 +1449,16 @@ String temporalDateToString(PlainDate plainDate)
     return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
 }
 
+String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName)
+{
+    if (calendarName == "always"_s) {
+        // TODO: print the correct calendar ID when calendars are fully implemented
+        auto first = temporalDateToString(plainYearMonth.isoPlainDate());
+        return makeString(first, "[u-ca=iso8601]"_s);
+    }
+    return temporalDateToString(plainYearMonth.year(), plainYearMonth.month());
+}
+
 String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName)
 {
     if (calendarName == "always"_s) {
