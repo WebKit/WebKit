@@ -300,27 +300,39 @@ private:
             return handleStoreBeforeClobber(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && ((candidate->opcode() == Store8 && candidate->child(0) == value)
-                            || ((candidate->opcode() == Load8Z || candidate->opcode() == Load8S)
-                                && candidate == value));
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Store8 && candidate->child(0) == value)
+                        return true;
+                    if ((candidate->opcode() == Load8Z || candidate->opcode() == Load8S) && candidate == value)
+                        return true;
+                    return false;
                 });
         case Store16:
             return handleStoreBeforeClobber(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && ((candidate->opcode() == Store16 && candidate->child(0) == value)
-                            || ((candidate->opcode() == Load16Z || candidate->opcode() == Load16S)
-                                && candidate == value));
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Store16 && candidate->child(0) == value)
+                        return true;
+                    if ((candidate->opcode() == Load16Z || candidate->opcode() == Load16S) && candidate == value)
+                        return true;
+                    return false;
                 });
         case Store:
             return handleStoreBeforeClobber(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && ((candidate->opcode() == Store && candidate->child(0) == value)
-                            || (candidate->opcode() == Load && candidate == value));
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Store && candidate->child(0) == value)
+                        return true;
+                    if (candidate->opcode() == Load && candidate == value)
+                        return true;
+                    if (memory->accessWidth() == Width32 && candidate->opcode() == Load32S && candidate == value)
+                        return true;
+                    return false;
                 });
         default:
             return false;
@@ -360,15 +372,43 @@ private:
             handleMemoryValue(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && (candidate->opcode() == Load8Z || candidate->opcode() == Store8);
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Load8Z) {
+                        if (candidate->type() == type)
+                            return true;
+                        if (candidate->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    if (candidate->opcode() == Store8) {
+                        if (candidate->child(0)->type() == type)
+                            return true;
+                        if (candidate->child(0)->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    return false;
                 },
                 [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load8Z) {
+                        if (match->type() == type)
+                            return nullptr;
+
+                        if (match->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match);
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
                     if (match->opcode() == Store8) {
+                        auto* target = match->child(0);
+                        if (match->child(0)->type() == Int64 && type == Int32) {
+                            target = m_proc.add<Value>(Trunc, m_value->origin(), target);
+                            fixups.append(target);
+                        }
+
                         Value* mask = m_proc.add<Const32Value>(m_value->origin(), 0xff);
                         fixups.append(mask);
-                        Value* zext = m_proc.add<Value>(
-                            BitAnd, m_value->origin(), match->child(0), mask);
+                        Value* zext = m_proc.add<Value>(BitAnd, m_value->origin(), target, mask);
                         fixups.append(zext);
                         return zext;
                     }
@@ -381,13 +421,41 @@ private:
             handleMemoryValue(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && (candidate->opcode() == Load8S || candidate->opcode() == Store8);
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Load8S) {
+                        if (candidate->type() == type)
+                            return true;
+                        if (candidate->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    if (candidate->opcode() == Store8) {
+                        if (candidate->child(0)->type() == type)
+                            return true;
+                        if (candidate->child(0)->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    return false;
                 },
                 [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load8S) {
+                        if (match->type() == type)
+                            return nullptr;
+
+                        if (match->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match);
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
                     if (match->opcode() == Store8) {
-                        Value* sext = m_proc.add<Value>(
-                            SExt8, m_value->origin(), match->child(0));
+                        auto* target = match->child(0);
+                        if (match->child(0)->type() == Int64 && type == Int32) {
+                            target = m_proc.add<Value>(Trunc, m_value->origin(), target);
+                            fixups.append(target);
+                        }
+
+                        Value* sext = m_proc.add<Value>(SExt8, m_value->origin(), target);
                         fixups.append(sext);
                         return sext;
                     }
@@ -400,15 +468,43 @@ private:
             handleMemoryValue(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && (candidate->opcode() == Load16Z || candidate->opcode() == Store16);
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Load16Z) {
+                        if (candidate->type() == type)
+                            return true;
+                        if (candidate->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    if (candidate->opcode() == Store16) {
+                        if (candidate->child(0)->type() == type)
+                            return true;
+                        if (candidate->child(0)->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    return false;
                 },
                 [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load16Z) {
+                        if (match->type() == type)
+                            return nullptr;
+
+                        if (match->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match);
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
                     if (match->opcode() == Store16) {
+                        auto* target = match->child(0);
+                        if (match->child(0)->type() == Int64 && type == Int32) {
+                            target = m_proc.add<Value>(Trunc, m_value->origin(), target);
+                            fixups.append(target);
+                        }
+
                         Value* mask = m_proc.add<Const32Value>(m_value->origin(), 0xffff);
                         fixups.append(mask);
-                        Value* zext = m_proc.add<Value>(
-                            BitAnd, m_value->origin(), match->child(0), mask);
+                        Value* zext = m_proc.add<Value>(BitAnd, m_value->origin(), target, mask);
                         fixups.append(zext);
                         return zext;
                     }
@@ -420,13 +516,73 @@ private:
         case Load16S: {
             handleMemoryValue(
                 ptr, range, [&] (MemoryValue* candidate) -> bool {
-                    return candidate->offset() == offset
-                        && (candidate->opcode() == Load16S || candidate->opcode() == Store16);
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Load16S) {
+                        if (candidate->type() == type)
+                            return true;
+                        if (candidate->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    if (candidate->opcode() == Store16) {
+                        if (candidate->child(0)->type() == type)
+                            return true;
+                        if (candidate->child(0)->type() == Int64 && type == Int32)
+                            return true;
+                    }
+                    return false;
                 },
                 [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load16S) {
+                        if (match->type() == type)
+                            return nullptr;
+
+                        if (match->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match);
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
                     if (match->opcode() == Store16) {
-                        Value* sext = m_proc.add<Value>(
-                            SExt16, m_value->origin(), match->child(0));
+                        auto* target = match->child(0);
+                        if (match->child(0)->type() == Int64 && type == Int32) {
+                            target = m_proc.add<Value>(Trunc, m_value->origin(), target);
+                            fixups.append(target);
+                        }
+                        Value* sext = m_proc.add<Value>(SExt16, m_value->origin(), target);
+                        fixups.append(sext);
+                        return sext;
+                    }
+                    return nullptr;
+                });
+            break;
+        }
+
+        case Load32S: {
+            handleMemoryValue(
+                ptr, range, [&] (MemoryValue* candidate) -> bool {
+                    if (candidate->offset() != offset)
+                        return false;
+                    if (candidate->opcode() == Load32S)
+                        return true;
+                    if (candidate->opcode() == Store && candidate->accessWidth() == Width32) {
+                        if (candidate->child(0)->type() == Int32)
+                            return true;
+                        if (candidate->child(0)->type() == Int64)
+                            return true;
+                    }
+                    return false;
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load32S)
+                        return nullptr;
+                    if (match->opcode() == Store && match->accessWidth() == Width32) {
+                        auto* target = match->child(0);
+                        if (match->child(0)->type() == Int64) {
+                            target = m_proc.add<Value>(Trunc, m_value->origin(), target);
+                            fixups.append(target);
+                        }
+                        Value* sext = m_proc.add<Value>(SExt32, m_value->origin(), target);
                         fixups.append(sext);
                         return sext;
                     }

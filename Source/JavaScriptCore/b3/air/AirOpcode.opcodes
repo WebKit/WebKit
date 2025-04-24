@@ -800,7 +800,7 @@ ZeroExtend8To32 U:G:8, ZD:G:32
     x86: Addr, Tmp as load8
     x86: Index, Tmp as load8
 
-SignExtend8To32 U:G:8, D:G:32
+SignExtend8To32 U:G:8, ZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp as load8SignedExtendTo32
     x86: Index, Tmp as load8SignedExtendTo32
@@ -810,7 +810,7 @@ ZeroExtend16To32 U:G:16, ZD:G:32
     x86: Addr, Tmp as load16
     x86: Index, Tmp as load16
 
-SignExtend16To32 U:G:16, D:G:32
+SignExtend16To32 U:G:16, ZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp as load16SignedExtendTo32
     x86: Index, Tmp as load16SignedExtendTo32
@@ -915,12 +915,19 @@ Store8 U:G:8, D:G:8
 arm: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
 
-Load8SignedExtendTo32 U:G:8, D:G:32
+Load8SignedExtendTo32 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq8SignedExtendTo32 U:G:8, D:G:32 /effects
+arm: LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
+
+arm64: LoadAcq8SignedExtendTo64 U:G:8, D:G:64 /effects
+    SimpleAddr, Tmp
+
+64: Load8SignedExtendTo64 U:G:8, D:G:64
+    Addr, Tmp
+    Index, Tmp
 
 Load16 U:G:16, ZD:G:32
     Addr, Tmp
@@ -929,12 +936,19 @@ Load16 U:G:16, ZD:G:32
 arm: LoadAcq16 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-Load16SignedExtendTo32 U:G:16, D:G:32
+Load16SignedExtendTo32 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq16SignedExtendTo32 U:G:16, D:G:32 /effects
+arm: LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
+
+arm64: LoadAcq16SignedExtendTo64 U:G:16, D:G:64 /effects
+    SimpleAddr, Tmp
+
+64: Load16SignedExtendTo64 U:G:16, D:G:64
+    Addr, Tmp
+    Index, Tmp
 
 Store16 U:G:16, D:G:16
     Tmp, Index
@@ -950,8 +964,15 @@ arm: StoreRel16 U:G:16, D:G:16 /effects
 arm: LoadAcq32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
+arm64: LoadAcq32SignedExtendTo64 U:G:32, D:G:64 /effects
+    SimpleAddr, Tmp
+
 arm: StoreRel32 U:G:32, ZD:G:32 /effects
     Tmp, SimpleAddr
+
+64: Load32SignedExtendTo64 U:G:32, D:G:64
+    Addr, Tmp
+    Index, Tmp
 
 arm64: LoadAcq64 U:G:64, ZD:G:64 /effects
     SimpleAddr, Tmp

@@ -985,14 +985,14 @@ void testBranch64Equal(int64_t left, int64_t right)
     thenCase->appendNewControlValue(
         proc, Return, Origin(),
         thenCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
 
     bool elseResult = false;
     elseCase->appendNewControlValue(
         proc, Return, Origin(),
         elseCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
 
     CHECK(compileAndRun<bool>(proc, left, right) == (left == right));
@@ -1017,14 +1017,14 @@ void testBranch64EqualImm(int64_t left, int64_t right)
     thenCase->appendNewControlValue(
         proc, Return, Origin(),
         thenCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
 
     bool elseResult = false;
     elseCase->appendNewControlValue(
         proc, Return, Origin(),
         elseCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
 
     CHECK(compileAndRun<bool>(proc, left) == (left == right));
@@ -1051,14 +1051,14 @@ void testBranch64EqualMem(int64_t left, int64_t right)
     thenCase->appendNewControlValue(
         proc, Return, Origin(),
         thenCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
 
     bool elseResult = false;
     elseCase->appendNewControlValue(
         proc, Return, Origin(),
         elseCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
 
     CHECK(compileAndRun<bool>(proc, &left, right) == (left == right));
@@ -1085,14 +1085,14 @@ void testBranch64EqualMemImm(int64_t left, int64_t right)
     thenCase->appendNewControlValue(
         proc, Return, Origin(),
         thenCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
 
     bool elseResult = false;
     elseCase->appendNewControlValue(
         proc, Return, Origin(),
         elseCase->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
 
     CHECK(compileAndRun<bool>(proc, &left) == (left == right));
@@ -1114,7 +1114,7 @@ void testStore8Load8Z(int32_t value)
 
     root->appendNewControlValue(
         proc, Return, Origin(),
-        root->appendNew<MemoryValue>(proc, Load8Z, Origin(), ptr));
+        root->appendNew<MemoryValue>(proc, Load8Z, Int32, Origin(), ptr));
 
     CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<uint8_t>(value));
 }
@@ -1135,7 +1135,7 @@ void testStore16Load16Z(int32_t value)
 
     root->appendNewControlValue(
         proc, Return, Origin(),
-        root->appendNew<MemoryValue>(proc, Load16Z, Origin(), ptr));
+        root->appendNew<MemoryValue>(proc, Load16Z, Int32, Origin(), ptr));
 
     CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<uint16_t>(value));
 }

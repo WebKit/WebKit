@@ -1215,9 +1215,11 @@ private:
         auto getLoadPromise = [&] (Value* load) -> ArgPromise {
             switch (m_value->opcode()) {
             case B3::Store:
-                if (load->opcode() != B3::Load)
-                    return ArgPromise();
-                break;
+                if (load->opcode() == B3::Load)
+                    break;
+                if (m_value->as<MemoryValue>()->accessWidth() == Width32 && load->opcode() == B3::Load32S)
+                    break;
+                return ArgPromise();
             case B3::Store8:
                 if (load->opcode() != B3::Load8Z && load->opcode() != B3::Load8S)
                     return ArgPromise();
@@ -1253,12 +1255,13 @@ private:
             return true;
         }
 
-        if (!isValidForm(opcode, Arg::Tmp, storeAddr.kind()))
-            return false;
+        if (isValidForm(opcode, Arg::Tmp, storeAddr.kind())) {
+            loadPromise.consume(*this);
+            append(trappingInst(m_value, loadPromise.inst(opcode, m_value, tmp(otherValue), storeAddr)));
+            return true;
+        }
 
-        loadPromise.consume(*this);
-        append(trappingInst(m_value, loadPromise.inst(opcode, m_value, tmp(otherValue), storeAddr)));
-        return true;
+        return false;
     }
 
     Inst createStore(Air::Kind move, Value* value, const Arg& dest)
@@ -1835,23 +1838,22 @@ private:
                     //     @2 = Const32(...)
                     //     @3 = LessThan(@1, @2)
                     //     Branch(@3)
-                
+
                     if (relCond.isSignedCond()) {
                         if (Inst result = tryCompareLoadImm(Width8, Load8S, Arg::Signed))
                             return result;
-                    }
-                
-                    if (relCond.isUnsignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Width8, Load8Z, Arg::Unsigned))
+
+                        if (Inst result = tryCompareLoadImm(Width16, Load16S, Arg::Signed))
+                            return result;
+
+                        if (Inst result = tryCompareLoadImm(Width32, Load32S, Arg::Signed))
                             return result;
                     }
 
-                    if (relCond.isSignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Width16, Load16S, Arg::Signed))
-                            return result;
-                    }
-                
                     if (relCond.isUnsignedCond()) {
+                        if (Inst result = tryCompareLoadImm(Width8, Load8Z, Arg::Unsigned))
+                            return result;
+
                         if (Inst result = tryCompareLoadImm(Width16, Load16Z, Arg::Unsigned))
                             return result;
                     }
@@ -2018,6 +2020,9 @@ private:
                     if (Inst result = tryTestLoadImm(Width16, Arg::Signed, Load16S))
                         return result;
 
+                    if (Inst result = tryTestLoadImm(Width32, Arg::Signed, Load32S))
+                        return result;
+
                     // This allows us to use a 32-bit test for 64-bit BitAnd if the immediate is
                     // representable as an unsigned 32-bit value. The logic involved is the same
                     // as if we were pondering using a 32-bit test for
@@ -2025,7 +2030,7 @@ private:
                     // to worry about high bits. So, we use the "Signed" version of this helper.
                     if (Inst result = tryTestLoadImm(Width32, Arg::Signed, Load))
                         return result;
-                    
+
                     // This is needed to handle 32-bit test for arbitrary 32-bit immediates.
                     if (Inst result = tryTestLoadImm(width, Arg::Unsigned, Load))
                         return result;
@@ -2099,6 +2104,11 @@ private:
                 }
 
                 if (Inst result = tryTest(Width16, loadPromise(value, Load16S), Arg::bitImm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
+
+                if (Inst result = tryTest(Width32, loadPromise(value, Load32S), Arg::bitImm(-1))) {
                     commitInternal(value);
                     return result;
                 }
@@ -3024,12 +3034,12 @@ private:
         }
             
         case Load8S: {
-            Air::Kind kind = Load8SignedExtendTo32;
+            Air::Kind kind = opcodeForType(Load8SignedExtendTo32, Load8SignedExtendTo64, m_value->type());
             if (m_value->as<MemoryValue>()->hasFence()) {
                 if (isX86())
                     kind.effects = true;
                 else
-                    kind = LoadAcq8SignedExtendTo32;
+                    kind = opcodeForType(LoadAcq8SignedExtendTo32, LoadAcq8SignedExtendTo64, m_value->type());
             }
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
@@ -3048,12 +3058,12 @@ private:
         }
 
         case Load16S: {
-            Air::Kind kind = Load16SignedExtendTo32;
+            Air::Kind kind = opcodeForType(Load16SignedExtendTo32, Load16SignedExtendTo64, m_value->type());
             if (m_value->as<MemoryValue>()->hasFence()) {
                 if (isX86())
                     kind.effects = true;
                 else
-                    kind = LoadAcq16SignedExtendTo32;
+                    kind = opcodeForType(LoadAcq16SignedExtendTo32, LoadAcq16SignedExtendTo64, m_value->type());
             }
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
@@ -3066,6 +3076,18 @@ private:
                     kind.effects = true;
                 else
                     kind = LoadAcq16;
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
+            return;
+        }
+
+        case Load32S: {
+            Air::Kind kind = Load32SignedExtendTo64;
+            if (m_value->as<MemoryValue>()->hasFence()) {
+                if (isX86())
+                    kind.effects = true;
+                else
+                    kind = LoadAcq32SignedExtendTo64;
             }
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;

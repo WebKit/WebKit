@@ -395,10 +395,11 @@ public:
             case Load8S:
             case Load16Z:
             case Load16S:
+            case Load32S:
                 VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
-                VALIDATE(value->type() == Int32, ("At ", *value));
+                VALIDATE(value->type().isInt(), ("At ", *value));
                 validateFence(value);
                 validateStackAccess(value);
                 break;
