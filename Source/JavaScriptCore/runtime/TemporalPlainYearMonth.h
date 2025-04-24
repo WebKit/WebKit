@@ -71,6 +71,9 @@ public:
         return ISO8601::temporalYearMonthToString(m_plainYearMonth, ""_s);
     }
 
+    ISO8601::Duration until(JSGlobalObject*, TemporalPlainYearMonth*, JSValue options);
+    ISO8601::Duration since(JSGlobalObject*, TemporalPlainYearMonth*, JSValue options);
+
     DECLARE_VISIT_CHILDREN;
 
 private:

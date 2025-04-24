@@ -665,8 +665,7 @@ static ISO8601::Duration adjustDateDurationRecord(JSGlobalObject* globalObject, 
     return result;
 }
 
-// TODO: Use PlainDateTime instead of a tuple, once that's added
-static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
+std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> TemporalDuration::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
 {
     return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, isoTime);
 }
@@ -693,7 +692,7 @@ static Int128 getEpochNanosecondsFor(std::tuple<ISO8601::PlainDate, ISO8601::Pla
 
 // https://tc39.es/proposal-temporal/#sec-temporal-nudgetocalendarunit
 // NudgeToCalendarUnit ( sign, duration, destEpochNs, isoDateTime, timeZone, calendar, increment, unit, roundingMode )
-static Nudged nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign, const ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, double increment, TemporalUnit unit, RoundingMode roundingMode)
+Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign, const ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, double increment, TemporalUnit unit, RoundingMode roundingMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -876,7 +875,7 @@ static constexpr TemporalUnit unitInTable(int32_t i)
 
 // https://tc39.es/proposal-temporal/#sec-temporal-bubblerelativeduration
 // BubbleRelativeDuration ( sign, duration, nudgedEpochNs, isoDateTime, timeZone, calendar, largestUnit, smallestUnit )
-static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject* globalObject, int32_t sign, ISO8601::InternalDuration duration, Int128 nudgedEpochNs, ISO8601::PlainDate isoDate, TemporalUnit largestUnit, TemporalUnit smallestUnit)
+ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObject* globalObject, int32_t sign, ISO8601::InternalDuration duration, Int128 nudgedEpochNs, ISO8601::PlainDate isoDate, TemporalUnit largestUnit, TemporalUnit smallestUnit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

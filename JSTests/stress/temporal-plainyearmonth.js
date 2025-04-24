@@ -146,3 +146,36 @@ shouldBe(Temporal.PlainYearMonth.prototype.subtract.length, 1);
     shouldBe(Temporal.PlainYearMonth.from('2025-04').subtract({ months: 1 }).toString(), '2025-03');
     shouldThrow(() => { yearMonth.subtract({ years: 300000 }); }, RangeError);
 }
+
+shouldBe(Temporal.PlainYearMonth.prototype.since.length, 1);
+shouldBe(Temporal.PlainYearMonth.prototype.until.length, 1);
+{
+    shouldBe(yearMonth.since('2024-04-01').toString(), 'P1Y');
+    shouldBe(yearMonth.until('2024-04-01').toString(), '-P1Y');
+    shouldBe(yearMonth.since('2024-04-01', { largestUnit: 'month' }).toString(), 'P12M');
+    shouldBe(yearMonth.until('2024-04-01', { largestUnit: 'month' }).toString(), '-P12M');
+    shouldBe(yearMonth.since('2024-03-30').toString(), 'P1Y1M');
+    shouldBe(yearMonth.until('2024-03-30').toString(), '-P1Y1M');
+    shouldBe(yearMonth.since('2024-03-30', { smallestUnit: 'year' }).toString(), 'P1Y');
+    shouldBe(yearMonth.until('2024-03-30', { smallestUnit: 'year' }).toString(), '-P1Y');
+
+    shouldBe(yearMonth.since('2025-06', { largestUnit: 'month' }).toString(), '-P2M');
+    shouldBe(yearMonth.until('2025-06', { largestUnit: 'month' }).toString(), 'P2M');
+    shouldBe(yearMonth.since('2025-06', { smallestUnit: 'year' }).toString(), 'PT0S');
+    shouldBe(yearMonth.until('2025-06', { smallestUnit: 'year' }).toString(), 'PT0S');
+
+    shouldBe(yearMonth.since('2020-03-15', { largestUnit: 'month' }).toString(), 'P61M');
+    shouldBe(yearMonth.until('2020-03-15', { largestUnit: 'month' }).toString(), '-P61M');
+    shouldBe(yearMonth.since('2019-12-15', { roundingMode: 'halfExpand', roundingIncrement: 3 }).toString(), 'P5Y3M');
+    shouldBe(yearMonth.until('2019-12-15', { roundingMode: 'halfExpand', roundingIncrement: 3 }).toString(), '-P5Y3M');
+
+    const earlier = Temporal.PlainYearMonth.from("2019-01");
+    const later = Temporal.PlainYearMonth.from("2021-09");
+    shouldBe(later.since(earlier, { smallestUnit: "years", roundingIncrement: 4, roundingMode: "halfExpand" }).toString(), "P4Y");
+    shouldBe(earlier.until(later, { smallestUnit: "years", roundingIncrement: 4, roundingMode: "halfExpand" }).toString(), "P4Y");
+
+    shouldThrow(() => { yearMonth.until('2019-02', { smallestUnit: 'week' }); }, RangeError);
+    shouldThrow(() => { yearMonth.until('2019-02', { smallestUnit: 'day' }); }, RangeError);
+    shouldThrow(() => { yearMonth.until('2019-02', { largestUnit: 'week' }); }, RangeError);
+    shouldThrow(() => { yearMonth.until('2019-02', { largestUnit: 'year', smallestUnit: 'day' }); }, RangeError);
+}

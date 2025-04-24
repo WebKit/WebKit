@@ -227,6 +227,61 @@ ISO8601::PlainDate TemporalPlainYearMonth::with(JSGlobalObject* globalObject, JS
     return TemporalCalendar::yearMonthFromFields(globalObject, y, m, overflow);
 }
 
+ISO8601::Duration TemporalPlainYearMonth::until(JSGlobalObject* globalObject, TemporalPlainYearMonth* other, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool calendarsMatch = calendar()->equals(globalObject, other->calendar());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarsMatch) {
+        throwRangeError(globalObject, scope, "calendars must match"_s);
+        return { };
+    }
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Month, TemporalUnit::Year);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = TemporalCalendar::differenceTemporalPlainYearMonth(
+        globalObject, false, plainYearMonth(), other->plainYearMonth(), increment, smallestUnit, largestUnit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return result;
+}
+
+ISO8601::Duration TemporalPlainYearMonth::since(JSGlobalObject* globalObject, TemporalPlainYearMonth* other, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool calendarsMatch = calendar()->equals(globalObject, other->calendar());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarsMatch) {
+        throwRangeError(globalObject, scope, "calendars must match"_s);
+        return { };
+    }
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Month, TemporalUnit::Year);
+    RETURN_IF_EXCEPTION(scope, { });
+    roundingMode = negateTemporalRoundingMode(roundingMode);
+
+    auto result = TemporalCalendar::differenceTemporalPlainYearMonth(
+        globalObject, true, plainYearMonth(), other->plainYearMonth(), increment, smallestUnit, largestUnit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return result;
+}
+
 String TemporalPlainYearMonth::monthCode() const
 {
     return ISO8601::monthCode(m_plainYearMonth.month());

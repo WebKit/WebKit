@@ -374,51 +374,6 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
     return result;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-balanceisoyearmonth
-ISO8601::PlainYearMonth TemporalCalendar::balanceISOYearMonth(double year, double month)
-{
-    year += std::floor((month - 1) / 12);
-    // ECMA modulo operator always results in same sign as y in x mod y
-    month = std::fmod(month - 1, 12) + 1;
-    if (month < 1)
-        month += 12;
-    return ISO8601::PlainYearMonth(year, month);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
-int32_t TemporalCalendar::isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
-{
-    if (d1.year() > d2.year())
-        return 1;
-    if (d1.year() < d2.year())
-        return -1;
-    if (d1.month() > d2.month())
-        return 1;
-    if (d1.month() < d2.month())
-        return -1;
-    if (d1.day() > d2.day())
-        return 1;
-    if (d1.day() < d2.day())
-        return -1;
-    return 0;
-}
-
-bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* other)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (other == this)
-        return true;
-
-    JSString* thisString = toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-    JSString* thatString = other->toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-
-    RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
-}
-
 static ISO8601::Duration dateDuration(double y, double m, double w, double d)
 {
     return ISO8601::Duration { y, m, w, d, 0, 0, 0, 0, 0, 0 };
@@ -437,6 +392,17 @@ static bool isoDateSurpasses(int32_t sign, double y1, double m1, double d1, cons
             return true;
     }
     return false;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisoyearmonth
+ISO8601::PlainYearMonth TemporalCalendar::balanceISOYearMonth(double year, double month)
+{
+    year += std::floor((month - 1) / 12);
+    // ECMA modulo operator always results in same sign as y in x mod y
+    month = std::fmod(month - 1, 12) + 1;
+    if (month < 1)
+        month += 12;
+    return ISO8601::PlainYearMonth(year, month);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
@@ -491,6 +457,93 @@ ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& 
     }
 
     return dateDuration(years, months, weeks, days);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplainyearmonth
+ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObject* globalObject,
+    bool isSince, const ISO8601::PlainYearMonth& yearMonth, const ISO8601::PlainYearMonth& other,
+    unsigned increment, TemporalUnit smallestUnit, TemporalUnit largestUnit,
+    RoundingMode roundingMode)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (largestUnit == TemporalUnit::Week || largestUnit == TemporalUnit::Day) {
+        throwRangeError(globalObject, scope, "largestUnit must be one of year, years, month, months"_s);
+        return { };
+    }
+
+    if (smallestUnit == TemporalUnit::Week || smallestUnit == TemporalUnit::Day) {
+        throwRangeError(globalObject, scope, "smallestUnit must be one of year, years, month, months"_s);
+        return { };
+    }
+
+    auto sign = isoDateCompare(yearMonth.isoPlainDate(), other.isoPlainDate());
+    if (!sign)
+        return { };
+
+    auto thisDate = yearMonth.isoPlainDate();
+    auto otherDate = other.isoPlainDate();
+
+    auto thisWithinLimits = ISO8601::isDateTimeWithinLimits(
+        thisDate.year(), thisDate.month(), thisDate.day(), 12, 0, 0, 0, 0, 0);
+    auto otherWithinLimits = ISO8601::isDateTimeWithinLimits(
+        otherDate.year(), otherDate.month(), otherDate.day(), 12, 0, 0, 0, 0, 0);
+    if (!thisWithinLimits || !otherWithinLimits) {
+        throwRangeError(globalObject, scope, "date/time value is outside of supported range"_s);
+        return { };
+    }
+    auto dateDifference = calendarDateUntil(thisDate, otherDate, largestUnit);
+    auto duration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
+        ISO8601::Duration { dateDifference.years(), dateDifference.months(), 0, 0, 0, 0, 0, 0, 0, 0 },
+        0);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (smallestUnit != TemporalUnit::Month || increment != 1) {
+        auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
+        auto destEpochNs = getUTCEpochNanoseconds(isoDateTimeOther);
+        TemporalDuration::roundRelativeDuration(globalObject,
+            duration, destEpochNs, thisDate, largestUnit, increment, smallestUnit, roundingMode);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
+    if (isSince)
+        result = -result;
+    return result;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
+int32_t TemporalCalendar::isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
+{
+    if (d1.year() > d2.year())
+        return 1;
+    if (d1.year() < d2.year())
+        return -1;
+    if (d1.month() > d2.month())
+        return 1;
+    if (d1.month() < d2.month())
+        return -1;
+    if (d1.day() > d2.day())
+        return 1;
+    if (d1.day() < d2.day())
+        return -1;
+    return 0;
+}
+
+bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* other)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (other == this)
+        return true;
+
+    JSString* thisString = toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    JSString* thatString = other->toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+
+    RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
 } // namespace JSC
