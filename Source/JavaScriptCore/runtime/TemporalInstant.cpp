@@ -256,7 +256,9 @@ ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, Temp
 
     std::optional<double> maxIncrement = maximumRoundingIncrement(smallestUnit);
     ASSERT(maxIncrement && *maxIncrement <= 1000); // unbounded increments are impossible with Temporal.Instant
-    unsigned increment = temporalRoundingIncrement(globalObject, options, maxIncrement, false);
+    double incrementDouble = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned increment = temporalRoundingIncrement(globalObject, incrementDouble, maxIncrement, false);
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::InternalDuration internalDuration = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
@@ -323,7 +325,9 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
     RoundingMode roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
-    double increment = temporalRoundingIncrement(globalObject, options, maximumIncrement(smallestUnit), true);
+    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    increment = temporalRoundingIncrement(globalObject, increment, maximumIncrement(smallestUnit), true);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto result = exactTime().round(increment, smallestUnit, roundingMode);

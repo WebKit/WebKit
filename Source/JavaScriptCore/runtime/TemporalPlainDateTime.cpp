@@ -346,7 +346,9 @@ TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     std::optional<double> maximum = smallestUnit == TemporalUnit::Day ? 1 : maximumRoundingIncrement(smallestUnit);
-    auto increment = temporalRoundingIncrement(globalObject, options, maximum, false);
+    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    increment = temporalRoundingIncrement(globalObject, increment, maximum, false);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto duration = TemporalPlainTime::roundTime(m_plainTime, increment, smallestUnit, roundingMode, std::nullopt);

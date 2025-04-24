@@ -253,7 +253,9 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
     auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
+    auto increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    increment = temporalRoundingIncrement(globalObject, increment, maximumRoundingIncrement(smallestUnit), false);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto duration = roundTime(m_plainTime, increment, smallestUnit, roundingMode, std::nullopt);
@@ -383,32 +385,31 @@ ISO8601::PlainTime TemporalPlainTime::regulateTime(JSGlobalObject* globalObject,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaltime
-TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<TemporalOverflow> overflowValue)
+TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSObject*> options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto overflow = overflowValue.value_or(TemporalOverflow::Constrain);
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(itemValue);
 
-        if (itemValue.inherits<TemporalPlainDateTime>())
+        if (itemValue.inherits<TemporalPlainDateTime>()) {
+            // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
+            if (options)
+                toTemporalOverflow(globalObject, options.value());
             return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
-
-        JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
-        RETURN_IF_EXCEPTION(scope, { });
-        JSString* calendarString = calendar->toString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto calendarWTFString = calendarString->value(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (calendarWTFString.data != "iso8601"_s) {
-            throwRangeError(globalObject, scope, "calendar is not iso8601"_s);
-            return { };
         }
+
         auto duration = toTemporalTimeRecord(globalObject, jsCast<JSObject*>(itemValue));
         RETURN_IF_EXCEPTION(scope, { });
+
+        TemporalOverflow overflow = TemporalOverflow::Constrain;
+        if (options) {
+            overflow = toTemporalOverflow(globalObject, options.value());
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
         auto plainTime = regulateTime(globalObject, WTFMove(duration), overflow);
         RETURN_IF_EXCEPTION(scope, { });
         return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
@@ -426,6 +427,9 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
+    // Validate overflow -- see step 3(g) of ToTemporalTime
+    if (options)
+        toTemporalOverflow(globalObject, options.value());
 
     auto time = ISO8601::parseCalendarTime(string);
     if (time) {

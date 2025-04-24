@@ -1023,7 +1023,9 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
+    auto increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    increment = temporalRoundingIncrement(globalObject, increment, maximumRoundingIncrement(smallestUnit), false);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.

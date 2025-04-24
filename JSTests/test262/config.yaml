@@ -72,10 +72,6 @@ skip:
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-upper-p.js
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-lower-p.js
 
-    # Depends on Temporal.PlainYearMonth
-    - test/built-ins/Temporal/PlainYearMonth/prototype/since/order-of-operations.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/until/order-of-operations.js
-
     # Depends on Temporal.Duration relativeTo option
     - test/built-ins/Temporal/Duration/compare/basic.js
     - test/built-ins/Temporal/Duration/compare/calendar-possibly-required.js
