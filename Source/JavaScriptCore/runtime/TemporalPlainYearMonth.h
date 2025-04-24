@@ -47,6 +47,9 @@ public:
 
     DECLARE_INFO;
 
+    static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue, std::optional<JSValue>);
+    static TemporalPlainYearMonth* from(JSGlobalObject*, WTF::String);
+
     TemporalCalendar* calendar() { return m_calendar.get(this); }
     ISO8601::PlainYearMonth plainYearMonth() const { return m_plainYearMonth; }
 
