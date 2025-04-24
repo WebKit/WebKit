@@ -299,26 +299,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/throws-if-rounded-date-outside-valid-iso-range.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/throws-if-year-outside-valid-iso-range.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/year-zero.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/argument-calendar-field.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/argument-missing-fields.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/argument-timezone-field.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/builtin.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/copy-properties-not-undefined.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/length.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/name.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/not-a-constructor.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/options-object.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/options-undefined.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/options-wrong-type.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/order-of-operations.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/overflow-invalid-string.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/overflow-undefined.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/overflow-wrong-type.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/with/subclassing-ignored.js
 
     # Depends on Temporal.Duration relativeTo option
     - test/built-ins/Temporal/Duration/compare/basic.js

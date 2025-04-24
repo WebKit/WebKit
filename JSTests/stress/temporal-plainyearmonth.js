@@ -102,3 +102,15 @@ shouldBe(Temporal.PlainYearMonth.prototype.valueOf.length, 0);
     let sorted = [one, two, three, four].sort(Temporal.PlainYearMonth.compare);
     shouldBe(sorted.join(' '), `1000-02 1001-01 1002-01 1003-03`);
 }
+
+shouldBe(Temporal.PlainYearMonth.prototype.with.length, 1);
+{
+    shouldBe(yearMonth.with({ year: 2025, month: 4, day: 5 }).toString(), '2025-04');
+    shouldBe(yearMonth.with({ year: 2025, month: 3 }).toString(), '2025-03');
+    shouldBe(yearMonth.with({ month: 3 }).toString(), '2025-03');
+    shouldBe(yearMonth.with({ year: 2024 }).toString(), '2024-04');
+    shouldThrow(() => yearMonth.with({ day: 5 }), TypeError);
+
+    shouldBe(yearMonth.with({ month: 13 }).toString(), '2025-12');
+    shouldThrow(() => { yearMonth.with({ month: 13 }, { overflow: 'reject' }); }, RangeError);
+}

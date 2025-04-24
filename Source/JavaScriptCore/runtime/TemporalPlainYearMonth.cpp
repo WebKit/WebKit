@@ -199,6 +199,34 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     return { };
 }
 
+ISO8601::PlainDate TemporalPlainYearMonth::with(JSGlobalObject* globalObject, JSObject* temporalYearMonthLike, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    rejectObjectWithCalendarOrTimeZone(globalObject, temporalYearMonthLike);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [optionalYear, optionalMonth] = TemporalPlainDate::toYearMonth(globalObject, temporalYearMonthLike);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!optionalYear && !optionalMonth) {
+        throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
+        return { };
+    }
+
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    double y = optionalYear.value_or(year());
+    double m = optionalMonth.value_or(month());
+    return TemporalCalendar::yearMonthFromFields(globalObject, y, m, overflow);
+}
+
 String TemporalPlainYearMonth::monthCode() const
 {
     return ISO8601::monthCode(m_plainYearMonth.month());
