@@ -1803,6 +1803,18 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
     return true;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isoyearmonthwithinlimits
+bool isYearMonthWithinLimits(double year, double month)
+{
+    if (!isYearWithinLimits(year))
+        return false;
+    if (year == minYear && month < 4)
+        return false;
+    if (year == maxYear && month > 9)
+        return false;
+    return true;
+}
+
 // More effective for our purposes than isInBounds<int32_t>.
 bool isYearWithinLimits(double year)
 {

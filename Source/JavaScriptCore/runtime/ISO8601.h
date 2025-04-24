@@ -282,13 +282,34 @@ private:
     int32_t m_day : 6; // Starts with 1.
 };
 
-class PlainYearMonth final {
+class PlainYearMonth {
+    WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
 public:
-    double year;
-    double month;
-    PlainYearMonth(double y, double m)
-        : year(y), month(m) { }
+    constexpr PlainYearMonth()
+        : m_isoPlainDate(0, 1, 1)
+    {
+    }
+
+    constexpr PlainYearMonth(int32_t year, unsigned month)
+        : m_isoPlainDate(year, month, 1)
+    {
+    }
+
+    constexpr PlainYearMonth(PlainDate&& d)
+        : m_isoPlainDate(d)
+    {
+    }
+
+    friend bool operator==(const PlainYearMonth&, const PlainYearMonth&) = default;
+
+    int32_t year() const { return m_isoPlainDate.year(); }
+    uint8_t month() const { return m_isoPlainDate.month(); }
+
+    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+private:
+    PlainDate m_isoPlainDate;
 };
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 class PlainMonthDay {
     WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
@@ -317,6 +338,7 @@ public:
 private:
     PlainDate m_isoPlainDate;
 };
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
@@ -366,6 +388,7 @@ PlainDate createISODateRecord(double, double, double);
 std::optional<ExactTime> parseInstant(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
+bool isYearMonthWithinLimits(double year, double month);
 bool isYearWithinLimits(double year);
 
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);

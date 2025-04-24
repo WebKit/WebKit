@@ -90,9 +90,7 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/name.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/not-a-constructor.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/argument-invalid.js
     - test/built-ins/Temporal/PlainYearMonth/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/builtin.js
     - test/built-ins/Temporal/PlainYearMonth/compare/argument-cast.js
     - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-string.js
     - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-year-zero.js
@@ -163,13 +161,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/from/reference-day.js
     - test/built-ins/Temporal/PlainYearMonth/from/subclassing-ignored.js
     - test/built-ins/Temporal/PlainYearMonth/from/year-zero.js
-    - test/built-ins/Temporal/PlainYearMonth/get-prototype-from-constructor-throws.js
-    - test/built-ins/Temporal/PlainYearMonth/infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/PlainYearMonth/length.js
-    - test/built-ins/Temporal/PlainYearMonth/missing-arguments.js
-    - test/built-ins/Temporal/PlainYearMonth/name.js
-    - test/built-ins/Temporal/PlainYearMonth/negative-infinity-throws-rangeerror.js
-    - test/built-ins/Temporal/PlainYearMonth/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/argument-duration-max.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/argument-duration-object.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/argument-duration-out-of-range.js
@@ -203,15 +194,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/subclassing-ignored.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/subtract-from-last-representable-month.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/add/throws-if-year-outside-valid-iso-range.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/calendarId/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/calendarId/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/constructor.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInMonth/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInMonth/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInMonth/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInYear/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInYear/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/daysInYear/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-cast.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-number.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-string.js
@@ -240,17 +222,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/use-internal-slots.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/equals/year-zero.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/inLeapYear/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/inLeapYear/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/inLeapYear/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/month/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/monthCode/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/monthCode/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/month/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/monthsInYear/basic.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/monthsInYear/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/monthsInYear/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-casting.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-number.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-string.js
@@ -388,7 +359,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/toString/options-object.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/toString/options-wrong-type.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/toString/prop-desc.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/toStringTag/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/toString/year-format.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-casting.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-number.js
@@ -482,8 +452,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/with/overflow-wrong-type.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/with/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/with/subclassing-ignored.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/year/branding.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/year/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/subclass.js
 
     # Depends on Temporal.Duration relativeTo option
