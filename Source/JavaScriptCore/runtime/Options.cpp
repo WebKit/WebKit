@@ -588,7 +588,11 @@ static void overrideDefaults()
     Options::numberOfGCMarkers() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
 
     Options::minNumberOfWorklistThreads() = 1;
+#if PLATFORM(MAC)
+    Options::maxNumberOfWorklistThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+#else
     Options::maxNumberOfWorklistThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+#endif
     Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
