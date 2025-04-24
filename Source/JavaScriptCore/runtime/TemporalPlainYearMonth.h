@@ -47,6 +47,9 @@ public:
 
     DECLARE_INFO;
 
+    static ISO8601::PlainYearMonth addDurationToYearMonth(
+        JSGlobalObject*, bool, ISO8601::PlainYearMonth, ISO8601::Duration, TemporalOverflow);
+
     static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue, std::optional<JSValue>);
     static TemporalPlainYearMonth* from(JSGlobalObject*, WTF::String);
 

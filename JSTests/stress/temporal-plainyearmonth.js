@@ -124,3 +124,25 @@ shouldBe(Temporal.PlainYearMonth.prototype.toPlainDate.length, 1);
     const nonLeapYear = new Temporal.PlainYearMonth(2025, 2);
     shouldBe(nonLeapYear.toPlainDate({ day: 29 }).toString(), "2025-02-28");
 }
+
+shouldBe(Temporal.PlainYearMonth.prototype.add.length, 1);
+shouldBe(Temporal.PlainYearMonth.prototype.subtract.length, 1);
+{
+    shouldBe(yearMonth.add(new Temporal.Duration()).toString(), '2025-04');
+    shouldBe(yearMonth.add({ years: 1, months: 1 }).toString(), '2026-05');
+    shouldBe(yearMonth.add('P1W1D').toString(), '2025-04');
+    shouldBe(yearMonth.add({ hours: 24 }).toString(), '2025-04');
+    shouldBe(yearMonth.add({ days: 36500000 }).toString(), '+101958-11');
+    shouldBe(yearMonth.add(new Temporal.Duration(-1, -1, 0, -1)).toString(), '2024-03');
+    shouldBe(Temporal.PlainYearMonth.from('2025-04').add({ months: 1 }).toString(), '2025-05');
+    shouldThrow(() => { yearMonth.add({ years: 300000 }); }, RangeError);
+
+    shouldBe(yearMonth.subtract(new Temporal.Duration()).toString(), '2025-04');
+    shouldBe(yearMonth.subtract({ years: 1, months: 1 }).toString(), '2024-03');
+    shouldBe(yearMonth.subtract('P1W1D').toString(), '2025-04');
+    shouldBe(yearMonth.subtract({ hours: 24 }).toString(), '2025-04');
+    shouldBe(yearMonth.subtract({ days: 36500000 }).toString(), '-097909-09');
+    shouldBe(yearMonth.subtract(new Temporal.Duration(-1, -1, 0, -1)).toString(), '2026-05');
+    shouldBe(Temporal.PlainYearMonth.from('2025-04').subtract({ months: 1 }).toString(), '2025-03');
+    shouldThrow(() => { yearMonth.subtract({ years: 300000 }); }, RangeError);
+}
