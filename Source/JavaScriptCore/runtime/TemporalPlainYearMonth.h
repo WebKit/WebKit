@@ -47,6 +47,8 @@ public:
 
     DECLARE_INFO;
 
+    static ISO8601::PlainYearMonth toPlainYearMonth(JSGlobalObject*, const ISO8601::Duration&);
+    static std::array<std::optional<double>, 2> toPartialDate(JSGlobalObject*, JSObject*);
     static ISO8601::PlainYearMonth addDurationToYearMonth(
         JSGlobalObject*, bool, ISO8601::PlainYearMonth, ISO8601::Duration, TemporalOverflow);
 
@@ -79,6 +81,10 @@ public:
 private:
     TemporalPlainYearMonth(VM&, Structure*, ISO8601::PlainYearMonth&&);
     void finishCreation(VM&);
+
+    template<typename CharacterType>
+    static std::optional<ISO8601::PlainYearMonth> parse(StringParsingBuffer<CharacterType>&);
+    static ISO8601::PlainYearMonth fromObject(JSGlobalObject*, JSObject*);
 
     ISO8601::PlainYearMonth m_plainYearMonth;
     LazyProperty<TemporalPlainYearMonth, TemporalCalendar> m_calendar;

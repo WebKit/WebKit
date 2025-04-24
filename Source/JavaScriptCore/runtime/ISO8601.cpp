@@ -1703,7 +1703,7 @@ std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, Temp
     case TemporalUnit::Microsecond: maximum = (Int128) msPerDay * 1000; break;
     case TemporalUnit::Nanosecond: maximum = nsPerDay; break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     if (!validateTemporalRoundingIncrement(increment, maximum, true))
         return std::nullopt;

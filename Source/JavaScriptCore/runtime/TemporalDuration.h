@@ -105,6 +105,7 @@ public:
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
+    static ISO8601::Duration toDateDurationWithoutTime(ISO8601::Duration);
     static Nudged nudgeToCalendarUnit(JSGlobalObject*,
         int32_t, const ISO8601::InternalDuration&, Int128,
         ISO8601::PlainDate, double, TemporalUnit, RoundingMode);

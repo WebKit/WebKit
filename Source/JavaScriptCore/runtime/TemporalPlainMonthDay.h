@@ -47,6 +47,8 @@ public:
 
     DECLARE_INFO;
 
+    static ISO8601::PlainMonthDay toPlainMonthDay(JSGlobalObject*, const ISO8601::Duration&);
+
     static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, std::optional<JSValue>);
     static TemporalPlainMonthDay* from(JSGlobalObject*, WTF::String);
 

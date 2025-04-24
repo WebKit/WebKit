@@ -30,6 +30,7 @@
 #include "DateConstructor.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "TemporalCalendar.h"
 #include "TemporalObject.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
