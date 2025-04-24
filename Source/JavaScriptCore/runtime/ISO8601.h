@@ -290,6 +290,34 @@ public:
         : year(y), month(m) { }
 };
 
+class PlainMonthDay {
+    WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
+public:
+    constexpr PlainMonthDay()
+        : m_isoPlainDate(0, 1, 1)
+    {
+    }
+
+    constexpr PlainMonthDay(unsigned month, int32_t day)
+        : m_isoPlainDate(2, month, day)
+    {
+    }
+
+    constexpr PlainMonthDay(PlainDate&& d)
+        : m_isoPlainDate(d)
+    {
+    }
+
+    friend bool operator==(const PlainMonthDay&, const PlainMonthDay&) = default;
+
+    uint8_t month() const { return m_isoPlainDate.month(); }
+    uint32_t day() const { return m_isoPlainDate.day(); }
+
+    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+private:
+    PlainDate m_isoPlainDate;
+};
+
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
