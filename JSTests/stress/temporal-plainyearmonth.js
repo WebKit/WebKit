@@ -80,3 +80,25 @@ const yearMonth = new Temporal.PlainYearMonth(2025, 4);
     shouldThrow(() => { Temporal.PlainYearMonth.from({ year: 2025, month: 0 }); }, RangeError);
     shouldThrow(() => { Temporal.PlainYearMonth.from({ year: 2025, month: 1, monthCode: 'M02' }); }, RangeError);
 }
+
+shouldBe(Temporal.PlainYearMonth.prototype.equals.length, 1);
+{
+    const ones = new Temporal.PlainYearMonth(1,1);
+    shouldBe(ones.equals(new Temporal.PlainYearMonth(1,1)), true);
+    shouldBe(ones.equals(new Temporal.PlainYearMonth(2,1)), false);
+    shouldBe(ones.equals(new Temporal.PlainYearMonth(1,2)), false);
+}
+
+shouldBe(Temporal.PlainYearMonth.prototype.valueOf.length, 0);
+{
+    shouldThrow(() => yearMonth.valueOf(), TypeError);
+}
+
+{
+    let one = Temporal.PlainYearMonth.from('1001-01');
+    let two = Temporal.PlainYearMonth.from('1003-03');
+    let three = Temporal.PlainYearMonth.from('1002-01');
+    let four = Temporal.PlainYearMonth.from('1000-02');
+    let sorted = [one, two, three, four].sort(Temporal.PlainYearMonth.compare);
+    shouldBe(sorted.join(' '), `1000-02 1001-01 1002-01 1003-03`);
+}

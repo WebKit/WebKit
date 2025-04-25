@@ -41,6 +41,8 @@ namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToJSON);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToLocaleString);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncEquals);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncValueOf);
 static JSC_DECLARE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterCalendarId);
 static JSC_DECLARE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterYear);
 static JSC_DECLARE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterMonth);
@@ -63,6 +65,8 @@ const ClassInfo TemporalPlainYearMonthPrototype::s_info = { "Temporal.PlainYearM
   toString         temporalPlainYearMonthPrototypeFuncToString           DontEnum|Function 0
   toJSON           temporalPlainYearMonthPrototypeFuncToJSON             DontEnum|Function 0
   toLocaleString   temporalPlainYearMonthPrototypeFuncToLocaleString     DontEnum|Function 0
+  equals           temporalPlainYearMonthPrototypeFuncEquals             DontEnum|Function 1
+  valueOf          temporalPlainYearMonthPrototypeFuncValueOf            DontEnum|Function 0
   calendarId       temporalPlainYearMonthPrototypeGetterCalendarId       DontEnum|ReadOnly|CustomAccessor
   year             temporalPlainYearMonthPrototypeGetterYear             DontEnum|ReadOnly|CustomAccessor
   month            temporalPlainYearMonthPrototypeGetterMonth            DontEnum|ReadOnly|CustomAccessor
@@ -111,6 +115,25 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToString, (JSGlobalO
     RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, yearMonth->toString(globalObject, callFrame->argument(0)))));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.equals
+JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncEquals, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    if (!yearMonth)
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.equals called on value that's not a PlainYearMonth"_s);
+
+    auto* other = TemporalPlainYearMonth::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (yearMonth->plainYearMonth() != other->plainYearMonth())
+        return JSValue::encode(jsBoolean(false));
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(true)));
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.tojson
 JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -135,6 +158,15 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToLocaleString, (JSG
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toLocaleString called on value that's not a PlainYearMonth"_s);
 
     return JSValue::encode(jsString(vm, yearMonth->toString()));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.valueof
+JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare"_s);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterCalendarId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
