@@ -159,6 +159,7 @@ skip:
 
     # Depends on Calendar support
     - test/built-ins/Temporal/PlainDate/basic.js
+    - test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js
     - test/built-ins/Temporal/PlainDate/calendar-number.js
     - test/built-ins/Temporal/PlainDate/calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-leap-second.js

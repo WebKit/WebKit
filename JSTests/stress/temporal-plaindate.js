@@ -423,3 +423,7 @@ shouldBe(Temporal.PlainDate.prototype.until.length, 1);
     shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'hour' }); }, RangeError);
     shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'day', smallestUnit: 'month' }); }, RangeError);
 }
+
+{
+    shouldBe(new Temporal.PlainDate(2000, 5, 2, "iso8601").calendarId, "iso8601");
+}
