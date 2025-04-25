@@ -72,24 +72,7 @@ skip:
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-upper-p.js
     - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-lower-p.js
 
-    # Depends on Temporal.PlainMonthDay
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/basic.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/branding.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/builtin.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/length.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/name.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/not-a-constructor.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/prop-desc.js
-
     # Depends on Temporal.PlainYearMonth
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/basic.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/branding.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/builtin.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/length.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/limits.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/name.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/not-a-constructor.js
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/prop-desc.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/order-of-operations.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/order-of-operations.js
 
