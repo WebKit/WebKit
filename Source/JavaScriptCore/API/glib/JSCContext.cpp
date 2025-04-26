@@ -1119,5 +1119,6 @@ JSCClass* jsc_context_register_class(JSCContext* context, const char* name, JSCC
 
     auto jscClass = jscClassCreate(context, name, parentClass, vtable, destroyFunction);
     wrapperMap(context).registerClass(jscClass.get());
-    return jscClass.get();
+    auto result = jscClass.get();
+    return result;
 }

@@ -97,13 +97,16 @@ static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBac
 
     WebKitBackForwardListPrivate* priv = list->priv;
     GRefPtr<WebKitBackForwardListItem> listItem = priv->itemsMap.get(webListItem);
-    if (listItem)
-        return listItem.get();
+    if (listItem) {
+        auto result = listItem.get();
+        return result;
+    }
 
     listItem = webkitBackForwardListItemGetOrCreate(webListItem);
     priv->itemsMap.set(webListItem, listItem);
 
-    return listItem.get();
+    auto result = listItem.get();
+    return result;
 }
 
 static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, API::Array* backForwardItems)
