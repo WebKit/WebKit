@@ -167,7 +167,14 @@ static RetainPtr<CGColorRef> createCGColor(const Color& color)
 {
     auto [colorSpace, components] = color.colorSpaceAndResolvedColorComponents();
     auto [cgColorSpace, cgCompatibleComponents] = convertToCGCompatibleComponents(colorSpace, components);
-    
+
+    // Clamp the extended colors so they look the same on SDR and HDR layers.
+    if (CGColorSpaceUsesExtendedRange(cgColorSpace)) {
+        auto [c1, c2, c3, c4] = cgCompatibleComponents;
+        auto clampedComponents = makeFromComponentsClamping<SRGBA<float>>(c1, c2, c3, c4);
+        cgCompatibleComponents = asColorComponents(clampedComponents.resolved());
+    }
+
     auto [c1, c2, c3, c4] = cgCompatibleComponents;
     std::array<CGFloat, 4> cgFloatComponents { c1, c2, c3, c4 };
 
