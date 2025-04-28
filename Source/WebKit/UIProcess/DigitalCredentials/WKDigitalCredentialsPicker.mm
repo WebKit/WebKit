@@ -175,6 +175,12 @@ using WebCore::IdentityCredentialProtocol;
     [self dismiss];
 }
 
+- (void)fetchRawRequestsWithCompletionHandler:(void (^)(NSArray<WKIdentityDocumentPresentmentRawRequest *> *rawRequest))completionHandler
+{
+    NSMutableArray<WKIdentityDocumentPresentmentRawRequest *> *rawRequests = [[NSMutableArray alloc] init];
+    completionHandler(WTFMove(rawRequests));
+}
+
 @end // WKDigitalCredentialsPicker
 
 #endif // HAVE(DIGITAL_CREDENTIALS_UI)

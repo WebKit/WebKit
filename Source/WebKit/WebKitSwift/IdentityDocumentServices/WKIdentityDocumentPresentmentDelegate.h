@@ -22,40 +22,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #pragma once
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#import "CocoaWindow.h"
+#import "WKIdentityDocumentPresentmentRawRequest.h"
 
-#import <WebKit/WKIdentityDocumentPresentmentDelegate.h>
+using WKIdentityDocumentPresentationAnchor = CocoaWindow *;
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIKit.h>
-#endif
+NS_ASSUME_NONNULL_BEGIN
 
-@class WKWebView;
-@class WKDigitalCredentialsPicker;
+NS_SWIFT_UI_ACTOR
+@protocol WKIdentityDocumentPresentmentDelegate <NSObject>
 
-namespace WebCore {
-struct DigitalCredentialsRequestData;
-struct DigitalCredentialsResponseData;
-struct ExceptionData;
-}
+- (nullable WKIdentityDocumentPresentationAnchor)presentationAnchor;
 
-@protocol WKDigitalCredentialsPickerDelegate <NSObject>
-@optional
-- (void)digitalCredentialsPickerDidPresent:(WKDigitalCredentialsPicker *)picker;
-- (void)digitalCredentialsPickerDidDismiss:(WKDigitalCredentialsPicker *)picker;
+- (void)fetchRawRequestsWithCompletionHandler:(void (^)(NSArray<WKIdentityDocumentPresentmentRawRequest *> *rawRequest))completionHandler;
+
 @end
 
-@interface WKDigitalCredentialsPicker : NSObject <WKDigitalCredentialsPickerDelegate, WKIdentityDocumentPresentmentDelegate>
-
-@property (nonatomic, weak) id<WKDigitalCredentialsPickerDelegate> delegate;
-
-- (instancetype)initWithView:(WKWebView *)view;
-
-- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
-- (void)dismissWithCompletionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
-- (void)dismissWithResponse:(NSObject *)response;
-@end
-
-#endif // HAVE(DIGITAL_CREDENTIALS_UI)
+NS_ASSUME_NONNULL_END
