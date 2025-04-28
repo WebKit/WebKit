@@ -1544,7 +1544,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebCryptoClient>(self),
         makeUniqueRef<WebCore::ProcessSyncClient>()
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-        , makeUniqueRef<WebCore::DummyCredentialRequestCoordinatorClient>()
+        , WebCore::DummyCredentialRequestCoordinatorClient::create()
 #endif
     );
 #if !PLATFORM(IOS_FAMILY)
@@ -1806,7 +1806,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebCryptoClient>(self),
         makeUniqueRef<WebCore::ProcessSyncClient>()
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-        , makeUniqueRef<WebCore::DummyCredentialRequestCoordinatorClient>()
+        , WebCore::DummyCredentialRequestCoordinatorClient::create()
 #endif
     );
 #if ENABLE(DRAG_SUPPORT)

@@ -105,8 +105,14 @@ class Attachment;
 namespace WebCore {
 struct AppHighlight;
 struct ExceptionDetails;
-struct DigitalCredentialsRequestData;
 enum class WheelScrollGestureState : uint8_t;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+struct DigitalCredentialsRequestData;
+struct MobileDocumentRequest;
+struct OpenID4VPRequest;
+#endif
+
 }
 
 namespace WebKit {

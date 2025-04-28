@@ -35,10 +35,13 @@
 
 #import "Logging.h"
 #import "WKWebView.h"
+#import "WebPageProxy.h"
 #import <WebCore/DigitalCredentialsRequestData.h>
 #import <WebCore/DigitalCredentialsResponseData.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/IdentityCredentialProtocol.h>
+#import <WebCore/MobileDocumentRequest.h>
+#import <WebCore/OpenID4VPRequest.h>
 #import <wtf/Expected.h>
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
@@ -49,8 +52,8 @@
 #import "UIKitUtilities.h"
 #endif
 
-using WebCore::ExceptionData;
 using WebCore::ExceptionCode;
+using WebCore::ExceptionData;
 using WebCore::IdentityCredentialProtocol;
 
 #pragma clang diagnostic push
@@ -108,15 +111,20 @@ using WebCore::IdentityCredentialProtocol;
 @implementation WKDigitalCredentialsPicker {
     WeakObjCPtr<WKWebView> _webView;
     WeakObjCPtr<id<WKDigitalCredentialsPickerDelegate>> _delegate;
-    WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> _completionHandler;
+    CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> _completionHandler;
     RetainPtr<WKDigitalCredentialsPickerDelegate> _digitalCredentialsPickerDelegate;
+    WeakPtr<WebKit::WebPageProxy> _page;
 }
 
-- (instancetype _Nonnull)initWithView:(WKWebView *_Nonnull)view
+- (instancetype)initWithView:(WKWebView *)view page:(WebKit::WebPageProxy &)page
 {
     self = [super init];
-    if (self)
-        _webView = view;
+    if (!self)
+        return nil;
+
+    _webView = view;
+    _page = page;
+
     return self;
 }
 
@@ -130,7 +138,7 @@ using WebCore::IdentityCredentialProtocol;
     _delegate = delegate;
 }
 
-- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData &)requestData completionHandler:(WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> &&)completionHandler
+- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData &)requestData completionHandler:(CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> &&)completionHandler
 {
     LOG(DigitalCredentials, "WKDigitalCredentialsPicker: Digital Credentials - Presenting with request data from origin: %s.", requestData.topOrigin.toString().utf8().data());
     _completionHandler = WTFMove(completionHandler);
@@ -141,7 +149,7 @@ using WebCore::IdentityCredentialProtocol;
     [self completeWith:makeUnexpected(exceptionData)];
 }
 
-- (void)dismissWithCompletionHandler:(WTF::CompletionHandler<void(bool)> &&)completionHandler
+- (void)dismissWithCompletionHandler:(CompletionHandler<void(bool)> &&)completionHandler
 {
     LOG(DigitalCredentials, "WKDigitalCredentialsPicker Dismissing with completion handler.");
     [self dismiss];
@@ -174,7 +182,6 @@ using WebCore::IdentityCredentialProtocol;
     _completionHandler = nullptr;
     [self dismiss];
 }
-
 @end // WKDigitalCredentialsPicker
 
 #endif // HAVE(DIGITAL_CREDENTIALS_UI)

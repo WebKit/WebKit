@@ -25,8 +25,6 @@
 #include "ContactInfo.h"
 #include "DatabaseDetails.h"
 #include "DeviceOrientationOrMotionPermissionState.h"
-#include "DigitalCredentialsRequestData.h"
-#include "DigitalCredentialsResponseData.h"
 #include "DisabledAdaptations.h"
 #include "DocumentStorageAccess.h"
 #include "ExceptionData.h"
@@ -77,6 +75,14 @@ class HTMLModelElement;
 #include "PlatformXR.h"
 #endif
 
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+#include "DigitalCredentialsProtocols.h"
+#include "DigitalCredentialsRequestData.h"
+#include "DigitalCredentialsResponseData.h"
+#include "UnvalidatedDigitalCredentialRequest.h"
+#include "ValidatedMobileDocumentRequest.h"
+#endif
+
 OBJC_CLASS NSResponder;
 
 namespace WebCore {
@@ -122,6 +128,11 @@ class SecurityOriginData;
 class ViewportConstraints;
 class Widget;
 class WorkerClient;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+struct DigitalCredentialsRequestData;
+struct MobileDocumentRequest;
+#endif
 
 #if ENABLE(WEBGL)
 class GraphicsContextGL;
@@ -381,14 +392,22 @@ public:
     virtual void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
 
+#if HAVE(DIGITAL_CREDENTIALS_UI)
     virtual void showDigitalCredentialsPicker(const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
     {
-        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s }));
     }
+
     virtual void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& completionHandler)
     {
         completionHandler(false);
     }
+
+    virtual ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+    {
+        return Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s };
+    };
+#endif
 
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;

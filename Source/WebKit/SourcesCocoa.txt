@@ -660,6 +660,8 @@ WebProcess/cocoa/RemoteRealtimeVideoSource.cpp
 WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoPresentationManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
+WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBridge.mm
+WebProcess/cocoa/IdentityDocumentServices/WKIdentityDocumentPresentmentError.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
 
@@ -792,6 +794,7 @@ AuxiliaryProcessMessageReceiver.cpp
 DownloadProxyMessageReceiver.cpp
 DrawingAreaMessageReceiver.cpp
 DrawingAreaProxyMessageReceiver.cpp
+DigitalCredentialsCoordinatorMessageReceiver.cpp
 EventDispatcherMessageReceiver.cpp
 GPUConnectionToWebProcessMessageReceiver.cpp
 GPUProcessConnectionMessageReceiver.cpp

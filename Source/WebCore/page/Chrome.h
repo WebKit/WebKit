@@ -90,9 +90,13 @@ struct ViewportArguments;
 struct WindowFeatures;
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
+class SecurityOriginData;
+
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct ExceptionData;
+struct MobileDocumentRequest;
+struct OpenID4VPRequest;
 #endif
 
 class Chrome : public HostWindow {

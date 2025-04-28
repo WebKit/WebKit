@@ -291,7 +291,6 @@ struct MediaSessionIdentifierType;
 struct MediaStreamRequest;
 struct MediaUsageInfo;
 struct MessageWithMessagePorts;
-struct MockWebAuthenticationConfiguration;
 struct NotificationData;
 struct NowPlayingInfo;
 struct OrganizationStorageAccessPromptQuirk;
@@ -324,13 +323,13 @@ struct WheelEventHandlingResult;
 struct WindowFeatures;
 struct WrappedCryptoKey;
 
+#if ENABLE(WEB_AUTHN)
+struct MockWebAuthenticationConfiguration;
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct ExceptionData;
-
-#if HAVE(DIGITAL_CREDENTIALS_UI)
-struct DigitalCredentialRequest;
-struct DigitalCredentialRequestOptions;
+struct MobileDocumentRequest;
+struct OpenID4VPRequest;
 #endif
 
 namespace TextExtraction {
@@ -2222,7 +2221,13 @@ public:
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>&&)>&&);
 
 #if ENABLE(WEB_AUTHN)
+    // Web Authentication API
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
+
+    // Digital Credentials API
+    void dismissDigitalCredentialsPicker(IPC::Connection&, CompletionHandler<void(bool)>&&);
+    void fetchRawDigitalCredentialRequests(CompletionHandler<void(Vector<Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPRequest>>)>&&);
+    void showDigitalCredentialsPicker(IPC::Connection&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
 #endif
 
     using TextManipulationItemCallback = Function<void(const Vector<WebCore::TextManipulationItem>&)>;
@@ -2855,10 +2860,6 @@ private:
     bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void showShareSheet(IPC::Connection&, const WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(IPC::Connection&, const WebCore::ContactsRequestData&, CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&);
-#if ENABLE(WEB_AUTHN)
-    void showDigitalCredentialsPicker(IPC::Connection&, const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
-    void dismissDigitalCredentialsPicker(IPC::Connection&, WTF::CompletionHandler<void(bool)>&&);
-#endif
     void printFrame(IPC::Connection&, WebCore::FrameIdentifier, const String&, const WebCore::FloatSize&,  CompletionHandler<void()>&&);
     void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
 

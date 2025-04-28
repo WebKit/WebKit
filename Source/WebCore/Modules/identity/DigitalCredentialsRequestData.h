@@ -25,17 +25,18 @@
 
 #pragma once
 
-#include "DigitalCredentialRequestOptions.h"
+#include "DigitalCredentialsProtocols.h"
 #include "MobileDocumentRequest.h"
 #include "OpenID4VPRequest.h"
 #include "SecurityOriginData.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 using DigitalCredentialRequestTypes = Variant<MobileDocumentRequest, OpenID4VPRequest>;
 
 struct DigitalCredentialsRequestData {
-    Vector<DigitalCredentialRequestTypes> requests;
+    Vector<ValidatedDigitalCredentialRequest> requests;
     SecurityOriginData topOrigin;
     SecurityOriginData documentOrigin;
 };

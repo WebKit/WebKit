@@ -14,6 +14,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CombinedWebDriverBidiDomains.json
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CredentialUpdaterShim.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
@@ -51,6 +53,13 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCTesterMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCTesterReceiverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCTesterReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCTesterReceiverMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentController.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentError.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentMobileDocumentRequest.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentRawRequest.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentRequest.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentPresentmentResponse.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IdentityDocumentRawRequestValidator.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIAction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIAction.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIAlarms.h

@@ -28,20 +28,25 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "BasicCredential.h"
+#include "DigitalCredentialsProtocols.h"
+#include "DigitalCredentialsRequestData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "UnvalidatedDigitalCredentialRequest.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class Document;
 
+class Document;
 enum class IdentityCredentialProtocol : uint8_t;
 struct CredentialRequestOptions;
-
+struct DigitalCredentialRequest;
+struct DigitalCredentialRequestOptions;
 template<typename IDLType> class DOMPromiseDeferred;
-using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
+template<typename> class ExceptionOr;
 
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class DigitalCredential final : public BasicCredential {
 public:
@@ -64,6 +69,9 @@ public:
 private:
     DigitalCredential(JSC::Strong<JSC::JSObject>&&, IdentityCredentialProtocol);
 
+    static ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateRequests(const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
+    static ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> convertObjectsToDigitalPresentationRequests(const Document&, const Vector<DigitalCredentialRequest>&);
+    static ExceptionOr<DigitalCredentialsRequestData> prepareDigitalCredentialRequestData(const Document&, Vector<ValidatedDigitalCredentialRequest>&&);
     static bool parseResponseData(RefPtr<Document>, const String&, JSC::JSObject*&);
 
     Type credentialType() const final { return Type::DigitalCredential; }

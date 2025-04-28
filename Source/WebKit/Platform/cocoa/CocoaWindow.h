@@ -27,7 +27,7 @@
 
 #if USE(APPKIT)
 OBJC_CLASS NSWindow;
-using CocoaWindow = NSWindow;
+typedef NSWindow CocoaWindow;
 #else
 OBJC_CLASS UIWindow;
 using CocoaWindow = UIWindow;

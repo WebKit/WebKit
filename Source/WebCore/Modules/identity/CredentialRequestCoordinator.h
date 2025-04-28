@@ -27,16 +27,17 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
+#include "DigitalCredentialsProtocols.h"
 #include "JSDOMPromiseDeferred.h"
+#include "UnvalidatedDigitalCredentialRequest.h"
 #include <optional>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-
+class BasicCredential;
 class AbortSignal;
 class CredentialRequestCoordinatorClient;
 class Document;
@@ -47,15 +48,20 @@ struct ExceptionData;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-class CredentialRequestCoordinator final : public RefCounted<CredentialRequestCoordinator>, public CanMakeWeakPtr<CredentialRequestCoordinator> {
+class CredentialRequestCoordinator final : public RefCounted<CredentialRequestCoordinator>, public CanMakeWeakPtr<CredentialRequestCoordinator>, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CredentialRequestCoordinator, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(CredentialRequestCoordinator);
 
 public:
-    static Ref<CredentialRequestCoordinator> create(UniqueRef<CredentialRequestCoordinatorClient>&&, Page&);
-    WEBCORE_EXPORT void presentPicker(CredentialPromise&&, DigitalCredentialsRequestData&&, RefPtr<AbortSignal>);
-    WEBCORE_EXPORT void abortPicker(JSC::JSValue reason);
+    static Ref<CredentialRequestCoordinator> create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
+    WEBCORE_EXPORT void presentPicker(const Document&, CredentialPromise&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
+    WEBCORE_EXPORT void abortPicker(ExceptionOr<JSC::JSValue>&&);
     ~CredentialRequestCoordinator();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    void contextDestroyed() final;
 
 private:
     static constexpr bool canPresentDigitalCredentialsUI()
@@ -95,12 +101,14 @@ private:
     void setCurrentPromise(CredentialPromise&&);
     CredentialPromise* currentPromise();
 
+    ExceptionOr<DigitalCredentialsRequestData> prepareDigitalCredentialRequestData(const Document&, Vector<ValidatedDigitalCredentialRequest>&&);
+
     ExceptionOr<JSC::JSObject*> parseDigitalCredentialsResponseData(Document&, const String&) const;
     void handleDigitalCredentialsPickerResult(Expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);
     void finalizeDigitalCredential(const DigitalCredentialsResponseData&);
 
-    explicit CredentialRequestCoordinator(UniqueRef<CredentialRequestCoordinatorClient>&&, Page&);
-    const UniqueRef<CredentialRequestCoordinatorClient> m_client;
+    explicit CredentialRequestCoordinator(Ref<CredentialRequestCoordinatorClient>&&, Page&);
+    const Ref<CredentialRequestCoordinatorClient> m_client;
     PickerState m_state { PickerState::Idle };
     std::optional<CredentialPromise> m_currentPromise;
     WeakPtr<Page> m_page;

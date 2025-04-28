@@ -140,7 +140,7 @@ public:
         UniqueRef<CryptoClient>&&,
         UniqueRef<ProcessSyncClient>&&
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-        , UniqueRef<CredentialRequestCoordinatorClient>&&
+        , Ref<CredentialRequestCoordinatorClient>&&
 #endif
     );
     WEBCORE_EXPORT ~PageConfiguration();
@@ -242,7 +242,7 @@ public:
 #endif
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    UniqueRef<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
+    Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
 #endif
 };
 

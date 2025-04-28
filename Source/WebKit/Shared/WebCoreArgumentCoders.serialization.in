@@ -6491,23 +6491,47 @@ struct WebCore::MockWebAuthenticationConfiguration {
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 
-[Nested] struct WebCore::OpenID4VPRequest {
+struct WebCore::OpenID4VPRequest {
 };
 
-[Nested] struct WebCore::MobileDocumentRequest {
+header: <WebCore/ISO18013.h>
+[Nested] struct WebCore::ISO18013ElementInfo {
+    bool isRetaining;
+};
+
+[Nested] struct WebCore::ISO18013DocumentRequest {
+    String documentType;
+    Vector<std::pair<String, Vector<std::pair<String, WebCore::ISO18013ElementInfo>>>> namespaces;
+};
+
+[Nested] struct WebCore::ISO18013DocumentRequestSet {
+    Vector<WebCore::ISO18013DocumentRequest> requests;
+};
+
+[Nested] struct WebCore::ISO18013PresentmentRequest {
+    bool isMandatory;
+    Vector<WebCore::ISO18013DocumentRequestSet> documentRequestSets;
+};
+
+struct WebCore::MobileDocumentRequest {
     String deviceRequest;
     String encryptionInfo;
 };
 
+[Nested] struct WebCore::ValidatedMobileDocumentRequest {
+    Vector<WebCore::CertificateInfo> requestAuthentications;
+    Vector<WebCore::ISO18013PresentmentRequest> presentmentRequests;
+};
+
 struct WebCore::DigitalCredentialsRequestData {
-    Vector<Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPRequest>> requests;
+    Vector<Variant<WebCore::ValidatedMobileDocumentRequest, WebCore::OpenID4VPRequest>> requests;
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
     [Validator='!documentOrigin->isNull()'] WebCore::SecurityOriginData documentOrigin;
 };
 
 struct WebCore::DigitalCredentialsResponseData {
     WebCore::IdentityCredentialProtocol protocol;
-    String responseData;
+    String responseDataJSON;
 };
 
 [Nested] enum class WebCore::IdentityCredentialProtocol : uint8_t {

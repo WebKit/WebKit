@@ -81,7 +81,7 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
-#if ENABLE(DIGITAL_CREDENTIALS_UI)
+#if HAVE(DIGITAL_CREDENTIALS_UI)
 #import <WebCore/DigitalCredentialsRequestData.h>
 #endif
 

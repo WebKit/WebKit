@@ -382,8 +382,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/identity/DigitalCredentialRequest.idl \
     $(WebCore)/Modules/identity/DigitalCredentialRequestOptions.idl \
     $(WebCore)/Modules/identity/IdentityCredentialProtocol.idl \
-    $(WebCore)/Modules/identity/MobileDocumentRequest.idl \
-    $(WebCore)/Modules/identity/OpenID4VPRequest.idl \
+    $(WebCore)/Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl \
+    $(WebCore)/Modules/identity/protocols/openid/OpenID4VPRequest.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \

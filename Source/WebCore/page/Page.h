@@ -739,7 +739,7 @@ public:
 #if ENABLE(WEB_AUTHN)
     AuthenticatorCoordinator& authenticatorCoordinator() { return m_authenticatorCoordinator.get(); }
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    CredentialRequestCoordinator& credentialRequestCoordinator() { return *m_credentialRequestCoordinator; }
+    CredentialRequestCoordinator& credentialRequestCoordinator() { return m_credentialRequestCoordinator.get(); }
 #endif
 #endif
 
@@ -1640,7 +1640,7 @@ private:
     const UniqueRef<AuthenticatorCoordinator> m_authenticatorCoordinator;
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    const RefPtr<CredentialRequestCoordinator> m_credentialRequestCoordinator;
+    const Ref<CredentialRequestCoordinator> m_credentialRequestCoordinator;
 #endif
 
 #endif // ENABLE(WEB_AUTHN)

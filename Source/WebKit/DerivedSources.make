@@ -199,6 +199,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/SpeechRecognitionServer \
 	UIProcess/XR/PlatformXRSystem \
 	WebProcess/Databases/IndexedDB/WebIDBConnectionToServer \
+	WebProcess/DigitalCredentials/DigitalCredentialsCoordinator \
 	WebProcess/Extensions/WebExtensionContextProxy \
 	WebProcess/Extensions/WebExtensionControllerProxy \
 	WebProcess/GPU/GPUProcessConnection \

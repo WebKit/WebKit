@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct DigitalCredentialsResponseData {
     IdentityCredentialProtocol protocol;
-    String responseData;
+    String responseDataJSON;
 };
 
 } // namespace WebCore

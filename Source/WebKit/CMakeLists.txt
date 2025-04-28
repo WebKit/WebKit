@@ -324,6 +324,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Databases/IndexedDB/WebIDBConnectionToServer
 
+    WebProcess/DigitalCredentials/DigitalCredentialsCoordinator
+
     WebProcess/Extensions/WebExtensionContextProxy
     WebProcess/Extensions/WebExtensionControllerProxy
 

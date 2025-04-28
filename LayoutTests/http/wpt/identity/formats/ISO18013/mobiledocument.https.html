@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Digital Credential API: get() default behavior checks.</title>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body></body>
+<script>
+    promise_setup(async () => {
+        if (document.visibilityState === "hidden") {
+            await new Promise((resolve) => {
+                document.onvisibilitychange = resolve;
+                testRunner.setPageVisibility("visible");
+            });
+        }
+        assert_equals(document.visibilityState, "visible", "should be visible");
+    });
+
+    promise_test(async (t) => {
+        const invalidData = [
+            "",
+            1,
+            null,
+            undefined,
+            {},
+            [],
+            true,
+            false,
+            new Date(),
+            new Map(),
+            { deviceRequest: "abc" },
+            { encryptionInfo: "123" },
+        ];
+        const allRequests = [];
+        for (const data of invalidData) {
+            const request = {
+                protocol: "iso.org.mdoc",
+                data,
+            };
+            await promise_rejects_js(
+                t,
+                TypeError,
+                navigator.credentials.get(
+                    {
+                        digital: {
+                            requests: [request],
+                        },
+                    },
+                    "Check that invalid data is rejected on conversion."
+                )
+            );
+            allRequests.push(request);
+        }
+        const options = {
+            digital: {
+                requests: allRequests,
+            },
+        };
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.credentials.get(
+                options,
+                "Check that all invalid data are rejected on conversion."
+            )
+        );
+
+        const idlValidRequest = {
+            protocol: "iso.org.mdoc",
+            data: { deviceRequest: "abc", encryptionInfo: "123" },
+        };
+        options.digital.requests.push(idlValidRequest);
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.credentials.get(
+                options,
+                "Check that any invalid request causes a rejection."
+            )
+        );
+    }, "Conversion to ISO-18013 Mobile Document Request.");
+
+    promise_test(async (t) => {
+        const invalidRequests = [{ deviceRequest: "123", encryptionInfo: "123" }];
+        for (const invalidRequest of invalidRequests) {
+            const options = {
+                digital: {
+                    requests: [
+                        {
+                            protocol: "iso.org.mdoc",
+                            data: invalidRequest,
+                        },
+                    ],
+                },
+            };
+            await promise_rejects_js(
+                t,
+                TypeError,
+                navigator.credentials.get(
+                    options,
+                    "Check that invalid request is rejected."
+                )
+            );
+        }
+    }, "Validation of ISO-18013 Mobile Document Request.");
+</script>

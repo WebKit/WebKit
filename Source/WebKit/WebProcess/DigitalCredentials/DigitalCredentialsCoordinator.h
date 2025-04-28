@@ -25,29 +25,53 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if HAVE(DIGITAL_CREDENTIALS_UI)
 
+#include "MessageReceiver.h"
 #include <WebCore/CredentialRequestCoordinatorClient.h>
+#include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/Document.h>
+#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class SecurityOriginData;
+struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
+struct ExceptionData;
+struct MobileDocumentRequest;
+struct OpenID4VPRequest;
+}
 
 namespace WebKit {
 
 class WebPage;
 
-class DigitalCredentialsCoordinator : public WebCore::CredentialRequestCoordinatorClient {
+class DigitalCredentialsCoordinator : public WebCore::CredentialRequestCoordinatorClient, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(DigitalCredentialsCoordinator);
+
 public:
     explicit DigitalCredentialsCoordinator(WebPage&);
 
-    void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) final;
-    void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&&) final;
+    static Ref<DigitalCredentialsCoordinator> create(WebPage&);
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    void showDigitalCredentialsPicker(Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) final;
+    void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&&) final;
+    WebCore::ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&) final;
+    void provideRawDigitalCredentialRequests(CompletionHandler<void(Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&)>&&);
 
 private:
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
     RefPtr<WebPage> protectedPage() const;
     WeakPtr<WebPage> m_page;
-
+    Vector<WebCore::UnvalidatedDigitalCredentialRequest> m_rawRequests;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(DIGITAL_CREDENTIALS_UI)

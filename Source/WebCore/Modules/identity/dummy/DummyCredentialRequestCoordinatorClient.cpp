@@ -31,6 +31,7 @@
 #include "DigitalCredentialsRequestData.h"
 #include "DigitalCredentialsResponseData.h"
 #include "ExceptionData.h"
+#include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>
 namespace WebCore {
 
@@ -39,7 +40,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DummyCredentialRequestCoordinatorClient);
 DummyCredentialRequestCoordinatorClient::DummyCredentialRequestCoordinatorClient() = default;
 DummyCredentialRequestCoordinatorClient::~DummyCredentialRequestCoordinatorClient() = default;
 
-void DummyCredentialRequestCoordinatorClient::showDigitalCredentialsPicker(const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
+Ref<DummyCredentialRequestCoordinatorClient> DummyCredentialRequestCoordinatorClient::create()
+{
+    return adoptRef(*new DummyCredentialRequestCoordinatorClient);
+}
+
+void DummyCredentialRequestCoordinatorClient::showDigitalCredentialsPicker(Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
 {
     completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Empty client."_s }));
 }
@@ -47,6 +53,11 @@ void DummyCredentialRequestCoordinatorClient::showDigitalCredentialsPicker(const
 void DummyCredentialRequestCoordinatorClient::dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(false);
+}
+
+ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> DummyCredentialRequestCoordinatorClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+{
+    return Exception { ExceptionCode::InvalidStateError };
 }
 
 } // namespace WebCore

@@ -107,7 +107,7 @@ PageConfiguration::PageConfiguration(
     UniqueRef<CryptoClient>&& cryptoClient,
     UniqueRef<ProcessSyncClient>&& processSyncClient
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    , UniqueRef<CredentialRequestCoordinatorClient>&& credentialRequestCoordinatorClient
+    , Ref<CredentialRequestCoordinatorClient>&& credentialRequestCoordinatorClient
 #endif
 )
     : identifier(identifier)

@@ -185,9 +185,11 @@ enum class ReplacementBehavior : uint8_t;
 
 namespace WebCore {
 struct DragItem;
-#if ENABLE(DIGITAL_CREDENTIALS_UI)
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
 struct DigitalCredentialsRequestData;
 #endif
+
 }
 
 namespace WebKit {

@@ -277,8 +277,6 @@ struct CompositionHighlight;
 struct CompositionUnderline;
 struct ContactInfo;
 struct ContactsRequestData;
-struct DigitalCredentialsRequestData;
-struct DigitalCredentialsResponseData;
 struct DataDetectorElementInfo;
 struct DictationAlternative;
 struct DictationContextType;
@@ -318,6 +316,13 @@ struct TextRecognitionResult;
 struct TranslationContextMenuInfo;
 #endif
 struct ViewportArguments;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
+struct MobileDocumentRequest;
+struct OpenID4VPRequest;
+#endif
 
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 using DictationContext = ObjectIdentifier<DictationContextType>;
@@ -1617,8 +1622,10 @@ public:
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback);
     void showContactPicker(const WebCore::ContactsRequestData&, CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&);
 
+#if HAVE(DIGITAL_CREDENTIALS_UI)
     void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
     void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&&);
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&&);

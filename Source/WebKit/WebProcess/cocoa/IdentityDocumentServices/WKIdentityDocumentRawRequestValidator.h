@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
 
-// Based on https://openid.github.io/OpenID4VP/openid-4-verifiable-presentations-wg-draft.html#name-openid4vp-profile-for-the-w
-dictionary OpenID4VPRequest {
-    // Members coming soon
-};
+#import "WKIdentityDocumentPresentmentRequest.h"
+#import "WKIdentityDocumentPresentmentResponse.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WKISO18013Request : NSObject
+
+@property (nonatomic, strong) NSString *encryptionInfo;
+
+@property (nonatomic, strong) NSString *deviceRequest;
+
+- (instancetype)initWithEncryptionInfo:(NSString *)encryptionInfo deviceRequest:(NSString *)deviceRequest NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@end
+
+@interface WKIdentityDocumentRawRequestValidator : NSObject
+
+- (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin;
+
+@end
+
+NS_ASSUME_NONNULL_END

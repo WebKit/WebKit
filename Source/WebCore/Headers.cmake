@@ -424,8 +424,19 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/DigitalCredentialsRequestData.h
     Modules/identity/DigitalCredentialsResponseData.h
     Modules/identity/IdentityCredentialProtocol.h
-    Modules/identity/MobileDocumentRequest.h
-    Modules/identity/OpenID4VPRequest.h
+
+    Modules/identity/protocols/DigitalCredentialsProtocols.h
+    Modules/identity/protocols/UnvalidatedDigitalCredentialRequest.h
+
+    Modules/identity/protocols/ISO18013/ISO18013.h
+    Modules/identity/protocols/ISO18013/ISO18013DocumentRequest.h
+    Modules/identity/protocols/ISO18013/ISO18013DocumentRequestSet.h
+    Modules/identity/protocols/ISO18013/ISO18013ElementInfo.h
+    Modules/identity/protocols/ISO18013/ISO18013PresentmentRequest.h
+    Modules/identity/protocols/ISO18013/MobileDocumentRequest.h
+    Modules/identity/protocols/ISO18013/ValidatedMobileDocumentRequest.h
+
+    Modules/identity/protocols/openid/OpenID4VPRequest.h
 
     Modules/identity/dummy/DummyCredentialRequestCoordinatorClient.h
 

@@ -406,7 +406,6 @@
 #if ENABLE(WEB_AUTHN)
 #include "WebAuthenticatorCoordinator.h"
 #include <WebCore/AuthenticatorCoordinator.h>
-#endif // ENABLE(WEB_AUTHN)
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 #include "DigitalCredentialsCoordinator.h"
@@ -414,6 +413,7 @@
 #include <WebCore/DigitalCredentialsResponseData.h>
 #include <WebCore/ExceptionData.h>
 #endif // HAVE(DIGITAL_CREDENTIALS_UI)
+#endif // ENABLE(WEB_AUTHN)
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "WebDeviceOrientationUpdateProvider.h"
@@ -783,7 +783,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebCryptoClient>(this->identifier()),
         makeUniqueRef<WebProcessSyncClient>(*this)
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-        , makeUniqueRef<DigitalCredentialsCoordinator>(*this)
+        , DigitalCredentialsCoordinator::create(*this)
 #endif
     );
 

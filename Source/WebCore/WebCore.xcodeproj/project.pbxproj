@@ -6397,9 +6397,17 @@
 		E7E0357224D4E196008DFEFB /* AnalyserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7E0357124D4E191008DFEFB /* AnalyserOptions.h */; };
 		E7FBE7C224EB2FB000A18E62 /* StereoPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FBE7C124EB2FAB00A18E62 /* StereoPannerNode.h */; };
 		E7FBE7C324EB2FB600A18E62 /* StereoPannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FBE7C024EB2FAB00A18E62 /* StereoPannerOptions.h */; };
+		E86097D22D84403B00A4E526 /* ISO18013.h in Headers */ = {isa = PBXBuildFile; fileRef = E86097CB2D843C0700A4E526 /* ISO18013.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E86097D32D84403B00A4E526 /* ISO18013PresentmentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E86097D02D843C0700A4E526 /* ISO18013PresentmentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E86097D42D84403B00A4E526 /* ISO18013DocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E86097CE2D843C0700A4E526 /* ISO18013DocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E86097D52D84403B00A4E526 /* ISO18013ElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E86097CD2D843C0700A4E526 /* ISO18013ElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E86097D62D84403B00A4E526 /* ISO18013DocumentRequestSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E86097CF2D843C0700A4E526 /* ISO18013DocumentRequestSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E868034828603E8900799EE3 /* JSWindowEventHandlers+Gamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = E8FC9219285BFD5A004904B2 /* JSWindowEventHandlers+Gamepad.h */; };
-		E8B45DAD2D5CAD5E00CC8447 /* MobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8B45DA82D5CA2E200CC8447 /* MobileDocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8744DA22D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8744DA02D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8744DA32D62BD0100E56B11 /* MobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8744D9D2D62BD0100E56B11 /* MobileDocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E89BE8AC2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E89BE8AB2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E8BF3AE42D56005800E7ED0B /* DummyCredentialRequestCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BDE32D94D20E0000A163 /* DigitalCredentialsProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BDE22D94D2020000A163 /* DigitalCredentialsProtocols.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB0FB708270D0B1000F7810D /* PushEncryptionKeyName.h in Headers */ = {isa = PBXBuildFile; fileRef = EB0FB6FD270D0AE800F7810D /* PushEncryptionKeyName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB0FB709270D0B1800F7810D /* PushSubscription.h in Headers */ = {isa = PBXBuildFile; fileRef = EB0FB707270D0AEC00F7810D /* PushSubscription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB0FB70A270D0B1B00F7810D /* PushSubscriptionJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = EB0FB703270D0AEB00F7810D /* PushSubscriptionJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21016,11 +21024,19 @@
 		E7FBE7C124EB2FAB00A18E62 /* StereoPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StereoPannerNode.h; sourceTree = "<group>"; };
 		E7FBE7C424EC36F300A18E62 /* StereoPanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StereoPanner.h; sourceTree = "<group>"; };
 		E7FBE7C524EC36F300A18E62 /* StereoPanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StereoPanner.cpp; sourceTree = "<group>"; };
+		E86097CB2D843C0700A4E526 /* ISO18013.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISO18013.h; sourceTree = "<group>"; };
+		E86097CD2D843C0700A4E526 /* ISO18013ElementInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISO18013ElementInfo.h; sourceTree = "<group>"; };
+		E86097CE2D843C0700A4E526 /* ISO18013DocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISO18013DocumentRequest.h; sourceTree = "<group>"; };
+		E86097CF2D843C0700A4E526 /* ISO18013DocumentRequestSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISO18013DocumentRequestSet.h; sourceTree = "<group>"; };
+		E86097D02D843C0700A4E526 /* ISO18013PresentmentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISO18013PresentmentRequest.h; sourceTree = "<group>"; };
+		E8744D9D2D62BD0100E56B11 /* MobileDocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileDocumentRequest.h; sourceTree = "<group>"; };
+		E8744D9F2D62BD0100E56B11 /* MobileDocumentRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MobileDocumentRequest.idl; sourceTree = "<group>"; };
+		E8744DA02D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValidatedMobileDocumentRequest.h; sourceTree = "<group>"; };
 		E886AA61285AC5A5008FF9F7 /* WindowEventHandlers+Gamepad.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "WindowEventHandlers+Gamepad.idl"; sourceTree = "<group>"; };
-		E8B45DA82D5CA2E200CC8447 /* MobileDocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileDocumentRequest.h; sourceTree = "<group>"; };
-		E8B45DAA2D5CA2E200CC8447 /* MobileDocumentRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MobileDocumentRequest.idl; sourceTree = "<group>"; };
+		E89BE8AB2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnvalidatedDigitalCredentialRequest.h; sourceTree = "<group>"; };
 		E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyCredentialRequestCoordinatorClient.h; sourceTree = "<group>"; };
 		E8BF3AE22D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DummyCredentialRequestCoordinatorClient.cpp; sourceTree = "<group>"; };
+		E8E7BDE22D94D2020000A163 /* DigitalCredentialsProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsProtocols.h; sourceTree = "<group>"; };
 		E8FC9219285BFD5A004904B2 /* JSWindowEventHandlers+Gamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JSWindowEventHandlers+Gamepad.h"; sourceTree = "<group>"; };
 		E8FC921A285BFD5B004904B2 /* JSWindowEventHandlers+Gamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "JSWindowEventHandlers+Gamepad.cpp"; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
@@ -22734,6 +22750,7 @@
 			isa = PBXGroup;
 			children = (
 				E8BF3AE32D56003700E7ED0B /* dummy */,
+				E8744D942D62BCC700E56B11 /* protocols */,
 				0D649B3A2B9EA50A00D7F335 /* CredentialRequestCoordinator.cpp */,
 				0D649B382B9EA4E500D7F335 /* CredentialRequestCoordinator.h */,
 				0D649B472B9EC4E200D7F335 /* CredentialRequestCoordinatorClient.h */,
@@ -22748,10 +22765,6 @@
 				0DE11A782C8AB2840003F6EE /* DigitalCredentialsResponseData.h */,
 				0D431A842B5A42AB00864655 /* IdentityCredentialProtocol.h */,
 				0D431A862B5A42AB00864655 /* IdentityCredentialProtocol.idl */,
-				E8B45DA82D5CA2E200CC8447 /* MobileDocumentRequest.h */,
-				E8B45DAA2D5CA2E200CC8447 /* MobileDocumentRequest.idl */,
-				0D66A3B52C61CC1F0027973F /* OpenID4VPRequest.h */,
-				0D66A3B62C61CC1F0027973F /* OpenID4VPRequest.idl */,
 			);
 			name = identity;
 			path = Modules/identity;
@@ -37628,6 +37641,32 @@
 			path = "contact-picker";
 			sourceTree = "<group>";
 		};
+		E8744D942D62BCC700E56B11 /* protocols */ = {
+			isa = PBXGroup;
+			children = (
+				E8744DA12D62BD0100E56B11 /* ISO18013 */,
+				E8E7BDE12D94D12A0000A163 /* openid */,
+				E8E7BDE22D94D2020000A163 /* DigitalCredentialsProtocols.h */,
+				E89BE8AB2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h */,
+			);
+			path = protocols;
+			sourceTree = "<group>";
+		};
+		E8744DA12D62BD0100E56B11 /* ISO18013 */ = {
+			isa = PBXGroup;
+			children = (
+				E86097CB2D843C0700A4E526 /* ISO18013.h */,
+				E86097CE2D843C0700A4E526 /* ISO18013DocumentRequest.h */,
+				E86097CF2D843C0700A4E526 /* ISO18013DocumentRequestSet.h */,
+				E86097CD2D843C0700A4E526 /* ISO18013ElementInfo.h */,
+				E86097D02D843C0700A4E526 /* ISO18013PresentmentRequest.h */,
+				E8744D9D2D62BD0100E56B11 /* MobileDocumentRequest.h */,
+				E8744D9F2D62BD0100E56B11 /* MobileDocumentRequest.idl */,
+				E8744DA02D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h */,
+			);
+			path = ISO18013;
+			sourceTree = "<group>";
+		};
 		E8BF3AE32D56003700E7ED0B /* dummy */ = {
 			isa = PBXGroup;
 			children = (
@@ -37635,6 +37674,15 @@
 				E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */,
 			);
 			path = dummy;
+			sourceTree = "<group>";
+		};
+		E8E7BDE12D94D12A0000A163 /* openid */ = {
+			isa = PBXGroup;
+			children = (
+				0D66A3B52C61CC1F0027973F /* OpenID4VPRequest.h */,
+				0D66A3B62C61CC1F0027973F /* OpenID4VPRequest.idl */,
+			);
+			path = openid;
 			sourceTree = "<group>";
 		};
 		EBA75C44275EC56000D6D31C /* cocoa */ = {
@@ -41003,6 +41051,7 @@
 				0D431A7D2B5A397C00864655 /* DigitalCredential.h in Headers */,
 				0D431F012B905BC4001E222F /* DigitalCredentialRequest.h in Headers */,
 				0D431F002B9053DC001E222F /* DigitalCredentialRequestOptions.h in Headers */,
+				E8E7BDE32D94D20E0000A163 /* DigitalCredentialsProtocols.h in Headers */,
 				0DF687F62C88414900C16DC9 /* DigitalCredentialsRequestData.h in Headers */,
 				0DE11A792C8AB2950003F6EE /* DigitalCredentialsResponseData.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
@@ -41976,6 +42025,11 @@
 				7B66CFD52D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
 				6DD53F3D2C49D37F0049F1C5 /* IsLoggedIn.h in Headers */,
+				E86097D22D84403B00A4E526 /* ISO18013.h in Headers */,
+				E86097D42D84403B00A4E526 /* ISO18013DocumentRequest.h in Headers */,
+				E86097D62D84403B00A4E526 /* ISO18013DocumentRequestSet.h in Headers */,
+				E86097D52D84403B00A4E526 /* ISO18013ElementInfo.h in Headers */,
+				E86097D32D84403B00A4E526 /* ISO18013PresentmentRequest.h in Headers */,
 				CD5FF4992162E2BE004BD86F /* ISOBox.h in Headers */,
 				CD720B4F2268B51300047FDE /* ISOFairPlayStreamingPsshBox.h in Headers */,
 				CD5FF49E2162E4E8004BD86F /* ISOOriginalFormatBox.h in Headers */,
@@ -43230,7 +43284,7 @@
 				07B93FFC23B94EC70036F8EA /* MIMETypeCache.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
-				E8B45DAD2D5CAD5E00CC8447 /* MobileDocumentRequest.h in Headers */,
+				E8744DA32D62BD0100E56B11 /* MobileDocumentRequest.h in Headers */,
 				A1E086642489D35300E496D9 /* MockApplePaySetupFeature.h in Headers */,
 				412DEF1D23A9186600D840F6 /* MockAudioSharedUnit.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
@@ -45030,6 +45084,7 @@
 				AEBAFFAD2D65D459008311A5 /* UnknownCredentialOptions.h in Headers */,
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				467302021C4EFE7800BCB357 /* UnloadCountIncrementer.h in Headers */,
+				E89BE8AC2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h in Headers */,
 				FD1762E0176686D900D836A8 /* UpSampler.h in Headers */,
 				93D437A21D57B3FE00AB85EA /* URLDecomposition.h in Headers */,
 				267726051A5DF6F2003C24DD /* URLFilterParser.h in Headers */,
@@ -45078,6 +45133,7 @@
 				55AF14E61EAAC59B0026EEAA /* UTIRegistry.h in Headers */,
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
 				8A3FCB16293C12FF00D1728A /* ValidatedFormListedElement.h in Headers */,
+				E8744DA22D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h in Headers */,
 				83C45B8E1DC2B68A008871BA /* ValidationBubble.h in Headers */,
 				F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */,
 				F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */,

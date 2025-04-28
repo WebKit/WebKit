@@ -40,6 +40,10 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/highlight"
     "${WEBCORE_DIR}/Modules/identity"
+    "${WEBCORE_DIR}/Modules/identity/dummy"
+    "${WEBCORE_DIR}/Modules/identity/protocols"
+    "${WEBCORE_DIR}/Modules/identity/protocols/ISO18013"
+    "${WEBCORE_DIR}/Modules/identity/protocols/openid"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
@@ -403,8 +407,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/identity/DigitalCredentialRequest.idl
     Modules/identity/DigitalCredentialRequestOptions.idl
     Modules/identity/IdentityCredentialProtocol.idl
-    Modules/identity/MobileDocumentRequest.idl
-    Modules/identity/OpenID4VPRequest.idl
+
+    Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
+
+    Modules/identity/protocols/openid/OpenID4VPRequest.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl

@@ -2,6 +2,13 @@
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalFeatureDefines.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatformHave.h
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentController.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentError.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentMobileDocumentRequest.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentRawRequest.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentRequest.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentPresentmentResponse.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/IdentityDocumentRawRequestValidator.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/MaterialAdditions.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKSeparatedImageView.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Compiler.h
@@ -554,6 +561,7 @@ $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.js
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Cache/WebCacheStorageConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
+$(PROJECT_DIR)/WebProcess/DigitalCredentials/DigitalCredentialsCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/CodeGeneratorExtensions.pm
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json
