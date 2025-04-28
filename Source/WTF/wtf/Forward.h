@@ -21,6 +21,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 #include <wtf/Platform.h>
 
 #if defined(__has_feature)
