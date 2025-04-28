@@ -601,8 +601,7 @@ void CurlRequest::invokeDidReceiveResponse(const CurlResponse& response, Functio
     m_didNotifyResponse = true;
     m_responseCompletionHandler = WTFMove(completionHandler);
 
-    // FIXME: Replace this isolatedCopy with WTFMove.
-    callClient([response = response.isolatedCopy()](CurlRequest& request, CurlRequestClient& client) mutable {
+    callClient([response = WTFMove(response)](CurlRequest& request, CurlRequestClient& client) mutable {
         client.curlDidReceiveResponse(request, WTFMove(response));
     });
 }
