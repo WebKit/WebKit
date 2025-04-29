@@ -26,6 +26,8 @@
 #ifndef WebNotificationProvider_h
 #define WebNotificationProvider_h
 
+#include "WKRetainPtrHashSupport.h"
+
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNotificationProvider.h>
 #include <WebKit/WKRetainPtr.h>

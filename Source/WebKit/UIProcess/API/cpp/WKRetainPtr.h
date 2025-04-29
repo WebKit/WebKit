@@ -29,9 +29,10 @@
 
 #include <WebKit/WKType.h>
 #include <algorithm>
-#include <wtf/HashTraits.h>
 
 namespace WebKit {
+
+enum WKRetainPtrHashDeletedValueType { WKRetainPtrDeletedValue = -1 };
 
 template<typename T> class WKRetainPtr {
 public:
@@ -81,7 +82,7 @@ public:
     }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
-    WKRetainPtr(WTF::HashTableDeletedValueType)
+    WKRetainPtr(WKRetainPtrHashDeletedValueType)
         : m_ptr(hashTableDeletedValue())
     {
     }
@@ -243,22 +244,10 @@ using WebKit::retainWK;
 namespace WTF {
 
 template<typename> struct IsSmartPtr;
-template<typename> struct DefaultHash;
 
 template<typename T> struct IsSmartPtr<WKRetainPtr<T>> {
     WTF_INTERNAL static const bool value = true;
     WTF_INTERNAL static constexpr bool isNullable = true;
-};
-
-template<typename P> struct DefaultHash<WKRetainPtr<P>> : PtrHash<WKRetainPtr<P>> { };
-
-template<typename P> struct HashTraits<WKRetainPtr<P>> : SimpleClassHashTraits<WKRetainPtr<P>> {
-    static P emptyValue() { return nullptr; }
-    static bool isEmptyValue(const WKRetainPtr<P>& value) { return !value; }
-
-    typedef P PeekType;
-    static PeekType peek(const WKRetainPtr<P>& value) { return value.get(); }
-    static PeekType peek(P value) { return value; }
 };
 
 } // namespace WTF
