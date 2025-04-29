@@ -1,4 +1,9 @@
 <!doctype html>
+<meta name=timeout content=long>
+<meta name="variant" content="?1-2">
+<meta name="variant" content="?3-4">
+<meta name="variant" content="?5-6">
+<meta name="variant" content="?7-last">
 <title>
     Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
     has no access to the openee.
@@ -7,39 +12,48 @@
 <script src=/resources/testharnessreport.js></script>
 <script src="/common/dispatcher/dispatcher.js"></script>
 <script src="/common/get-host-info.sub.js"></script>
+<script src="/common/subset-tests.js"></script>
 <script src="/common/utils.js"></script>
 <script src="../../resources/common.js"></script>
 <script src="../../resources/noopener-helper.js"></script>
 <script>
 
 
-test_noopener_opening_popup("noopener-allow-popups",
-                            "unsafe-none",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/true);
-test_noopener_opening_popup("noopener-allow-popups",
-                            "noopener-allow-popups",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_opening_popup("noopener-allow-popups",
-                            "same-origin",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_opening_popup("noopener-allow-popups",
-                            "same-origin-allow-popups",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_opening_popup("noopener-allow-popups",
-                            "same-origin-allow-popups",
-                            CROSS_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_opening_popup("same-origin-allow-popups",
-                            "noopener-allow-popups",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_opening_popup("same-origin",
-                            "noopener-allow-popups",
-                            SAME_ORIGIN,
-                            /*opener_expectation=*/false);
-test_noopener_navigating_away("unsafe-none");
+subsetTest(test_noopener_opening_popup,
+           "noopener-allow-popups",
+           "unsafe-none",
+           SAME_ORIGIN,
+           /*opener_expectation=*/true);
+subsetTest(test_noopener_opening_popup,
+           "noopener-allow-popups",
+           "noopener-allow-popups",
+           SAME_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_opening_popup,
+           "noopener-allow-popups",
+           "same-origin",
+           SAME_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_opening_popup,
+           "noopener-allow-popups",
+           "same-origin-allow-popups",
+           SAME_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_opening_popup,
+           "noopener-allow-popups",
+           "same-origin-allow-popups",
+           CROSS_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_opening_popup,
+           "same-origin-allow-popups",
+           "noopener-allow-popups",
+           SAME_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_opening_popup,
+           "same-origin",
+           "noopener-allow-popups",
+           SAME_ORIGIN,
+           /*opener_expectation=*/false);
+subsetTest(test_noopener_navigating_away,
+           "unsafe-none");
  </script>
