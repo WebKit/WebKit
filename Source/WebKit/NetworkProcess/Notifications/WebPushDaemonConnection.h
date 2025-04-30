@@ -36,6 +36,7 @@
 #include <WebCore/PushSubscriptionData.h>
 #include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace IPC {
 class Connection;
@@ -60,9 +61,9 @@ namespace WebPushD {
 
 struct ConnectionTraits {
     using MessageType = WebPushD::MessageType;
-    static constexpr auto protocolVersionKey { WebPushD::protocolVersionKey };
+    static constexpr auto protocolVersionKey = ASCIILiteral::fromLiteralUnsafe(WebPushD::protocolVersionKey);
     static constexpr uint64_t protocolVersionValue { WebPushD::protocolVersionValue };
-    static constexpr auto protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
+    static constexpr auto protocolEncodedMessageKey = ASCIILiteral::fromLiteralUnsafe(WebPushD::protocolEncodedMessageKey);
 };
 
 class Connection final : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {

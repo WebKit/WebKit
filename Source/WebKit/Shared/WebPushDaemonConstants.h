@@ -27,21 +27,18 @@
 
 #ifdef __cplusplus
 
-#include <wtf/Seconds.h>
-#include <wtf/text/ASCIILiteral.h>
-
 namespace WebKit::WebPushD {
 
 // If an origin processes more than this many silent pushes, then it will be unsubscribed from push.
 constexpr unsigned maxSilentPushCount = 3;
 
 // getPendingPushMessage starts a timer with this time interval after returning a push message to the client. If the timer expires, then we increment the subscription's silent push count.
-static constexpr Seconds silentPushTimeoutForProduction { 30_s };
-static constexpr Seconds silentPushTimeoutForTesting { 1_s };
+constexpr double silentPushTimeoutForProductionSeconds = 30;
+constexpr double silentPushTimeoutForTestingSeconds = 1;
 
-constexpr auto protocolVersionKey = "protocol version"_s;
+constexpr auto protocolVersionKey = "protocol version";
 constexpr uint64_t protocolVersionValue = 5;
-constexpr auto protocolEncodedMessageKey = "encoded message"_s;
+constexpr auto protocolEncodedMessageKey = "encoded message";
 
 // FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here
 // until we can remove that requirement.

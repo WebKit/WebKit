@@ -57,6 +57,7 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/darwin/XPCExtras.h>
+#import <wtf/text/ASCIILiteral.h>
 #import <wtf/text/MakeString.h>
 
 #if HAVE(MOBILE_KEY_BAG)
@@ -306,7 +307,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
     }
 
-    auto data = xpcDictionaryGetData(request, protocolEncodedMessageKey);
+    auto data = xpcDictionaryGetData(request, ASCIILiteral::fromLiteralUnsafe(protocolEncodedMessageKey));
     if (!data.data()) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - No encoded message data in xpc message");
         tryCloseRequestConnection(request);
@@ -676,7 +677,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 Seconds WebPushDaemon::silentPushTimeout() const
 {
-    return m_usingMockPushService ? silentPushTimeoutForTesting : silentPushTimeoutForProduction;
+    return Seconds { m_usingMockPushService ? silentPushTimeoutForTestingSeconds : silentPushTimeoutForProductionSeconds };
 }
 
 // This only needs to be called if the first entry in m_potentialSilentPushes was changed or removed.
