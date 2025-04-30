@@ -299,13 +299,13 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    const bool asUTCVariant = false;
+    constexpr bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToUTCString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    const bool asUTCVariant = true;
+    constexpr bool asUTCVariant = true;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
@@ -353,13 +353,13 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToDateString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    const bool asUTCVariant = false;
+    constexpr bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDate, asUTCVariant);
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToTimeString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    const bool asUTCVariant = false;
+    constexpr bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatTime, asUTCVariant);
 }
 

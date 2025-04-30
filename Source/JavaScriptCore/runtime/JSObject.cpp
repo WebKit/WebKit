@@ -1788,7 +1788,7 @@ void JSObject::convertFromCopyOnWrite(VM& vm)
     ASSERT(isCopyOnWrite(indexingMode()));
     ASSERT(structure()->indexingMode() == indexingMode());
 
-    const bool hasIndexingHeader = true;
+    constexpr bool hasIndexingHeader = true;
     Butterfly* oldButterfly = butterfly();
     size_t propertyCapacity = 0;
     unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min(oldButterfly->vectorLength() * 2, MAX_STORAGE_VECTOR_LENGTH));

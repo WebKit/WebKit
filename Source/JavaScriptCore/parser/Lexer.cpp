@@ -1597,7 +1597,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
 
     // Optimization: most binary values fit into 4 bytes.
     uint32_t binaryValue = 0;
-    const unsigned maximumDigits = 32;
+    constexpr unsigned maximumDigits = 32;
     int digit = maximumDigits - 1;
     // Temporary buffer for the digits. Makes easier
     // to reconstruct the input characters when needed.
@@ -1653,7 +1653,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
 
     // Optimization: most octal values fit into 4 bytes.
     uint32_t octalValue = 0;
-    const unsigned maximumDigits = 10;
+    constexpr unsigned maximumDigits = 10;
     int digit = maximumDigits - 1;
     // Temporary buffer for the digits. Makes easier
     // to reconstruct the input characters when needed.
@@ -1712,7 +1712,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
     // Since parseOctal may be executed before parseDecimal,
     // the m_buffer8 may hold ascii digits.
     if (!m_buffer8.size()) {
-        const unsigned maximumDigits = 10;
+        constexpr unsigned maximumDigits = 10;
         int digit = maximumDigits - 1;
         // Temporary buffer for the digits. Makes easier
         // to reconstruct the input characters when needed.

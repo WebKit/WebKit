@@ -327,45 +327,45 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
 
 typedef uint8_t LexicallyScopedFeatures;
 
-const LexicallyScopedFeatures NoLexicallyScopedFeatures                     = 0;
-const LexicallyScopedFeatures StrictModeLexicallyScopedFeature         = 1 << 0;
-const LexicallyScopedFeatures TaintedByWithScopeLexicallyScopedFeature = 1 << 1;
+constexpr LexicallyScopedFeatures NoLexicallyScopedFeatures                     = 0;
+constexpr LexicallyScopedFeatures StrictModeLexicallyScopedFeature         = 1 << 0;
+constexpr LexicallyScopedFeatures TaintedByWithScopeLexicallyScopedFeature = 1 << 1;
 
-const LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeatures | StrictModeLexicallyScopedFeature | TaintedByWithScopeLexicallyScopedFeature;
+constexpr LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeatures | StrictModeLexicallyScopedFeature | TaintedByWithScopeLexicallyScopedFeature;
 static constexpr unsigned bitWidthOfLexicallyScopedFeatures = 2;
 static_assert(AllLexicallyScopedFeatures <= (1 << bitWidthOfLexicallyScopedFeatures) - 1, "LexicallyScopedFeatures must be 2bits");
 
 typedef uint16_t CodeFeatures;
 
-const CodeFeatures NoFeatures =                         0;
-const CodeFeatures EvalFeature =                   1 << 0;
-const CodeFeatures ArgumentsFeature =              1 << 1;
-const CodeFeatures WithFeature =                   1 << 2;
-const CodeFeatures ThisFeature =                   1 << 3;
-const CodeFeatures NonSimpleParameterListFeature = 1 << 4;
-const CodeFeatures ShadowsArgumentsFeature =       1 << 5;
-const CodeFeatures ArrowFunctionFeature =          1 << 6;
-const CodeFeatures AwaitFeature =                  1 << 7;
-const CodeFeatures SuperCallFeature =              1 << 8;
-const CodeFeatures SuperPropertyFeature =          1 << 9;
-const CodeFeatures NewTargetFeature =              1 << 10;
-const CodeFeatures NoEvalCacheFeature =            1 << 11;
-const CodeFeatures ImportMetaFeature =             1 << 12;
+constexpr CodeFeatures NoFeatures =                         0;
+constexpr CodeFeatures EvalFeature =                   1 << 0;
+constexpr CodeFeatures ArgumentsFeature =              1 << 1;
+constexpr CodeFeatures WithFeature =                   1 << 2;
+constexpr CodeFeatures ThisFeature =                   1 << 3;
+constexpr CodeFeatures NonSimpleParameterListFeature = 1 << 4;
+constexpr CodeFeatures ShadowsArgumentsFeature =       1 << 5;
+constexpr CodeFeatures ArrowFunctionFeature =          1 << 6;
+constexpr CodeFeatures AwaitFeature =                  1 << 7;
+constexpr CodeFeatures SuperCallFeature =              1 << 8;
+constexpr CodeFeatures SuperPropertyFeature =          1 << 9;
+constexpr CodeFeatures NewTargetFeature =              1 << 10;
+constexpr CodeFeatures NoEvalCacheFeature =            1 << 11;
+constexpr CodeFeatures ImportMetaFeature =             1 << 12;
 
-const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | NonSimpleParameterListFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | AwaitFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature | ImportMetaFeature;
+constexpr CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | NonSimpleParameterListFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | AwaitFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature | ImportMetaFeature;
 static constexpr unsigned bitWidthOfCodeFeatures = 14;
 static_assert(AllFeatures <= (1 << bitWidthOfCodeFeatures) - 1, "CodeFeatures must fit within 14 bits");
 
 typedef uint8_t InnerArrowFunctionCodeFeatures;
     
-const InnerArrowFunctionCodeFeatures NoInnerArrowFunctionFeatures =                0;
-const InnerArrowFunctionCodeFeatures EvalInnerArrowFunctionFeature =          1 << 0;
-const InnerArrowFunctionCodeFeatures ArgumentsInnerArrowFunctionFeature =     1 << 1;
-const InnerArrowFunctionCodeFeatures ThisInnerArrowFunctionFeature =          1 << 2;
-const InnerArrowFunctionCodeFeatures SuperCallInnerArrowFunctionFeature =     1 << 3;
-const InnerArrowFunctionCodeFeatures SuperPropertyInnerArrowFunctionFeature = 1 << 4;
-const InnerArrowFunctionCodeFeatures NewTargetInnerArrowFunctionFeature =     1 << 5;
+constexpr InnerArrowFunctionCodeFeatures NoInnerArrowFunctionFeatures =                0;
+constexpr InnerArrowFunctionCodeFeatures EvalInnerArrowFunctionFeature =          1 << 0;
+constexpr InnerArrowFunctionCodeFeatures ArgumentsInnerArrowFunctionFeature =     1 << 1;
+constexpr InnerArrowFunctionCodeFeatures ThisInnerArrowFunctionFeature =          1 << 2;
+constexpr InnerArrowFunctionCodeFeatures SuperCallInnerArrowFunctionFeature =     1 << 3;
+constexpr InnerArrowFunctionCodeFeatures SuperPropertyInnerArrowFunctionFeature = 1 << 4;
+constexpr InnerArrowFunctionCodeFeatures NewTargetInnerArrowFunctionFeature =     1 << 5;
     
-const InnerArrowFunctionCodeFeatures AllInnerArrowFunctionCodeFeatures = EvalInnerArrowFunctionFeature | ArgumentsInnerArrowFunctionFeature | ThisInnerArrowFunctionFeature | SuperCallInnerArrowFunctionFeature | SuperPropertyInnerArrowFunctionFeature | NewTargetInnerArrowFunctionFeature;
+constexpr InnerArrowFunctionCodeFeatures AllInnerArrowFunctionCodeFeatures = EvalInnerArrowFunctionFeature | ArgumentsInnerArrowFunctionFeature | ThisInnerArrowFunctionFeature | SuperCallInnerArrowFunctionFeature | SuperPropertyInnerArrowFunctionFeature | NewTargetInnerArrowFunctionFeature;
 static_assert(AllInnerArrowFunctionCodeFeatures <= 0b111111, "InnerArrowFunctionCodeFeatures must be 6bits");
 } // namespace JSC

@@ -233,7 +233,7 @@ static JSValue decode(JSGlobalObject* globalObject, JSValue argument, const WTF:
     });
 }
 
-static const int SizeOfInfinity = 8;
+static constexpr int SizeOfInfinity = 8;
 
 template <typename CharType>
 static bool isInfinity(std::span<const CharType> data)

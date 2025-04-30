@@ -3413,7 +3413,7 @@ public:
     template<PtrTag tag>
     static CodeLocationLabel<tag> startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr<tag> label)
     {
-        const unsigned twoWordOpSize = 4;
+        constexpr unsigned twoWordOpSize = 4;
         return label.labelAtOffset(-twoWordOpSize * 2);
     }
     

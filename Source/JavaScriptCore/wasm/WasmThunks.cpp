@@ -228,7 +228,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(co
 
     jit.emitFunctionPrologue();
 
-    const unsigned extraPaddingBytes = 0;
+    constexpr unsigned extraPaddingBytes = 0;
     auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(isSIMDContext ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 

@@ -49,8 +49,8 @@ void initializeSuperSampler()
     Thread::create(
         "JSC Super Sampler"_s,
         [] () {
-            const int sleepQuantum = 3;
-            const int printingPeriod = 3000;
+            constexpr int sleepQuantum = 3;
+            constexpr int printingPeriod = 3000;
             for (;;) {
                 for (int ms = 0; ms < printingPeriod; ms += sleepQuantum) {
                     if (g_superSamplerEnabled) {

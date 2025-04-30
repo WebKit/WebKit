@@ -54,8 +54,8 @@ namespace {
 bool verbose() { return Options::airLinearScanVerbose(); }
 
 // Phase constants we use for the PhaseInsertionSet.
-const unsigned firstPhase = 0;
-const unsigned secondPhase = 1;
+constexpr unsigned firstPhase = 0;
+constexpr unsigned secondPhase = 1;
 
 typedef Range<size_t> Interval;
 

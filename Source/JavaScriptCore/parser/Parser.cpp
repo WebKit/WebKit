@@ -402,7 +402,7 @@ bool Parser<LexerType>::allowAutomaticSemicolon()
 template <typename LexerType>
 template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceElements(TreeBuilder& context, SourceElementsMode mode)
 {
-    const unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
+    constexpr unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
     TreeSourceElements sourceElements = context.createSourceElements();
     const Identifier* directive = nullptr;
     unsigned directiveLiteralLength = 0;

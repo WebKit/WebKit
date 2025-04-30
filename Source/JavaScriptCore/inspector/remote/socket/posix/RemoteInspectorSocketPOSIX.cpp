@@ -78,7 +78,7 @@ std::optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
         return std::nullopt;
     }
 
-    const int enabled = 1;
+    constexpr int enabled = 1;
     int error = setsockopt(fdListen, SOL_SOCKET, SO_REUSEADDR, &enabled, sizeof(enabled));
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEADDR, errno = %d", errno);

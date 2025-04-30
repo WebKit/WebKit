@@ -36,7 +36,7 @@ class SmallStrings;
 
 class NumericStrings {
 public:
-    static const size_t cacheSize = 1024;
+    static constexpr size_t cacheSize = 1024;
 
     template<typename T>
     struct CacheEntry {

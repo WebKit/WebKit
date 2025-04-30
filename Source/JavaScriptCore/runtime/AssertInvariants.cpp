@@ -41,12 +41,12 @@ void assertInvariants()
     // prepared to change LowLevelInterpreter.asm as well!!
     {
 #if USE(JSVALUE64)
-        const ptrdiff_t CallFrameHeaderSlots = 5;
+        constexpr ptrdiff_t CallFrameHeaderSlots = 5;
 #else // USE(JSVALUE64) // i.e. 32-bit version
-        const ptrdiff_t CallFrameHeaderSlots = 4;
+        constexpr ptrdiff_t CallFrameHeaderSlots = 4;
 #endif
-        const ptrdiff_t MachineRegisterSize = sizeof(CPURegister);
-        const ptrdiff_t SlotSize = 8;
+        constexpr ptrdiff_t MachineRegisterSize = sizeof(CPURegister);
+        constexpr ptrdiff_t SlotSize = 8;
 
         static_assert(sizeof(Register) == SlotSize);
         static_assert(CallFrame::headerSizeInRegisters == CallFrameHeaderSlots);

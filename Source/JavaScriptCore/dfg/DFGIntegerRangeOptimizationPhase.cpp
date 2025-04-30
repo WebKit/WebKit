@@ -43,7 +43,7 @@ namespace {
 namespace DFGIntegerRangeOptimizationPhaseInternal {
 static constexpr bool verbose = false;
 }
-const unsigned giveUpThreshold = 50;
+constexpr unsigned giveUpThreshold = 50;
 
 int64_t clampedSumImpl() { return 0; }
 

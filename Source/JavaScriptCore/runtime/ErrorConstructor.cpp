@@ -122,7 +122,7 @@ JSC_DEFINE_HOST_FUNCTION(errorConstructorCaptureStackTrace, (JSGlobalObject* glo
 
     Vector<StackFrame> stackTrace;
     // skip this function.
-    const size_t framesToSkip = 1;
+    constexpr size_t framesToSkip = 1;
 
     vm.interpreter.getStackTrace(object, stackTrace, framesToSkip, globalObject->stackTraceLimit().value_or(0), caller);
 

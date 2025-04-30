@@ -35,7 +35,7 @@ namespace JSC {
 // holding the fast malloc heap lock).
 template<typename T>
 class TieredMMapArray {
-    static const size_t entriesPerBlock = 4096;
+    static constexpr size_t entriesPerBlock = 4096;
 
 public:
     TieredMMapArray()

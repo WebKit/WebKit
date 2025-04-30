@@ -323,16 +323,16 @@ public:
     }
     
 private:
-    static const intptr_t SlimFlag = 0x1;
-    static const intptr_t ReadOnlyFlag = 0x2;
-    static const intptr_t DontEnumFlag = 0x4;
-    static const intptr_t NotNullFlag = 0x8;
-    static const intptr_t KindBitsMask = 0x30;
-    static const intptr_t ScopeKindBits = 0x00;
-    static const intptr_t UnwatchableScopeKindBits = 0x10;
-    static const intptr_t StackKindBits = 0x20;
-    static const intptr_t DirectArgumentKindBits = 0x30;
-    static const intptr_t FlagBits = 6;
+    static constexpr intptr_t SlimFlag = 0x1;
+    static constexpr intptr_t ReadOnlyFlag = 0x2;
+    static constexpr intptr_t DontEnumFlag = 0x4;
+    static constexpr intptr_t NotNullFlag = 0x8;
+    static constexpr intptr_t KindBitsMask = 0x30;
+    static constexpr intptr_t ScopeKindBits = 0x00;
+    static constexpr intptr_t UnwatchableScopeKindBits = 0x10;
+    static constexpr intptr_t StackKindBits = 0x20;
+    static constexpr intptr_t DirectArgumentKindBits = 0x30;
+    static constexpr intptr_t FlagBits = 6;
     
     class FatEntry {
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);

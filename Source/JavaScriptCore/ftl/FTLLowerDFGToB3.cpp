@@ -18056,7 +18056,7 @@ IGNORE_CLANG_WARNINGS_END
     // stores value at every 64-bits word between base+begin*8 and base+end*8
     void splatWords(LValue base, LValue begin, LValue end, LValue value, const AbstractHeap& heap)
     {
-        const uint64_t unrollingLimit = 10;
+        constexpr uint64_t unrollingLimit = 10;
         if (begin->hasInt() && end->hasInt()) {
             uint64_t beginConst = static_cast<uint64_t>(begin->asInt());
             uint64_t endConst = static_cast<uint64_t>(end->asInt());

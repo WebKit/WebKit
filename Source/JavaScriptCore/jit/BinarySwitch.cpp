@@ -177,7 +177,7 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     // when combined with some input will always produce pathologically good or pathologically bad
     // performance.
     
-    const unsigned leafThreshold = 3;
+    constexpr unsigned leafThreshold = 3;
     
     if (size <= leafThreshold) {
         if (BinarySwitchInternal::verbose)

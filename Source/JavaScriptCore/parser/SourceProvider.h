@@ -60,7 +60,7 @@ class UnlinkedFunctionCodeBlock;
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
-        static const intptr_t nullID = 1;
+        static constexpr intptr_t nullID = 1;
         
         JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, String&& sourceURL, String&& preRedirectURL, SourceTaintedOrigin, const TextPosition& startPosition, SourceProviderSourceType);
 

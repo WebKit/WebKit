@@ -58,7 +58,7 @@ namespace JSC {
         const Identifier& makePrivateIdentifier(VM&, ASCIILiteral, unsigned);
 
     public:
-        static const int MaximumCachableCharacter = 128;
+        static constexpr int MaximumCachableCharacter = 128;
         typedef SegmentedVector<Identifier, 64> IdentifierVector;
         void clear()
         {
@@ -197,7 +197,7 @@ namespace JSC {
         }
 
     private:
-        static const size_t freeablePoolSize = 8000;
+        static constexpr size_t freeablePoolSize = 8000;
 
         static size_t alignSize(size_t size)
         {

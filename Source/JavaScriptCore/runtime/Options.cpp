@@ -1164,7 +1164,7 @@ bool Options::setOptions(const char* optionsStr)
 
         char* valueBegin = p;
         bool hasStringValue = false;
-        const int minStringLength = 2; // The min is an empty string i.e. 2 double quotes.
+        constexpr int minStringLength = 2; // The min is an empty string i.e. 2 double quotes.
         if ((p + minStringLength < end) && (*p == '"')) {
             p = strstr(p + 1, "\"");
             if (!p) {

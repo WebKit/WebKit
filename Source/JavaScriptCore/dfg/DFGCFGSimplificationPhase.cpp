@@ -49,7 +49,7 @@ public:
     
     bool run()
     {
-        const bool extremeLogging = false;
+        constexpr bool extremeLogging = false;
 
         bool outerChanged = false;
         bool innerChanged;

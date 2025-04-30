@@ -844,7 +844,7 @@ public:
     bool cleanup();
 
     // Type definitions are uniqued and, for call_indirect, validated at runtime. Tables can create invalid TypeIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in TypeInformation.
-    static const constexpr TypeIndex invalidIndex = 0;
+    static constexpr TypeIndex invalidIndex = 0;
 
 private:
     // Returns the TypeIndex of a potentially unowned (other than TypeInformation::m_typeSet) TypeDefinition.

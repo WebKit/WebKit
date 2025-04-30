@@ -465,7 +465,7 @@ public:
 
         void dump(PrintStream& out) const
         {
-            const unsigned maxPrintLen = 50;
+            constexpr unsigned maxPrintLen = 50;
 
             out.print(sizeof(CharType) == 1 ? "8bit" : "16bit", " len: ", length, " \"");
             unsigned printLen = std::min(length, maxPrintLen);
@@ -546,7 +546,7 @@ public:
         if (characterClass->m_anyCharacter)
             return true;
 
-        const size_t thresholdForBinarySearch = 6;
+        constexpr size_t thresholdForBinarySearch = 6;
 
         if (!isASCII(ch)) {
             if (characterClass->m_matchesUnicode.size()) {

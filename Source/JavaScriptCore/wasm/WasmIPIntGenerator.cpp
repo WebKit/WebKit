@@ -2876,7 +2876,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
 {
     const FunctionSignature& signature = *originalSignature.expand().as<FunctionSignature>();
     if (callType == CallType::TailCall) {
-        const unsigned callIndex = 1;
+        constexpr unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
         m_metadata->setTailCallClobbersInstance();
 
@@ -2904,7 +2904,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
 
     auto& callConvention = cachedCallInformationFor(signature);
     results.appendUsingFunctor(signature.returnCount(), [](unsigned) { return Value { }; });
-    const unsigned callIndex = 1;
+    constexpr unsigned callIndex = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callIndex);
 
     IPInt::CallIndirectMetadata functionIndexMetadata {
@@ -2928,7 +2928,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition
 {
     const FunctionSignature& signature = *originalSignature.expand().as<FunctionSignature>();
     if (callType == CallType::TailCall) {
-        const unsigned callIndex = 1;
+        constexpr unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
         m_metadata->setTailCallClobbersInstance();
 
@@ -2955,7 +2955,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition
 
     auto& callConvention = cachedCallInformationFor(signature);
     results.appendUsingFunctor(signature.returnCount(), [](unsigned) { return Value { }; });
-    const unsigned callRef = 1;
+    constexpr unsigned callRef = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callRef);
 
     IPInt::CallRefMetadata callMetadata {

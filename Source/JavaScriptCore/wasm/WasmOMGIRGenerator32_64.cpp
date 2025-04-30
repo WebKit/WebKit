@@ -6417,7 +6417,7 @@ void OMGIRGenerator::emitChecksForModOrDiv(B3::Opcode operation, Value* left, Va
 
 auto OMGIRGenerator::addI32DivS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = Div;
+    constexpr B3::Opcode op = Div;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6427,7 +6427,7 @@ auto OMGIRGenerator::addI32DivS(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI32RemS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = Mod;
+    constexpr B3::Opcode op = Mod;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6437,7 +6437,7 @@ auto OMGIRGenerator::addI32RemS(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI32DivU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = UDiv;
+    constexpr B3::Opcode op = UDiv;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6447,7 +6447,7 @@ auto OMGIRGenerator::addI32DivU(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI32RemU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = UMod;
+    constexpr B3::Opcode op = UMod;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6457,7 +6457,7 @@ auto OMGIRGenerator::addI32RemU(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI64DivS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = Div;
+    constexpr B3::Opcode op = Div;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6467,7 +6467,7 @@ auto OMGIRGenerator::addI64DivS(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI64RemS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = Mod;
+    constexpr B3::Opcode op = Mod;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6477,7 +6477,7 @@ auto OMGIRGenerator::addI64RemS(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI64DivU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = UDiv;
+    constexpr B3::Opcode op = UDiv;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);
@@ -6487,7 +6487,7 @@ auto OMGIRGenerator::addI64DivU(ExpressionType leftVar, ExpressionType rightVar,
 
 auto OMGIRGenerator::addI64RemU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
-    const B3::Opcode op = UMod;
+    constexpr B3::Opcode op = UMod;
     Value* left = get(leftVar);
     Value* right = get(rightVar);
     emitChecksForModOrDiv(op, left, right);

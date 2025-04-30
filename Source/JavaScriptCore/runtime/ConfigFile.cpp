@@ -46,7 +46,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-static const size_t s_processNameMax = 128;
+static constexpr size_t s_processNameMax = 128;
 char ConfigFile::s_processName[s_processNameMax + 1] = { 0 };
 char ConfigFile::s_parentProcessName[s_processNameMax + 1] = { 0 };
 

@@ -345,7 +345,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         newStorageCapacity = currentCapacity;
         allocatedNewStorage = false;
     } else {
-        const unsigned preCapacity = 0;
+        constexpr unsigned preCapacity = 0;
         Butterfly* newButterfly = Butterfly::tryCreateUninitialized(vm, this, preCapacity, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
         if (!newButterfly)
             return false;

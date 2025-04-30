@@ -723,8 +723,8 @@ private:
         // shift off the uninteresting bits. On the other hand, it's not clear that this would
         // actually be any better than what we have done here and it's not clear that it would be
         // better than a binary switch.
-        const unsigned minCasesForTable = 7;
-        const unsigned densityLimit = 4;
+        constexpr unsigned minCasesForTable = 7;
+        constexpr unsigned densityLimit = 4;
         if (end - start >= minCasesForTable) {
             int64_t firstValue = cases[start].caseValue();
             int64_t lastValue = cases[end - 1].caseValue();
@@ -819,7 +819,7 @@ private:
         // See comments in jit/BinarySwitch.cpp for a justification of this algorithm. The only
         // thing we do differently is that we don't use randomness.
 
-        const unsigned leafThreshold = 3;
+        constexpr unsigned leafThreshold = 3;
 
         unsigned size = end - start;
 

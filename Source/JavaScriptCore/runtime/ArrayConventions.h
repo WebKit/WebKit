@@ -126,7 +126,7 @@ JS_EXPORT_PRIVATE void clearArrayMemset(double* base, unsigned count);
 ALWAYS_INLINE void clearArray(WriteBarrier<Unknown>* base, unsigned count)
 {
 #if USE(JSVALUE64)
-    const unsigned minCountForMemset = 100;
+    constexpr unsigned minCountForMemset = 100;
     if (count >= minCountForMemset) {
         clearArrayMemset(base, count);
         return;
@@ -140,7 +140,7 @@ ALWAYS_INLINE void clearArray(WriteBarrier<Unknown>* base, unsigned count)
 ALWAYS_INLINE void clearArray(double* base, unsigned count)
 {
 #if USE(JSVALUE64)
-    const unsigned minCountForMemset = 100;
+    constexpr unsigned minCountForMemset = 100;
     if (count >= minCountForMemset) {
         clearArrayMemset(base, count);
         return;

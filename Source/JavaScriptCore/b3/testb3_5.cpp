@@ -2185,7 +2185,7 @@ void testCallFunctionWithHellaArguments2()
 
 static void preCommitStackMemory(void* stackLimit)
 {
-    const int pageSize = 4096;
+    constexpr int pageSize = 4096;
     for (volatile char* p = reinterpret_cast<char*>(&stackLimit); p > stackLimit; p -= pageSize) {
         char ch = *p;
         *p = ch;

@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-const static uint8_t JSRegExpStringIteratorNumberOfInternalFields = 5;
+static constexpr uint8_t JSRegExpStringIteratorNumberOfInternalFields = 5;
 
 class JSRegExpStringIterator final : public JSInternalFieldObjectImpl<JSRegExpStringIteratorNumberOfInternalFields> {
 public:

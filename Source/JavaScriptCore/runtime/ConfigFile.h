@@ -41,11 +41,11 @@ private:
     void canonicalizePaths();
 
 #if OS(WINDOWS)
-    static const size_t s_maxPathLength = 260; // Windows value for "MAX_PATH"
+    static constexpr size_t s_maxPathLength = 260; // Windows value for "MAX_PATH"
 #elif defined(PATH_MAX)
-    static const size_t s_maxPathLength = PATH_MAX;
+    static constexpr size_t s_maxPathLength = PATH_MAX;
 #else
-    static const size_t s_maxPathLength = 4095;
+    static constexpr size_t s_maxPathLength = 4095;
 #endif
 
     static char s_processName[];

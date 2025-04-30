@@ -2782,7 +2782,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(BigIntImpl x, double y)
     //
     uint64_t mantissa = doubleBits & 0x000FFFFFFFFFFFFF;
     mantissa |= 0x0010000000000000;
-    const int mantissaTopBit = 52; // 0-indexed.
+    constexpr int mantissaTopBit = 52; // 0-indexed.
 
     // 0-indexed position of {x}'s most significant bit within the {msd}.
     int msdTopBit = digitBits - 1 - msdLeadingZeros;

@@ -1115,7 +1115,7 @@ TokenType LiteralParser<CharType, reviverMode>::Lexer::lexNumber(LiteralParserTo
     }
 
     // ('.' [0-9]+)?
-    const int NumberOfDigitsForSafeInt32 = 9;  // The numbers from -99999999 to 999999999 are always in range of Int32.
+    constexpr int NumberOfDigitsForSafeInt32 = 9; // The numbers from -99999999 to 999999999 are always in range of Int32.
     if (m_ptr < m_end && *m_ptr == '.') {
         ++m_ptr;
         // [0-9]+

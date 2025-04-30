@@ -98,7 +98,7 @@ static void setBitThreadFunc(void* p)
 void testCompareAndSwap()
 {
     Bitmap bitmap;
-    const int numThreads = 5;
+    constexpr int numThreads = 5;
     RefPtr<Thread> threads[numThreads];
     Data data[numThreads];
 

@@ -61,8 +61,8 @@ namespace JSC {
 static double sNumTotalStackTraces = 0;
 static double sNumTotalWalks = 0;
 static double sNumFailedWalks = 0;
-static const uint32_t sNumWalkReportingFrequency = 50;
-static const double sWalkErrorPercentage = .05;
+static constexpr uint32_t sNumWalkReportingFrequency = 50;
+static constexpr double sWalkErrorPercentage = .05;
 static constexpr bool sReportStatsOnlyWhenTheyreAboveThreshold = false;
 static constexpr bool sReportStats = false;
 

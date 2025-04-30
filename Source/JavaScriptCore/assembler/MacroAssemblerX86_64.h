@@ -4895,8 +4895,8 @@ public:
     Call threadSafePatchableNearCall()
     {
         padBeforePatch();
-        const size_t nearCallOpcodeSize = 1;
-        const size_t nearCallRelativeLocationSize = sizeof(int32_t);
+        constexpr size_t nearCallOpcodeSize = 1;
+        constexpr size_t nearCallRelativeLocationSize = sizeof(int32_t);
         // We want to make sure the 32-bit near call immediate is 32-bit aligned.
         size_t codeSize = m_assembler.codeSize();
         size_t alignedSize = WTF::roundUpToMultipleOf<nearCallRelativeLocationSize>(codeSize + nearCallOpcodeSize);
@@ -4909,8 +4909,8 @@ public:
 
     Call threadSafePatchableNearTailCall()
     {
-        const size_t nearCallOpcodeSize = 1;
-        const size_t nearCallRelativeLocationSize = sizeof(int32_t);
+        constexpr size_t nearCallOpcodeSize = 1;
+        constexpr size_t nearCallRelativeLocationSize = sizeof(int32_t);
         // We want to make sure the 32-bit near call immediate is 32-bit aligned.
         size_t codeSize = m_assembler.codeSize();
         size_t alignedSize = WTF::roundUpToMultipleOf<nearCallRelativeLocationSize>(codeSize + nearCallOpcodeSize);
@@ -9065,10 +9065,10 @@ public:
     template<PtrTag tag>
     static CodeLocationLabel<tag> startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr<tag> label)
     {
-        const int rexBytes = 1;
-        const int opcodeBytes = 1;
-        const int immediateBytes = 8;
-        const int totalBytes = rexBytes + opcodeBytes + immediateBytes;
+        constexpr int rexBytes = 1;
+        constexpr int opcodeBytes = 1;
+        constexpr int immediateBytes = 8;
+        constexpr int totalBytes = rexBytes + opcodeBytes + immediateBytes;
         ASSERT(totalBytes >= maxJumpReplacementSize());
         return label.labelAtOffset(-totalBytes);
     }
@@ -9076,10 +9076,10 @@ public:
     template<PtrTag tag>
     static CodeLocationLabel<tag> startOfBranch32WithPatchOnRegister(CodeLocationDataLabel32<tag> label)
     {
-        const int rexBytes = 1;
-        const int opcodeBytes = 1;
-        const int immediateBytes = 4;
-        const int totalBytes = rexBytes + opcodeBytes + immediateBytes;
+        constexpr int rexBytes = 1;
+        constexpr int opcodeBytes = 1;
+        constexpr int immediateBytes = 4;
+        constexpr int totalBytes = rexBytes + opcodeBytes + immediateBytes;
         ASSERT(totalBytes >= maxJumpReplacementSize());
         return label.labelAtOffset(-totalBytes);
     }

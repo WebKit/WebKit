@@ -381,9 +381,9 @@ public:
 
     // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
     // converted to Int52s and back again.
-    static constexpr const unsigned numberOfInt52Bits = 52;
-    static constexpr const int64_t notInt52 = static_cast<int64_t>(1) << numberOfInt52Bits;
-    static constexpr const unsigned int52ShiftAmount = 12;
+    static constexpr unsigned numberOfInt52Bits = 52;
+    static constexpr int64_t notInt52 = static_cast<int64_t>(1) << numberOfInt52Bits;
+    static constexpr unsigned int52ShiftAmount = 12;
     
     static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
     static constexpr ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }

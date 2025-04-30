@@ -2305,7 +2305,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCrash, NO_RETURN_DUE_TO_CRASH, 
     auto scope = DECLARE_CATCH_SCOPE(vm);
     if (callFrame->argumentCount()) {
         dataLogLn("Dumping ", callFrame->argumentCount(), " values before crashing:");
-        const bool addLineFeed = true;
+        constexpr bool addLineFeed = true;
         doPrint(globalObject, callFrame, addLineFeed);
         if (scope.exception()) {
             JSValue value = scope.exception()->value();
@@ -2798,7 +2798,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpBytecodeFor, (JSGlobalObject* globalObject,
 JSC_DEFINE_HOST_FUNCTION(functionDataLog, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
-    const bool addLineFeed = false;
+    constexpr bool addLineFeed = false;
     return doPrint(globalObject, callFrame, addLineFeed);
 }
 
@@ -2807,7 +2807,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDataLog, (JSGlobalObject* globalObject, CallFra
 JSC_DEFINE_HOST_FUNCTION(functionPrint, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
-    const bool addLineFeed = true;
+    constexpr bool addLineFeed = true;
     return doPrint(globalObject, callFrame, addLineFeed);
 }
 

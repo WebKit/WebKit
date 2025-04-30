@@ -1835,8 +1835,8 @@ public:
     ALWAYS_INLINE void umaxv(FPRegisterID vd, FPRegisterID vn)
     {
         static_assert(destSize == 8 || destSize == 16 || destSize == 32);
-        const unsigned Q = 1;
-        const unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
+        constexpr unsigned Q = 1;
+        constexpr unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
         insn(0b00101110001100001010100000000000 | (Q << 30) | (size << 22)| (vn << 5) | vd);
     }
 
@@ -1844,8 +1844,8 @@ public:
     ALWAYS_INLINE void uminv(FPRegisterID vd, FPRegisterID vn)
     {
         static_assert(destSize == 8 || destSize == 16 || destSize == 32);
-        const unsigned Q = 1;
-        const unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
+        constexpr unsigned Q = 1;
+        constexpr unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
         insn(0b00101110001100011010100000000000 | (Q << 30) | (size << 22)| (vn << 5) | vd);
     }
 
@@ -2105,16 +2105,16 @@ public:
 
     ALWAYS_INLINE void tbl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
     {
-        const unsigned len = 0;
-        const unsigned Q = 1;
+        constexpr unsigned len = 0;
+        constexpr unsigned Q = 1;
         insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
     }
 
     ALWAYS_INLINE void tbl2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vn2, FPRegisterID vm)
     {
         RELEASE_ASSERT(vn2, vn2 == vn + 1);
-        const unsigned len = 1;
-        const unsigned Q = 1;
+        constexpr unsigned len = 1;
+        constexpr unsigned Q = 1;
         insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
     }
 
@@ -4233,7 +4233,7 @@ protected:
     {
         ASSERT(imm3 < 5);
         // The only allocated values for opt is 0.
-        const int opt = 0;
+        constexpr int opt = 0;
         return (0x0b200000 | sf << 31 | op << 30 | S << 29 | opt << 22 | xOrZr(rm) << 16 | option << 13 | (imm3 & 0x7) << 10 | xOrSp(rn) << 5 | xOrZrOrSp(S, rd));
     }
 
@@ -4253,7 +4253,7 @@ protected:
 
     ALWAYS_INLINE static int addSubtractWithCarry(Datasize sf, AddOp op, SetFlags S, RegisterID rm, RegisterID rn, RegisterID rd)
     {
-        const int opcode2 = 0;
+        constexpr int opcode2 = 0;
         return (0x1a000000 | sf << 31 | op << 30 | S << 29 | xOrZr(rm) << 16 | opcode2 << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
@@ -4277,8 +4277,8 @@ protected:
         ASSERT(imm19 == (imm19 << 13) >> 13);
         ASSERT(!(cond & ~15));
         // The only allocated values for o1 & o0 are 0.
-        const int o1 = 0;
-        const int o0 = 0;
+        constexpr int o1 = 0;
+        constexpr int o0 = 0;
         return (0x54000000 | o1 << 24 | (imm19 & 0x7ffff) << 5 | o0 << 4 | cond);
     }
 
@@ -4286,18 +4286,18 @@ protected:
     {
         ASSERT(!(imm5 & ~0x1f));
         ASSERT(nzcv < 16);
-        const int S = 1;
-        const int o2 = 0;
-        const int o3 = 0;
+        constexpr int S = 1;
+        constexpr int o2 = 0;
+        constexpr int o3 = 0;
         return (0x1a400800 | sf << 31 | op << 30 | S << 29 | (imm5 & 0x1f) << 16 | cond << 12 | o2 << 10 | xOrZr(rn) << 5 | o3 << 4 | nzcv);
     }
 
     ALWAYS_INLINE static int conditionalCompareRegister(Datasize sf, AddOp op, RegisterID rm, Condition cond, RegisterID rn, int nzcv)
     {
         ASSERT(nzcv < 16);
-        const int S = 1;
-        const int o2 = 0;
-        const int o3 = 0;
+        constexpr int S = 1;
+        constexpr int o2 = 0;
+        constexpr int o3 = 0;
         return (0x1a400000 | sf << 31 | op << 30 | S << 29 | xOrZr(rm) << 16 | cond << 12 | o2 << 10 | xOrZr(rn) << 5 | o3 << 4 | nzcv);
     }
 
@@ -4305,20 +4305,20 @@ protected:
     // 'op2' means increment
     ALWAYS_INLINE static int conditionalSelect(Datasize sf, bool op, RegisterID rm, Condition cond, bool op2, RegisterID rn, RegisterID rd)
     {
-        const int S = 0;
+        constexpr int S = 0;
         return (0x1a800000 | sf << 31 | op << 30 | S << 29 | xOrZr(rm) << 16 | cond << 12 | op2 << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
     ALWAYS_INLINE static int dataProcessing1Source(Datasize sf, DataOp1Source opcode, RegisterID rn, RegisterID rd)
     {
-        const int S = 0;
-        const int opcode2 = 0;
+        constexpr int S = 0;
+        constexpr int opcode2 = 0;
         return (0x5ac00000 | sf << 31 | S << 29 | opcode2 << 16 | opcode << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
     ALWAYS_INLINE static int dataProcessing2Source(Datasize sf, RegisterID rm, DataOp2Source opcode, RegisterID rn, RegisterID rd)
     {
-        const int S = 0;
+        constexpr int S = 0;
         return (0x1ac00000 | sf << 31 | S << 29 | xOrZr(rm) << 16 | opcode << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
@@ -4333,7 +4333,7 @@ protected:
     ALWAYS_INLINE static int excepnGeneration(ExcepnOp opc, uint16_t imm16, int LL)
     {
         ASSERT((opc == ExcepnOp_BREAKPOINT || opc == ExcepnOp_HALT) ? !LL : (LL && (LL < 4)));
-        const int op2 = 0;
+        constexpr int op2 = 0;
         return (0xd4000000 | opc << 21 | imm16 << 5 | op2 << 2 | LL);
     }
     ALWAYS_INLINE static int excepnGenerationImmMask()
@@ -4345,46 +4345,46 @@ protected:
     ALWAYS_INLINE static int extract(Datasize sf, RegisterID rm, int imms, RegisterID rn, RegisterID rd)
     {
         ASSERT(imms < (sf ? 64 : 32));
-        const int op21 = 0;
+        constexpr int op21 = 0;
         const int N = sf;
-        const int o0 = 0;
+        constexpr int o0 = 0;
         return (0x13800000 | sf << 31 | op21 << 29 | N << 22 | o0 << 21 | xOrZr(rm) << 16 | imms << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
     ALWAYS_INLINE static int floatingPointCompare(Datasize type, FPRegisterID rm, FPRegisterID rn, FPCmpOp opcode2)
     {
-        const int M = 0;
-        const int S = 0;
-        const int op = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
+        constexpr int op = 0;
         return (0x1e202000 | M << 31 | S << 29 | type << 22 | rm << 16 | op << 14 | rn << 5 | opcode2);
     }
 
     ALWAYS_INLINE static int floatingPointConditionalCompare(Datasize type, FPRegisterID rm, Condition cond, FPRegisterID rn, FPCondCmpOp op, int nzcv)
     {
         ASSERT(nzcv < 16);
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0x1e200400 | M << 31 | S << 29 | type << 22 | rm << 16 | cond << 12 | rn << 5 | op << 4 | nzcv);
     }
 
     ALWAYS_INLINE static int floatingPointConditionalSelect(Datasize type, FPRegisterID rm, Condition cond, FPRegisterID rn, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0x1e200c00 | M << 31 | S << 29 | type << 22 | rm << 16 | cond << 12 | rn << 5 | rd);
     }
 
     ALWAYS_INLINE static int floatingPointImmediate(Datasize type, int imm8, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
-        const int imm5 = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
+        constexpr int imm5 = 0;
         return (0x1e201000 | M << 31 | S << 29 | type << 22 | (imm8 & 0xff) << 13 | imm5 << 5 | rd);
     }
 
     ALWAYS_INLINE static int floatingPointIntegerConversions(Datasize sf, Datasize type, FPIntConvOp rmodeOpcode, FPRegisterID rn, FPRegisterID rd)
     {
-        const int S = 0;
+        constexpr int S = 0;
         return (0x1e200000 | sf << 31 | S << 29 | type << 22 | rmodeOpcode << 16 | rn << 5 | rd);
     }
 
@@ -4400,15 +4400,15 @@ protected:
 
     ALWAYS_INLINE static int floatingPointDataProcessing1Source(Datasize type, FPDataOp1Source opcode, FPRegisterID rn, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0x1e204000 | M << 31 | S << 29 | type << 22 | opcode << 15 | rn << 5 | rd);
     }
 
     ALWAYS_INLINE static int floatingPointDataProcessing2Source(Datasize type, FPRegisterID rm, FPDataOp2Source opcode, FPRegisterID rn, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0x1e200800 | M << 31 | S << 29 | type << 22 | rm << 16 | opcode << 12 | rn << 5 | rd);
     }
 
@@ -4421,15 +4421,15 @@ protected:
     // 'o1' means negate
     ALWAYS_INLINE static int floatingPointDataProcessing3Source(Datasize type, bool o1, FPRegisterID rm, AddOp o2, FPRegisterID ra, FPRegisterID rn, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0x1f000000 | M << 31 | S << 29 | type << 22 | o1 << 21 | rm << 16 | o2 << 15 | ra << 10 | rn << 5 | rd);
     }
 
     ALWAYS_INLINE static int floatingPointDataProcessing4Source(Datasize type, FPDataOp4Source opcode, FPRegisterID rn, FPRegisterID rd)
     {
-        const int M = 0;
-        const int S = 0;
+        constexpr int M = 0;
+        constexpr int S = 0;
         return (0b0'0'0'11110'00'10100'00'10000'00000'00000 | M << 31 | S << 29 | type << 22 | opcode << 15 | rn << 5 | rd);
     }
 
@@ -4658,9 +4658,9 @@ protected:
     ALWAYS_INLINE static int unconditionalBranchRegister(BranchType opc, RegisterID rn)
     {
         // The only allocated values for op2 is 0x1f, for op3 & op4 are 0.
-        const int op2 = 0x1f;
-        const int op3 = 0;
-        const int op4 = 0;
+        constexpr int op2 = 0x1f;
+        constexpr int op3 = 0;
+        constexpr int op4 = 0;
         return (0xd6000000 | opc << 21 | op2 << 16 | op3 << 10 | xOrZr(rn) << 5 | op4);
     }
     

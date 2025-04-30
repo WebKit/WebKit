@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-const static uint8_t JSAsyncFromSyncIteratorNumberOfInternalFields = 2;
+static constexpr uint8_t JSAsyncFromSyncIteratorNumberOfInternalFields = 2;
 
 class JSAsyncFromSyncIterator final : public JSInternalFieldObjectImpl<JSAsyncFromSyncIteratorNumberOfInternalFields> {
 public:

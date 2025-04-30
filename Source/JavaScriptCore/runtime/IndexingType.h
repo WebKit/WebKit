@@ -61,57 +61,57 @@ namespace JSC {
 typedef uint8_t IndexingType;
 
 // Flags for testing the presence of capabilities.
-static const IndexingType IsArray                  = 0x01;
+static constexpr IndexingType IsArray                  = 0x01;
 
 // The shape of the indexed property storage.
-static const IndexingType NoIndexingShape                 = 0x00;
-static const IndexingType UndecidedShape                  = 0x02; // Only useful for arrays.
-static const IndexingType Int32Shape                      = 0x04;
-static const IndexingType DoubleShape                     = 0x06;
-static const IndexingType ContiguousShape                 = 0x08;
-static const IndexingType ArrayStorageShape               = 0x0A;
-static const IndexingType SlowPutArrayStorageShape        = 0x0C;
+static constexpr IndexingType NoIndexingShape                 = 0x00;
+static constexpr IndexingType UndecidedShape                  = 0x02; // Only useful for arrays.
+static constexpr IndexingType Int32Shape                      = 0x04;
+static constexpr IndexingType DoubleShape                     = 0x06;
+static constexpr IndexingType ContiguousShape                 = 0x08;
+static constexpr IndexingType ArrayStorageShape               = 0x0A;
+static constexpr IndexingType SlowPutArrayStorageShape        = 0x0C;
 
-static const IndexingType IndexingShapeMask               = 0x0E;
-static const IndexingType IndexingShapeShift              = 1;
-static const IndexingType NumberOfIndexingShapes          = 7;
-static const IndexingType IndexingTypeMask                = IndexingShapeMask | IsArray;
+static constexpr IndexingType IndexingShapeMask               = 0x0E;
+static constexpr IndexingType IndexingShapeShift              = 1;
+static constexpr IndexingType NumberOfIndexingShapes          = 7;
+static constexpr IndexingType IndexingTypeMask                = IndexingShapeMask | IsArray;
 
 // Whether or not the butterfly is copy on write. If it is copy on write then the butterfly is actually a JSImmutableButterfly. This should only ever be set if there are no named properties.
-static const IndexingType CopyOnWrite                      = 0x10;
-static const IndexingType IndexingShapeAndWritabilityMask  = CopyOnWrite | IndexingShapeMask;
-static const IndexingType IndexingModeMask                 = CopyOnWrite | IndexingTypeMask;
-static const IndexingType NumberOfCopyOnWriteIndexingModes = 3; // We only have copy on write for int32, double, and contiguous shapes.
-static const IndexingType NumberOfArrayIndexingModes       = NumberOfIndexingShapes + NumberOfCopyOnWriteIndexingModes;
+static constexpr IndexingType CopyOnWrite                      = 0x10;
+static constexpr IndexingType IndexingShapeAndWritabilityMask  = CopyOnWrite | IndexingShapeMask;
+static constexpr IndexingType IndexingModeMask                 = CopyOnWrite | IndexingTypeMask;
+static constexpr IndexingType NumberOfCopyOnWriteIndexingModes = 3; // We only have copy on write for int32, double, and contiguous shapes.
+static constexpr IndexingType NumberOfArrayIndexingModes       = NumberOfIndexingShapes + NumberOfCopyOnWriteIndexingModes;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
 // FIXME: We only seem to use MayHaveIndexedAccessors for checking if the prototype chain may intercept indexed properties. We should probably be able to compute that same information via (indexingShape != SlowPutArrayStorageShape || classInfo().getOwnPropertySlotByIndex != JSObject::getOwnPropertySlotByIndex || globalObject().isHavingABadTime()) since we will already get the structure in order to do the prototype chain walk.
 // See: https://bugs.webkit.org/show_bug.cgi?id=209757
-static const IndexingType MayHaveIndexedAccessors         = 0x20;
+static constexpr IndexingType MayHaveIndexedAccessors         = 0x20;
 
 // The IndexingType field of JSCells is stolen for locks and remembering if the object has been a
 // prototype.
-static const IndexingType IndexingTypeLockIsHeld          = 0x40;
-static const IndexingType IndexingTypeLockHasParked       = 0x80;
+static constexpr IndexingType IndexingTypeLockIsHeld          = 0x40;
+static constexpr IndexingType IndexingTypeLockHasParked       = 0x80;
 
 // List of acceptable array types.
-static const IndexingType NonArray                        = 0x0;
-static const IndexingType NonArrayWithInt32               = Int32Shape;
-static const IndexingType NonArrayWithDouble              = DoubleShape;
-static const IndexingType NonArrayWithContiguous          = ContiguousShape;
-static const IndexingType NonArrayWithArrayStorage        = ArrayStorageShape;
-static const IndexingType NonArrayWithSlowPutArrayStorage = SlowPutArrayStorageShape;
-static const IndexingType ArrayClass                      = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
-static const IndexingType ArrayWithUndecided              = IsArray | UndecidedShape;
-static const IndexingType ArrayWithInt32                  = IsArray | Int32Shape;
-static const IndexingType ArrayWithDouble                 = IsArray | DoubleShape;
-static const IndexingType ArrayWithContiguous             = IsArray | ContiguousShape;
-static const IndexingType ArrayWithArrayStorage           = IsArray | ArrayStorageShape;
-static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArrayStorageShape;
-static const IndexingType CopyOnWriteArrayWithInt32       = IsArray | Int32Shape | CopyOnWrite;
-static const IndexingType CopyOnWriteArrayWithDouble      = IsArray | DoubleShape | CopyOnWrite;
-static const IndexingType CopyOnWriteArrayWithContiguous  = IsArray | ContiguousShape | CopyOnWrite;
+static constexpr IndexingType NonArray                        = 0x0;
+static constexpr IndexingType NonArrayWithInt32               = Int32Shape;
+static constexpr IndexingType NonArrayWithDouble              = DoubleShape;
+static constexpr IndexingType NonArrayWithContiguous          = ContiguousShape;
+static constexpr IndexingType NonArrayWithArrayStorage        = ArrayStorageShape;
+static constexpr IndexingType NonArrayWithSlowPutArrayStorage = SlowPutArrayStorageShape;
+static constexpr IndexingType ArrayClass                      = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
+static constexpr IndexingType ArrayWithUndecided              = IsArray | UndecidedShape;
+static constexpr IndexingType ArrayWithInt32                  = IsArray | Int32Shape;
+static constexpr IndexingType ArrayWithDouble                 = IsArray | DoubleShape;
+static constexpr IndexingType ArrayWithContiguous             = IsArray | ContiguousShape;
+static constexpr IndexingType ArrayWithArrayStorage           = IsArray | ArrayStorageShape;
+static constexpr IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArrayStorageShape;
+static constexpr IndexingType CopyOnWriteArrayWithInt32       = IsArray | Int32Shape | CopyOnWrite;
+static constexpr IndexingType CopyOnWriteArrayWithDouble      = IsArray | DoubleShape | CopyOnWrite;
+static constexpr IndexingType CopyOnWriteArrayWithContiguous  = IsArray | ContiguousShape | CopyOnWrite;
 
 #define ALL_BLANK_INDEXING_TYPES \
     NonArray:                    \
@@ -243,10 +243,10 @@ IndexingType leastUpperBoundOfIndexingTypeAndValue(IndexingType, JSValue);
 void dumpIndexingType(PrintStream&, IndexingType);
 MAKE_PRINT_ADAPTOR(IndexingTypeDump, IndexingType, dumpIndexingType);
 
-static const IndexingType AllWritableArrayTypes    = IndexingShapeMask | IsArray;
-static const IndexingType AllArrayTypes            = AllWritableArrayTypes | CopyOnWrite;
-static const IndexingType AllWritableArrayTypesAndHistory = AllWritableArrayTypes | MayHaveIndexedAccessors;
-static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
+static constexpr IndexingType AllWritableArrayTypes    = IndexingShapeMask | IsArray;
+static constexpr IndexingType AllArrayTypes            = AllWritableArrayTypes | CopyOnWrite;
+static constexpr IndexingType AllWritableArrayTypesAndHistory = AllWritableArrayTypes | MayHaveIndexedAccessors;
+static constexpr IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
 
 typedef LockAlgorithm<IndexingType, IndexingTypeLockIsHeld, IndexingTypeLockHasParked> IndexingTypeLockAlgorithm;
 

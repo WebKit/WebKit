@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const static uint8_t JSSetIteratorNumberOFInternalFields = 4;
+static constexpr uint8_t JSSetIteratorNumberOFInternalFields = 4;
 
 class JSSetIterator final : public JSInternalFieldObjectImpl<JSSetIteratorNumberOFInternalFields> {
 public:

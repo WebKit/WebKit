@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    static const size_t cacheSize = 16;
+    static constexpr size_t cacheSize = 16;
 
     struct CacheEntry {
         double key;

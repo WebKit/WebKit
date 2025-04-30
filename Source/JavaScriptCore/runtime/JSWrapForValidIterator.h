@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-const static uint8_t JSWrapForValidIteratorNumberOfInternalFields = 2;
+static constexpr uint8_t JSWrapForValidIteratorNumberOfInternalFields = 2;
 
 class JSWrapForValidIterator final : public JSInternalFieldObjectImpl<JSWrapForValidIteratorNumberOfInternalFields> {
 

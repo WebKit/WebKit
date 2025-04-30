@@ -199,7 +199,7 @@ public:
                 + m_fallbackStackMap.size()));
 
 #if ASSERT_ENABLED
-        const bool verifyClobber = false;
+        constexpr bool verifyClobber = false;
         if (verifyClobber) {
             for (auto& pair : m_debugImpureData)
                 ASSERT(!!get(pair.key));

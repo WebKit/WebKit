@@ -37,8 +37,8 @@ namespace JSC { namespace B3 { namespace Air {
 
 void logRegisterPressure(Code& code)
 {
-    const unsigned totalColumns = 200;
-    const unsigned registerColumns = 100;
+    constexpr unsigned totalColumns = 200;
+    constexpr unsigned registerColumns = 100;
     
     RegLiveness liveness(code);
 

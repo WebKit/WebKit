@@ -98,7 +98,7 @@ public:
 
             RELEASE_ASSERT(entrySwitchData->cases[0] == m_graph.block(0)); // We strongly assume the normal call entrypoint is the first item in the list.
 
-            const bool exitOK = false;
+            constexpr bool exitOK = false;
             NodeOrigin origin { CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), exitOK };
             newRoot->appendNode(
                 m_graph, SpecNone, EntrySwitch, origin, OpInfo(entrySwitchData));

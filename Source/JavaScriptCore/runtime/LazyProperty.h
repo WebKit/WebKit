@@ -111,8 +111,8 @@ private:
     template<typename Func>
     static ElementType* callFunc(const Initializer&);
     
-    static const uintptr_t lazyTag = 1;
-    static const uintptr_t initializingTag = 2;
+    static constexpr uintptr_t lazyTag = 1;
+    static constexpr uintptr_t initializingTag = 2;
     
     uintptr_t m_pointer { 0 };
 };

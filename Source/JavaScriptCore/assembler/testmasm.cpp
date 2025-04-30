@@ -345,9 +345,9 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
 {
     const uint64_t valAsUInt = std::bit_cast<uint64_t>(val);
 #if CPU(BIG_ENDIAN)
-    const bool isBigEndian = true;
+    constexpr bool isBigEndian = true;
 #else
-    const bool isBigEndian = false;
+    constexpr bool isBigEndian = false;
 #endif
     CHECK_EQ(compileAndRun<int>([&] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);

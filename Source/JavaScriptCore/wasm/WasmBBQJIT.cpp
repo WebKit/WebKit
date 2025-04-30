@@ -4404,7 +4404,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     ASSERT(arguments.size() == callInfo.params.size());
 
     ArgumentList resolvedArguments;
-    const unsigned calleeArgument = 1;
+    constexpr unsigned calleeArgument = 1;
     resolvedArguments.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
     Vector<Location, 8> parameterLocations;
     parameterLocations.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
