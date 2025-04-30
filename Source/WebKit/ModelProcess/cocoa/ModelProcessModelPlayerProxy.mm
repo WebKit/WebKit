@@ -340,7 +340,8 @@ void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCor
 
 static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter)
 {
-    return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
+    constexpr CGFloat minimumEffectiveDeviceWidthScale = 1024. / 938.;
+    return minimumEffectiveDeviceWidthScale * simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
 }
 
 static void computeScaledExtentsAndCenter(simd_float2 boundsOfLayerInMeters, simd_float3& boundingBoxExtents, simd_float3& boundingBoxCenter)
