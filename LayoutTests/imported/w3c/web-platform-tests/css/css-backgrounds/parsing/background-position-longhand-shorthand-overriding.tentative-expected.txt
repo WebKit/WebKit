@@ -1,0 +1,14 @@
+
+PASS Test with style 'background-position: right top'
+PASS Test with style 'background-position: center center'
+PASS Test with style 'background-position-block: 10%; background-position-inline: 20%'
+PASS Test with style 'background-position-block: 10%; background-position-inline: 20%; background-position-x: 30%; background-position-y: 40%;'
+PASS Test with style 'background-position-x: 30%; background-position-y: 40%; background-position-block: 10%; background-position-inline: 20%;'
+PASS Test with style 'background-position-x: 30%; background-position-block: 10%; background-position-y: 40%; background-position-inline: 20%;'
+PASS Test with style 'background-position-block: 10%; background-position-inline: 20%; background-position: 30px 40px;'
+PASS Test with style 'background-position: 30px 40px; background-position-block: 10%; background-position-inline: 20%;'
+PASS Test with style 'background-position-block: 10%; background-position: 30px 40px; background-position-inline: 20%;'
+PASS Test with style '--foo: 1px 2px; background-position-block: 10%; background-position-inline: 20%; background-position: var(--foo);'
+PASS Test with style '--foo: 1px 2px; background-position: var(--foo); background-position-block: 10%; background-position-inline: 20%;'
+PASS Test with style '--foo: 1px 2px; background-position-block: 10%; background-position: var(--foo); background-position-inline: 20%;'
+

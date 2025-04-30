@@ -63,7 +63,7 @@ static auto toTwoComponent(const ThreeComponentPositionVertical& component) -> T
     return WTF::switchOn(component.offset, [](auto keyword) -> TwoComponentPositionVertical { return { keyword }; });
 }
 
-std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&& position)
+std::pair<CSS::PositionX, CSS::PositionY> split(CSS::PositionXY&& position)
 {
     // CSS::PositionX and CSS::PositionY don't utilize the three component variants, so the
     // non-length containing item must be converted to its two component variant.
@@ -77,6 +77,90 @@ std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&& position)
         },
         [&](const ThreeComponentPositionHorizontalVerticalLengthSecond& components) -> std::pair<CSS::PositionX, CSS::PositionY> {
             return { CSS::PositionX(toTwoComponent(get<0>(components))), CSS::PositionY(get<1>(components)) };
+        }
+    );
+}
+
+PositionX resolveToPhysicalX(const PositionLogical& position, WritingMode writingMode)
+{
+    return WTF::switchOn(position.value,
+        [&](const TwoComponentPositionLogical& components) -> PositionX {
+            return WTF::switchOn(components.offset,
+                [&](Keyword::Start) -> PositionX {
+                    return writingMode.isAnyLeftToRight()
+                        ? TwoComponentPositionHorizontal { Keyword::Left { } }
+                        : TwoComponentPositionHorizontal { Keyword::Right { } };
+                },
+                [&](Keyword::End) -> PositionX {
+                    return writingMode.isAnyLeftToRight()
+                        ? TwoComponentPositionHorizontal { Keyword::Right { } }
+                        : TwoComponentPositionHorizontal { Keyword::Left { } };
+                },
+                [&](Keyword::Center) -> PositionX {
+                    return TwoComponentPositionHorizontal { Keyword::Center { } };
+                },
+                [&](const LengthPercentage<>& length) -> PositionX {
+                    return writingMode.isAnyLeftToRight()
+                        ? FourComponentPositionHorizontal { { Keyword::Left { }, length } }
+                        : FourComponentPositionHorizontal { { Keyword::Right { }, length } };
+                }
+            );
+        },
+        [&](const FourComponentPositionLogical& components) -> PositionX {
+            return WTF::switchOn(get<0>(components.offset),
+                [&](Keyword::Start) -> PositionX {
+                    return writingMode.isAnyLeftToRight()
+                        ? FourComponentPositionHorizontal { { Keyword::Left { }, get<1>(components.offset) } }
+                        : FourComponentPositionHorizontal { { Keyword::Right { }, get<1>(components.offset) } };
+                },
+                [&](Keyword::End) -> PositionX {
+                    return writingMode.isAnyLeftToRight()
+                        ? FourComponentPositionHorizontal { { Keyword::Right { }, get<1>(components.offset) } }
+                        : FourComponentPositionHorizontal { { Keyword::Left { }, get<1>(components.offset) } };
+                }
+            );
+        }
+    );
+}
+
+PositionY resolveToPhysicalY(const PositionLogical& position, WritingMode writingMode)
+{
+    return WTF::switchOn(position.value,
+        [&](const TwoComponentPositionLogical& components) -> PositionY {
+            return WTF::switchOn(components.offset,
+                [&](Keyword::Start) -> PositionY {
+                    return writingMode.isAnyTopToBottom()
+                        ? TwoComponentPositionVertical { Keyword::Top { } }
+                        : TwoComponentPositionVertical { Keyword::Bottom { } };
+                },
+                [&](Keyword::End) -> PositionY {
+                    return writingMode.isAnyTopToBottom()
+                        ? TwoComponentPositionVertical { Keyword::Bottom { } }
+                        : TwoComponentPositionVertical { Keyword::Top { } };
+                },
+                [&](Keyword::Center) -> PositionY {
+                    return TwoComponentPositionVertical { Keyword::Center { } };
+                },
+                [&](const LengthPercentage<>& length) -> PositionY {
+                    return writingMode.isAnyTopToBottom()
+                        ? FourComponentPositionVertical { { Keyword::Top { }, length } }
+                        : FourComponentPositionVertical { { Keyword::Bottom { }, length } };
+                }
+            );
+        },
+        [&](const FourComponentPositionLogical& components) -> PositionY {
+            return WTF::switchOn(get<0>(components.offset),
+                [&](Keyword::Start) -> PositionY {
+                    return writingMode.isAnyTopToBottom()
+                        ? FourComponentPositionVertical { { Keyword::Top { }, get<1>(components.offset) } }
+                        : FourComponentPositionVertical { { Keyword::Bottom { }, get<1>(components.offset) } };
+                },
+                [&](Keyword::End) -> PositionY {
+                    return writingMode.isAnyTopToBottom()
+                        ? FourComponentPositionVertical { { Keyword::Bottom { }, get<1>(components.offset) } }
+                        : FourComponentPositionVertical { { Keyword::Top { }, get<1>(components.offset) } };
+                }
+            );
         }
     );
 }

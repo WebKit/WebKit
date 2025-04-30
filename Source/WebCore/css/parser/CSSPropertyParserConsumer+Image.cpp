@@ -493,7 +493,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedRadialGradient(
     };
     static constexpr SortedArrayMap extentMap { extentMappings };
 
-    auto position = consumeOneOrTwoComponentPositionUnresolved(range, state);
+    auto position = consumeLegacyBackgroundPositionUnresolved(range, state);
     if (position) {
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;

@@ -2335,7 +2335,9 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
 
                 if (property == CSSPropertyBackgroundPositionX || property == CSSPropertyWebkitMaskPositionX) {
                     // Note: This assumes y properties (for example background-position-y) follow the x properties in the shorthand array.
-                    auto position = consumeBackgroundPositionUnresolved(m_range, state);
+
+                    // Splitting does not support flow relative keywords yet. See https://github.com/w3c/csswg-drafts/issues/12132.
+                    auto position = consumeBackgroundPositionXYUnresolved(m_range, state);
                     if (!position)
                         continue;
                     auto [positionX, positionY] = CSS::split(WTFMove(*position));
@@ -2420,7 +2422,8 @@ bool CSSPropertyParser::consumeBackgroundPositionShorthand(const StylePropertySh
     CSSValueListBuilder x;
     CSSValueListBuilder y;
     do {
-        auto position = consumeBackgroundPositionUnresolved(m_range, state);
+        // Splitting does not support flow relative keywords yet. See https://github.com/w3c/csswg-drafts/issues/12132.
+        auto position = consumeBackgroundPositionXYUnresolved(m_range, state);
         if (!position)
             return false;
         auto [positionX, positionY] = CSS::split(WTFMove(*position));
@@ -2472,7 +2475,7 @@ bool CSSPropertyParser::consumeMaskPositionShorthand(CSS::PropertyParserState& s
     CSSValueListBuilder x;
     CSSValueListBuilder y;
     do {
-        auto position = consumePositionUnresolved(m_range, state);
+        auto position = consumePositionXYUnresolved(m_range, state);
         if (!position)
             return false;
         auto [positionX, positionY] = CSS::split(WTFMove(*position));
@@ -2946,7 +2949,7 @@ bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(CSS::PropertyParser
 
 bool CSSPropertyParser::consumeTransformOriginShorthand(CSS::PropertyParserState& state)
 {
-    if (auto position = consumeOneOrTwoComponentPositionUnresolved(m_range, state)) {
+    if (auto position = consumeTransformOriginXY(m_range, state)) {
         m_range.consumeWhitespace();
         bool atEnd = m_range.atEnd();
         auto resultZ = CSSPrimitiveValueResolver<CSS::Length<>>::consumeAndResolve(m_range, state);
@@ -2964,7 +2967,7 @@ bool CSSPropertyParser::consumeTransformOriginShorthand(CSS::PropertyParserState
 
 bool CSSPropertyParser::consumePerspectiveOriginShorthand(CSS::PropertyParserState& state)
 {
-    if (auto position = consumePositionUnresolved(m_range, state)) {
+    if (auto position = consumePositionXYUnresolved(m_range, state)) {
         auto [positionX, positionY] = CSS::split(WTFMove(*position));
         addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginX, CSSPositionXValue::create(WTFMove(positionX)));
         addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginY, CSSPositionYValue::create(WTFMove(positionY)));

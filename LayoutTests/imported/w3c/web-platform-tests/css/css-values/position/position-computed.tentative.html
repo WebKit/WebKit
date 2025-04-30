@@ -46,6 +46,20 @@ test_computed_value(property, "y-end", "50% 100%");
 test_computed_value(property, "10px y-end", "10px 100%");
 test_computed_value(property, "left 10px y-end 20%", "10px 80%");
 
+test_computed_value(property, "block-start", "50% 0%");
+test_computed_value(property, "block-end", "50% 100%");
+test_computed_value(property, "inline-start", "0% 50%");
+test_computed_value(property, "inline-end", "100% 50%");
+test_computed_value(property, "block-start 10% inline-start 20px", "20px 10%");
+test_computed_value(property, "block-end 10% inline-start 20%", "20px calc(100% - 10px)");
+
+test_computed_value(property, "start start", "0% 0%");
+test_computed_value(property, "end end", "100% 100%");
+test_computed_value(property, "start end", "100% 0%");
+test_computed_value(property, "end start", "0% 100%");
+test_computed_value(property, "start 10px start 20%", "20% 10px");
+test_computed_value(property, "end 10px start 20%", "20% calc(100% - 10px)");
+
 function test_writing_modes(property) {
   const writing_modes = [
     {
@@ -57,6 +71,12 @@ function test_writing_modes(property) {
         { "x-end": "right" },
         { "y-start": "top" },
         { "y-end": "bottom" },
+        { "block-start": "top" },
+        { "block-end": "bottom" },
+        { "inline-start": "left" },
+        { "inline-end": "right" },
+        { "block-start 10px inline-start 20px": "top 10px left 20px" },
+        { "inline-start 20px block-start 10px": "left 20px top 10px" },
       ]
     },
     {
@@ -68,6 +88,12 @@ function test_writing_modes(property) {
         { "x-end": "left" },
         { "y-start": "top" },
         { "y-end": "bottom" },
+        { "block-start": "top" },
+        { "block-end": "bottom" },
+        { "inline-start": "right" },
+        { "inline-end": "left" },
+        { "block-start 10px inline-start 20px": "top 10px right 20px" },
+        { "inline-start 20px block-start 10px": "right 20px top 10px" },
       ]
     },
     {
@@ -80,6 +106,12 @@ function test_writing_modes(property) {
         { "x-end": "left" },
         { "y-start": "bottom" },
         { "y-end": "top" },
+        { "block-start": "right" },
+        { "block-end": "left" },
+        { "inline-start": "bottom" },
+        { "inline-end": "top" },
+        { "block-start 10px inline-start 20px": "right 10px bottom 20px" },
+        { "inline-start 20px block-start 10px": "bottom 20px right 10px" },
       ]
     },
     {
@@ -92,6 +124,12 @@ function test_writing_modes(property) {
         { "x-end": "left" },
         { "y-start": "top" },
         { "y-end": "bottom" },
+        { "block-start": "right" },
+        { "block-end": "left" },
+        { "inline-start": "top" },
+        { "inline-end": "bottom" },
+        { "block-start 10px inline-start 20px": "right 10px top 20px" },
+        { "inline-start 20px block-start 10px": "top 20px right 10px" },
       ]
     },
     {
@@ -103,6 +141,12 @@ function test_writing_modes(property) {
         { "x-end": "right" },
         { "y-start": "bottom" },
         { "y-end": "top" },
+        { "block-start": "left" },
+        { "block-end": "right" },
+        { "inline-start": "bottom" },
+        { "inline-end": "top" },
+        { "block-start 10px inline-start 20px": "left 10px bottom 20px" },
+        { "inline-start 20px block-start 10px": "bottom 20px left 10px" },
       ]
     },
     {
@@ -114,6 +158,12 @@ function test_writing_modes(property) {
         { "x-end": "right" },
         { "y-start": "bottom" },
         { "y-end": "top" },
+        { "block-start": "left" },
+        { "block-end": "right" },
+        { "inline-start": "bottom" },
+        { "inline-end": "top" },
+        { "block-start 10px inline-start 20px": "left 10px bottom 20px" },
+        { "inline-start 20px block-start 10px": "bottom 20px left 10px" },
       ]
     },
     {
@@ -125,6 +175,12 @@ function test_writing_modes(property) {
         { "x-end": "right" },
         { "y-start": "top" },
         { "y-end": "bottom" },
+        { "block-start": "left" },
+        { "block-end": "right" },
+        { "inline-start": "top" },
+        { "inline-end": "bottom" },
+        { "block-start 10px inline-start 20px": "left 10px top 20px" },
+        { "inline-start 20px block-start 10px": "top 20px left 10px" },
       ]
     },
     {
@@ -136,8 +192,26 @@ function test_writing_modes(property) {
         { "x-end": "right" },
         { "y-start": "top" },
         { "y-end": "bottom" },
+        { "block-start": "left" },
+        { "block-end": "right" },
+        { "inline-start": "top" },
+        { "inline-end": "bottom" },
+        { "block-start 10px inline-start 20px": "left 10px top 20px" },
+        { "inline-start 20px block-start 10px": "top 20px left 10px" },
       ]
     },
+  ];
+
+  // These mapping equivilances hold for all writing modes.
+  const canonical_mappings = [
+    { "start center": "block-start" },
+    { "end center": "block-end" },
+    { "center start": "inline-start" },
+    { "center end": "inline-end" },
+    { "start start": "block-start inline-start" },
+    { "start end": "block-start inline-end" },
+    { "end start": "block-end inline-start" },
+    { "end end": "block-end inline-end" },
   ];
 
   function inner_test(property, specified, expected_to_match, container_styles) {
@@ -173,6 +247,12 @@ function test_writing_modes(property) {
       }
       
       for (let mapping of writing_mode.mappings) {
+        for (let key in mapping) {
+          inner_test(property, key, mapping[key], container_styles);
+        }
+      }
+
+      for (let mapping of canonical_mappings) {
         for (let key in mapping) {
           inner_test(property, key, mapping[key], container_styles);
         }

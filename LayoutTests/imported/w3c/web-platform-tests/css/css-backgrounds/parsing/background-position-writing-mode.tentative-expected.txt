@@ -1,0 +1,22 @@
+
+PASS Test with style 'writing-mode: horizontal-tb; direction: ltr; background-position-block: start; background-position-inline: start;'
+PASS Test with style 'writing-mode: horizontal-tb; direction: ltr; background-position-x: left; background-position-y: top;'
+FAIL Test with style 'writing-mode: horizontal-tb; direction: rtl; background-position-block: 0%; background-position-inline: 0%;' assert_equals: computed value for 'background-position-inline' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: horizontal-tb; direction: rtl; background-position-x: left; background-position-y: top;' assert_equals: computed value for 'background-position-inline' matches provided expectation expected "100%" but got "0%"
+PASS Test with style 'writing-mode: vertical-rl; direction: rtl; background-position-block: start; background-position-inline: end;'
+PASS Test with style 'writing-mode: vertical-rl; direction: rtl; background-position-x: left; background-position-y: bottom;'
+FAIL Test with style 'writing-mode: sideways-rl; direction: rtl; background-position-block: start; background-position-inline: end;' assert_equals: computed value for 'background-position-x' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: sideways-rl; direction: rtl; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+FAIL Test with style 'writing-mode: vertical-rl; direction: ltr; background-position-block: start; background-position-inline: end;' assert_equals: computed value for 'background-position-x' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: vertical-rl; direction: ltr; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+FAIL Test with style 'writing-mode: sideways-rl; direction: ltr; background-position-block: start; background-position-inline: end;' assert_equals: computed value for 'background-position-x' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: sideways-rl; direction: ltr; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+PASS Test with style 'writing-mode: vertical-lr; direction: rtl; background-position-block: start; background-position-inline: end;'
+FAIL Test with style 'writing-mode: vertical-lr; direction: rtl; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+PASS Test with style 'writing-mode: sideways-lr; direction: ltr; background-position-block: start; background-position-inline: end;'
+FAIL Test with style 'writing-mode: sideways-lr; direction: ltr; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+FAIL Test with style 'writing-mode: vertical-lr; direction: ltr; background-position-block: start; background-position-inline: end;' assert_equals: computed value for 'background-position-y' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: vertical-lr; direction: ltr; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+FAIL Test with style 'writing-mode: sideways-lr; direction: rtl; background-position-block: start; background-position-inline: end;' assert_equals: computed value for 'background-position-y' matches provided expectation expected "0%" but got "100%"
+FAIL Test with style 'writing-mode: sideways-lr; direction: rtl; background-position-x: left; background-position-y: bottom;' assert_equals: computed value for 'background-position-block' matches provided expectation expected "100%" but got "0%"
+

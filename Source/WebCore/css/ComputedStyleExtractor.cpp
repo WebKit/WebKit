@@ -477,11 +477,102 @@ static Ref<CSSValueList> createPositionListForLayer(const FillLayer& layer, cons
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-static Ref<CSSValue> createSingleAxisPositionValueForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
+static Ref<CSSValue> createSingleXAxisPositionValueForLayer(const FillLayer& layer, const RenderStyle& style)
 {
-    if (propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX)
-        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style);
+}
+
+static Ref<CSSValue> createSingleYAxisPositionValueForLayer(const FillLayer& layer, const RenderStyle& style)
+{
     return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.yPosition(), style);
+}
+
+static Ref<CSSValue> createSingleXAxisPositionValueForLayerReflectingIfNeeded(const FillLayer& layer, const RenderStyle& style, bool reflect)
+{
+    if (reflect)
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(convertTo100PercentMinusLength(layer.xPosition()), style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style);
+}
+
+static Ref<CSSValue> createSingleYAxisPositionValueForLayerReflectingIfNeeded(const FillLayer& layer, const RenderStyle& style, bool reflect)
+{
+    if (reflect)
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(convertTo100PercentMinusLength(layer.yPosition()), style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.yPosition(), style);
+}
+
+static Ref<CSSValue> positionValueForPosition(const FillLayer& layers, const RenderStyle& style)
+{
+    if (!layers.next())
+        return createPositionListForLayer(layers, style);
+    CSSValueListBuilder list;
+    for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+        list.append(createPositionListForLayer(*currLayer, style));
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> positionValueForPositionX(const FillLayer& layers, const RenderStyle& style)
+{
+    if (!layers.next())
+        return createSingleXAxisPositionValueForLayer(layers, style);
+    CSSValueListBuilder list;
+    for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+        list.append(createSingleXAxisPositionValueForLayer(*currLayer, style));
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> positionValueForPositionY(const FillLayer& layers, const RenderStyle& style)
+{
+    if (!layers.next())
+        return createSingleYAxisPositionValueForLayer(layers, style);
+    CSSValueListBuilder list;
+    for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+        list.append(createSingleYAxisPositionValueForLayer(*currLayer, style));
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> positionValueForPositionBlock(const FillLayer& layers, const RenderStyle& style)
+{
+    auto writingMode = style.writingMode();
+    if (writingMode.isVertical()) {
+        bool needsReflection = !writingMode.isAnyLeftToRight();
+        if (!layers.next())
+            return createSingleXAxisPositionValueForLayerReflectingIfNeeded(layers, style, needsReflection);
+        CSSValueListBuilder list;
+        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+            list.append(createSingleXAxisPositionValueForLayerReflectingIfNeeded(*currLayer, style, needsReflection));
+        return CSSValueList::createCommaSeparated(WTFMove(list));
+    } else {
+        bool needsReflection = !writingMode.isAnyTopToBottom();
+        if (!layers.next())
+            return createSingleYAxisPositionValueForLayerReflectingIfNeeded(layers, style, needsReflection);
+        CSSValueListBuilder list;
+        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+            list.append(createSingleYAxisPositionValueForLayerReflectingIfNeeded(*currLayer, style, needsReflection));
+        return CSSValueList::createCommaSeparated(WTFMove(list));
+    }
+}
+
+static Ref<CSSValue> positionValueForPositionInline(const FillLayer& layers, const RenderStyle& style)
+{
+    auto writingMode = style.writingMode();
+    if (writingMode.isVertical()) {
+        bool needsReflection = !writingMode.isAnyLeftToRight();
+        if (!layers.next())
+            return createSingleXAxisPositionValueForLayerReflectingIfNeeded(layers, style, needsReflection);
+        CSSValueListBuilder list;
+        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+            list.append(createSingleXAxisPositionValueForLayerReflectingIfNeeded(*currLayer, style, needsReflection));
+        return CSSValueList::createCommaSeparated(WTFMove(list));
+    } else {
+        bool needsReflection = !writingMode.isAnyTopToBottom();
+        if (!layers.next())
+            return createSingleYAxisPositionValueForLayerReflectingIfNeeded(layers, style, needsReflection);
+        CSSValueListBuilder list;
+        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+            list.append(createSingleYAxisPositionValueForLayerReflectingIfNeeded(*currLayer, style, needsReflection));
+        return CSSValueList::createCommaSeparated(WTFMove(list));
+    }
 }
 
 static Length getOffsetComputedLength(const RenderStyle& style, CSSPropertyID propertyID)
@@ -3604,10 +3695,9 @@ bool ComputedStyleExtractor::hasProperty(CSSPropertyID propertyID) const
 
 RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer, PropertyValueType valueType) const
 {
-    auto& cssValuePool = CSSValuePool::singleton();
-    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.writingMode());
-
     ASSERT(isExposed(propertyID, m_element->document().settings()));
+
+    auto& cssValuePool = CSSValuePool::singleton();
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -3711,36 +3801,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSValueList::createCommaSeparated(WTFMove(list));
     }
     case CSSPropertyBackgroundPosition:
+        return positionValueForPosition(style.backgroundLayers(), style);
     case CSSPropertyWebkitMaskPosition:
-    case CSSPropertyMaskPosition: {
-        auto& layers = propertyID == CSSPropertyBackgroundPosition ? style.backgroundLayers() : style.maskLayers();
-        if (!layers.next())
-            return createPositionListForLayer(layers, style);
-        CSSValueListBuilder list;
-        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-            list.append(createPositionListForLayer(*currLayer, style));
-        return CSSValueList::createCommaSeparated(WTFMove(list));
-    }
+    case CSSPropertyMaskPosition:
+        return positionValueForPosition(style.maskLayers(), style);
     case CSSPropertyBackgroundPositionX:
-    case CSSPropertyWebkitMaskPositionX: {
-        auto& layers = propertyID == CSSPropertyWebkitMaskPositionX ? style.maskLayers() : style.backgroundLayers();
-        if (!layers.next())
-            return createSingleAxisPositionValueForLayer(propertyID, layers, style);
-        CSSValueListBuilder list;
-        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-            list.append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
-        return CSSValueList::createCommaSeparated(WTFMove(list));
-    }
+        return positionValueForPositionX(style.backgroundLayers(), style);
     case CSSPropertyBackgroundPositionY:
-    case CSSPropertyWebkitMaskPositionY: {
-        auto& layers = propertyID == CSSPropertyWebkitMaskPositionY ? style.maskLayers() : style.backgroundLayers();
-        if (!layers.next())
-            return createSingleAxisPositionValueForLayer(propertyID, layers, style);
-        CSSValueListBuilder list;
-        for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-            list.append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
-        return CSSValueList::createCommaSeparated(WTFMove(list));
-    }
+        return positionValueForPositionY(style.backgroundLayers(), style);
+    case CSSPropertyWebkitMaskPositionX:
+        return positionValueForPositionX(style.maskLayers(), style);
+    case CSSPropertyWebkitMaskPositionY:
+        return positionValueForPositionY(style.maskLayers(), style);
     case CSSPropertyBlockEllipsis:
         switch (style.blockEllipsis().type) {
         case BlockEllipsis::Type::None:
@@ -5078,7 +5150,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyAll:
         return nullptr;
 
-    // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
+    // Most directional properties are resolved by recursing using resolveDirectionAwareProperty() to find the appropriate mapped property.
     case CSSPropertyBorderBlockEndColor:
     case CSSPropertyBorderBlockEndStyle:
     case CSSPropertyBorderBlockEndWidth:
@@ -5131,8 +5203,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyScrollPaddingInlineStart:
     case CSSPropertyContainIntrinsicBlockSize:
     case CSSPropertyContainIntrinsicInlineSize:
-        ASSERT_NOT_REACHED();
-        return nullptr;
+        return valueForPropertyInStyle(style, CSSProperty::resolveDirectionAwareProperty(propertyID, style.writingMode()), renderer, valueType);
+
+    // A few direction aware properties need special attention to allow additional processing of the value.
+    case CSSPropertyBackgroundPositionBlock:
+        return positionValueForPositionBlock(style.backgroundLayers(), style);
+    case CSSPropertyBackgroundPositionInline:
+        return positionValueForPositionInline(style.backgroundLayers(), style);
+    case CSSPropertyWebkitMaskPositionBlock:
+        return positionValueForPositionBlock(style.maskLayers(), style);
+    case CSSPropertyWebkitMaskPositionInline:
+        return positionValueForPositionInline(style.maskLayers(), style);
 
     // Internal properties should be handled by isExposed above.
     case CSSPropertyWebkitFontSizeDelta:

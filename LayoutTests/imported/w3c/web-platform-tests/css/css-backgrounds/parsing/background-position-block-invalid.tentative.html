@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Backgrounds and Borders Module Level 4: parsing background-position-block with invalid values</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-block">
+<meta name="assert" content="background-position-block supports only the grammar '[ center | [ start | end ]? <length-percentage>? ]#'.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_invalid_value("background-position-block", "auto");
+test_invalid_value("background-position-block", "top");
+test_invalid_value("background-position-block", "bottom");
+test_invalid_value("background-position-block", "x-start");
+test_invalid_value("background-position-block", "x-end");
+test_invalid_value("background-position-block", "y-start");
+test_invalid_value("background-position-block", "y-end");
+test_invalid_value("background-position-block", "center 10px");
+test_invalid_value("background-position-block", "20% left");
+test_invalid_value("background-position-block", "right left");
+test_invalid_value("background-position-block", "x-start center");
+test_invalid_value("background-position-block", "left, center right");
+test_invalid_value("background-position-block", "start garbage");
+test_invalid_value("background-position-block", "garbage end");
+test_invalid_value("background-position-block", "20% garbage");
+test_invalid_value("background-position-block", "garbage 20px");
+</script>
+</body>
+</html>

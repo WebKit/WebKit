@@ -114,6 +114,7 @@ public:
     bool isPositionValue() const { return m_classType == ClassType::Position; }
     bool isPositionXValue() const { return m_classType == ClassType::PositionX; }
     bool isPositionYValue() const { return m_classType == ClassType::PositionY; }
+    bool isPositionLogicalValue() const { return m_classType == ClassType::PositionLogical; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
     bool isRatioValue() const { return m_classType == ClassType::Ratio; }
@@ -245,6 +246,7 @@ protected:
         Position,
         PositionX,
         PositionY,
+        PositionLogical,
         Quad,
         Ratio,
         Ray,
