@@ -28,13 +28,12 @@
 #ifdef __cplusplus
 
 #include <WebKit/WKDeclarationSpecifiers.h>
-#include <wtf/Seconds.h>
 
 namespace WebKit {
 
 struct FullscreenTouchSecheuristicParameters {
-    Seconds rampUpSpeed;
-    Seconds rampDownSpeed;
+    double rampUpSpeedSeconds;
+    double rampDownSpeedSeconds;
     double xWeight;
     double yWeight;
     double gamma;
