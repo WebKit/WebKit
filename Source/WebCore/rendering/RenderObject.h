@@ -332,6 +332,7 @@ public:
     RenderObject(Type, Node&, OptionSet<TypeFlag>, TypeSpecificFlags);
     virtual ~RenderObject();
 
+    void willBeDestroyedAsync();
     Type type() const { return m_type; }
     Layout::Box* layoutBox() { return m_layoutBox.get(); }
     const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
@@ -1076,6 +1077,7 @@ public:
     bool renderTreeBeingDestroyed() const; // Defined in RenderObjectInlines.h
 
     void destroy();
+    void deleteRenderObject();
 
     // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
     bool isRenderDeprecatedFlexibleBox() const { return m_type == RenderObject::Type::DeprecatedFlexibleBox; }
@@ -1127,6 +1129,8 @@ public:
 
     PointerEvents usedPointerEvents() const;
 
+    void setNextSiblingForAsyncDeletionQueue(RenderObject*);
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -1144,6 +1148,7 @@ protected:
     void setPosChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::PosChildNeedsLayout, b); }
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsSimplifiedNormalFlowLayout, b); }
     void setOutOfFlowChildNeedsStaticPositionLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout, b); }
+    void setNodeToDocument() { m_node = document(); };
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
 

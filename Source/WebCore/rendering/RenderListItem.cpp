@@ -59,7 +59,7 @@ RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
 RenderListItem::~RenderListItem()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
-    ASSERT(!m_marker);
+    ASSERT(!m_marker || m_marker->beingDestroyed());
 }
 
 RenderStyle RenderListItem::computeMarkerStyle() const
@@ -85,6 +85,14 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     markerStyle.setTextWrapMode(TextWrapMode::NoWrap);
     markerStyle.setTextTransform({ });
     return markerStyle;
+}
+
+RenderListMarker* RenderListItem::markerRenderer() const
+{
+    RenderListMarker* marker = m_marker.get();
+    if (marker && !marker->beingDestroyed())
+        return marker;
+    return nullptr;
 }
 
 bool isHTMLListElement(const Node& node)

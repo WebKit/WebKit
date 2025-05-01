@@ -72,7 +72,7 @@ bool RenderButton::hasLineIfEmpty() const
 
 void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
-    ASSERT(!m_inner.get());
+    ASSERT(!m_inner.get() || m_inner->beingDestroyed());
     m_inner = innerRenderer;
     updateAnonymousChildStyle(m_inner->mutableStyle());
 

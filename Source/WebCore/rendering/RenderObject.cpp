@@ -1072,6 +1072,8 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
+    if (beingDestroyed())
+        return;
     ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
 
     if (view().printing())
@@ -1684,7 +1686,7 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
         return renderer.parent();
 
     auto* renderElement = dynamicDowncast<RenderElement>(renderer);
-    if (!renderElement) {
+    if (!renderElement || renderElement->beingDestroyed()) {
         ASSERT_NOT_REACHED();
         return renderer.parent();
     }
@@ -1818,6 +1820,20 @@ void RenderObject::willBeRemovedFromTree()
     checkedParent()->invalidateCachedBoundaries();
 }
 
+
+void RenderObject::setNextSiblingForAsyncDeletionQueue(RenderObject* next)
+{
+#ifndef NDEBUG
+    ASSERT(!next->previousSibling());
+    ASSERT(!next->nextSibling());
+    if (auto* renderElement = dynamicDowncast<RenderElement>(next)) {
+        ASSERT(!renderElement->firstChild());
+        ASSERT(!renderElement->lastChild());
+    }
+#endif
+    setNextSibling(next);
+}
+
 void RenderObject::destroy()
 {
     RELEASE_ASSERT(!m_parent);
@@ -1828,12 +1844,25 @@ void RenderObject::destroy()
     m_stateBitfields.setFlag(StateFlag::BeingDestroyed);
 
     willBeDestroyed();
+    deleteRenderObject();
+}
 
+void RenderObject::deleteRenderObject()
+{
     if (auto* widgetRenderer = dynamicDowncast<RenderWidget>(*this)) {
         widgetRenderer->deref();
         return;
     }
     delete this;
+}
+
+void RenderObject::willBeDestroyedAsync()
+{
+    m_stateBitfields.setFlag(StateFlag::BeingDestroyed);
+    willBeDestroyed();
+    // The RenderObject can outlive its Node. Set m_node to the document of the current Node so RenderObject::document() will still return the document
+    if (!isAnonymous())
+        setNodeToDocument();
 }
 
 Position RenderObject::positionForPoint(const LayoutPoint& point, HitTestSource source)

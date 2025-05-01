@@ -78,6 +78,7 @@
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"

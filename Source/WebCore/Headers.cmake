@@ -2537,6 +2537,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/PluginInfoProvider.h
     plugins/PluginViewBase.h
 
+    rendering/AsyncRenderObjectDeletionQueue.h
     rendering/AccessibilityRegionContext.h
     rendering/BreakLines.h
     rendering/CaretRectComputation.h

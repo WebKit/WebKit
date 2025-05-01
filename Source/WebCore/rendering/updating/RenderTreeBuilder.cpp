@@ -228,11 +228,14 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     };
     // FIXME: webkit.org/b/182909.
     tearDownSubTreeIfApplicable();
+    toDestroy->view().asyncRenderObjectDeletionQueue().append(WTFMove(toDestroy));
 }
 
 void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     reportVisuallyNonEmptyContent(parent, *child);
+    ASSERT(!parent.beingDestroyed());
+    ASSERT(child);
     attachInternal(parent, WTFMove(child), beforeChild);
 }
 
@@ -391,6 +394,10 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
+    ASSERT(&parent);
+    ASSERT(&child);
+    ASSERT(!parent.beingDestroyed());
+    ASSERT(!child.beingDestroyed());
     if (auto* text = dynamicDowncast<RenderSVGText>(parent))
         return svgBuilder().detach(*text, child, willBeDestroyed);
 
