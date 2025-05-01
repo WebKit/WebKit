@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
-#if WK_HAVE_C_SPI
+#ifdef __cplusplus
 
-#include "PlatformUtilities.h"
 #include <WebKit/WKRetainPtr.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 
 namespace WTF {
@@ -51,29 +49,4 @@ template<typename P> struct HashTraits<WKRetainPtr<P>> : GenericHashTraits<WKRet
 
 } // namespace WTF
 
-namespace TestWebKitAPI {
-
-TEST(WebKit, WKRetainPtr)
-{
-    WKRetainPtr<WKStringRef> string1 = adoptWK(WKStringCreateWithUTF8CString("a"));
-    WKRetainPtr<WKStringRef> string2 = adoptWK(WKStringCreateWithUTF8CString("a"));
-    WKRetainPtr<WKStringRef> string3 = adoptWK(WKStringCreateWithUTF8CString("a"));
-    WKRetainPtr<WKStringRef> string4 = adoptWK(WKStringCreateWithUTF8CString("a"));
-
-    HashMap<WKRetainPtr<WKStringRef>, int> map;
-
-    map.set(string2, 2);
-    map.set(string1, 1);
-
-    EXPECT_TRUE(map.contains(string1));
-    EXPECT_TRUE(map.contains(string2));
-    EXPECT_FALSE(map.contains(string3));
-    EXPECT_FALSE(map.contains(string4));
-
-    EXPECT_EQ(1, map.get(string1));
-    EXPECT_EQ(2, map.get(string2));
-}
-
-} // namespace TestWebKitAPI
-
-#endif
+#endif // __cplusplus
