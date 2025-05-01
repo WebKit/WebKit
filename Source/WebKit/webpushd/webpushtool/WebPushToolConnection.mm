@@ -41,6 +41,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/text/ASCIILiteral.h>
 
 namespace WebPushTool {
 
@@ -180,7 +181,7 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
             return completionHandler(nullptr);
         }
 
-        auto data = xpcDictionaryGetData(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto data = xpcDictionaryGetData(reply, ASCIILiteral::fromLiteralUnsafe(WebKit::WebPushD::protocolEncodedMessageKey));
         auto decoder = IPC::Decoder::create(data, { });
         ASSERT(decoder);
 

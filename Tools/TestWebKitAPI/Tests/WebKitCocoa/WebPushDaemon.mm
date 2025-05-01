@@ -62,6 +62,7 @@
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/darwin/XPCExtras.h>
+#import <wtf/text/ASCIILiteral.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
 
@@ -480,7 +481,7 @@ void WebPushXPCConnectionMessageSender::sendWithAsyncReplyWithoutUsingIPCConnect
         if (xpc_dictionary_get_uint64(reply, WebKit::WebPushD::protocolVersionKey) != WebKit::WebPushD::protocolVersionValue)
             RELEASE_ASSERT_NOT_REACHED();
 
-        auto data = xpcDictionaryGetData(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto data = xpcDictionaryGetData(reply, ASCIILiteral::fromLiteralUnsafe(WebKit::WebPushD::protocolEncodedMessageKey));
         TestDecoder decoder(data);
         decoder.ignoreHeader<M>();
         IPC::callReplyWithoutUsingConnection<M>(decoder, WTFMove(completionHandler));
@@ -1974,7 +1975,7 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCancelledOnShowingNotificatio
             ASSERT_TRUE(v->expectDecryptedMessage(@"null data", message.get()));
         }
 
-        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTestingSeconds + 0.5)];
         ASSERT_TRUE(v->hasPushSubscription());
     }
 }
@@ -2011,7 +2012,7 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerIgnoredForInspectedContexts)
         }
 
         // Should still be subscribed since we don't enforce the silent push timer while being inspected.
-        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTestingSeconds + 0.5)];
         ASSERT_TRUE(v->hasPushSubscription());
     }
 }
@@ -3108,7 +3109,7 @@ TEST_F(WebPushDPushNotificationEventTest, Basic)
 
     // After the slew of above messages that were handled by service workers, silent push tracking should *not* have
     // kicked in, and therefore there should still be a push subscription.
-    [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+    [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTestingSeconds + 0.5)];
     EXPECT_TRUE(webViews().first()->hasPushSubscription());
 }
 
