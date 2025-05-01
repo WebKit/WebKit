@@ -2864,7 +2864,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 void SpeculativeJIT::compileUInt32ToNumber(Node* node)
 {
     if (doesOverflow(node->arithMode())) {
-        if (enableInt52()) {
+        if (node->hasInt52Result()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
             zeroExtend32ToWord(op1.gpr(), result.gpr());

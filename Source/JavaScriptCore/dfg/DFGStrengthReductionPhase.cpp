@@ -107,6 +107,187 @@ private:
         return false;
     }
 
+    static std::optional<std::tuple<int64_t, int64_t>> rangeInt52(Node* node, unsigned timeToLive = 5)
+    {
+        auto isInt52 = [](int64_t asInt64) {
+            if (asInt64 >= (static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))
+                return false;
+            if (asInt64 < -(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))
+                return false;
+            return true;
+        };
+
+        if (!timeToLive)
+            return std::nullopt;
+
+        switch (node->op()) {
+        case Int52Constant: {
+            int64_t value = node->constant()->value().asAnyInt();
+            return std::tuple { value, value };
+        }
+
+        case UInt32ToNumber: {
+            return std::tuple { 0, UINT32_MAX };
+        }
+
+        case Int52Rep: {
+            switch (node->child1().useKind()) {
+            case Int32Use:
+                return std::tuple { INT32_MIN, INT32_MAX };
+            default:
+                return std::nullopt;
+            }
+        }
+
+        case GetByVal: {
+            ArrayMode arrayMode = node->arrayMode();
+            if (arrayMode.isOutOfBounds())
+                return std::nullopt;
+
+            switch (arrayMode.type()) {
+            case Array::Int8Array:
+                return std::tuple { INT8_MIN, INT8_MAX };
+            case Array::Uint8Array:
+            case Array::Uint8ClampedArray:
+                return std::tuple { 0, UINT8_MAX };
+            case Array::Int16Array:
+                return std::tuple { INT16_MIN, INT16_MAX };
+            case Array::Uint16Array:
+                return std::tuple { 0, UINT16_MAX };
+            case Array::Int32Array:
+                return std::tuple { INT32_MIN, INT32_MAX };
+            case Array::Uint32Array:
+                return std::tuple { 0, UINT32_MAX };
+            default:
+                return std::nullopt;
+            }
+        }
+
+        case ArithAdd: {
+            if (!node->isBinaryUseKind(Int52RepUse))
+                return std::nullopt;
+
+            auto lhs = rangeInt52(node->child1().node(), timeToLive - 1);
+            if (!lhs)
+                return std::nullopt;
+            auto [leftMinValue, leftMaxValue] = lhs.value();
+
+            auto rhs = rangeInt52(node->child2().node(), timeToLive - 1);
+            if (!rhs)
+                return std::nullopt;
+            auto [rightMinValue, rightMaxValue] = rhs.value();
+
+            auto value1 = CheckedInt64 { leftMinValue } + rightMinValue;
+            if (value1.hasOverflowed())
+                return std::nullopt;
+
+            auto value2 = CheckedInt64 { leftMaxValue } + rightMinValue;
+            if (value2.hasOverflowed())
+                return std::nullopt;
+
+            auto value3 = CheckedInt64 { leftMinValue } + rightMaxValue;
+            if (value3.hasOverflowed())
+                return std::nullopt;
+
+            auto value4 = CheckedInt64 { leftMaxValue } + rightMaxValue;
+            if (value4.hasOverflowed())
+                return std::nullopt;
+
+            auto minValue = std::min({ value1.value(), value2.value(), value3.value(), value4.value() });
+            auto maxValue = std::max({ value1.value(), value2.value(), value3.value(), value4.value() });
+            if (!isInt52(minValue))
+                return std::nullopt;
+            if (!isInt52(maxValue))
+                return std::nullopt;
+
+            return std::tuple { minValue, maxValue };
+        }
+
+        case ArithSub: {
+            if (!node->isBinaryUseKind(Int52RepUse))
+                return std::nullopt;
+
+            auto lhs = rangeInt52(node->child1().node(), timeToLive - 1);
+            if (!lhs)
+                return std::nullopt;
+            auto [leftMinValue, leftMaxValue] = lhs.value();
+
+            auto rhs = rangeInt52(node->child2().node(), timeToLive - 1);
+            if (!rhs)
+                return std::nullopt;
+            auto [rightMinValue, rightMaxValue] = rhs.value();
+
+            auto value1 = CheckedInt64 { leftMinValue } - rightMinValue;
+            if (value1.hasOverflowed())
+                return std::nullopt;
+
+            auto value2 = CheckedInt64 { leftMaxValue } - rightMinValue;
+            if (value2.hasOverflowed())
+                return std::nullopt;
+
+            auto value3 = CheckedInt64 { leftMinValue } - rightMaxValue;
+            if (value3.hasOverflowed())
+                return std::nullopt;
+
+            auto value4 = CheckedInt64 { leftMaxValue } - rightMaxValue;
+            if (value4.hasOverflowed())
+                return std::nullopt;
+
+            auto minValue = std::min({ value1.value(), value2.value(), value3.value(), value4.value() });
+            auto maxValue = std::max({ value1.value(), value2.value(), value3.value(), value4.value() });
+            if (!isInt52(minValue))
+                return std::nullopt;
+            if (!isInt52(maxValue))
+                return std::nullopt;
+
+            return std::tuple { minValue, maxValue };
+        }
+
+        case ArithMul: {
+            if (!node->isBinaryUseKind(Int52RepUse))
+                return std::nullopt;
+
+            auto lhs = rangeInt52(node->child1().node(), timeToLive - 1);
+            if (!lhs)
+                return std::nullopt;
+            auto [leftMinValue, leftMaxValue] = lhs.value();
+
+            auto rhs = rangeInt52(node->child2().node(), timeToLive - 1);
+            if (!rhs)
+                return std::nullopt;
+            auto [rightMinValue, rightMaxValue] = rhs.value();
+
+            auto value1 = CheckedInt64 { leftMinValue } * rightMinValue;
+            if (value1.hasOverflowed())
+                return std::nullopt;
+
+            auto value2 = CheckedInt64 { leftMaxValue } * rightMinValue;
+            if (value2.hasOverflowed())
+                return std::nullopt;
+
+            auto value3 = CheckedInt64 { leftMinValue } * rightMaxValue;
+            if (value3.hasOverflowed())
+                return std::nullopt;
+
+            auto value4 = CheckedInt64 { leftMaxValue } * rightMaxValue;
+            if (value4.hasOverflowed())
+                return std::nullopt;
+
+            auto minValue = std::min({ value1.value(), value2.value(), value3.value(), value4.value() });
+            auto maxValue = std::max({ value1.value(), value2.value(), value3.value(), value4.value() });
+            if (!isInt52(minValue))
+                return std::nullopt;
+            if (!isInt52(maxValue))
+                return std::nullopt;
+
+            return std::tuple { minValue, maxValue };
+        }
+
+        default:
+            return std::nullopt;
+        }
+    }
+
     void handleNode()
     {
         switch (m_node->op()) {
@@ -192,6 +373,16 @@ private:
                 convertToIdentityOverChild1();
                 break;
             }
+
+            if (m_node->isBinaryUseKind(Int52RepUse)) {
+                if (shouldCheckOverflow(m_node->arithMode())) {
+                    if (rangeInt52(m_node)) {
+                        m_node->setArithMode(Arith::Unchecked);
+                        m_changed = true;
+                        break;
+                    }
+                }
+            }
             break;
             
         case ValueMul:
@@ -235,6 +426,17 @@ private:
                     break;
                 }
             }
+
+
+            if (m_node->isBinaryUseKind(Int52RepUse)) {
+                if (m_node->arithMode() == Arith::CheckOverflow) {
+                    if (rangeInt52(m_node)) {
+                        m_node->setArithMode(Arith::Unchecked);
+                        m_changed = true;
+                        break;
+                    }
+                }
+            }
             break;
         }
         case ArithSub: {
@@ -251,6 +453,16 @@ private:
                             m_nodeIndex, m_node->origin, jsNumber(-value)));
                     m_changed = true;
                     break;
+                }
+            }
+
+            if (m_node->isBinaryUseKind(Int52RepUse)) {
+                if (shouldCheckOverflow(m_node->arithMode())) {
+                    if (rangeInt52(m_node)) {
+                        m_node->setArithMode(Arith::Unchecked);
+                        m_changed = true;
+                        break;
+                    }
                 }
             }
             break;
