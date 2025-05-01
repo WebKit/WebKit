@@ -1047,9 +1047,10 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     }
 
     if (view().usesCompositing()) {
-        ASSERT(repaintContainer->isComposited());
-        if (CheckedPtr layer = repaintContainer->layer())
+        if (CheckedPtr layer = repaintContainer->layer()) {
+            ASSERT(repaintContainer->isComposited());
             layer->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
+        }
     }
 }
 

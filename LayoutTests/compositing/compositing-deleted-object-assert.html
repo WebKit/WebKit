@@ -1,0 +1,24 @@
+<style>
+    #htmlvar00006 { 0px; transform: translate(78px, -1px) }
+    .class4 { outline-style: inset; }
+    body { will-change: opacity, }
+</style>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+        
+    function jsfuzzer() {
+        htmlvar00004 = document.getElementById("htmlvar00004"); //HTMLAnchorElement
+        try { var00010 = document.head; } catch(e) { }
+        try { svgvar00001.remove(); } catch(e) { }
+        try { htmlvar00004.replaceWith(var00010); } catch(e) { }
+}
+</script>
+
+<body onload=jsfuzzer()>
+    <svg id="svgvar00001" style="break-inside: floating; background: url(data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7) top; onmousedown="eventhandler3()">
+    <a id="htmlvar00004" />
+    <dl id="htmlvar00006" style="animation-direction: initial; -webkit-transition-duration: 1s; srclang="sv">
+    <dt class="class4" manifest="S8H,&#x27;wbI&amp;|!&amp;yw">
+    <p> Test PASS if no crash </p>
