@@ -13276,7 +13276,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 jit.addPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.load64(CCallHelpers::calleeFrameSlot(CallFrameSlot::callee), BaselineJITRegisters::Call::calleeGPR);
-                jit.emitVirtualCall(vm, callLinkInfo);
+                jit.emitVirtualCall(vm, callLinkInfo, /* isTopTier */ true);
 
                 done.link(&jit);
                 jit.addPtr(

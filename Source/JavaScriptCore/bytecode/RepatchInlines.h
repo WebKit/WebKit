@@ -27,6 +27,8 @@
 
 #include "ErrorInstance.h"
 #include "FrameTracers.h"
+#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyModule.h"
 #include "LLIntEntrypoint.h"
 #include "Repatch.h"
 
@@ -151,7 +153,15 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
                     linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
                     break;
                 }
-                callLinkInfo->setVirtualCall(vm);
+                CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+                ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+                bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+                bool isWebAssembly = false;
+#endif
+                bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
+                callLinkInfo->setVirtualCall(vm, notUsingCounting);
                 break;
             }
             case CallLinkInfo::Mode::Virtual:
@@ -214,7 +224,16 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
             linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
             break;
         }
-        callLinkInfo->setVirtualCall(vm);
+
+        CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+        ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+        bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+        bool isWebAssembly = false;
+#endif
+        bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
+        callLinkInfo->setVirtualCall(vm, notUsingCounting);
         break;
     }
     case CallLinkInfo::Mode::Virtual:

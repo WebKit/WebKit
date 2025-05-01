@@ -837,21 +837,22 @@ MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTIThrowExceptionFromCallSlowPath()
     return LLInt::callToThrow(*this).template retagged<JSEntryPtrTag>();
 }
 
-MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callMode)
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callMode, bool isTopTier)
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         switch (callMode) {
         case CallMode::Regular:
-            return getCTIStub(CommonJITThunkID::VirtualThunkForRegularCall).template retagged<JITStubRoutinePtrTag>();
+            return getCTIStub(isTopTier ? CommonJITThunkID::VirtualTopTierThunkForRegularCall : CommonJITThunkID::VirtualThunkForRegularCall).template retagged<JITStubRoutinePtrTag>();
         case CallMode::Tail:
-            return getCTIStub(CommonJITThunkID::VirtualThunkForTailCall).template retagged<JITStubRoutinePtrTag>();
+            return getCTIStub(isTopTier ? CommonJITThunkID::VirtualTopTierThunkForTailCall : CommonJITThunkID::VirtualThunkForTailCall).template retagged<JITStubRoutinePtrTag>();
         case CallMode::Construct:
-            return getCTIStub(CommonJITThunkID::VirtualThunkForConstruct).template retagged<JITStubRoutinePtrTag>();
+            return getCTIStub(isTopTier ? CommonJITThunkID::VirtualTopTierThunkForConstruct : CommonJITThunkID::VirtualThunkForConstruct).template retagged<JITStubRoutinePtrTag>();
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
 #endif
+    UNUSED_PARAM(isTopTier);
     switch (callMode) {
     case CallMode::Regular:
         return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_call_trampoline);

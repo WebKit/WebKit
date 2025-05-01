@@ -67,6 +67,9 @@ class NativeExecutable;
     macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
     macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
     macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
+    macro(VirtualTopTierThunkForRegularCall, virtualTopTierThunkForRegularCall) \
+    macro(VirtualTopTierThunkForTailCall, virtualTopTierThunkForTailCall) \
+    macro(VirtualTopTierThunkForConstruct, virtualTopTierThunkForConstruct) \
     macro(PolymorphicThunk, polymorphicThunk) \
     macro(PolymorphicThunkForClosure, polymorphicThunkForClosure) \
     macro(PolymorphicTopTierThunk, polymorphicTopTierThunk) \

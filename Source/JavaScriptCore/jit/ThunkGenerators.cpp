@@ -198,7 +198,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowAtPrologueGenerator(VM& 
 // path virtual call so that we can enable fast tail calls for megamorphic
 // virtual calls by using the shuffler.
 // https://bugs.webkit.org/show_bug.cgi?id=148831
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mode, CodeSpecializationKind kind)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mode, CodeSpecializationKind kind, bool isTopTier)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
@@ -215,9 +215,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
 
     // This is a slow path execution, and regT2 contains the CallLinkInfo. Count the
     // slow path execution for the profiler.
-    jit.add32(
-        CCallHelpers::TrustedImm32(1),
-        CCallHelpers::Address(GPRInfo::regT2, CallLinkInfo::offsetOfSlowPathCount()));
+    // If it is top-tier code, then we do not need to count these feedback anymore.
+    if (!isTopTier)
+        jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(GPRInfo::regT2, CallLinkInfo::offsetOfSlowPathCount()));
 
     // FIXME: we should have a story for eliminating these checks. In many cases,
     // the DFG knows that the value is definitely a cell, or definitely a function.
@@ -297,17 +297,32 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Regular, CodeForCall);
+    return virtualThunkFor(vm, CallMode::Regular, CodeForCall, /* isTopTier */ false);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Tail, CodeForCall);
+    return virtualThunkFor(vm, CallMode::Tail, CodeForCall, /* isTopTier */ false);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct);
+    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct, /* isTopTier */ false);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForRegularCall(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Regular, CodeForCall, /* isTopTier */ true);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForTailCall(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Tail, CodeForCall, /* isTopTier */ true);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualTopTierThunkForConstruct(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct, /* isTopTier */ true);
 }
 
 enum class ClosureMode : uint8_t { No, Yes };
