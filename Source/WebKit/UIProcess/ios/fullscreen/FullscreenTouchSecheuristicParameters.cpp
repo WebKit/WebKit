@@ -31,8 +31,8 @@ namespace WebKit {
 FullscreenTouchSecheuristicParameters FullscreenTouchSecheuristicParameters::iosParameters()
 {
     return {
-        .rampUpSpeed = 0.25_s,
-        .rampDownSpeed = 1_s,
+        .rampUpSpeedSeconds = 0.25,
+        .rampDownSpeedSeconds = 1,
         .xWeight = 0,
         .yWeight = 1,
         .gamma = 0.1,

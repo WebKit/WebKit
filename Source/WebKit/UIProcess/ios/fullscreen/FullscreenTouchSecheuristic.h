@@ -28,6 +28,7 @@
 #ifdef __cplusplus
 
 #include <WebKit/FullscreenTouchSecheuristicParameters.h>
+#include <wtf/Seconds.h>
 
 namespace WebKit {
 
@@ -40,8 +41,8 @@ public:
     void setParameters(const FullscreenTouchSecheuristicParameters& parameters) { m_parameters = parameters; }
     double requiredScore() const { return m_parameters.requiredScore; }
 
-    void setRampUpSpeed(Seconds speed) { m_parameters.rampUpSpeed = speed; }
-    void setRampDownSpeed(Seconds speed) { m_parameters.rampDownSpeed = speed; }
+    void setRampUpSpeed(Seconds speed) { m_parameters.rampUpSpeedSeconds = speed.seconds(); }
+    void setRampDownSpeed(Seconds speed) { m_parameters.rampDownSpeedSeconds = speed.seconds(); }
     void setXWeight(double weight) { m_parameters.xWeight = weight; }
     void setYWeight(double weight) { m_parameters.yWeight = weight; }
     void setSize(CGSize size) { m_size = size; }

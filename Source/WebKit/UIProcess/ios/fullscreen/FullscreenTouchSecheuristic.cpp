@@ -75,15 +75,15 @@ double FullscreenTouchSecheuristic::distanceScore(const CGPoint& nextLocation, c
         m_parameters.yWeight * pow(m_size.height, 2));
     double scaledDistance = distance / sizeFactor;
     if (scaledDistance <= m_parameters.gammaCutoff)
-        return scaledDistance * (m_parameters.rampUpSpeed / deltaTime);
+        return scaledDistance * (Seconds { m_parameters.rampUpSpeedSeconds } / deltaTime);
 
     double exponentialDistance = m_parameters.gammaCutoff + pow((scaledDistance - m_parameters.gammaCutoff) / (1 - m_parameters.gammaCutoff), m_parameters.gamma);
-    return exponentialDistance * (m_parameters.rampUpSpeed / deltaTime);
+    return exponentialDistance * (Seconds { m_parameters.rampUpSpeedSeconds } / deltaTime);
 }
 
 double FullscreenTouchSecheuristic::attenuationFactor(Seconds delta)
 {
-    double normalizedTimeDelta = delta / m_parameters.rampDownSpeed;
+    double normalizedTimeDelta = delta / Seconds { m_parameters.rampDownSpeedSeconds };
     return std::max(std::min(normalizedTimeDelta * m_weight, 1.0), 0.0);
 }
 
