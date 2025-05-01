@@ -29,6 +29,7 @@
 #include "TemporalPlainDate.h"
 #include "TemporalPlainTime.h"
 #include "TemporalTimeZone.h"
+#include "TemporalZonedDateTime.h"
 
 namespace JSC {
 

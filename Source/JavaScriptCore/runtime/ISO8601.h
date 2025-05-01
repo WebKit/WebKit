@@ -492,11 +492,4 @@ int32_t compareTimeRecord(const PlainTime&, const PlainTime&);
 
 } // namespace ISO8601
 
-static constexpr Int128 absInt128(const Int128& value)
-{
-    if (value < 0)
-        return -value;
-    return value;
-}
-
 } // namespace JSC

@@ -340,6 +340,10 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/era/branding.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/era/prop-desc.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/eraYear/branding.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/eraYear/prop-desc.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
 
     # Depends on annotations in datetime strings

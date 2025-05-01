@@ -218,16 +218,8 @@ static double totalSubseconds(ISO8601::Duration& duration)
     return 1000 * microseconds + duration.nanoseconds();
 }
 
-int32_t ISO8601::InternalDuration::sign() const
-{
-    int32_t sign = TemporalDuration::sign(m_dateDuration);
-    if (sign)
-        return sign;
-    return timeDurationSign();
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-add24hourdaystonormalizedtimeduration
-static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
+Int128 TemporalDuration::add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -372,24 +364,6 @@ ISO8601::InternalDuration TemporalDuration::toInternalDurationRecordWith24HourDa
         timeDuration);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-regulateisodate
-std::optional<ISO8601::PlainDate> TemporalDuration::regulateISODate(double year, double month, double day, TemporalOverflow overflow)
-{
-    if (overflow == TemporalOverflow::Constrain) {
-        if (month < 1)
-            month = 1;
-        if (month > 12)
-            month = 12;
-        auto daysInMonth = ISO8601::daysInMonth(year, month);
-        if (day < 1)
-            day = 1;
-        if (day > daysInMonth)
-            day = daysInMonth;
-    } else if (!ISO8601::isValidISODate(year, month, day))
-        return std::nullopt;
-    return ISO8601::createISODateRecord(year, month, day);
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-todatedurationrecordwithouttime
 // ToDateDurationRecordWithoutTime ( duration )
 ISO8601::Duration TemporalDuration::toDateDurationRecordWithoutTime(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
@@ -499,33 +473,6 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
         ISO8601::Duration(), timeResult);
     RETURN_IF_EXCEPTION(scope, { });
     return temporalDurationFromInternal(result, largestUnit);
-}
-
-Int128 TemporalDuration::timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds)
-{
-    Int128 min = ((Int128) minutes) + ((Int128) hours) * 60;
-    Int128 sec = ((Int128) seconds) + min * 60;
-    Int128 millis = ((Int128) milliseconds) + sec * 1000;
-    Int128 micros = ((Int128) microseconds) + millis * 1000;
-    Int128 nanos = ((Int128) nanoseconds) + micros * 1000;
-    ASSERT(absInt128(nanos) <= ISO8601::InternalDuration::maxTimeDuration);
-    return nanos;
-}
-
-ISO8601::InternalDuration TemporalDuration::toInternalDurationRecordWith24HourDays(JSGlobalObject* globalObject, ISO8601::Duration d)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 1. Let timeDuration be TimeDurationFromComponents(duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]).
-    Int128 timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(), d.milliseconds(), d.microseconds(), d.nanoseconds());
-    // 2. Set timeDuration to ! Add24HourDaysToTimeDuration(timeDuration, duration.[[Days]]).
-    timeDuration = add24HourDaysToTimeDuration(globalObject, timeDuration, d.days());
-    RETURN_IF_EXCEPTION(scope, { });
-    // 3. Let dateDuration be ! CreateDateDurationRecord(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], 0).
-    ISO8601::Duration dateDuration = ISO8601::Duration { d.years(), d.months(), d.weeks(), 0, 0, 0, 0, 0, 0, 0 };
-    // 4. Return ! CombineDateAndTimeDuration(dateDuration, timeDuration).
-    RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDuration, timeDuration));
 }
 
 ISO8601::InternalDuration TemporalDuration::toInternalDuration(JSGlobalObject* globalObject, ISO8601::Duration d)
