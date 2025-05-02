@@ -82,6 +82,23 @@ public:
         // Returns true if the node would emit code when lowered to B3.
         // Used to estimate unrolling cost more precisely, skipping Phantom-like ops.
         bool isMaterialNode(Graph&, Node*);
+        bool isNumericComputationNode(Node*);
+        bool isLocalAccessNode(Node*);
+
+        uint32_t nonPadBlockCount()
+        {
+            uint32_t count = 0;
+            for (uint32_t i = 0; i < loopSize(); ++i) {
+                if (!loopBody(i)->isJumpPad())
+                    ++count;
+            }
+            return count;
+        }
+
+        // Ratio of this count to total material node count
+        double ratio(uint32_t count) { return materialNodeCount ? static_cast<double>(count) / materialNodeCount : 0.0; }
+
+        uint32_t maxAllowedUnrollSize() { return shouldFullyUnroll() ? Options::maxLoopUnrollingBodyNodeSize() : Options::maxPartialLoopUnrollingBodyNodeSize(); }
 
         const NaturalLoop* loop { nullptr };
         BasicBlock* preHeader { nullptr };
@@ -101,6 +118,8 @@ public:
         uint32_t materialNodeCount { 0 };
         uint32_t putByValCount { 0 };
         uint32_t getByValCount { 0 };
+        uint32_t numericComputationCount { 0 };
+        uint32_t localAccessCount { 0 };
     };
 
     LoopUnrollingPhase(Graph& graph)
@@ -472,7 +491,6 @@ public:
 
     bool isLoopBodyUnrollable(LoopData& data)
     {
-        uint32_t maxLoopUnrollingBodyNodeSize = data.shouldFullyUnroll() ? Options::maxLoopUnrollingBodyNodeSize() : Options::maxPartialLoopUnrollingBodyNodeSize();
         for (uint32_t i = 0; i < data.loopSize(); ++i) {
             BasicBlock* body = data.loopBody(i);
             if (!body->isReachable) {
@@ -486,10 +504,6 @@ public:
 
             HashSet<Node*> cloneableCache;
             for (Node* node : *body) {
-                if (data.materialNodeCount > maxLoopUnrollingBodyNodeSize) {
-                    dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " and loop node count=", data.materialNodeCount, " since maxLoopUnrollingBodyNodeSize=", maxLoopUnrollingBodyNodeSize);
-                    return false;
-                }
 
                 if (!CloneHelper::isNodeCloneable(m_graph, cloneableCache, node)) {
                     dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since ", node, "<", node->op(), "> is not cloneable");
@@ -604,6 +618,23 @@ bool performLoopUnrolling(Graph& graph)
 
 bool LoopUnrollingPhase::LoopData::isProfitableToUnroll()
 {
+    auto matchesNumericHotLoopPattern = [&]() {
+        // Unroll hot loops dominated by numeric computations and local access
+        return nonPadBlockCount() == 1
+            && ratio(numericComputationCount) > 0.3
+            && ratio(localAccessCount) > 0.4
+            && materialNodeCount > 160
+            && materialNodeCount < 225;
+    };
+
+    if (matchesNumericHotLoopPattern())
+        return true;
+
+    if (materialNodeCount > maxAllowedUnrollSize()) {
+        dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *header(), " and loop node count=", materialNodeCount, " since maxAllowedUnrollSize=", maxAllowedUnrollSize());
+        return false;
+    }
+
     if (putByValCount && !getByValCount) {
         // Avoid unrolling loops that only perform stores. These tend to increase code size
         // without improving performance, since they are often memory-bound and unrolling
@@ -628,6 +659,11 @@ void LoopUnrollingPhase::LoopData::analyzeLoopNode(Graph& graph, Node* node)
         ++putByValCount;
     if (node->op() == GetByVal)
         ++getByValCount;
+
+    if (isNumericComputationNode(node))
+        ++numericComputationCount;
+    if (isLocalAccessNode(node))
+        ++localAccessCount;
 }
 
 void LoopUnrollingPhase::dumpLoopNodeTypeStats(LoopData& data)
@@ -642,11 +678,11 @@ void LoopUnrollingPhase::dumpLoopNodeTypeStats(LoopData& data)
 
     for (uint32_t i = 0; i < counter.size(); i++) {
         uint32_t count = counter[i];
-        if (count) {
-            double ratio = data.materialNodeCount ? static_cast<double>(count) / data.materialNodeCount : 0.0;
-            dataLogLn("  ", static_cast<NodeType>(i), ": count = ", count, ", ratio = ", ratio);
-        }
+        if (count)
+            dataLogLn("  ", static_cast<NodeType>(i), ": count = ", count, ", ratio = ", data.ratio(count));
     }
+    dataLogLn("  numericComputationCount=", data.numericComputationCount, ", ratio=", data.ratio(data.numericComputationCount));
+    dataLogLn("  localAccessCount=", data.localAccessCount, ", ratio=", data.ratio(data.localAccessCount));
 }
 
 void LoopUnrollingPhase::LoopData::dump(PrintStream& out) const
@@ -835,6 +871,67 @@ bool LoopUnrollingPhase::LoopData::isMaterialNode(Graph& graph, Node* node)
         break;
     }
     return true;
+}
+
+bool LoopUnrollingPhase::LoopData::isNumericComputationNode(Node* node)
+{
+    switch (node->op()) {
+    // Arithmetic operations
+    case ArithBitNot:
+    case ArithBitAnd:
+    case ArithBitOr:
+    case ArithBitXor:
+    case ArithBitLShift:
+    case ArithBitRShift:
+    case ArithAdd:
+    case ArithClz32:
+    case ArithSub:
+    case ArithNegate:
+    case ArithMul:
+    case ArithIMul:
+    case ArithDiv:
+    case ArithMod:
+    case ArithAbs:
+    case ArithMin:
+    case ArithMax:
+    case ArithFRound:
+    case ArithF16Round:
+    case ArithPow:
+    case ArithRandom:
+    case ArithRound:
+    case ArithFloor:
+    case ArithCeil:
+    case ArithTrunc:
+    case ArithSqrt:
+    case ArithUnary:
+
+    // Representations
+    case DoubleRep:
+    case Int52Rep:
+    case ValueRep:
+
+    // Numeric constants
+    case DoubleConstant:
+    case Int52Constant:
+        return true;
+    case JSConstant:
+        if (node->isNumberConstant())
+            return true;
+        FALLTHROUGH;
+    default:
+        return false;
+    }
+}
+
+bool LoopUnrollingPhase::LoopData::isLocalAccessNode(Node* node)
+{
+    switch (node->op()) {
+    case GetLocal:
+    case SetLocal:
+        return true;
+    default:
+        return false;
+    }
 }
 
 FunctionAllowlist& LoopUnrollingPhase::functionAllowlist()
