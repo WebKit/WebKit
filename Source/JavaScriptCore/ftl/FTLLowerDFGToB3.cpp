@@ -538,8 +538,11 @@ private:
             if (result == CodeGenerationResult::Generated)
                 ++codeGeneratedNodes;
             if (!notTerminated)
-                return codeGeneratedNodes;
+                break;
         }
+
+        if (block->isExcludedFromFTLCodeSizeEstimation)
+            return 0;
         return codeGeneratedNodes;
     }
 

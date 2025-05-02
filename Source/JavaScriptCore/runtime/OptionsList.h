@@ -593,13 +593,13 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpBaselineJITSizeStatistics, false, Normal, nullptr) \
     v(Bool, dumpDFGJITSizeStatistics, false, Normal, nullptr) \
     v(Bool, useLoopUnrolling, true, Normal, nullptr) \
-    v(Bool, usePartialLoopUnrolling, false, Normal, nullptr) \
+    v(Bool, usePartialLoopUnrolling, true, Normal, nullptr) \
     v(Bool, verboseLoopUnrolling, false, Normal, nullptr) \
     v(Bool, disallowLoopUnrollingForNonInnermost, true, Normal, nullptr) \
-    v(Unsigned, maxLoopUnrollingCount, 2, Normal, nullptr) \
+    v(Unsigned, maxLoopUnrollingCount, 5, Normal, nullptr) \
     v(Unsigned, maxLoopUnrollingBodyNodeSize, 200, Normal, nullptr) \
     v(Unsigned, maxLoopUnrollingIterationCount, 4, Normal, nullptr) \
-    v(Unsigned, maxPartialLoopUnrollingBodyNodeSize, 200, Normal, nullptr) \
+    v(Unsigned, maxPartialLoopUnrollingBodyNodeSize, 70, Normal, nullptr) \
     v(Unsigned, maxPartialLoopUnrollingIterationCount, 4, Normal, nullptr) \
     v(Bool, printEachUnrolledLoop, false, Normal, nullptr) \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \

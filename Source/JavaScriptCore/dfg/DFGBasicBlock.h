@@ -264,6 +264,11 @@ public:
     };
     std::unique_ptr<SSAData> ssa;
 
+    // Indicates this block was synthetically generated (e.g., via loop unrolling or
+    // additional jump pad insertion due to loop unrolling) and should not contribute
+    // to FTL inlining code size heuristics.
+    bool isExcludedFromFTLCodeSizeEstimation { false };
+
 #if ASSERT_ENABLED
     // Points to the original block this one was cloned from during loop unrolling.
     BasicBlock* cloneSource { nullptr };

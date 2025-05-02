@@ -127,6 +127,8 @@ public:
                 }
                 }
             }
+
+            pad->isExcludedFromFTLCodeSizeEstimation = true;
         }
     }
 private:

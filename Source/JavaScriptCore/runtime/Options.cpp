@@ -632,6 +632,12 @@ static void overrideDefaults()
     // So, we need a much larger ReservedZoneSize to allow stack overflow handlers to execute.
     Options::reservedZoneSize() = 3 * Options::reservedZoneSize();
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    // This is used to mitigate performance regression rdar://150522186.
+    if (Options::usePartialLoopUnrolling())
+        Options::maxPartialLoopUnrollingBodyNodeSize() = 50;
+#endif
 }
 
 bool Options::setAllJITCodeValidations(const char* valueStr)

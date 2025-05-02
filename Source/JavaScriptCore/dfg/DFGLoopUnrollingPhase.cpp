@@ -75,6 +75,8 @@ public:
         bool isInductionVariable(Node* node) { return node->operand() == inductionVariable->operand(); }
         void dump(PrintStream& out) const;
 
+        bool isProfitableToUnroll();
+
         void analyzeLoopNode(Graph&, Node*);
 
         // Returns true if the node would emit code when lowered to B3.
@@ -97,6 +99,8 @@ public:
         std::optional<bool> invertCondition { };
 
         uint32_t materialNodeCount { 0 };
+        uint32_t putByValCount { 0 };
+        uint32_t getByValCount { 0 };
     };
 
     LoopUnrollingPhase(Graph& graph)
@@ -488,7 +492,13 @@ public:
                 }
 
                 if (!CloneHelper::isNodeCloneable(m_graph, cloneableCache, node)) {
-                    dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since D@", node->index(), " with op ", node->op(), " is not cloneable");
+                    dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since ", node, "<", node->op(), "> is not cloneable");
+                    return false;
+                }
+
+                if (node->op() == StringFromCharCode) {
+                    // Not supported due to performance regression rdar://150526635
+                    dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since ", node, "<", node->op(), "> is not supported");
                     return false;
                 }
 
@@ -498,7 +508,8 @@ public:
 
         if (UNLIKELY(Options::verboseLoopUnrolling()))
             dumpLoopNodeTypeStats(data);
-        return true;
+
+        return data.isProfitableToUnroll();
     }
 
     void unrollLoop(LoopData& data)
@@ -591,6 +602,19 @@ bool performLoopUnrolling(Graph& graph)
     return runPhase<LoopUnrollingPhase>(graph);
 }
 
+bool LoopUnrollingPhase::LoopData::isProfitableToUnroll()
+{
+    if (putByValCount && !getByValCount) {
+        // Avoid unrolling loops that only perform stores. These tend to increase code size
+        // without improving performance, since they are often memory-bound and unrolling
+        // doesn't expose additional optimization opportunities. (e.g., rdar://150524264)
+        dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *header(), " since putByValCount=", putByValCount, " getByValCount=", getByValCount);
+        return false;
+    }
+
+    return true;
+}
+
 // This can be extended to count other categories, such as arithmetic operations,
 // and get/set operations for locals.
 void LoopUnrollingPhase::LoopData::analyzeLoopNode(Graph& graph, Node* node)
@@ -599,6 +623,11 @@ void LoopUnrollingPhase::LoopData::analyzeLoopNode(Graph& graph, Node* node)
     // loop body size due to Phantom or ExitOK, etc.
     if (isMaterialNode(graph, node))
         ++materialNodeCount;
+
+    if (node->op() == PutByVal)
+        ++putByValCount;
+    if (node->op() == GetByVal)
+        ++getByValCount;
 }
 
 void LoopUnrollingPhase::dumpLoopNodeTypeStats(LoopData& data)

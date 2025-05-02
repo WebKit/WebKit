@@ -112,6 +112,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
 #if ASSERT_ENABLED
     clone->cloneSource = block;
 #endif
+    clone->isExcludedFromFTLCodeSizeEstimation = true;
     return clone;
 }
 
