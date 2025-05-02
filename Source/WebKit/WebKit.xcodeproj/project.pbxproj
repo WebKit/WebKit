@@ -1209,7 +1209,7 @@
 		5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */; };
 		512B6792294B8CB8000C0760 /* WebBadgeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512B6790294B8CB8000C0760 /* WebBadgeClient.h */; };
 		512CD6982721EFC800F7F8EC /* WebPushDaemonConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6972721EFC300F7F8EC /* WebPushDaemonConnection.h */; };
-		512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */; };
 		512F03842CDA9B34009F7ABC /* WebProcessSyncClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F03812CDA9B34009F7ABC /* WebProcessSyncClient.h */; };

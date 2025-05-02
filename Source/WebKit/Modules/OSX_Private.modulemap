@@ -1554,11 +1554,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WebPushDaemonConstants {
-    header "WebPushDaemonConstants.h"
-    export *
-  }
-
   explicit module WebQuotaManager {
     header "WebQuotaManager.h"
     export *
