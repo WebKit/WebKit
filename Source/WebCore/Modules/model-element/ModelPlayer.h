@@ -102,6 +102,7 @@ public:
     virtual void updateStageModeTransform(const TransformationMatrix&);
     virtual void endStageModeInteraction();
     virtual void renderingAbruptlyStopped();
+    virtual void pageScaleFactorChanged(float);
 #endif
 };
 

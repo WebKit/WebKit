@@ -1125,6 +1125,9 @@ public:
     bool findMatchingLocalDocument(NOESCAPE const Function<bool(Document&)>&) const;
     void forEachRenderableDocument(NOESCAPE const Function<void(Document&)>&) const;
     void forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&);
+#if ENABLE(MODEL_PROCESS)
+    void forEachModelElement(NOESCAPE const Function<void(HTMLModelElement&)>&);
+#endif
     static void forEachDocumentFromMainFrame(const Frame&, NOESCAPE const Function<void(Document&)>&);
     void forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>&);
     void forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)>&);

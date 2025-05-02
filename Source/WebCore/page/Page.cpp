@@ -86,6 +86,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLModelElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "HistoryController.h"
@@ -1654,6 +1655,14 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
         if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
             mainFrameView->setScrollPosition(origin);
     }
+
+#if ENABLE(MODEL_PROCESS)
+    if (inStableState) {
+        forEachModelElement([] (HTMLModelElement& element) {
+            element.pageScaleFactorChanged();
+        });
+    }
+#endif
 
 #if ENABLE(VIDEO)
     if (inStableState) {
@@ -4411,6 +4420,15 @@ void Page::forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&
     UNUSED_PARAM(functor);
 #endif
 }
+
+#if ENABLE(MODEL_PROCESS)
+void Page::forEachModelElement(NOESCAPE const Function<void(HTMLModelElement&)>& functor)
+{
+    forEachDocument([&] (Document& document) {
+        document.forEachModelElement(functor);
+    });
+}
+#endif
 
 void Page::forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>& functor)
 {

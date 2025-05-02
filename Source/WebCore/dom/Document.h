@@ -170,6 +170,7 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
+class HTMLModelElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
 class HighlightRange;
@@ -1327,6 +1328,11 @@ public:
     void unregisterMediaElement(HTMLMediaElement&);
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    void registerModelElement(HTMLModelElement&);
+    void unregisterModelElement(HTMLModelElement&);
+#endif
+
     bool requiresUserGestureForAudioPlayback() const;
     bool requiresUserGestureForVideoPlayback() const;
     bool mediaDataLoadsAutomatically() const;
@@ -1849,6 +1855,10 @@ public:
     WEBCORE_EXPORT void forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&);
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    WEBCORE_EXPORT void forEachModelElement(NOESCAPE const Function<void(HTMLModelElement&)>&);
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
@@ -2317,6 +2327,10 @@ private:
 
 #if ENABLE(VIDEO)
     WeakHashSet<HTMLMediaElement> m_mediaElements;
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    WeakHashSet<HTMLModelElement, WeakPtrImplWithEventTargetData> m_modelElements;
 #endif
 
 #if ENABLE(VIDEO)

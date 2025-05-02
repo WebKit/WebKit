@@ -135,6 +135,10 @@ void ModelPlayer::renderingAbruptlyStopped()
 {
 }
 
+void ModelPlayer::pageScaleFactorChanged(float)
+{
+}
+
 #endif // ENABLE(MODEL_PROCESS)
 
 }

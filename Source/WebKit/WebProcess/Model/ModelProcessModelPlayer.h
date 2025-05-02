@@ -111,6 +111,7 @@ private:
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
     void updateStageModeTransform(const WebCore::TransformationMatrix&) final;
     void endStageModeInteraction() final;
+    void pageScaleFactorChanged(float) final;
 
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;

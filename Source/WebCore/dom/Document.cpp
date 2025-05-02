@@ -130,6 +130,7 @@
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMetaElement.h"
+#include "HTMLModelElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
@@ -2630,6 +2631,26 @@ void Document::forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement
     });
 }
 
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+void Document::registerModelElement(HTMLModelElement& element)
+{
+    m_modelElements.add(element);
+}
+
+void Document::unregisterModelElement(HTMLModelElement& element)
+{
+    m_modelElements.remove(element);
+}
+
+void Document::forEachModelElement(NOESCAPE const Function<void(HTMLModelElement&)>& function)
+{
+    ASSERT(!m_modelElements.hasNullReferences());
+    m_modelElements.forEach([&](auto& element) {
+        function(Ref { element });
+    });
+}
 #endif
 
 String Document::nodeName() const

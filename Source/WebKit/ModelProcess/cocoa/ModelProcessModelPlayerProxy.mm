@@ -338,9 +338,9 @@ void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCor
 
 // MARK: - RE stuff
 
-static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter)
+static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter, float pageScale)
 {
-    return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
+    return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter) / pageScale;
 }
 
 static void computeScaledExtentsAndCenter(simd_float2 boundsOfLayerInMeters, simd_float3& boundingBoxExtents, simd_float3& boundingBoxCenter)
@@ -355,9 +355,9 @@ static void computeScaledExtentsAndCenter(simd_float2 boundsOfLayerInMeters, sim
     }
 }
 
-static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, float boundingRadius, bool isPortal, CGFloat pointsPerMeter, WebCore::StageModeOperation operation, simd_quatf currentModelRotation)
+static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, float boundingRadius, bool isPortal, CGFloat pointsPerMeter, float pageScale, WebCore::StageModeOperation operation, simd_quatf currentModelRotation)
 {
-    auto boundsOfLayerInMeters = makeMeterSizeFromPointSize(layer.bounds.size, pointsPerMeter);
+    auto boundsOfLayerInMeters = makeMeterSizeFromPointSize(layer.bounds.size, pointsPerMeter, pageScale);
     simd_float3 boundingBoxExtents = originalBoundingBoxExtents;
     simd_float3 boundingBoxCenter = originalBoundingBoxCenter;
     computeScaledExtentsAndCenter(boundsOfLayerInMeters, boundingBoxExtents, boundingBoxCenter);
@@ -440,7 +440,7 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
     float boundingRadius = [m_modelRKEntity boundingRadius];
     simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
-    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation);
+    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_pageScale, m_stageModeOperation, currentModelRotation);
     m_transformSRT = newSRT;
 
     notifyModelPlayerOfEntityTransformChange();
@@ -865,6 +865,16 @@ void ModelProcessModelPlayerProxy::applyStageModeOperationToDriver()
         break;
     }
     }
+}
+
+void ModelProcessModelPlayerProxy::pageScaleFactorChanged(float newScale)
+{
+    m_pageScale = newScale;
+    if (!m_model || !m_layer)
+        return;
+
+    computeTransform(false);
+    updateTransform();
 }
 
 } // namespace WebKit

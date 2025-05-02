@@ -136,6 +136,7 @@ public:
     void updateStageModeTransform(const WebCore::TransformationMatrix&) final;
     void endStageModeInteraction() final;
     void stageModeInteractionDidUpdateModel();
+    void pageScaleFactorChanged(float) final;
 
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
@@ -167,6 +168,7 @@ private:
     simd_float3 m_originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
     float m_pitch { 0 };
     float m_yaw { 0 };
+    float m_pageScale { 1.0f };
 
     RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
 

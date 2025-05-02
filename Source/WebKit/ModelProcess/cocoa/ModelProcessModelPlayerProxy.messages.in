@@ -42,6 +42,7 @@ messages -> ModelProcessModelPlayerProxy {
     BeginStageModeTransform(WebCore::TransformationMatrix transform)
     UpdateStageModeTransform(WebCore::TransformationMatrix transform)
     EndStageModeInteraction()
+    PageScaleFactorChanged(float pageScale)
 }
 
 #endif

@@ -101,6 +101,8 @@ public:
 
     std::optional<PlatformLayerIdentifier> layerID() const;
 
+    void pageScaleFactorChanged();
+
 #if ENABLE(MODEL_PROCESS)
     RefPtr<ModelContext> modelContext() const;
 
@@ -145,6 +147,9 @@ public:
     bool isDraggableIgnoringAttributes() const final;
 
     bool isInteractive() const;
+
+    void registerWithDocument(Document&);
+    void unregisterWithDocument(Document&);
 
 #if ENABLE(MODEL_PROCESS)
     double playbackRate() const { return m_playbackRate; }

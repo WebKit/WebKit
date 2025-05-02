@@ -377,6 +377,11 @@ void ModelProcessModelPlayer::renderingAbruptlyStopped()
         m_client->renderingAbruptlyStopped();
 }
 
+void ModelProcessModelPlayer::pageScaleFactorChanged(float pageScale)
+{
+    send(Messages::ModelProcessModelPlayerProxy::PageScaleFactorChanged(pageScale));
+}
+
 }
 
 #endif // ENABLE(MODEL_PROCESS)

@@ -222,6 +222,8 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
     ActiveDOMObject::didMoveToNewDocument(newDocument);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     sourcesChanged();
+    registerWithDocument(newDocument);
+    unregisterWithDocument(oldDocument);
 }
 
 // MARK: - Rendering overrides.
@@ -326,6 +328,8 @@ void HTMLModelElement::createModelPlayer()
         m_modelPlayer->setEnvironmentMap(m_environmentMapData.takeAsContiguous().get());
     else if (!m_environmentMapURL.isEmpty())
         environmentMapRequestResource();
+
+    registerWithDocument(document());
 #endif
 }
 
@@ -1183,6 +1187,28 @@ void HTMLModelElement::removedFromAncestor(RemovalType removalType, ContainerNod
         document().unregisterForVisibilityStateChangedCallbacks(*this);
         deleteModelPlayer();
     }
+}
+
+void HTMLModelElement::registerWithDocument(Document& document)
+{
+    document.registerModelElement(*this);
+}
+
+void HTMLModelElement::unregisterWithDocument(Document& document)
+{
+    document.unregisterModelElement(*this);
+}
+
+void HTMLModelElement::pageScaleFactorChanged()
+{
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    if (!m_modelPlayer)
+        return;
+
+    m_modelPlayer->pageScaleFactorChanged(page->pageScaleFactor());
 }
 
 }
