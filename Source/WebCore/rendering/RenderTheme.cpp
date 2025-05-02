@@ -462,8 +462,14 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
                 return StyleAppearance::SearchFieldResultsButton;
         }
 
-        if (part == UserAgentParts::webkitSliderThumb())
+        if (part == UserAgentParts::webkitSliderThumb()) {
+            if (RefPtr shadowHost = elementPtr->shadowHost()) {
+                if (CheckedPtr shadowStyles = shadowHost->computedStyle(); shadowStyles
+                    && shadowStyles->usedAppearance() == StyleAppearance::SliderVertical)
+                    return StyleAppearance::SliderThumbVertical;
+            }
             return StyleAppearance::SliderThumbHorizontal;
+        }
 
         if (part == UserAgentParts::webkitInnerSpinButton())
             return StyleAppearance::InnerSpinButton;
