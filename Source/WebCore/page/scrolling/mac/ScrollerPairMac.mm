@@ -233,18 +233,22 @@ void ScrollerPairMac::contentsSizeChanged()
 void ScrollerPairMac::setUsePresentationValues(bool inMomentumPhase)
 {
     m_usingPresentationValues = inMomentumPhase;
-    [scrollerImpHorizontal() setUsePresentationValue:m_usingPresentationValues];
-    [scrollerImpVertical() setUsePresentationValue:m_usingPresentationValues];
+    RetainPtr horizontalScrollerImp = scrollerImpHorizontal();
+    RetainPtr verticalScrollerImpl = scrollerImpVertical();
+    [horizontalScrollerImp.get() setUsePresentationValue:m_usingPresentationValues];
+    [verticalScrollerImpl.get() setUsePresentationValue:m_usingPresentationValues];
 }
 
 void ScrollerPairMac::setHorizontalScrollbarPresentationValue(float scrollbValue)
 {
-    [scrollerImpHorizontal() setPresentationValue:scrollbValue];
+    RetainPtr horizontalScrollerImp = scrollerImpHorizontal();
+    [horizontalScrollerImp.get() setPresentationValue:scrollbValue];
 }
 
 void ScrollerPairMac::setVerticalScrollbarPresentationValue(float scrollbValue)
 {
-    [scrollerImpVertical() setPresentationValue:scrollbValue];
+    RetainPtr verticalScrollerImpl = scrollerImpVertical();
+    [verticalScrollerImpl.get() setPresentationValue:scrollbValue];
 }
 
 void ScrollerPairMac::updateValues()
