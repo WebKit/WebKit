@@ -7,7 +7,12 @@ elseif (USE_SKIA)
     include(platform/Skia.cmake)
 endif ()
 
-include(platform/GCrypt.cmake)
+if (USE_OPENSSL_BACKEND)
+    include(platform/OpenSSL.cmake)
+else ()
+    include(platform/GCrypt.cmake)
+endif ()
+
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)

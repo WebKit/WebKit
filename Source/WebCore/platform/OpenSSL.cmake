@@ -1,3 +1,5 @@
+add_definitions(-DOPENSSL_API_COMPAT=0x10100000L)
+
 list(APPEND WebCore_SOURCES
     crypto/openssl/CryptoAlgorithmAESCBCOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmAESCFBOpenSSL.cpp

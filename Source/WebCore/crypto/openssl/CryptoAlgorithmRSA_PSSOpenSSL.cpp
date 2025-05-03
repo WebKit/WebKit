@@ -36,7 +36,7 @@ namespace WebCore {
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
-#if defined(EVP_PKEY_CTX_set_rsa_pss_saltlen) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md)
+#if (defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR > 1) || (defined(EVP_PKEY_CTX_set_rsa_pss_saltlen) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md))
     const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!md)
         return Exception { ExceptionCode::NotSupportedError };
@@ -75,13 +75,16 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAl
 
     return signature;
 #else
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(data);
     return Exception { ExceptionCode::NotSupportedError };
 #endif
 }
 
 ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-#if defined(EVP_PKEY_CTX_set_rsa_pss_saltlen) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md)
+#if (defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR > 1) || (defined(EVP_PKEY_CTX_set_rsa_pss_saltlen) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md))
     const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!md)
         return Exception { ExceptionCode::NotSupportedError };
@@ -113,6 +116,10 @@ ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRs
 
     return ret == 1;
 #else
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(signature);
+    UNUSED_PARAM(data);
     return Exception { ExceptionCode::NotSupportedError };
 #endif
 }

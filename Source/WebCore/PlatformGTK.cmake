@@ -1,9 +1,14 @@
 include(platform/Adwaita.cmake)
-include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_OPENSSL_BACKEND)
+    include(platform/OpenSSL.cmake)
+else ()
+    include(platform/GCrypt.cmake)
+endif ()
 
 if (USE_CAIRO)
     include(platform/Cairo.cmake)
