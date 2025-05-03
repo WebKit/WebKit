@@ -11452,6 +11452,8 @@
 		4CBBE5192C5D41AF00B7786E /* TextSpacing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextSpacing.cpp; sourceTree = "<group>"; };
 		4CBE86962955BA7F00832AAA /* CSSCounterStyleRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCounterStyleRegistry.h; sourceTree = "<group>"; };
 		4CBE86972955BA7F00832AAA /* CSSCounterStyleRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCounterStyleRegistry.cpp; sourceTree = "<group>"; };
+		4CC7C1E52BA381AE00C58DBD /* GlyphBufferCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphBufferCache.cpp; sourceTree = "<group>"; };
+		4CC7C1E62BA381AF00C58DBD /* GlyphBufferCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphBufferCache.h; sourceTree = "<group>"; };
 		4CF2530E29C09454005CDDAA /* ListStyleType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ListStyleType.cpp; sourceTree = "<group>"; };
 		4D3B00A4215D61040076B983 /* MediaRecorder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRecorder.idl; sourceTree = "<group>"; };
 		4D3B00A6215D645B0076B983 /* BlobEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobEvent.idl; sourceTree = "<group>"; };
@@ -38213,6 +38215,8 @@
 				9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */,
 				9A528E8217D7F52F00AA9518 /* FloatingObjects.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
+				4CC7C1E52BA381AE00C58DBD /* GlyphBufferCache.cpp */,
+				4CC7C1E62BA381AF00C58DBD /* GlyphBufferCache.h */,
 				32B0B0CF283C7483006217C6 /* GlyphDisplayListCache.cpp */,
 				5597FCCB2076C06800D35BB0 /* GlyphDisplayListCache.h */,
 				320377E42B5C773C003DB3A2 /* GlyphDisplayListCacheRemoval.cpp */,
