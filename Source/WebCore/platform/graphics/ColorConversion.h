@@ -28,6 +28,10 @@
 #include "ColorTypes.h"
 #include <wtf/MathExtras.h>
 
+#ifndef NDEBUG
+#include <wtf/text/TextStream.h>
+#endif
+
 namespace WebCore {
 
 class DestinationColorSpace;
@@ -499,7 +503,11 @@ private:
         return boundsConversion(gammaConversion(color));
     }
 
-    static constexpr Output handleMatrixConversion(const Input& color)
+    static
+#ifdef NDEBUG
+    constexpr
+#endif
+    Output handleMatrixConversion(const Input& color)
     {
         static_assert((IsRGBLinearEncodedType<Input> && IsRGBExtendedType<Input>) || IsXYZA<Input>);
         static_assert((IsRGBLinearEncodedType<Output> && IsRGBExtendedType<Output>) || IsXYZA<Output>);
@@ -536,17 +544,63 @@ private:
                 return applyMatrices(color, Output::xyzToLinear);
             else if constexpr (IsXYZA<Output>)
                 return applyMatrices(color, Input::linearToXYZ);
-            else
-                return applyMatrices(color, Input::linearToXYZ, Output::xyzToLinear);
+            else {
+                constexpr auto matrices = premultiply(Input::linearToXYZ.template toValueType<double>(), Output::xyzToLinear.template toValueType<double>()).template toValueType<float>();
+                auto after = applyMatrices(color, matrices);
+#ifndef NDEBUG
+                auto before = applyMatrices(color, Input::linearToXYZ, Output::xyzToLinear);
+                if (before != after) {
+                    auto c = asColorComponents(color.resolved());
+                    auto b = asColorComponents(before.resolved());
+                    auto a = asColorComponents(after.resolved());
+                    ALWAYS_LOG_WITH_STREAM(stream << "**GS** " << c[0] << "," << c[1] << "," << c[2] << "/" << c[3] << " Input::linearToXYZ, Output::xyzToLinear -> " << b[0] << "," << b[1] << "," << b[2] << "/" << b[3] << " or premult " << a[0] << "," << a[1] << "," << a[2] << "/" << a[3] << " - diff*1000000: " << ((a[0] - b[0]) * 1000000.0) << "," << ((a[1] - b[1]) * 1000000.0) << "," << ((a[2] - b[2]) * 1000000.0) << "/" << ((a[3] - b[3]) * 1000000.0));
+                }
+#endif
+                return after;
+            }
         } else {
             if constexpr (IsXYZA<Input> && IsXYZA<Output>)
                 return applyMatrices(color, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix);
-            else if constexpr (IsXYZA<Input>)
-                return applyMatrices(color, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
-            else if constexpr (IsXYZA<Output>)
-                return applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix);
-            else
-                return applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+            else if constexpr (IsXYZA<Input>) {
+                constexpr auto matrices = premultiply(ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix.template toValueType<double>(), Output::xyzToLinear.template toValueType<double>()).template toValueType<float>();
+                auto after = applyMatrices(color, matrices);
+#ifndef NDEBUG
+                auto before = applyMatrices(color, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+                if (before != after) {
+                    auto c = asColorComponents(color.resolved());
+                    auto b = asColorComponents(before.resolved());
+                    auto a = asColorComponents(after.resolved());
+                    ALWAYS_LOG_WITH_STREAM(stream << "**GS** " << c[0] << "," << c[1] << "," << c[2] << "/" << c[3] << " ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear -> " << b[0] << "," << b[1] << "," << b[2] << "/" << b[3] << " or premult " << a[0] << "," << a[1] << "," << a[2] << "/" << a[3] << " - diff*1000000: " << ((a[0] - b[0]) * 1000000.0) << "," << ((a[1] - b[1]) * 1000000.0) << "," << ((a[2] - b[2]) * 1000000.0) << "/" << ((a[3] - b[3]) * 1000000.0));
+                }
+#endif
+                return after;
+            } else if constexpr (IsXYZA<Output>) {
+                constexpr auto matrices = premultiply(Input::linearToXYZ.template toValueType<double>(), ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix.template toValueType<double>()).template toValueType<float>();
+                auto after = applyMatrices(color, matrices);
+#ifndef NDEBUG
+                auto before = applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix);
+                if (before != after) {
+                    auto c = asColorComponents(color.resolved());
+                    auto b = asColorComponents(before.resolved());
+                    auto a = asColorComponents(after.resolved());
+                    ALWAYS_LOG_WITH_STREAM(stream << "**GS** " << c[0] << "," << c[1] << "," << c[2] << "/" << c[3] << " Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix -> " << b[0] << "," << b[1] << "," << b[2] << "/" << b[3] << " or premult " << a[0] << "," << a[1] << "," << a[2] << "/" << a[3] << " - diff*1000000: " << ((a[0] - b[0]) * 1000000.0) << "," << ((a[1] - b[1]) * 1000000.0) << "," << ((a[2] - b[2]) * 1000000.0) << "/" << ((a[3] - b[3]) * 1000000.0));
+                }
+#endif
+                return after;
+            } else {
+                constexpr auto matrices = premultiply(premultiply(Input::linearToXYZ.template toValueType<double>(), ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix.template toValueType<double>()), Output::xyzToLinear.template toValueType<double>()).template toValueType<float>();
+                auto after = applyMatrices(color, matrices);
+#ifndef NDEBUG
+                auto before = applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+                if (before != after) {
+                    auto c = asColorComponents(color.resolved());
+                    auto b = asColorComponents(before.resolved());
+                    auto a = asColorComponents(after.resolved());
+                    ALWAYS_LOG_WITH_STREAM(stream << "**GS** " << c[0] << "," << c[1] << "," << c[2] << "/" << c[3] << " Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear -> " << b[0] << "," << b[1] << "," << b[2] << "/" << b[3] << " or premult " << a[0] << "," << a[1] << "," << a[2] << "/" << a[3] << " - diff*1000000: " << ((a[0] - b[0]) * 1000000.0) << "," << ((a[1] - b[1]) * 1000000.0) << "," << ((a[2] - b[2]) * 1000000.0) << "/" << ((a[3] - b[3]) * 1000000.0));
+                }
+#endif
+                return after;
+            }
         }
     }
 };
