@@ -133,24 +133,13 @@ static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, U
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-template<typename, typename = void> inline constexpr bool HasToTimeT = false;
-template<typename ClockType> inline constexpr bool HasToTimeT<ClockType, std::void_t<
-    std::enable_if_t<std::is_same_v<std::time_t, decltype(ClockType::to_time_t(std::filesystem::file_time_type()))>>
->> = true;
-
-template <typename FileTimeType>
-typename std::time_t toTimeT(FileTimeType fileTime)
-{
-    if constexpr (HasToTimeT<typename FileTimeType::clock>)
-        return decltype(fileTime)::clock::to_time_t(fileTime);
-    else
-        return std::chrono::system_clock::to_time_t(std::chrono::time_point_cast<std::chrono::system_clock::duration>(fileTime - decltype(fileTime)::clock::now() + std::chrono::system_clock::now()));
-}
-
 static WallTime toWallTime(std::filesystem::file_time_type fileTime)
 {
-    // FIXME: Use std::chrono::file_clock::to_sys() once we can use C++20.
-    return WallTime::fromRawSeconds(toTimeT(fileTime));
+#if defined(_WIN32) || defined(_WIN64)
+    return WallTime::fromRawSeconds(std::chrono::system_clock::to_time_t(std::chrono::clock_cast<std::chrono::system_clock>(fileTime)));
+#else
+    return WallTime::fromRawSeconds(std::chrono::system_clock::to_time_t(std::chrono::time_point_cast<std::chrono::system_clock::duration>(std::chrono::file_clock::to_sys(fileTime))));
+#endif
 }
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
