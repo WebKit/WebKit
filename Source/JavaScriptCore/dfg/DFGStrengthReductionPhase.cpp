@@ -1180,6 +1180,7 @@ private:
             break;
         }
 
+        // FIXME: handle StringReplaceAllString here
         case StringReplaceString: {
             Node* stringNode = m_node->child1().node();
             String string = stringNode->tryGetString(m_graph);

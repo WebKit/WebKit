@@ -2197,6 +2197,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         clobberTop();
         return;
 
+    case StringReplaceAllString:
     case StringReplaceString:
         if (node->child3().useKind() == StringUse)
             return;

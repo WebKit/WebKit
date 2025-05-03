@@ -393,6 +393,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringReplaceAll:
     case StringReplaceRegExp:
     case StringReplaceString:
+    case StringReplaceAllString:
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:

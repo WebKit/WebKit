@@ -351,6 +351,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         }
         break;
 
+    case StringReplaceAllString:
     case StringReplaceString: {
         if (node->child3().useKind() == StringUse) {
             result = ExitsForExceptions;

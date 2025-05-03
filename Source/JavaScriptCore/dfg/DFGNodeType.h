@@ -351,6 +351,7 @@ namespace JSC { namespace DFG {
     macro(StringReplaceAll, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceRegExp, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceString, NodeResultJS | NodeMustGenerate) \
+    macro(StringReplaceAllString, NodeResultJS | NodeMustGenerate) \
     macro(StringIndexOf, NodeResultInt32) \
     \
     /* Optimizations for string access */ \

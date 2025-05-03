@@ -1725,11 +1725,14 @@ private:
         case StringReplace:
         case StringReplaceAll:
         case StringReplaceRegExp: {
-            if (op == StringReplace
+            if ((op == StringReplace || op == StringReplaceAll)
                 && node->child1()->shouldSpeculateString()
                 && node->child2()->shouldSpeculateString()
                 && m_graph.isWatchingStringSymbolReplaceWatchpoint(node)) {
-                node->setOp(StringReplaceString);
+                if (op == StringReplace)
+                    node->setOp(StringReplaceString);
+                else if (op == StringReplaceAll)
+                    node->setOp(StringReplaceAllString);
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
                 if (node->child3()->shouldSpeculateString()) {
@@ -1764,6 +1767,7 @@ private:
             break;
         }
 
+        case StringReplaceAllString:
         case StringReplaceString: {
             fixEdge<StringUse>(node->child1());
             fixEdge<StringUse>(node->child2());

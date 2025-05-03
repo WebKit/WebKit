@@ -13215,6 +13215,9 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
 void SpeculativeJIT::compileStringReplaceString(Node* node)
 {
+    bool isStringReplaceAll = node->op() == StringReplaceAllString;
+    ASSERT(node->op() == StringReplaceString || isStringReplaceAll);
+
     if (node->child3().useKind() == StringUse) {
         const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
         String searchString = node->child2()->tryGetString(m_graph);
@@ -13223,7 +13226,8 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
 
         String replacementString = node->child3()->tryGetString(m_graph);
         if (!!replacementString) {
-            if (!replacementString.length()) {
+            // FIXME: handle StringReplaceAllString here
+            if (!replacementString.length() && !isStringReplaceAll) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand search(this, node->child2());
                 GPRReg stringGPR = string.gpr();
@@ -13255,9 +13259,9 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
                 flushRegisters();
                 GPRFlushedCallResult result(this);
                 if (tablePointer)
-                    callOperation(operationStringReplaceStringStringWithoutSubstitutionWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
+                    callOperation(isStringReplaceAll ? operationStringReplaceAllStringStringWithoutSubstitutionWithTable8 : operationStringReplaceStringStringWithoutSubstitutionWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
                 else
-                    callOperation(operationStringReplaceStringStringWithoutSubstitution, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
+                    callOperation(isStringReplaceAll ? operationStringReplaceAllStringStringWithoutSubstitution : operationStringReplaceStringStringWithoutSubstitution, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
                 cellResult(result.gpr(), node);
                 return;
             }
@@ -13276,9 +13280,9 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         if (tablePointer)
-            callOperation(operationStringReplaceStringStringWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
+            callOperation(isStringReplaceAll ? operationStringReplaceAllStringStringWithTable8 : operationStringReplaceStringStringWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
         else
-            callOperation(operationStringReplaceStringString, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
+            callOperation(isStringReplaceAll ? operationStringReplaceAllStringString : operationStringReplaceStringString, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
         cellResult(result.gpr(), node);
         return;
     }
@@ -13296,7 +13300,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
 
     flushRegisters();
     GPRFlushedCallResult result(this);
-    callOperation(operationStringReplaceStringGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceRegs);
+    callOperation(isStringReplaceAll ? operationStringReplaceAllStringGeneric : operationStringReplaceStringGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceRegs);
     cellResult(result.gpr(), node);
 }
 

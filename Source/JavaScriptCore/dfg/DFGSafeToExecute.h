@@ -788,6 +788,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArraySplice:
         return false;
 
+    case StringReplaceAllString:
     case StringReplaceString:
         return node->child3().useKind() == StringUse;
 

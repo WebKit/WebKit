@@ -4183,6 +4183,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringReplaceAllString:
     case StringReplaceString: {
         compileStringReplaceString(node);
         break;

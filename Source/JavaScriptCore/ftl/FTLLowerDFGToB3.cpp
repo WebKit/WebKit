@@ -1779,6 +1779,7 @@ private:
         case StringReplaceRegExp:
             compileStringReplace();
             break;
+        case StringReplaceAllString:
         case StringReplaceString:
             compileStringReplaceString();
             break;
@@ -17941,6 +17942,9 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileStringReplaceString()
     {
+        bool isStringReplaceAll = m_node->op() == StringReplaceAllString;
+        ASSERT(m_node->op() == StringReplaceString || isStringReplaceAll);
+
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
         if (m_node->child3().useKind() == StringUse) {
@@ -17951,7 +17955,8 @@ IGNORE_CLANG_WARNINGS_END
 
             String replacement = m_node->child3()->tryGetString(m_graph);
             if (!!replacement) {
-                if (!replacement.length()) {
+                // FIXME: handle StringReplaceAllString here
+                if (!replacement.length() && !isStringReplaceAll) {
                     LValue string = lowString(m_node->child1());
                     LValue search = lowString(m_node->child2());
                     if (tablePointer)
@@ -17966,9 +17971,9 @@ IGNORE_CLANG_WARNINGS_END
                     LValue search = lowString(m_node->child2());
                     LValue replace = lowString(m_node->child3());
                     if (tablePointer)
-                        setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitutionWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
+                        setJSValue(vmCall(pointerType(), isStringReplaceAll ? operationStringReplaceAllStringStringWithoutSubstitutionWithTable8 : operationStringReplaceStringStringWithoutSubstitutionWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
                     else
-                        setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitution, weakPointer(globalObject), string, search, replace));
+                        setJSValue(vmCall(pointerType(), isStringReplaceAll ? operationStringReplaceAllStringStringWithoutSubstitution : operationStringReplaceStringStringWithoutSubstitution, weakPointer(globalObject), string, search, replace));
                     return;
                 }
             }
@@ -17977,13 +17982,13 @@ IGNORE_CLANG_WARNINGS_END
             LValue search = lowString(m_node->child2());
             LValue replace = lowString(m_node->child3());
             if (tablePointer)
-                setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
+                setJSValue(vmCall(pointerType(), isStringReplaceAll ? operationStringReplaceAllStringStringWithTable8 : operationStringReplaceStringStringWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
             else
-                setJSValue(vmCall(pointerType(), operationStringReplaceStringString, weakPointer(globalObject), string, search, replace));
+                setJSValue(vmCall(pointerType(), isStringReplaceAll ? operationStringReplaceAllStringString : operationStringReplaceStringString, weakPointer(globalObject), string, search, replace));
             return;
         }
 
-        setJSValue(vmCall(pointerType(), operationStringReplaceStringGeneric, weakPointer(globalObject), lowString(m_node->child1()), lowString(m_node->child2()), lowJSValue(m_node->child3())));
+        setJSValue(vmCall(pointerType(), isStringReplaceAll ? operationStringReplaceAllStringGeneric : operationStringReplaceStringGeneric, weakPointer(globalObject), lowString(m_node->child1()), lowString(m_node->child2()), lowJSValue(m_node->child3())));
     }
 
     void compileGetRegExpObjectLastIndex()

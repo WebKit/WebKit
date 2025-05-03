@@ -1026,6 +1026,7 @@ private:
         case StringReplaceAll:
         case StringReplaceRegExp:
         case StringReplaceString:
+        case StringReplaceAllString:
         case GetById:
         case GetByIdFlush:
         case GetByIdMegamorphic:

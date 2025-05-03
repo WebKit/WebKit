@@ -2103,6 +2103,7 @@ public:
         case StringReplaceAll:
         case StringReplaceRegExp:
         case StringReplaceString:
+        case StringReplaceAllString:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:

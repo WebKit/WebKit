@@ -286,6 +286,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalOb
 }
 
 enum class StringReplaceSubstitutions : bool { No, Yes };
+
 template<StringReplaceSubstitutions substitutions>
 ALWAYS_INLINE String tryMakeReplacedString(const String& string, const String& replacement, size_t matchStart, size_t matchEnd)
 {
@@ -302,6 +303,32 @@ ALWAYS_INLINE String tryMakeReplacedString(const String& string, const String& r
         }
     }
     return tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
+}
+
+template<StringReplaceSubstitutions substitutions>
+ALWAYS_INLINE String tryMakeReplacedAllString(const String& string, const String& replacement, const Vector<size_t, 16>& matchStarts, size_t searchLength)
+{
+    auto resultLength = CheckedSize { string.length() + matchStarts.size() * (replacement.length() - searchLength) };
+
+    StringBuilder resultBuilder(OverflowPolicy::RecordOverflow);
+    resultBuilder.reserveCapacity(resultLength);
+
+    size_t lastMatchEnd = 0;
+    for (auto start : matchStarts) {
+        resultBuilder.append(StringView(string).substring(lastMatchEnd, start - lastMatchEnd));
+        if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
+            int ovector[2] = { static_cast<int>(start), static_cast<int>(start + searchLength) };
+            substituteBackreferences(resultBuilder, replacement, string, ovector, nullptr);
+        } else
+            resultBuilder.append(replacement);
+        lastMatchEnd = start + searchLength;
+    }
+    resultBuilder.append(StringView(string).substring(lastMatchEnd));
+
+    if (UNLIKELY(resultBuilder.hasOverflowed()))
+        return { };
+
+    return resultBuilder.toString();
 }
 
 enum class StringReplaceUseTable : bool { No, Yes };
@@ -343,16 +370,22 @@ ALWAYS_INLINE JSString* stringReplaceAllStringString(JSGlobalObject* globalObjec
 
     size_t matchStart = 0;
     while (true) {
-        if constexpr (useTable == StringReplaceUseTable::Yes)
-            matchStart = table->find(StringView(string).substring(matchStart), search);
-        else
-            matchStart = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(search), matchStart);
+        size_t found;
 
-        if (matchStart == notFound)
+        if constexpr (useTable == StringReplaceUseTable::Yes) {
+            size_t foundRelative = table->find(StringView(string).substring(matchStart), search);
+            if (foundRelative == notFound)
+                found = notFound;
+            else
+                found = matchStart + foundRelative;
+        } else
+            found = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(search), matchStart);
+
+        if (found == notFound)
             break;
 
-        matchStarts.append(matchStart);
-        matchStart += searchLength;
+        matchStarts.append(found);
+        matchStart = found + searchLength;
         if (search.isEmpty())
             ++matchStart;
     }
@@ -360,29 +393,13 @@ ALWAYS_INLINE JSString* stringReplaceAllStringString(JSGlobalObject* globalObjec
     if (matchStarts.isEmpty())
         return stringCell;
 
-    auto resultLength = CheckedSize { string.length() + matchStarts.size() * (replacement.length() - searchLength) };
-
-    StringBuilder resultBuilder(OverflowPolicy::RecordOverflow);
-    resultBuilder.reserveCapacity(resultLength);
-
-    size_t lastMatchEnd = 0;
-    for (auto start : matchStarts) {
-        resultBuilder.append(StringView(string).substring(lastMatchEnd, start - lastMatchEnd));
-        if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
-            int ovector[2] = { static_cast<int>(start), static_cast<int>(start + searchLength) };
-            substituteBackreferences(resultBuilder, replacement, string, ovector, nullptr);
-        } else
-            resultBuilder.append(replacement);
-        lastMatchEnd = start + searchLength;
-    }
-    resultBuilder.append(StringView(string).substring(lastMatchEnd));
-
-    if (UNLIKELY(resultBuilder.hasOverflowed())) {
+    auto replacedString = tryMakeReplacedAllString<substitutions>(string, replacement, matchStarts, searchLength);
+    if (UNLIKELY(!replacedString)) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
-    return jsString(vm, resultBuilder.toString());
+    return jsString(vm, replacedString);
 }
 
 enum class StringReplaceMode : bool { Single, Global };
