@@ -32,6 +32,10 @@
 #include <wtf/Gigacage.h>
 #include <wtf/SafeStrerror.h>
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/bmalloc.h>
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -104,6 +108,9 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
         return nullptr;
     }
 
+#if !USE(SYSTEM_MALLOC)
+    bmalloc::api::vmZeroAndPurge(slowMemory, initialBytes);
+#endif
     constexpr bool readable = false;
     constexpr bool writable = false;
     OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
@@ -488,6 +495,9 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
 
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
+#if !USE(SYSTEM_MALLOC)
+                bmalloc::api::vmZeroAndPurge(startAddress, bytesToAdd);
+#endif
                 constexpr bool readable = true;
                 constexpr bool writable = true;
                 OSAllocator::protect(startAddress, bytesToAdd, readable, writable);
@@ -584,6 +594,9 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + m_memoryHandle->size();
 
         dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
+#if !USE(SYSTEM_MALLOC)
+        bmalloc::api::vmZeroAndPurge(startAddress, extraBytes);
+#endif
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);

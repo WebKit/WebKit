@@ -33,6 +33,9 @@
 #include "Options.h"
 #include "WasmFaultSignalHandler.h"
 #include "WeakGCSetInlines.h"
+#include <cstring>
+#include <limits>
+#include <mutex>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/Gigacage.h>
@@ -45,9 +48,9 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
-#include <cstring>
-#include <limits>
-#include <mutex>
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/bmalloc.h>
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -187,6 +190,9 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     }
     
     if (fastMemory) {
+#if !USE(SYSTEM_MALLOC)
+        bmalloc::api::vmZeroAndPurge(fastMemory, initialBytes);
+#endif
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable);
@@ -236,6 +242,9 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
             return nullptr;
         }
 
+#if !USE(SYSTEM_MALLOC)
+        bmalloc::api::vmZeroAndPurge(slowMemory, initialBytes);
+#endif
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
@@ -379,6 +388,9 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + size();
         
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
+#if !USE(SYSTEM_MALLOC)
+        bmalloc::api::vmZeroAndPurge(startAddress, extraBytes);
+#endif
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);

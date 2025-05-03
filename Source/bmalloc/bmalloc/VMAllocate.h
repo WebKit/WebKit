@@ -157,6 +157,8 @@ inline void vmRevokePermissions(void* p, size_t vmSize)
 
 inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
+    if (!vmSize)
+        return;
     vmValidate(p, vmSize);
     int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE;
     int tag = static_cast<int>(usage);

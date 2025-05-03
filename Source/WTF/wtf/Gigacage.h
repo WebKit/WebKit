@@ -77,6 +77,7 @@ WTF_EXPORT_PRIVATE void* tryZeroedMalloc(Kind, size_t);
 WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
 inline void free(Kind, void* p) { fastFree(p); }
 
+WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(Kind, size_t size);
 WTF_EXPORT_PRIVATE void* tryAllocateZeroedVirtualPages(Kind, size_t size);
 WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
 
@@ -93,6 +94,7 @@ WTF_EXPORT_PRIVATE void* tryZeroedMalloc(Kind, size_t);
 WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
 WTF_EXPORT_PRIVATE void free(Kind, void*);
 
+WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(Kind, size_t size);
 WTF_EXPORT_PRIVATE void* tryAllocateZeroedVirtualPages(Kind, size_t size);
 WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
 

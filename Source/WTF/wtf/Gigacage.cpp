@@ -49,6 +49,14 @@ void* tryRealloc(Kind, void* pointer, size_t size)
     return FastMalloc::tryRealloc(pointer, size);
 }
 
+void* tryAllocateVirtualPages(Kind, size_t requestedSize)
+{
+    size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
+    RELEASE_ASSERT(size >= requestedSize);
+    void* result = OSAllocator::tryReserveAndCommit(size);
+    return result;
+}
+
 void* tryAllocateZeroedVirtualPages(Kind, size_t requestedSize)
 {
     size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
@@ -126,6 +134,14 @@ void free(Kind kind, void* p)
     RELEASE_ASSERT(isCaged(kind, p));
     bmalloc::api::free(p, bmalloc::heapKind(kind));
     WTF::compilerFence();
+}
+
+void* tryAllocateVirtualPages(Kind kind, size_t size)
+{
+    void* result = bmalloc::api::tryLargeMemalignVirtual(WTF::pageSize(), size, bmalloc::CompactAllocationMode::Compact, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
+    WTF::compilerFence();
+    return result;
 }
 
 void* tryAllocateZeroedVirtualPages(Kind kind, size_t size)
