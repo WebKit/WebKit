@@ -125,7 +125,8 @@ void sendCOEPInheritenceViolation(ReportingClient& reportingClient, const URL& e
         body.setString("type"_s, type);
         body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));
     });
-    reportingClient.sendReportToEndpoints(embedderURL, { }, { endpoint }, WTFMove(reportFormData), ViolationReportType::COEPInheritenceViolation);
+    FixedVector endpoints { endpoint };
+    reportingClient.sendReportToEndpoints(embedderURL, { }, WTFMove(endpoints), WTFMove(reportFormData), ViolationReportType::COEPInheritenceViolation);
 }
 
 // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
@@ -144,7 +145,8 @@ void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedder
         body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));
         body.setString("destination"_s, convertEnumerationToString(destination));
     });
-    reportingClient.sendReportToEndpoints(embedderURL, { }, { endpoint }, WTFMove(reportFormData), ViolationReportType::CORPViolation);
+    FixedVector endpoints { endpoint };
+    reportingClient.sendReportToEndpoints(embedderURL, { }, WTFMove(endpoints), WTFMove(reportFormData), ViolationReportType::CORPViolation);
 }
 
 void CrossOriginEmbedderPolicy::encode(WTF::Persistence::Encoder& encoder) const

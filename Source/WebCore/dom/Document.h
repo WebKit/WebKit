@@ -1961,7 +1961,7 @@ public:
     bool hasSleepDisabler() const { return !!m_sleepDisabler; }
 
     void notifyReportObservers(Ref<Report>&&) final;
-    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
 
     virtual void didChangeViewSize() { }

@@ -11285,7 +11285,7 @@ String Document::httpUserAgent() const
     return userAgent(url());
 }
 
-void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
+void Document::sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
 {
     for (auto& url : endpointURIs)
         PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);

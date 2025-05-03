@@ -232,7 +232,7 @@ void reportHashesIfNeeded(const CachedResource& resource)
         return;
 
     bool canExposeHashes = isResponseEligible(resource);
-    for (auto& [algorithmSet, fixedEndpoints] : hashesToReport) {
+    for (auto& [algorithmSet, endpoints] : hashesToReport) {
         auto hashAlgorithm = findStrongestAlgorithm(algorithmSet);
         if (!hashAlgorithm)
             return;
@@ -247,10 +247,7 @@ void reportHashesIfNeeded(const CachedResource& resource)
             body.setString("type"_s, "subresource"_s);
             body.setString("destination"_s, "script"_s);
         });
-        Vector<String> endpoints;
-        for (auto endpoint : fixedEndpoints)
-            endpoints.append(endpoint);
-        document->sendReportToEndpoints(documentURL, { }, WTFMove(endpoints), WTFMove(report), ViolationReportType::CSPHashReport);
+        document->sendReportToEndpoints(documentURL, { }, endpoints, WTFMove(report), ViolationReportType::CSPHashReport);
     }
 }
 

@@ -214,7 +214,7 @@ private:
     // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
-    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    void sendReportToEndpoints(const URL& baseURL, const std::span<const String> endpointURIs, const std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final { return m_userAgent; }
 
     URL m_url;

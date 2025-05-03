@@ -41,7 +41,7 @@ struct WEBCORE_EXPORT ReportingClient {
 
     virtual void notifyReportObservers(Ref<Report>&&) = 0;
     virtual String endpointURIForToken(const String&) const = 0;
-    virtual void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) = 0;
+    virtual void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) = 0;
     virtual String httpUserAgent() const = 0;
 };
 
