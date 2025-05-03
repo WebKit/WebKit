@@ -15,9 +15,9 @@ o
 r
 l
 d
-Got a exception. Type error
+Got a exception. String.prototype.charAt requires that |this| not be null or undefined
 >> FirstChar : undefined
-Got a exception. Type error
+Got a exception. String.prototype.charAt requires that |this| not be null or undefined
 >> FirstChar : 0
 0
 << FirstChar.

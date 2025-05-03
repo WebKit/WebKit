@@ -25,8 +25,8 @@ PASS "ウェブキット".codePointAt(3) is 12461
 PASS "ウェブキット".codePointAt(4) is 12483
 PASS "ウェブキット".codePointAt(5) is 12488
 PASS "ウェブキット".codePointAt(6) is undefined
-PASS "".codePointAt.call(null, 0) threw exception TypeError: Type error.
-PASS "".codePointAt.call(undefined, 0) threw exception TypeError: Type error.
+PASS "".codePointAt.call(null, 0) threw exception TypeError: String.prototype.codePointAt requires that |this| not be null or undefined.
+PASS "".codePointAt.call(undefined, 0) threw exception TypeError: String.prototype.codePointAt requires that |this| not be null or undefined.
 PASS "".codePointAt.call(0, 0) is 48
 PASS "".codePointAt.call(Math.PI, 0) is 51
 PASS "".codePointAt.call(Math.PI, 1) is 46
@@ -40,8 +40,8 @@ PASS "".codePointAt.call(objectThrowingOnToString, 0) threw exception Hehe.
 PASS "".codePointAt.call(objectCountingToString, 0) is 49
 PASS objectCountingToString.counter is 1
 PASS "abcde".codePointAt(objectWithCustomValueOf) is 98
-PASS "".codePointAt.call(null, objectRecordsValueOf) threw exception TypeError: Type error.
-PASS "".codePointAt.call(undefined, objectRecordsValueOf) threw exception TypeError: Type error.
+PASS "".codePointAt.call(null, objectRecordsValueOf) threw exception TypeError: String.prototype.codePointAt requires that |this| not be null or undefined.
+PASS "".codePointAt.call(undefined, objectRecordsValueOf) threw exception TypeError: String.prototype.codePointAt requires that |this| not be null or undefined.
 PASS "".codePointAt.call(Symbol("WebKit"), objectRecordsValueOf) threw exception TypeError: Cannot convert a symbol to a string.
 PASS "".codePointAt.call(objectThrowingOnToString, objectRecordsValueOf) threw exception Hehe.
 PASS objectRecordsValueOf.valueOfEvaluated is false

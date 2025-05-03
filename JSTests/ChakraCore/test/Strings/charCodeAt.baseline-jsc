@@ -15,9 +15,9 @@ AllChars : HelloWorld. Length : 10
 114
 108
 100
-Got a exception. Type error
+Got a exception. String.prototype.charCodeAt requires that |this| not be null or undefined
 >> FirstChar : undefined
-Got a exception. Type error
+Got a exception. String.prototype.charCodeAt requires that |this| not be null or undefined
 >> FirstChar : 0
 48
 << FirstChar.

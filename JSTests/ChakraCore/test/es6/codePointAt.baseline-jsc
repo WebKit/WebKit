@@ -1,6 +1,6 @@
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
+TypeError: String.prototype.codePointAt requires that |this| not be null or undefined
+TypeError: String.prototype.codePointAt requires that |this| not be null or undefined
+TypeError: String.prototype.codePointAt requires that |this| not be null or undefined
 TypeError: function is not a constructor (evaluating 'new String.prototype.codePointAt()')
 TypeError: function is not a constructor (evaluating 'new String.fromCodePoint()')
 RangeError: Arguments contain a value that is out of range of code points

@@ -12,4 +12,4 @@ try {
 } catch (e) {
     error = e;
 }
-shouldBe(String(error), `TypeError: Type error`);
+shouldBe(String(error), `TypeError: String.prototype.charAt requires that |this| not be null or undefined`);

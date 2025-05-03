@@ -19,5 +19,5 @@ try {
     exception = e;
 }
 
-if (exception != "TypeError: Type error")
+if (exception != "TypeError: String.prototype.toString requires that |this| be a string")
     throw "FAIL";

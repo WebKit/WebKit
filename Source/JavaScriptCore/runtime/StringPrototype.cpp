@@ -385,7 +385,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
 
     auto* stringObject = jsDynamicCast<StringObject*>(thisValue);
     if (!stringObject)
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.toString requires that |this| be a string"_s);
 
     Integrity::auditStructureID(stringObject->structureID());
     return JSValue::encode(stringObject->internalValue());
@@ -398,7 +398,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCharAt, (JSGlobalObject* globalObject, C
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.charAt requires that |this| not be null or undefined"_s);
     auto* thisString = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     auto view = thisString->view(globalObject);
@@ -424,7 +424,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCharCodeAt, (JSGlobalObject* globalObjec
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.charCodeAt requires that |this| not be null or undefined"_s);
     auto* thisString = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     auto view = thisString->view(globalObject);
@@ -461,7 +461,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCodePointAt, (JSGlobalObject* globalObje
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.codePointAt requires that |this| not be null or undefined"_s);
 
     String string = thisValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -491,7 +491,7 @@ static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame*
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.indexOf requires that |this| not be null or undefined"_s);
 
     JSValue a0 = callFrame->argument(0);
     JSValue a1 = callFrame->argument(1);
@@ -551,7 +551,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObje
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.lastIndexOf requires that |this| not be null or undefined"_s);
 
     JSValue a0 = callFrame->argument(0);
     JSValue a1 = callFrame->argument(1);
@@ -596,7 +596,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSlice, (JSGlobalObject* globalObject, Ca
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.slice requires that |this| not be null or undefined"_s);
     JSString* string = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -862,7 +862,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstr, (JSGlobalObject* globalObject, C
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.substr requires that |this| not be null or undefined"_s);
     unsigned len;
     JSString* jsString = nullptr;
     String uString;
@@ -906,7 +906,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstring, (JSGlobalObject* globalObject
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.substring requires that |this| not be null or undefined"_s);
 
     JSString* jsString = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -954,7 +954,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLowerCase, (JSGlobalObject* globalObje
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.toLowerCase requires that |this| not be null or undefined"_s);
 
     JSString* sVal = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -990,7 +990,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObje
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.toUpperCase requires that |this| not be null or undefined"_s);
 
     JSString* sVal = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -1068,8 +1068,12 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
 
     // 1. Let O be RequireObjectCoercible(this value).
     JSValue thisValue = callFrame->thisValue();
-    if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+    if (UNLIKELY(!checkObjectCoercible(thisValue))) {
+        if constexpr (mode == CaseConversionMode::Upper)
+            return throwVMTypeError(globalObject, scope, "String.prototype.toLocaleUpperCase requires that |this| not be null or undefined"_s);
+        else
+            return throwVMTypeError(globalObject, scope, "String.prototype.toLocaleLowerCase requires that |this| not be null or undefined"_s);
+    }
 
     // 2. Let S be ToString(O).
     JSString* sVal = thisValue.toString(globalObject);
@@ -1227,7 +1231,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncStartsWith, (JSGlobalObject* globalObjec
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.startsWith requires that |this| not be null or undefined"_s);
 
     String stringToSearchIn = thisValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1261,7 +1265,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncEndsWith, (JSGlobalObject* globalObject,
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.endsWith requires that |this| not be null or undefined"_s);
 
     String stringToSearchIn = thisValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1312,7 +1316,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIncludes, (JSGlobalObject* globalObject,
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.includes requires that |this| not be null or undefined"_s);
 
     String stringToSearchIn = thisValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1358,7 +1362,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIterator, (JSGlobalObject* globalObject,
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype[Symbol.iterator] requires that |this| not be null or undefined"_s);
     JSString* string = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(JSStringIterator::create(vm, globalObject->stringIteratorStructure(), string));
@@ -1437,7 +1441,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.normalize requires that |this| not be null or undefined"_s);
     JSString* string = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -1495,7 +1499,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObj
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.isWellFormed requires that |this| not be null or undefined"_s);
 
     // Latin-1 characters do not have surrogates.
     if (thisValue.isString() && asString(thisValue)->is8Bit())
@@ -1516,7 +1520,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.toWellFormed requires that |this| not be null or undefined");
 
     // Latin-1 characters do not have surrogates.
     if (thisValue.isString() && asString(thisValue)->is8Bit())
@@ -1587,7 +1591,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAt, (JSGlobalObject* globalObject, CallF
 
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!checkObjectCoercible(thisValue)))
-        return throwVMTypeError(globalObject, scope);
+        return throwVMTypeError(globalObject, scope, "String.prototype.at requires that |this| not be null or undefined");
     auto* thisString = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 

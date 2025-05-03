@@ -64,17 +64,17 @@ Called with this: object[true], args: []
 Called with this: object[string], args: []
 
 --- f.apply(v), v is missing/null/undefined/123/true/'string', f: string.charCodeAt ---
-Exception: TypeError : Type error
-Exception: TypeError : Type error
-Exception: TypeError : Type error
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
 49
 116
 115
 
 --- f.apply(v), v is missing/null/undefined/123/true/'string', f: string.charAt ---
-Exception: TypeError : Type error
-Exception: TypeError : Type error
-Exception: TypeError : Type error
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
 1
 t
 s
@@ -88,17 +88,17 @@ Called with this: object[true], args: []
 Called with this: object[string], args: []
 
 --- f.call(v), v is missing/null/undefined/123/true/'string', f: string.charCodeAt ---
-Exception: TypeError : Type error
-Exception: TypeError : Type error
-Exception: TypeError : Type error
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charCodeAt requires that |this| not be null or undefined
 49
 116
 115
 
 --- f.call(v), v is missing/null/undefined/123/true/'string', f: string.charAt ---
-Exception: TypeError : Type error
-Exception: TypeError : Type error
-Exception: TypeError : Type error
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
+Exception: TypeError : String.prototype.charAt requires that |this| not be null or undefined
 1
 t
 s

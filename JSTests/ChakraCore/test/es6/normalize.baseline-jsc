@@ -1,7 +1,7 @@
 RangeError: argument does not match any normalization form
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
+TypeError: String.prototype.normalize requires that |this| not be null or undefined
+TypeError: String.prototype.normalize requires that |this| not be null or undefined
+TypeError: String.prototype.normalize requires that |this| not be null or undefined
 TypeError: function is not a constructor (evaluating 'new String.prototype.normalize()')
 Passed! Empty string noramlized to empty string.
 Passed! NFD normalization test.

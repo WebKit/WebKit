@@ -124,9 +124,9 @@ PASS 'abc'.endsWith('bc', 3) is true
 PASS 'abc'.endsWith('', 3) is true
 PASS 'abc'.endsWith('', 4) is true
 PASS 'abc'.endsWith('', Infinity) is true
-PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
-PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
-PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: Type error.
+PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: String.prototype.startsWith requires that |this| not be null or undefined.
+PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: String.prototype.endsWith requires that |this| not be null or undefined.
+PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: String.prototype.includes requires that |this| not be null or undefined.
 PASS 'foo bar'.startsWith(/w+/) threw exception TypeError: Argument to String.prototype.startsWith cannot be a RegExp.
 PASS 'foo bar'.endsWith(/w+/) threw exception TypeError: Argument to String.prototype.endsWith cannot be a RegExp.
 PASS 'foo bar'.includes(/w+/) threw exception TypeError: Argument to String.prototype.includes cannot be a RegExp.

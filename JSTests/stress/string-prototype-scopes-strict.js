@@ -14,7 +14,7 @@ try {
 } catch (e) {
     error = e;
 }
-shouldBe(String(error), `TypeError: Type error`);
+shouldBe(String(error), `TypeError: String.prototype.charAt requires that |this| not be null or undefined`);
 
 var error = null;
 try {
@@ -23,7 +23,7 @@ try {
 } catch (e) {
     error = e;
 }
-shouldBe(String(error), `TypeError: Type error`);
+shouldBe(String(error), `TypeError: String.prototype.charAt requires that |this| not be null or undefined`);
 
 var error = null;
 try {
@@ -33,7 +33,7 @@ try {
 } catch (e) {
     error = e;
 }
-shouldBe(String(error), `TypeError: Type error`);
+shouldBe(String(error), `TypeError: String.prototype.charAt requires that |this| not be null or undefined`);
 
 (function () {
     var error = null;
@@ -46,6 +46,6 @@ shouldBe(String(error), `TypeError: Type error`);
     }
 
     function refer() { charAt; } // Refer the charAt variable.
-    shouldBe(String(error), `TypeError: Type error`);
+    shouldBe(String(error), `TypeError: String.prototype.charAt requires that |this| not be null or undefined`);
     return ok;
 }());
