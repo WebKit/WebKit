@@ -727,7 +727,6 @@ WI.NativePrototypeFunctionParameters = {
     },
 
     DOMImplementation: {
-        createCSSStyleSheet: "[title], [media]",
         createDocument: "[namespaceURI], [qualifiedName], [doctype]",
         createDocumentType: "[qualifiedName], [publicId], [systemId]",
         createHTMLDocument: "[title]",

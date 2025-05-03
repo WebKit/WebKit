@@ -36,7 +36,6 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 - (BOOL)hasFeature:(NSString *)feature version:(NSString *)version WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMDocument *)createDocument:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName doctype:(DOMDocumentType *)doctype WEBKIT_AVAILABLE_MAC(10_5);
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title media:(NSString *)media WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title WEBKIT_AVAILABLE_MAC(10_5);
 @end
 
@@ -44,5 +43,4 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version WEBKIT_DEPRECATED_MAC(10_4, 10_5);
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId WEBKIT_DEPRECATED_MAC(10_4, 10_5);
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype WEBKIT_DEPRECATED_MAC(10_4, 10_5);
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media WEBKIT_DEPRECATED_MAC(10_4, 10_5);
 @end

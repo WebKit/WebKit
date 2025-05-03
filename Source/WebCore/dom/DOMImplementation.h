@@ -43,7 +43,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType*);
     WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(String&& title);
     static bool hasFeature() { return true; }
-    WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 
     static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 

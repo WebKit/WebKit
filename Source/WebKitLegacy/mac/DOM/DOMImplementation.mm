@@ -74,12 +74,6 @@ static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
     return kit(raiseOnDOMError(unwrap(*self).createDocument(namespaceURI, qualifiedName, core(doctype))).ptr());
 }
 
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title media:(NSString *)media
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).createCSSStyleSheet(title, media).ptr());
-}
-
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title
 {
     WebCore::JSMainThreadNullState state;
@@ -103,11 +97,6 @@ static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
 {
     return [self createDocument:namespaceURI qualifiedName:qualifiedName doctype:doctype];
-}
-
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
-{
-    return [self createCSSStyleSheet:title media:media];
 }
 
 @end
