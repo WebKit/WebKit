@@ -34,6 +34,30 @@ DECLARE_SYSTEM_HEADER
 #include <xpc/xpc.h>
 #else
 
+#if __has_feature(assume_nonnull)
+#define XPC_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define XPC_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
+#else
+#define XPC_ASSUME_NONNULL_BEGIN
+#define XPC_ASSUME_NONNULL_END
+#endif
+
+#if defined(__has_ptrcheck) && __has_ptrcheck
+#define XPC_COUNTEDBY(N) __counted_by(N)
+#define XPC_UNSAFE_INDEXABLE __unsafe_indexable
+#else
+#define XPC_COUNTEDBY(N)
+#define XPC_UNSAFE_INDEXABLE
+#endif
+
+#if OS_OBJECT_USE_OBJC
+#define XPC_RETURNS_RETAINED OS_OBJECT_RETURNS_RETAINED
+#else
+#define XPC_RETURNS_RETAINED
+#endif
+
+XPC_ASSUME_NONNULL_BEGIN
+
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(xpc_object);
 typedef xpc_object_t xpc_connection_t;
@@ -69,13 +93,16 @@ enum {
 };
 typedef long xpc_activity_state_t;
 typedef const struct _xpc_type_s* xpc_type_t;
-extern "C" const xpc_object_t XPC_ACTIVITY_CHECK_IN;
-extern "C" const char * const XPC_ACTIVITY_INTERVAL;
-extern "C" const char * const XPC_ACTIVITY_GRACE_PERIOD;
-extern "C" const char * const XPC_ACTIVITY_PRIORITY;
-extern "C" const char * const XPC_ACTIVITY_PRIORITY_MAINTENANCE;
-extern "C" const char * const XPC_ACTIVITY_ALLOW_BATTERY;
-extern "C" const char * const XPC_ACTIVITY_REPEATING;
+
+WTF_EXTERN_C_BEGIN
+extern const xpc_object_t XPC_ACTIVITY_CHECK_IN;
+extern const char * const XPC_ACTIVITY_INTERVAL;
+extern const char * const XPC_ACTIVITY_GRACE_PERIOD;
+extern const char * const XPC_ACTIVITY_PRIORITY;
+extern const char * const XPC_ACTIVITY_PRIORITY_MAINTENANCE;
+extern const char * const XPC_ACTIVITY_ALLOW_BATTERY;
+extern const char * const XPC_ACTIVITY_REPEATING;
+WTF_EXTERN_C_END
 
 #if PLATFORM(IOS_FAMILY) && __has_attribute(noescape)
 #define XPC_NOESCAPE __attribute__((__noescape__))
@@ -105,19 +132,25 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 
 extern const char * const _xpc_error_key_description;
 
-extern "C" void xpc_connection_activate(xpc_connection_t connection);
-extern "C" const void* xpc_dictionary_get_data(xpc_object_t xdict, const char* key, size_t* length);
-extern "C" xpc_object_t xpc_data_create_with_dispatch_data(dispatch_data_t ddata);
-extern "C" xpc_activity_state_t xpc_activity_get_state(xpc_activity_t activity);
-extern "C" xpc_object_t xpc_activity_copy_criteria(xpc_activity_t activity);
-extern "C" void xpc_activity_set_criteria(xpc_activity_t activity, xpc_object_t criteria);
+WTF_EXTERN_C_BEGIN
+
+void xpc_connection_activate(xpc_connection_t);
+const void* xpc_dictionary_get_data(xpc_object_t xdict, const char* key, size_t* length);
+xpc_object_t xpc_data_create_with_dispatch_data(dispatch_data_t ddata);
+xpc_activity_state_t xpc_activity_get_state(xpc_activity_t);
+xpc_object_t xpc_activity_copy_criteria(xpc_activity_t);
+void xpc_activity_set_criteria(xpc_activity_t, xpc_object_t criteria);
 #if COMPILER_SUPPORTS(BLOCKS)
 typedef void (^xpc_activity_handler_t)(xpc_activity_t activity);
-extern "C" void xpc_activity_register(const char *identifier, xpc_object_t criteria,
+void xpc_activity_register(const char *identifier, xpc_object_t criteria,
     xpc_activity_handler_t handler);
 #endif // COMPILER_SUPPORTS(BLOCKS)
 
-#endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+WTF_EXTERN_C_END
+
+XPC_ASSUME_NONNULL_END
+
+#endif // HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <os/transaction_private.h>
@@ -130,19 +163,27 @@ extern "C" void xpc_activity_register(const char *identifier, xpc_object_t crite
 #ifdef __OBJC__
 #import <Foundation/NSError.h>
 #if HAVE(OS_LAUNCHD_JOB)
+XPC_ASSUME_NONNULL_BEGIN
 @interface OSLaunchdJob : NSObject
 - (instancetype)initWithPlist:(xpc_object_t)plist;
 - (BOOL)submit:(NSError **)errorOut;
 @end
+XPC_ASSUME_NONNULL_END
 #endif // HAVE(OS_LAUNCHD_JOB)
 #endif // __OBJC__
 
-extern "C" const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
-extern "C" const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
+XPC_ASSUME_NONNULL_BEGIN
+
+WTF_EXTERN_C_BEGIN
+
+extern const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
+extern const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
 
 #if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
-extern "C" char * xpc_connection_copy_invalidation_reason(xpc_connection_t connection);
+char * xpc_connection_copy_invalidation_reason(xpc_connection_t);
 #endif
+
+WTF_EXTERN_C_END
 
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(os_transaction);
@@ -153,11 +194,16 @@ typedef struct os_transaction_s *os_transaction_t;
 enum {
     DISPATCH_MACH_SEND_POSSIBLE = 0x8,
 };
+
+XPC_ASSUME_NONNULL_END
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if !defined(XPC_NOESCAPE)
 #define XPC_NOESCAPE
 #endif
+
+XPC_ASSUME_NONNULL_BEGIN
 
 WTF_EXTERN_C_BEGIN
 
@@ -173,7 +219,7 @@ extern const struct _xpc_type_s _xpc_type_endpoint;
 extern const struct _xpc_type_s _xpc_type_error;
 extern const struct _xpc_type_s _xpc_type_string;
 
-xpc_object_t xpc_array_create(const xpc_object_t*, size_t count);
+XPC_RETURNS_RETAINED xpc_object_t xpc_array_create(const xpc_object_t _Nonnull *XPC_COUNTEDBY(count) _Nullable objects, size_t count);
 #if COMPILER_SUPPORTS(BLOCKS)
 bool xpc_array_apply(xpc_object_t, XPC_NOESCAPE xpc_array_applier_t);
 bool xpc_dictionary_apply(xpc_object_t xdict, XPC_NOESCAPE xpc_dictionary_applier_t applier);
@@ -183,7 +229,7 @@ const char* xpc_array_get_string(xpc_object_t, size_t index);
 void xpc_array_set_string(xpc_object_t, size_t index, const char* string);
 bool xpc_bool_get_value(xpc_object_t);
 void xpc_connection_cancel(xpc_connection_t);
-xpc_connection_t xpc_connection_create(const char* name, dispatch_queue_t);
+xpc_connection_t xpc_connection_create(const char* _Nullable name, dispatch_queue_t _Nullable);
 xpc_endpoint_t xpc_endpoint_create(xpc_connection_t);
 xpc_connection_t xpc_connection_create_from_endpoint(xpc_endpoint_t);
 xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
@@ -194,7 +240,7 @@ void xpc_connection_send_message(xpc_connection_t, xpc_object_t);
 void xpc_connection_send_message_with_reply(xpc_connection_t, xpc_object_t, dispatch_queue_t, xpc_handler_t);
 void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
 void xpc_connection_set_target_queue(xpc_connection_t, dispatch_queue_t);
-xpc_object_t xpc_dictionary_create(const char*  const* keys, const xpc_object_t*, size_t count);
+XPC_RETURNS_RETAINED xpc_object_t xpc_dictionary_create(const char *XPC_UNSAFE_INDEXABLE _Nonnull const *XPC_COUNTEDBY(count) _Nullable keys, const xpc_object_t _Nullable *XPC_COUNTEDBY(count) _Nullable values, size_t count);
 xpc_object_t xpc_dictionary_create_reply(xpc_object_t);
 int xpc_dictionary_dup_fd(xpc_object_t, const char* key);
 xpc_connection_t xpc_dictionary_get_remote_connection(xpc_object_t);
@@ -222,13 +268,13 @@ void xpc_track_activity(void);
 xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);
 void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
 void xpc_connection_kill(xpc_connection_t, int);
-void xpc_connection_set_instance(xpc_connection_t, uuid_t);
+void xpc_connection_set_instance(xpc_connection_t, uuid_t _Null_unspecified instance);
 mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
 void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t);
 xpc_object_t xpc_copy_bootstrap();
-void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
+void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t _Null_unspecified instance);
 
 void xpc_array_append_value(xpc_object_t xarray, xpc_object_t value);
 xpc_object_t xpc_array_get_value(xpc_object_t xarray, size_t index);
@@ -256,3 +302,5 @@ void xpc_release(xpc_object_t);
 #endif
 
 WTF_EXTERN_C_END
+
+XPC_ASSUME_NONNULL_END
