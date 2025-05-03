@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Table col/colgroup background image spans col/colgroup</title>
+    <style type="text/css">
+      div { margin-bottom: 1em; }
+      div.x {}
+      table { border: 5px solid red; }
+      td { border: 2px solid blue; }
+      td { width: 100px; height: 20px; }
+      .w-200 { width: 200px; }
+      td.v { width: 20px; height: 50px; }
+      .b { background: black; }
+      .w { background: white; }
+      .r { background: #ff0000; }
+      .g { background: #00ff00; }
+    </style>
+  </head>
+  <body>
+    <ol>
+      <li>Left cells should be black, right cells white (normal)
+        <div class="x"><table>
+          <tbody>
+            <tr><td class="b"></td><td class="w w-200"></td></tr>
+            <tr><td class="b"></td><td class="w w-200"></td></tr>
+          </tbody>
+        </table></div>
+      </li>
+      <li>Left cells should be black, right cells white (rtl)
+        <div class="x"><table>
+          <tbody>
+            <tr><td class="b"></td><td class="w w-200"></td></tr>
+            <tr><td class="b"></td><td class="w w-200"></td></tr>
+          </tbody>
+        </table></div>
+      </li>
+      <li>Left cells should be black, right cells white (vertical-lr writing mode)
+        <div class="x"><table>
+          <tbody>
+            <tr><td class="b v"></td><td class="w v"></td></tr>
+          </tbody>
+        </table></div>
+      </li>
+      <li>Top cells should be black, bottom cells white, multiple sections
+        <div class="x"><table>
+          <caption>Caption</caption>
+          <tbody>
+            <tr><td class="b"></td><td class="b"></td></tr>
+            <tr><td class="b"></td><td class="b"></td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td class="w"></td><td class="w"></td></tr>
+            <tr><td class="w"></td><td class="w"></td></tr>
+          </tfoot>
+        </table></div>
+      </li>
+      <li>Black-black-red-black/white-white-green-white, column groups and columns and spans
+        <div class="x"><table>
+          <tbody>
+            <tr><td class="b"></td><td class="b"></td><td class="r"></td><td class="b"></td></tr>
+            <tr><td class="b"></td><td class="b"></td><td class="r"></td><td class="b"></td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td class="w"></td><td class="w"></td><td class="g"></td><td class="w"></td></tr>
+            <tr><td class="w"></td><td class="w"></td><td class="g"></td><td class="w"></td></tr>
+          </tfoot>
+        </table></div>
+      </li>
+    </ol>
+  </body>
+</html>

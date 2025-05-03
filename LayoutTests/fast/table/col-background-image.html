@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Table col/colgroup background image spans col/colgroup</title>
+    <style type="text/css">
+      div { margin-bottom: 1em; }
+      div.x {}
+      table { border: 5px solid red; }
+      td { border: 2px solid blue; }
+      td { width: 100px; height: 20px; }
+      .w-200 { width: 200px; }
+      td.v { width: 20px; height: 50px; }
+      .bwh { background-image: linear-gradient(to right, black 0 50%, white 50% 100%); }
+      .bwv { background-image: linear-gradient(to bottom, black 0 50%, white 50% 100%); }
+      .rgv { background-image: linear-gradient(to bottom, #ff0000 0 50%, #00ff00 50% 100%); }
+      .b { background-image: linear-gradient(to bottom, black 0 100%); }
+      .w { background-image: linear-gradient(to bottom, white 0 100%); }
+    </style>
+  </head>
+  <body>
+    <ol>
+      <li>Left cells should be black, right cells white (normal)
+        <div class="x"><table>
+          <col class="b"><col class="w">
+          <tbody>
+            <tr><td></td><td class="w-200"></td></tr>
+            <tr><td></td><td></td></tr>
+          </tbody>
+        </table></div>
+      </li>
+      <li>Left cells should be black, right cells white (rtl)
+        <div class="x"><table style="direction:rtl">
+          <col class="w"><col class="b">
+          <tbody>
+            <tr><td class="w-200"></td><td></td></tr>
+            <tr><td></td><td></td></tr>
+          </tbody>
+        </table></div>
+      </li>
+      <li>Left cells should be black, right cells white (vertical-lr writing mode)
+        <div class="x"><table style="writing-mode: vertical-lr">
+          <col class="bwh">
+          <tbody><tr><td class="v"></td></tr><tr><td class="v"></td></tr></tbody>
+        </table></div>
+      </li>
+      <li>Top cells should be black, bottom cells white, multiple sections
+        <div class="x"><table>
+          <caption>Caption</caption>
+          <colgroup span="2" class="bwv">
+          <tbody>
+            <tr><td></td><td></td></tr>
+            <tr><td></td><td></td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td></td><td></td></tr>
+            <tr><td></td><td></td></tr>
+          </tfoot>
+        </table></div>
+      </li>
+      <li>Black-black-red-black/white-white-green-white, column groups and columns and spans
+        <div class="x"><table>
+          <colgroup class="rgv">
+            <col class="bwv" span="2">
+            <col>
+          </colgroup>
+          <col class="bwv">
+          <tbody>
+            <tr><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td></tr>
+          </tfoot>
+        </table></div>
+      </li>
+    </ol>
+  </body>
+</html>
