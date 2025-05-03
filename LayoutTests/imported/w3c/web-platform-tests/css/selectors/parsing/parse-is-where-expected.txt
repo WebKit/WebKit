@@ -11,8 +11,8 @@ PASS ":host(:is(div))" should be a valid selector
 PASS ":host(:where(div))" should be a valid selector
 PASS ":host(:is(div ))" should be a valid selector
 PASS ":host(:where(div ))" should be a valid selector
-FAIL ":host(:is(div .foo))" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
-FAIL ":host(:where(div .foo))" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL ":host(:is(div .foo))" should be a valid selector ':host(:is(div .foo))' is not a valid selector.
+FAIL ":host(:where(div .foo))" should be a valid selector ':host(:where(div .foo))' is not a valid selector.
 PASS ":is(:hover, :active)" should be a valid selector
 PASS ":where(:hover, :active)" should be a valid selector
 PASS ":is(div):hover" should be a valid selector

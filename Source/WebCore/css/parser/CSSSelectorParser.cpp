@@ -884,6 +884,19 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             block.consumeWhitespace();
             if (!innerSelector || !block.atEnd())
                 return nullptr;
+            if (innerSelector->selector() && innerSelector->selector()->selectorList()) {
+                for (const auto& subSelector : *innerSelector->selector()->selectorList()) {
+                    // Skip :has() verification for now, as it is not well-defined whether it should be valid inside :host()
+                    if (subSelector.match() == CSSSelector::Match::Tag)
+                        continue;
+                    if (subSelector.tagHistory()
+                    && (subSelector.relation() == CSSSelector::Relation::DescendantSpace
+                    || subSelector.relation() == CSSSelector::Relation::DirectAdjacent
+                    || subSelector.relation() == CSSSelector::Relation::IndirectAdjacent
+                    || subSelector.relation() == CSSSelector::Relation::Child))
+                        return nullptr;
+                }
+            }
             selector->adoptSelectorVector(MutableCSSSelectorList::from(WTFMove(innerSelector)));
             return selector;
         }

@@ -24,5 +24,5 @@ PASS ":not(::before)" should be an invalid selector
 PASS ":not(:unknownpseudo)" should be an invalid selector
 PASS ":not(.a, :unknownpseudo)" should be an invalid selector
 PASS ":not(:unknownpseudo, .a)" should be an invalid selector
-FAIL ":host(:not(.a .b))" should be an invalid selector assert_throws_dom: ":host(:not(.a .b))" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+PASS ":host(:not(.a .b))" should be an invalid selector
 
