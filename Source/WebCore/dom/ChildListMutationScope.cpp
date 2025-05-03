@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ChildListMutationScope.h"
 
+#include "DocumentInlines.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StaticNodeList.h"
@@ -145,6 +146,12 @@ bool ChildListMutationAccumulator::isEmpty()
     }
 #endif
     return result;
+}
+
+ChildListMutationScope::ChildListMutationScope(ContainerNode& target)
+{
+    if (target.document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))
+        m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
 }
 
 } // namespace WebCore

@@ -29,7 +29,7 @@
 #include "JSDOMSetLike.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

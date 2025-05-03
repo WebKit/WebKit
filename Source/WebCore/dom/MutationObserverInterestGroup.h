@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "DocumentInlines.h"
+#include "Document.h"
 #include "MutationObserver.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -45,30 +45,9 @@ class MutationObserverInterestGroup {
 public:
     MutationObserverInterestGroup(UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
 
-    static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
-    {
-        if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))
-            return nullptr;
-
-        MutationRecordDeliveryOptions oldValueFlag;
-        return createIfNeeded(target, MutationObserverOptionType::ChildList, oldValueFlag);
-    }
-
-    static std::unique_ptr<MutationObserverInterestGroup> createForCharacterDataMutation(Node& target)
-    {
-        if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::CharacterData))
-            return nullptr;
-
-        return createIfNeeded(target, MutationObserverOptionType::CharacterData, MutationObserverOptionType::CharacterDataOldValue);
-    }
-
-    static std::unique_ptr<MutationObserverInterestGroup> createForAttributesMutation(Node& target, const QualifiedName& attributeName)
-    {
-        if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::Attributes))
-            return nullptr;
-
-        return createIfNeeded(target, MutationObserverOptionType::Attributes, MutationObserverOptionType::AttributeOldValue, &attributeName);
-    }
+    static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target);
+    static std::unique_ptr<MutationObserverInterestGroup> createForCharacterDataMutation(Node& target);
+    static std::unique_ptr<MutationObserverInterestGroup> createForAttributesMutation(Node& target, const QualifiedName& attributeName);
 
     bool isOldValueRequested() const;
     void enqueueMutationRecord(Ref<MutationRecord>&&);

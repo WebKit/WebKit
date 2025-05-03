@@ -24,6 +24,7 @@
 
 #include "Attr.h"
 #include "ChildChangeInvalidation.h"
+#include "DocumentInlines.h"
 #include "ElementTraversal.h"
 #include "EventNames.h"
 #include "FrameSelection.h"

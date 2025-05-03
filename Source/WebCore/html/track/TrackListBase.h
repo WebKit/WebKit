@@ -70,7 +70,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     void didMoveToNewDocument(Document&);
 

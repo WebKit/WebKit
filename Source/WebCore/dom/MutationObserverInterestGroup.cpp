@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
-
 #include "MutationObserverInterestGroup.h"
 
+#include "DocumentInlines.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -45,6 +45,31 @@ inline MutationObserverInterestGroup::MutationObserverInterestGroup(UncheckedKey
     , m_oldValueFlag(oldValueFlag)
 {
     ASSERT(!m_observers.isEmpty());
+}
+
+std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForChildListMutation(Node& target)
+{
+    if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))
+        return nullptr;
+
+    MutationRecordDeliveryOptions oldValueFlag;
+    return createIfNeeded(target, MutationObserverOptionType::ChildList, oldValueFlag);
+}
+
+std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForCharacterDataMutation(Node& target)
+{
+    if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::CharacterData))
+        return nullptr;
+
+    return createIfNeeded(target, MutationObserverOptionType::CharacterData, MutationObserverOptionType::CharacterDataOldValue);
+}
+
+std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node& target, const QualifiedName& attributeName)
+{
+    if (!target.document().hasMutationObserversOfType(MutationObserverOptionType::Attributes))
+        return nullptr;
+
+    return createIfNeeded(target, MutationObserverOptionType::Attributes, MutationObserverOptionType::AttributeOldValue, &attributeName);
 }
 
 std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node& target, MutationObserverOptionType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)

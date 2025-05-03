@@ -251,4 +251,9 @@ bool BackgroundFetchRegistration::virtualHasPendingActivity() const
     return m_information.recordsAvailable;
 }
 
+ScriptExecutionContext* BackgroundFetchRegistration::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 } // namespace WebCore

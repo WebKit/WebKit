@@ -31,7 +31,7 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "DocumentInlines.h"
+#include "Document.h"
 #include "MutationObserver.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
@@ -77,11 +77,7 @@ private:
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
-    explicit ChildListMutationScope(ContainerNode& target)
-    {
-        if (target.document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))
-            m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
-    }
+    explicit ChildListMutationScope(ContainerNode& target);
 
     bool canObserve() const { return m_accumulator; }
 

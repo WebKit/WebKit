@@ -189,6 +189,11 @@ bool TrackListBase::isAnyTrackEnabled() const
     return false;
 }
 
+ScriptExecutionContext* TrackListBase::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
 } // namespace WebCore
 
 #endif

@@ -294,4 +294,9 @@ bool BroadcastChannel::isEligibleForMessaging() const
     return !downcast<WorkerGlobalScope>(*context).isClosing();
 }
 
+ScriptExecutionContext* BroadcastChannel::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 } // namespace WebCore

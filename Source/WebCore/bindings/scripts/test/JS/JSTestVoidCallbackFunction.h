@@ -22,6 +22,7 @@
 
 #if ENABLE(TEST_CONDITIONAL)
 
+#include "ContextDestructionObserverInlines.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestVoidCallbackFunction.h"

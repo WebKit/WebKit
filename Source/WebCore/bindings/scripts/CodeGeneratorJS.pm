@@ -6725,6 +6725,7 @@ sub GenerateCallbackHeaderContent
     my $name = $interfaceOrCallback->type->name;
     my $className = GetCallbackClassName($name);
 
+    $includesRef->{"ContextDestructionObserverInlines.h"} = 1;
     $includesRef->{"IDLTypes.h"} = 1;
     $includesRef->{"JSCallbackData.h"} = 1;
     $includesRef->{"<wtf/Forward.h>"} = 1;

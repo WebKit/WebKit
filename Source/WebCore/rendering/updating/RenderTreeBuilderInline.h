@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderBlockInlines.h"
 #include "RenderTreeBuilder.h"
 #include <wtf/TZoneMalloc.h>
 

@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserverInlines.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionWithTypedefs.h"
