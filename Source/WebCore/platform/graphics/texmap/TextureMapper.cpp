@@ -37,6 +37,7 @@
 #include "LengthFunctions.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperShaderProgram.h"
+#include <bit>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
@@ -54,15 +55,6 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapper);
-
-static size_t nextPowerOf2(size_t n)
-{
-    if (!n)
-        return 1;
-
-    const int totalBits = static_cast<int>(sizeof(size_t) * CHAR_BIT);
-    return static_cast<size_t>(1) << (totalBits - std::countl_zero(n - 1));
-}
 
 class TextureMapperGLData {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(TextureMapperGLData);
@@ -1532,7 +1524,7 @@ void TextureMapper::drawTextureExternalOES(GLuint texture, OptionSet<TextureMapp
 
 Ref<TextureMapperGPUBuffer> TextureMapper::acquireBufferFromPool(size_t size, TextureMapperGPUBuffer::Type type)
 {
-    size_t ceil = nextPowerOf2(size);
+    size_t ceil = std::bit_ceil(size);
     size_t floor = ceil >> 1; // half of ceil
     size_t mid = floor + (floor >> 1); // (1.5 times floor)
     size_t requestSize = (size <= mid) ? mid : ceil;

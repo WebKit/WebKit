@@ -24,6 +24,7 @@
 #include "PropertyOffset.h"
 #include "Structure.h"
 #include "WriteBarrier.h"
+#include <bit>
 #include <wtf/HashTable.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -58,27 +59,6 @@ struct PropertyTableStats {
 JS_EXPORT_PRIVATE extern PropertyTableStats* propertyTableStats;
 
 #endif
-
-inline constexpr bool isPowerOf2(unsigned v)
-{
-    return hasOneBitSet(v);
-}
-
-inline constexpr unsigned nextPowerOf2(unsigned v)
-{
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-    // Devised by Sean Anderson, Sepember 14, 2001
-
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-
-    return v;
-}
 
 // compact <-> non-compact PropertyTable
 // We need to maintain two things, one is PropertyOffset and one is unsigned index in index buffer of PropertyTable.
@@ -654,7 +634,7 @@ inline unsigned PropertyTable::sizeForCapacity(unsigned capacity)
 {
     if (capacity < MinimumTableSize / 2)
         return MinimumTableSize;
-    return nextPowerOf2(capacity + 1) * 2;
+    return std::bit_ceil(capacity + 1) * 2;
 }
 
 inline bool PropertyTable::canInsert(const ValueType& entry)

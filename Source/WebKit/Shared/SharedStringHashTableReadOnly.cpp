@@ -27,20 +27,12 @@
 #include "SharedStringHashTableReadOnly.h"
 
 #include <WebCore/SharedMemory.h>
+#include <bit>
 #include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
 using namespace WebCore;
-
-#if ASSERT_ENABLED
-static inline bool isPowerOf2(unsigned v)
-{
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-
-    return !(v & (v - 1)) && v;
-}
-#endif
 
 static inline unsigned doubleHash(unsigned key)
 {
@@ -63,7 +55,7 @@ void SharedStringHashTableReadOnly::setSharedMemory(RefPtr<SharedMemory>&& share
     if (m_sharedMemory) {
         ASSERT(!(m_sharedMemory->size() % sizeof(SharedStringHash)));
         m_table = spanReinterpretCast<SharedStringHash>(m_sharedMemory->mutableSpan());
-        ASSERT(isPowerOf2(m_table.size()));
+        ASSERT(std::has_single_bit(m_table.size()));
         m_tableSizeMask = m_table.size() - 1;
     } else {
         m_table = { };
