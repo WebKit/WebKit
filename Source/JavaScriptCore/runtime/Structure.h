@@ -43,6 +43,7 @@
 #include "TypeInfoBlob.h"
 #include "Watchpoint.h"
 #include "WriteBarrierInlines.h"
+#include <bit>
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactPtr.h>
@@ -590,7 +591,7 @@ public:
 
         ASSERT(outOfLineSize > initialOutOfLineCapacity);
         static_assert(outOfLineGrowthFactor == 2);
-        return WTF::roundUpToPowerOfTwo(outOfLineSize);
+        return std::bit_ceil(outOfLineSize);
     }
     
     static unsigned outOfLineSize(PropertyOffset maxOffset)

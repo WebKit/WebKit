@@ -26,6 +26,7 @@
 #include "ObjectTypeTable.h"
 
 #include "VMAllocate.h"
+#include <bit>
 
 #if !BUSE(LIBPAS)
 
@@ -83,7 +84,7 @@ void ObjectTypeTable::set(UniqueLockHolder&, Chunk* chunk, ObjectType objectType
         unsigned count = newEnd - newBegin;
         size_t size = vmSize(sizeof(Bits) + (roundUpToMultipleOf<size_t>(ObjectTypeTable::Bits::bitCountPerWord, count) / 8));
         RELEASE_BASSERT(size <= 0x80000000U); // Too large bitvector, out-of-memory.
-        size = roundUpToPowerOfTwo(size);
+        size = std::bit_ceil(size);
         newEnd = newBegin + ((size - sizeof(Bits)) / sizeof(ObjectTypeTable::Bits::WordType)) * ObjectTypeTable::Bits::bitCountPerWord;
         BASSERT(newEnd > newBegin);
         void* allocated = vmAllocate(size);

@@ -40,6 +40,7 @@
 #include "YarrDisassembler.h"
 #include "YarrJITRegisters.h"
 #include "YarrMatchingContextHolder.h"
+#include <bit>
 #include <wtf/ASCIICType.h>
 #include <wtf/BitVector.h>
 #include <wtf/HexNumber.h>
@@ -2319,7 +2320,7 @@ class YarrGenerator final : public YarrJITInfo {
                     ignoredCharsMask |= charMask << shiftAmount;
             }
 
-            auto numRealCharsToCheck = WTF::roundUpToPowerOfTwo(lastCharInLoad - firstCharInLoad + 1);
+            auto numRealCharsToCheck = std::bit_ceil(lastCharInLoad - firstCharInLoad + 1);
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
             if (m_useFirstNonBMPCharacterOptimization && numRealCharsToCheck > 1) {

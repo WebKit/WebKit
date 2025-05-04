@@ -44,6 +44,7 @@
 #import <AVFoundation/AVAudioBuffer.h>
 #import <AudioToolbox/AudioConverter.h>
 #import <CoreAudio/CoreAudioTypes.h>
+#import <bit>
 #import <numbers>
 #import <wtf/IndexedRange.h>
 #import <wtf/RunLoop.h>
@@ -285,7 +286,7 @@ void MockAudioSharedInternalUnit::reconfigure()
     auto rate = sampleRate();
     ASSERT(rate);
 
-    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * rate * 2);
+    m_maximiumFrameCount = std::bit_ceil<size_t>(renderInterval().seconds() * rate * 2);
     ASSERT(m_maximiumFrameCount);
 
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamFormat, m_maximiumFrameCount);

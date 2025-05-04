@@ -288,17 +288,4 @@ constexpr unsigned getMSBSetConstexpr(T t)
     return bitSize - 1 - clzConstexpr(t);
 }
 
-// From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
-{
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
-}
-
 } // namespace bmalloc

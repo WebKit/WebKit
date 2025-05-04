@@ -32,6 +32,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "WasmTypeDefinitionInlines.h"
+#include <bit>
 #include <type_traits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -64,7 +65,7 @@ template<typename Visitor> constexpr decltype(auto) Table::visitDerived(Visitor&
 
 uint32_t Table::allocatedLength(uint32_t length)
 {
-    return WTF::roundUpToPowerOfTwo(length);
+    return std::bit_ceil(length);
 }
 
 void Table::setLength(uint32_t length)

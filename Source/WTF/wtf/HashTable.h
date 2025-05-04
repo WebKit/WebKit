@@ -22,6 +22,7 @@
 #pragma once
 
 #include <atomic>
+#include <bit>
 #include <iterator>
 #include <mutex>
 #include <string.h>
@@ -345,7 +346,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             constexpr unsigned maxCapacity = 1U << 31;
             UNUSED_PARAM(maxCapacity);
             ASSERT_UNDER_CONSTEXPR_CONTEXT(sizeArg <= maxCapacity);
-            uint32_t capacity = roundUpToPowerOfTwo(sizeArg);
+            uint32_t capacity = std::bit_ceil(sizeArg);
             ASSERT_UNDER_CONSTEXPR_CONTEXT(capacity <= maxCapacity);
             if (shouldExpand(sizeArg, capacity)) {
                 ASSERT_UNDER_CONSTEXPR_CONTEXT((static_cast<uint64_t>(capacity) * 2) <= maxCapacity);
@@ -1222,7 +1223,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey, typename Malloc>
     constexpr unsigned HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey, Malloc>::computeBestTableSize(unsigned keyCount)
     {
-        unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount);
+        unsigned bestTableSize = std::bit_ceil(keyCount);
 
         if (HashTableSizePolicy::shouldExpand(keyCount, bestTableSize))
             bestTableSize *= 2;

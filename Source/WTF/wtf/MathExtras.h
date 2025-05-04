@@ -26,6 +26,7 @@
 #pragma once
 
 #include <algorithm>
+#include <bit>
 #include <climits>
 #include <cmath>
 #include <float.h>
@@ -406,24 +407,11 @@ inline void doubleToInteger(double d, unsigned long long& value)
 
 namespace WTF {
 
-// From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
-{
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
-}
-
 constexpr unsigned maskForSize(unsigned size)
 {
     if (!size)
         return 0;
-    return roundUpToPowerOfTwo(size) - 1;
+    return std::bit_ceil(size) - 1;
 }
 
 inline constexpr unsigned fastLog2(unsigned i)

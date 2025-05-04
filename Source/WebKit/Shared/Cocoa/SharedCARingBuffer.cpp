@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include <WebCore/CARingBuffer.h>
+#include <bit>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -46,7 +47,7 @@ SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t fram
 
 std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint32_t bytesPerFrame, uint32_t numChannelStreams, ConsumerSharedCARingBuffer::Handle&& handle)
 {
-    auto frameCount = WTF::roundUpToPowerOfTwo(handle.frameCount);
+    auto frameCount = std::bit_ceil(handle.frameCount);
 
     // Validate the parameters as they may be coming from an untrusted process.
     auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
@@ -71,7 +72,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint
 
 std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
-    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
+    frameCount = std::bit_ceil(frameCount);
     auto bytesPerFrame = format.bytesPerFrame();
     auto numChannelStreams = format.numberOfChannelStreams();
 

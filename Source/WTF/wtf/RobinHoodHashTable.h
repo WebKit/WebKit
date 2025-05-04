@@ -51,6 +51,7 @@
 
 #pragma once
 
+#include <bit>
 #include <wtf/AlignedStorage.h>
 #include <wtf/HashTable.h>
 #include <wtf/text/StringHash.h>
@@ -726,7 +727,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, ShouldValidateKey shouldValidateKey, typename Malloc>
 constexpr unsigned RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, shouldValidateKey, Malloc>::computeBestTableSize(unsigned keyCount)
 {
-    unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount);
+    unsigned bestTableSize = std::bit_ceil(keyCount);
 
     if (shouldExpand(keyCount, bestTableSize))
         bestTableSize *= 2;

@@ -34,6 +34,7 @@
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <bit>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -311,7 +312,7 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
 
 std::unique_ptr<InProcessCARingBuffer> InProcessCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
-    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
+    frameCount = std::bit_ceil(frameCount);
     auto bytesPerFrame = format.bytesPerFrame();
     auto numChannelStreams = format.numberOfChannelStreams();
 

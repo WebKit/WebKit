@@ -27,6 +27,7 @@
 #import "HardwareCapabilities.h"
 
 #import <algorithm>
+#import <bit>
 #import <limits>
 #import <ranges>
 #import <sys/sysctl.h>
@@ -400,7 +401,7 @@ template <typename T>
 static T mergeAlignment(T previous, T next)
 {
     // https://gpuweb.github.io/gpuweb/#limit-class-alignment
-    return std::min(WTF::roundUpToPowerOfTwo(previous), WTF::roundUpToPowerOfTwo(next));
+    return std::min(std::bit_ceil(previous), std::bit_ceil(next));
 };
 
 static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next)
