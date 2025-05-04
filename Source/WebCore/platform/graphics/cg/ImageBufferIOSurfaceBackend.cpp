@@ -112,6 +112,7 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context()
     if (!m_context) {
         m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
         applyBaseTransform(*m_context);
+        m_context->setCurrentImage(WTFMove(m_currentImageIfNoContext));
     }
     return *m_context;
 }
@@ -154,6 +155,8 @@ void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreation
 
 bool ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 {
+    setCurrentImage(nullptr);
+
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
     // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
@@ -170,7 +173,12 @@ bool ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage()
 {
-    return NativeImage::create(createImage());
+    RefPtr<NativeImage> currentImage = this->currentImage();
+    if (!currentImage) {
+        currentImage = NativeImage::create(createImage());
+        setCurrentImage(RefPtr { currentImage });
+    }
+    return currentImage;
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::createNativeImageReference()
@@ -219,7 +227,14 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
 
 void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
+    // Currently we do not move m_context->currentImage() to m_currentImageIfNoContext because
+    // destroying the m_platformContext would read back the data from the IOSurface to a buffer
+    // in the image.
     m_context = nullptr;
+
+    // Currently we also have to clear m_currentImageIfNoContext, since we are clearing m_platformContext.
+    // This is for the same read back reason.
+    m_currentImageIfNoContext = nullptr;
     m_platformContext = nullptr;
 }
 
@@ -312,6 +327,22 @@ RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::createImageReference()
     // This also skips WebKit GraphicsContext subimage cache.
     CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
     return image;
+}
+
+void ImageBufferIOSurfaceBackend::setCurrentImage(RefPtr<NativeImage> image)
+{
+    // Cache the current image in the context, so that the context may clear it before a draw.
+    if (m_context)
+        m_context->setCurrentImage(WTFMove(image));
+    else
+        m_currentImageIfNoContext = WTFMove(image);
+}
+
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::currentImage() const
+{
+    if (m_context)
+        return m_context->currentImage();
+    return m_currentImageIfNoContext;
 }
 
 } // namespace WebCore
