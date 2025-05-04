@@ -42,10 +42,20 @@ static std::unique_ptr<GLFence> createEGLFence(EGLenum type, const Vector<EGLAtt
     if (display.eglCheckVersion(1, 5))
         sync = eglCreateSync(display.eglDisplay(), type, attributes.isEmpty() ? nullptr : attributes.data());
     else {
+#ifdef EGL_EGLEXT_PROTOTYPES
         Vector<EGLint> intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
             return value;
         });
         sync = eglCreateSyncKHR(display.eglDisplay(), type, intAttributes.isEmpty() ? nullptr : intAttributes.data());
+#else
+        Vector<EGLint> intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
+            return value;
+        });
+
+        PFNEGLCREATESYNCKHRPROC eglCreateSyncKHR = (PFNEGLCREATESYNCKHRPROC) eglGetProcAddress("eglCreateSyncKHR");
+        if (eglCreateSyncKHR)
+            sync = eglCreateSyncKHR(display.eglDisplay(), type, intAttributes.isEmpty() ? nullptr : intAttributes.data());
+#endif
     }
     if (sync == EGL_NO_SYNC)
         return nullptr;
@@ -94,8 +104,16 @@ GLFenceEGL::~GLFenceEGL()
     auto& display = PlatformDisplay::sharedDisplay();
     if (display.eglCheckVersion(1, 5))
         eglDestroySync(display.eglDisplay(), m_sync);
-    else
+    else {
+#ifdef EGL_EGLEXT_PROTOTYPES
         eglDestroySyncKHR(display.eglDisplay(), m_sync);
+#else
+        PFNEGLDESTROYSYNCKHRPROC eglDestroySyncKHR = (PFNEGLDESTROYSYNCKHRPROC) eglGetProcAddress("eglDestroySyncKHR");
+        if (eglDestroySyncKHR) {
+            eglDestroySyncKHR(display.eglDisplay(), m_sync);
+        }
+#endif
+    }
 }
 
 void GLFenceEGL::clientWait()
@@ -103,8 +121,16 @@ void GLFenceEGL::clientWait()
     auto& display = PlatformDisplay::sharedDisplay();
     if (display.eglCheckVersion(1, 5))
         eglClientWaitSync(display.eglDisplay(), m_sync, 0, EGL_FOREVER);
-    else
+    else {
+#ifdef EGL_EGLEXT_PROTOTYPES
         eglClientWaitSyncKHR(display.eglDisplay(), m_sync, 0, EGL_FOREVER_KHR);
+#else
+        PFNEGLCLIENTWAITSYNCKHRPROC eglClientWaitSyncKHR = (PFNEGLCLIENTWAITSYNCKHRPROC) eglGetProcAddress("eglClientWaitSyncKHR");
+        if (eglClientWaitSyncKHR) {
+            eglClientWaitSyncKHR(display.eglDisplay(), m_sync, 0, EGL_FOREVER_KHR);
+        }
+#endif
+    }
 }
 
 void GLFenceEGL::serverWait()
@@ -117,8 +143,16 @@ void GLFenceEGL::serverWait()
     auto& display = PlatformDisplay::sharedDisplay();
     if (display.eglCheckVersion(1, 5))
         eglWaitSync(display.eglDisplay(), m_sync, 0);
-    else
+    else {
+#ifdef EGL_EGLEXT_PROTOTYPES
         eglWaitSyncKHR(display.eglDisplay(), m_sync, 0);
+#else
+        PFNEGLWAITSYNCKHRPROC eglWaitSyncKHR = (PFNEGLWAITSYNCKHRPROC) eglGetProcAddress("eglWaitSyncKHR");
+        if (eglWaitSyncKHR) {
+            eglWaitSyncKHR(display.eglDisplay(), m_sync, 0);
+        }
+#endif
+    }
 }
 
 #if OS(UNIX)
@@ -127,7 +161,16 @@ UnixFileDescriptor GLFenceEGL::exportFD()
     if (!m_isExportable)
         return { };
 
+#ifdef EGL_EGLEXT_PROTOTYPES
     return UnixFileDescriptor { eglDupNativeFenceFDANDROID(PlatformDisplay::sharedDisplay().eglDisplay(), m_sync), UnixFileDescriptor::Adopt };
+#else
+    PFNEGLDUPNATIVEFENCEFDANDROIDPROC eglDupNativeFenceFDANDROID =
+        (PFNEGLDUPNATIVEFENCEFDANDROIDPROC) eglGetProcAddress("eglDupNativeFenceFDANDROID");
+    if (!eglDupNativeFenceFDANDROID) {
+        return { };
+    }
+    return UnixFileDescriptor { eglDupNativeFenceFDANDROID(PlatformDisplay::sharedDisplay().eglDisplay(), m_sync), UnixFileDescriptor::Adopt };
+#endif
 }
 #endif
 
