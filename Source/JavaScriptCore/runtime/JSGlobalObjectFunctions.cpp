@@ -563,6 +563,27 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseFloat, (JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsNumber(parseFloat(view)));
 }
 
+// Encode string to Uint8Array
+JSC_DEFINE_HOST_FUNCTION(globalFuncUFT8Encoding, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = callFrame->argument(0);
+
+    auto* jsString = value.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto content = Uint8Array::tryCreate(viewWithString.view.span8());
+
+    Structure* structure = globalObject->typedArrayStructure(TypeUint8, content->isResizableOrGrowableShared());
+    JSObject* result = JSUint8Array::create(vm, structure, WTFMove(content));
+
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURI, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     static constexpr auto doNotUnescapeWhenDecodingURI = makeLatin1CharacterBitSet(

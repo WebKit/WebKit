@@ -698,6 +698,7 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
   unescape              globalFuncUnescape                           DontEnum|Function 1
   decodeURI             globalFuncDecodeURI                          DontEnum|Function 1
   decodeURIComponent    globalFuncDecodeURIComponent                 DontEnum|Function 1
+  UFT8Encoding          globalFuncUFT8Encoding                       DontEnum|Function 1
   encodeURI             globalFuncEncodeURI                          DontEnum|Function 1
   encodeURIComponent    globalFuncEncodeURIComponent                 DontEnum|Function 1
   eval                  initializeEvalFunction                       DontEnum|PropertyCallback
