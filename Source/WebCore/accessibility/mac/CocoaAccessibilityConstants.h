@@ -70,6 +70,7 @@
 #define NSAccessibilityLandmarkBannerSubrole @"AXLandmarkBanner"
 #define NSAccessibilityLandmarkComplementarySubrole @"AXLandmarkComplementary"
 #define NSAccessibilityLandmarkContentInfoSubrole @"AXLandmarkContentInfo"
+#define NSAccessibilityLandmarkFormSubrole @"AXLandmarkForm"
 #define NSAccessibilityLandmarkMainSubrole @"AXLandmarkMain"
 #define NSAccessibilityLandmarkNavigationSubrole @"AXLandmarkNavigation"
 #define NSAccessibilityLandmarkRegionSubrole @"AXLandmarkRegion"

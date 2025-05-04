@@ -301,7 +301,6 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case AccessibilityRole::DocumentNote:
     case AccessibilityRole::LandmarkRegion:
     case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::Form:
     case AccessibilityRole::Grid:
     case AccessibilityRole::Group:
     case AccessibilityRole::Image:
@@ -310,6 +309,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case AccessibilityRole::LandmarkBanner:
     case AccessibilityRole::LandmarkComplementary:
     case AccessibilityRole::LandmarkContentInfo:
+    case AccessibilityRole::LandmarkForm:
     case AccessibilityRole::LandmarkNavigation:
     case AccessibilityRole::LandmarkMain:
     case AccessibilityRole::LandmarkSearch:
@@ -2615,7 +2615,7 @@ static void initializeRoleMap()
         RoleEntry { "definition"_s, AccessibilityRole::Definition },
         RoleEntry { "document"_s, AccessibilityRole::Document },
         RoleEntry { "feed"_s, AccessibilityRole::Feed },
-        RoleEntry { "form"_s, AccessibilityRole::Form },
+        RoleEntry { "form"_s, AccessibilityRole::LandmarkForm },
         RoleEntry { "rowheader"_s, AccessibilityRole::RowHeader },
         RoleEntry { "group"_s, AccessibilityRole::Group },
         RoleEntry { "heading"_s, AccessibilityRole::Heading },

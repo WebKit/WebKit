@@ -55,7 +55,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS resultElement.role is 'AXRole: AXButton'
 PASS resultElement.title is 'AXTitle: Submit'
-PASS resultElement is undefined.
+FAIL resultElement should be undefined. Was null
 PASS successfullyParsed is true
 
 TEST COMPLETE

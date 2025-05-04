@@ -163,7 +163,6 @@ enum class AccessibilityRole : uint8_t {
     Figure,
     Footer,
     Footnote,
-    Form,
     Generic,
     GraphicsDocument,
     GraphicsObject,
@@ -183,6 +182,7 @@ enum class AccessibilityRole : uint8_t {
     LandmarkComplementary,
     LandmarkContentInfo,
     LandmarkDocRegion,
+    LandmarkForm,
     LandmarkMain,
     LandmarkNavigation,
     LandmarkRegion,
@@ -341,8 +341,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Footer"_s;
     case AccessibilityRole::Footnote:
         return "Footnote"_s;
-    case AccessibilityRole::Form:
-        return "Form"_s;
     case AccessibilityRole::Generic:
         return "Generic"_s;
     case AccessibilityRole::GraphicsDocument:
@@ -381,6 +379,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "LandmarkContentInfo"_s;
     case AccessibilityRole::LandmarkDocRegion:
         return "LandmarkDocRegion"_s;
+    case AccessibilityRole::LandmarkForm:
+        return "LandmarkForm"_s;
     case AccessibilityRole::LandmarkMain:
         return "LandmarkMain"_s;
     case AccessibilityRole::LandmarkNavigation:

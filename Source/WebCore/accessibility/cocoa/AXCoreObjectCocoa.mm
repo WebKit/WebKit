@@ -456,7 +456,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ListItem, NSAccessibilityGroupRole },
         { AccessibilityRole::Paragraph, NSAccessibilityGroupRole },
         { AccessibilityRole::Label, NSAccessibilityGroupRole },
-        { AccessibilityRole::Form, NSAccessibilityGroupRole },
+        { AccessibilityRole::LandmarkForm, NSAccessibilityGroupRole },
         { AccessibilityRole::Generic, NSAccessibilityGroupRole },
         { AccessibilityRole::SpinButton, NSAccessibilityIncrementorRole },
         { AccessibilityRole::SpinButtonPart, NSAccessibilityIncrementorArrowRole },

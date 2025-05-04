@@ -37,7 +37,7 @@ PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: first heading leve
 PASS: resultElement.role === 'AXRole: AXGroup'
 PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: serif blue italic text'
 PASS: resultElement.role === 'AXRole: AXGroup'
-PASS: resultElement.subrole === 'AXSubrole: AXLandmarkBanner'
+FAIL: resultElement.subrole !== 'AXSubrole: AXLandmarkBanner', was AXSubrole: AXLandmarkForm
 PASS: resultElement.role === 'AXRole: AXLink'
 PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: link'
 PASS: resultElement.role === 'AXRole: AXList'

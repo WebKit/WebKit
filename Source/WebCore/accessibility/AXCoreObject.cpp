@@ -143,6 +143,7 @@ bool AXCoreObject::isLandmark() const
     case AccessibilityRole::LandmarkComplementary:
     case AccessibilityRole::LandmarkContentInfo:
     case AccessibilityRole::LandmarkDocRegion:
+    case AccessibilityRole::LandmarkForm:
     case AccessibilityRole::LandmarkMain:
     case AccessibilityRole::LandmarkNavigation:
     case AccessibilityRole::LandmarkRegion:
@@ -1019,6 +1020,8 @@ String AXCoreObject::ariaLandmarkRoleDescription() const
         return AXARIAContentGroupText("ARIALandmarkComplementary"_s);
     case AccessibilityRole::LandmarkContentInfo:
         return AXARIAContentGroupText("ARIALandmarkContentInfo"_s);
+    case AccessibilityRole::LandmarkForm:
+        return AXARIAContentGroupText("ARIALandmarkForm"_s);
     case AccessibilityRole::LandmarkMain:
         return AXARIAContentGroupText("ARIALandmarkMain"_s);
     case AccessibilityRole::LandmarkNavigation:

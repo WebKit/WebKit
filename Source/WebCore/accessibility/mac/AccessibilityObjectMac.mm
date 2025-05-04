@@ -256,6 +256,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXLandmarkComplementary"_s;
     case AccessibilityRole::LandmarkContentInfo:
         return "AXLandmarkContentInfo"_s;
+    case AccessibilityRole::LandmarkForm:
+        return "AXLandmarkForm"_s;
     case AccessibilityRole::LandmarkMain:
         return "AXLandmarkMain"_s;
     case AccessibilityRole::LandmarkNavigation:

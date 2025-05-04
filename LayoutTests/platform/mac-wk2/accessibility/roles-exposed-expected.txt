@@ -122,8 +122,8 @@ footer
 
 form
       AXRole: AXGroup
-      AXSubrole:
-      AXRoleDescription: group
+      AXSubrole: AXLandmarkForm
+      AXRoleDescription: form
 
 header
       AXRole: AXGroup

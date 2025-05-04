@@ -288,8 +288,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Section;
     case AccessibilityRole::Footer:
         return Atspi::Role::Footer;
-    case AccessibilityRole::Form:
-        return Atspi::Role::Form;
     case AccessibilityRole::Canvas:
         return Atspi::Role::Canvas;
     case AccessibilityRole::HorizontalRule:
@@ -325,6 +323,8 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::LandmarkRegion:
     case AccessibilityRole::LandmarkSearch:
         return Atspi::Role::Landmark;
+    case AccessibilityRole::LandmarkForm:
+        return Atspi::Role::Form;
     case AccessibilityRole::DescriptionList:
         return Atspi::Role::DescriptionList;
     case AccessibilityRole::Term:
@@ -1177,7 +1177,7 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
     RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     switch (m_coreObject->roleValue()) {
-    case AccessibilityRole::Form:
+    case AccessibilityRole::LandmarkForm:
         if (liveObject && liveObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
             return Atspi::Role::Landmark;
         break;

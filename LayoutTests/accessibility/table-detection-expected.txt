@@ -1,8 +1,6 @@
 
 This should be a table because it has a thead.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -31,6 +29,8 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 20}
+AXElementBusy: 0
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>
@@ -43,7 +43,9 @@ AXColumnCount: 2
 AXRowCount: 2
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -51,8 +53,6 @@ asdf	asdf
 
 This should be a table because cells have borders.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -81,8 +81,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 2>
@@ -93,15 +95,15 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
 
 This should not be a table because its cells do not have borders.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -130,16 +132,15 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf	asdf
 
 This should be a table because a cell has a special attribute
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -168,8 +169,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 2>
@@ -180,15 +183,15 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
 
 This should be a table because a cell has a special attribute.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -217,8 +220,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 2>
@@ -229,15 +234,15 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
 
 This should be a table because a cell has a special attribute.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -266,8 +271,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 2>
-AXVisibleRows: <array of size 2>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 4>
@@ -278,7 +285,9 @@ AXColumnCount: 2
 AXRowCount: 2
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -286,57 +295,43 @@ asdf	asdf
 
 This should be a table because cells have different colors.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
-AXRole: AXTable
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: table
-AXChildren: <array of size 4>
-AXChildrenInNavigationOrder: <array of size 4>
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
-AXParent: <AXTable>
-AXSize: NSSize: {59, 23}
+AXParent: <AXGroup>
+AXSize: NSSize: {27, 19}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXTable>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
+AXTopLevelUIElement: <AXGroup>
 AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXTable>
+AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
-AXColumns: <array of size 2>
-AXVisibleColumns: <array of size 2>
-AXVisibleCells: <array of size 2>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
-AXColumnCount: 2
-AXRowCount: 1
-AXARIAColumnCount: 0
-AXARIARowCount: 0
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf	asdf
 
 This should not be a table because cells have different but no spacing.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -365,16 +360,15 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf	asdf
 
 This should not be a table because cells have the same colors even though there is spacing.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -403,16 +397,15 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf	asdf
 
 This should be a table because it has the "rules" attr.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -441,8 +434,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 2>
@@ -453,53 +448,66 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
 
 This should not be a table because it only has one valid cell (need more than one).
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
-AXRole: AXGroup
+AXRole: AXTable
 AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXRoleDescription: table
+AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
-AXParent: <AXGroup>
+AXParent: <AXTable>
 AXSize: NSSize: {769, 27}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow: <AXTable>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement: <AXTable>
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXGroup>
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXRows: <array of size 1>
+AXVisibleRows: <array of size 0>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 2>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
+AXARIAColumnCount: 0
+AXARIARowCount: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 Contributions
 
 This should not be a table because it does not have enough cell borders or background colors
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -528,8 +536,9 @@ AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 Politics
@@ -542,8 +551,6 @@ New York Times
 
 This should be a table because it's editable.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -572,8 +579,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 2>
@@ -584,15 +593,15 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
 
 This should be a table because most cells have a top border.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -621,8 +630,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 2>
-AXVisibleRows: <array of size 2>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 4>
@@ -633,7 +644,9 @@ AXColumnCount: 2
 AXRowCount: 2
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -641,8 +654,6 @@ asdf	asdf
 
 This should not be a table because cells have different borders.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -671,8 +682,9 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf	asdf
@@ -680,8 +692,6 @@ asdf	asdf
 
 This should be a table because it sets empty-cells: hide on the table.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -710,8 +720,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 6>
@@ -722,7 +734,9 @@ AXColumnCount: 2
 AXRowCount: 3
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -731,8 +745,6 @@ asdf	asdf
 
 This should be a table because it sets empty-cells: hide on a cell.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -761,8 +773,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 6>
@@ -773,7 +787,9 @@ AXColumnCount: 2
 AXRowCount: 3
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -782,8 +798,6 @@ asdf	asdf
 
 This should be a table because it has a col.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -812,8 +826,10 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 2>
-AXVisibleRows: <array of size 2>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 4>
@@ -824,7 +840,9 @@ AXColumnCount: 2
 AXRowCount: 2
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 asdf	asdf
@@ -832,47 +850,37 @@ asdf	asdf
 
 This should be a table because it has at least 20 rows
 
-AXRole: AXTable
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: table
-AXChildren: <array of size 26>
-AXChildrenInNavigationOrder: <array of size 26>
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
-AXParent: <AXTable>
-AXSize: NSSize: {33, 531}
+AXParent: <AXGroup>
+AXSize: NSSize: {29, 21}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXTable>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
+AXTopLevelUIElement: <AXGroup>
 AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXTable>
+AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXRows: <array of size 24>
-AXVisibleRows: <array of size 13>
-AXColumns: <array of size 1>
-AXVisibleColumns: <array of size 1>
-AXVisibleCells: <array of size 24>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
-AXColumnCount: 1
-AXRowCount: 24
-AXARIAColumnCount: 0
-AXARIARowCount: 0
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
+AXInlineText: 0
 
 
 asdf
@@ -902,8 +910,6 @@ asdf
 
 This should be a table even though it uses table-row-group for it's display type.
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -928,23 +934,27 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
+AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXRows: <array of size 2>
-AXVisibleRows: <array of size 2>
+AXVisibleRows: <array of size 0>
 AXColumns: <array of size 2>
 AXVisibleColumns: <array of size 2>
 AXVisibleCells: <array of size 4>
 AXColumnHeaderUIElements: <array of size 2>
-AXRowHeaderUIElements: <array of size 1>
+AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXElementBusy: 0
+AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 
 
 head	head2

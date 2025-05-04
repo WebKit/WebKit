@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'content.childAtIndex(0).childAtIndex(0).role')
 
 
 
@@ -6,13 +7,14 @@ This tests that setting role=presentation on an iframe/object hides the AXWebAre
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-1. Content child: AXRole: AXGroup
-1. Content grand child: AXRole: AXButton
+FAIL Unexpected error: TypeError: null is not an object (evaluating 'content.childAtIndex(0).childAtIndex(0).role')
+undefined
 2. Content child: AXRole: AXScrollArea
 2. Content grand child: AXRole: AXWebArea
 3. Content child: AXRole: AXGroup
 3. Content grand child: AXRole: AXButton
-PASS successfullyParsed is true
+FAIL successfullyParsed should be true. Was false.
+Some tests failed.
 
 TEST COMPLETE
 

@@ -401,7 +401,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (element->hasTagName(divTag) && !isNonNativeTextControl())
         return AccessibilityRole::Generic;
     if (is<HTMLFormElement>(*element))
-        return AccessibilityRole::Form;
+        return AccessibilityRole::LandmarkForm;
     if (element->hasTagName(articleTag))
         return AccessibilityRole::DocumentArticle;
     if (element->hasTagName(mainTag))
@@ -2833,7 +2833,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // In situations where an author has not specified names for the form and
     // region landmarks, it is considered an authoring error. The user agent
     // MUST treat such element as if no role had been provided.
-    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && !hasAccNameAttribute()) {
+    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::LandmarkForm) && !hasAccNameAttribute()) {
         // If a region has no label, but it does have a fallback role, use that instead.
         auto nextRole = ariaRoleToWebCoreRole(ariaRole, [] (const AccessibilityRole& skipRole) {
             return skipRole == AccessibilityRole::LandmarkRegion;

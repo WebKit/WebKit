@@ -1894,6 +1894,9 @@
 /* accessibility role description for a footer */
 "footer" = "footer";
 
+/* accessibility role description for a form */
+"form" = "form";
+
 /* Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia' */
 "from %@" = "from %@";
 
