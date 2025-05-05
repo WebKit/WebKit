@@ -79,30 +79,21 @@ extension WKWebView {
     }
 
     open override func _intelligenceCollectContent(in visibleRect: CGRect, collector: UIIntelligenceElementCollector) {
-#if canImport(UIIntelligenceSupport, _version: 9007)
         let context = collector.context.createRemoteContext(description: "WKWebView")
-#else
-        let context = collector.context.createRemoteContext()
-#endif
         collector.collect(.remote(context))
     }
 
     open override func _intelligenceCollectRemoteContent(in visibleRect: CGRect, remoteContextWrapper: UIIntelligenceCollectionRemoteContextWrapper) {
-        let coordinator = IntelligenceCollectionCoordinator.shared
-        coordinator.createCollector(remoteContextWrapper: remoteContextWrapper) { collector, error in
-            guard let collector else { return }
-            self._requestTextExtraction(in: visibleRect) { item in
-                if let item {
-                    collector.collect(createIntelligenceElement(item: item))
-                }
-                coordinator.finishCollection(collector)
-            }
-        }
-    }
+        Task { @MainActor in
+            let coordinator = IntelligenceCollectionCoordinator.shared
+            let collector = coordinator.createCollector(remoteContextWrapper: remoteContextWrapper)
 
-    @objc private func _requestTextExtraction(in rect: CGRect, completionHandler: @escaping (WKTextExtractionItem?) -> Void) {
-        let context = WKTextExtractionRequest(rectInWebView: rect, completionHandler: completionHandler)
-        self.perform(Selector(("_requestTextExtractionForSwift:")), with: context)
+            if let item = await _requestTextExtraction(visibleRect) {
+                collector.collect(createIntelligenceElement(item: item))
+            }
+
+            coordinator.finishCollection(collector)
+        }
     }
 }
 

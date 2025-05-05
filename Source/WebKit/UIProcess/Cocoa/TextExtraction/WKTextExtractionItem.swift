@@ -160,25 +160,4 @@ internal import WebKit_Internal
 #endif
 }
 
-@_objcImplementation extension WKTextExtractionRequest {
-    let rectInWebView: CGRect
-    @objc
-    private var completionHandler: ((WKTextExtractionItem?) -> Void)?
-
-    init(rectInWebView: CGRect, completionHandler: @escaping (WKTextExtractionItem?) -> Void) {
-        self.rectInWebView = rectInWebView
-        self.completionHandler = completionHandler
-    }
-
-    func fulfill(_ item: WKTextExtractionItem) {
-        guard let completionHandler = self.completionHandler else { return }
-        completionHandler(item)
-        self.completionHandler = nil
-    }
-
-#if compiler(<6.0)
-    @objc deinit { }
-#endif
-}
-
 #endif // USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))

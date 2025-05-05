@@ -137,7 +137,6 @@ class ViewGestureController;
 @class WKScrollGeometry;
 @class WKScrollView;
 @class WKTextExtractionItem;
-@class WKTextExtractionRequest;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 @class _WKWarningView;
@@ -580,11 +579,6 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 @end
 #endif
 
-@interface WKWebView (WKTextExtraction)
-- (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context;
-- (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
-@end
-
 #endif // __cplusplus
 
 @interface WKWebView (NonCpp)
@@ -601,5 +595,7 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 #endif
 
 - (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
+
+- (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
 
 @end
