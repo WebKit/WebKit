@@ -21,32 +21,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if os(iOS) && !os(visionOS) && canImport(MarketplaceKit)
+#if USE_APPLE_INTERNAL_SDK && HAVE_MARKETPLACE_KIT
 
 import Foundation
-import OSLog
+import WebKitSwift
+internal import OSLog
 
-import MarketplaceKit
+// FIXME: (rdar://150642154) This cannot be used in WebKit.framework due to a dependency cycle.
+internal import MarketplaceKit
 
-@objc(WKMarketplaceKit)
-@available(iOS 17.4, *)
-public final class MarketplaceKitWrapper : NSObject {
+@objc @implementation extension WKMarketplaceKit {
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Loading")
 
-    @objc
-    @available(iOS 17.4, *)
-    public static func requestAppInstallation(topOrigin: URL, url: URL, completionHandler: @escaping (Error?) -> Void) {
-        Task { @MainActor in
-            do {
-                try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)
-                logger.debug("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded")
-                completionHandler(nil);
-            } catch {
-                logger.error("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) failed: \(error, privacy: .public)")
-                completionHandler(error);
-            }
+    class func requestAppInstallation(withTopOrigin topOrigin: URL, url: URL) async throws {
+        do {
+            try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)
+            logger.debug("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded")
+        } catch {
+            logger.error("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) failed: \(error, privacy: .public)")
+            throw error
         }
     }
 }
 
-#endif
+#endif // USE_APPLE_INTERNAL_SDK && HAVE_MARKETPLACE_KIT

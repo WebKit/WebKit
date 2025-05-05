@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "LinearMediaKitExtras.h"
-#import "RealityKitBridging.h"
-#import "WKIntelligenceReplacementTextEffectCoordinator.h"
-#import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
-#import "WKIntelligenceTextEffectCoordinator.h"
-#import "WKMarketplaceKit.h"
-#import "WKSLinearMediaPlayer.h"
-#import "WKSLinearMediaTypes.h"
-#import "WKSPreviewWindowController.h"
-#import "WKSTextAnimationSourceDelegate.h"
-#import "WKStageMode.h"
+#pragma once
+
+#if USE(APPLE_INTERNAL_SDK) && HAVE(MARKETPLACE_KIT)
+
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WKMarketplaceKit : NSObject
++ (void)requestAppInstallationWithTopOrigin:(NSURL *)topOrigin url:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable))completionHandler;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK) && HAVE(MARKETPLACE_KIT)
