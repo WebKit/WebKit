@@ -71,4 +71,6 @@ private:
     void operator=(const StyleInheritedData&) = delete;
 };
 
+DataAreDifferent deduplicateData(DataRef<StyleInheritedData>&, const DataRef<StyleInheritedData>&);
+
 } // namespace WebCore

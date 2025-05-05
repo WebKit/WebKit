@@ -65,4 +65,6 @@ private:
     StyleNonInheritedData(const StyleNonInheritedData&);
 };
 
+DataAreDifferent deduplicateData(DataRef<StyleNonInheritedData>&, const DataRef<StyleNonInheritedData>&);
+
 } // namespace WebCore

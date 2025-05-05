@@ -365,6 +365,52 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
         conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags(m_nonInheritedFlags, other.m_nonInheritedFlags);
 }
 
+DataAreDifferent SVGRenderStyle::deduplicate(const SVGRenderStyle& other)
+{
+    if (&other == this)
+        return DataAreDifferent::No;
+
+    auto result = DataAreDifferent::No;
+    if (deduplicateData(m_fillData, other.m_fillData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    if (deduplicateData(m_strokeData, other.m_strokeData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    if (deduplicateData(m_inheritedResourceData, other.m_inheritedResourceData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    if (deduplicateData(m_stopData, other.m_stopData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    if (deduplicateData(m_miscData, other.m_miscData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    if (deduplicateData(m_layoutData, other.m_layoutData) == DataAreDifferent::Yes)
+        result = DataAreDifferent::Yes;
+
+    return result;
+}
+
+DataAreDifferent deduplicateData(DataRef<SVGRenderStyle>& data, const DataRef<SVGRenderStyle>& otherData)
+{
+    if (data.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    // data.ptr() returns a const pointer; calling access(), which clones, is the way to get a non-const pointer.
+    // But here we know that deduplicate() preserves equality, so the cast is OK.
+    auto dataDifferent = const_cast<SVGRenderStyle*>(data.ptr())->deduplicate(*otherData);
+
+    if (dataDifferent == DataAreDifferent::Yes)
+        return DataAreDifferent::Yes;
+
+    if (*data != *otherData)
+        return DataAreDifferent::Yes;
+
+    data = otherData;
+    return DataAreDifferent::No;
+}
+
 #if !LOG_DISABLED
 
 void SVGRenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const SVGRenderStyle::InheritedFlags& other) const

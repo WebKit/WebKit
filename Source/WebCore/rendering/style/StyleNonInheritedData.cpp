@@ -76,6 +76,37 @@ bool StyleNonInheritedData::operator==(const StyleNonInheritedData& other) const
         && rareData == other.rareData;
 }
 
+DataAreDifferent deduplicateData(DataRef<StyleNonInheritedData>& data, const DataRef<StyleNonInheritedData>& otherData)
+{
+    if (data.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    bool haveDataDifferences = false;
+    if (deduplicateData(data->boxData, otherData->boxData) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->backgroundData, otherData->backgroundData) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->surroundData, otherData->surroundData) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->miscData, otherData->miscData) == DataAreDifferent::Yes) // We could also deduplicate more inside here.
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->rareData, otherData->rareData) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (haveDataDifferences)
+        return DataAreDifferent::Yes;
+
+    // If this class gains any non-DataRef numbers, we will need to compare them here.
+    ASSERT(*data == *otherData);
+
+    data = otherData;
+    return DataAreDifferent::No;
+}
+
 #if !LOG_DISABLED
 void StyleNonInheritedData::dumpDifferences(TextStream& ts, const StyleNonInheritedData& other) const
 {

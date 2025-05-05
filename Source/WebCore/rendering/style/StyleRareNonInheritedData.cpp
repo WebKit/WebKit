@@ -389,6 +389,38 @@ bool StyleRareNonInheritedData::hasBackdropFilters() const
     return !backdropFilter->operations.isEmpty();
 }
 
+DataAreDifferent deduplicateData(DataRef<StyleRareNonInheritedData>& data, const DataRef<StyleRareNonInheritedData>& otherData)
+{
+    if (data.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    bool haveDataDifferences = false;
+
+    if (deduplicateData(data->marquee, otherData->marquee) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->backdropFilter, otherData->backdropFilter) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->grid, otherData->grid) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->gridItem, otherData->gridItem) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->customProperties, otherData->customProperties) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (haveDataDifferences)
+        return DataAreDifferent::Yes;
+
+    if (*data != *otherData)
+        return DataAreDifferent::Yes;
+
+    data = otherData;
+    return DataAreDifferent::No;
+}
+
 #if !LOG_DISABLED
 void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareNonInheritedData& other) const
 {

@@ -400,6 +400,28 @@ bool StyleRareInheritedData::hasColorFilters() const
     return !appleColorFilter->operations.isEmpty();
 }
 
+DataAreDifferent deduplicateData(DataRef<StyleRareInheritedData>& data, const DataRef<StyleRareInheritedData>& otherData)
+{
+    if (data.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    bool haveDataDifferences = false;
+    if (deduplicateData(data->customProperties, otherData->customProperties) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (deduplicateData(data->appleColorFilter, otherData->appleColorFilter) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (haveDataDifferences)
+        return DataAreDifferent::Yes;
+
+    if (*data != *otherData)
+        return DataAreDifferent::Yes;
+
+    data = otherData;
+    return DataAreDifferent::No;
+}
+
 #if !LOG_DISABLED
 void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInheritedData& other) const
 {

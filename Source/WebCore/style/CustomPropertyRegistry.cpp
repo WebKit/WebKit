@@ -159,7 +159,7 @@ const RenderStyle& CustomPropertyRegistry::initialValuePrototypeStyle() const
         initializeToStyle(m_propertiesFromStylesheet);
         initializeToStyle(m_propertiesFromAPI);
 
-        m_initialValuePrototypeStyle->deduplicateCustomProperties(*oldStyle);
+        m_initialValuePrototypeStyle->deduplicate(*oldStyle);
     }
 
     return *m_initialValuePrototypeStyle;

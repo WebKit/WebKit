@@ -3571,18 +3571,12 @@ void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMod
     }
 }
 
-void RenderStyle::deduplicateCustomProperties(const RenderStyle& other)
+void RenderStyle::deduplicate(const RenderStyle& other)
 {
-    auto deduplicate = [&] <typename T> (const DataRef<T>& data, const DataRef<T>& otherData) {
-        auto& properties = const_cast<DataRef<StyleCustomPropertyData>&>(data->customProperties);
-        auto& otherProperties = otherData->customProperties;
-        if (properties.ptr() == otherProperties.ptr() || *properties != *otherProperties)
-            return;
-        properties = otherProperties;
-    };
-
-    deduplicate(m_rareInheritedData, other.m_rareInheritedData);
-    deduplicate(m_nonInheritedData->rareData, other.m_nonInheritedData->rareData);
+    deduplicateData(m_inheritedData, other.m_inheritedData);
+    deduplicateData(m_nonInheritedData, other.m_nonInheritedData);
+    deduplicateData(m_rareInheritedData, other.m_rareInheritedData);
+    deduplicateData(m_svgStyle, other.m_svgStyle);
 }
 
 void RenderStyle::setCustomPropertyValue(Ref<const CSSCustomPropertyValue>&& value, bool isInherited)

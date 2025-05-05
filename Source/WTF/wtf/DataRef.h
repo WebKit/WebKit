@@ -120,6 +120,22 @@ template<typename T> struct HashTraits<DataRef<T>> : SimpleClassHashTraits<DataR
     static bool isEmptyValue(const DataRef<T>& value) { return value.isHashTableEmptyValue(); }
 };
 
+enum class DataAreDifferent : bool { No, Yes };
+
+template <typename T>
+DataAreDifferent deduplicateData(const DataRef<T>& dataRef, const DataRef<T>& otherData)
+{
+    if (dataRef.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    if (*dataRef != *otherData)
+        return DataAreDifferent::Yes;
+
+    const_cast<DataRef<T>&>(dataRef) = otherData;
+    return DataAreDifferent::No;
+}
+
 } // namespace WTF
 
 using WTF::DataRef;
+using WTF::DataAreDifferent;

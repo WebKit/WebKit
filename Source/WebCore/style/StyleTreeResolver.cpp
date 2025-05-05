@@ -773,10 +773,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     // as animations created via the JS API.
     auto [newStyle, animationImpact] = applyAnimations();
 
-    // Deduplication speeds up equality comparisons as the properties inherit to descendants.
-    // FIXME: There should be a more general mechanism for this.
+    // Deduplication speeds up equality comparisons between old and new styles as the properties inherit to descendants.
     if (currentStyle)
-        newStyle->deduplicateCustomProperties(*currentStyle);
+        newStyle->deduplicate(*currentStyle);
 
     auto changes = currentStyle ? determineChanges(*currentStyle, *newStyle) : Change::Renderer;
 

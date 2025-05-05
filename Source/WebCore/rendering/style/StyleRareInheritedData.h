@@ -230,4 +230,6 @@ private:
     StyleRareInheritedData(const StyleRareInheritedData&);
 };
 
+DataAreDifferent deduplicateData(DataRef<StyleRareInheritedData>&, const DataRef<StyleRareInheritedData>&);
+
 } // namespace WebCore

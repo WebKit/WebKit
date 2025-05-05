@@ -93,6 +93,26 @@ void StyleInheritedData::fastPathInheritFrom(const StyleInheritedData& inheritPa
     visitedLinkColor = inheritParent.visitedLinkColor;
 }
 
+DataAreDifferent deduplicateData(DataRef<StyleInheritedData>& data, const DataRef<StyleInheritedData>& otherData)
+{
+    if (data.ptr() == otherData.ptr())
+        return DataAreDifferent::No;
+
+    bool haveDataDifferences = false;
+
+    if (deduplicateData(data->fontData, otherData->fontData) == DataAreDifferent::Yes)
+        haveDataDifferences = true;
+
+    if (haveDataDifferences)
+        return DataAreDifferent::Yes;
+
+    if (*data != *otherData)
+        return DataAreDifferent::Yes;
+
+    data = otherData;
+    return DataAreDifferent::No;
+}
+
 #if !LOG_DISABLED
 void StyleInheritedData::dumpDifferences(TextStream& ts, const StyleInheritedData& other) const
 {
