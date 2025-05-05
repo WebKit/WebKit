@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Backgrounds and Borders Module Level 4: parsing background-position-inline with invalid values</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-inline">
+<meta name="assert" content="background-position-inline supports only the grammar '[ center | [ start | end ]? <length-percentage>? ]#'.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_invalid_value("background-position-inline", "auto");
+test_invalid_value("background-position-inline", "top");
+test_invalid_value("background-position-inline", "bottom");
+test_invalid_value("background-position-inline", "x-start");
+test_invalid_value("background-position-inline", "x-end");
+test_invalid_value("background-position-inline", "y-start");
+test_invalid_value("background-position-inline", "y-end");
+test_invalid_value("background-position-inline", "center 10px");
+test_invalid_value("background-position-inline", "20% left");
+test_invalid_value("background-position-inline", "right left");
+test_invalid_value("background-position-inline", "x-start center");
+test_invalid_value("background-position-inline", "left, center right");
+test_invalid_value("background-position-inline", "start garbage");
+test_invalid_value("background-position-inline", "garbage end");
+test_invalid_value("background-position-inline", "20% garbage");
+test_invalid_value("background-position-inline", "garbage 20px");
+</script>
+</body>
+</html>

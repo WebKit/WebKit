@@ -27,6 +27,7 @@
 #include "CSSPosition.h"
 #include "CSSPropertyParserOptions.h"
 #include <optional>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -42,6 +43,11 @@ namespace CSSPropertyParserHelpers {
 // MARK: <position> | <bg-position>
 // https://drafts.csswg.org/css-values/#position
 
+enum class AllowedPositionKeywords : uint8_t {
+    AxisRelative = 1 << 0,
+    FlowRelative = 1 << 1,
+};
+
 // MARK: <position> (CSSValue)
 RefPtr<CSSValue> consumePosition(CSSParserTokenRange&, CSS::PropertyParserState&);
 
@@ -51,12 +57,20 @@ RefPtr<CSSValue> consumePositionX(CSSParserTokenRange&, CSS::PropertyParserState
 // MARK: <position-y> (CSSValue)
 RefPtr<CSSValue> consumePositionY(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: <background-position-block> (CSSValue)
+RefPtr<CSSValue> consumePositionBlock(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// MARK: <background-position-inline> (CSSValue)
+RefPtr<CSSValue> consumePositionInline(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 
 // MARK: <position> (unresolved)
 std::optional<CSS::Position> consumePositionUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+std::optional<CSS::PositionXY> consumePositionXYUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <bg-position> (unresolved)
 std::optional<CSS::Position> consumeBackgroundPositionUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+std::optional<CSS::PositionXY> consumeBackgroundPositionXYUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <position-x> (unresolved)
 std::optional<CSS::PositionX> consumePositionXUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
@@ -64,16 +78,25 @@ std::optional<CSS::PositionX> consumePositionXUnresolved(CSSParserTokenRange&, C
 // MARK: <position-y> (unresolved)
 std::optional<CSS::PositionY> consumePositionYUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: <position-block> (unresolved)
+std::optional<CSS::PositionLogical> consumePositionBlockUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// MARK: <position-inline> (unresolved)
+std::optional<CSS::PositionLogical> consumePositionInlineUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 
 // MARK: Subset / Special case parsers.
 
-// NOTE: This is only used by the `<-webkit-radial-gradient()>` and `<transform-origin>` parsers.
-std::optional<CSS::Position> consumeOneOrTwoComponentPositionUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+// NOTE: This is only used by the `<-webkit-radial-gradient()>` parser. Does not include axis or flow relative keywords.
+std::optional<CSS::Position> consumeLegacyBackgroundPositionUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-// NOTE: This is only used by the `<horizontal-line-command>` parser
+// NOTE: This is only used by the `<transform-origin>` parser. Does not include axis or flow relative keywords.
+std::optional<CSS::PositionXY> consumeTransformOriginXY(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// NOTE: This is only used by the `<horizontal-line-command>` parser. Does not include flow relative keywords.
 std::optional<CSS::TwoComponentPositionHorizontal> consumeTwoComponentPositionHorizontalUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-// NOTE: This is only used by the `<vertical-line-command>` parser
+// NOTE: This is only used by the `<vertical-line-command>` parser. Does not include flow relative keywords.
 std::optional<CSS::TwoComponentPositionVertical> consumeTwoComponentPositionVerticalUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers

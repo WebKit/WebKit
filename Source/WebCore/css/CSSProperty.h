@@ -111,6 +111,7 @@ public:
     // NOTE: These return true if the CSSPropertyID is member of the named logical
     // property group or is the shorthand of a member of the logical property group.
 
+    static bool isBackgroundPositionProperty(CSSPropertyID);
     static bool isBorderColorProperty(CSSPropertyID);
     static bool isBorderRadiusProperty(CSSPropertyID);
     static bool isBorderStyleProperty(CSSPropertyID);
@@ -127,6 +128,7 @@ public:
     static bool isScrollMarginProperty(CSSPropertyID);
     static bool isScrollPaddingProperty(CSSPropertyID);
     static bool isSizeProperty(CSSPropertyID);
+    static bool isWebkitMaskPositionPositionProperty(CSSPropertyID);
 
     // Check if a property is a sizing property, as defined in:
     // https://drafts.csswg.org/css-sizing-3/#sizing-property

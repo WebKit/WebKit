@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Backgrounds and Borders Module Level 4: background-position with different writing modes</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/computed-testcommon.js"></script>
+<style>
+  #target {
+    font-size: 40px;
+  }
+</style>
+</head>
+<body>
+<div id="target"></div>
+<script>
+const test_cases = [  
+  // writing-mode: horizontal-tb; direction: ltr
+  {
+    style: "writing-mode: horizontal-tb; direction: ltr; background-position-block: start; background-position-inline: start;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: horizontal-tb; direction: ltr; background-position-x: left; background-position-y: top;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+
+  // writing-mode: horizontal-tb; direction: rtl
+  {
+    style: "writing-mode: horizontal-tb; direction: rtl; background-position-block: 0%; background-position-inline: 0%;",
+    expected: {
+      "background-position-x": "100%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "100% 0%",
+    }
+  },
+  {
+    style: "writing-mode: horizontal-tb; direction: rtl; background-position-x: left; background-position-y: top;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "100%",
+      "background-position": "0% 0%",
+    }
+  },
+
+  // writing-mode: vertical-rl; direction: rtl
+  {
+    style: "writing-mode: vertical-rl; direction: rtl; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "100%",
+      "background-position-y": "0%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "100% 0%",
+    }
+  },
+  {
+    style: "writing-mode: vertical-rl; direction: rtl; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "0%",
+      "background-position-inline": "100%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: sideways-rl; direction: rtl
+  {
+    style: "writing-mode: sideways-rl; direction: rtl; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: sideways-rl; direction: rtl; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: vertical-rl; direction: ltr
+  {
+    style: "writing-mode: vertical-rl; direction: ltr; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: vertical-rl; direction: ltr; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: sideways-rl; direction: ltr
+  {
+    style: "writing-mode: sideways-rl; direction: ltr; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: sideways-rl; direction: ltr; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: vertical-lr; direction: rtl
+  {
+    style: "writing-mode: vertical-lr; direction: rtl; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: vertical-lr; direction: rtl; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: sideways-lr; direction: ltr
+  {
+    style: "writing-mode: sideways-lr; direction: ltr; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: sideways-lr; direction: ltr; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: vertical-lr; direction: ltr
+  {
+    style: "writing-mode: vertical-lr; direction: ltr; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: vertical-lr; direction: ltr; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  },
+
+  // writing-mode: sideways-lr; direction: rtl
+  {
+    style: "writing-mode: sideways-lr; direction: rtl; background-position-block: start; background-position-inline: end;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "0%",
+      "background-position-block": "0%",
+      "background-position-inline": "0%",
+      "background-position": "0% 0%",
+    }
+  },
+  {
+    style: "writing-mode: sideways-lr; direction: rtl; background-position-x: left; background-position-y: bottom;",
+    expected: {
+      "background-position-x": "0%",
+      "background-position-y": "100%",
+      "background-position-block": "100%",
+      "background-position-inline": "0%",
+      "background-position": "0% 100%",
+    }
+  }
+];
+
+for (let test_case of test_cases) {
+  test(function(){
+      var div = document.getElementById('target');
+      div.style = "";
+      try {
+          div.style = test_case.style;
+
+          for (let property in test_case.expected) {
+            const readValue = window.getComputedStyle(div)[property];
+            assert_equals(readValue, test_case.expected[property], `computed value for '${property}' matches provided expectation`);
+          }
+      } finally {
+          div.style = "";
+      }
+  }, `Test with style '${test_case.style}'`);
+}
+</script>
+</body>
+</html>

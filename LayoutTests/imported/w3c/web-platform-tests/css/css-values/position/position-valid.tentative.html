@@ -48,6 +48,20 @@ test_valid_value(property, "y-end", "center y-end");
 test_valid_value(property, "10px y-end");
 test_valid_value(property, "left 10px y-end 20%");
 test_valid_value(property, "y-end 20% left 10px", "left 10px y-end 20%");
+
+test_valid_value(property, "block-start", "block-start center");
+test_valid_value(property, "block-end", "block-end center");
+test_valid_value(property, "inline-start", "center inline-start");
+test_valid_value(property, "inline-end", "center inline-end");
+test_valid_value(property, "block-start 10% inline-start 20px");
+test_valid_value(property, "block-end 10% inline-start 20%");
+
+test_valid_value(property, "start start");
+test_valid_value(property, "end end");
+test_valid_value(property, "start end");
+test_valid_value(property, "end start");
+test_valid_value(property, "start 10px start 20%");
+test_valid_value(property, "end 10px start 20%");
 </script>
 </body>
 </html>

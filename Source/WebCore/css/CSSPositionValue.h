@@ -80,8 +80,26 @@ private:
     CSS::PositionY m_position;
 };
 
+class CSSPositionLogicalValue final : public CSSValue {
+public:
+    static Ref<CSSPositionLogicalValue> create(CSS::PositionLogical&&);
+
+    const CSS::PositionLogical& position() const { return m_position; }
+
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSPositionLogicalValue&) const;
+
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+
+private:
+    CSSPositionLogicalValue(CSS::PositionLogical&&);
+
+    CSS::PositionLogical m_position;
+};
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPositionValue, isPositionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPositionXValue, isPositionXValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPositionYValue, isPositionYValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPositionLogicalValue, isPositionLogicalValue())

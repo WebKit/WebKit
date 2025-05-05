@@ -2156,6 +2156,10 @@
             "animation-type": "repeatable list",
             "initial": "0%",
             "codegen-properties": {
+                "logical-property-group": {
+                    "name": "background-position",
+                    "resolver": "horizontal"
+                },
                 "animation-wrapper": "FillLayersWrapper",
                 "fill-layer-name-for-methods": "XPosition",
                 "fill-layer-property": true,
@@ -2171,6 +2175,11 @@
             "animation-type": "repeatable list",
             "initial": "0%",
             "codegen-properties": {
+                "logical-property-group": {
+                    "name": "background-position",
+                    "resolver": "vertical"
+                },
+                "disables-native-appearance": true,
                 "animation-wrapper": "FillLayersWrapper",
                 "fill-layer-name-for-methods": "YPosition",
                 "fill-layer-property": true,
@@ -2180,6 +2189,42 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-y"
+            }
+        },
+        "background-position-block": {
+            "animation-type": "repeatable list",
+            "initial": "0%",
+            "codegen-properties": {
+                "settings-flag": "cssLogicalBackgroundPositionEnabled",
+                "skip-style-builder": true,
+                "logical-property-group": {
+                    "name": "background-position",
+                    "resolver": "block"
+                },
+                "disables-native-appearance": true,
+                "parser-grammar": "<single-background-position-block>#"
+            },
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-block"
+            }
+        },
+        "background-position-inline": {
+            "animation-type": "repeatable list",
+            "initial": "0%",
+            "codegen-properties": {
+                "settings-flag": "cssLogicalBackgroundPositionEnabled",
+                "skip-style-builder": true,
+                "logical-property-group": {
+                    "name": "background-position",
+                    "resolver": "inline"
+                },
+                "disables-native-appearance": true,
+                "parser-grammar": "<single-background-position-inline>#"
+            },
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-inline"
             }
         },
         "background-repeat": {
@@ -5665,6 +5710,10 @@
             "animation-type": "repeatable list",
             "initial": "0%",
             "codegen-properties": {
+                "logical-property-group": {
+                    "name": "-webkit-mask-position-position",
+                    "resolver": "horizontal"
+                },
                 "animation-wrapper": "FillLayersWrapper",
                 "fill-layer-name-for-methods": "XPosition",
                 "fill-layer-property": true,
@@ -5683,10 +5732,56 @@
             "animation-type": "repeatable list",
             "initial": "0%",
             "codegen-properties": {
+                "logical-property-group": {
+                    "name": "-webkit-mask-position-position",
+                    "resolver": "vertical"
+                },
                 "animation-wrapper": "FillLayersWrapper",
                 "fill-layer-name-for-methods": "YPosition",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-webkit-mask-position-y>#"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://drafts.fxtf.org/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-block": {
+            "animation-type": "repeatable list",
+            "initial": "0%",
+            "codegen-properties": {
+                "settings-flag": "cssLogicalBackgroundPositionEnabled",
+                "skip-style-builder": true,
+                "logical-property-group": {
+                    "name": "-webkit-mask-position-position",
+                    "resolver": "block"
+                },
+                "parser-grammar": "<single-webkit-mask-position-block>#"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://drafts.fxtf.org/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-inline": {
+            "animation-type": "repeatable list",
+            "initial": "0%",
+            "codegen-properties": {
+                "settings-flag": "cssLogicalBackgroundPositionEnabled",
+                "skip-style-builder": true,
+                "logical-property-group": {
+                    "name": "-webkit-mask-position-position",
+                    "resolver": "inline"
+                },
+                "parser-grammar": "<single-webkit-mask-position-inline>#"
             },
             "status": {
                 "status": "non-standard",
@@ -13124,14 +13219,34 @@
         "<single-background-position-x>": {
             "grammar": "<position-x>",
             "exported": true,
-            "status": "non-standard",
-            "comment": "Internally used to represent horizontal part of standard <bg-position>"
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-x"
+            }
         },
         "<single-background-position-y>": {
             "grammar": "<position-y>",
             "exported": true,
-            "status": "non-standard",
-            "comment": "Internally used to represent vertical part of standard <bg-position>"
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-y"
+            }
+        },
+        "<single-background-position-block>": {
+            "grammar": "<position-block>",
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-block"
+            }
+        },
+        "<single-background-position-inline>": {
+            "grammar": "<position-inline>",
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-inline"
+            }
         },
         "<single-mask-clip>": {
             "grammar": "<box> | no-clip",
@@ -13210,6 +13325,16 @@
         },
         "<single-webkit-mask-position-y>": {
             "grammar": "<position-y>",
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-position-block>": {
+            "grammar": "<position-block>",
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-position-inline>": {
+            "grammar": "<position-inline>",
             "exported": true,
             "status": "non-standard"
         },

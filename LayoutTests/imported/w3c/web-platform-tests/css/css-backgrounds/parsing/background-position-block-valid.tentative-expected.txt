@@ -1,0 +1,15 @@
+
+PASS e.style['background-position-block'] = "center" should set the property value
+PASS e.style['background-position-block'] = "start" should set the property value
+PASS e.style['background-position-block'] = "end" should set the property value
+PASS e.style['background-position-block'] = "-20%" should set the property value
+PASS e.style['background-position-block'] = "10px" should set the property value
+PASS e.style['background-position-block'] = "0.5em" should set the property value
+PASS e.style['background-position-block'] = "calc(10px - 0.5em)" should set the property value
+PASS e.style['background-position-block'] = "start -20%" should set the property value
+PASS e.style['background-position-block'] = "end 10px" should set the property value
+PASS e.style['background-position-block'] = "-20%, 10px" should set the property value
+PASS e.style['background-position-block'] = "center, start, end" should set the property value
+PASS e.style['background-position-block'] = "0.5em, end, start" should set the property value
+PASS e.style['background-position-block'] = "calc(10px - 0.5em), end -20%, start 10px" should set the property value
+

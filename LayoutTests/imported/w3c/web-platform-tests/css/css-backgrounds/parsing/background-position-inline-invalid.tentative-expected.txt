@@ -1,0 +1,18 @@
+
+PASS e.style['background-position-inline'] = "auto" should not set the property value
+PASS e.style['background-position-inline'] = "top" should not set the property value
+PASS e.style['background-position-inline'] = "bottom" should not set the property value
+PASS e.style['background-position-inline'] = "x-start" should not set the property value
+PASS e.style['background-position-inline'] = "x-end" should not set the property value
+PASS e.style['background-position-inline'] = "y-start" should not set the property value
+PASS e.style['background-position-inline'] = "y-end" should not set the property value
+PASS e.style['background-position-inline'] = "center 10px" should not set the property value
+PASS e.style['background-position-inline'] = "20% left" should not set the property value
+PASS e.style['background-position-inline'] = "right left" should not set the property value
+PASS e.style['background-position-inline'] = "x-start center" should not set the property value
+PASS e.style['background-position-inline'] = "left, center right" should not set the property value
+PASS e.style['background-position-inline'] = "start garbage" should not set the property value
+PASS e.style['background-position-inline'] = "garbage end" should not set the property value
+PASS e.style['background-position-inline'] = "20% garbage" should not set the property value
+PASS e.style['background-position-inline'] = "garbage 20px" should not set the property value
+

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StylePosition.h"
 
+#include "BoxSides.h"
 #include "CalculationCategory.h"
 #include "CalculationTree.h"
 #include "LengthPoint.h"
@@ -114,6 +115,42 @@ template<typename... Args> static auto resolveKeyword(CSS::Keyword::YEnd, const 
         : resolveKeyword(CSS::Keyword::Top { }, state, std::forward<Args>(args)...);
 }
 
+template<typename... Args> static auto resolveKeyword(BoxSide boxSide, Args&&... args) -> LengthPercentage<>
+{
+    switch (boxSide) {
+    case BoxSide::Top:
+        return resolveKeyword(CSS::Keyword::Top { }, std::forward<Args>(args)...);
+    case BoxSide::Right:
+        return resolveKeyword(CSS::Keyword::Right { }, std::forward<Args>(args)...);
+    case BoxSide::Bottom:
+        return resolveKeyword(CSS::Keyword::Bottom { }, std::forward<Args>(args)...);
+    case BoxSide::Left:
+        return resolveKeyword(CSS::Keyword::Left { }, std::forward<Args>(args)...);
+    }
+    ASSERT_NOT_REACHED();
+    return 0_css_percentage;
+}
+
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::BlockStart, const BuilderState& state, Args&&... args) -> LengthPercentage<>
+{
+    return resolveKeyword(mapSideLogicalToPhysical(state.style().writingMode(), LogicalBoxSide::BlockStart), state, std::forward<Args>(args)...);
+}
+
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::BlockEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<>
+{
+    return resolveKeyword(mapSideLogicalToPhysical(state.style().writingMode(), LogicalBoxSide::BlockEnd), state, std::forward<Args>(args)...);
+}
+
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::InlineStart, const BuilderState& state, Args&&... args) -> LengthPercentage<>
+{
+    return resolveKeyword(mapSideLogicalToPhysical(state.style().writingMode(), LogicalBoxSide::InlineStart), state, std::forward<Args>(args)...);
+}
+
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::InlineEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<>
+{
+    return resolveKeyword(mapSideLogicalToPhysical(state.style().writingMode(), LogicalBoxSide::InlineEnd), state, std::forward<Args>(args)...);
+}
+
 // MARK: Horizontal/Vertical
 
 static auto resolve(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<>
@@ -176,6 +213,106 @@ static auto resolve(const CSS::FourComponentPositionVertical& value, const Build
     );
 }
 
+// MARK: Block/Inline
+
+static auto resolve(const CSS::TwoComponentPositionBlock& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(value.offset,
+        [&](auto keyword) {
+            return resolveKeyword(keyword, state);
+        }
+    );
+}
+
+static auto resolve(const CSS::TwoComponentPositionInline& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(value.offset,
+        [&](auto keyword) {
+            return resolveKeyword(keyword, state);
+        }
+    );
+}
+
+static auto resolve(const CSS::FourComponentPositionBlock& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(get<0>(value.offset),
+        [&](auto keyword) {
+            return resolveKeyword(keyword, state, get<1>(value.offset));
+        }
+    );
+}
+
+static auto resolve(const CSS::FourComponentPositionInline& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(get<0>(value.offset),
+        [&](auto keyword) {
+            return resolveKeyword(keyword, state, get<1>(value.offset));
+        }
+    );
+}
+
+// MARK: Start/End
+
+static auto resolveMappingBlock(const CSS::TwoComponentPositionLogical& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(value.offset,
+        [&](CSS::Keyword::Start) {
+            return resolveKeyword(CSS::Keyword::BlockStart { }, state);
+        },
+        [&](CSS::Keyword::End) {
+            return resolveKeyword(CSS::Keyword::BlockEnd { }, state);
+        },
+        [&](CSS::Keyword::Center) {
+            return resolveKeyword(CSS::Keyword::Center { }, state);
+        },
+        [&](const CSS::LengthPercentage<>& value) {
+            return resolveKeyword(CSS::Keyword::BlockStart { }, state, value);
+        }
+    );
+}
+
+static auto resolveMappingInline(const CSS::TwoComponentPositionLogical& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(value.offset,
+        [&](CSS::Keyword::Start) {
+            return resolveKeyword(CSS::Keyword::InlineStart { }, state);
+        },
+        [&](CSS::Keyword::End) {
+            return resolveKeyword(CSS::Keyword::InlineEnd { }, state);
+        },
+        [&](CSS::Keyword::Center) {
+            return resolveKeyword(CSS::Keyword::Center { }, state);
+        },
+        [&](const CSS::LengthPercentage<>& value) {
+            return resolveKeyword(CSS::Keyword::InlineStart { }, state, value);
+        }
+    );
+}
+
+static auto resolveMappingBlock(const CSS::FourComponentPositionLogical& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(get<0>(value.offset),
+        [&](CSS::Keyword::Start) {
+            return resolveKeyword(CSS::Keyword::BlockStart { }, state, get<1>(value.offset));
+        },
+        [&](CSS::Keyword::End) {
+            return resolveKeyword(CSS::Keyword::BlockEnd { }, state, get<1>(value.offset));
+        }
+    );
+}
+
+static auto resolveMappingInline(const CSS::FourComponentPositionLogical& value, const BuilderState& state) -> LengthPercentage<>
+{
+    return WTF::switchOn(get<0>(value.offset),
+        [&](CSS::Keyword::Start) {
+            return resolveKeyword(CSS::Keyword::InlineStart { }, state, get<1>(value.offset));
+        },
+        [&](CSS::Keyword::End) {
+            return resolveKeyword(CSS::Keyword::InlineEnd { }, state, get<1>(value.offset));
+        }
+    );
+}
+
 auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> TwoComponentPositionHorizontal
 {
     return { resolve(value, state) };
@@ -201,6 +338,32 @@ auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const Bui
                 resolve(get<0>(components), state),
                 resolve(get<1>(components), state),
             };
+        },
+        [&]<CSS::IsBlockInlineComponents T>(const T& components) {
+            if (state.style().writingMode().isHorizontal()) {
+                return Position {
+                    resolve(get<1>(components), state),
+                    resolve(get<0>(components), state),
+                };
+            } else {
+                return Position {
+                    resolve(get<0>(components), state),
+                    resolve(get<1>(components), state),
+                };
+            }
+        },
+        [&]<CSS::IsStartEndComponents T>(const T& components) {
+            if (state.style().writingMode().isHorizontal()) {
+                return Position {
+                    resolveMappingInline(get<1>(components), state),
+                    resolveMappingBlock(get<0>(components), state),
+                };
+            } else {
+                return Position {
+                    resolveMappingBlock(get<0>(components), state),
+                    resolveMappingInline(get<1>(components), state),
+                };
+            }
         }
     );
 }

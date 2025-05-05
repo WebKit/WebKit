@@ -597,6 +597,9 @@ inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builder
 
 inline WebCore::Length BuilderConverter::convertPositionComponentX(BuilderState& builderState, const CSSValue& value)
 {
+    if (RefPtr positionLogicalValue = dynamicDowncast<CSSPositionLogicalValue>(value))
+        return Style::toPlatform(Style::toStyle(CSS::resolveToPhysicalX(positionLogicalValue->position(), builderState.style().writingMode()), builderState));
+
     RefPtr positionXValue = requiredDowncast<CSSPositionXValue>(builderState, value);
     if (!positionXValue)
         return { };
@@ -605,6 +608,9 @@ inline WebCore::Length BuilderConverter::convertPositionComponentX(BuilderState&
 
 inline WebCore::Length BuilderConverter::convertPositionComponentY(BuilderState& builderState, const CSSValue& value)
 {
+    if (RefPtr positionLogicalValue = dynamicDowncast<CSSPositionLogicalValue>(value))
+        return Style::toPlatform(Style::toStyle(CSS::resolveToPhysicalY(positionLogicalValue->position(), builderState.style().writingMode()), builderState));
+
     RefPtr positionYValue = requiredDowncast<CSSPositionYValue>(builderState, value);
     if (!positionYValue)
         return { };

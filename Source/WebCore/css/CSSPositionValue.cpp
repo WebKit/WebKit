@@ -113,4 +113,32 @@ IterationStatus CSSPositionYValue::customVisitChildren(NOESCAPE const Function<I
     return CSS::visitCSSValueChildren(func, m_position);
 }
 
+// MARK: PositionLogical
+
+Ref<CSSPositionLogicalValue> CSSPositionLogicalValue::create(CSS::PositionLogical&& position)
+{
+    return adoptRef(*new CSSPositionLogicalValue(WTFMove(position)));
+}
+
+CSSPositionLogicalValue::CSSPositionLogicalValue(CSS::PositionLogical&& position)
+    : CSSValue(ClassType::PositionLogical)
+    , m_position(WTFMove(position))
+{
+}
+
+String CSSPositionLogicalValue::customCSSText(const CSS::SerializationContext& context) const
+{
+    return CSS::serializationForCSS(context, m_position);
+}
+
+bool CSSPositionLogicalValue::equals(const CSSPositionLogicalValue& other) const
+{
+    return m_position == other.m_position;
+}
+
+IterationStatus CSSPositionLogicalValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return CSS::visitCSSValueChildren(func, m_position);
+}
+
 } // namespace WebCore

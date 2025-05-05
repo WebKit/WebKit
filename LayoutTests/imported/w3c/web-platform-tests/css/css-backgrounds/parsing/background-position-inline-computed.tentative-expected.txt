@@ -1,0 +1,16 @@
+
+PASS Property background-position-inline value 'center'
+PASS Property background-position-inline value 'start'
+PASS Property background-position-inline value 'end'
+PASS Property background-position-inline value '-20%'
+PASS Property background-position-inline value '10px'
+PASS Property background-position-inline value '0.5em'
+PASS Property background-position-inline value 'calc(10px - 0.5em)'
+PASS Property background-position-inline value 'start -20%'
+PASS Property background-position-inline value 'end -10px'
+PASS Property background-position-inline value '-20%, 10px'
+PASS Property background-position-inline value 'center, start, end'
+PASS Property background-position-inline value '0.5em, center'
+PASS Property background-position-inline value 'calc(10px - 0.5em), -20%, 10px'
+PASS Property background-position-inline value 'calc(10px - 0.5em), start -20%, end 10px'
+

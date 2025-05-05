@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Backgrounds and Borders Module Level 4: parsing background-position-inline with valid values</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-inline">
+<meta name="assert" content="background-position-inline supports the full grammar '[ center | [ start | end ]? <length-percentage>? ]#'.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_valid_value("background-position-inline", "center");
+test_valid_value("background-position-inline", "start");
+test_valid_value("background-position-inline", "end");
+test_valid_value("background-position-inline", "-20%");
+test_valid_value("background-position-inline", "10px");
+test_valid_value("background-position-inline", "0.5em");
+test_valid_value("background-position-inline", "calc(10px - 0.5em)", "calc(-0.5em + 10px)");
+test_valid_value("background-position-inline", "start -20%");
+test_valid_value("background-position-inline", "end 10px");
+test_valid_value("background-position-inline", "-20%, 10px");
+test_valid_value("background-position-inline", "center, start, end");
+test_valid_value("background-position-inline", "0.5em, end, start");
+test_valid_value("background-position-inline", "calc(10px - 0.5em), end -20%, start 10px", "calc(-0.5em + 10px), end -20%, start 10px");
+</script>
+</body>
+</html>

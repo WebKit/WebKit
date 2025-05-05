@@ -201,6 +201,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPositionXValue>(*this));
     case PositionY:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPositionYValue>(*this));
+    case PositionLogical:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPositionLogicalValue>(*this));
     case Primitive:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPrimitiveValue>(*this));
     case Quad:
