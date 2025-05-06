@@ -278,7 +278,13 @@ public:
     using DirectJITCode::initializeCodeRefForDFG;
 
     PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
-    
+
+    unsigned numberOfCompiledDFGNodes() const { return m_numberOfCompiledDFGNodes; }
+    void setNumberOfCompiledDFGNodes(unsigned numberOfCompiledDFGNodes)
+    {
+        m_numberOfCompiledDFGNodes = numberOfCompiledDFGNodes;
+    }
+
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().
 
@@ -321,6 +327,7 @@ public:
     unsigned osrEntryRetry { 0 };
     bool abandonOSREntry { false };
 #endif // ENABLE(FTL_JIT)
+    unsigned m_numberOfCompiledDFGNodes { 0 };
 };
 
 inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)

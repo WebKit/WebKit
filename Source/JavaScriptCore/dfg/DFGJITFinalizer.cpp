@@ -63,6 +63,14 @@ bool JITFinalizer::finalize()
 
     CodeBlock* codeBlock = m_plan.codeBlock();
 
+    if (UNLIKELY(Options::dumpDFGCodeSize())) {
+        auto* baselineCodeBlock = codeBlock->baselineAlternative();
+        size_t baselineCodeSize = 0;
+        if (auto jitCode = baselineCodeBlock->jitCode())
+            baselineCodeSize = jitCode->size();
+        dataLogLn("DFG: codeSize:(", m_jitCode->size(), "),nodes:(", m_jitCode->numberOfCompiledDFGNodes(), "),baselineCodeSize:(", baselineCodeSize, "),bytecodeCost:(", baselineCodeBlock->bytecodeCost(), ")");
+    }
+
     codeBlock->setJITCode(m_jitCode.copyRef());
 
     auto data = m_plan.tryFinalizeJITData(m_jitCode.get());
