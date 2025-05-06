@@ -1787,6 +1787,29 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
     return !geometry.hasNonLocalGeometry;
 }
 
+LayoutRect RenderBox::backgroundClipRect() const
+{
+    // FIXME: Check for the maximum background clip rect.
+    switch (style().backgroundClip()) {
+    case FillBox::BorderBox:
+        // A 'border-box' clip on scrollable elements local attachment is treated as 'padding-box'.
+        // https://www.w3.org/TR/css-backgrounds-3/#the-background-attachment
+        if (!style().isOverflowVisible() && style().backgroundLayers().attachment() == FillAttachment::LocalBackground)
+            return paddingBoxRect();
+        return borderBoxRect();
+        break;
+    case FillBox::PaddingBox:
+        return paddingBoxRect();
+        break;
+    case FillBox::ContentBox:
+        return contentBoxRect();
+        break;
+    default:
+        break;
+    }
+    return { };
+}
+
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
     if (!BackgroundPainter::paintsOwnBackground(*this))
@@ -1814,21 +1837,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     // FIXME: The background color clip is defined by the last layer.
     if (style().backgroundLayers().next())
         return false;
-    LayoutRect backgroundRect;
-    switch (style().backgroundClip()) {
-    case FillBox::BorderBox:
-        backgroundRect = borderBoxRect();
-        break;
-    case FillBox::PaddingBox:
-        backgroundRect = paddingBoxRect();
-        break;
-    case FillBox::ContentBox:
-        backgroundRect = contentBoxRect();
-        break;
-    default:
-        break;
-    }
-    return backgroundRect.contains(localRect);
+    return backgroundClipRect().contains(localRect);
 }
 
 static bool isCandidateForOpaquenessTest(const RenderBox& childBox)

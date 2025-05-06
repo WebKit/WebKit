@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3538,30 +3539,13 @@ LayoutRect RenderLayerBacking::contentsBox() const
     return contentsRect;
 }
 
-static LayoutRect backgroundRectForBox(const RenderBox& box)
-{
-    switch (box.style().backgroundClip()) {
-    case FillBox::BorderBox:
-        return box.borderBoxRect();
-    case FillBox::PaddingBox:
-        return box.paddingBoxRect();
-    case FillBox::ContentBox:
-        return box.contentBoxRect();
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 FloatRect RenderLayerBacking::backgroundBoxForSimpleContainerPainting() const
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer());
     if (!box)
         return FloatRect();
 
-    LayoutRect backgroundBox = backgroundRectForBox(*box);
+    LayoutRect backgroundBox = box->backgroundClipRect();
     backgroundBox.move(contentOffsetInCompositingLayer());
     return snapRectToDevicePixels(backgroundBox, deviceScaleFactor());
 }
