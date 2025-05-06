@@ -27,6 +27,7 @@
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerQuirks.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
@@ -119,6 +120,11 @@ unsigned long AudioDestination::maxChannelCount()
 AudioDestinationGStreamer::AudioDestinationGStreamer(const CreationOptions& options)
     : AudioDestination(options)
     , m_renderBus(AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
+#if ENABLE(WPE_PLATFORM)
+    , m_audioSinkStartedCallback(WTF::move(options.audioSinkStarted))
+    , m_audioSinkStoppedCallback(WTF::move(options.audioSinkStopped))
+    , m_audioSinkSocketPath(options.audioSinkSocketPath)
+#endif
 {
 }
 
@@ -156,7 +162,24 @@ void AudioDestinationGStreamer::initializePipeline()
     webkitWebAudioSourceSetDestination(WEBKIT_WEB_AUDIO_SRC(m_src.get()), this);
 
     auto& quirksManager = GStreamerQuirksManager::singleton();
-    GRefPtr<GstElement> audioSink = quirksManager.createWebAudioSink();
+    GRefPtr<GstElement> audioSink;
+#if ENABLE(WPE_PLATFORM)
+    if (!m_audioSinkSocketPath.isEmpty())
+        audioSink = createPlatformAudioSink("music"_s, { }, nullptr, m_audioSinkSocketPath.isolatedCopy());
+    if (WEBKIT_IS_AUDIO_SINK(audioSink.get()) && !m_audioSinkSocketPath.isEmpty()) {
+        webkitAudioSinkSetStartedCallback(WEBKIT_AUDIO_SINK(audioSink.get()), [&](const auto& path) {
+            m_audioSinkStartedCallback(path);
+        });
+        webkitAudioSinkSetStoppedCallback(WEBKIT_AUDIO_SINK(audioSink.get()), [&](const auto& path) {
+            m_audioSinkStoppedCallback(path);
+        });
+    }
+#endif
+    if (!audioSink)
+        audioSink = quirksManager.createWebAudioSink();
+    if (!audioSink)
+        audioSink = createPlatformAudioSink("music"_s);
+
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");

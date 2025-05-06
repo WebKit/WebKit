@@ -77,7 +77,10 @@ struct _WPEViewClass
     gboolean           (* can_be_mapped)         (WPEView            *view);
     WPEViewAccessible *(* get_accessible)        (WPEView            *view);
 
-    gpointer padding[32];
+    gchar             *(* request_audio_sink_socket) (WPEView *view);
+    void              *(* audio_sink_started)        (WPEView *view);
+
+    gpointer padding[30];
 };
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
@@ -155,6 +158,12 @@ WPE_API void                  wpe_view_set_gesture_controller       (WPEView    
                                                                      WPEGestureController *controller);
 WPE_API WPEGestureController *wpe_view_get_gesture_controller       (WPEView            *view);
 WPE_API WPEViewAccessible    *wpe_view_get_accessible               (WPEView            *view);
+
+WPE_API gchar                  *wpe_view_request_audio_sink_socket     (WPEView            *view);
+WPE_API void                    wpe_view_audio_sink_started            (WPEView            *view,
+                                                                        const gchar        *path);
+WPE_API void                    wpe_view_audio_sink_stopped            (WPEView            *view,
+                                                                        const gchar        *path);
 
 G_END_DECLS
 

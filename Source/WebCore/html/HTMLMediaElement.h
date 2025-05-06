@@ -1195,6 +1195,12 @@ private:
     void setScreenReserved(bool);
 #endif
 
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    String requestAudioSinkSocket() final;
+    void audioSinkStarted(const String&) final;
+    void audioSinkStopped(const String&) final;
+#endif
+
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;

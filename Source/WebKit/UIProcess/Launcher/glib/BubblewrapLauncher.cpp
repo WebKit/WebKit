@@ -468,6 +468,15 @@ static void bindGStreamerData(Vector<CString>& args)
     args.appendList({ "--dev-bind-try", "/dev/udmabuf", "/dev/udmabuf" });
 }
 
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+static void bindClientSideAudioSockets(Vector<CString>& args)
+{
+    GUniquePtr<char> audioSocketsDir(g_build_filename(g_get_user_runtime_dir(), "wpe-audio", nullptr));
+    FileSystem::makeAllDirectories(String::fromUTF8(audioSocketsDir.get()));
+    bindIfExists(args, audioSocketsDir.get(), BindFlags::ReadWrite);
+}
+#endif
+
 static void bindOpenGL(Vector<CString>& args)
 {
     args.appendList({
@@ -966,6 +975,9 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 #endif
 #if PLATFORM(GTK)
         bindGtkData(sandboxArgs);
+#endif
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+        bindClientSideAudioSockets(sandboxArgs);
 #endif
         dbusProxy.launch(launchOptions);
     } else {

@@ -62,6 +62,7 @@ private:
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_volumeElement;
     GRefPtr<GstElement> m_pitchElement;
+    GRefPtr<GstElement> m_sink;
 };
 
 GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthesizer& synthesizer)
@@ -78,14 +79,20 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
     });
 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_FLITE_SRC, nullptr));
-    GRefPtr<GstElement> audioSink = createPlatformAudioSink("speech"_s);
-    if (!audioSink) {
+
+    String socketPath;
+#if ENABLE(WPE_PLATFORM)
+    socketPath = m_platformSynthesizer.client().requestAudioSinkSocket();
+#endif
+
+    m_sink = createPlatformAudioSink("speech"_s, { }, nullptr, WTF::move(socketPath));
+    if (!m_sink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
         return;
     }
 
-    if (!WEBKIT_IS_AUDIO_SINK(audioSink.get())) {
-        g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
+    if (!WEBKIT_IS_AUDIO_SINK(m_sink.get())) {
+        g_signal_connect(m_sink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
             if (GST_IS_AUDIO_BASE_SINK(object))
                 g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
         }), nullptr);
@@ -93,12 +100,21 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
         // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition
         // so it's best to roll it to READY as soon as possible to ensure the underlying platform
         // audiosink was loaded correctly.
-        GstStateChangeReturn stateChangeReturn = gst_element_set_state(audioSink.get(), GST_STATE_READY);
+        GstStateChangeReturn stateChangeReturn = gst_element_set_state(m_sink.get(), GST_STATE_READY);
         if (stateChangeReturn == GST_STATE_CHANGE_FAILURE) {
             GST_ERROR("Failed to change autoaudiosink element state");
-            gst_element_set_state(audioSink.get(), GST_STATE_NULL);
+            gst_element_set_state(m_sink.get(), GST_STATE_NULL);
             return;
         }
+#if ENABLE(WPE_PLATFORM)
+    } else if (!socketPath.isEmpty()) {
+        webkitAudioSinkSetStartedCallback(WEBKIT_AUDIO_SINK(m_sink.get()), [&](const auto& path) {
+            m_platformSynthesizer.client().audioSinkStarted(path);
+        });
+        webkitAudioSinkSetStoppedCallback(WEBKIT_AUDIO_SINK(m_sink.get()), [&](const auto& path) {
+            m_platformSynthesizer.client().audioSinkStopped(path);
+        });
+#endif
     }
 
     m_volumeElement = makeGStreamerElement("volume"_s);
@@ -109,18 +125,18 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
     GRefPtr<GstElement> audioConvert = makeGStreamerElement("audioconvert"_s);
     GRefPtr<GstElement> audioResample = makeGStreamerElement("audioresample"_s);
     if (m_pitchElement)
-        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), m_volumeElement.get(), audioConvert.get(), audioResample.get(), m_pitchElement.get(), audioSink.get(), nullptr);
+        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), m_volumeElement.get(), audioConvert.get(), audioResample.get(), m_pitchElement.get(), m_sink.get(), nullptr);
     else
-        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), m_volumeElement.get(), audioConvert.get(), audioResample.get(), audioSink.get(), nullptr);
+        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), m_volumeElement.get(), audioConvert.get(), audioResample.get(), m_sink.get(), nullptr);
 
     gst_element_link_pads_full(m_src.get(), "src", m_volumeElement.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(m_volumeElement.get(), "src", audioConvert.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert.get(), "src", audioResample.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
     if (m_pitchElement) {
         gst_element_link_pads_full(audioResample.get(), "src", m_pitchElement.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(m_pitchElement.get(), "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+        gst_element_link_pads_full(m_pitchElement.get(), "src", m_sink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
     } else
-        gst_element_link_pads_full(audioResample.get(), "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+        gst_element_link_pads_full(audioResample.get(), "src", m_sink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
 
 GstSpeechSynthesisWrapper::~GstSpeechSynthesisWrapper()

@@ -468,6 +468,12 @@ public:
 
     // PlatformSpeechSynthesizerClient
     void voicesDidChange() final;
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    String requestAudioSinkSocket() final;
+    void audioSinkStarted(const String&) final;
+    void audioSinkStopped(const String&) final;
+#endif
+
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

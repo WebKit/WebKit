@@ -894,6 +894,12 @@ public:
     virtual void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
     virtual void dismissImmersiveElement(CompletionHandler<void()>&& completion) const { completion(); }
 #endif
+
+#if ENABLE(WPE_PLATFORM)
+    virtual void requestAudioSinkSocket(CompletionHandler<void(String)> &&) = 0;
+    virtual void audioSinkStarted(const String &) = 0;
+    virtual void audioSinkStopped(const String &) = 0;
+#endif
 };
 
 } // namespace WebKit

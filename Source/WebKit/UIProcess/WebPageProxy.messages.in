@@ -615,6 +615,12 @@ messages -> WebPageProxy {
     SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
+#if ENABLE(WPE_PLATFORM)
+    RequestAudioSinkSocket() -> (String result) Synchronous
+    AudioSinkStarted(String path)
+    AudioSinkStopped(String path)
+#endif
+
     DidFindTextManipulationItems(Vector<WebCore::TextManipulationItem> items)
 
 #if ENABLE(MEDIA_USAGE)

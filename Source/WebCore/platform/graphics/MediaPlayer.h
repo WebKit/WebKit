@@ -359,8 +359,15 @@ public:
     virtual bool canShowWhileLocked() const { return false; }
 #endif
 
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual MediaPlaybackTargetType playbackTargetType() const { return MediaPlaybackTargetType::None; }
+#endif
+
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    virtual String requestAudioSinkSocket() { return emptyString(); }
+    virtual void audioSinkStarted(const String &) { }
+    virtual void audioSinkStopped(const String &) { }
 #endif
 };
 
@@ -680,6 +687,12 @@ public:
 #if USE(GSTREAMER)
     void simulateAudioInterruption();
     bool isGStreamerHolePunchingEnabled();
+#endif
+
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    String requestAudioSinkSocket();
+    void audioSinkStarted(const String&);
+    void audioSinkStopped(const String &);
 #endif
 
     String languageOfPrimaryAudioTrack() const;

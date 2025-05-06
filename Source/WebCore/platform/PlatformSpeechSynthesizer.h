@@ -65,6 +65,11 @@ public:
     virtual void speakingErrorOccurred(PlatformSpeechSynthesisUtterance&) = 0;
     virtual void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex, unsigned charLength) = 0;
     virtual void voicesDidChange() = 0;
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    virtual String requestAudioSinkSocket() = 0;
+    virtual void audioSinkStarted(const String&) = 0;
+    virtual void audioSinkStopped(const String&) = 0;
+#endif
 protected:
     virtual ~PlatformSpeechSynthesizerClient() = default;
 };

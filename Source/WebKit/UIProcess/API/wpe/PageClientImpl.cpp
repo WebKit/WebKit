@@ -600,4 +600,26 @@ RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::Int
     return nullptr;
 }
 
+void PageClientImpl::requestAudioSinkSocket(CompletionHandler<void(String)>&& completionHandler)
+{
+    auto view = m_view.wpeView();
+    if (!view) {
+        completionHandler({ });
+        return;
+    }
+
+    GUniquePtr<char> path(wpe_view_request_audio_sink_socket(view));
+    completionHandler(String::fromUTF8(path.get()));
+}
+
+void PageClientImpl::audioSinkStarted(const String& path)
+{
+    wpe_view_audio_sink_started(m_view.wpeView(), path.utf8().data());
+}
+
+void PageClientImpl::audioSinkStopped(const String& path)
+{
+    wpe_view_audio_sink_stopped(m_view.wpeView(), path.utf8().data());
+}
+
 } // namespace WebKit

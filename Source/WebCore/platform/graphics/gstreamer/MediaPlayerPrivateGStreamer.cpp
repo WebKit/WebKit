@@ -1604,20 +1604,44 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     auto role = player->isVideoPlayer() ? "video"_s : "music"_s;
     GstElement* audioSink = nullptr;
 
+    String socketPath;
+#if ENABLE(WPE_PLATFORM)
+    socketPath = player->requestAudioSinkSocket();
+    bool hasSocketPath = !socketPath.isEmpty();
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     auto deviceId = player->audioOutputDeviceId();
     if (!deviceId.isEmpty()) {
         auto [resolvedId, device] = resolveAudioOutputDevice(deviceId);
         if (device)
-            audioSink = createPlatformAudioSink(role, resolvedId, device);
+            audioSink = createPlatformAudioSink(role, resolvedId, device, WTF::move(socketPath));
     }
 #endif
 
     if (!audioSink)
-        audioSink = createPlatformAudioSink(role);
+        audioSink = createPlatformAudioSink(role, { }, nullptr, WTF::move(socketPath));
     RELEASE_ASSERT(audioSink);
     if (!audioSink)
         return nullptr;
+
+
+#if ENABLE(WPE_PLATFORM)
+    if (WEBKIT_IS_AUDIO_SINK(audioSink) && hasSocketPath) {
+        webkitAudioSinkSetStartedCallback(WEBKIT_AUDIO_SINK(audioSink), [&](const auto& path) {
+            callOnMainThreadAndWait([&] {
+                if (RefPtr player = m_player.get())
+                    player->audioSinkStarted(path);
+            });
+        });
+        webkitAudioSinkSetStoppedCallback(WEBKIT_AUDIO_SINK(audioSink), [&](const auto& path) {
+            callOnMainThreadAndWait([&] {
+                if (RefPtr player = m_player.get())
+                    player->audioSinkStopped(path);
+            });
+        });
+    }
+#endif
 
 #if ENABLE(WEB_AUDIO)
     GstElement* audioSinkBin = gst_bin_new("audio-sink");
@@ -2253,13 +2277,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GstState newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
 
+        auto element = GST_ELEMENT_CAST(GST_MESSAGE_SRC(message));
         if (isHolePunchRenderingEnabled() && currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
             // If we didn't create a video sink, store a reference to the created one.
             if (!m_videoSink) {
                 // Detect the videoSink element. Getting the video-sink property of the pipeline requires
                 // locking some elements, which may lead to deadlocks during playback. Instead, identify
                 // the videoSink based on its metadata.
-                GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
                 if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
                     auto klassStr = CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
                     if (contains(klassStr.span(), "Sink"_s)  && contains(klassStr.span(), "Video"_s)) {
@@ -2275,7 +2299,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         auto& quirksManager = GStreamerQuirksManager::singleton();
         if (quirksManager.isEnabled() && currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
             // Detect an audio sink element and store reference to it if it supersedes what we currently have.
-            GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
             if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
                 auto klassStr = CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
                 if (contains(klassStr.span(), "Sink"_s) && contains(klassStr.span(), "Audio"_s)

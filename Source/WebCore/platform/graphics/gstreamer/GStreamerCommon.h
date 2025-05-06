@@ -293,7 +293,8 @@ bool isGStreamerPluginAvailable(ASCIILiteral name);
 bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 
 GstElement* createAutoAudioSink(const String& role);
-GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+
+GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { }, String&& sharedMemory = { });
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
     return true;

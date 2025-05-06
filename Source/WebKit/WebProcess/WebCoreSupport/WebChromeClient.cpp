@@ -2509,6 +2509,23 @@ void WebChromeClient::setNeedsFixedContainerEdgesUpdate()
     m_page->setNeedsFixedContainerEdgesUpdate();
 }
 
+#if ENABLE(WPE_PLATFORM)
+String WebChromeClient::requestAudioSinkSocket()
+{
+    return m_page->requestAudioSinkSocket();
+}
+
+void WebChromeClient::audioSinkStarted(const String& path)
+{
+    m_page->audioSinkStarted(path);
+}
+
+void WebChromeClient::audioSinkStopped(const String& path)
+{
+    m_page->audioSinkStopped(path);
+}
+#endif
+
 bool WebChromeClient::usePluginRendererScrollableArea(LocalFrame& frame) const
 {
 #if ENABLE(PDF_PLUGIN)

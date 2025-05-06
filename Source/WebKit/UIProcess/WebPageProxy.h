@@ -2725,6 +2725,12 @@ public:
 
     WebPageProxyMessageReceiverRegistration& NODELETE messageReceiverRegistration() LIFETIME_BOUND;
 
+#if ENABLE(WPE_PLATFORM)
+    void requestAudioSinkSocket(CompletionHandler<void(String)>&&);
+    void audioSinkStarted(const String&);
+    void audioSinkStopped(const String&);
+#endif
+
 #if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
     bool shouldAllowAutoFillForCellularIdentifiers() const;
 #endif

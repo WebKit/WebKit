@@ -10515,6 +10515,35 @@ void HTMLMediaElement::setScreenReserved(bool reserved)
 }
 #endif
 
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+String HTMLMediaElement::requestAudioSinkSocket()
+{
+    auto page = protect(document().page());
+    if (!page)
+        return emptyString();
+
+    return page->requestAudioSinkSocket();
+}
+
+void HTMLMediaElement::audioSinkStarted(const String& path)
+{
+    auto page = protect(document().page());
+    if (!page)
+        return;
+
+    page->audioSinkStarted(path);
+}
+
+void HTMLMediaElement::audioSinkStopped(const String& path)
+{
+    auto page = protect(document().page());
+    if (!page)
+        return;
+
+    page->audioSinkStopped(path);
+}
+#endif // USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)

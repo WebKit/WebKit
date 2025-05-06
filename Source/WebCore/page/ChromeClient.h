@@ -801,6 +801,12 @@ public:
     virtual void foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&&) const { }
 #endif
 
+#if ENABLE(WPE_PLATFORM)
+    virtual String requestAudioSinkSocket() { return emptyString(); }
+    virtual void audioSinkStarted(const String &) { }
+    virtual void audioSinkStopped(const String &) { }
+#endif
+
     virtual bool usePluginRendererScrollableArea(LocalFrame&) const { return true; }
 
 #if ENABLE(VIDEO)
