@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,13 @@
 
 #include "DOMPoint.h"
 #include "DOMRect.h"
+#include "WebCoreTZoneInlines.h"
 #include <wtf/MathExtras.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace WTF;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMQuad);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMQuad);
 
 DOMQuad::DOMQuad(const DOMPointInit& p1, const DOMPointInit& p2, const DOMPointInit& p3, const DOMPointInit& p4)
     : m_p1(DOMPoint::create(p1))

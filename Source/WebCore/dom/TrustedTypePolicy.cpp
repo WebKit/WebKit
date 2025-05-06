@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +33,12 @@
 #include "TrustedType.h"
 #include "TrustedTypePolicyOptions.h"
 #include "WebCoreOpaqueRoot.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrustedTypePolicy);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrustedTypePolicy);
 
 Ref<TrustedTypePolicy> TrustedTypePolicy::create(const String& name, const TrustedTypePolicyOptions& options)
 {

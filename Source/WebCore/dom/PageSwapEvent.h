@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,11 @@
 #include "Event.h"
 #include "NavigationActivation.h"
 #include "ViewTransition.h"
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PageSwapEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PageSwapEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(PageSwapEvent);
 public:
     struct Init : EventInit {
         RefPtr<NavigationActivation> activation;

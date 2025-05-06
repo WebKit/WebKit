@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,12 @@
 #include "IdleDeadline.h"
 #include "Page.h"
 #include "Timer.h"
+#include "WebCoreTZoneInlines.h"
 #include "WindowEventLoop.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(IdleCallbackController);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(IdleCallbackController);
 
 IdleCallbackController::IdleCallbackController(Document& document)
     : m_document(document)

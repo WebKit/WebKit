@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,11 +23,11 @@
 #include "Comment.h"
 
 #include "Document.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Comment);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Comment);
 
 inline Comment::Comment(Document& document, String&& text)
     : CharacterData(document, WTFMove(text), COMMENT_NODE)

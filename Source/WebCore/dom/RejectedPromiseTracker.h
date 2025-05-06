@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -47,7 +46,7 @@ class ScriptExecutionContext;
 class UnhandledPromise;
 
 class RejectedPromiseTracker final : public CanMakeCheckedPtr<RejectedPromiseTracker> {
-    WTF_MAKE_TZONE_ALLOCATED(RejectedPromiseTracker);
+    DOM_MAKE_TZONE_ALLOCATED(RejectedPromiseTracker);
     WTF_MAKE_NONCOPYABLE(RejectedPromiseTracker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RejectedPromiseTracker);
 public:

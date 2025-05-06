@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,13 +23,12 @@
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class SpaceSplitStringData {
-    WTF_MAKE_TZONE_ALLOCATED(SpaceSplitStringData);
+    DOM_MAKE_TZONE_ALLOCATED(SpaceSplitStringData);
     WTF_MAKE_NONCOPYABLE(SpaceSplitStringData);
 public:
     static RefPtr<SpaceSplitStringData> create(const AtomString&);

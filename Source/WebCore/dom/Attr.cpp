@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,13 +37,13 @@
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "TreeScopeInlines.h"
+#include "WebCoreTZoneInlines.h"
 #include "XMLNSNames.h"
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Attr);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Attr);
 
 using namespace HTMLNames;
 

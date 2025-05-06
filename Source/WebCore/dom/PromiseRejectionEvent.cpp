@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2017 Apple Inc. All rights reserved.
+* Copyright (C) 2017-2025 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -28,14 +28,14 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSDOMPromise.h"
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PromiseRejectionEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PromiseRejectionEvent);
 
 PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::PromiseRejectionEvent, type, initializer, isTrusted)

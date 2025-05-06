@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include "XMLNames.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
-#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MATHML)
 #include "MathMLNames.h"
@@ -46,7 +45,7 @@ enum class NodeName : uint16_t;
 namespace WebCore {
 
 class QualifiedNameCache {
-    WTF_MAKE_TZONE_ALLOCATED(QualifiedNameCache);
+    DOM_MAKE_TZONE_ALLOCATED(QualifiedNameCache);
 public:
     QualifiedNameCache() = default;
 

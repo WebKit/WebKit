@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class CustomStateSet final : public ScriptWrappable, public RefCounted<CustomStateSet> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomStateSet);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(CustomStateSet);
 
 public:
     static Ref<CustomStateSet> create(Element& element)

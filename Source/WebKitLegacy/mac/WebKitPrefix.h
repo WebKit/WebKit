@@ -93,6 +93,6 @@ typedef float CGFloat;
 #undef catch
 
 #ifdef __cplusplus
+#include <WebCore/WebCoreTZone.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/TZoneMalloc.h>
 #endif

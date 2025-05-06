@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
@@ -34,10 +34,10 @@
 #include "EventListenerOptions.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include "WebCoreTZone.h"
 #include <memory>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -54,7 +54,7 @@ class EventTarget;
 class JSEventListener;
 
 struct EventTargetData {
-    WTF_MAKE_TZONE_ALLOCATED(EventTargetData);
+    DOM_MAKE_TZONE_ALLOCATED(EventTargetData);
     WTF_MAKE_NONCOPYABLE(EventTargetData);
 public:
     EventTargetData() = default;
@@ -80,7 +80,7 @@ private:
 };
 
 class EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTarget);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
 

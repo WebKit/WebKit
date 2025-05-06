@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -30,7 +30,6 @@
 #include "Timer.h"
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -49,7 +48,7 @@ enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
 enum class FilterMarkerResult : bool { Keep, Remove };
 
 class DocumentMarkerController final : public CanMakeCheckedPtr<DocumentMarkerController> {
-    WTF_MAKE_TZONE_ALLOCATED(DocumentMarkerController);
+    DOM_MAKE_TZONE_ALLOCATED(DocumentMarkerController);
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentMarkerController);
 public:

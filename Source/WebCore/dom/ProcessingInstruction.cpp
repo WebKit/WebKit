@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -36,14 +36,14 @@
 #include "NodeInlines.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "WebCoreTZoneInlines.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
 #include <wtf/SetForScope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProcessingInstruction);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProcessingInstruction);
 
 inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
     : CharacterData(document, WTFMove(data), PROCESSING_INSTRUCTION_NODE)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ class Attribute;
 class ShareableElementData;
 
 class DocumentSharedObjectPool {
-    WTF_MAKE_TZONE_ALLOCATED(DocumentSharedObjectPool);
+    DOM_MAKE_TZONE_ALLOCATED(DocumentSharedObjectPool);
 public:
     Ref<ShareableElementData> cachedShareableElementDataWithAttributes(std::span<const Attribute>);
 

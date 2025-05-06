@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,11 @@
 #include "config.h"
 #include "TrustedScript.h"
 
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrustedScript);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrustedScript);
 
 Ref<TrustedScript> TrustedScript::create(const String& data)
 {

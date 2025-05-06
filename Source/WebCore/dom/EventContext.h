@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,11 @@
 
 #include "HTMLFormElement.h"
 #include "TouchList.h"
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EventContext {
-    WTF_MAKE_TZONE_ALLOCATED(EventContext);
+    DOM_MAKE_TZONE_ALLOCATED(EventContext);
 public:
     using EventInvokePhase = EventTarget::EventInvokePhase;
 

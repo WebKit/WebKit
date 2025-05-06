@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,11 @@
 
 #include "Namespace.h"
 #include "NodeName.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(QualifiedNameCache);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(QualifiedNameCache);
 
 struct QNameComponentsTranslator {
     static unsigned hash(const QualifiedNameComponents& components)

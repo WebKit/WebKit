@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include "WebCoreOpaqueRoot.h"
+#include "WebCoreTZoneInlines.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerNavigator.h"
@@ -88,7 +89,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -105,7 +105,7 @@ static UncheckedKeyHashMap<ScriptExecutionContextIdentifier, ScriptExecutionCont
 }
 
 struct ScriptExecutionContext::PendingException {
-    WTF_MAKE_TZONE_ALLOCATED(PendingException);
+    DOM_MAKE_TZONE_ALLOCATED(PendingException);
 public:
     PendingException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<ScriptCallStack>&& callStack)
         : m_errorMessage(errorMessage)
@@ -122,8 +122,8 @@ public:
     RefPtr<ScriptCallStack> m_callStack;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptExecutionContext::PendingException);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptExecutionContext::Task);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ScriptExecutionContext::PendingException);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ScriptExecutionContext::Task);
 
 ScriptExecutionContext::ScriptExecutionContext(Type type, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : m_identifier(contextIdentifier ? *contextIdentifier : ScriptExecutionContextIdentifier::generate())

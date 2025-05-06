@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -52,7 +52,7 @@ class Scope;
 }
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ShadowRoot);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(ShadowRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ShadowRoot);
 public:
 

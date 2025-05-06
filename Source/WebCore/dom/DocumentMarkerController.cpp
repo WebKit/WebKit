@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -41,12 +41,12 @@
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
+#include "WebCoreTZoneInlines.h"
 #include <stdio.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentMarkerController);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DocumentMarkerController);
 
 constexpr Seconds markerFadeAnimationDuration = 200_ms;
 

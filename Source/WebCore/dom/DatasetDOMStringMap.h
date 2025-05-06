@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class DatasetDOMStringMap final : public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DatasetDOMStringMap);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(DatasetDOMStringMap);
 public:
     explicit DatasetDOMStringMap(Element& element)
         : m_element(element)

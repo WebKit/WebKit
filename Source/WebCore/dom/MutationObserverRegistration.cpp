@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,11 +37,11 @@
 #include "JSNodeCustom.h"
 #include "QualifiedName.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationObserverRegistration);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(MutationObserverRegistration);
 
 MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
     : m_observer(observer)

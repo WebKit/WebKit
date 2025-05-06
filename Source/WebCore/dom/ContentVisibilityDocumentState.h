@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +27,6 @@
 #pragma once
 
 #include "IntersectionObserver.h"
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ enum class ViewportProximity : bool { Far, Near };
 enum class HadInitialVisibleContentVisibilityDetermination : bool { No, Yes };
 
 class ContentVisibilityDocumentState {
-    WTF_MAKE_TZONE_ALLOCATED(ContentVisibilityDocumentState);
+    DOM_MAKE_TZONE_ALLOCATED(ContentVisibilityDocumentState);
 public:
     static void observe(Element&);
     static void unobserve(Element&);

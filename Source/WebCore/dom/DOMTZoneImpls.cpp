@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,11 @@
 
 #include "config.h"
 
+#include "WebCoreTZoneInlines.h"
 #include "WritingSuggestionData.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WritingSuggestionData);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(WritingSuggestionData);
 
 } // namespace WebCore

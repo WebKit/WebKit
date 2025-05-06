@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 #include "Element.h"
 #include "PendingScript.h"
 #include "ScriptElement.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptRunner);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ScriptRunner);
 
 ScriptRunner::ScriptRunner(Document& document)
     : m_document(document)

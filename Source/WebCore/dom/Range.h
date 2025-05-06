@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,7 +42,7 @@ class TrustedHTML;
 struct SimpleRange;
 
 class Range final : public AbstractRange, public CanMakeSingleThreadWeakPtr<Range> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Range, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Range, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);

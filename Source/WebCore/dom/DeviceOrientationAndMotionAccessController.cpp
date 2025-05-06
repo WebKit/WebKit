@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,11 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationAndMotionAccessController);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationAndMotionAccessController);
 
 DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController(Document& topDocument)
     : m_topDocument(topDocument)

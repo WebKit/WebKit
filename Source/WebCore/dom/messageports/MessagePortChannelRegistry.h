@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,11 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MessagePortChannelRegistry final : public CanMakeWeakPtr<MessagePortChannelRegistry>, public CanMakeCheckedPtr<MessagePortChannelRegistry> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MessagePortChannelRegistry, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_ALLOCATED_EXPORT(MessagePortChannelRegistry, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MessagePortChannelRegistry);
 public:
     WEBCORE_EXPORT MessagePortChannelRegistry();

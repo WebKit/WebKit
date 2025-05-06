@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
- * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "CachedResourceHandle.h"
 #include "Document.h"
 #include "Timer.h"
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -38,7 +37,7 @@ namespace WebCore {
 class CachedFont;
 
 class DocumentFontLoader {
-    WTF_MAKE_TZONE_ALLOCATED(DocumentFontLoader);
+    DOM_MAKE_TZONE_ALLOCATED(DocumentFontLoader);
 public:
     DocumentFontLoader(Document&);
     ~DocumentFontLoader();

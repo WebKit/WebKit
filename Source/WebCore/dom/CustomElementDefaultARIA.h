@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "QualifiedName.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -39,7 +38,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class CustomElementDefaultARIA final : public CanMakeCheckedPtr<CustomElementDefaultARIA> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomElementDefaultARIA);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(CustomElementDefaultARIA);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomElementDefaultARIA);
 public:
     CustomElementDefaultARIA();

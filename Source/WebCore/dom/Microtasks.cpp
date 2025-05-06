@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2014 Yoav Weiss (yoav@yoav.ws)
  * Copyright (C) 2015 Akamai Technologies Inc. All rights reserved.
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,18 +29,18 @@
 #include "JSExecState.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreTZoneInlines.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/MicrotaskQueueInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(MicrotaskQueue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreMicrotaskDispatcher);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(MicrotaskQueue);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(WebCoreMicrotaskDispatcher);
 
 
 JSC::QueuedTask::Result WebCoreMicrotaskDispatcher::currentRunnability() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,12 @@
 
 #include "EventNames.h"
 #include "History.h"
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PopStateEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PopStateEvent);
 
 PopStateEvent::PopStateEvent()
     : Event(EventInterfaceType::PopStateEvent)

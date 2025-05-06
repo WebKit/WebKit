@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -52,7 +51,7 @@ class HTMLFormElement;
 class JSCustomElementInterface;
 
 class CustomElementReactionQueueItem {
-    WTF_MAKE_TZONE_ALLOCATED(CustomElementReactionQueueItem);
+    DOM_MAKE_TZONE_ALLOCATED(CustomElementReactionQueueItem);
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueueItem);
 public:
     enum class Type : uint8_t {
@@ -98,7 +97,7 @@ private:
 
 // https://html.spec.whatwg.org/multipage/custom-elements.html#element-queue
 class CustomElementQueue {
-    WTF_MAKE_TZONE_ALLOCATED(CustomElementQueue);
+    DOM_MAKE_TZONE_ALLOCATED(CustomElementQueue);
     WTF_MAKE_NONCOPYABLE(CustomElementQueue);
 public:
     CustomElementQueue() = default;
@@ -118,7 +117,7 @@ private:
 };
 
 class CustomElementReactionQueue final : public CanMakeCheckedPtr<CustomElementReactionQueue> {
-    WTF_MAKE_TZONE_ALLOCATED(CustomElementReactionQueue);
+    DOM_MAKE_TZONE_ALLOCATED(CustomElementReactionQueue);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomElementReactionQueue);
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:

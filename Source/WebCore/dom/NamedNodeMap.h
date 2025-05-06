@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +34,7 @@ namespace WebCore {
 class Attr;
 
 class NamedNodeMap final : public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NamedNodeMap);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(NamedNodeMap);
 public:
     explicit NamedNodeMap(Element& element)
         : m_element(element)

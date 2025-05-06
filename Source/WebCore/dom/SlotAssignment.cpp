@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,13 @@
 #include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotAssignment);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(NamedSlotAssignment);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(NamedSlotAssignment::Slot);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(SlotAssignment);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(NamedSlotAssignment);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(NamedSlotAssignment::Slot);
 
 using namespace HTMLNames;
 

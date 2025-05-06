@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ namespace WebCore {
 class Node;
 
 class PointerEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
         PointerID pointerId { mousePointerID };

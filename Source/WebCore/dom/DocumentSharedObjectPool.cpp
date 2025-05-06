@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,12 @@
 
 #include "Element.h"
 #include "ElementData.h"
+#include "WebCoreTZoneInlines.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentSharedObjectPool);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DocumentSharedObjectPool);
 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
     static unsigned hash(const Ref<ShareableElementData>& data)

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,6 @@
 #include "NodeList.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,7 +34,7 @@ namespace WebCore {
 class ContainerNode;
 
 class EmptyNodeList final : public NodeList, public CanMakeSingleThreadWeakPtr<EmptyNodeList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EmptyNodeList);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(EmptyNodeList);
 public:
     static Ref<EmptyNodeList> create(Node& owner)
     {
@@ -58,7 +57,7 @@ private:
 };
 
 class ChildNodeList final : public NodeList, public CanMakeSingleThreadWeakPtr<ChildNodeList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ChildNodeList);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(ChildNodeList);
 public:
     static Ref<ChildNodeList> create(ContainerNode& parent)
     {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,7 +36,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
@@ -73,7 +72,7 @@ using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
 using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 class MutationObserver final : public RefCounted<MutationObserver> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MutationObserver);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(MutationObserver);
 public:
     static Ref<MutationObserver> create(Ref<MutationCallback>&&);
 

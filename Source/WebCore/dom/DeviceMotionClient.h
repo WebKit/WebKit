@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ class DeviceMotionData;
 class Page;
 
 class DeviceMotionClient : public DeviceClient {
-    WTF_MAKE_TZONE_ALLOCATED(DeviceMotionClient);
+    DOM_MAKE_TZONE_ALLOCATED(DeviceMotionClient);
     WTF_MAKE_NONCOPYABLE(DeviceMotionClient);
 public:
     DeviceMotionClient() = default;

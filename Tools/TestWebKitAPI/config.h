@@ -90,6 +90,9 @@
 #endif
 
 #ifdef __cplusplus
+#if OS(DARWIN)
+#include <WebCore/WebCoreTZone.h>
+#endif
 // The TestJSC executable doesn't use gtest it uses glib's testing
 #if !defined(BUILDING_TestJSC) && !defined(NO_GTEST_USAGE)
 #undef UniversalPrint

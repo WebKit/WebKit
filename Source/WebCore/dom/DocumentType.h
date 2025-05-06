@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@ namespace WebCore {
 class NamedNodeMap;
 
 class DocumentType final : public Node {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentType);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentType);
 public:
     static Ref<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)

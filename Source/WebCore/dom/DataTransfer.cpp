@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,8 +51,8 @@
 #include "StaticPasteboard.h"
 #include "WebContentReader.h"
 #include "WebCorePasteboardFileReader.h"
+#include "WebCoreTZoneInlines.h"
 #include "markup.h"
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -61,7 +61,7 @@ namespace WebCore {
 #if ENABLE(DRAG_SUPPORT)
 
 class DragImageLoader final : public CachedImageClient {
-    WTF_MAKE_TZONE_ALLOCATED(DragImageLoader);
+    DOM_MAKE_TZONE_ALLOCATED(DragImageLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DragImageLoader);
     WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
@@ -77,7 +77,7 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DragImageLoader);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DragImageLoader);
 
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,12 +40,12 @@
 #include "StyledElement.h"
 #include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQuery);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQueryCache);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(SelectorQuery);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(SelectorQueryCache);
 
 #if ASSERT_ENABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)

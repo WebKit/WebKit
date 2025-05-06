@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,13 @@
 #include "config.h"
 #include "StaticNodeList.h"
 
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticNodeList);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticWrapperNodeList);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticElementList);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticNodeList);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticWrapperNodeList);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticElementList);
 
 StaticNodeList::StaticNodeList(Vector<Ref<Node>>&& nodes)
     : m_nodes(WTFMove(nodes))

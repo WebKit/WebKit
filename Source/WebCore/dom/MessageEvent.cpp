@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Henry Mason (hmason@mac.com)
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,14 @@
 #include "Blob.h"
 #include "EventNames.h"
 #include "JSMessageEvent.h"
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MessageEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MessageEvent);
 
 MessageEvent::MessageEvent()
     : Event(EventInterfaceType::MessageEvent)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 #include "config.h"
 #include "SecurityPolicyViolationEvent.h"
 
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SecurityPolicyViolationEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SecurityPolicyViolationEvent);
 
 SecurityPolicyViolationEventInit::SecurityPolicyViolationEventInit(EventInit&& eventInit, String&& documentURI, String&& referrer, String&& blockedURI, String&& violatedDirective, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned lineNumber, unsigned columnNumber)
     : EventInit(WTFMove(eventInit))

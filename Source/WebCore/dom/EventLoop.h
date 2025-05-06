@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -54,7 +53,7 @@ class ScriptExecutionContext;
 class TimerAlignment;
 
 class EventLoopTask {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopTask);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopTask);
     WTF_MAKE_NONCOPYABLE(EventLoopTask);
 
 public:
@@ -74,7 +73,7 @@ private:
 };
 
 class EventLoopTimerHandle {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopTimerHandle);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopTimerHandle);
 public:
     EventLoopTimerHandle();
     EventLoopTimerHandle(EventLoopTimer&);
@@ -162,7 +161,7 @@ private:
 };
 
 class EventLoopTaskGroup final : public CanMakeWeakPtr<EventLoopTaskGroup>, public CanMakeCheckedPtr<EventLoopTaskGroup> {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopTaskGroup);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopTaskGroup);
     WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventLoopTaskGroup);
 public:

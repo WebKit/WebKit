@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,16 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "TrustedTypePolicyFactory.h"
+#include "WebCoreTZoneInlines.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScopeTrustedTypes);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScopeTrustedTypes);
 
 class DOMWindowTrustedTypes : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_ALLOCATED(DOMWindowTrustedTypes);
+    DOM_MAKE_TZONE_ALLOCATED(DOMWindowTrustedTypes);
 public:
     explicit DOMWindowTrustedTypes(LocalDOMWindow&);
     virtual ~DOMWindowTrustedTypes() = default;
@@ -56,7 +56,7 @@ private:
     mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowTrustedTypes);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowTrustedTypes);
 
 DOMWindowTrustedTypes::DOMWindowTrustedTypes(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

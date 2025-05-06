@@ -1,5 +1,6 @@
 /*
  * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +37,7 @@ class Document;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceOrientationEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DeviceOrientationEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(DeviceOrientationEvent);
 public:
     static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,19 +33,19 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "LocalDOMWindow.h"
+#include "WebCoreTZoneInlines.h"
 #include "WindowEventLoop.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueueItem);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementQueue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueue);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueueItem);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(CustomElementQueue);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueue);
 
 inline CustomElementReactionQueueItem::AdoptedPayload::~AdoptedPayload() = default;
 inline CustomElementReactionQueueItem::FormAssociatedPayload::~FormAssociatedPayload() = default;

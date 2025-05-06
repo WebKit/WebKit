@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ class AbortSignal;
 class ScriptExecutionContext;
 
 class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AbortController);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(AbortController);
 public:
     static Ref<AbortController> create(ScriptExecutionContext&);
     ~AbortController();

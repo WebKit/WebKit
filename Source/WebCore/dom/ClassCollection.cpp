@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2008, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,11 @@
 
 #include "NodeRareDataInlines.h"
 #include "StyledElement.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ClassCollection);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ClassCollection);
 
 Ref<ClassCollection> ClassCollection::create(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
 {

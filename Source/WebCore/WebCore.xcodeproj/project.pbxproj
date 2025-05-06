@@ -6735,6 +6735,8 @@
 		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = FE699870192087E7006936BD /* FloatingPointEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA600E9C4703000D6F75 /* JSGeolocation.h */; };
+		FE84F8AA2DC9753700857E56 /* WebCoreTZoneInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE84F8A92DC9753700857E56 /* WebCoreTZoneInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE84F8AB2DC9753700857E56 /* WebCoreTZone.h in Headers */ = {isa = PBXBuildFile; fileRef = FE84F8A82DC9753700857E56 /* WebCoreTZone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8A674616CDD19E00930BF8 /* SQLStatement.h */; };
 		FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9E89FA16E2DC0400A908F8 /* OriginLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21753,6 +21755,8 @@
 		FE699870192087E7006936BD /* FloatingPointEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingPointEnvironment.h; sourceTree = "<group>"; };
 		FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocation.cpp; sourceTree = "<group>"; };
 		FE80DA600E9C4703000D6F75 /* JSGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeolocation.h; sourceTree = "<group>"; };
+		FE84F8A82DC9753700857E56 /* WebCoreTZone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreTZone.h; sourceTree = "<group>"; };
+		FE84F8A92DC9753700857E56 /* WebCoreTZoneInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreTZoneInlines.h; sourceTree = "<group>"; };
 		FE8A674516CDD19E00930BF8 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
 		FE8A674616CDD19E00930BF8 /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
 		FE9E89F916E2DC0400A908F8 /* OriginLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginLock.cpp; sourceTree = "<group>"; };
@@ -36022,6 +36026,8 @@
 				A1DD61892B7EB59300075A92 /* VideoReceiverEndpoint.h */,
 				5CE19CF428D8FB3700A4571E /* WebCorePersistentCoders.cpp */,
 				5CE19CF328D8FB3700A4571E /* WebCorePersistentCoders.h */,
+				FE84F8A82DC9753700857E56 /* WebCoreTZone.h */,
+				FE84F8A92DC9753700857E56 /* WebCoreTZoneInlines.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
@@ -45270,6 +45276,8 @@
 				A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */,
 				A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */,
 				0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */,
+				FE84F8AB2DC9753700857E56 /* WebCoreTZone.h in Headers */,
+				FE84F8AA2DC9753700857E56 /* WebCoreTZoneInlines.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				44A20DB90F84166C00B3E1FE /* WebCoreURLResponseIOS.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,

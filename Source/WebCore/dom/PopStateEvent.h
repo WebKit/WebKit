@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ class History;
 class SerializedScriptValue;
 
 class PopStateEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PopStateEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(PopStateEvent);
 public:
     virtual ~PopStateEvent();
     static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, History*);

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,12 +26,12 @@
 #include "CollectionIndexCacheInlines.h"
 #include "ElementIterator.h"
 #include "NodeRareData.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EmptyNodeList);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ChildNodeList);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EmptyNodeList);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ChildNodeList);
 
 EmptyNodeList::~EmptyNodeList()
 {

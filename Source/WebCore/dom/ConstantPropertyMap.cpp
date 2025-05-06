@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,12 @@
 #include "CSSVariableData.h"
 #include "Document.h"
 #include "Page.h"
+#include "WebCoreTZoneInlines.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ConstantPropertyMap);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ConstantPropertyMap);
 
 ConstantPropertyMap::ConstantPropertyMap(Document& document)
     : m_document(document)

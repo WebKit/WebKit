@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -219,7 +219,7 @@ public:
     WEBCORE_EXPORT bool requiresScriptExecutionTelemetry(ScriptTelemetryCategory);
 
     class Task {
-        WTF_MAKE_TZONE_ALLOCATED(Task);
+        DOM_MAKE_TZONE_ALLOCATED(Task);
     public:
         enum CleanupTaskTag { CleanupTask };
 

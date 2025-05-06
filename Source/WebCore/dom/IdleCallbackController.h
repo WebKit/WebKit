@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,7 +46,7 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 
 class IdleCallbackController : public CanMakeWeakPtr<IdleCallbackController> {
-    WTF_MAKE_TZONE_ALLOCATED(IdleCallbackController);
+    DOM_MAKE_TZONE_ALLOCATED(IdleCallbackController);
 
 public:
     IdleCallbackController(Document&);

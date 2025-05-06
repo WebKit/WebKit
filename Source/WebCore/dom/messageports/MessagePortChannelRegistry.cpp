@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@
 #include "MessagePortChannelRegistry.h"
 
 #include "Logging.h"
+#include "WebCoreTZoneInlines.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(MessagePortChannelRegistry);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(MessagePortChannelRegistry);
 
 MessagePortChannelRegistry::MessagePortChannelRegistry() = default;
 

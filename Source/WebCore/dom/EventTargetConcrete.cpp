@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +28,11 @@
 #include "EventTargetConcrete.h"
 
 #include "ContextDestructionObserverInlines.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EventTargetConcrete);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EventTargetConcrete);
 
 Ref<EventTargetConcrete> EventTargetConcrete::create(ScriptExecutionContext& context)
 {

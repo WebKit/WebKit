@@ -1997,6 +1997,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/VideoPixelFormat.h
     platform/VideoReceiverEndpoint.h
     platform/WebCorePersistentCoders.h
+    platform/WebCoreTZone.h
+    platform/WebCoreTZoneInlines.h
     platform/Widget.h
     platform/WindowsKeyboardCodes.h
 

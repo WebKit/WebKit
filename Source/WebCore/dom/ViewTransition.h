@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 #include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace JSC {
@@ -65,7 +64,7 @@ enum class ViewTransitionPhase : uint8_t {
 };
 
 struct CapturedElement {
-    WTF_MAKE_TZONE_ALLOCATED(CapturedElement);
+    DOM_MAKE_TZONE_ALLOCATED(CapturedElement);
 public:
     // std::nullopt represents an non-capturable element.
     // nullptr represents an absent snapshot on an capturable element.
@@ -155,7 +154,7 @@ private:
 };
 
 struct ViewTransitionParams {
-    WTF_MAKE_TZONE_ALLOCATED(ViewTransitionParams);
+    DOM_MAKE_TZONE_ALLOCATED(ViewTransitionParams);
 public:
 
     OrderedNamedElementsMap namedElements;
@@ -165,7 +164,7 @@ public:
 };
 
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
-    WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
+    DOM_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

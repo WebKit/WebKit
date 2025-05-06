@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class ClassCollection final : public CachedHTMLCollection<ClassCollection, CollectionTypeTraits<CollectionType::ByClass>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ClassCollection);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(ClassCollection);
 public:
     static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomString& classNames);
 

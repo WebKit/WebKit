@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,15 +58,15 @@
 #include "Styleable.h"
 #include "ViewTransitionTypeSet.h"
 #include "WebAnimation.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CapturedElement);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransitionParams);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransition);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(CapturedElement);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ViewTransitionParams);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ViewTransition);
 
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)

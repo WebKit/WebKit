@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class WheelEvent final : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WheelEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(WheelEvent);
 public:
     static constexpr int TickMultiplier = 120;
 

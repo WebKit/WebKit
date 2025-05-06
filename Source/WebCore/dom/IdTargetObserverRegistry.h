@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -40,7 +40,7 @@ class Element;
 class IdTargetObserver;
 
 class IdTargetObserverRegistry final : public CanMakeCheckedPtr<IdTargetObserverRegistry> {
-    WTF_MAKE_TZONE_ALLOCATED(IdTargetObserverRegistry);
+    DOM_MAKE_TZONE_ALLOCATED(IdTargetObserverRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IdTargetObserverRegistry);
     friend class IdTargetObserver;
 public:

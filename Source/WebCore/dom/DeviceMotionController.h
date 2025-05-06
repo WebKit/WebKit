@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@
 
 #include "DeviceController.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +35,7 @@ class DeviceMotionClient;
 class DeviceMotionData;
 
 class DeviceMotionController : public DeviceController {
-    WTF_MAKE_TZONE_ALLOCATED(DeviceMotionController);
+    DOM_MAKE_TZONE_ALLOCATED(DeviceMotionController);
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceMotionController);
 public:

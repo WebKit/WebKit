@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -54,7 +53,7 @@ enum class ConstantProperty {
 };
 
 class ConstantPropertyMap {
-    WTF_MAKE_TZONE_ALLOCATED(ConstantPropertyMap);
+    DOM_MAKE_TZONE_ALLOCATED(ConstantPropertyMap);
 public:
     explicit ConstantPropertyMap(Document&);
 

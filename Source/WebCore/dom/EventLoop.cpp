@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +29,18 @@
 #include "JSExecState.h"
 #include "Microtasks.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/MicrotaskQueueInlines.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTask);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTimerHandle);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTaskGroup);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTask);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTimerHandle);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTaskGroup);
 
 class EventLoopTimer final : public RefCountedAndCanMakeWeakPtr<EventLoopTimer>, public TimerBase {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopTimer);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopTimer);
 public:
     enum class Type : bool { OneShot, Repeating };
     static Ref<EventLoopTimer> create(Type type, std::unique_ptr<EventLoopTask>&& task) { return adoptRef(*new EventLoopTimer(type, WTFMove(task))); }
@@ -156,7 +156,7 @@ private:
     bool m_savedIsActive { false };
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTimer);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTimer);
 
 EventLoopTimerHandle::EventLoopTimerHandle() = default;
 
@@ -408,7 +408,7 @@ Markable<MonotonicTime> EventLoop::nextTimerFireTime() const
 }
 
 class JSMicrotaskDispatcher final : public WebCoreMicrotaskDispatcher {
-    WTF_MAKE_TZONE_ALLOCATED(JSMicrotaskDispatcher);
+    DOM_MAKE_TZONE_ALLOCATED(JSMicrotaskDispatcher);
 public:
     JSMicrotaskDispatcher(EventLoopTaskGroup& group)
         : WebCoreMicrotaskDispatcher(Type::JavaScript, group)
@@ -431,7 +431,7 @@ public:
     }
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSMicrotaskDispatcher);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(JSMicrotaskDispatcher);
 
 EventLoopTaskGroup::EventLoopTaskGroup(EventLoop& eventLoop)
     : m_eventLoop(eventLoop)
@@ -512,7 +512,7 @@ void EventLoopTaskGroup::queueTask(std::unique_ptr<EventLoopTask>&& task)
 }
 
 class EventLoopFunctionDispatchTask : public EventLoopTask {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopFunctionDispatchTask);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopFunctionDispatchTask);
 public:
     EventLoopFunctionDispatchTask(TaskSource source, EventLoopTaskGroup& group, EventLoop::TaskFunction&& function)
         : EventLoopTask(source, group)
@@ -526,7 +526,7 @@ private:
     EventLoop::TaskFunction m_function;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopFunctionDispatchTask);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopFunctionDispatchTask);
 
 void EventLoopTaskGroup::queueTask(TaskSource source, EventLoop::TaskFunction&& function)
 {
@@ -534,7 +534,7 @@ void EventLoopTaskGroup::queueTask(TaskSource source, EventLoop::TaskFunction&& 
 }
 
 class EventLoopFunctionMicrotaskDispatcher final : public WebCoreMicrotaskDispatcher {
-    WTF_MAKE_TZONE_ALLOCATED(EventLoopFunctionMicrotaskDispatcher);
+    DOM_MAKE_TZONE_ALLOCATED(EventLoopFunctionMicrotaskDispatcher);
 public:
     EventLoopFunctionMicrotaskDispatcher(EventLoopTaskGroup& group, EventLoop::TaskFunction&& function)
         : WebCoreMicrotaskDispatcher(Type::Function, group)
@@ -561,7 +561,7 @@ private:
     EventLoop::TaskFunction m_function;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopFunctionMicrotaskDispatcher);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(EventLoopFunctionMicrotaskDispatcher);
 
 void EventLoopTaskGroup::queueMicrotask(EventLoop::TaskFunction&& function)
 {

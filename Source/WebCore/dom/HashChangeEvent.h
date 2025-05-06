@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class HashChangeEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HashChangeEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(HashChangeEvent);
 public:
     static Ref<HashChangeEvent> create(const String& oldURL, const String& newURL)
     {

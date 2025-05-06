@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,7 +35,6 @@
 #include "MutationObserver.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/RobinHoodHashSet.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -57,7 +57,7 @@ namespace WebCore {
 class QualifiedName;
 
 class MutationObserverRegistration : public CanMakeWeakPtr<MutationObserverRegistration> {
-    WTF_MAKE_TZONE_ALLOCATED(MutationObserverRegistration);
+    DOM_MAKE_TZONE_ALLOCATED(MutationObserverRegistration);
 public:
     MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
     ~MutationObserverRegistration();

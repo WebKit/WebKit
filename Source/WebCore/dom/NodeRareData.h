@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -32,7 +32,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -215,7 +214,7 @@ private:
 };
 
 class NodeMutationObserverData {
-    WTF_MAKE_TZONE_ALLOCATED(NodeMutationObserverData);
+    DOM_MAKE_TZONE_ALLOCATED(NodeMutationObserverData);
     WTF_MAKE_NONCOPYABLE(NodeMutationObserverData);
 public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;

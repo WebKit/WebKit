@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,9 +44,9 @@
 // Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".
 #undef new
 #undef delete
+#include "WebCoreTZone.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/TZoneMalloc.h>
 
 #endif
 

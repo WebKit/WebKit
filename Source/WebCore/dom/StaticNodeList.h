@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class StaticNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~StaticNodeList() = default;
 
@@ -53,7 +53,7 @@ private:
 };
 
 class StaticWrapperNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticWrapperNodeList);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(StaticWrapperNodeList);
 public:
     static Ref<StaticWrapperNodeList> create(NodeList& nodeList)
     {
@@ -72,7 +72,7 @@ private:
 };
 
 class StaticElementList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticElementList);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(StaticElementList);
 public:
     static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {

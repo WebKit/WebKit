@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +33,7 @@
 namespace WebCore {
 
 class TrustedHTML : public ScriptWrappable, public RefCounted<TrustedHTML> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TrustedHTML, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TrustedHTML, WEBCORE_EXPORT);
 public:
     static Ref<TrustedHTML> create(const String& data);
     ~TrustedHTML() = default;

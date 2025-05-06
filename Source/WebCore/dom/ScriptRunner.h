@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -42,7 +41,7 @@ class LoadableScript;
 class WeakPtrImplWithEventTargetData;
 
 class ScriptRunner final : public PendingScriptClient, public CanMakeCheckedPtr<ScriptRunner> {
-    WTF_MAKE_TZONE_ALLOCATED(ScriptRunner);
+    DOM_MAKE_TZONE_ALLOCATED(ScriptRunner);
     WTF_MAKE_NONCOPYABLE(ScriptRunner);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptRunner);
 public:

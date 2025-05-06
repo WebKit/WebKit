@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2010, 2012-2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -32,7 +32,6 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -52,7 +51,7 @@ class StyleSheetList;
 class WeakPtrImplWithEventTargetData;
 
 class ExtensionStyleSheets final : public CanMakeCheckedPtr<ExtensionStyleSheets> {
-    WTF_MAKE_TZONE_ALLOCATED(ExtensionStyleSheets);
+    DOM_MAKE_TZONE_ALLOCATED(ExtensionStyleSheets);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExtensionStyleSheets);
 public:
     explicit ExtensionStyleSheets(Document&);

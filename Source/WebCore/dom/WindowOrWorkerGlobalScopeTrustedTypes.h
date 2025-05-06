@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 
 #include "Supplementable.h"
 #include <wtf/Forward.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ public:
 };
 
 class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_TZONE_ALLOCATED(WorkerGlobalScopeTrustedTypes);
+    DOM_MAKE_TZONE_ALLOCATED(WorkerGlobalScopeTrustedTypes);
 public:
     explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeTrustedTypes();

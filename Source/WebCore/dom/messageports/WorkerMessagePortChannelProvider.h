@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "MessagePortChannelProvider.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +35,7 @@ namespace WebCore {
 class WorkerOrWorkletGlobalScope;
 
 class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider, public CanMakeCheckedPtr<WorkerMessagePortChannelProvider> {
-    WTF_MAKE_TZONE_ALLOCATED(WorkerMessagePortChannelProvider);
+    DOM_MAKE_TZONE_ALLOCATED(WorkerMessagePortChannelProvider);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerMessagePortChannelProvider);
 public:
     explicit WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope&);

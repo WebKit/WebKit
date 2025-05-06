@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2007, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,13 +26,13 @@
 
 #include "CachedHTMLCollectionInlines.h"
 #include "NodeRareDataInlines.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TagCollection);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TagCollectionNS);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTagCollection);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TagCollection);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TagCollectionNS);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTagCollection);
 
 TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
     : CachedHTMLCollection(rootNode, CollectionType::ByTag)

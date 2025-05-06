@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2007, 2008, 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,15 +21,15 @@
 #include "config.h"
 #include "SpaceSplitString.h"
 
+#include "WebCoreTZoneInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SpaceSplitStringData);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(SpaceSplitStringData);
 
 static_assert(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), "SpaceSplitStringDataTail is aligned to WordSize");
 

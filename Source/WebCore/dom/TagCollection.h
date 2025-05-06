@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2008, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ namespace WebCore {
 
 // HTMLCollection that limits to a particular tag.
 class TagCollection final : public CachedHTMLCollection<TagCollection, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollection);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollection);
 public:
     static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
@@ -49,7 +49,7 @@ private:
 };
 
 class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollectionNS);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollectionNS);
 public:
     static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
     {
@@ -67,7 +67,7 @@ private:
 };
 
 class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<CollectionType::ByHTMLTag>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTagCollection);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTagCollection);
 public:
     static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {

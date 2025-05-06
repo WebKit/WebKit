@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -90,6 +90,7 @@
 #include "TouchEvent.h"
 #include "TreeScopeInlines.h"
 #include "WebCoreOpaqueRoot.h"
+#include "WebCoreTZoneInlines.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -98,7 +99,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -110,12 +110,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
 struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
-    WTF_MAKE_TZONE_ALLOCATED(SameSizeAsNode);
+    DOM_MAKE_TZONE_ALLOCATED(SameSizeAsNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsNode);
 public:
 #if ASSERT_ENABLED
@@ -134,7 +134,7 @@ public:
     uint8_t rareDataWithBitfields[8];
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SameSizeAsNode);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(SameSizeAsNode);
 
 static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
 

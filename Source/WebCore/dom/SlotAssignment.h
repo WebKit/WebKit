@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -43,7 +42,7 @@ class HTMLSlotElement;
 class Node;
 
 class SlotAssignment {
-    WTF_MAKE_TZONE_ALLOCATED(SlotAssignment);
+    DOM_MAKE_TZONE_ALLOCATED(SlotAssignment);
     WTF_MAKE_NONCOPYABLE(SlotAssignment);
 public:
     SlotAssignment() = default;
@@ -78,7 +77,7 @@ protected:
 };
 
 class NamedSlotAssignment : public SlotAssignment {
-    WTF_MAKE_TZONE_ALLOCATED(NamedSlotAssignment);
+    DOM_MAKE_TZONE_ALLOCATED(NamedSlotAssignment);
     WTF_MAKE_NONCOPYABLE(NamedSlotAssignment);
 public:
     NamedSlotAssignment();
@@ -108,7 +107,7 @@ private:
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) final;
 
     struct Slot {
-        WTF_MAKE_TZONE_ALLOCATED(Slot);
+        DOM_MAKE_TZONE_ALLOCATED(Slot);
     public:
         bool hasSlotElements() { return !!elementCount; }
         bool hasDuplicatedSlotElements() { return elementCount > 1; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@
 #include "Node.h"
 #include "PromiseRejectionEvent.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -46,13 +47,12 @@
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RejectedPromiseTracker);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(RejectedPromiseTracker);
 
 class UnhandledPromise {
     WTF_MAKE_NONCOPYABLE(UnhandledPromise);

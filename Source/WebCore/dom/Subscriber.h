@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +39,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
     void ref() const final { RefCounted::ref(); }

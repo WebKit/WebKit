@@ -26,11 +26,11 @@
 #include "config.h"
 #include "ProgressEvent.h"
 
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressEvent);
 
 ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(eventInterface, type, initializer, isTrusted)

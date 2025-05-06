@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +47,7 @@ struct SubscribeOptions;
 struct SubscriptionObserver;
 
 class Observable final : public ScriptWrappable, public RefCounted<Observable> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Observable);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(Observable);
 
 public:
     using ObserverUnion = Variant<RefPtr<JSSubscriptionObserverCallback>, SubscriptionObserver>;

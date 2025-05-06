@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -56,9 +56,9 @@
 #include "StyleSheetContents.h"
 #include "Text.h"
 #include "TextDocument.h"
+#include "WebCoreTZoneInlines.h"
 #include "XMLDocument.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MODEL_ELEMENT)
 #include "ModelDocument.h"
@@ -68,7 +68,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMImplementation);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMImplementation);
 
 Ref<Document> DOMImplementation::protectedDocument()
 {

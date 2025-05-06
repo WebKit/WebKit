@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,6 @@
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ class Element;
 inline bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 class LiveNodeList : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(LiveNodeList);
+    DOM_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(LiveNodeList);
 public:
     virtual ~LiveNodeList();
 
@@ -73,7 +72,7 @@ private:
 
 template <class NodeListType>
 class CachedLiveNodeList : public LiveNodeList {
-    WTF_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(CachedLiveNodeList);
+    DOM_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(CachedLiveNodeList);
 public:
     virtual ~CachedLiveNodeList();
 

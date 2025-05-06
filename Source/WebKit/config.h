@@ -38,8 +38,8 @@
 // Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".
 #undef new
 #undef delete
+#include <WebCore/WebCoreTZone.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/TZoneMalloc.h>
 
 #endif
 

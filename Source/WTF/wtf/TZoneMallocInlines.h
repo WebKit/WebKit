@@ -60,6 +60,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include <bmalloc/TZoneHeapInlines.h>
 
+#if __has_include(<WebKitAdditions/TZoneProfilingAdditionsInlines.h>)
+#include <WebKitAdditions/TZoneProfilingAdditionsInlines.h>
+#endif
+
 #if !BUSE(TZONE)
 #error "TZones enabled in WTF, but not enabled in bmalloc"
 #endif

@@ -108,6 +108,10 @@
 
 #include <bmalloc/TZoneHeap.h>
 
+#if __has_include(<WebKitAdditions/TZoneProfilingAdditions.h>)
+#include <WebKitAdditions/TZoneProfilingAdditions.h>
+#endif
+
 #if !BUSE(TZONE)
 #error "TZones enabled in WTF, but not enabled in bmalloc"
 #endif

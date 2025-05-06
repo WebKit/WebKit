@@ -1,6 +1,7 @@
 /*
  * Copyright 2008, The Android Open Source Project
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +32,11 @@
 #include "TouchEvent.h"
 
 #include "EventDispatcher.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TouchEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TouchEvent);
 
 TouchEvent::TouchEvent()
     : MouseRelatedEvent(EventInterfaceType::TouchEvent)

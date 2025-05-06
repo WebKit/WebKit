@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class CustomEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(CustomEvent);
 public:
     virtual ~CustomEvent();
 

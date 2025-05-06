@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ namespace WebCore {
     enum class MailBlockquoteHandling : bool;
 
     class TextEvent final : public UIEvent {
-        WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextEvent);
+        DOM_MAKE_TZONE_OR_ISO_ALLOCATED(TextEvent);
     public:
         static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForBindings();

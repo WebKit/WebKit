@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Jakub Wieczorek <faw217@gmail.com>
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@ namespace WebCore {
 typedef xmlDocPtr PlatformTransformSource;
 
 class TransformSource {
-    WTF_MAKE_TZONE_ALLOCATED(TransformSource);
+    DOM_MAKE_TZONE_ALLOCATED(TransformSource);
     WTF_MAKE_NONCOPYABLE(TransformSource);
 public:
     explicit TransformSource(const PlatformTransformSource&);

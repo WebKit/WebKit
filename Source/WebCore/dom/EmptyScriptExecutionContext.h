@@ -32,7 +32,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,7 @@
 namespace WebCore {
 
 class ContentVisibilityAutoStateChangeEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContentVisibilityAutoStateChangeEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(ContentVisibilityAutoStateChangeEvent);
 public:
     struct Init : EventInit {
         bool skipped = false;

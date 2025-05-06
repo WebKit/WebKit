@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2014 Yoav Weiss (yoav@yoav.ws)
  * Copyright (C) 2015 Akamai Technologies Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +25,6 @@
 #include "EventLoop.h"
 #include <JavaScriptCore/MicrotaskQueue.h>
 #include <wtf/Forward.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -35,7 +35,7 @@ class VM;
 namespace WebCore {
 
 class WebCoreMicrotaskDispatcher : public JSC::MicrotaskDispatcher {
-    WTF_MAKE_TZONE_ALLOCATED(WebCoreMicrotaskDispatcher);
+    DOM_MAKE_TZONE_ALLOCATED(WebCoreMicrotaskDispatcher);
 public:
     WebCoreMicrotaskDispatcher(Type type, EventLoopTaskGroup& group)
         : JSC::MicrotaskDispatcher(type)
@@ -55,7 +55,7 @@ private:
 };
 
 class MicrotaskQueue final {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT MicrotaskQueue(JSC::VM&, EventLoop&);
     WEBCORE_EXPORT ~MicrotaskQueue();

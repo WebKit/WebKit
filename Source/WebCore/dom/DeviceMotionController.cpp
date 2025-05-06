@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Apple Inc. All rights reserved.
+ * Copyright 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,12 @@
 #include "DeviceMotionEvent.h"
 #include "EventNames.h"
 #include "Page.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionClient);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionController);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionClient);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionController);
 
 DeviceMotionController::DeviceMotionController(DeviceMotionClient& client)
     : m_client(client)

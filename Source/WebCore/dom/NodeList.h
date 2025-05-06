@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,6 @@
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +33,7 @@ class Node;
 class ScriptExecutionContext;
 
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
 public:
     virtual ~NodeList() = default;
 

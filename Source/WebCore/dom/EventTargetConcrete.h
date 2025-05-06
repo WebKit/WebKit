@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +30,13 @@
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreTZone.h"
 #include <wtf/RefCounted.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class EventTargetConcrete final : public RefCounted<EventTargetConcrete>, public EventTarget, private ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTargetConcrete);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(EventTargetConcrete);
 public:
     static Ref<EventTargetConcrete> create(ScriptExecutionContext&);
 

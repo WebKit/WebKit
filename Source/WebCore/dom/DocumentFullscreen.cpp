@@ -54,9 +54,9 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
+#include "WebCoreTZoneInlines.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/Scope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MATHML)
 #include "MathMLMathElement.h"
@@ -66,7 +66,7 @@ namespace WebCore {
 
 // MARK: - Constructor.
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentFullscreen);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DocumentFullscreen);
 
 DocumentFullscreen::DocumentFullscreen(Document& document)
     : m_document(document)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -71,7 +70,7 @@ struct RequestStorageAccessResult {
 const unsigned maxNumberOfTimesExplicitlyDeniedStorageAccess = 2;
 
 class DocumentStorageAccess final : public Supplement<Document>, public CanMakeWeakPtr<DocumentStorageAccess> {
-    WTF_MAKE_TZONE_ALLOCATED(DocumentStorageAccess);
+    DOM_MAKE_TZONE_ALLOCATED(DocumentStorageAccess);
 public:
     explicit DocumentStorageAccess(Document&);
     ~DocumentStorageAccess();

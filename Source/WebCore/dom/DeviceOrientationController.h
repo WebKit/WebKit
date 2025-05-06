@@ -1,6 +1,7 @@
 /*
  * Copyright 2010, The Android Open Source Project
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +29,6 @@
 
 #include "DeviceController.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationController final : public DeviceController {
-    WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationController);
+    DOM_MAKE_TZONE_ALLOCATED(DeviceOrientationController);
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationController);
 public:

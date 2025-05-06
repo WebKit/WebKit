@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,6 @@
 
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -32,7 +31,7 @@ class HTMLInputElement;
 class RadioButtonGroup;
 
 class RadioButtonGroups {
-    WTF_MAKE_TZONE_ALLOCATED(RadioButtonGroups);
+    DOM_MAKE_TZONE_ALLOCATED(RadioButtonGroups);
 public:
     RadioButtonGroups();
     ~RadioButtonGroups();

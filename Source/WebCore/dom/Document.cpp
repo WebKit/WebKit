@@ -321,6 +321,7 @@
 #include "WakeLockManager.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include "WebCoreTZoneInlines.h"
 #include "WebRTCProvider.h"
 #include "WheelEvent.h"
 #include "WindowEventLoop.h"
@@ -347,7 +348,6 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
@@ -426,8 +426,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Document);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentParserYieldToken);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Document);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(DocumentParserYieldToken);
 
 using namespace HTMLNames;
 using namespace WTF::Unicode;
@@ -438,13 +438,13 @@ static const Seconds maxIntervalForUserGestureForwardingAfterMediaFinishesPlayin
 
 // Defined here to avoid including GCReachableRef.h in Document.h
 struct Document::PendingScrollEventTargetList {
-    WTF_MAKE_TZONE_ALLOCATED(PendingScrollEventTargetList);
+    DOM_MAKE_TZONE_ALLOCATED(PendingScrollEventTargetList);
 
 public:
     Vector<GCReachableRef<ContainerNode>> targets;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Document::PendingScrollEventTargetList);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(Document::PendingScrollEventTargetList);
 
 static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
 

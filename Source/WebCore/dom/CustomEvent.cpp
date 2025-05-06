@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 #include "config.h"
 #include "CustomEvent.h"
 
+#include "WebCoreTZoneInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomEvent);
 
 inline CustomEvent::CustomEvent(IsTrusted isTrusted)
     : Event(EventInterfaceType::CustomEvent, isTrusted)

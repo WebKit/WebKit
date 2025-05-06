@@ -3,7 +3,7 @@
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,12 +29,11 @@
 #include "ScriptWrappable.h"
 #include "Traversal.h"
 #include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TreeWalker final : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TreeWalker, WEBCORE_EXPORT);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TreeWalker, WEBCORE_EXPORT);
 public:
     static Ref<TreeWalker> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     {

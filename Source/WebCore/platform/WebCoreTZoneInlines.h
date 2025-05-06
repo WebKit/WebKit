@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,24 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "BeforeTextInsertedEvent.h"
+#pragma once
 
-#include "EventNames.h"
-#include "WebCoreTZoneInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
+#ifndef DOM_TZONE
 
-DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BeforeTextInsertedEvent);
+#define DOM_MAKE_TZONE_ALLOCATED_INLINE WTF_MAKE_TZONE_ALLOCATED_INLINE
+#define DOM_MAKE_TZONE_ALLOCATED_IMPL WTF_MAKE_TZONE_ALLOCATED_IMPL
+#define DOM_MAKE_COMPACT_TZONE_ALLOCATED_IMPL WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL
+#define DOM_MAKE_STRUCT_TZONE_ALLOCATED_IMPL WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL
+#define DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL
+#define DOM_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL
 
-BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
-    : Event(EventInterfaceType::Event, eventNames().webkitBeforeTextInsertedEvent, CanBubble::No, IsCancelable::Yes), m_text(text)
-{
-}
-
-BeforeTextInsertedEvent::~BeforeTextInsertedEvent() = default;
-
-}
+#endif // DOM_TZONE

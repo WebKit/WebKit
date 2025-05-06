@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,12 @@
 #include "DeviceOrientationAndMotionAccessController.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeviceMotionEvent);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeviceMotionEvent);
 
 DeviceMotionEvent::~DeviceMotionEvent() = default;
 

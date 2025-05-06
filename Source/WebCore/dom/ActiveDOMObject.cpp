@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
@@ -148,7 +148,7 @@ void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&
 }
 
 class ActiveDOMObjectEventDispatchTask : public EventLoopTask {
-    WTF_MAKE_TZONE_ALLOCATED(ActiveDOMObjectEventDispatchTask);
+    DOM_MAKE_TZONE_ALLOCATED(ActiveDOMObjectEventDispatchTask);
 public:
     ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, Function<void()>&& dispatchEvent)
         : EventLoopTask(source, group)
@@ -177,7 +177,7 @@ private:
     Function<void()> m_dispatchEvent;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ActiveDOMObjectEventDispatchTask);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(ActiveDOMObjectEventDispatchTask);
 
 void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, TaskSource source, Ref<Event>&& event)
 {

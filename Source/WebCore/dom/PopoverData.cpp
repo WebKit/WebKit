@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,11 @@
 #include "PopoverData.h"
 
 #include "ToggleEventTask.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PopoverData);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(PopoverData);
 
 Ref<ToggleEventTask> PopoverData::ensureToggleEventTask(Element& element)
 {

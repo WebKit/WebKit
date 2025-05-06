@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +32,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebCoreTZoneInlines.h"
 
 namespace WebCore {
 
@@ -172,6 +173,6 @@ void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
     observerConcurrently()->visitAdditionalChildren(visitor);
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Subscriber);
+DOM_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Subscriber);
 
 } // namespace WebCore

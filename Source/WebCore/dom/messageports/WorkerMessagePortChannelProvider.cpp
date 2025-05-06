@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,15 @@
 #include "WorkerMessagePortChannelProvider.h"
 
 #include "MessagePort.h"
+#include "WebCoreTZoneInlines.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagePortChannelProvider);
+DOM_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagePortChannelProvider);
 
 WorkerMessagePortChannelProvider::WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope& scope)
     : m_scope(scope)

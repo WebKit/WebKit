@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ namespace WebCore {
 class Node;
 
 class FocusEvent final : public UIEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FocusEvent);
+    DOM_MAKE_TZONE_OR_ISO_ALLOCATED(FocusEvent);
 public:
     static Ref<FocusEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {
