@@ -167,33 +167,38 @@ static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 
     // Skip tid and name.
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    // FIXME: Use `find(std::span { buffer }, ')')` instead of `strchr()`.
-    char* position = strchr(buffer, ')');
-    if (!position)
+    auto bufferSpan = std::span { buffer, static_cast<size_t>(totalBytesRead + 1) };
+    auto position = WTF::find(bufferSpan, [](char c) { return c == ')';
+    }, 0);
+    if (position == bufferSpan.size())
         return false;
 
     if (!info.name) {
-        char* name = strchr(buffer, '(');
-        if (!name)
+        auto namePos = WTF::find(bufferSpan, [](char c) {
+            return c == '(';
+        }, 0);
+        if (namePos == bufferSpan.size())
             return false;
-        name++;
-        info.name = String::fromUTF8({ name, position });
+        namePos++;
+        info.name = String::fromUTF8({ buffer + namePos, buffer + position });
     }
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+    char* positionPtr = buffer + position;
+
     // Move after state.
-    position += 4;
+    positionPtr += 4;
 
     // Skip ppid, pgrp, sid, tty_nr, tty_pgrp, flags, min_flt, cmin_flt, maj_flt, cmaj_flt.
     unsigned tokensToSkip = 10;
     while (tokensToSkip--) {
-        while (!isUnicodeCompatibleASCIIWhitespace(position[0]))
-            position++;
-        position++;
+        while (!isUnicodeCompatibleASCIIWhitespace(positionPtr[0]))
+            positionPtr++;
+        positionPtr++;
     }
 
-    unsigned long long utime = strtoull(position, &position, 10);
-    unsigned long long stime = strtoull(position, &position, 10);
+    unsigned long long utime = strtoull(positionPtr, &positionPtr, 10);
+    unsigned long long stime = strtoull(positionPtr, &positionPtr, 10);
     float usage = (utime + stime - (info.previousUtime + info.previousStime)) / period * 100.0;
     info.previousUtime = utime;
     info.previousStime = stime;
