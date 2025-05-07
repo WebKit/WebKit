@@ -51,11 +51,6 @@ public:
     ShareableBitmapConfiguration() = default;
 
     WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, bool isOpaque = false);
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace>, bool isOpaque, unsigned bytesPerPixel, unsigned bytesPerRow
-#if USE(CG)
-        , CGBitmapInfo
-#endif
-    );
 #if USE(CG)
     ShareableBitmapConfiguration(NativeImage&);
 #endif

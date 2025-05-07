@@ -51,27 +51,6 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     ASSERT(!m_size.isEmpty());
 }
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, bool isOpaque, unsigned bytesPerPixel, unsigned bytesPerRow
-#if USE(CG)
-    , CGBitmapInfo bitmapInfo
-#endif
-)
-    : m_size(size)
-    , m_colorSpace(colorSpace)
-    , m_isOpaque(isOpaque)
-    , m_bytesPerPixel(bytesPerPixel)
-    , m_bytesPerRow(bytesPerRow)
-#if USE(CG)
-    , m_bitmapInfo(bitmapInfo)
-#endif
-#if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
-#endif
-{
-    // This constructor is called when decoding ShareableBitmapConfiguration. So this constructor
-    // will behave like the default constructor if a null ShareableBitmapHandle was encoded.
-}
-
 CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, const DestinationColorSpace& colorSpace)
 {
     return calculateBytesPerRow(size, colorSpace) * size.height();
