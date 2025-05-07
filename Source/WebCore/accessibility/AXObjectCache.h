@@ -37,6 +37,7 @@
 #include "VisibleUnits.h"
 #include <limits.h>
 #include <wtf/Compiler.h>
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -861,7 +862,7 @@ private:
 
 #if PLATFORM(COCOA)
     Timer m_passwordNotificationTimer;
-    Vector<std::pair<Ref<AccessibilityObject>, AXTextChangeContext>> m_passwordNotifications;
+    Deque<std::pair<Ref<AccessibilityObject>, AXTextChangeContext>> m_passwordNotifications;
 #endif
 
     Timer m_liveRegionChangedPostTimer;
