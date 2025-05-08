@@ -6235,6 +6235,14 @@
    },
    {
       "emails" : [
+         "n_raj@apple.com",
+         "neeraqa@gmail.com"
+      ],
+      "github" : "neeraqa",
+      "name" : "Neethu Raj"
+   }
+   {
+      "emails" : [
          "nick.diego@gmail.com",
          "nick.yamane@openbossa.org"
       ],
@@ -8740,13 +8748,5 @@
          "zdobersek"
       ],
       "status" : "reviewer"
-   },
-   {
-      "emails" : [
-         "n_raj@apple.com",
-         "neeraqa@gmail.com"
-      ],
-      "github" : "neeraqa",
-      "name" : "Neethu Raj"
    }
 ]
