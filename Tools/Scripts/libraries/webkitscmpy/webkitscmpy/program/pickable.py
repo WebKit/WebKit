@@ -216,6 +216,13 @@ class Pickable(Command):
         return [commit for commit in commits if str(commit) in filtered_in]
 
     @classmethod
+    def print_git_notes(cls, commits):
+        for commit in commits:
+            result = run(['git', 'notes', 'show', commit.hash], capture_output=True)
+            if result.returncode == 0:
+                print('\n[Note for {}]:\n{}\n'.format(commit.hash[:commit.HASH_LABEL_SIZE], result.stdout.strip()))
+
+    @classmethod
     def related_commits_from_notes(cls, commit, run_command_function=None):
         '''
         Parse Git notes for patterns like:
