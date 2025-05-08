@@ -23,12 +23,17 @@
 import os
 import time
 import sys
+import re
 
 from datetime import datetime
+from unittest.mock import Mock
 
 from webkitcorepy import OutputCapture, Terminal, testing
+from webkitcorepy.mocks import ProcessCompletion
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import local, program, mocks, Commit, CommitClassifier
+from webkitscmpy.program import Pickable
+
 
 
 class TestPickable(testing.PathTestCase):
@@ -317,3 +322,50 @@ class TestPickable(testing.PathTestCase):
             '2.3@branch-b | 790725a6d79e | 7th commit\n'
             '2.2@branch-b | 3cd32e352410 | 5th commit\n',
         )
+
+    def test_related_commits_from_notes(self):
+        # Create a mock for the run method
+        mock_run = Mock()
+
+        # Simulate the output of 'git notes show'
+        mock_run.return_value = ProcessCompletion(
+            returncode=0,
+            stdout='Picked-from: abc1234def456\nCherry-picked-from: 789abc123def\nSome unrelated line\n'
+        )
+
+        commit = Mock()
+        commit.hash = 'commit_hash'
+
+        # Mock the `run` method used in the `related_commits_from_notes` method
+        related = Pickable.related_commits_from_notes(commit, run_command_function=mock_run)
+
+        # Validate the parsed hashes
+        self.assertEqual(
+            related,
+            ['abc1234def456', '789abc123def'],
+        )
+
+        # Ensure that `run` was called with the correct parameters
+        mock_run.assert_called_once_with(['git', 'notes', 'show', 'commit_hash'], capture_output=True)
+
+    def test_related_commits_from_notes_none(self):
+        with mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime:
+            commit = repo.commits['main'][3]
+
+            # Simulate no notes for this commit
+            repo.notes[commit.hash] = []
+
+            related = Pickable.related_commits_from_notes(commit)
+
+            self.assertEqual(related, [])
+
+    def test_related_commits_from_notes_no_notes(self):
+        with mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime:
+            commit = repo.commits['main'][3]
+
+            # Simulate 'git notes show' returning a failure
+            repo.notes.pop(commit.hash, None)  # No note for this commit
+
+            related = Pickable.related_commits_from_notes(commit)
+
+            self.assertEqual(related, [])

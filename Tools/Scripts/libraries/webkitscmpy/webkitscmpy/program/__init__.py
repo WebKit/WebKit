@@ -25,6 +25,7 @@ import logging
 import os
 import sys
 
+from .annotate import Annotate
 from .blame import Blame
 from .branch import Branch
 from .canonicalize import Canonicalize
@@ -93,7 +94,7 @@ def main(
     subparser.set_defaults(main=lambda *args, **kwargs: parser.print_help())
 
     programs = [
-        Blame, Branch, Canonicalize, Checkout,
+        Annotate, Blame, Branch, Canonicalize, Checkout,
         Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,

@@ -131,6 +131,14 @@ class Pickable(Command):
             dest='by',
             default=[],
         )
+        parser.add_argument(
+            '--notes', '-n',
+            help='Print related git notes for the selected commit(s)',
+            #  it will be False by default, and set to True if --notes or -n is passed.
+            action='store_true',
+            dest='notes',
+            default=False,
+        )
 
     @classmethod
     def pickable(cls, commits, repository, commits_story=None, excluded=None):
@@ -164,7 +172,20 @@ class Pickable(Command):
             commit = all_commits[ref]
             relationships = Trace.relationships(commit, repository)
             if not relationships:
-                continue
+                # Try to recover relationships via git notes
+                related_hashes = cls.related_commits_from_notes(commit)
+                relationships = []
+                for h in related_hashes:
+                    try:
+                        related_commit = repository.find(h, include_log=True)
+                    except Exception:
+                        continue
+                    relationships.append(Relationship(
+                        type=Relationship.IDENTITY[0],
+                        commit=related_commit,
+                    ))
+                if not relationships:
+                    continue
             for rel in relationships:
                 if rel.type in Relationship.IDENTITY:
                     if rel.commit in commits_story:
@@ -193,6 +214,35 @@ class Pickable(Command):
                     break
 
         return [commit for commit in commits if str(commit) in filtered_in]
+
+    @classmethod
+    def related_commits_from_notes(cls, commit, run_command_function=None):
+        '''
+        Parse Git notes for patterns like:
+            Picked-from: <commit-hash>
+            Cherry-picked-from: <commit-hash>
+            TODO:Excluded-because: <commit-hash>
+        '''
+
+        # If no custom run_command_function is provided for mocking, fall back to the default `run` method
+        run_command_function = run_command_function or run
+
+        result = run_command_function(['git', 'notes', 'show', commit.hash], capture_output=True)
+        if result.returncode != 0:
+            return []
+
+        # Decode stdout from bytes to string if it's in bytes format
+        stdout_str = result.stdout.decode('utf-8') if isinstance(result.stdout, bytes) else result.stdout
+
+        related = []
+        for line in stdout_str.strip().splitlines():
+            match = re.search(r'(Cherry-picked|Picked)-from:\s+(\S+)', line, re.IGNORECASE)
+            if match:
+                candidate = match.group(2)
+                if Commit.HASH_RE.match(candidate) or Commit.IDENTIFIER_RE.match(candidate):
+                    related.append(candidate)
+        return related
+
 
     @classmethod
     def main(cls, args, repository, printer=None, **kwargs):
@@ -288,4 +338,9 @@ class Pickable(Command):
             commits = [commit for commit in commits if any([f(commit) for f in filters])]
 
         printer = printer or Info.print_
-        return printer(args, commits, verbose_default=1)
+        exit_code = printer(args, commits, verbose_default=1)
+
+        if args.notes:
+            cls.print_git_notes(commits)
+
+        return exit_code
