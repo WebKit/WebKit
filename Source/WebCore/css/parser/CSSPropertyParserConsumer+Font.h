@@ -116,6 +116,18 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&, CSS::PropertyParserStat
 const AtomString& genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
+// MARK: 'font-variant-ligatures'
+// https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-ligatures
+RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// MARK: 'font-variant-east-asian'
+// https://drafts.csswg.org/css-fonts-4/#font-variant-east-asian-prop
+RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// MARK: 'font-variant-numeric'
+// https://drafts.csswg.org/css-fonts-4/#font-variant-numeric-prop
+RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 // MARK: 'font-size-adjust'
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&, CSS::PropertyParserState&);
@@ -171,10 +183,12 @@ RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&, CSS::PropertyPar
 // MARK: @font-face 'font-width'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-width
 RefPtr<CSSValue> parseFontFaceFontWidth(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontWidth(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: @font-face 'font-weight'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-weight
 RefPtr<CSSValue> parseFontFaceFontWeight(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontWeight(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: - @font-feature-values descriptor consumers
 

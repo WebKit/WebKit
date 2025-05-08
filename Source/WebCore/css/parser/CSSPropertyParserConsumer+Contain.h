@@ -38,21 +38,9 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: <'text-shadow'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
-RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, CSS::PropertyParserState&);
-
-// MARK: <'text-decoration-line'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-decoration-line-property
-RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&, CSS::PropertyParserState&);
-
-// MARK: <'text-emphasis-style'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-emphasis-style-property
-RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&, CSS::PropertyParserState&);
-
-// MARK: <'text-emphasis-position'> consuming
-// https://drafts.csswg.org/css-text-decor-3/#text-emphasis-position-property
-RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&, CSS::PropertyParserState&);
+// MARK: <'contain'> consuming
+// https://drafts.csswg.org/css-contain-2/#propdef-contain
+RefPtr<CSSValue> consumeContain(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
