@@ -32,7 +32,7 @@
 String WebDatabaseProvider::indexedDatabaseDirectoryPath()
 {
     RetainPtr defaults = [NSUserDefaults standardUserDefaults];
-    RetainPtr databasesDirectory = dynamic_objc_cast<NSString>([defaults objectForKey:WebDatabaseDirectoryDefaultsKey]);
+    RetainPtr databasesDirectory = dynamicObjCDowncast<NSString>([defaults objectForKey:WebDatabaseDirectoryDefaultsKey]);
     if (!databasesDirectory)
         databasesDirectory = FileSystem::pathByAppendingComponent("~/Library/WebKit/Databases/___IndexedDB"_s, String([[NSBundle mainBundle] bundleIdentifier])).createNSString();
     else

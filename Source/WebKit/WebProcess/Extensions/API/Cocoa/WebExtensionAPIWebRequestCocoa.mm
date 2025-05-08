@@ -386,7 +386,7 @@ void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensio
 void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::AuthenticationChallenge& webCoreChallenge, const ResourceLoadInfo& resourceLoad)
 {
     auto *challenge = webCoreChallenge.nsURLAuthenticationChallenge();
-    auto *httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(challenge.failureResponse);
+    auto *httpResponse = dynamicObjCDowncast<NSHTTPURLResponse>(challenge.failureResponse);
     if (!httpResponse)
         return;
 

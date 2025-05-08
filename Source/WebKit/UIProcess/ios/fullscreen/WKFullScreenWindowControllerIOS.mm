@@ -1984,7 +1984,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             } else {
                 scene.sizeRestrictions.minimumSize = [originalState sceneMinimumSize];
                 scene.mrui_placement.preferredResizingBehavior = [originalState sceneResizingBehavior];
-                if (auto delegate = dynamic_objc_cast<WKFullscreenWindowSceneDelegate>(scene.delegate))
+                if (auto delegate = dynamicObjCDowncast<WKFullscreenWindowSceneDelegate>(scene.delegate))
                     scene.delegate = [delegate originalDelegate];
 
                 for (MRUIPlatterOrnament *ornament in [originalState ornamentProperties])

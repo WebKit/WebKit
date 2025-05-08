@@ -879,7 +879,7 @@ TEST(WritingTools, ProofreadingWithLinks)
     [attributedText enumerateAttributesInRange:NSMakeRange(0, [attributedText length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         substringsAndURLs.append({
             [[[attributedText string] substringWithRange:range] stringByTrimmingCharactersInSet:whitespaceSet],
-            dynamic_objc_cast<NSURL>(attributes[NSLinkAttributeName])
+            dynamicObjCDowncast<NSURL>(attributes[NSLinkAttributeName])
         });
     }];
 

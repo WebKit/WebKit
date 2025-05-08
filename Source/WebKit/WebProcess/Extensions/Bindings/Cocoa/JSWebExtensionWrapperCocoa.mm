@@ -368,7 +368,7 @@ JSValueRef toJSValueRefOrJSNull(JSContextRef context, id object)
 NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containingObjectsOfClass)
 {
     ASSERT(containingObjectsOfClass);
-    return dynamic_objc_cast<NSArray>(toNSObject(context, value, containingObjectsOfClass));
+    return dynamicObjCDowncast<NSArray>(toNSObject(context, value, containingObjectsOfClass));
 }
 
 JSContext *toJSContext(JSContextRef context)
@@ -412,7 +412,7 @@ JSValueRef toJSValueRef(JSContextRef context, id object)
     if (!object)
         return JSValueMakeUndefined(context);
 
-    if (JSValue *value = dynamic_objc_cast<JSValue>(object))
+    if (JSValue *value = dynamicObjCDowncast<JSValue>(object))
         return value.JSValueRef;
 
     return [JSValue valueWithObject:object inContext:toJSContext(context)].JSValueRef;
@@ -475,7 +475,7 @@ using namespace WebKit;
 
 - (BOOL)_isThenable
 {
-    return self.isObject && dynamic_objc_cast<JSValue>(self[@"then"])._isFunction;
+    return self.isObject && dynamicObjCDowncast<JSValue>(self[@"then"])._isFunction;
 }
 
 - (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(JSValue *result, JSValue *error))completionHandler

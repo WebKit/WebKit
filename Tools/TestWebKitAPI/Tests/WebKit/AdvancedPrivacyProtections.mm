@@ -333,7 +333,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenCopyingURL)
 #if PLATFORM(MAC)
     auto copiedString = [pasteboard stringForType:NSPasteboardTypeString];
 #else
-    auto copiedString = dynamic_objc_cast<NSString>([pasteboard valueForPasteboardType:UTTypeUTF8PlainText.identifier]);
+    auto copiedString = dynamicObjCDowncast<NSString>([pasteboard valueForPasteboardType:UTTypeUTF8PlainText.identifier]);
 #endif
     EXPECT_WK_STREQ("http://example.com/?hello=world", copiedString);
 }

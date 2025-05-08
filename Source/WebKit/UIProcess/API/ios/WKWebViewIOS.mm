@@ -883,7 +883,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     if (_findInteractionEnabled) {
         [_findInteraction dismissFindNavigator];
 
-        if (auto *findSession = dynamic_objc_cast<UITextSearchingFindSession>([_findInteraction activeFindSession]))
+        if (auto *findSession = dynamicObjCDowncast<UITextSearchingFindSession>([_findInteraction activeFindSession]))
             findSession.searchableObject = [self _searchableObject];
     }
 #endif
@@ -1256,7 +1256,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         HashSet<UIView *> overlayAncestorsChain;
         for (UIView *overlayAncestor = (UIView *)overlayView; overlayAncestor; overlayAncestor = [overlayAncestor superview]) {
             overlayAncestorsChain.add(overlayAncestor);
-            if (auto *layer = dynamic_objc_cast<WKBaseScrollView>(overlayAncestor)) {
+            if (auto *layer = dynamicObjCDowncast<WKBaseScrollView>(overlayAncestor)) {
                 enclosingScrollView = layer;
                 break;
             }
@@ -2176,7 +2176,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if ([scrollView isZooming])
         *targetContentOffset = [scrollView contentOffset];
     else {
-        auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
+        auto axesToPreventMomentumScrolling = dynamicObjCDowncast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
         if ([_contentView preventsPanningInXAxis] || (axesToPreventMomentumScrolling & UIAxisHorizontal))
             targetContentOffset->x = scrollView.contentOffset.x;
         if ([_contentView preventsPanningInYAxis] || (axesToPreventMomentumScrolling & UIAxisVertical))
@@ -3670,7 +3670,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_enhancedWindowingToggled:(NSNotification *)notification
 {
-    if (dynamic_objc_cast<UIWindowScene>(notification.object) != self.window.windowScene)
+    if (dynamicObjCDowncast<UIWindowScene>(notification.object) != self.window.windowScene)
         return;
 
     if (!_page || !_page->hasRunningProcess())

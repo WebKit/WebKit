@@ -63,7 +63,7 @@ static RetainPtr<NSArray<NSNumber *>> fromPurposes(OptionSet<WebCore::Applicatio
 
 static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const WebCore::ApplicationManifest::Icon*, id arrayElement)
 {
-    auto icon = dynamic_objc_cast<_WKApplicationManifestIcon>(arrayElement);
+    auto icon = dynamicObjCDowncast<_WKApplicationManifestIcon>(arrayElement);
     if (!icon)
         return std::nullopt;
 
@@ -77,7 +77,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
 static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(const WebCore::ApplicationManifest::Shortcut*, id arrayElement)
 {
-    auto shortcut = dynamic_objc_cast<_WKApplicationManifestShortcut>(arrayElement);
+    auto shortcut = dynamicObjCDowncast<_WKApplicationManifestShortcut>(arrayElement);
     if (!shortcut)
         return std::nullopt;
 

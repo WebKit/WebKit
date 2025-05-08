@@ -140,7 +140,7 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
 #endif // PLATFORM(MAC)
 
     _internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(configuration.window) ?: window;
+        auto *desiredWindow = dynamicObjCDowncast<TestWebExtensionWindow>(configuration.window) ?: window;
         auto *newTab = [desiredWindow openNewTabAtIndex:configuration.index];
 
         if (configuration.url) {
@@ -595,7 +595,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 - (void)setParentTab:(id<WKWebExtensionTab>)parentTab forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->_parentTab = dynamic_objc_cast<TestWebExtensionTab>(parentTab);
+        self->_parentTab = dynamicObjCDowncast<TestWebExtensionTab>(parentTab);
 
         completionHandler(nil);
     });
@@ -793,7 +793,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     __weak TestWebExtensionTab *weakTab = newTab;
 
     newTab.duplicate = ^(WKWebExtensionTabConfiguration *configuration, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(configuration.window) ?: weakTab.window;
+        auto *desiredWindow = dynamicObjCDowncast<TestWebExtensionWindow>(configuration.window) ?: weakTab.window;
         auto *duplicatedTab = [desiredWindow openNewTabAtIndex:configuration.index];
 
         [duplicatedTab.webView loadRequest:[NSURLRequest requestWithURL:weakTab.webView.URL]];

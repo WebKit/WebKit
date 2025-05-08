@@ -71,19 +71,19 @@ SerializedPlatformDataCueValue::SerializedPlatformDataCueValue(AVMetadataItem *i
             m_data->otherAttributes.add(keyString, value);
     }
 
-    if (auto *keyString = dynamic_objc_cast<NSString>(item.key))
+    if (auto *keyString = dynamicObjCDowncast<NSString>(item.key))
         m_data->key = keyString;
 
     if (item.locale)
         m_data->locale = item.locale;
 
-    if (auto *str = dynamic_objc_cast<NSString>(item.value))
+    if (auto *str = dynamicObjCDowncast<NSString>(item.value))
         m_data->value = str;
-    else if (auto *data = dynamic_objc_cast<NSData>(item.value))
+    else if (auto *data = dynamicObjCDowncast<NSData>(item.value))
         m_data->value = data;
-    else if (auto *date = dynamic_objc_cast<NSDate>(item.value))
+    else if (auto *date = dynamicObjCDowncast<NSDate>(item.value))
         m_data->value = date;
-    else if (auto *number = dynamic_objc_cast<NSNumber>(item.value))
+    else if (auto *number = dynamicObjCDowncast<NSNumber>(item.value))
         m_data->value = number;
 }
 

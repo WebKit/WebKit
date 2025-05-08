@@ -1372,7 +1372,7 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()])
         return static_cast<AVPlayerLayer *>(platformLayer());
 
-    if (auto *layer = dynamic_objc_cast<WebVideoContainerLayer>(platformLayer()))
+    if (auto *layer = dynamicObjCDowncast<WebVideoContainerLayer>(platformLayer()))
         return layer.playerLayer;
 
     ASSERT_NOT_REACHED();

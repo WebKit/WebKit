@@ -71,7 +71,7 @@
 - (UIAction *)actionWithTitle:(NSString *)title
 {
     return (UIAction *)[self findMatching:^BOOL(UIMenuElement *element) {
-        return [dynamic_objc_cast<UIAction>(element).title isEqual:title];
+        return [dynamicObjCDowncast<UIAction>(element).title isEqual:title];
     }];
 }
 
@@ -83,14 +83,14 @@
 - (UIAction *)actionForIdentifier:(UIActionIdentifier)identifier
 {
     return (UIAction *)[self findMatching:^BOOL(UIMenuElement *element) {
-        return [dynamic_objc_cast<UIAction>(element).identifier isEqual:identifier];
+        return [dynamicObjCDowncast<UIAction>(element).identifier isEqual:identifier];
     }];
 }
 
 - (UICommand *)commandForAction:(SEL)action propertyList:(id)propertyList
 {
     return (UICommand *)[self findMatching:^BOOL(UIMenuElement *element) {
-        auto command = dynamic_objc_cast<UICommand>(element);
+        auto command = dynamicObjCDowncast<UICommand>(element);
         return command.action == action && (command.propertyList == propertyList || [command.propertyList isEqual:propertyList]);
     }];
 }

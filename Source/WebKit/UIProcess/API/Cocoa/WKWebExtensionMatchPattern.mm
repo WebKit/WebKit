@@ -159,7 +159,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
     if (self == object)
         return YES;
 
-    WKWebExtensionMatchPattern *other = dynamic_objc_cast<WKWebExtensionMatchPattern>(object);
+    WKWebExtensionMatchPattern *other = dynamicObjCDowncast<WKWebExtensionMatchPattern>(object);
     if (!other)
         return NO;
 

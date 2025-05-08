@@ -159,7 +159,7 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
     if (!isFilePasteboardType(pasteboardType))
         return;
     id paths = [m_pasteboard propertyListForType:pasteboardType.createNSString().get()];
-    if (auto *pathsString = dynamic_objc_cast<NSString>(paths)) {
+    if (auto *pathsString = dynamicObjCDowncast<NSString>(paths)) {
         pathnames.append(pathsString);
         return;
     }

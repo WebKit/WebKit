@@ -180,14 +180,14 @@ template<>
 NSString *objectForKey<NSString>(NSDictionary *dictionary, id key, bool nilIfEmpty, Class requiredClass)
 {
     ASSERT(!requiredClass);
-    NSString *result = dynamic_objc_cast<NSString>(dictionary[key]);
+    NSString *result = dynamicObjCDowncast<NSString>(dictionary[key]);
     return !nilIfEmpty || result.length ? result : nil;
 }
 
 template<>
 NSArray *objectForKey<NSArray>(NSDictionary *dictionary, id key, bool nilIfEmpty, Class requiredClass)
 {
-    NSArray *result = dynamic_objc_cast<NSArray>(dictionary[key]);
+    NSArray *result = dynamicObjCDowncast<NSArray>(dictionary[key]);
     result = !nilIfEmpty || result.count ? result : nil;
     if (!result || !requiredClass)
         return result;
@@ -199,7 +199,7 @@ NSArray *objectForKey<NSArray>(NSDictionary *dictionary, id key, bool nilIfEmpty
 template<>
 NSDictionary *objectForKey<NSDictionary>(NSDictionary *dictionary, id key, bool nilIfEmpty, Class requiredClass)
 {
-    NSDictionary *result = dynamic_objc_cast<NSDictionary>(dictionary[key]);
+    NSDictionary *result = dynamicObjCDowncast<NSDictionary>(dictionary[key]);
     result = !nilIfEmpty || result.count ? result : nil;
     if (!result || !requiredClass)
         return result;
@@ -211,7 +211,7 @@ NSDictionary *objectForKey<NSDictionary>(NSDictionary *dictionary, id key, bool 
 template<>
 NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Class requiredClass)
 {
-    NSSet *result = dynamic_objc_cast<NSSet>(dictionary[key]);
+    NSSet *result = dynamicObjCDowncast<NSSet>(dictionary[key]);
     result = !nilIfEmpty || result.count ? result : nil;
     if (!result || !requiredClass)
         return result;
@@ -259,7 +259,7 @@ id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
     if (options.contains(JSONOptions::FragmentsAllowed))
         return result;
 
-    return dynamic_objc_cast<NSDictionary>(result);
+    return dynamicObjCDowncast<NSDictionary>(result);
 }
 
 id parseJSON(NSString *json, JSONOptionSet options, NSError **error)
@@ -278,7 +278,7 @@ id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
 NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
 {
 #if JSC_OBJC_API_ENABLED
-    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+    if (JSValue *value = dynamicObjCDowncast<JSValue>(object)) {
         if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
             return nil;
 
@@ -298,7 +298,7 @@ NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
         return nil;
 
 #if JSC_OBJC_API_ENABLED
-    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+    if (JSValue *value = dynamicObjCDowncast<JSValue>(object)) {
         if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
             return nil;
 
@@ -498,7 +498,7 @@ HashSet<String> toImpl(NSSet *set)
     result.reserveInitialCapacity(set.count);
 
     for (id element in set) {
-        if (auto *string = dynamic_objc_cast<NSString>(element))
+        if (auto *string = dynamicObjCDowncast<NSString>(element))
             result.addVoid(string);
     }
 
@@ -511,19 +511,19 @@ DataMap toDataMap(NSDictionary *dictionary)
     result.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {
-        String keyString = dynamic_objc_cast<NSString>(key);
+        String keyString = dynamicObjCDowncast<NSString>(key);
         if (keyString.isEmpty()) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
         id value = dictionary[key];
-        if (auto *valueString = dynamic_objc_cast<NSString>(value)) {
+        if (auto *valueString = dynamicObjCDowncast<NSString>(value)) {
             result.add(keyString, valueString);
             continue;
         }
 
-        if (auto *valueData = dynamic_objc_cast<NSData>(value)) {
+        if (auto *valueData = dynamicObjCDowncast<NSData>(value)) {
             result.add(keyString, API::Data::createWithoutCopying(valueData));
             continue;
         }

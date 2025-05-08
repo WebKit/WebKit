@@ -102,7 +102,7 @@ struct PointerInfo {
 - (UIPointerInteraction *)pointerInteraction
 {
     for (id<UIInteraction> interaction in self.textInputContentView.interactions) {
-        if (auto result = dynamic_objc_cast<UIPointerInteraction>(interaction))
+        if (auto result = dynamicObjCDowncast<UIPointerInteraction>(interaction))
             return result;
     }
     return nil;

@@ -289,7 +289,7 @@ TEST(CopyHTML, CopySelectedTextInTextDocument)
 
 #if PLATFORM(MAC)
     RetainPtr pastedObjects = [[NSPasteboard generalPasteboard] readObjectsForClasses:@[ NSAttributedString.class ] options:nil];
-    RetainPtr copiedText = dynamic_objc_cast<NSAttributedString>([pastedObjects firstObject]);
+    RetainPtr copiedText = dynamicObjCDowncast<NSAttributedString>([pastedObjects firstObject]);
 #elif !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     RetainPtr itemProvider = [[[UIPasteboard generalPasteboard] itemProviders] firstObject];
     __block bool doneLoading = false;

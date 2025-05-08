@@ -33,7 +33,7 @@ RetainPtr<id> makeNSArrayElement(const String& vectorElement)
 
 std::optional<String> makeVectorElement(const String*, id arrayElement)
 {
-    NSString *nsString = dynamic_objc_cast<NSString>(arrayElement);
+    NSString *nsString = dynamicObjCDowncast<NSString>(arrayElement);
     if (!nsString)
         return std::nullopt;
     return { { nsString } };

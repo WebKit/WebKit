@@ -596,7 +596,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (![teamDataObject isKindOfClass:NSDictionary.class])
             continue;
 
-        RetainPtr originInTeamData = dynamic_objc_cast<NSString>([teamDataObject objectForKey:@(originKeyForTeamData)]);
+        RetainPtr originInTeamData = dynamicObjCDowncast<NSString>([teamDataObject objectForKey:@(originKeyForTeamData)]);
         if (!originInTeamData)
             continue;
         if (String(originInTeamData.get()) != origin)
@@ -822,9 +822,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!value)
         return { };
 
-    RetainPtr url = dynamic_objc_cast<NSURL>(value);
+    RetainPtr url = dynamicObjCDowncast<NSURL>(value);
     if (!url) {
-        if (auto *urlData = dynamic_objc_cast<NSData>(value))
+        if (auto *urlData = dynamicObjCDowncast<NSData>(value))
             url = adoptNS([[NSURL alloc] initWithDataRepresentation:urlData relativeToURL:nil]);
     }
 

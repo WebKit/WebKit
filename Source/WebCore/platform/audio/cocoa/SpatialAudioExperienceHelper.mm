@@ -84,15 +84,15 @@ String spatialAudioExperienceDescription(CASpatialAudioExperience *experience)
     StringBuilder builder;
     builder.append('{', NSStringFromClass(experience.class));
 
-    if (auto *headTrackedExperience = dynamic_objc_cast<CAHeadTrackedSpatialAudio>(experience)) {
+    if (auto *headTrackedExperience = dynamicObjCDowncast<CAHeadTrackedSpatialAudio>(experience)) {
         builder.append(": soundStageSize("_s, headTrackedExperience.soundStageSize, "), "_s);
 
         auto *anchoringStrategy = headTrackedExperience.anchoringStrategy;
         builder.append("anchoringStrategy: {"_s, NSStringFromClass(anchoringStrategy.class));
 
-        if (auto *sceneAnchoringStrategy = dynamic_objc_cast<CASceneAnchoringStrategy>(anchoringStrategy))
+        if (auto *sceneAnchoringStrategy = dynamicObjCDowncast<CASceneAnchoringStrategy>(anchoringStrategy))
             builder.append(": sceneId: "_s, sceneAnchoringStrategy.sceneIdentifier);
-        else if (auto *tetherAnchoringStrategy = dynamic_objc_cast<CAAudioTetherAnchoringStrategy>(anchoringStrategy))
+        else if (auto *tetherAnchoringStrategy = dynamicObjCDowncast<CAAudioTetherAnchoringStrategy>(anchoringStrategy))
             builder.append(": identifier: "_s, tetherAnchoringStrategy.audioTether.identifier.UUIDString);
 
         builder.append('}');

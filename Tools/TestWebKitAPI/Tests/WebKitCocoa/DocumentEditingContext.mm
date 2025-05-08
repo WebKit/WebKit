@@ -938,9 +938,9 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToVis
     };
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityCharacter, 0, CGRectMake(1, 1, 978, 598))];
-    String selectedText = dynamic_objc_cast<NSString>([context selectedText]);
-    auto contextBeforeParts = trimmedComponentsSeparatedByNewlines(dynamic_objc_cast<NSString>([context contextBefore]));
-    auto contextAfterParts = trimmedComponentsSeparatedByNewlines(dynamic_objc_cast<NSString>([context contextAfter]));
+    String selectedText = dynamicObjCDowncast<NSString>([context selectedText]);
+    auto contextBeforeParts = trimmedComponentsSeparatedByNewlines(dynamicObjCDowncast<NSString>([context contextBefore]));
+    auto contextAfterParts = trimmedComponentsSeparatedByNewlines(dynamicObjCDowncast<NSString>([context contextAfter]));
 
     EXPECT_EQ(contextBeforeParts.size(), 1U);
     EXPECT_WK_STREQ("Here's to the crazy ones.", contextBeforeParts[0]);
@@ -1578,7 +1578,7 @@ TEST(DocumentEditingContext, CharacterRectsInEditableWebView)
     [webView waitForNextPresentationUpdate];
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularitySentence, 15)];
-    auto contextAfter = dynamic_objc_cast<NSString>([context contextAfter]);
+    auto contextAfter = dynamicObjCDowncast<NSString>([context contextAfter]);
     EXPECT_GT(contextAfter.length, 0U);
 
     for (auto range : contextAfter.composedCharacterRanges) {
@@ -1673,11 +1673,11 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
             "})()"];
         [webView waitForNextPresentationUpdate];
         auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAnnotation, UITextGranularitySentence, 3)];
-        auto annotatedText = String { dynamic_objc_cast<NSAttributedString>(context.annotatedText).string };
+        auto annotatedText = String { dynamicObjCDowncast<NSAttributedString>(context.annotatedText).string };
         auto combinedContext = makeString(
-            String { dynamic_objc_cast<NSString>(context.contextBefore) },
-            String { dynamic_objc_cast<NSString>(context.selectedText) },
-            String { dynamic_objc_cast<NSString>(context.contextAfter) }
+            String { dynamicObjCDowncast<NSString>(context.contextBefore) },
+            String { dynamicObjCDowncast<NSString>(context.selectedText) },
+            String { dynamicObjCDowncast<NSString>(context.contextAfter) }
         );
         return std::pair { WTFMove(combinedContext), WTFMove(annotatedText) };
     };
@@ -1714,10 +1714,10 @@ TEST(DocumentEditingContext, ContextWithWritingSuggestions)
     [[webView textInputContentView] setAttributedMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0)];
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 2)];
-    RetainPtr contextBefore = dynamic_objc_cast<NSString>([context contextBefore]) ?: @"";
-    RetainPtr selectedText = dynamic_objc_cast<NSString>([context selectedText]) ?: @"";
-    RetainPtr contextAfter = dynamic_objc_cast<NSString>([context contextAfter]) ?: @"";
-    RetainPtr markedText = dynamic_objc_cast<NSString>([context markedText]) ?: @"";
+    RetainPtr contextBefore = dynamicObjCDowncast<NSString>([context contextBefore]) ?: @"";
+    RetainPtr selectedText = dynamicObjCDowncast<NSString>([context selectedText]) ?: @"";
+    RetainPtr contextAfter = dynamicObjCDowncast<NSString>([context contextAfter]) ?: @"";
+    RetainPtr markedText = dynamicObjCDowncast<NSString>([context markedText]) ?: @"";
     NSRange selectedRangeInMarkedText = [context selectedRangeInMarkedText];
 
     EXPECT_WK_STREQ("Hel", contextBefore.get());

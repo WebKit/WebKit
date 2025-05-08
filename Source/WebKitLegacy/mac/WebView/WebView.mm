@@ -9232,7 +9232,7 @@ FORWARD(toggleUnderline)
         }
     }
 
-    if (auto* touchBarItem = dynamic_objc_cast<NSPopoverTouchBarItem>(foundItem))
+    if (auto* touchBarItem = dynamicObjCDowncast<NSPopoverTouchBarItem>(foundItem))
         [touchBarItem dismissPopover:nil];
 }
 

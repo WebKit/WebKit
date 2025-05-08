@@ -388,7 +388,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto jsonString = eventsJSON->string();
-    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    auto eventInfo = dynamicObjCDowncast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
     if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
         WTFLogAlways("JSON is not convertible to a dictionary");
         return;

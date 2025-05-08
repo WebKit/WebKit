@@ -209,7 +209,7 @@ static WKCookiePolicy toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy policy)
 
 static std::optional<WebCore::Cookie> makeVectorElement(const WebCore::Cookie*, id arrayElement)
 {
-    if (NSHTTPCookie *nsCookie = dynamic_objc_cast<NSHTTPCookie>(arrayElement))
+    if (NSHTTPCookie *nsCookie = dynamicObjCDowncast<NSHTTPCookie>(arrayElement))
         return WebCore::Cookie { nsCookie };
 
     return std::nullopt;

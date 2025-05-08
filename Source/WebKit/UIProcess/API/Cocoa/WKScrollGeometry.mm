@@ -54,7 +54,7 @@
     if (other == self)
         return YES;
 
-    RetainPtr otherGeometry = dynamic_objc_cast<WKScrollGeometry>(other);
+    RetainPtr otherGeometry = dynamicObjCDowncast<WKScrollGeometry>(other);
     if (!otherGeometry)
         return NO;
 

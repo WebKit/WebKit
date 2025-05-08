@@ -63,10 +63,10 @@ static double cookieCreated(NSHTTPCookie *cookie)
         return 1000.0 * (referenceFormat + NSTimeIntervalSince1970);
     };
 
-    if (RetainPtr number = dynamic_objc_cast<NSNumber>(value.get()))
+    if (RetainPtr number = dynamicObjCDowncast<NSNumber>(value.get()))
         return toCanonicalFormat(number.get().doubleValue);
 
-    if (RetainPtr string = dynamic_objc_cast<NSString>(value.get()))
+    if (RetainPtr string = dynamicObjCDowncast<NSString>(value.get()))
         return toCanonicalFormat(string.get().doubleValue);
 
     return 0;

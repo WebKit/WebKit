@@ -387,7 +387,7 @@ static void* kvoContext = &kvoContext;
         return nil;
 
     _webExtensionAction = action;
-    _popupWebView = dynamic_objc_cast<_WKWebExtensionActionWebView>(action.popupWebView());
+    _popupWebView = dynamicObjCDowncast<_WKWebExtensionActionWebView>(action.popupWebView());
 
     self.view = _popupWebView;
     self.modalPresentationStyle = UIModalPresentationPopover;
@@ -414,7 +414,7 @@ static void* kvoContext = &kvoContext;
 
 - (void)presentationController:(UIPresentationController *)presentationController prepareAdaptivePresentationController:(UIPresentationController *)adaptivePresentationController
 {
-    if (auto *sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(adaptivePresentationController))
+    if (auto *sheetPresentationController = dynamicObjCDowncast<UISheetPresentationController>(adaptivePresentationController))
         [self _updateDetentForSheetPresentationController:sheetPresentationController];
 }
 
@@ -437,7 +437,7 @@ static void* kvoContext = &kvoContext;
     if (!webExtensionAction || !objectForKey<NSNumber>(notification.userInfo, UIPresentationControllerDismissalTransitionDidEndCompletedKey).boolValue)
         return;
 
-    auto *dismissedViewController = dynamic_objc_cast<UIViewController>(notification.object);
+    auto *dismissedViewController = dynamicObjCDowncast<UIViewController>(notification.object);
     if (dismissedViewController != self && dismissedViewController != self.navigationController)
         return;
 
@@ -469,7 +469,7 @@ static void* kvoContext = &kvoContext;
             self.preferredContentSize = contentSize;
         }
 
-        [self _updateDetentForSheetPresentationController:dynamic_objc_cast<UISheetPresentationController>(presentationController)];
+        [self _updateDetentForSheetPresentationController:dynamicObjCDowncast<UISheetPresentationController>(presentationController)];
     } else {
         CGSize contentSize = _popupWebView.scrollView.contentSize;
         CGSize desiredSize = CGSizeMake(std::min(contentSize.width, maximumPopoverWidth), std::min(contentSize.height, maximumPopoverHeight));
@@ -522,7 +522,7 @@ static void* kvoContext = &kvoContext;
         return nil;
 
     _webExtensionAction = action;
-    _popupWebView = dynamic_objc_cast<_WKWebExtensionActionWebView>(action.popupWebView());
+    _popupWebView = dynamicObjCDowncast<_WKWebExtensionActionWebView>(action.popupWebView());
 
     _popupWebView.accessibilityRole = NSAccessibilityPopoverRole;
 
@@ -572,7 +572,7 @@ static void* kvoContext = &kvoContext;
         return;
 
     // Close if another popover is about to show in the same window.
-    auto *incomingPopover = dynamic_objc_cast<NSPopover>(notification.object);
+    auto *incomingPopover = dynamicObjCDowncast<NSPopover>(notification.object);
     auto *incomingPopoverWindow = incomingPopover.positioningView.window;
     if (![incomingPopoverWindow isEqual:self.positioningView.window])
         return;
@@ -948,7 +948,7 @@ void WebExtensionAction::detectPopoverColorScheme()
         bool forceLightPopoverAppearance = false;
         bool forceDarkPopoverAppearance = false;
 
-        if (auto *colorSchemesArray = dynamic_objc_cast<NSArray>(result)) {
+        if (auto *colorSchemesArray = dynamicObjCDowncast<NSArray>(result)) {
             auto *supportedColorSchemes = [NSSet setWithArray:colorSchemesArray];
             if (([supportedColorSchemes containsObject:@"light"] || [supportedColorSchemes containsObject:@"only"]) && ![supportedColorSchemes containsObject:@"dark"])
                 forceLightPopoverAppearance = true;

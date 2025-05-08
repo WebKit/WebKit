@@ -104,7 +104,7 @@ Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> MediaPl
     ASSERT(m_targetType == MediaPlaybackTargetContextType::AVOutputContext);
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-    return MediaPlaybackTargetContextCocoa(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
+    return MediaPlaybackTargetContextCocoa(dynamicObjCDowncast<AVOutputContext>(m_context.toID()));
 #else
     auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
     propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();

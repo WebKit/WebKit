@@ -57,12 +57,12 @@
     if (_pasteboardToReset)
         return;
 
-    auto pasteboard = dynamic_objc_cast<UIPasteboard>(notification.object);
+    auto pasteboard = dynamicObjCDowncast<UIPasteboard>(notification.object);
     if (![_pasteboardName isEqualToString:pasteboard.name])
         return;
 
-    auto userInfoDictionary = dynamic_objc_cast<NSDictionary>(notification.userInfo);
-    if ([dynamic_objc_cast<NSArray>([userInfoDictionary objectForKey:UIPasteboardChangedTypesAddedKey]) count])
+    auto userInfoDictionary = dynamicObjCDowncast<NSDictionary>(notification.userInfo);
+    if ([dynamicObjCDowncast<NSArray>([userInfoDictionary objectForKey:UIPasteboardChangedTypesAddedKey]) count])
         _pasteboardToReset = pasteboard;
 }
 

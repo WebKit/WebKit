@@ -63,7 +63,7 @@ static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
 - (NSImmediateActionGestureRecognizer *)immediateActionGesture
 {
     for (NSGestureRecognizer *gesture in [self gestureRecognizers]) {
-        if (RetainPtr immediateActionGesture = dynamic_objc_cast<NSImmediateActionGestureRecognizer>(gesture))
+        if (RetainPtr immediateActionGesture = dynamicObjCDowncast<NSImmediateActionGestureRecognizer>(gesture))
             return immediateActionGesture.get();
     }
     return nil;

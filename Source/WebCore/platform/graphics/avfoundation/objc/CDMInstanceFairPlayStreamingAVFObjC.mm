@@ -1030,7 +1030,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
-            RetainPtr playbackSessionIdValue = dynamic_objc_cast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
+            RetainPtr playbackSessionIdValue = dynamicObjCDowncast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
             if (!playbackSessionIdValue)
                 continue;
 
@@ -1096,7 +1096,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
-            RetainPtr playbackSessionIdValue = dynamic_objc_cast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
+            RetainPtr playbackSessionIdValue = dynamicObjCDowncast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
             if (!playbackSessionIdValue)
                 continue;
 

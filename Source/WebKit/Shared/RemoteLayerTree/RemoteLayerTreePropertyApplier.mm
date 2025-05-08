@@ -323,7 +323,7 @@ static void applyVisualStylingToLayer(CALayer *layer, const AppleVisualEffectDat
 
 static void updateAppleVisualEffect(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, AppleVisualEffectData effectData)
 {
-    if (RetainPtr materialLayer = dynamic_objc_cast<MTMaterialLayer>(layer)) {
+    if (RetainPtr materialLayer = dynamicObjCDowncast<MTMaterialLayer>(layer)) {
         if (RetainPtr recipe = materialRecipeForAppleVisualEffect(effectData.effect, effectData.colorScheme)) {
             [materialLayer setRecipe:recipe.get()];
             return;
@@ -350,7 +350,7 @@ static void updateAppleVisualEffect(CALayer *layer, RemoteLayerTreeNode* layerTr
 
 #if PLATFORM(IOS_FAMILY)
         if (layerTreeNode) {
-            if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(layerTreeNode->uiView()))
+            if (RetainPtr materialHostingView = dynamicObjCDowncast<WKMaterialHostingView>(layerTreeNode->uiView()))
                 [materialHostingView updateMaterialEffectType:hostedMaterialEffectTypeForAppleVisualEffect(effectData.effect) colorScheme:hostedMaterialColorSchemeForAppleVisualEffectData(effectData) cornerRadius:cornerRadius];
         }
 #endif
@@ -447,11 +447,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         Path path;
         if (properties.shapeRoundedRect)
             path.addRoundedRect(*properties.shapeRoundedRect);
-        dynamic_objc_cast<CAShapeLayer>(layer).path = path.platformPath();
+        dynamicObjCDowncast<CAShapeLayer>(layer).path = path.platformPath();
     }
 
     if (properties.changedProperties & LayerChange::ShapePathChanged)
-        dynamic_objc_cast<CAShapeLayer>(layer).path = properties.shapePath.platformPath();
+        dynamicObjCDowncast<CAShapeLayer>(layer).path = properties.shapePath.platformPath();
 
     if (properties.changedProperties & LayerChange::MinificationFilterChanged)
         layer.minificationFilter = toCAFilterType(properties.minificationFilter);
@@ -463,7 +463,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         PlatformCAFilters::setBlendingFiltersOnLayer(layer, properties.blendMode);
 
     if (properties.changedProperties & LayerChange::WindRuleChanged) {
-        if (auto *shapeLayer = dynamic_objc_cast<CAShapeLayer>(layer)) {
+        if (auto *shapeLayer = dynamicObjCDowncast<CAShapeLayer>(layer)) {
             switch (properties.windRule) {
             case WindRule::NonZero:
                 shapeLayer.fillRule = kCAFillRuleNonZero;
@@ -544,7 +544,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             playerLayer = [(WKVideoView*)layerTreeNode->uiView() playerLayer];
 #endif
         ASSERT([playerLayer respondsToSelector:@selector(setVideoGravity:)]);
-        if (RetainPtr webAVPlayerLayer = dynamic_objc_cast<WebAVPlayerLayer>(playerLayer))
+        if (RetainPtr webAVPlayerLayer = dynamicObjCDowncast<WebAVPlayerLayer>(playerLayer))
             [webAVPlayerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
     }
 #endif
@@ -636,7 +636,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 
         RetainPtr view = node.uiView();
 #if HAVE(MATERIAL_HOSTING)
-        if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(view.get()))
+        if (RetainPtr materialHostingView = dynamicObjCDowncast<WKMaterialHostingView>(view.get()))
             view = [materialHostingView contentView];
 #endif
 
@@ -706,7 +706,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const
 
 #if HAVE(MATERIAL_HOSTING)
     if (properties.changedProperties & LayerChange::BoundsChanged) {
-        if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(view))
+        if (RetainPtr materialHostingView = dynamicObjCDowncast<WKMaterialHostingView>(view))
             [materialHostingView updateHostingSize:properties.bounds.size()];
     }
 #endif

@@ -194,7 +194,7 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffe
     switch (type) {
         case ObjcObjectType: {
             id obj = *(const id*)buffer;
-            if (auto *str = dynamic_objc_cast<NSString>(obj))
+            if (auto *str = dynamicObjCDowncast<NSString>(obj))
                 return convertNSStringToString(lexicalGlobalObject, str);
             if ([obj isKindOfClass:webUndefinedClass()])
                 return jsUndefined();

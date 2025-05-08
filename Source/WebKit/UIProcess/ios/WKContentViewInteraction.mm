@@ -628,10 +628,10 @@ inline static UITextPosition *positionWithOffsetFrom(UITextPosition *position, N
     if (!offset)
         return position;
 
-    if (auto concretePosition = dynamic_objc_cast<WKTextPosition>(position); !concretePosition.anchors.isEmpty())
+    if (auto concretePosition = dynamicObjCDowncast<WKTextPosition>(position); !concretePosition.anchors.isEmpty())
         return adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:concretePosition.anchors offset:offset]).autorelease();
 
-    if (auto relativePosition = dynamic_objc_cast<WKRelativeTextPosition>(position))
+    if (auto relativePosition = dynamicObjCDowncast<WKRelativeTextPosition>(position))
         return adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:[relativePosition anchors] offset:offset + [relativePosition offset]]).autorelease();
 
     return nil;
@@ -639,10 +639,10 @@ inline static UITextPosition *positionWithOffsetFrom(UITextPosition *position, N
 
 inline static std::pair<OptionSet<WebKit::TextPositionAnchor>, NSInteger> anchorsAndOffset(UITextPosition *position)
 {
-    if (auto concretePosition = dynamic_objc_cast<WKTextPosition>(position); concretePosition.anchors)
+    if (auto concretePosition = dynamicObjCDowncast<WKTextPosition>(position); concretePosition.anchors)
         return { concretePosition.anchors, 0 };
 
-    if (auto relativePosition = dynamic_objc_cast<WKRelativeTextPosition>(position))
+    if (auto relativePosition = dynamicObjCDowncast<WKRelativeTextPosition>(position))
         return { relativePosition.anchors, relativePosition.offset };
 
     return { { }, 0 };
@@ -1065,7 +1065,7 @@ inline static RetainPtr<NSString> textRelativeToSelectionStart(WKRelativeTextRan
 
 static WKDragSessionContext *existingLocalDragSessionContext(id <UIDragSession> session)
 {
-    return dynamic_objc_cast<WKDragSessionContext>(session.localContext);
+    return dynamicObjCDowncast<WKDragSessionContext>(session.localContext);
 }
 
 static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> session)
@@ -3358,7 +3358,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!hitView)
         return NO;
 
-    RetainPtr hitScroller = dynamic_objc_cast<UIScrollView>(hitView.get()) ?: [hitView _wk_parentScrollView];
+    RetainPtr hitScroller = dynamicObjCDowncast<UIScrollView>(hitView.get()) ?: [hitView _wk_parentScrollView];
     return hitScroller && hitScroller == self._selectionContainerViewInternal._wk_parentScrollView;
 }
 
@@ -3384,7 +3384,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     UIView *view = firstView ?: self.webView.scrollView;
     for (; view; view = view.superview) {
-        if (auto scrollView = dynamic_objc_cast<UIScrollView>(view); scrollView && matchFunction(scrollView))
+        if (auto scrollView = dynamicObjCDowncast<UIScrollView>(view); scrollView && matchFunction(scrollView))
             return YES;
     }
     return NO;
@@ -5678,7 +5678,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
 - (BOOL)_handleTapOverInteractiveControl:(CGPoint)position
 {
-    auto *hitButton = dynamic_objc_cast<UIControl>([self hitTest:position withEvent:nil]);
+    auto *hitButton = dynamicObjCDowncast<UIControl>([self hitTest:position withEvent:nil]);
     if (!hitButton)
         return NO;
 
@@ -6384,14 +6384,14 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 {
     _autocorrectionContextNeedsUpdate = YES;
 
-    if (RetainPtr autoFillSuggestion = dynamic_objc_cast<UITextAutofillSuggestion>(textSuggestion)) {
+    if (RetainPtr autoFillSuggestion = dynamicObjCDowncast<UITextAutofillSuggestion>(textSuggestion)) {
         // Maintain binary compatibility with UITextAutofillSuggestion, even when using the ServiceExtensions text input.
         _page->autofillLoginCredentials([autoFillSuggestion username], [autoFillSuggestion password]);
         return;
     }
 
 #if USE(BROWSERENGINEKIT)
-    if (RetainPtr autoFillSuggestion = dynamic_objc_cast<BEAutoFillTextSuggestion>(textSuggestion)) {
+    if (RetainPtr autoFillSuggestion = dynamicObjCDowncast<BEAutoFillTextSuggestion>(textSuggestion)) {
         RetainPtr contents = [autoFillSuggestion contents];
         _page->autofillLoginCredentials([contents objectForKey:UITextContentTypeUsername], [contents objectForKey:UITextContentTypePassword]);
         return;
@@ -6412,7 +6412,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)]) {
         auto uiTextSuggestion = [&]() -> RetainPtr<UITextSuggestion> {
 #if USE(BROWSERENGINEKIT)
-            if (auto beTextSuggestion = dynamic_objc_cast<BETextSuggestion>(textSuggestion))
+            if (auto beTextSuggestion = dynamicObjCDowncast<BETextSuggestion>(textSuggestion))
                 return beTextSuggestion._uikitTextSuggestion;
 #endif
             return textSuggestion;
@@ -6433,7 +6433,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     if (self.selectedTextRange == range && editorState.selectionIsRange)
         return editorState.postLayoutData->wordAtSelection.createNSString().autorelease();
 
-    if (auto relativeRange = dynamic_objc_cast<WKRelativeTextRange>(range))
+    if (auto relativeRange = dynamicObjCDowncast<WKRelativeTextRange>(range))
         return textRelativeToSelectionStart(relativeRange, *editorState.postLayoutData, _lastInsertedCharacterToOverrideCharacterBeforeSelection).autorelease();
 
     return nil;
@@ -6518,12 +6518,12 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    return dynamic_objc_cast<WKTextPosition>(position).positionRect;
+    return dynamicObjCDowncast<WKTextPosition>(position).positionRect;
 }
 
 - (NSArray *)selectionRectsForRange:(UITextRange *)range
 {
-    return dynamic_objc_cast<WKTextRange>(range).selectionRects;
+    return dynamicObjCDowncast<WKTextRange>(range).selectionRects;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)range
@@ -6988,11 +6988,11 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 // Accepts either NSTextAlternatives, or an equivalent type that's currently defined as PlatformTextAlternatives.
 - (void)addTextAlternatives:(NSObject *)alternatives
 {
-    RetainPtr platformAlternatives = dynamic_objc_cast<PlatformTextAlternatives>(alternatives);
+    RetainPtr platformAlternatives = dynamicObjCDowncast<PlatformTextAlternatives>(alternatives);
 
 #if USE(BROWSERENGINEKIT)
     if (!platformAlternatives) {
-        if (RetainPtr nsAlternatives = dynamic_objc_cast<NSTextAlternatives>(alternatives))
+        if (RetainPtr nsAlternatives = dynamicObjCDowncast<NSTextAlternatives>(alternatives))
             platformAlternatives = adoptNS([[PlatformTextAlternatives alloc] _initWithNSTextAlternatives:nsAlternatives.get()]);
     }
 #endif
@@ -7318,7 +7318,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     traits.textContentType = [self contentTypeFromFieldName:_focusedElementInformation.autofillFieldName];
 #endif
 
-    auto extendedTraits = dynamic_objc_cast<WKExtendedTextInputTraits>(traits);
+    auto extendedTraits = dynamicObjCDowncast<WKExtendedTextInputTraits>(traits);
     auto privateTraits = (id <UITextInputTraits_Private>)traits;
 
     BOOL isSingleLineDocument = ^{
@@ -9889,7 +9889,7 @@ static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCor
 {
     NSSet<UITouch *> *touches = [event touchesForGestureRecognizer:gestureRecognizer];
     for (UITouch *touch in touches) {
-        if (dynamic_objc_cast<UIScrollView>(touch.view)._wk_isInterruptingDeceleration)
+        if (dynamicObjCDowncast<UIScrollView>(touch.view)._wk_isInterruptingDeceleration)
             return YES;
     }
     return self._scroller._wk_isInterruptingDeceleration;
@@ -10428,7 +10428,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         if (gestureRecognizer == _highlightLongPressGestureRecognizer)
             return YES;
 
-        if (auto *tapGesture = dynamic_objc_cast<UITapGestureRecognizer>(gestureRecognizer))
+        if (auto *tapGesture = dynamicObjCDowncast<UITapGestureRecognizer>(gestureRecognizer))
             return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
 
         return NO;
@@ -10977,7 +10977,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler
 {
     // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
-    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+    if (RetainPtr wkTextPlaceholder = dynamicObjCDowncast<WKTextPlaceholder>(placeholder))
         _page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
     else
         completionHandler();
@@ -11790,12 +11790,12 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     WKBETextDocumentRequestOptions options = WKBETextDocumentRequestOptionNone;
     CGRect documentRect;
 
-    if (auto uiRequest = dynamic_objc_cast<UIWKDocumentRequest>(request)) {
+    if (auto uiRequest = dynamicObjCDowncast<UIWKDocumentRequest>(request)) {
         documentRect = uiRequest.documentRect;
         options = static_cast<WKBETextDocumentRequestOptions>(uiRequest.flags);
     }
 #if USE(BROWSERENGINEKIT)
-    else if (auto seRequest = dynamic_objc_cast<WKBETextDocumentRequest>(request)) {
+    else if (auto seRequest = dynamicObjCDowncast<WKBETextDocumentRequest>(request)) {
         documentRect = seRequest._documentRect;
         options = seRequest.options;
     }
@@ -11806,7 +11806,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
         .granularityCount = [request granularityCount],
         .rect = documentRect
     };
-    if (auto textInputContext = dynamic_objc_cast<_WKTextInputContext>([request inputElementIdentifier]))
+    if (auto textInputContext = dynamicObjCDowncast<_WKTextInputContext>([request inputElementIdentifier]))
         webRequest.textInputContext = [textInputContext _textInputContext];
 
     return webRequest;
@@ -12633,7 +12633,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (!self.supportsTextReplacement)
         return;
 
-    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
+    auto foundTextRange = dynamicObjCDowncast<WKFoundTextRange>(range);
     if (!foundTextRange)
         return;
 
@@ -12642,7 +12642,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)decorateFoundTextRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document usingStyle:(UITextSearchFoundTextStyle)style
 {
-    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
+    auto foundTextRange = dynamicObjCDowncast<WKFoundTextRange>(range);
     if (!foundTextRange)
         return;
 
@@ -12657,7 +12657,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)scrollRangeToVisible:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
 {
-    if (auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range))
+    if (auto foundTextRange = dynamicObjCDowncast<WKFoundTextRange>(range))
         _page->scrollTextRangeToVisible([foundTextRange webFoundTextRange]);
 }
 
@@ -12707,7 +12707,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
 {
-    if (auto* foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {
+    if (auto* foundTextRange = dynamicObjCDowncast<WKFoundTextRange>(range)) {
         _page->requestRectForFoundTextRange([foundTextRange webFoundTextRange], [completionHandler = makeBlockPtr(completionHandler)] (WebCore::FloatRect rect) {
             completionHandler(rect);
         });
@@ -13172,7 +13172,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         auto revealImageIdentifier = elementActionTypeToUIActionIdentifier(_WKElementActionTypeRevealImage);
         auto showTextIdentifier = elementActionTypeToUIActionIdentifier(_WKElementActionTypeImageExtraction);
         [menu.children enumerateObjectsUsingBlock:^(UIMenuElement *child, NSUInteger index, BOOL* stop) {
-            auto *action = dynamic_objc_cast<UIAction>(child);
+            auto *action = dynamicObjCDowncast<UIAction>(child);
             if ([action.identifier isEqualToString:revealImageIdentifier])
                 foundRevealImageItem = YES;
             else if ([action.identifier isEqualToString:showTextIdentifier])
@@ -13183,7 +13183,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         auto newItems = adoptNS([NSMutableArray<UIMenuElement *> new]);
 
         for (UIMenuElement *child in adjustedChildren.get()) {
-            UIAction *action = dynamic_objc_cast<UIAction>(child);
+            UIAction *action = dynamicObjCDowncast<UIAction>(child);
             if (!action)
                 continue;
 
@@ -14239,7 +14239,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
         return YES;
 
     RetainPtr mainScroller = [_webView scrollView];
-    RetainPtr innerScroller = dynamic_objc_cast<UIScrollView>(lastHitView.get()) ?: [lastHitView _wk_parentScrollView];
+    RetainPtr innerScroller = dynamicObjCDowncast<UIScrollView>(lastHitView.get()) ?: [lastHitView _wk_parentScrollView];
     for (RetainPtr scroller = innerScroller; scroller; scroller = [scroller _wk_parentScrollView]) {
         if ([scroller isDragging])
             return NO;

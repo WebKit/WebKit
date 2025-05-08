@@ -98,7 +98,7 @@
         return NO;
 
     CGPoint pointInMask = [self.mask convertPoint:point fromLayer:self];
-    if (auto *shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
+    if (auto *shapeMask = dynamicObjCDowncast<CAShapeLayer>(self.mask)) {
         bool isEvenOddFill = [shapeMask.fillRule isEqualToString:kCAFillRuleEvenOdd];
         return CGPathContainsPoint(shapeMask.path, nullptr, pointInMask, isEvenOddFill);
     }
@@ -112,7 +112,7 @@
         return NO;
 
     CGRect rectInMask = [self.mask convertRect:rect fromLayer:self];
-    if (auto *shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
+    if (auto *shapeMask = dynamicObjCDowncast<CAShapeLayer>(self.mask)) {
         CGRect pathBounds = CGPathGetPathBoundingBox(shapeMask.path);
         return CGRectIntersectsRect(pathBounds, rectInMask);
     }

@@ -130,13 +130,13 @@
 
     RetainPtr<id> item = [items objectAtIndex:0];
 
-    if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(item.get())) {
+    if (RetainPtr attributedString = dynamicObjCDowncast<NSAttributedString>(item.get())) {
         RetainPtr data = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
         dataReference = span(data.get());
 
         types.append(NSPasteboardTypeRTFD);
         types.append(WebCore::legacyRTFDPasteboardType());
-    } else if (RetainPtr data = dynamic_objc_cast<NSData>(item.get())) {
+    } else if (RetainPtr data = dynamicObjCDowncast<NSData>(item.get())) {
         RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData(bridge_cast(data.get()), NULL));
         RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
 
@@ -145,7 +145,7 @@
 
         dataReference = span(data.get());
         types.append(NSPasteboardTypeTIFF);
-    } else if (RetainPtr itemProvider = dynamic_objc_cast<NSItemProvider>(item.get())) {
+    } else if (RetainPtr itemProvider = dynamicObjCDowncast<NSItemProvider>(item.get())) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         RefPtr menuProxy = _menuProxy.get();
         WeakPtr weakPage = menuProxy ? menuProxy->page() : nullptr;

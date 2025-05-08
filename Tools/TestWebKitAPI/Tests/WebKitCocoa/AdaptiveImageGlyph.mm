@@ -928,9 +928,9 @@ TEST(AdaptiveImageGlyph, AttributedStringDocumentEditingContext)
     [request setGranularityCount:1];
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:request.get()];
-    RetainPtr contextBefore = dynamic_objc_cast<NSAttributedString>([context contextBefore]);
-    RetainPtr selectedText = dynamic_objc_cast<NSAttributedString>([context selectedText]);
-    RetainPtr contextAfter = dynamic_objc_cast<NSAttributedString>([context contextAfter]);
+    RetainPtr contextBefore = dynamicObjCDowncast<NSAttributedString>([context contextBefore]);
+    RetainPtr selectedText = dynamicObjCDowncast<NSAttributedString>([context selectedText]);
+    RetainPtr contextAfter = dynamicObjCDowncast<NSAttributedString>([context contextAfter]);
 
     EXPECT_WK_STREQ(@"Hello ", [contextBefore string]);
     EXPECT_WK_STREQ(@"\uFFFC", [selectedText string]);

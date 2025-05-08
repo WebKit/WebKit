@@ -113,7 +113,7 @@ using namespace WebCore;
     RetainPtr attachments = (__bridge NSArray *)PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
     SCFrameStatus status = SCFrameStatusStopped;
     [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
-        RetainPtr statusNumber = dynamic_objc_cast<NSNumber>(attachment[SCStreamFrameInfoStatus]);
+        RetainPtr statusNumber = dynamicObjCDowncast<NSNumber>(attachment[SCStreamFrameInfoStatus]);
         if (!statusNumber)
             return;
 
@@ -560,10 +560,10 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
         if (!protectedThis)
             return;
 
-        if (RetainPtr scaleFactorNumber = dynamic_objc_cast<NSNumber>(attachment[SCStreamFrameInfoScaleFactor]))
+        if (RetainPtr scaleFactorNumber = dynamicObjCDowncast<NSNumber>(attachment[SCStreamFrameInfoScaleFactor]))
             scaleFactor = [scaleFactorNumber floatValue];
 
-        if (RetainPtr contentScaleNumber = dynamic_objc_cast<NSNumber>(attachment[SCStreamFrameInfoContentScale]))
+        if (RetainPtr contentScaleNumber = dynamicObjCDowncast<NSNumber>(attachment[SCStreamFrameInfoContentScale]))
             contentScale = [contentScaleNumber floatValue];
 
         if (RetainPtr contentRectDictionary = dynamic_cf_cast<CFDictionaryRef>(attachment[SCStreamFrameInfoContentRect])) {
@@ -581,7 +581,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
             }
         }
 #endif
-        RetainPtr statusNumber = dynamic_objc_cast<NSNumber>(attachment[SCStreamFrameInfoStatus]);
+        RetainPtr statusNumber = dynamicObjCDowncast<NSNumber>(attachment[SCStreamFrameInfoStatus]);
         if (!statusNumber)
             return;
 

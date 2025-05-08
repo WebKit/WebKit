@@ -330,7 +330,7 @@ TEST(WKWebExtensionAPICommands, PerformMenuItem)
 #if USE(APPKIT)
     [menuItem.target performSelector:menuItem.action withObject:nil];
 #else
-    [dynamic_objc_cast<UIAction>(menuItem) performWithSender:nil target:nil];
+    [dynamicObjCDowncast<UIAction>(menuItem) performWithSender:nil target:nil];
 #endif
 
     [manager run];

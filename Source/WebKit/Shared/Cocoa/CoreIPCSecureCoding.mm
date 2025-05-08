@@ -56,7 +56,7 @@ static std::unique_ptr<HashSet<String>>& internalClassNamesExemptFromSecureCodin
         exemptClassNames.get() = WTF::makeUnique<HashSet<String>>();
 
         for (id value in array.get()) {
-            if (RetainPtr string = dynamic_objc_cast<NSString>(value))
+            if (RetainPtr string = dynamicObjCDowncast<NSString>(value))
                 exemptClassNames.get()->add(string.get());
         }
     });

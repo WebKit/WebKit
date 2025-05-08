@@ -167,7 +167,7 @@ static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayIn
 static RetainPtr<NSDictionary> applicationMetadataDictionary(const ApplePayInstallmentConfiguration& configuration)
 {
     if (RetainPtr applicationMetadata = [configuration.applicationMetadata.createNSString() dataUsingEncoding:NSUTF8StringEncoding])
-        return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata.get() options:0 error:nil]);
+        return dynamicObjCDowncast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata.get() options:0 error:nil]);
     return { };
 }
 

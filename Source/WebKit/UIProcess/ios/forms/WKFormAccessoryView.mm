@@ -303,7 +303,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (UIButton *)_autoFillButton
 {
-    return dynamic_objc_cast<UIButton>([_autoFillButtonItem customView]);
+    return dynamicObjCDowncast<UIButton>([_autoFillButtonItem customView]);
 }
 
 - (void)_refreshAutofillPresentation

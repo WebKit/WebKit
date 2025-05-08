@@ -126,16 +126,16 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
         vector.reserveInitialCapacity(headerFields.get().count);
         for (id key in headerFields.get()) {
             RetainPtr<id> value = [headerFields objectForKey:key];
-            if (RetainPtr valueArray = dynamic_objc_cast<NSArray>(value.get())) {
+            if (RetainPtr valueArray = dynamicObjCDowncast<NSArray>(value.get())) {
                 Vector<String> valueVector;
                 valueVector.reserveInitialCapacity(valueArray.get().count);
                 for (id item in valueArray.get()) {
-                    if (RetainPtr nsString = dynamic_objc_cast<NSString>(item))
+                    if (RetainPtr nsString = dynamicObjCDowncast<NSString>(item))
                         valueVector.append(nsString.get());
                 }
                 vector.append({ key, valueVector });
             }
-            if (RetainPtr nsString = dynamic_objc_cast<NSString>(value.get()))
+            if (RetainPtr nsString = dynamicObjCDowncast<NSString>(value.get()))
                 vector.append({ key, nsString.get() });
         }
         vector.shrinkToFit();

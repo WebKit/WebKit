@@ -84,7 +84,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSResponder *responder, NSView *view)
 {
-    if (auto *responderView = dynamic_objc_cast<NSView>(responder); responderView && [responderView isDescendantOf:view])
+    if (auto *responderView = dynamicObjCDowncast<NSView>(responder); responderView && [responderView isDescendantOf:view])
         [window makeFirstResponder:responder];
 }
 

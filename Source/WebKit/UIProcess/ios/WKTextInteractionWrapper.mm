@@ -166,7 +166,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 #endif
 
     for (id<UIInteraction> interaction in _view.interactions) {
-        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+        if (RetainPtr selectionInteraction = dynamicObjCDowncast<UITextSelectionDisplayInteraction>(interaction))
             return selectionInteraction.get();
     }
 

@@ -143,7 +143,7 @@ static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vec
         return std::nullopt;
     bool parseFailed = false;
     auto result = makeVector(bridge_cast(array), [&] (id value) {
-        auto parseResult = parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
+        auto parseResult = parseInteger<uint16_t>(String(dynamicObjCDowncast<NSString>(value)));
         parseFailed |= !parseResult;
         return parseResult;
     });

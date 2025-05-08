@@ -816,7 +816,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_webViewImpl)
         return;
 
-    RetainPtr insertListControl = dynamic_objc_cast<NSSegmentedControl>(self.view);
+    RetainPtr insertListControl = dynamicObjCDowncast<NSSegmentedControl>(self.view);
     switch (insertListControl.get().selectedSegment) {
     case noListSegment:
         // There is no "remove list" edit command, but InsertOrderedList and InsertUnorderedList both
@@ -840,7 +840,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setCurrentListType:(WebKit::ListType)listType
 {
-    RetainPtr insertListControl = dynamic_objc_cast<NSSegmentedControl>(self.view);
+    RetainPtr insertListControl = dynamicObjCDowncast<NSSegmentedControl>(self.view);
     switch (listType) {
     case WebKit::ListType::None:
         [insertListControl setSelected:YES forSegment:noListSegment];
@@ -924,7 +924,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr<NSColorPickerTouchBarItem> colorPickerItem;
     if ([identifier isEqualToString:NSTouchBarItemIdentifierTextColorPicker])
-        colorPickerItem = dynamic_objc_cast<NSColorPickerTouchBarItem>(item.get());
+        colorPickerItem = dynamicObjCDowncast<NSColorPickerTouchBarItem>(item.get());
     if (isTextFormatItem)
         colorPickerItem = self.colorPickerItem;
     if (colorPickerItem) {
@@ -1186,7 +1186,7 @@ static void* imageOverlayObservationContext = &imageOverlayObservationContext;
     if (!_impl)
         return NO;
 
-    for (RetainPtr view = dynamic_objc_cast<NSView>(_impl->view().window.firstResponder); view; view = view.get().superview) {
+    for (RetainPtr view = dynamicObjCDowncast<NSView>(_impl->view().window.firstResponder); view; view = view.get().superview) {
         if (view == _overlayView)
             return YES;
     }
@@ -1322,7 +1322,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     [view addTrackingArea:m_flagsChangedEventMonitorTrackingArea.get()];
 
     for (NSView *subview in view.subviews) {
-        if (RetainPtr layerHostingView = dynamic_objc_cast<WKFlippedView>(subview)) {
+        if (RetainPtr layerHostingView = dynamicObjCDowncast<WKFlippedView>(subview)) {
             // A layer hosting view may have already been created and added to the view hierarchy
             // in the process of initializing the WKWebView from an NSCoder.
             m_layerHostingView = layerHostingView.get();
@@ -1574,8 +1574,8 @@ bool WebViewImpl::resignFirstResponder()
         if (m_page->maintainsInactiveSelection())
             return false;
 
-        RetainPtr<NSWindow> nextResponderWindow = dynamic_objc_cast<NSView>(nextResponder.get()).window;
-        return !dynamic_objc_cast<NSPanel>(nextResponderWindow.get());
+        RetainPtr<NSWindow> nextResponderWindow = dynamicObjCDowncast<NSView>(nextResponder.get()).window;
+        return !dynamicObjCDowncast<NSPanel>(nextResponderWindow.get());
     }();
 
     if (shouldClearSelection)
@@ -2936,7 +2936,7 @@ void WebViewImpl::changeFontColorFromSender(id sender)
     if (![sender respondsToSelector:@selector(color)])
         return;
 
-    RetainPtr color = dynamic_objc_cast<NSColor>([sender color]);
+    RetainPtr color = dynamicObjCDowncast<NSColor>([sender color]);
     if (!color)
         return;
 
@@ -4213,7 +4213,7 @@ static bool handleLegacyFilesPromisePasteboard(id<NSDraggingInfo> draggingInfo, 
     // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
     // guaranteed that the count of UTIs equals the count of files, since some clients only write
     // unique UTIs.
-    RetainPtr files = dynamic_objc_cast<NSArray>([draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()]);
+    RetainPtr files = dynamicObjCDowncast<NSArray>([draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()]);
     if (!files)
         return false;
 
@@ -4246,7 +4246,7 @@ static bool handleLegacyFilesPromisePasteboard(id<NSDraggingInfo> draggingInfo, 
 
 static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<WebCore::DragData>&& dragData, WebPageProxy& page)
 {
-    RetainPtr files = dynamic_objc_cast<NSArray>([draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()]);
+    RetainPtr files = dynamicObjCDowncast<NSArray>([draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()]);
     if (!files)
         return false;
 
@@ -4329,7 +4329,7 @@ void WebViewImpl::registerDraggedTypes()
 
 NSString *WebViewImpl::fileNameForFilePromiseProvider(NSFilePromiseProvider *provider, NSString *)
 {
-    RetainPtr userInfo = dynamic_objc_cast<WKPromisedAttachmentContext>(provider.userInfo);
+    RetainPtr userInfo = dynamicObjCDowncast<WKPromisedAttachmentContext>(provider.userInfo);
     if (!userInfo)
         return nil;
 
@@ -4348,7 +4348,7 @@ void WebViewImpl::didPerformDragOperation(bool handled)
 
 void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provider, NSURL *fileURL, void(^completionHandler)(NSError *))
 {
-    RetainPtr userInfo = dynamic_objc_cast<WKPromisedAttachmentContext>(provider.userInfo);
+    RetainPtr userInfo = dynamicObjCDowncast<WKPromisedAttachmentContext>(provider.userInfo);
     if (!userInfo) {
         completionHandler(webKitUnknownError());
         return;
@@ -4777,7 +4777,7 @@ void WebViewImpl::insertTextPlaceholderWithSize(CGSize size, void(^completionHan
 void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool willInsertText, void(^completionHandler)())
 {
     // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
-    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+    if (RetainPtr wkTextPlaceholder = dynamicObjCDowncast<WKTextPlaceholder>(placeholder))
         m_page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
     else
         completionHandler();
@@ -5490,7 +5490,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
 
 #if HAVE(INLINE_PREDICTIONS)
-    if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(string)) {
+    if (RetainPtr attributedString = dynamicObjCDowncast<NSAttributedString>(string)) {
         BOOL hasTextCompletion = [&] {
             __block BOOL result = NO;
 
@@ -6250,7 +6250,7 @@ void WebViewImpl::dismissTextTouchBarPopoverItemWithIdentifier(NSString *identif
         }
     }
 
-    if (RetainPtr touchBarItem = dynamic_objc_cast<NSPopoverTouchBarItem>(foundItem))
+    if (RetainPtr touchBarItem = dynamicObjCDowncast<NSPopoverTouchBarItem>(foundItem))
         [touchBarItem dismissPopover:nil];
 }
 

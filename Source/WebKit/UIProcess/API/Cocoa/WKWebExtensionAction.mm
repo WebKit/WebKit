@@ -55,7 +55,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
     if (self == object)
         return YES;
 
-    auto *other = dynamic_objc_cast<WKWebExtensionAction>(object);
+    auto *other = dynamicObjCDowncast<WKWebExtensionAction>(object);
     if (!other)
         return NO;
 

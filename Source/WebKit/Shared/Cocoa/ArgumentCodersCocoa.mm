@@ -110,26 +110,26 @@
 
 - (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
-    if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object); unwrappedURL && transformURLs)
+    if (auto unwrappedURL = dynamicObjCDowncast<NSURL>(object); unwrappedURL && transformURLs)
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
     if (rewriteMutableArray) {
-        if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object))
+        if (auto mutableArray = dynamicObjCDowncast<NSMutableArray>(object))
             return adoptNS([mutableArray copy]).autorelease();
     }
 
     if (rewriteMutableData) {
-        if (auto mutableData = dynamic_objc_cast<NSMutableData>(object))
+        if (auto mutableData = dynamicObjCDowncast<NSMutableData>(object))
             return adoptNS([mutableData copy]).autorelease();
     }
 
     if (rewriteMutableDictionary) {
-        if (auto mutableDict = dynamic_objc_cast<NSMutableDictionary>(object))
+        if (auto mutableDict = dynamicObjCDowncast<NSMutableDictionary>(object))
             return adoptNS([mutableDict copy]).autorelease();
     }
 
     if (rewriteMutableString) {
-        if (auto mutableString = dynamic_objc_cast<NSMutableString>(object))
+        if (auto mutableString = dynamicObjCDowncast<NSMutableString>(object))
             return adoptNS([mutableString copy]).autorelease();
     }
 
@@ -145,10 +145,10 @@
 - (id)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED
 {
     auto adoptedObject = adoptNS(object);
-    if (auto wrapper = dynamic_objc_cast<WKSecureCodingURLWrapper>(adoptedObject.get()))
+    if (auto wrapper = dynamicObjCDowncast<WKSecureCodingURLWrapper>(adoptedObject.get()))
         return retainPtr(wrapper.wrappedURL).leakRef();
 
-    if (auto wrapper = dynamic_objc_cast<WKSecureCodingCGColorWrapper>(adoptedObject.get()))
+    if (auto wrapper = dynamicObjCDowncast<WKSecureCodingCGColorWrapper>(adoptedObject.get()))
         return static_cast<id>(retainPtr(wrapper.wrappedColor).leakRef());
 
     return adoptedObject.leakRef();

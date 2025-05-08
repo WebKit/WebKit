@@ -63,7 +63,7 @@ RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> CaptionUserPreferencesMe
 
 RefPtr<CaptionUserPreferencesMediaAF> CaptionUserPreferencesMediaAF::extractCaptionUserPreferencesMediaAF(void* observer)
 {
-    RetainPtr strongObserver { dynamic_objc_cast<WebCaptionUserPreferencesMediaAFWeakObserver>(reinterpret_cast<id>(observer)) };
+    RetainPtr strongObserver { dynamicObjCDowncast<WebCaptionUserPreferencesMediaAFWeakObserver>(reinterpret_cast<id>(observer)) };
     if (!strongObserver)
         return nullptr;
     return [strongObserver userPreferences];

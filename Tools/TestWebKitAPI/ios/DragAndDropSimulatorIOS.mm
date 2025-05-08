@@ -71,7 +71,7 @@ template<typename InteractionType>
 InteractionType *findInteractionOfType(UIView *view)
 {
     for (id<UIInteraction> interaction in view.interactions) {
-        if (auto foundInteraction = dynamic_objc_cast<InteractionType>(interaction))
+        if (auto foundInteraction = dynamicObjCDowncast<InteractionType>(interaction))
             return foundInteraction;
     }
     return nil;
