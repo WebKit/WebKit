@@ -4089,9 +4089,10 @@
 				DDE99316278D08B900F60D26 /* Product Dependencies */,
 				DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */,
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
+				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
+				DDC9D68C2DEBE87000E175C0 /* Generate modulemap */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
-				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
 			);
 			buildRules = (
 				147572882CCD82170027BA8F /* PBXBuildRule */,
@@ -4223,6 +4224,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${WK_HEADERS_VFS_FILE}\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}/wtf\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
+		};
+		DDC9D68C2DEBE87000E175C0 /* Generate modulemap */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/modulemap-from-tapi-filelist.py",
+				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
+				"$(SRCROOT)/Configurations/modulemap.toml",
+			);
+			name = "Generate modulemap";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/module.modulemap",
+				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/module.modulemap",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${WK_XCODE_16}\" == XCODE_BEFORE_16 && ${DEPLOYMENT_LOCATION} != YES ]; then\nrm -f \"${SCRIPT_OUTPUT_FILE_0}\"\nelif [ \"${WK_XCODE_16}\" == XCODE_BEFORE_16 ]; then\nrm -f \"${SCRIPT_OUTPUT_FILE_1}\"\nelif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n\"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\" --config \"${SCRIPT_INPUT_FILE_2}\" --relative-to \"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n\"${SCRIPT_INPUT_FILE_0}\" ${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/WTF.json --config \"${SCRIPT_INPUT_FILE_2}\" --relative-to \"<SDKROOT>/${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

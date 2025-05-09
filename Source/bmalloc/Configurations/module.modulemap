@@ -1,0 +1,55 @@
+module bmalloc {
+    requires cplusplus11
+    // List of "semi-public" bmalloc headers. What does "semi-public" mean? These are
+    // the headers which, in practice, are included by WTF headers. WTF headers are
+    // exported as part of the WebKit SPI, and therefore these headers need to be
+    // buildable as a clang module.
+    // It's important that this list excludes pas_lock.h. pas_lock.h produces
+    // an #error if OS_UNFAIR_LOCK_INLINE is not 1, because bmalloc expects
+    // the underlying OS lock APIs to be confifgured in that fashion (and
+    // has presumably been tested only in that configuration.) In a modules build,
+    // that configuration can't be enforced by the including code (bmalloc) but
+    // instead all downstream consumers of bmalloc - right up to WebKit and things
+    // that depend upon WebKit - would individually need to set OS_UNFAIR_LOCK_INLINE.
+    // Or, bmalloc would need to be tested in two different configurations instead
+    // of producing an #error. This complexity is the main reason why bmalloc
+    // has a narrower, hand-curated list of headers in its module.
+    header "Algorithm.h"
+    header "BAssert.h"
+    header "BCompiler.h"
+    header "BInline.h"
+    header "BPlatform.h"
+    header "BVMTags.h"
+    header "CompactAllocationMode.h"
+    header "Gigacage.h"
+    header "GigacageConfig.h"
+    header "GigacageKind.h"
+    header "IsoHeap.h"
+    header "IsoHeapInlines.h"
+    header "Logging.h"
+    header "Sizes.h"
+    header "TZoneHeap.h"
+    header "TZoneHeapInlines.h"
+    // The following header contains only plain C definitions so
+    // we declare this in a submodule which doesn't require cplusplus11
+    explicit module bexport {
+        header "BExport.h"
+    }
+    // The following also do not need cplusplus11 and also need
+    // to be colocated in one module since any headers including
+    // most of these will end up requiring the definitions from
+    // the others. Specifically, we don't want lots of downstream
+    // files to need to explicitly include pas_utils_prefix.h,
+    // yet many of these other files define things in terms of
+    // the contents of that file.
+    explicit module pas {
+        header "pas_allocation_mode.h"
+        header "pas_config.h"
+        header "pas_config_prefix.h"
+        header "pas_platform.h"
+        header "pas_thread.h"
+        header "pas_utils.h"
+        header "pas_utils_prefix.h"
+    }
+    export *
+}

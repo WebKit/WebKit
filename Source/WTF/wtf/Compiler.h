@@ -665,3 +665,7 @@
 // Used to indicate that a class member has a specialized implementation in Swift. See
 // "SwiftCXXThunk.h".
 #define HAS_SWIFTCXX_THUNK  NS_REFINED_FOR_SWIFT
+
+// This comment is incremented each time we add or remove a modulemap file, to force
+// rebuild of all WTF's dependencies. This is a workaround for rdar://151920332.
+// Current increment: 2.

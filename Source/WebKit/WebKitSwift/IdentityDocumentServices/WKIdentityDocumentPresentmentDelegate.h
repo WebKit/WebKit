@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/Compiler.h>
 #import "WKIdentityDocumentPresentmentRawRequest.h"
 
 #if USE(APPKIT)
