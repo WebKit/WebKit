@@ -109,6 +109,8 @@ public:
 #if !USE(SYSTEM_MALLOC)
         m_useDebugHeap = !bmalloc::api::isEnabled();
         if (!m_useDebugHeap) [[likely]] {
+            // Protect the structure heap region; pas_page_malloc commit will mark the region as readable / writeable
+            OSAllocator::protect((void *) g_jscConfig.startOfStructureHeap, g_jscConfig.sizeOfStructureHeap, false, false);
             bmalloc_force_auxiliary_heap_into_reserved_memory(&structureHeap, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + g_jscConfig.sizeOfStructureHeap);
             return;
         }

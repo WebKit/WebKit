@@ -221,6 +221,8 @@ static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capab
     if (end_as_int == base_as_int)
         return;
 
+    PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE));
+
     if (PAS_MPROTECT_DECOMMITTED && do_mprotect && mmap_capability)
         PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE));
 
