@@ -618,7 +618,7 @@ private:
 
 #if USE(SOUP)
     bool m_persistentCredentialStorageEnabled { true };
-    bool m_ignoreTLSErrors { true };
+    bool m_ignoreTLSErrors { false };
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
     String m_cookiePersistentStoragePath;
     SoupCookiePersistentStorageType m_cookiePersistentStorageType { SoupCookiePersistentStorageType::SQLite };

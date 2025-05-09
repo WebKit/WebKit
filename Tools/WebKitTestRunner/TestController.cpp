@@ -908,6 +908,7 @@ WKWebsiteDataStoreRef TestController::defaultWebsiteDataStore()
         auto configuration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
         configureWebsiteDataStoreTemporaryDirectories(configuration.get());
         dataStore = WKWebsiteDataStoreCreateWithConfiguration(configuration.get());
+        WKWebsiteDataStoreSetIgnoreTLSErrorsForTesting(dataStore, true);
     }
     return dataStore;
 }
@@ -995,6 +996,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     
     if (options.useEphemeralSession()) {
         auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+        WKWebsiteDataStoreSetIgnoreTLSErrorsForTesting(ephemeralDataStore.get(), true);
         WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralDataStore.get());
     }
 

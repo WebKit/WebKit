@@ -580,6 +580,16 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
     store->scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [callbackAggregator] { });
 }
 
+void WKWebsiteDataStoreSetIgnoreTLSErrorsForTesting(WKWebsiteDataStoreRef dataStoreRef, bool ignore)
+{
+#if USE(SOUP)
+    WebKit::toImpl(dataStoreRef)->setIgnoreTLSErrors(ignore);
+#else
+    UNUSED_PARAM(dataStoreRef);
+    UNUSED_PARAM(ignore);
+#endif
+}
+
 void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
 {
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DOMCache;

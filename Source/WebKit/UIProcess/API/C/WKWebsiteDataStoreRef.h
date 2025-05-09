@@ -160,6 +160,8 @@ WK_EXPORT void WKWebsiteDataStoreSetManagedDomainsForTesting(WKArrayRef originUR
 typedef void (*WKWebsiteDataStoreStatisticsResetToConsistentStateFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler);
 
+WK_EXPORT void WKWebsiteDataStoreSetIgnoreTLSErrorsForTesting(WKWebsiteDataStoreRef dataStoreRef, bool ignore);
+
 typedef void (*WKWebsiteDataStoreRemoveFetchCacheRemovalFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreRemoveFetchCacheForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKSecurityOriginRef origin, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback);
 WK_EXPORT void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback);
