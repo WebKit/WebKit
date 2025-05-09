@@ -135,7 +135,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , positionTryOrder(static_cast<unsigned>(RenderStyle::initialPositionTryOrder()))
     , positionVisibility(RenderStyle::initialPositionVisibility().toRaw())
     , fieldSizing(static_cast<unsigned>(RenderStyle::initialFieldSizing()))
-    , nativeAppearanceDisabled(static_cast<unsigned>(RenderStyle::initialNativeAppearanceDisabled()))
 #if HAVE(CORE_MATERIAL)
     , appleVisualEffect(static_cast<unsigned>(RenderStyle::initialAppleVisualEffect()))
 #endif
@@ -243,7 +242,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , positionTryOrder(o.positionTryOrder)
     , positionVisibility(o.positionVisibility)
     , fieldSizing(o.fieldSizing)
-    , nativeAppearanceDisabled(o.nativeAppearanceDisabled)
 #if HAVE(CORE_MATERIAL)
     , appleVisualEffect(o.appleVisualEffect)
 #endif
@@ -358,7 +356,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && positionTryOrder == o.positionTryOrder
         && positionVisibility == o.positionVisibility
         && fieldSizing == o.fieldSizing
-        && nativeAppearanceDisabled == o.nativeAppearanceDisabled
 #if HAVE(CORE_MATERIAL)
         && appleVisualEffect == o.appleVisualEffect
 #endif
@@ -531,8 +528,6 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasClip);
     LOG_IF_DIFFERENT_WITH_CAST(Style::PositionTryOrder, positionTryOrder);
     LOG_IF_DIFFERENT(fieldSizing);
-
-    LOG_IF_DIFFERENT(nativeAppearanceDisabled);
 
 #if HAVE(CORE_MATERIAL)
     LOG_IF_DIFFERENT(appleVisualEffect);

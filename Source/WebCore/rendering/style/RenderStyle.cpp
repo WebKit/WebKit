@@ -1283,6 +1283,7 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
 #if ENABLE(DARK_MODE_CSS)
         || first.colorScheme != second.colorScheme
 #endif
+        || first.nativeAppearanceDisabled != second.nativeAppearanceDisabled
     ;
 }
 
@@ -2216,6 +2217,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // cursorData
         // textEmphasisCustomMark
         // insideDefaultButton
+        // nativeAppearanceDisabled
     };
 
     if (m_inheritedFlags != other.m_inheritedFlags)

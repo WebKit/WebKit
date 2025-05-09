@@ -1134,7 +1134,6 @@ public:
 #endif
 
     inline bool useSmoothScrolling() const;
-    inline bool nativeAppearanceDisabled() const;
 
 #if ENABLE(TEXT_AUTOSIZING)
     inline TextSizeAdjustment textSizeAdjust() const;
@@ -1691,7 +1690,6 @@ public:
 #endif
 
     inline void setUseSmoothScrolling(bool);
-    inline void setNativeAppearanceDisabled(bool);
 
 #if ENABLE(TEXT_AUTOSIZING)
     inline void setTextSizeAdjust(TextSizeAdjustment);
@@ -2219,8 +2217,6 @@ public:
 
     static bool initialUseSmoothScrolling() { return false; }
 
-    static bool initialNativeAppearanceDisabled() { return false; }
-
     static inline FilterOperations initialFilter();
     static inline FilterOperations initialAppleColorFilter();
 
@@ -2364,6 +2360,9 @@ public:
 
     inline bool insideDefaultButton() const;
     inline void setInsideDefaultButton(bool);
+
+    inline bool nativeAppearanceDisabled() const;
+    inline void setNativeAppearanceDisabled(bool);
 
 private:
     struct NonInheritedFlags {

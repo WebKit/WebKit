@@ -184,6 +184,8 @@ public:
 
     unsigned insideDefaultButton : 1;
 
+    unsigned nativeAppearanceDisabled : 1;
+
 #if HAVE(CORE_MATERIAL)
     unsigned usedAppleVisualEffectForSubtree : 4; // AppleVisualEffect
 #endif

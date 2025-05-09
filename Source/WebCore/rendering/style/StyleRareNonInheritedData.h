@@ -275,8 +275,6 @@ public:
 
     unsigned fieldSizing : 1; // FieldSizing
 
-    unsigned nativeAppearanceDisabled : 1;
-
 #if HAVE(CORE_MATERIAL)
     unsigned appleVisualEffect : 5; // AppleVisualEffect
 #endif

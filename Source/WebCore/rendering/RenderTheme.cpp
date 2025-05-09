@@ -98,37 +98,11 @@ RenderTheme::RenderTheme()
 
 RenderTheme::~RenderTheme() = default;
 
-static bool parentOfElementUsesPrimitiveAppearance(const Element& element)
-{
-    if (RefPtr parent = element.parentOrShadowHostElement()) {
-        if (CheckedPtr computedStyle = parent->computedStyle())
-            return computedStyle->usedAppearance() == StyleAppearance::None;
-    }
-
-    return false;
-}
-
 StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, StyleAppearance autoAppearance) const
 {
     if (!element) {
         style.setUsedAppearance(StyleAppearance::None);
         return StyleAppearance::None;
-    }
-
-    // Each user agent part for input type='color' controls
-    // should use StyleAppearance::None if their parent is
-    // using primitive appearance.
-
-    // FIXME: (rdar://148625484) If the parent devolves
-    // after the initial styles are applied, the children
-    // are not immediately updated to match.
-
-    if ((autoAppearance == StyleAppearance::ColorWellSwatch
-        || autoAppearance == StyleAppearance::ColorWellSwatchOverlay
-        || autoAppearance == StyleAppearance::ColorWellSwatchWrapper)
-        && parentOfElementUsesPrimitiveAppearance(*element)) {
-            style.setUsedAppearance(StyleAppearance::None);
-            return StyleAppearance::None;
     }
 
     auto appearance = style.usedAppearance();
@@ -269,7 +243,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element)
         style.setEffectiveDisplay(DisplayType::Block);
 
     bool widgetMayDevolve = devolvableWidgetsEnabledAndSupported(element);
-    bool widgetHasNativeAppearanceDisabled = widgetMayDevolve && element->isDevolvableWidget() && style.nativeAppearanceDisabled() && !isAppearanceAllowedForAllElements(appearance);
+    bool widgetHasNativeAppearanceDisabled = widgetMayDevolve && style.nativeAppearanceDisabled() && !isAppearanceAllowedForAllElements(appearance);
     bool hasAppearanceFromUAStyle = element && hasAppearanceForElementTypeFromUAStyle(*element);
 
     if (!widgetMayDevolve || shouldCheckLegacyStylesForNativeAppearance(element))

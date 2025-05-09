@@ -371,8 +371,6 @@ inline void RenderStyle::setCornerBottomRightShape(Style::CornerShapeValue&& sha
 inline void RenderStyle::setCornerTopLeftShape(Style::CornerShapeValue&& shape) { SET_NESTED(m_nonInheritedData, surroundData, border.m_cornerShapes.topLeft(), WTFMove(shape)); }
 inline void RenderStyle::setCornerTopRightShape(Style::CornerShapeValue&& shape) { SET_NESTED(m_nonInheritedData, surroundData, border.m_cornerShapes.topRight(), WTFMove(shape)); }
 
-inline void RenderStyle::setNativeAppearanceDisabled(bool value) { SET_NESTED(m_nonInheritedData, rareData, nativeAppearanceDisabled, value); }
-
 #if ENABLE(APPLE_PAY)
 inline void RenderStyle::setApplePayButtonStyle(ApplePayButtonStyle style) { SET_NESTED(m_nonInheritedData, rareData, applePayButtonStyle, static_cast<unsigned>(style)); }
 inline void RenderStyle::setApplePayButtonType(ApplePayButtonType type) { SET_NESTED(m_nonInheritedData, rareData, applePayButtonType, static_cast<unsigned>(type)); }
@@ -406,6 +404,8 @@ inline void RenderStyle::setTapHighlightColor(const Style::Color& color) { SET(m
 #endif
 
 inline void RenderStyle::setInsideDefaultButton(bool value) { SET(m_rareInheritedData, insideDefaultButton, value); }
+
+inline void RenderStyle::setNativeAppearanceDisabled(bool value) { SET(m_rareInheritedData, nativeAppearanceDisabled, value); }
 
 inline void RenderStyle::NonInheritedFlags::setHasPseudoStyles(PseudoIdSet pseudoIdSet)
 {

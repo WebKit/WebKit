@@ -827,8 +827,6 @@ inline float RenderStyle::wordSpacing() const { return m_inheritedData->fontData
 constexpr LengthType RenderStyle::zeroLength() { return LengthType::Fixed; }
 inline float RenderStyle::zoom() const { return m_nonInheritedData->rareData->zoom; }
 
-inline bool RenderStyle::nativeAppearanceDisabled() const { return m_nonInheritedData->rareData->nativeAppearanceDisabled; }
-
 inline const Style::CornerShapeValue& RenderStyle::cornerBottomLeftShape() const { return border().bottomLeftCornerShape(); }
 inline const Style::CornerShapeValue& RenderStyle::cornerBottomRightShape() const { return border().bottomRightCornerShape(); }
 inline const Style::CornerShapeValue& RenderStyle::cornerTopLeftShape() const { return border().topLeftCornerShape(); }
@@ -901,6 +899,8 @@ inline Style::Color RenderStyle::tapHighlightColor() const { return m_rareInheri
 #endif
 
 inline bool RenderStyle::insideDefaultButton() const { return m_rareInheritedData->insideDefaultButton; }
+
+inline bool RenderStyle::nativeAppearanceDisabled() const { return m_rareInheritedData->nativeAppearanceDisabled; }
 
 inline bool RenderStyle::NonInheritedFlags::hasPseudoStyle(PseudoId pseudo) const
 {
