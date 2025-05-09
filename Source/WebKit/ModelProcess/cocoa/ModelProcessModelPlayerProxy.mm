@@ -763,8 +763,14 @@ bool ModelProcessModelPlayerProxy::stageModeInteractionInProgress() const
 
 void ModelProcessModelPlayerProxy::animateModelToFitPortal(CompletionHandler<void(bool)>&& completionHandler)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=291289
-    completionHandler(true);
+    if (!m_model || !m_layer)
+        completionHandler(false);
+
+    auto boundsOfLayerInMeters = makeMeterSizeFromPointSize(m_layer.get().bounds.size, effectivePointsPerMeter(m_layer.get()));
+    BOOL inStageMode = m_stageModeOperation != WebCore::StageModeOperation::None;
+    [m_modelRKEntity fitEntityWithinPortalBounds:boundsOfLayerInMeters ignoreClippingConstraints:NO isAnimated:YES withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () {
+        completionHandler(!!weakThis);
+    }).get()];
 }
 
 void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()

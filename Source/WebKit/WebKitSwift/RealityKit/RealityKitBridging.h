@@ -69,6 +69,8 @@ typedef struct {
 - (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform NS_SWIFT_NAME(interactionContainerDidRecenter(_:));
 - (void)recenterEntityAtTransform:(WKEntityTransform)transform NS_SWIFT_NAME(recenterEntity(at:));
 - (void)applyDefaultIBL NS_SWIFT_NAME(applyDefaultIBL());
+- (void)fitEntityWithinPortalBounds:(simd_float2)bounds isAnimated:(BOOL)animated withCompletion:(void(^)())completion NS_SWIFT_NAME(fitEntity(within:animated:completion:));
+- (void)resetModelTransformAfterDrag;
 @end
 
 NS_ASSUME_NONNULL_END
