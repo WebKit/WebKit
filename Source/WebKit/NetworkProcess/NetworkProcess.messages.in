@@ -32,9 +32,11 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
 
     AddAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain firstPartyForCookies, enum:bool WebKit::LoadedWebArchive loadedWebArchive) -> ()
+#if USE(SOUP) || USE(CURL)
+    SetIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
+#endif
 
 #if USE(SOUP)
-    SetIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
     UserPreferredLanguagesChanged(Vector<String> languages)
     SetNetworkProxySettings(PAL::SessionID sessionID, struct WebCore::SoupNetworkProxySettings settings)
     PrefetchDNS(String hostname)

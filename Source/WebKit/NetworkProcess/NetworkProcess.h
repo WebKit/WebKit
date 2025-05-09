@@ -544,10 +544,13 @@ private:
 #endif
     
 #if USE(SOUP)
-    void setIgnoreTLSErrors(PAL::SessionID, bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
     void setNetworkProxySettings(PAL::SessionID, WebCore::SoupNetworkProxySettings&&);
     void setPersistentCredentialStorageEnabled(PAL::SessionID, bool);
+#endif
+
+#if USE(SOUP) || USE(CURL)
+    void setIgnoreTLSErrors(PAL::SessionID, bool);
 #endif
 
 #if USE(CURL)

@@ -55,7 +55,7 @@ class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeChecke
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
-    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol,  bool ignoreTLSErrors, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
@@ -110,6 +110,7 @@ private:
     WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
     String m_protocol;
+    bool m_ignoreTLSErrors { false };
     WebCore::SecurityOriginData m_topOrigin;
 
     WebCore::CurlStreamScheduler& m_scheduler;

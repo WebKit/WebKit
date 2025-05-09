@@ -46,8 +46,13 @@ public:
 
     void didReceiveChallenge(WebSocketTask&, WebCore::AuthenticationChallenge&&, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
 
+    void setIgnoreTLSErrors(bool ignore) { m_ignoreTLSErrors = ignore; }
+    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
+
 private:
     std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy) final;
+
+    bool m_ignoreTLSErrors { false };
 };
 
 } // namespace WebKit

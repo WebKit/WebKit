@@ -2232,6 +2232,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = trackingPreventionEnabled();
     platformSetNetworkParameters(parameters);
+#if USE(SOUP) || USE(CURL)
+    parameters.networkSessionParameters.ignoreTLSErrors = m_ignoreTLSErrors;
+#endif
 #if PLATFORM(COCOA)
     parameters.networkSessionParameters.useNetworkLoader = useNetworkLoader();
 #endif
@@ -2259,6 +2262,17 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     
     return parameters;
 }
+
+#if USE(SOUP) || USE(CURL)
+void WebsiteDataStore::setIgnoreTLSErrors(bool ignoreTLSErrors)
+{
+    if (m_ignoreTLSErrors == ignoreTLSErrors)
+        return;
+
+    m_ignoreTLSErrors = ignoreTLSErrors;
+    networkProcess().send(Messages::NetworkProcess::SetIgnoreTLSErrors(m_sessionID, m_ignoreTLSErrors), 0);
+}
+#endif
 
 #if HAVE(SEC_KEY_PROXY)
 void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)

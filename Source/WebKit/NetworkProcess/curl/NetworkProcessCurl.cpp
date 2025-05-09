@@ -69,4 +69,10 @@ void NetworkProcess::setNetworkProxySettings(PAL::SessionID sessionID, WebCore::
         ASSERT_NOT_REACHED();
 }
 
+void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
+{
+    if (auto* session = networkSession(sessionID))
+        static_cast<NetworkSessionCurl&>(*session).setIgnoreTLSErrors(ignoreTLSErrors);
+}
+
 } // namespace WebKit

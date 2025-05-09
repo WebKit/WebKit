@@ -318,11 +318,13 @@ public:
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
 #endif
 
+#if USE(SOUP) || USE(CURL)
+    void setIgnoreTLSErrors(bool);
+#endif
+
 #if USE(SOUP)
     void setPersistentCredentialStorageEnabled(bool);
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled && isPersistent(); }
-    void setIgnoreTLSErrors(bool);
-    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
     void setNetworkProxySettings(WebCore::SoupNetworkProxySettings&&);
     const WebCore::SoupNetworkProxySettings& networkProxySettings() const { return m_networkProxySettings; }
     void setCookiePersistentStorage(const String&, SoupCookiePersistentStorageType);
@@ -616,9 +618,16 @@ private:
     WebCore::CurlProxySettings m_proxySettings;
 #endif
 
+#if USE(CURL)
+    bool m_ignoreTLSErrors { false };
+#elif USE(SOUP)
+    // FIXME: should also be initialized with false.
+    // https://bugs.webkit.org/show_bug.cgi?id=292752
+    bool m_ignoreTLSErrors { true };
+#endif
+
 #if USE(SOUP)
     bool m_persistentCredentialStorageEnabled { true };
-    bool m_ignoreTLSErrors { true };
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
     String m_cookiePersistentStoragePath;
     SoupCookiePersistentStorageType m_cookiePersistentStorageType { SoupCookiePersistentStorageType::SQLite };

@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CurlStream);
 
-CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url, ServerTrustEvaluation serverTrustEvaluation, LocalhostAlias localhostAlias)
+CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, bool ignoreTLSErrors, URL&& url, ServerTrustEvaluation serverTrustEvaluation, LocalhostAlias localhostAlias)
     : m_scheduler(scheduler)
     , m_streamID(streamID)
 {
@@ -52,6 +52,8 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
         m_curlHandle->disableServerTrustEvaluation();
 
     m_curlHandle->enableConnectionOnly();
+    if (ignoreTLSErrors)
+        m_curlHandle->disableServerTrustEvaluation();
 
     auto errorCode = m_curlHandle->perform();
     if (errorCode != CURLE_OK) {

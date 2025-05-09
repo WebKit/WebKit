@@ -68,7 +68,7 @@ void NetworkSessionCurl::clearAlternativeServices(WallTime)
 
 std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy)
 {
-    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, protocol, clientOrigin);
+    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, protocol, ignoreTLSErrors(), clientOrigin);
 }
 
 void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)

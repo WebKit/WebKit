@@ -38,7 +38,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 {
     auto& networkSessionParameters = parameters.networkSessionParameters;
     networkSessionParameters.persistentCredentialStorageEnabled = m_persistentCredentialStorageEnabled;
-    networkSessionParameters.ignoreTLSErrors = m_ignoreTLSErrors;
     networkSessionParameters.proxySettings = m_networkProxySettings;
     networkSessionParameters.cookiePersistentStoragePath = m_cookiePersistentStoragePath;
     networkSessionParameters.cookiePersistentStorageType = m_cookiePersistentStorageType;
@@ -55,15 +54,6 @@ void WebsiteDataStore::setPersistentCredentialStorageEnabled(bool enabled)
 
     m_persistentCredentialStorageEnabled = enabled;
     networkProcess().send(Messages::NetworkProcess::SetPersistentCredentialStorageEnabled(m_sessionID, m_persistentCredentialStorageEnabled), 0);
-}
-
-void WebsiteDataStore::setIgnoreTLSErrors(bool ignoreTLSErrors)
-{
-    if (m_ignoreTLSErrors == ignoreTLSErrors)
-        return;
-
-    m_ignoreTLSErrors = ignoreTLSErrors;
-    networkProcess().send(Messages::NetworkProcess::SetIgnoreTLSErrors(m_sessionID, m_ignoreTLSErrors), 0);
 }
 
 void WebsiteDataStore::setNetworkProxySettings(WebCore::SoupNetworkProxySettings&& settings)

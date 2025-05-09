@@ -85,6 +85,8 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
+    if (static_cast<const NetworkSessionCurl*>(networkSession())->ignoreTLSErrors())
+        m_curlRequest->disableServerTrustEvaluation();
 }
 
 NetworkDataTaskCurl::~NetworkDataTaskCurl()
@@ -410,6 +412,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
         }
+        if (static_cast<const NetworkSessionCurl*>(networkSession())->ignoreTLSErrors())
+            m_curlRequest->disableServerTrustEvaluation();
 
         if (m_state != State::Suspended) {
             m_state = State::Suspended;
