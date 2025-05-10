@@ -81,14 +81,14 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "E"_s), jsNumber(Math::exp(1.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN2"_s), jsNumber(Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN10"_s), jsNumber(Math::log(10.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG2E"_s), jsNumber(1.0 / Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG10E"_s), jsNumber(0.4342944819032518), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "E"_s), jsNumber(std::numbers::e), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN2"_s), jsNumber(std::numbers::ln2), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN10"_s), jsNumber(std::numbers::ln10), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG2E"_s), jsNumber(std::numbers::log2e), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG10E"_s), jsNumber(std::numbers::log10e), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "PI"_s), jsNumber(std::numbers::pi), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT1_2"_s), jsNumber(sqrt(0.5)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT2"_s), jsNumber(sqrt(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT1_2"_s), jsNumber(std::numbers::sqrt2 / 2), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT2"_s), jsNumber(std::numbers::sqrt2), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "abs"_s), 1, mathProtoFuncAbs, ImplementationVisibility::Public, AbsIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
