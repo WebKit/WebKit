@@ -33,7 +33,6 @@
 
 #include <limits.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -47,18 +46,13 @@ static constexpr int minimumWeekNumber = 1;
 // HTML defines maximum week of year is 53.
 static constexpr int maximumWeekNumber = 53;
 
-static constexpr int maximumMonthInMaximumYear = 8; // This is September, since months are 0 based.
+static constexpr WTF::Month maximumMonthInMaximumYear = WTF::September;
 static constexpr int maximumDayInMaximumMonth = 13;
 static constexpr int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
 
-static constexpr std::array<int, 12> daysInMonth { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-// 'month' is 0-based.
-static int maxDayOfMonth(int year, int month)
+static int maxDayOfMonth(int year, WTF::Month month)
 {
-    if (month != 1) // February?
-        return daysInMonth[month];
-    return isLeapYear(year) ? 29 : 28;
+    return daysInMonth(month, isLeapYearEnum(year));
 }
 
 // 'month' is 0-based.
@@ -141,7 +135,7 @@ template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuf
     return true;
 }
 
-static bool withinHTMLDateLimits(int year, int month)
+static bool withinHTMLDateLimits(int year, WTF::Month month)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -150,7 +144,7 @@ static bool withinHTMLDateLimits(int year, int month)
     return month <= maximumMonthInMaximumYear;
 }
 
-static bool withinHTMLDateLimits(int year, int month, int monthDay)
+static bool withinHTMLDateLimits(int year, WTF::Month month, int monthDay)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -161,7 +155,7 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay)
     return monthDay <= maximumDayInMaximumMonth;
 }
 
-static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
+static bool withinHTMLDateLimits(int year, WTF::Month month, int monthDay, int hour, int minute, int second, int millisecond)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -233,15 +227,15 @@ bool DateComponents::addDay(int dayDiff)
     if (day > maxDayOfMonth(m_year, m_month)) {
         day = m_monthDay;
         int year = m_year;
-        int month = m_month;
+        auto month = m_month;
         int maxDay = maxDayOfMonth(year, month);
         for (; dayDiff > 0; --dayDiff) {
             ++day;
             if (day > maxDay) {
                 day = 1;
                 ++month;
-                if (month >= 12) { // month is 0-origin.
-                    month = 0;
+                if (month > WTF::December) {
+                    month = WTF::January;
                     ++year;
                 }
                 maxDay = maxDayOfMonth(year, month);
@@ -252,15 +246,15 @@ bool DateComponents::addDay(int dayDiff)
         m_year = year;
         m_month = month;
     } else if (day < 1) {
-        int month = m_month;
+        auto month = m_month;
         int year = m_year;
         day = m_monthDay;
         for (; dayDiff < 0; ++dayDiff) {
             --day;
             if (day < 1) {
                 --month;
-                if (month < 0) {
-                    month = 11;
+                if (month < WTF::January) {
+                    month = WTF::December;
                     --year;
                 }
                 day = maxDayOfMonth(year, month);
@@ -373,15 +367,15 @@ template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBu
     if (!skipExactly(buffer, '-'))
         return false;
 
-    auto month = parseIntWithinLimits(buffer, 2, 1, 12);
-    if (!month)
-        return false;
-    --*month;
-
-    if (!withinHTMLDateLimits(m_year, *month))
+    auto monthInt = parseIntWithinLimits(buffer, 2, 1, 12);
+    if (!monthInt)
         return false;
 
-    m_month = *month;
+    WTF::Month month { static_cast<unsigned>(*monthInt) };
+    if (!withinHTMLDateLimits(m_year, month))
+        return false;
+
+    m_month = month;
     m_type = DateComponentsType::Month;
     return true;
 }
@@ -586,8 +580,9 @@ bool DateComponents::setMillisecondsSinceEpochForDateInternal(double ms)
 {
     m_year = msToYear(ms);
     int yearDay = dayInYear(ms, m_year);
-    m_month = monthFromDayInYear(yearDay, isLeapYear(m_year));
-    m_monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear(m_year));
+    auto isLeapYear = isLeapYearEnum(m_year);
+    m_month = monthFromDayInYear(yearDay, isLeapYear);
+    m_monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear);
     return true;
 }
 
@@ -652,7 +647,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
     if (doubleYear < minimumYear() || maximumYear() < doubleYear)
         return false;
     int year = static_cast<int>(doubleYear);
-    int month = static_cast<int>(doubleMonth);
+    WTF::Month month { static_cast<unsigned>(doubleMonth) + 1 };
     if (!withinHTMLDateLimits(year, month))
         return false;
     m_year = year;
@@ -721,7 +716,7 @@ double DateComponents::millisecondsSinceEpoch() const
     case DateComponentsType::Time:
         return millisecondsSinceEpochForTime();
     case DateComponentsType::Week:
-        return (dateToDaysFrom1970(m_year, 0, 1) + offsetTo1stWeekStart(m_year) + (m_week - 1) * 7) * msPerDay;
+        return (dateToDaysFrom1970(m_year, WTF::January, 1) + offsetTo1stWeekStart(m_year) + (m_week - 1) * 7) * msPerDay;
     case DateComponentsType::Invalid:
         break;
     }
@@ -732,7 +727,7 @@ double DateComponents::millisecondsSinceEpoch() const
 double DateComponents::monthsSinceEpoch() const
 {
     ASSERT(m_type == DateComponentsType::Month);
-    return (m_year - 1970) * 12 + m_month;
+    return (m_year - 1970) * 12 + static_cast<unsigned>(m_month) - 1;
 }
 
 String DateComponents::toStringForTime(SecondFormat format) const
@@ -769,11 +764,11 @@ String DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
     case DateComponentsType::Date:
-        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay));
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month), '-', pad('0', 2, m_monthDay));
     case DateComponentsType::DateTimeLocal:
-        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format));
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format));
     case DateComponentsType::Month:
-        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1));
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month));
     case DateComponentsType::Time:
         return toStringForTime(format);
     case DateComponentsType::Week:

@@ -126,7 +126,7 @@ const Vector<String>& LocaleCocoa::monthLabels()
         m_monthLabels = makeVector<String>(array);
         return m_monthLabels;
     }
-    m_monthLabels = std::span { WTF::monthFullName };
+    m_monthLabels = std::span { WTF::monthFullNames };
     return m_monthLabels;
 }
 
@@ -229,7 +229,7 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
         m_shortMonthLabels = makeVector<String>(array);
         return m_shortMonthLabels;
     }
-    m_shortMonthLabels = std::span { WTF::monthName };
+    m_shortMonthLabels = std::span { WTF::monthNames };
     return m_shortMonthLabels;
 }
 

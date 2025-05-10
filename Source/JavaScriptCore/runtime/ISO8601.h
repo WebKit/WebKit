@@ -107,7 +107,8 @@ public:
     {
         return ExactTime(Int128 { epochMilliseconds } * ExactTime::nsPerMillisecond);
     }
-    static ExactTime fromISOPartsAndOffset(int32_t y, uint8_t mon, uint8_t d, unsigned h, unsigned min, unsigned s, unsigned ms, unsigned micros, unsigned ns, int64_t offset);
+
+    static ExactTime fromISOPartsAndOffset(int32_t year, WTF::Month, uint8_t day, unsigned hours, unsigned minutes, unsigned seconds, unsigned milliseconds, unsigned microseconds, unsigned nanoseconds, int64_t offset);
 
     int64_t epochMilliseconds() const
     {
@@ -211,16 +212,11 @@ static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 class PlainDate {
     WTF_MAKE_TZONE_ALLOCATED(PlainDate);
 public:
-    constexpr PlainDate()
-        : m_year(0)
-        , m_month(1)
-        , m_day(1)
-    {
-    }
+    constexpr PlainDate() = default;
 
-    constexpr PlainDate(int32_t year, unsigned month, unsigned day)
+    constexpr PlainDate(int32_t year, WTF::Month month, unsigned day)
         : m_year(year)
-        , m_month(month)
+        , m_month(static_cast<unsigned>(month))
         , m_day(day)
     {
     }
@@ -228,13 +224,14 @@ public:
     friend bool operator==(const PlainDate&, const PlainDate&) = default;
 
     int32_t year() const { return m_year; }
-    uint8_t month() const { return m_month; }
+    WTF::Month month() const { return WTF::Month { static_cast<unsigned>(m_month) }; }
+    int32_t monthInt() const { return m_month; }
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
-    int32_t m_month : 5; // Starts with 1.
-    int32_t m_day : 6; // Starts with 1.
+    int32_t m_year : 21 { 0 }; // ECMAScript max / min date's year can be represented <= 20 bits.
+    int32_t m_month : 5 { 1 }; // Starts with 1.
+    int32_t m_day : 6 { 1 }; // Starts with 1.
 };
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
@@ -274,20 +271,20 @@ uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
-uint8_t daysInMonth(int32_t year, uint8_t month);
-uint8_t daysInMonth(uint8_t month);
+uint8_t daysInMonth(int32_t year, WTF::Month);
+uint8_t daysInMonth(WTF::Month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
-String monthCode(uint32_t);
+String monthCode(WTF::Month);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
 
 std::optional<ExactTime> parseInstant(StringView);
 
-bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
+bool isDateTimeWithinLimits(int32_t year, WTF::Month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 bool isYearWithinLimits(double year);
 
 } // namespace ISO8601

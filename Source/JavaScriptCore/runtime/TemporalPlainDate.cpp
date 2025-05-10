@@ -100,7 +100,7 @@ ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, 
         throwRangeError(globalObject, scope, "month is out of range"_s);
         return { };
     }
-    unsigned month = static_cast<unsigned>(monthDouble);
+    WTF::Month month { static_cast<unsigned>(monthDouble) };
 
     double daysInMonth = ISO8601::daysInMonth(year, month);
     if (!(dayDouble >= 1 && dayDouble <= daysInMonth)) {
@@ -301,7 +301,7 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
     RETURN_IF_EXCEPTION(scope, { });
 
     double y = optionalYear.value_or(year());
-    double m = optionalMonth.value_or(month());
+    double m = optionalMonth.value_or(static_cast<unsigned>(month()));
     double d = optionalDay.value_or(day());
     RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow));
 }

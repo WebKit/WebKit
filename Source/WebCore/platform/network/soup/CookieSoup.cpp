@@ -89,7 +89,7 @@ static SoupDate* msToSoupDate(double ms)
 {
     int year = msToYear(ms);
     int dayOfYear = dayInYear(ms, year);
-    bool leapYear = isLeapYear(year);
+    auto leapYear = isLeapYearEnum(year);
 
     // monthFromDayInYear() returns a value in the [0,11] range, while soup_date_new() expects
     // a value in the [1,12] range, meaning we have to manually adjust the month value.

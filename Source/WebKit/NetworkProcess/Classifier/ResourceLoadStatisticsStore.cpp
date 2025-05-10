@@ -292,8 +292,9 @@ OperatingDate OperatingDate::fromWallTime(WallTime time)
     double ms = time.secondsSinceEpoch().milliseconds();
     int year = msToYear(ms);
     int yearDay = dayInYear(ms, year);
-    int month = monthFromDayInYear(yearDay, isLeapYear(year));
-    int monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear(year));
+    auto isLeapYear = isLeapYearEnum(year);
+    auto month = monthFromDayInYear(yearDay, isLeapYear);
+    int monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear);
     return OperatingDate { year, month, monthDay };
 }
 
@@ -3251,7 +3252,7 @@ void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
     auto insertOperatingDateStatement = m_database.prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
     if (!insertOperatingDateStatement
         || insertOperatingDateStatement->bindInt(1, today.year()) != SQLITE_OK
-        || insertOperatingDateStatement->bindInt(2, today.month()) != SQLITE_OK
+        || insertOperatingDateStatement->bindInt(2, today.monthIntForDatabase()) != SQLITE_OK
         || insertOperatingDateStatement->bindInt(3, today.monthDay()) != SQLITE_OK
         || insertOperatingDateStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_DATABASE_ERROR("includeTodayAsOperatingDateIfNecessary: failed to step insertOperatingDateStatement");
@@ -3303,7 +3304,7 @@ void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Registr
         auto insertOperatingDateStatement = m_database.prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
         if (!insertOperatingDateStatement
             || insertOperatingDateStatement->bindInt(1, dateToInsert.year()) != SQLITE_OK
-            || insertOperatingDateStatement->bindInt(2, dateToInsert.month()) != SQLITE_OK
+            || insertOperatingDateStatement->bindInt(2, dateToInsert.monthIntForDatabase()) != SQLITE_OK
             || insertOperatingDateStatement->bindInt(3, dateToInsert.monthDay()) != SQLITE_OK
             || insertOperatingDateStatement->step() != SQLITE_DONE) {
             ITP_RELEASE_LOG_DATABASE_ERROR("insertExpiredStatisticForTesting: failed to step insertOperatingDateStatement");

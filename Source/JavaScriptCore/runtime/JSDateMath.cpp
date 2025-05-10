@@ -342,7 +342,7 @@ double DateCache::localTimeToMS(double milliseconds, WTF::TimeType inputTimeType
     return milliseconds;
 }
 
-std::tuple<int32_t, int32_t, int32_t> DateCache::yearMonthDayFromDaysWithCache(int32_t days)
+std::tuple<int32_t, WTF::Month, int32_t> DateCache::yearMonthDayFromDaysWithCache(int32_t days)
 {
     if (m_yearMonthDayCache) {
         // Check conservatively if the given 'days' has
@@ -351,7 +351,7 @@ std::tuple<int32_t, int32_t, int32_t> DateCache::yearMonthDayFromDaysWithCache(i
         int32_t newDay = m_yearMonthDayCache->m_day + (days - cachedDays);
         if (newDay >= 1 && newDay <= 28) {
             int32_t year = m_yearMonthDayCache->m_year;
-            int32_t month = m_yearMonthDayCache->m_month;
+            auto month = m_yearMonthDayCache->m_month;
             m_yearMonthDayCache = { days, year, month, newDay };
             return std::tuple { year, month, newDay };
         }

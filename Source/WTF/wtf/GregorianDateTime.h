@@ -37,7 +37,7 @@ class GregorianDateTime final {
 public:
     GregorianDateTime() = default;
     WTF_EXPORT_PRIVATE explicit GregorianDateTime(double ms, LocalTimeOffset);
-    explicit GregorianDateTime(int year, int month, int yearDay, int monthDay, Weekday weekDay, int hour, int minute, int second, int utcOffsetInMinute, bool isDST)
+    explicit GregorianDateTime(int year, Month month, int yearDay, int monthDay, Weekday weekDay, int hour, int minute, int second, int utcOffsetInMinute, bool isDST)
         : m_year(year)
         , m_month(month)
         , m_yearDay(yearDay)
@@ -52,7 +52,8 @@ public:
     }
 
     inline int year() const { return m_year; }
-    inline int month() const { return m_month; }
+    inline Month month() const { return m_month; }
+    inline int tm_month() const { return static_cast<unsigned>(m_month) - 1; } // tm_mon is in [0, 11] range.
     inline int yearDay() const { return m_yearDay; }
     inline int monthDay() const { return m_monthDay; }
     inline Weekday weekDay() const { return m_weekDay; }
@@ -63,7 +64,7 @@ public:
     inline int isDST() const { return m_isDST; }
 
     inline void setYear(int year) { m_year = year; }
-    inline void setMonth(int month) { m_month = month; }
+    inline void setMonth(Month month) { m_month = month; }
     inline void setYearDay(int yearDay) { m_yearDay = yearDay; }
     inline void setMonthDay(int monthDay) { m_monthDay = monthDay; }
     inline void setWeekDay(Weekday weekDay) { m_weekDay = weekDay; }
@@ -92,7 +93,7 @@ public:
         zeroBytes(ret);
 
         ret.tm_year = m_year - 1900;
-        ret.tm_mon = m_month;
+        ret.tm_mon = tm_month();
         ret.tm_yday = m_yearDay;
         ret.tm_mday = m_monthDay;
         ret.tm_wday = m_weekDay.c_encoding();
@@ -110,7 +111,7 @@ public:
 
 private:
     int m_year { 0 };
-    int m_month { 0 };
+    Month m_month { 0 };
     int m_yearDay { 0 };
     int m_monthDay { 0 };
     Weekday m_weekDay { 0 };

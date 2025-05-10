@@ -103,7 +103,15 @@ static inline double makeDay(double year, double month, double date)
     int32_t monthInt32 = toInt32(mm);
     if (yearInt32 != ym || monthInt32 != mm)
         return PNaN;
-    double days = dateToDaysFrom1970(yearInt32, monthInt32, 1);
+
+    yearInt32 += monthInt32 / 12;
+    monthInt32 %= 12;
+    if (monthInt32 < 0) {
+        yearInt32--;
+        monthInt32 += 12;
+    }
+
+    double days = dateToDaysFrom1970(yearInt32, WTF::Month { static_cast<unsigned>(monthInt32) + 1 }, 1);
     return days + date - 1;
 }
 

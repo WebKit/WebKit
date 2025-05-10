@@ -232,8 +232,9 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (overflow == TemporalOverflow::Constrain) {
-        month = std::min<unsigned>(month, 12);
-        day = std::min<unsigned>(day, ISO8601::daysInMonth(year, month));
+        auto monthUInt = std::min<unsigned>(month, 12);
+        month = monthUInt;
+        day = std::min<unsigned>(day, ISO8601::daysInMonth(year, WTF::Month { monthUInt }));
     }
 
     auto plainDate = TemporalPlainDate::toPlainDate(globalObject, ISO8601::Duration(year, month, 0, day, 0, 0, 0, 0, 0, 0));
@@ -255,7 +256,7 @@ static bool balanceISODate(double& year, double& month, double& day)
     if (!ISO8601::isYearWithinLimits(year))
         return false;
 
-    double daysFrom1970 = day + dateToDaysFrom1970(static_cast<int>(year), static_cast<int>(month - 1), 1) - 1;
+    double daysFrom1970 = day + dateToDaysFrom1970(static_cast<int>(year), WTF::Month { static_cast<unsigned>(month) }, 1) - 1;
 
     double balancedYear = std::floor(daysFrom1970 / 365.2425) + 1970;
     if (!ISO8601::isYearWithinLimits(balancedYear))
@@ -277,16 +278,16 @@ static bool balanceISODate(double& year, double& month, double& day)
     auto dayInYear = static_cast<unsigned>(daysFrom1970 - daysUntilYear + 1);
 
     unsigned daysUntilMonth = 0;
-    unsigned balancedMonth = 1;
-    for (; balancedMonth < 12; balancedMonth++) {
-        auto monthDays = balancedMonth != 2 ? ISO8601::daysInMonth(balancedMonth) : ISO8601::daysInMonth(static_cast<int>(balancedYear), balancedMonth);
+    WTF::Month balancedMonth = WTF::January;
+    for (; balancedMonth < WTF::December; ++balancedMonth) {
+        auto monthDays = balancedMonth != WTF::February ? ISO8601::daysInMonth(balancedMonth) : ISO8601::daysInMonth(static_cast<int>(balancedYear), balancedMonth);
         if (daysUntilMonth + monthDays >= dayInYear)
             break;
         daysUntilMonth += monthDays;
     }
 
     year = balancedYear;
-    month = balancedMonth;
+    month = static_cast<unsigned>(balancedMonth);
     day = dayInYear - daysUntilMonth;
     return true;
 }
@@ -301,13 +302,13 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
     TemporalDuration::balance(balancedDuration, TemporalUnit::Day);
 
     double year = plainDate.year() + duration.years();
-    double month = plainDate.month() + duration.months();
+    double month = plainDate.monthInt() + duration.months();
     if (month < 1 || month > 12) {
         year += std::floor((month - 1) / 12);
         month = nonNegativeModulo((month - 1), 12) + 1;
     }
 
-    double daysInMonth = ISO8601::daysInMonth(year, month);
+    double daysInMonth = ISO8601::daysInMonth(year, WTF::Month { static_cast<unsigned>(month) });
     double day = plainDate.day();
     if (overflow == TemporalOverflow::Constrain)
         day = std::min<double>(day, daysInMonth);
@@ -359,7 +360,7 @@ ISO8601::Duration TemporalCalendar::isoDateDifference(JSGlobalObject* globalObje
             return { years, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
-        double months = date2.month() - date1.month();
+        double months = date2.monthInt() - date1.monthInt();
         if (midSign != sign) {
             years -= sign;
             months += 12 * sign;
@@ -398,8 +399,8 @@ ISO8601::Duration TemporalCalendar::isoDateDifference(JSGlobalObject* globalObje
         return { years, months, 0, days, 0, 0, 0, 0, 0, 0 };
     }
 
-    double days = dateToDaysFrom1970(static_cast<int>(date2.year()), static_cast<int>(date2.month() - 1), static_cast<int>(date2.day()))
-        - dateToDaysFrom1970(static_cast<int>(date1.year()), static_cast<int>(date1.month() - 1), static_cast<int>(date1.day()));
+    double days = dateToDaysFrom1970(static_cast<int>(date2.year()), date2.month(), static_cast<int>(date2.day()))
+        - dateToDaysFrom1970(static_cast<int>(date1.year()), date1.month(), static_cast<int>(date1.day()));
 
     double weeks = 0;
     if (largestUnit == TemporalUnit::Week) {

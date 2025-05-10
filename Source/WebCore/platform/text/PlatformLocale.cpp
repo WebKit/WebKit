@@ -58,6 +58,7 @@ private:
 
     String zeroPadString(const String&, size_t width);
     void appendNumber(int number, size_t width);
+    void appendMonth(WTF::Month month, size_t width) { appendNumber(static_cast<unsigned>(month), width); }
 
     StringBuilder m_builder;
     Locale& m_localizer;
@@ -101,26 +102,30 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         // Always use padding width of 4 so it matches DateTimeEditElement.
         appendNumber(m_date.fullYear(), 4);
         return;
-    case DateTimeFormat::FieldTypeMonth:
+    case DateTimeFormat::FieldTypeMonth: {
+        auto monthIndex = static_cast<unsigned>(m_date.month()) - 1;
         if (numberOfPatternCharacters == 3)
-            m_builder.append(m_localizer.shortMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer.shortMonthLabels()[monthIndex]);
         else if (numberOfPatternCharacters == 4)
-            m_builder.append(m_localizer.monthLabels()[m_date.month()]);
+            m_builder.append(m_localizer.monthLabels()[monthIndex]);
         else {
             // Always use padding width of 2 so it matches DateTimeEditElement.
-            appendNumber(m_date.month() + 1, 2);
+            appendMonth(m_date.month(), 2);
         }
         return;
-    case DateTimeFormat::FieldTypeMonthStandAlone:
+    }
+    case DateTimeFormat::FieldTypeMonthStandAlone: {
+        auto monthIndex = static_cast<unsigned>(m_date.month()) - 1;
         if (numberOfPatternCharacters == 3)
-            m_builder.append(m_localizer.shortStandAloneMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer.shortStandAloneMonthLabels()[monthIndex]);
         else if (numberOfPatternCharacters == 4)
-            m_builder.append(m_localizer.standAloneMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer.standAloneMonthLabels()[monthIndex]);
         else {
             // Always use padding width of 2 so it matches DateTimeEditElement.
-            appendNumber(m_date.month() + 1, 2);
+            appendMonth(m_date.month(), 2);
         }
         return;
+    }
     case DateTimeFormat::FieldTypeDayOfMonth:
         // Always use padding width of 2 so it matches DateTimeEditElement.
         appendNumber(m_date.monthDay(), 2);

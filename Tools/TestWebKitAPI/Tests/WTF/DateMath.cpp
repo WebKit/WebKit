@@ -36,10 +36,10 @@ namespace TestWebKitAPI {
 
 TEST(WTF_DateMath, dateToDaysFrom1970)
 {
-    EXPECT_EQ(0.0, dateToDaysFrom1970(1970, 0, 1));
-    EXPECT_EQ(157.0, dateToDaysFrom1970(1970, 5, 7));
-    EXPECT_EQ(-145.0, dateToDaysFrom1970(1969, 7, 9));
-    EXPECT_EQ(16322, dateToDaysFrom1970(2014, 8, 9));
+    EXPECT_EQ(0.0, dateToDaysFrom1970(1970, WTF::January, 1));
+    EXPECT_EQ(157.0, dateToDaysFrom1970(1970, WTF::June, 7));
+    EXPECT_EQ(-145.0, dateToDaysFrom1970(1969, WTF::August, 9));
+    EXPECT_EQ(16322, dateToDaysFrom1970(2014, WTF::September, 9));
 }
 
 
@@ -100,37 +100,37 @@ TEST(WTF_DateMath, msToHours)
 
 TEST(WTF_DateMath, dayInYear)
 {
-    EXPECT_EQ(59, dayInYear(2015, 2, 1));
-    EXPECT_EQ(60, dayInYear(2012, 2, 1));
-    EXPECT_EQ(0, dayInYear(2015, 0, 1));
-    EXPECT_EQ(31, dayInYear(2015, 1, 1));
+    EXPECT_EQ(59, dayInYear(2015, WTF::March, 1));
+    EXPECT_EQ(60, dayInYear(2012, WTF::March, 1));
+    EXPECT_EQ(0, dayInYear(2015, WTF::January, 1));
+    EXPECT_EQ(31, dayInYear(2015, WTF::February, 1));
 }
 
 TEST(WTF_DateMath, monthFromDayInYear)
 {
-    EXPECT_EQ(2, monthFromDayInYear(59, false));
-    EXPECT_EQ(1, monthFromDayInYear(59, true));
-    EXPECT_EQ(2, monthFromDayInYear(60, true));
-    EXPECT_EQ(0, monthFromDayInYear(0, false));
-    EXPECT_EQ(0, monthFromDayInYear(0, true));
-    EXPECT_EQ(1, monthFromDayInYear(31, true));
-    EXPECT_EQ(1, monthFromDayInYear(31, false));
+    EXPECT_EQ(WTF::March, monthFromDayInYear(59, WTF::IsLeapYear::No));
+    EXPECT_EQ(WTF::February, monthFromDayInYear(59, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(WTF::March, monthFromDayInYear(60, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(WTF::January, monthFromDayInYear(0, WTF::IsLeapYear::No));
+    EXPECT_EQ(WTF::January, monthFromDayInYear(0, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(WTF::February, monthFromDayInYear(31, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(WTF::February, monthFromDayInYear(31, WTF::IsLeapYear::No));
 }
 
 TEST(WTF_DateMath, dayInMonthFromDayInYear)
 {
-    EXPECT_EQ(1, dayInMonthFromDayInYear(0, false));
-    EXPECT_EQ(1, dayInMonthFromDayInYear(0, true));
-    EXPECT_EQ(1, dayInMonthFromDayInYear(59, false));
-    EXPECT_EQ(29, dayInMonthFromDayInYear(59, true));
-    EXPECT_EQ(1, dayInMonthFromDayInYear(60, true));
-    EXPECT_EQ(1, dayInMonthFromDayInYear(0, false));
-    EXPECT_EQ(1, dayInMonthFromDayInYear(0, true));
-    EXPECT_EQ(31, dayInMonthFromDayInYear(30, true));
-    EXPECT_EQ(31, dayInMonthFromDayInYear(30, false));
-    EXPECT_EQ(31, dayInMonthFromDayInYear(365, true));
-    EXPECT_EQ(32, dayInMonthFromDayInYear(365, false));
-    EXPECT_EQ(32, dayInMonthFromDayInYear(366, true));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(0, WTF::IsLeapYear::No));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(0, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(59, WTF::IsLeapYear::No));
+    EXPECT_EQ(29, dayInMonthFromDayInYear(59, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(60, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(0, WTF::IsLeapYear::No));
+    EXPECT_EQ(1, dayInMonthFromDayInYear(0, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(31, dayInMonthFromDayInYear(30, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(31, dayInMonthFromDayInYear(30, WTF::IsLeapYear::No));
+    EXPECT_EQ(31, dayInMonthFromDayInYear(365, WTF::IsLeapYear::Yes));
+    EXPECT_EQ(32, dayInMonthFromDayInYear(365, WTF::IsLeapYear::No));
+    EXPECT_EQ(32, dayInMonthFromDayInYear(366, WTF::IsLeapYear::Yes));
 }
 
 static bool isPacificTimeZone()

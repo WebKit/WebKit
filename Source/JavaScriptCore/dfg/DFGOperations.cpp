@@ -4976,7 +4976,7 @@ JSC_DEFINE_JIT_OPERATION(operationDateGetMonth, EncodedJSValue, (VM* vmPointer, 
     const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->month())));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->tm_month())));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDateGetUTCMonth, EncodedJSValue, (VM* vmPointer, DateInstance* date))
@@ -4989,7 +4989,7 @@ JSC_DEFINE_JIT_OPERATION(operationDateGetUTCMonth, EncodedJSValue, (VM* vmPointe
     const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->month())));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->tm_month())));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDateGetDate, EncodedJSValue, (VM* vmPointer, DateInstance* date))

@@ -67,6 +67,7 @@ public:
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
     uint8_t weekOfYear() const;
+    unsigned monthInt() const { return static_cast<unsigned>(month()); } // [1, 12] range.
 
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const

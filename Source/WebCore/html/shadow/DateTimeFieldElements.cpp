@@ -246,7 +246,7 @@ void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
 
 DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), fieldOwner.placeholderDate().month() + 1)
+    : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), static_cast<unsigned>(fieldOwner.placeholderDate().month()))
 {
 }
 
@@ -270,8 +270,7 @@ void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState&
 
 void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
 {
-    // DateComponents represents months from 0 (January) to 11 (December).
-    setValueAsInteger(date.month() + 1);
+    setValueAsInteger(static_cast<unsigned>(date.month()));
 }
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeSecondFieldElement);
@@ -307,7 +306,7 @@ void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
 
 DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
-    : DateTimeSymbolicFieldElement(document, fieldOwner, labels, fieldOwner.placeholderDate().month())
+    : DateTimeSymbolicFieldElement(document, fieldOwner, labels, static_cast<unsigned>(fieldOwner.placeholderDate().month()) - 1)
 {
 }
 
@@ -331,7 +330,7 @@ void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFiel
 
 void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& date)
 {
-    setValueAsInteger(date.month());
+    setValueAsInteger(static_cast<unsigned>(date.month()) - 1);
 }
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);

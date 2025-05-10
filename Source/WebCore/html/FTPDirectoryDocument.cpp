@@ -223,19 +223,20 @@ static String processFileDateString(const FTPTime& fileTime)
     now.setToCurrentLocalTime();
 
     if (fileTime.tm_year == now.year()) {
-        if (fileTime.tm_mon == now.month()) {
+        if (fileTime.tm_mon == now.tm_month()) {
             if (fileTime.tm_mday == now.monthDay())
                 return makeString("Today"_s, timeOfDay);
             if (fileTime.tm_mday == now.monthDay() - 1)
                 return makeString("Yesterday"_s, timeOfDay);
         }
         
-        if (now.monthDay() == 1 && (now.month() == fileTime.tm_mon + 1 || (now.month() == 0 && fileTime.tm_mon == 11)) &&
-            wasLastDayOfMonth(fileTime.tm_year, fileTime.tm_mon, fileTime.tm_mday))
-                return makeString("Yesterday"_s, timeOfDay);
+        if (now.monthDay() == 1 && (now.tm_month() == fileTime.tm_mon + 1 || (now.month() == WTF::January && fileTime.tm_mon == 11))
+            && wasLastDayOfMonth(fileTime.tm_year, fileTime.tm_mon, fileTime.tm_mday)) {
+            return makeString("Yesterday"_s, timeOfDay);
+        }
     }
 
-    if (fileTime.tm_year == now.year() - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.month() == 1 && now.monthDay() == 1)
+    if (fileTime.tm_year == now.year() - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.month() == WTF::February && now.monthDay() == 1)
         return makeString("Yesterday"_s, timeOfDay);
 
     static constexpr std::array months = { "Jan"_s, "Feb"_s, "Mar"_s, "Apr"_s, "May"_s, "Jun"_s, "Jul"_s, "Aug"_s, "Sep"_s, "Oct"_s, "Nov"_s, "Dec"_s, "???"_s };

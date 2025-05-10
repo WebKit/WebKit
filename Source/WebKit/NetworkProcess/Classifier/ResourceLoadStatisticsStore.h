@@ -62,21 +62,27 @@ public:
     static OperatingDate today(Seconds timeAdvanceForTesting);
     Seconds secondsSinceEpoch() const;
     int year() const { return m_year; }
-    int month() const { return m_month; }
+    WTF::Month month() const { return m_month; }
+    int monthIntForDatabase() const { return static_cast<unsigned>(m_month) - 1; } // [0, 11] range.
     int monthDay() const { return m_monthDay; }
 
     friend bool operator==(const OperatingDate&, const OperatingDate&) = default;
     friend auto operator<=>(const OperatingDate& a, const OperatingDate& b) { return a.secondsSinceEpoch() <=> b.secondsSinceEpoch(); }
     
-    OperatingDate(int year, int month, int monthDay)
+    OperatingDate(int year, WTF::Month month, int monthDay)
         : m_year(year)
         , m_month(month)
         , m_monthDay(monthDay)
     { }
 
+    // databaseMonth is in [0, 11] range.
+    OperatingDate(int year, int databaseMonth, int monthDay)
+        : OperatingDate(year, WTF::Month { static_cast<unsigned>(databaseMonth) + 1 }, monthDay)
+    { }
+
 private:
     int m_year { 0 };
-    int m_month { 0 }; // [0, 11].
+    WTF::Month m_month { WTF::January };
     int m_monthDay { 0 }; // [1, 31].
 };
 
