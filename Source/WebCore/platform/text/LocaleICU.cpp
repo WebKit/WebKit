@@ -211,7 +211,7 @@ std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* 
 
 static std::unique_ptr<Vector<String>> createFallbackMonthLabels()
 {
-    return makeUnique<Vector<String>>(std::span { WTF::monthFullName });
+    return makeUnique<Vector<String>>(std::span { WTF::monthFullNames });
 }
 
 const Vector<String>& LocaleICU::monthLabels()
@@ -346,9 +346,7 @@ const Vector<String>& LocaleICU::shortMonthLabels()
             return m_shortMonthLabels;
         }
     }
-    m_shortMonthLabels.reserveCapacity(std::size(WTF::monthName));
-    for (unsigned i = 0; i < std::size(WTF::monthName); ++i)
-        m_shortMonthLabels.append(WTF::monthName[i]);
+    m_shortMonthLabels = std::span { WTF::monthNames };
     return m_shortMonthLabels;
 }
 

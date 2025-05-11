@@ -32,6 +32,7 @@
 
 #include <optional>
 #include <unicode/utypes.h>
+#include <wtf/DateMath.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -59,25 +60,14 @@ enum class DateComponentsType : uint8_t {
 // * DateTime or DateTimeLocal type: year-month-day hour-minute-second-millisecond
 class DateComponents {
 public:
-    DateComponents()
-        : m_millisecond(0)
-        , m_second(0)
-        , m_minute(0)
-        , m_hour(0)
-        , m_monthDay(0)
-        , m_month(0)
-        , m_year(0)
-        , m_week(0)
-        , m_type(DateComponentsType::Invalid)
-    {
-    }
+    DateComponents() = default;
 
     int millisecond() const { return m_millisecond; }
     int second() const { return m_second; }
     int minute() const { return m_minute; }
     int hour() const { return m_hour; }
     int monthDay() const { return m_monthDay; }
-    int month() const { return m_month; }
+    WTF::Month month() const { return m_month; }
     int fullYear() const { return m_year; }
     int week() const { return m_week; }
     DateComponentsType type() const { return m_type; }
@@ -192,16 +182,16 @@ private:
         Saturday,
     };
 
-    int m_millisecond; // 0 - 999
-    int m_second;
-    int m_minute;
-    int m_hour;
-    int m_monthDay; // 1 - 31
-    int m_month; // 0:January - 11:December
-    int m_year; //  1582 -
-    int m_week; // 1 - 53
+    int m_millisecond { 0 }; // 0 - 999
+    int m_second { 0 };
+    int m_minute { 0 };
+    int m_hour { 0 };
+    int m_monthDay { 1 }; // 1 - 31
+    WTF::Month m_month { 1 }; // 1: January - 12: December
+    int m_year { 0 }; //  1582 -
+    int m_week { 0 }; // 1 - 53
 
-    DateComponentsType m_type;
+    DateComponentsType m_type { DateComponentsType::Invalid };
 };
 
 } // namespace WebCore

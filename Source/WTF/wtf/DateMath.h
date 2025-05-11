@@ -49,6 +49,7 @@
 #include <time.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -63,12 +64,60 @@ enum TimeType {
 // 0 is Sunday, 1 is Monday, 2 is Tuesday, ...
 class Weekday {
 public:
-    explicit Weekday(unsigned weekday)
+    constexpr explicit Weekday(unsigned weekday)
         : m_weekday(static_cast<uint8_t>(weekday == 7 ? 0 : weekday))
     { }
-    unsigned c_encoding() const { return m_weekday; }
+    constexpr unsigned c_encoding() const { return m_weekday; }
 private:
     uint8_t m_weekday;
+};
+
+// FIXME: Replace with std::chrono::month once supported by the Playstation port.
+// The API matches std::chrono::month to facilitate transition.
+// 1 is January, 2 is February, 3 is March, ...
+class Month {
+public:
+    Month() = default;
+    constexpr explicit Month(unsigned month)
+        : m_month(static_cast<uint8_t>(month))
+    { }
+    constexpr bool ok() const { return m_month >= 1 && m_month <= 12; }
+    constexpr Month& operator++()
+    {
+        ++m_month;
+        return *this;
+    }
+    constexpr Month& operator--()
+    {
+        --m_month;
+        return *this;
+    }
+    constexpr explicit operator unsigned() const { return m_month; }
+    friend constexpr std::strong_ordering operator<=>(const Month&, const Month&) = default;
+
+private:
+    uint8_t m_month;
+};
+
+inline constexpr Month January { 1 };
+inline constexpr Month February { 2 };
+inline constexpr Month March { 3 };
+inline constexpr Month April { 4 };
+inline constexpr Month May { 5 };
+inline constexpr Month June { 6 };
+inline constexpr Month July { 7 };
+inline constexpr Month August { 8 };
+inline constexpr Month September { 9 };
+inline constexpr Month October { 10 };
+inline constexpr Month November { 11 };
+inline constexpr Month December { 12 };
+
+template<>
+class StringTypeAdapter<WTF::Month> : public StringTypeAdapter<unsigned> {
+public:
+    explicit StringTypeAdapter(WTF::Month month)
+        : StringTypeAdapter<unsigned>(static_cast<unsigned>(month))
+    { }
 };
 
 struct LocalTimeOffset {
@@ -94,8 +143,8 @@ int equivalentYearForDST(int year);
 WTF_EXPORT_PRIVATE double parseES5Date(std::span<const LChar> dateString, bool& isLocalTime);
 WTF_EXPORT_PRIVATE double parseDate(std::span<const LChar> dateString);
 WTF_EXPORT_PRIVATE double parseDate(std::span<const LChar> dateString, bool& isLocalTime);
-// dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [0, 11], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720]. 
-WTF_EXPORT_PRIVATE String makeRFC2822DateString(Weekday dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
+// dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [1, 12], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720].
+WTF_EXPORT_PRIVATE String makeRFC2822DateString(Weekday, unsigned day, Month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
 
 inline double jsCurrentTime()
 {
@@ -103,12 +152,14 @@ inline double jsCurrentTime()
     return floor(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
-extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthName;
-extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthFullName;
-extern WTF_EXPORT_PRIVATE const std::array<std::array<int, 12>, 2> firstDayOfMonth;
-extern WTF_EXPORT_PRIVATE const std::array<int8_t, 12> daysInMonths;
+extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthNames;
+extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthFullNames;
+enum class IsLeapYear : bool { No, Yes };
+WTF_EXPORT_PRIVATE uint16_t firstDayOfMonth(Month, IsLeapYear);
+WTF_EXPORT_PRIVATE uint8_t daysInMonth(Month, IsLeapYear = IsLeapYear::No);
 
 WTF_EXPORT_PRIVATE ASCIILiteral weekdayName(Weekday);
+WTF_EXPORT_PRIVATE ASCIILiteral monthName(Month);
 
 static constexpr double hoursPerDay = 24.0;
 static constexpr double minutesPerHour = 60.0;
@@ -212,6 +263,11 @@ inline bool isLeapYear(int year)
     return true;
 }
 
+inline IsLeapYear isLeapYearEnum(int year)
+{
+    return isLeapYear(year) ? IsLeapYear::Yes : IsLeapYear::No;
+}
+
 inline int daysInYear(int year)
 {
     return 365 + isLeapYear(year);
@@ -235,7 +291,7 @@ inline int32_t timeInDay(Int64Milliseconds ms, int days)
     return static_cast<int32_t>(ms.value() - days * Int64Milliseconds::msPerDay);
 }
 
-inline std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDays(int32_t passedDays)
+inline std::tuple<int32_t, Month, int32_t> yearMonthDayFromDays(int32_t passedDays)
 {
     int32_t days = passedDays;
     days += Int64Milliseconds::daysOffset;
@@ -262,26 +318,27 @@ inline std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDays(int32_t passed
     days += isLeap;
 
     // Check if the date is after February.
-    int32_t month = 0;
+    Month month { January };
     int32_t day = 0;
     if (days >= 31 + 28 + (isLeap ? 1 : 0)) {
         days -= 31 + 28 + (isLeap ? 1 : 0);
         // Find the date starting from March.
-        for (int i = 2; i < 12; i++) {
-            if (days < daysInMonths[i]) {
+        for (Month i = March; i <= December; ++i) {
+            auto daysForMonth = daysInMonth(i);
+            if (days < daysForMonth) {
                 month = i;
                 day = days + 1;
                 break;
             }
-            days -= daysInMonths[i];
+            days -= daysForMonth;
         }
     } else {
         // Check January and February.
         if (days < 31) {
-            month = 0;
+            month = January;
             day = days + 1;
         } else {
-            month = 1;
+            month = February;
             day = days - 31 + 1;
         }
     }
@@ -289,17 +346,9 @@ inline std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDays(int32_t passed
     return std::tuple { year, month, day };
 }
 
-inline int32_t daysFromYearMonth(int32_t year, int32_t month)
+inline int32_t daysFromYearMonth(int32_t year, Month month)
 {
-    year += month / 12;
-    month %= 12;
-    if (month < 0) {
-        year--;
-        month += 12;
-    }
-
-    ASSERT(month >= 0);
-    ASSERT(month < 12);
+    ASSERT(month.ok());
 
     // yearDelta is an arbitrary number such that:
     // a) yearDelta = -1 (mod 400)
@@ -318,13 +367,13 @@ inline int32_t daysFromYearMonth(int32_t year, int32_t month)
     int32_t dayFromYear = 365 * year1 + year1 / 4 - year1 / 100 + year1 / 400 - baseDay;
 
     if ((year % 4 != 0) || (year % 100 == 0 && year % 400 != 0))
-        return dayFromYear + firstDayOfMonth[0][month];
-    return dayFromYear + firstDayOfMonth[1][month];
+        return dayFromYear + firstDayOfMonth(month, IsLeapYear::No);
+    return dayFromYear + firstDayOfMonth(month, IsLeapYear::Yes);
 }
 
-inline int dayInYear(int year, int month, int day)
+inline int dayInYear(int year, Month month, int day)
 {
-    return firstDayOfMonth[isLeapYear(year)][month] + day - 1;
+    return firstDayOfMonth(month, isLeapYearEnum(year)) + day - 1;
 }
 
 inline int dayInYear(double ms, int year)
@@ -334,16 +383,8 @@ inline int dayInYear(double ms, int year)
 }
 
 // Returns the number of days from 1970-01-01 to the specified date.
-inline double dateToDaysFrom1970(int year, int month, int day)
+inline double dateToDaysFrom1970(int year, Month month, int day)
 {
-    year += month / 12;
-
-    month %= 12;
-    if (month < 0) {
-        month += 12;
-        --year;
-    }
-
     double yearday = floor(daysFrom1970ToYear(year));
     ASSERT((year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0));
     return yearday + dayInYear(year, month, day);
@@ -402,38 +443,38 @@ inline Weekday weekDay(int32_t days)
     return Weekday { unsignedCast(result >= 0 ? result : result + 7) };
 }
 
-inline int monthFromDayInYear(int dayInYear, bool leapYear)
+inline Month monthFromDayInYear(int dayInYear, IsLeapYear leapYear)
 {
     const int d = dayInYear;
     int step;
 
     if (d < (step = 31))
-        return 0;
-    step += (leapYear ? 29 : 28);
+        return January;
+    step += (leapYear == IsLeapYear::Yes ? 29 : 28);
     if (d < step)
-        return 1;
+        return February;
     if (d < (step += 31))
-        return 2;
+        return March;
     if (d < (step += 30))
-        return 3;
+        return April;
     if (d < (step += 31))
-        return 4;
+        return May;
     if (d < (step += 30))
-        return 5;
+        return June;
     if (d < (step += 31))
-        return 6;
+        return July;
     if (d < (step += 31))
-        return 7;
+        return August;
     if (d < (step += 30))
-        return 8;
+        return September;
     if (d < (step += 31))
-        return 9;
+        return October;
     if (d < step + 30)
-        return 10;
-    return 11;
+        return November;
+    return December;
 }
 
-inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
+inline int dayInMonthFromDayInYear(int dayInYear, IsLeapYear leapYear)
 {
     auto checkMonth = [] (int dayInYear, int& startDayOfThisMonth, int& startDayOfNextMonth, int daysInThisMonth) -> bool {
         startDayOfThisMonth = startDayOfNextMonth;
@@ -447,7 +488,7 @@ inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
 
     if (d <= next)
         return d + 1;
-    const int daysInFeb = (leapYear ? 29 : 28);
+    const int daysInFeb = (leapYear == IsLeapYear::Yes ? 29 : 28);
     if (checkMonth(d, step, next, daysInFeb))
         return d - step;
     if (checkMonth(d, step, next, 31))
@@ -483,7 +524,7 @@ inline double timeToMS(double hour, double min, double sec, double ms)
 // ECMA 262 - 15.9.1.9.
 inline int32_t equivalentYear(int32_t year)
 {
-    auto weekDay = WTF::weekDay(daysFromYearMonth(year, 0));
+    auto weekDay = WTF::weekDay(daysFromYearMonth(year, January));
     int recentYear = (isLeapYear(year) ? 1956 : 1967) + (weekDay.c_encoding() * 12) % 28;
     // Find the year in the range 2008..2037 that is equivalent mod 28.
     // Add 3*28 to give a positive argument to the modulus operator.
@@ -518,6 +559,8 @@ WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMillisec
 
 } // namespace WTF
 
+using WTF::IsLeapYear;
+using WTF::LocalTimeOffset;
 using WTF::calculateLocalTimeOffset;
 using WTF::dateToDaysFrom1970;
 using WTF::dayInMonthFromDayInYear;
@@ -526,9 +569,9 @@ using WTF::daysFrom1970ToYear;
 using WTF::daysInYear;
 using WTF::getTimeZoneOverride;
 using WTF::isLeapYear;
+using WTF::isLeapYearEnum;
 using WTF::isTimeZoneValid;
 using WTF::jsCurrentTime;
-using WTF::LocalTimeOffset;
 using WTF::makeRFC2822DateString;
 using WTF::minutesPerHour;
 using WTF::monthFromDayInYear;

@@ -70,9 +70,9 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         if (asUTCVariant) {
             builder.append(", "_s);
             appendNumber<2>(builder, t.monthDay());
-            builder.append(' ', WTF::monthName[t.month()]);
+            builder.append(' ', WTF::monthName(t.month()));
         } else {
-            builder.append(' ', WTF::monthName[t.month()], ' ');
+            builder.append(' ', WTF::monthName(t.month()), ' ');
             appendNumber<2>(builder, t.monthDay());
         }
         builder.append(' ');

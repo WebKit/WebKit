@@ -400,7 +400,7 @@ String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZon
     }
 
     builder.append(makeString(pad('0', yearLength, std::abs(gregorianDateTime.year())),
-        '-', pad('0', 2, gregorianDateTime.month() + 1),
+        '-', pad('0', 2, gregorianDateTime.month()),
         '-', pad('0', 2, gregorianDateTime.monthDay()),
         'T', pad('0', 2, gregorianDateTime.hour()),
         ':', pad('0', 2, gregorianDateTime.minute())));

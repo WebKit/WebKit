@@ -1056,15 +1056,15 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     }
     // We ensured that buffer has enough length for month and day. We do not need to check length.
 
-    unsigned month = 0;
+    WTF::Month month;
     auto firstMonthCharacter = *buffer;
     if (firstMonthCharacter == '0' || firstMonthCharacter == '1') {
         buffer.advance();
         auto secondMonthCharacter = *buffer;
         if (!isASCIIDigit(secondMonthCharacter))
             return std::nullopt;
-        month = (secondMonthCharacter - '0') + 10 * (firstMonthCharacter - '0');
-        if (!month || month > 12)
+        month = WTF::Month { static_cast<unsigned>((secondMonthCharacter - '0') + 10 * (firstMonthCharacter - '0')) };
+        if (!month.ok())
             return std::nullopt;
         buffer.advance();
     } else
@@ -1243,14 +1243,14 @@ static bool isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>& buffer)
     }
 
     // Any YYYY is valid, we just need to check the MM and DD.
-    unsigned month = (buffer[0] - '0') * 10 + (buffer[1] - '0');
-    if (!month || month > 12)
+    WTF::Month month { static_cast<unsigned>((buffer[0] - '0') * 10 + (buffer[1] - '0')) };
+    if (!month.ok())
         return false;
 
     buffer.advanceBy(monthPartLength);
     if (buffer.hasCharactersRemaining()) {
         unsigned day = (buffer[0] - '0') * 10 + (buffer[1] - '0');
-        if (!day || day > daysInMonth(month))
+        if (!day || day > JSC::ISO8601::daysInMonth(month))
             return false;
     }
 
@@ -1325,7 +1325,7 @@ std::optional<ExactTime> parseInstant(StringView string)
 
 uint8_t dayOfWeek(PlainDate plainDate)
 {
-    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(plainDate.year(), plainDate.month() - 1, plainDate.day()));
+    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(plainDate.year(), plainDate.month(), plainDate.day()));
     int weekDay = static_cast<int>((dateDays + 4) % 7);
     if (weekDay < 0)
         weekDay += 7;
@@ -1334,7 +1334,7 @@ uint8_t dayOfWeek(PlainDate plainDate)
 
 uint16_t dayOfYear(PlainDate plainDate)
 {
-    return dayInYear(plainDate.year(), plainDate.month() - 1, plainDate.day()) + 1; // Always start with 1 (1/1 is 1).
+    return dayInYear(plainDate.year(), plainDate.month(), plainDate.day()) + 1; // Always start with 1 (1/1 is 1).
 }
 
 uint8_t weekOfYear(PlainDate plainDate)
@@ -1352,7 +1352,7 @@ uint8_t weekOfYear(PlainDate plainDate)
         // > The long years, with 53 weeks in them, can be described by any of the following equivalent definitions:
         // >  - any year ending on Thursday (D, ED) and any leap year ending on Friday (DC)
 
-        int32_t dayOfWeekForJanuaryFirst = ISO8601::dayOfWeek(PlainDate { plainDate.year(), 1, 1 });
+        int32_t dayOfWeekForJanuaryFirst = ISO8601::dayOfWeek(PlainDate { plainDate.year(), WTF::January, 1 });
 
         // Any year ending on Thursday (D, ED) -> this year's 1/1 is Friday.
         if (dayOfWeekForJanuaryFirst == 5)
@@ -1374,21 +1374,16 @@ uint8_t weekOfYear(PlainDate plainDate)
     return week;
 }
 
-static constexpr uint8_t daysInMonths[2][12] = {
-    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
-    { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-};
-
 // https://tc39.es/proposal-temporal/#sec-temporal-isodaysinmonth
-uint8_t daysInMonth(int32_t year, uint8_t month)
+uint8_t daysInMonth(int32_t year, WTF::Month month)
 {
-    return daysInMonths[isLeapYear(year)][month - 1];
+    return WTF::daysInMonth(month, isLeapYearEnum(year));
 }
 
-uint8_t daysInMonth(uint8_t month)
+uint8_t daysInMonth(WTF::Month month)
 {
-    constexpr unsigned isLeapYear = 1;
-    return daysInMonths[isLeapYear][month - 1];
+    // FIXME: Why does this assume leap year?
+    return WTF::daysInMonth(month, IsLeapYear::Yes);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
@@ -1487,7 +1482,7 @@ String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::t
     return makeString(temporalDateToString(plainDate), 'T', temporalTimeToString(plainTime, precision));
 }
 
-String monthCode(uint32_t month)
+String monthCode(WTF::Month month)
 {
     return makeString('M', pad('0', 2, month));
 }
@@ -1507,9 +1502,9 @@ uint8_t monthFromCode(StringView monthCode)
     return result;
 }
 
-ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond, int64_t offset)
+ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, WTF::Month month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond, int64_t offset)
 {
-    ASSERT(month >= 1 && month <= 12);
+    ASSERT(month.ok());
     ASSERT(day >= 1 && day <= 31);
     ASSERT(hour <= 23);
     ASSERT(minute <= 59);
@@ -1518,7 +1513,7 @@ ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t 
     ASSERT(microsecond <= 999);
     ASSERT(nanosecond <= 999);
 
-    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(year, month - 1, day));
+    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(year, month, day));
     Int128 utcNanoseconds = dateDays * nsPerDay + hour * nsPerHour + minute * nsPerMinute + second * nsPerSecond + millisecond * nsPerMillisecond + microsecond * nsPerMicrosecond + nanosecond;
     return ExactTime { utcNanoseconds - offset };
 }
@@ -1715,7 +1710,7 @@ ExactTime ExactTime::now()
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
-bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond)
+bool isDateTimeWithinLimits(int32_t year, WTF::Month month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond)
 {
     Int128 nanoseconds = ExactTime::fromISOPartsAndOffset(year, month, day, hour, minute, second, millisecond, microsecond, nanosecond, 0).epochNanoseconds();
     if (nanoseconds <= (ExactTime::minValue - ExactTime::nsPerDay))

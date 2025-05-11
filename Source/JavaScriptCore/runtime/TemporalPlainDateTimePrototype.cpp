@@ -155,7 +155,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncGetISOFields, (JSGlob
     fields->putDirect(vm, vm.propertyNames->isoMicrosecond, jsNumber(plainDateTime->microsecond()));
     fields->putDirect(vm, vm.propertyNames->isoMillisecond, jsNumber(plainDateTime->millisecond()));
     fields->putDirect(vm, vm.propertyNames->isoMinute, jsNumber(plainDateTime->minute()));
-    fields->putDirect(vm, vm.propertyNames->isoMonth, jsNumber(plainDateTime->month()));
+    fields->putDirect(vm, vm.propertyNames->isoMonth, jsNumber(plainDateTime->monthInt()));
     fields->putDirect(vm, vm.propertyNames->isoNanosecond, jsNumber(plainDateTime->nanosecond()));
     fields->putDirect(vm, vm.propertyNames->isoSecond, jsNumber(plainDateTime->second()));
     fields->putDirect(vm, vm.propertyNames->isoYear, jsNumber(plainDateTime->year()));
@@ -404,7 +404,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMonth, (JSGlobalObj
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.month called on value that's not a PlainDateTime"_s);
 
-    return JSValue::encode(jsNumber(plainDateTime->month()));
+    return JSValue::encode(jsNumber(plainDateTime->monthInt()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMonthCode, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

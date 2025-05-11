@@ -166,7 +166,7 @@ private:
     struct YearMonthDayCache {
         int32_t m_days { 0 };
         int32_t m_year { 0 };
-        int32_t m_month { 0 };
+        WTF::Month m_month { WTF::January };
         int32_t m_day { 0 };
     };
 
@@ -187,7 +187,7 @@ private:
         return m_timeZoneCache.get();
     }
 
-    std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
+    std::tuple<int32_t, WTF::Month, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
 
     std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
     std::array<DSTCache, 2> m_caches;

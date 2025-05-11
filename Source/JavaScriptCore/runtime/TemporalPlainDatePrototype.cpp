@@ -138,7 +138,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncGetISOFields, (JSGlobalOb
     JSObject* fields = constructEmptyObject(globalObject);
     fields->putDirect(vm, vm.propertyNames->calendar, plainDate->calendar());
     fields->putDirect(vm, vm.propertyNames->isoDay, jsNumber(plainDate->day()));
-    fields->putDirect(vm, vm.propertyNames->isoMonth, jsNumber(plainDate->month()));
+    fields->putDirect(vm, vm.propertyNames->isoMonth, jsNumber(plainDate->monthInt()));
     fields->putDirect(vm, vm.propertyNames->isoYear, jsNumber(plainDate->year()));
     return JSValue::encode(fields);
 }
@@ -371,7 +371,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterMonth, (JSGlobalObject*
     if (!plainDate)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.month called on value that's not a PlainDate"_s);
 
-    return JSValue::encode(jsNumber(plainDate->month()));
+    return JSValue::encode(jsNumber(plainDate->monthInt()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterMonthCode, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

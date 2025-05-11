@@ -182,7 +182,7 @@ static void incrementDay(ISO8601::Duration& duration)
     double month = duration.months();
     double day = duration.days();
 
-    double daysInMonth = ISO8601::daysInMonth(year, month);
+    double daysInMonth = ISO8601::daysInMonth(year, WTF::Month { static_cast<unsigned>(month) });
     if (day < daysInMonth) {
         duration.setDays(day + 1);
         return;
@@ -225,7 +225,7 @@ String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue opt
 
     double extraDays = duration.days();
     duration.setYears(year());
-    duration.setMonths(month());
+    duration.setMonths(static_cast<unsigned>(month()));
     duration.setDays(day());
     if (extraDays) {
         ASSERT(extraDays == 1);
@@ -285,7 +285,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
 
     double y = optionalYear.value_or(year());
-    double m = optionalMonth.value_or(month());
+    double m = optionalMonth.value_or(static_cast<unsigned>(month()));
     double d = optionalDay.value_or(day());
     auto plainDate = TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow);
     RETURN_IF_EXCEPTION(scope, { });
@@ -350,7 +350,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject
 
     double extraDays = duration.days();
     duration.setYears(year());
-    duration.setMonths(month());
+    duration.setMonths(static_cast<unsigned>(month()));
     duration.setDays(day());
     if (extraDays) {
         ASSERT(extraDays == 1);

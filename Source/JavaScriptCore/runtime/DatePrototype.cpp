@@ -199,10 +199,21 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
     }
     // months
     if (maxArgs >= 2 && idx < numArgs) {
-        double months = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
+        double monthsDouble = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        ok = ok && std::isfinite(months);
-        t->setMonth(toInt32(months));
+        ok = ok && std::isfinite(monthsDouble);
+        auto months = toInt32(monthsDouble);
+        if (months < 0 || months > 12) {
+            auto year = t->year();
+            year += months / 12;
+            months %= 12;
+            if (months < 0) {
+                year--;
+                months += 12;
+            }
+            t->setYear(year);
+        }
+        t->setMonth(WTF::Month { static_cast<unsigned>(months) + 1 });
     }
     // days
     if (idx < numArgs) {
@@ -334,7 +345,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
         ms += msPerSecond;
 
     int year = gregorianDateTime->year();
-    int month = gregorianDateTime->month() + 1;
+    auto month = gregorianDateTime->month();
     int day = gregorianDateTime->monthDay();
     int hour = gregorianDateTime->hour();
     int minute = gregorianDateTime->minute();
@@ -440,7 +451,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMonth, (JSGlobalObject* globalObject, C
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->month()));
+    return JSValue::encode(jsNumber(gregorianDateTime->tm_month()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -455,7 +466,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMonth, (JSGlobalObject* globalObject
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->month()));
+    return JSValue::encode(jsNumber(gregorianDateTime->tm_month()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDate, (JSGlobalObject* globalObject, CallFrame* callFrame))

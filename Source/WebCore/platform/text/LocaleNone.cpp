@@ -68,7 +68,7 @@ const Vector<String>& LocaleNone::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
-    m_monthLabels = { WTF::monthFullName, std::size(WTF::monthFullName) };
+    m_monthLabels = std::span { WTF::monthFullNames };
     return m_monthLabels;
 }
 
@@ -111,7 +111,7 @@ const Vector<String>& LocaleNone::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
-    m_shortMonthLabels = { WTF::monthName, std::size(WTF::monthName) };
+    m_shortMonthLabels = std::span { WTF::monthNames };
     return m_shortMonthLabels;
 }
 

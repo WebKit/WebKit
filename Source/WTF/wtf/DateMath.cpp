@@ -102,9 +102,8 @@ static Vector<UChar>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOve
 
 /* Constants */
 
-const std::array<ASCIILiteral, 12> monthName { "Jan"_s, "Feb"_s, "Mar"_s, "Apr"_s, "May"_s, "Jun"_s, "Jul"_s, "Aug"_s, "Sep"_s, "Oct"_s, "Nov"_s, "Dec"_s };
-const std::array<ASCIILiteral, 12> monthFullName { "January"_s, "February"_s, "March"_s, "April"_s, "May"_s, "June"_s, "July"_s, "August"_s, "September"_s, "October"_s, "November"_s, "December"_s };
-
+const std::array<ASCIILiteral, 12> monthNames { "Jan"_s, "Feb"_s, "Mar"_s, "Apr"_s, "May"_s, "Jun"_s, "Jul"_s, "Aug"_s, "Sep"_s, "Oct"_s, "Nov"_s, "Dec"_s };
+const std::array<ASCIILiteral, 12> monthFullNames { "January"_s, "February"_s, "March"_s, "April"_s, "May"_s, "June"_s, "July"_s, "August"_s, "September"_s, "October"_s, "November"_s, "December"_s };
 
 ASCIILiteral weekdayName(Weekday weekday)
 {
@@ -112,16 +111,30 @@ ASCIILiteral weekdayName(Weekday weekday)
     return weekdayName[weekday.c_encoding()];
 }
 
-// Day of year for the first day of each month, where index 0 is January, and day 0 is January 1.
-// First for non-leap years, then for leap years.
-const std::array<std::array<int, 12>, 2> firstDayOfMonth {
-    std::array<int, 12> { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 },
-    std::array<int, 12> { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 }
-};
+ASCIILiteral monthName(Month month)
+{
+    return monthNames[static_cast<unsigned>(month) - 1];
+}
 
-const std::array<int8_t, 12> daysInMonths {
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-};
+uint16_t firstDayOfMonth(Month month, IsLeapYear isLeapYear)
+{
+    static constexpr std::array<uint16_t, 12> nonLeapYearDays { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+    static constexpr std::array<uint16_t, 12> leapYearDays { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 };
+    unsigned index = static_cast<unsigned>(month) - 1;
+    return isLeapYear == IsLeapYear::Yes ? leapYearDays[index] : nonLeapYearDays[index];
+}
+
+uint8_t daysInMonth(Month month, IsLeapYear isLeapYear)
+{
+    static constexpr std::array<uint8_t, 12> daysInMonthsNonLeapYear {
+        31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    };
+    static constexpr std::array<uint8_t, 12> daysInMonthsLeapYear {
+        31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    };
+    auto index = static_cast<unsigned>(month) - 1;
+    return isLeapYear == IsLeapYear::Yes ? daysInMonthsLeapYear[index] : daysInMonthsNonLeapYear[index];
+}
 
 #if !OS(WINDOWS) || HAVE(TM_GMTOFF)
 static inline void getLocalTime(const time_t* localTime, struct tm* localTM)
@@ -322,10 +335,10 @@ LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
     int year = msToYear(ms);
     int equivalentYear = equivalentYearForDST(year);
     if (year != equivalentYear) {
-        bool leapYear = isLeapYear(year);
+        auto leapYear = isLeapYearEnum(year);
         int dayInYearLocal = dayInYear(ms, year);
         int dayInMonth = dayInMonthFromDayInYear(dayInYearLocal, leapYear);
-        int month = monthFromDayInYear(dayInYearLocal, leapYear);
+        auto month = monthFromDayInYear(dayInYearLocal, leapYear);
         double day = dateToDaysFrom1970(equivalentYear, month, dayInMonth);
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
@@ -359,9 +372,9 @@ void initializeDates()
     equivalentYearForDST(2000); // Need to call once to initialize a static used in this function.
 }
 
-static inline double ymdhmsToMilliseconds(int year, long mon, long day, long hour, long minute, long second, double milliseconds)
+static inline double ymdhmsToMilliseconds(int year, Month month, long day, long hour, long minute, long second, double milliseconds)
 {
-    int mday = firstDayOfMonth[isLeapYear(year)][mon - 1];
+    int mday = firstDayOfMonth(month, isLeapYearEnum(year));
     double ydays = daysFrom1970ToYear(year);
 
     double dateMilliseconds = milliseconds + second * msPerSecond + minute * (secondsPerMinute * msPerSecond) + hour * (secondsPerHour * msPerSecond) + (mday + day - 1 + ydays) * (secondsPerDay * msPerSecond);
@@ -670,7 +683,7 @@ double parseES5Date(std::span<const LChar> dateString, bool& isLocalTime)
         milliseconds = 0;
     }
         
-    return ymdhmsToMilliseconds(year, month, day, hours, minutes, seconds, milliseconds) - (timeZoneSeconds * msPerSecond);
+    return ymdhmsToMilliseconds(year, Month { static_cast<unsigned>(month) }, day, hours, minutes, seconds, milliseconds) - (timeZoneSeconds * msPerSecond);
 }
 
 // Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
@@ -962,7 +975,7 @@ double parseDate(std::span<const LChar> dateString, bool& isLocalTime)
     }
     ASSERT(year);
 
-    return ymdhmsToMilliseconds(year.value(), month + 1, day, hour, minute, second, 0) - offset * (secondsPerMinute * msPerSecond);
+    return ymdhmsToMilliseconds(year.value(), Month { static_cast<unsigned>(month) + 1 }, day, hour, minute, second, 0) - offset * (secondsPerMinute * msPerSecond);
 }
 
 double parseDate(std::span<const LChar> dateString)
@@ -977,10 +990,10 @@ double parseDate(std::span<const LChar> dateString)
 }
 
 // See http://tools.ietf.org/html/rfc2822#section-3.3 for more information.
-String makeRFC2822DateString(Weekday dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
+String makeRFC2822DateString(Weekday dayOfWeek, unsigned day, Month month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(weekdayName(dayOfWeek), ", "_s, day, ' ', monthName[month], ' ', year, ' ');
+    stringBuilder.append(weekdayName(dayOfWeek), ", "_s, day, ' ', monthName(month), ' ', year, ' ');
 
     appendTwoDigitNumber(stringBuilder, hours);
     stringBuilder.append(':');
