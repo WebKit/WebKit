@@ -1999,7 +1999,6 @@ http/tests/webrtc/audioSessionInFrames.html [ Skip ]
 http/wpt/webrtc/rtcNetworkInterface.html [ Failure ]
 
 webkit.org/b/292839 media/media-fullscreen-not-in-document.html [ Timeout ]
-webkit.org/b/292842 fast/mediastream/stream-switch.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-related bugs

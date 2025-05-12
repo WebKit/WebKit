@@ -443,7 +443,7 @@ public:
         GST_INFO_OBJECT(m_src.get(), "Track ended");
         sourceStopped();
         m_isEnded = true;
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
+        //webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
     }
 
     void sourceStopped() final
@@ -456,11 +456,11 @@ public:
                 return;
         }
 
-        {
-            Locker locker { m_eosLock };
-            m_eosPending = true;
-            m_eosCondition.waitFor(m_eosLock, 50_ms);
-        }
+        // {
+        //     Locker locker { m_eosLock };
+        //     m_eosPending = true;
+        //     m_eosCondition.waitFor(m_eosLock, 50_ms);
+        // }
     }
 
     void trackEnabledChanged(MediaStreamTrackPrivate& track) final
