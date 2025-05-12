@@ -32,7 +32,6 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/ContentType.h>
 #import <WebCore/MediaSample.h>
-#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SourceBufferParserWebM.h>
 #import <WebCore/UTIUtilities.h>
@@ -97,7 +96,6 @@ int main(int argc, char* argv[])
         WTF::initializeMainThread();
         registerWebKitVP9Decoder();
         registerSupplementalVP9Decoder();
-        RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(true);
 
         auto mdItem = adoptCF(MDItemCreate(kCFAllocatorDefault, filename.createCFString().get()));
         auto mdContentType = adoptCF(checked_cf_cast<CFStringRef>(MDItemCopyAttribute(mdItem.get(), kMDItemContentType)));
