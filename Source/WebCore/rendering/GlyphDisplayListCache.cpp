@@ -39,6 +39,8 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCacheEntry);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCache);
 
+static constexpr unsigned s_maxDisplayListsForOpportunisticDeletion = 300;
+
 struct GlyphDisplayListCacheKey {
     GlyphDisplayListCacheKey(const TextRun& textRun, const FontCascade& font, const GraphicsContext& context)
         : textRun(textRun)
@@ -85,6 +87,13 @@ void GlyphDisplayListCache::clear()
 {
     m_entriesForLayoutRun.clear();
     m_entries.clear();
+    m_entriesForOpportunisticDeletion.clear();
+}
+
+void GlyphDisplayListCache::clearEntriesForOpportunisticCleanup()
+{
+    static constexpr size_t s_entriesToClear = 100;
+    m_entriesForOpportunisticDeletion.remove(0, std::min(s_entriesToClear, m_entriesForOpportunisticDeletion.size()));
 }
 
 unsigned GlyphDisplayListCache::size() const
@@ -170,7 +179,10 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getIfExists(const 
 
 void GlyphDisplayListCache::remove(const void* run)
 {
-    m_entriesForLayoutRun.remove(run);
+    if (RefPtr glyphDisplayListCacheEntry = m_entriesForLayoutRun.take(run); glyphDisplayListCacheEntry && m_entriesForOpportunisticDeletion.size() < s_maxDisplayListsForOpportunisticDeletion) {
+        m_entries.remove(*glyphDisplayListCacheEntry);
+        m_entriesForOpportunisticDeletion.append(WTFMove(glyphDisplayListCacheEntry));
+    }
 }
 
 bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)

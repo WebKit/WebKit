@@ -84,6 +84,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "GeolocationController.h"
+#include "GlyphDisplayListCache.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
@@ -5158,6 +5159,9 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     OptionSet<JSC::VM::SchedulerOptions> options;
     if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
+
+    GlyphDisplayListCache::singleton().performOpportunisticCleanup();
+
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 
     deleteRemovedNodes();

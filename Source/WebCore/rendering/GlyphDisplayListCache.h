@@ -119,6 +119,9 @@ public:
 
     void clear();
     unsigned size() const;
+    void clearEntriesForOpportunisticCleanup();
+
+    void performOpportunisticCleanup() { clearEntriesForOpportunisticCleanup(); }
 
     void setForceUseGlyphDisplayListForTesting(bool flag)
     {
@@ -136,6 +139,7 @@ private:
 
     UncheckedKeyHashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
     UncheckedKeyHashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
+    Vector<RefPtr<GlyphDisplayListCacheEntry>> m_entriesForOpportunisticDeletion;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };
 

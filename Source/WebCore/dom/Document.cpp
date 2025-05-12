@@ -105,6 +105,7 @@
 #include "GCReachableRef.h"
 #include "GPUCanvasContext.h"
 #include "GenericCachedHTMLCollection.h"
+#include "GlyphDisplayListCache.h"
 #include "GraphicsTypes.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
@@ -3475,6 +3476,8 @@ void Document::destroyRenderTree()
 
     if (RefPtr documentElement = m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*documentElement);
+
+    GlyphDisplayListCache::singleton().performOpportunisticCleanup();
 
     clearChildNeedsStyleRecalc();
 
