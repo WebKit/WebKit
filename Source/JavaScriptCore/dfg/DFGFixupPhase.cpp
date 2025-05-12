@@ -2104,7 +2104,17 @@ private:
             break;
         }
 
-        case PutClosureVar:
+        case PutClosureVar: {
+            fixEdge<KnownCellUse>(node->child1());
+            // FTL does optimization (ObjectAllocationSinking etc.) with the assumption that PutClosureVar's input value is boxed JSValue.
+            // Since FTL can handle these patterns in ValueRep reduction phase, let's not put speculation here.
+            if (!m_graph.m_plan.isFTL() && !node->child2()->shouldSpeculateInt32() && !node->child2()->shouldSpeculateInt52() && node->child2()->shouldSpeculateNumber())
+                fixEdge<DoubleRepUse>(node->child2());
+            else
+                speculateForBarrier(node->child2());
+            break;
+        }
+
         case PutToArguments:
         case PutInternalField: {
             fixEdge<KnownCellUse>(node->child1());
@@ -2407,7 +2417,12 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            speculateForBarrier(node->child3());
+            // FTL does optimization (ObjectAllocationSinking etc.) with the assumption that PutByOffset's input value is boxed JSValue.
+            // Since FTL can handle these patterns in ValueRep reduction phase, let's not put speculation here.
+            if (!m_graph.m_plan.isFTL() && !node->child3()->shouldSpeculateInt32() && !node->child3()->shouldSpeculateInt52() && node->child3()->shouldSpeculateNumber())
+                fixEdge<DoubleRepUse>(node->child3());
+            else
+                speculateForBarrier(node->child3());
             break;
         }
             
@@ -2664,7 +2679,12 @@ private:
 
         case PutGlobalVariable: {
             fixEdge<CellUse>(node->child1());
-            speculateForBarrier(node->child2());
+            // FTL does optimization (ObjectAllocationSinking etc.) with the assumption that PutGlobalVariable's input value is boxed JSValue.
+            // Since FTL can handle these patterns in ValueRep reduction phase, let's not put speculation here.
+            if (!m_graph.m_plan.isFTL() && !node->child2()->shouldSpeculateInt32() && !node->child2()->shouldSpeculateInt52() && node->child2()->shouldSpeculateNumber())
+                fixEdge<DoubleRepUse>(node->child2());
+            else
+                speculateForBarrier(node->child2());
             break;
         }
 

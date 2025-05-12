@@ -12909,10 +12909,34 @@ void SpeculativeJIT::compileGetGlobalVariable(Node* node)
 
 void SpeculativeJIT::compilePutGlobalVariable(Node* node)
 {
-    JSValueOperand value(this, node->child2());
-    JSValueRegs valueRegs = value.jsValueRegs();
-    storeValue(valueRegs, node->variablePointer());
-    noResult(node);
+    switch (node->child2().useKind()) {
+    case DoubleRepUse: {
+        SpeculateDoubleOperand value(this, node->child2());
+        FPRTemporary scratch(this);
+
+        FPRReg valueFPR = value.fpr();
+        FPRReg scratchFPR = scratch.fpr();
+
+        FPRReg inputFPR = valueFPR;
+        if (m_state.forNode(node->child2()).couldBeType(SpecDoubleImpureNaN)) {
+            purifyNaN(valueFPR, scratchFPR);
+            inputFPR = scratchFPR;
+        }
+
+        boxDoubleAsDouble(inputFPR, scratchFPR);
+        storeDouble(scratchFPR, TrustedImmPtr(node->variablePointer()));
+        noResult(node);
+        break;
+
+    }
+    default: {
+        JSValueOperand value(this, node->child2());
+        JSValueRegs valueRegs = value.jsValueRegs();
+        storeValue(valueRegs, node->variablePointer());
+        noResult(node);
+        break;
+    }
+    }
 }
 
 void SpeculativeJIT::compileGetDynamicVar(Node* node)
@@ -12953,14 +12977,40 @@ void SpeculativeJIT::compileGetClosureVar(Node* node)
 
 void SpeculativeJIT::compilePutClosureVar(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
-    JSValueOperand value(this, node->child2());
+    switch (node->child2().useKind()) {
+    case DoubleRepUse: {
+        SpeculateCellOperand base(this, node->child1());
+        SpeculateDoubleOperand value(this, node->child2());
+        FPRTemporary scratch(this);
 
-    GPRReg baseGPR = base.gpr();
-    JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg baseGPR = base.gpr();
+        FPRReg valueFPR = value.fpr();
+        FPRReg scratchFPR = scratch.fpr();
 
-    storeValue(valueRegs, Address(baseGPR, JSLexicalEnvironment::offsetOfVariable(node->scopeOffset())));
-    noResult(node);
+        FPRReg inputFPR = valueFPR;
+        if (m_state.forNode(node->child2()).couldBeType(SpecDoubleImpureNaN)) {
+            purifyNaN(valueFPR, scratchFPR);
+            inputFPR = scratchFPR;
+        }
+
+        boxDoubleAsDouble(inputFPR, scratchFPR);
+        storeDouble(scratchFPR, Address(baseGPR, JSLexicalEnvironment::offsetOfVariable(node->scopeOffset())));
+        noResult(node);
+        break;
+    }
+
+    default: {
+        SpeculateCellOperand base(this, node->child1());
+        JSValueOperand value(this, node->child2());
+
+        GPRReg baseGPR = base.gpr();
+        JSValueRegs valueRegs = value.jsValueRegs();
+
+        storeValue(valueRegs, Address(baseGPR, JSLexicalEnvironment::offsetOfVariable(node->scopeOffset())));
+        noResult(node);
+        break;
+    }
+    }
 }
 
 void SpeculativeJIT::compileGetInternalField(Node* node)
@@ -14226,19 +14276,49 @@ void SpeculativeJIT::compileGetByOffset(Node* node)
 
 void SpeculativeJIT::compilePutByOffset(Node* node)
 {
-    StorageOperand storage(this, node->child1());
-    JSValueOperand value(this, node->child3());
+    switch (node->child3().useKind()) {
+    case DoubleRepUse: {
+        StorageOperand storage(this, node->child1());
+        SpeculateDoubleOperand value(this, node->child3());
+        FPRTemporary scratch(this);
 
-    GPRReg storageGPR = storage.gpr();
-    JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg storageGPR = storage.gpr();
+        FPRReg valueFPR = value.fpr();
+        FPRReg scratchFPR = scratch.fpr();
 
-    speculate(node, node->child2());
+        speculate(node, node->child2());
 
-    StorageAccessData& storageAccessData = node->storageAccessData();
+        FPRReg inputFPR = valueFPR;
+        if (m_state.forNode(node->child3()).couldBeType(SpecDoubleImpureNaN)) {
+            purifyNaN(valueFPR, scratchFPR);
+            inputFPR = scratchFPR;
+        }
+        StorageAccessData& storageAccessData = node->storageAccessData();
 
-    storeValue(valueRegs, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
+        boxDoubleAsDouble(inputFPR, scratchFPR);
+        storeDouble(scratchFPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
 
-    noResult(node);
+        noResult(node);
+        break;
+    }
+
+    default: {
+        StorageOperand storage(this, node->child1());
+        JSValueOperand value(this, node->child3());
+
+        GPRReg storageGPR = storage.gpr();
+        JSValueRegs valueRegs = value.jsValueRegs();
+
+        speculate(node, node->child2());
+
+        StorageAccessData& storageAccessData = node->storageAccessData();
+
+        storeValue(valueRegs, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
+
+        noResult(node);
+        break;
+    }
+    }
 }
 
 void SpeculativeJIT::compileMatchStructure(Node* node)

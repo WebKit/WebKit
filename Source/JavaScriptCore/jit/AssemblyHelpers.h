@@ -1512,6 +1512,20 @@ public:
         unboxDouble(regs.payloadGPR(), resultGPR, destFPR);
     }
 
+    void boxDoubleAsDouble(FPRReg valueFPR, FPRReg resultFPR)
+    {
+        // -JSValue::DoubleEncodeOffset can fit in one instruction.
+        move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(-JSValue::DoubleEncodeOffset)), fpTempRegister);
+        sub64(valueFPR, fpTempRegister, resultFPR);
+    }
+
+    void unboxDoubleAsDouble(FPRReg boxedFPR, FPRReg resultFPR)
+    {
+        // -JSValue::DoubleEncodeOffset can fit in one instruction.
+        move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(-JSValue::DoubleEncodeOffset)), fpTempRegister);
+        add64(boxedFPR, fpTempRegister, resultFPR);
+    }
+
     Jump isStrictInt52(GPRReg valueGPR, GPRReg scratchGPR)
     {
         // This moves the checking range (fail if N >= (1 << (52 - 1)) or N < -(1 << (52 - 1))) by subtracting a value.
