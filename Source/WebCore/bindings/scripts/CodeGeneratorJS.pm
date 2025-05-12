@@ -3259,6 +3259,8 @@ sub GenerateHeader
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } elsif ($interface->extendedAttributes->{Exception}) {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ErrorInstanceType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     }
