@@ -237,13 +237,6 @@ template<> constexpr BorderStyle fromCSSValueID(CSSValueID valueID)
     return static_cast<BorderStyle>(valueID - CSSValueNone);
 }
 
-template<> constexpr OutlineIsAuto fromCSSValueID(CSSValueID valueID)
-{
-    if (valueID == CSSValueAuto)
-        return OutlineIsAuto::On;
-    return OutlineIsAuto::Off;
-}
-
 constexpr CSSValueID toCSSValueID(CompositeOperator e, CSSPropertyID propertyID)
 {
     if (propertyID == CSSPropertyMaskComposite) {

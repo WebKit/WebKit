@@ -16,6 +16,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testAnimationWrapper;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testAnimationWrapperAccelerationAlways;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testAnimationWrapperAccelerationThreadedOnly;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testAutoFunctions;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testBoundedRepetitionWithCommas;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testBoundedRepetitionWithCommasFixed;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testBoundedRepetitionWithCommasNoSingleItemOpt;
@@ -30,6 +31,10 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColor;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColorAllowsTypesAbsolute;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColorPropertyWithNoVisitedLinkSupport;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColorPropertyWithVisitedLinkSupport;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testCustonmExtractor;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testExtractorConverter;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionBoundedParameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionFixedParameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionNoParameters;
@@ -94,6 +99,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testNumericValueRange;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testProperty;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName, EnabledBySetting=cssSettingsOneEnabled] attribute [LegacyNullToEmptyString] CSSOMString testSettingsOne;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testSharedBuilderExtractorConverter;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testShorthandOne;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testShorthandTwo;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testSinkPriority;
@@ -132,6 +138,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-animation-wrapper;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-animation-wrapper-acceleration-always;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-animation-wrapper-acceleration-threaded-only;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-auto-functions;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-bounded-repetition-with-commas;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-bounded-repetition-with-commas-fixed;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-bounded-repetition-with-commas-no-single-item-opt;
@@ -146,6 +153,10 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-bounded-repetition-with-spaces-with-type-with-default-previous-two;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color-allows-types-absolute;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color-property-with-no-visited-link-support;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color-property-with-visited-link-support;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-custonm-extractor;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-extractor-converter;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-bounded-parameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-fixed-parameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-no-parameters;
@@ -210,6 +221,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-numeric-value-range;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-property;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName, EnabledBySetting=cssSettingsOneEnabled] attribute [LegacyNullToEmptyString] CSSOMString test-settings-one;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-shared-builder-extractor-converter;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-shorthand-one;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-shorthand-two;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-sink-priority;

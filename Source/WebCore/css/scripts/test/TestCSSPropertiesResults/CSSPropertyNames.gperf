@@ -24,10 +24,11 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 96> computedPropertyIDs {
+const std::array<CSSPropertyID, 102> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestAnimationWrapper,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways,
     CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly,
+    CSSPropertyID::CSSPropertyTestAutoFunctions,
     CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas,
     CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed,
     CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasNoSingleItemOpt,
@@ -42,6 +43,10 @@ const std::array<CSSPropertyID, 96> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo,
     CSSPropertyID::CSSPropertyTestColor,
     CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute,
+    CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport,
+    CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
+    CSSPropertyID::CSSPropertyTestCustonmExtractor,
+    CSSPropertyID::CSSPropertyTestExtractorConverter,
     CSSPropertyID::CSSPropertyTestFunctionBoundedParameters,
     CSSPropertyID::CSSPropertyTestFunctionFixedParameters,
     CSSPropertyID::CSSPropertyTestFunctionNoParameters,
@@ -106,6 +111,7 @@ const std::array<CSSPropertyID, 96> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestNumericValueRange,
     CSSPropertyID::CSSPropertyTestProperty,
     CSSPropertyID::CSSPropertyTestSettingsOne,
+    CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter,
     CSSPropertyID::CSSPropertyTestSinkPriority,
     CSSPropertyID::CSSPropertyTestTopPriority,
     CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin,
@@ -131,6 +137,7 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-animation-wrapper"_s,
     "test-animation-wrapper-acceleration-always"_s,
     "test-animation-wrapper-acceleration-threaded-only"_s,
+    "test-auto-functions"_s,
     "test-bounded-repetition-with-commas"_s,
     "test-bounded-repetition-with-commas-fixed"_s,
     "test-bounded-repetition-with-commas-no-single-item-opt"_s,
@@ -145,6 +152,10 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-bounded-repetition-with-spaces-with-type-with-default-previous-two"_s,
     "test-color"_s,
     "test-color-allows-types-absolute"_s,
+    "test-color-property-with-no-visited-link-support"_s,
+    "test-color-property-with-visited-link-support"_s,
+    "test-custonm-extractor"_s,
+    "test-extractor-converter"_s,
     "test-function-bounded-parameters"_s,
     "test-function-fixed-parameters"_s,
     "test-function-no-parameters"_s,
@@ -204,6 +215,7 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-numeric-value-range"_s,
     "test-property"_s,
     "test-settings-one"_s,
+    "test-shared-builder-extractor-converter"_s,
     "test-unbounded-repetition-with-commas-with-min"_s,
     "test-unbounded-repetition-with-commas-with-min-no-single-item-opt"_s,
     "test-unbounded-repetition-with-commas-with-min-single-item-opt"_s,
@@ -249,6 +261,7 @@ first-test-descriptor-for-second-descriptor, CSSPropertyID::CSSPropertyFirstTest
 test-animation-wrapper, CSSPropertyID::CSSPropertyTestAnimationWrapper
 test-animation-wrapper-acceleration-always, CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways
 test-animation-wrapper-acceleration-threaded-only, CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly
+test-auto-functions, CSSPropertyID::CSSPropertyTestAutoFunctions
 test-bounded-repetition-with-commas, CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas
 test-bounded-repetition-with-commas-fixed, CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed
 test-bounded-repetition-with-commas-no-single-item-opt, CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasNoSingleItemOpt
@@ -263,6 +276,10 @@ test-bounded-repetition-with-spaces-with-type-with-default-previous, CSSProperty
 test-bounded-repetition-with-spaces-with-type-with-default-previous-two, CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo
 test-color, CSSPropertyID::CSSPropertyTestColor
 test-color-allows-types-absolute, CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
+test-color-property-with-no-visited-link-support, CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport
+test-color-property-with-visited-link-support, CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
+test-custonm-extractor, CSSPropertyID::CSSPropertyTestCustonmExtractor
+test-extractor-converter, CSSPropertyID::CSSPropertyTestExtractorConverter
 test-function-bounded-parameters, CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
 test-function-fixed-parameters, CSSPropertyID::CSSPropertyTestFunctionFixedParameters
 test-function-no-parameters, CSSPropertyID::CSSPropertyTestFunctionNoParameters
@@ -322,6 +339,7 @@ test-match-one-with-settings-flag, CSSPropertyID::CSSPropertyTestMatchOneWithSet
 test-numeric-value-range, CSSPropertyID::CSSPropertyTestNumericValueRange
 test-property, CSSPropertyID::CSSPropertyTestProperty
 test-settings-one, CSSPropertyID::CSSPropertyTestSettingsOne
+test-shared-builder-extractor-converter, CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter
 test-unbounded-repetition-with-commas-with-min, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin
 test-unbounded-repetition-with-commas-with-min-no-single-item-opt, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt
 test-unbounded-repetition-with-commas-with-min-single-item-opt, CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt
@@ -473,6 +491,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestAnimationWrapper
     false, // CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways
     false, // CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly
+    false, // CSSPropertyID::CSSPropertyTestAutoFunctions
     false, // CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas
     false, // CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed
     false, // CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasNoSingleItemOpt
@@ -487,6 +506,10 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo
     false, // CSSPropertyID::CSSPropertyTestColor
     false, // CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
+    false, // CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport
+    false, // CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
+    false, // CSSPropertyID::CSSPropertyTestCustonmExtractor
+    false, // CSSPropertyID::CSSPropertyTestExtractorConverter
     false, // CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
     false, // CSSPropertyID::CSSPropertyTestFunctionFixedParameters
     false, // CSSPropertyID::CSSPropertyTestFunctionNoParameters
@@ -546,6 +569,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestNumericValueRange
     false, // CSSPropertyID::CSSPropertyTestProperty
     false, // CSSPropertyID::CSSPropertyTestSettingsOne
+    false, // CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt
@@ -594,6 +618,10 @@ Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)
 
 const WTF::BitSet<cssPropertyIDEnumValueCount> CSSProperty::colorProperties = ([]() -> WTF::BitSet<cssPropertyIDEnumValueCount> {
     WTF::BitSet<cssPropertyIDEnumValueCount> result;
+    result.set(CSSPropertyID::CSSPropertyTestColor);
+    result.set(CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute);
+    result.set(CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport);
+    result.set(CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport);
     return result;
 })();
 
@@ -621,6 +649,7 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestAnimationWrapper:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
+    case CSSPropertyID::CSSPropertyTestAutoFunctions:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesNoSingleItemOpt:
@@ -629,6 +658,8 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
+    case CSSPropertyID::CSSPropertyTestCustonmExtractor:
+    case CSSPropertyID::CSSPropertyTestExtractorConverter:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndCustomType:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalNoSingleItemOpt:
@@ -655,6 +686,7 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
+    case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesNoMin:

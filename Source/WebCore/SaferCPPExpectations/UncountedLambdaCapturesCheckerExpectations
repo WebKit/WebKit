@@ -48,7 +48,6 @@ crypto/SubtleCrypto.cpp
 css/CSSPendingSubstitutionValue.cpp
 css/CSSValue.cpp
 css/CSSVariableReferenceValue.cpp
-css/ComputedStyleExtractor.cpp
 css/StyleRule.cpp
 dom/BroadcastChannel.cpp
 dom/ContentVisibilityDocumentState.cpp

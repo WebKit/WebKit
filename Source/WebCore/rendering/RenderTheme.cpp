@@ -761,7 +761,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         if (isSpinUpButtonPartPressed(renderer))
             states.add(ControlStyle::State::SpinUp);
     }
-    if (isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On)
+    if (isFocused(renderer) && renderer.style().hasAutoOutlineStyle())
         states.add(ControlStyle::State::Focused);
     if (isEnabled(renderer))
         states.add(ControlStyle::State::Enabled);

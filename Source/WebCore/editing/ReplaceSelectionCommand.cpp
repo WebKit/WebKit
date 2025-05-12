@@ -70,6 +70,7 @@
 #include "ScriptElement.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
+#include "StyleExtractor.h"
 #include "StylePropertiesInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -202,7 +203,7 @@ ReplacementFragment::ReplacementFragment(RefPtr<DocumentFragment>&& inputFragmen
 
     ASSERT(stagingDocument->body());
 
-    ComputedStyleExtractor computedStyleOfEditableRoot(editableRoot.get());
+    Style::Extractor computedStyleOfEditableRoot(editableRoot.get());
     stagingDocument->body()->setAttributeWithoutSynchronization(styleAttr, computedStyleOfEditableRoot.copyProperties()->asTextAtom(CSS::defaultSerializationContext()));
 
     RefPtr holder = insertFragmentForTestRendering(stagingDocument->body());

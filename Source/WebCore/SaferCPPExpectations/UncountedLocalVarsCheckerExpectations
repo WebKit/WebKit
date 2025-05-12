@@ -227,7 +227,6 @@ css/CSSValue.cpp
 css/CSSValueList.cpp
 css/CSSValueList.h
 css/CSSVariableReferenceValue.cpp
-css/ComputedStyleExtractor.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
@@ -695,6 +694,9 @@ style/StyleBuilder.cpp
 style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
+style/StyleExtractor.cpp
+style/StyleExtractorConverter.h
+style/StyleExtractorCustom.h
 style/StyleInterpolationFunctions.h
 style/StyleInterpolationWrappers.h
 style/StyleInvalidationFunctions.h

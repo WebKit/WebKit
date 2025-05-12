@@ -93,7 +93,6 @@ bindings/js/WebCoreJSClientData.cpp
 contentextensions/ContentExtensionsBackend.cpp
 css/CSSFontSelector.cpp
 css/CSSStyleSheet.cpp
-css/ComputedStyleExtractor.cpp
 css/FontFaceSet.cpp
 css/MediaQueryMatcher.cpp
 css/SelectorChecker.cpp
@@ -616,6 +615,8 @@ style/StyleBuilder.cpp
 style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderStateInlines.h
+style/StyleExtractor.cpp
+style/StyleExtractorCustom.h
 style/StyleInterpolationFunctions.h
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp

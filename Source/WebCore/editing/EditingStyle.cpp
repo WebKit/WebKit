@@ -59,6 +59,7 @@
 #include "RenderStyle.h"
 #include "SimpleRange.h"
 #include "StyleColor.h"
+#include "StyleExtractor.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolveForFont.h"
 #include "StyleResolver.h"
@@ -137,7 +138,7 @@ static inline bool isEditingProperty(int id)
     return false;
 }
 
-static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(ComputedStyleExtractor& computedStyle, EditingStyle::PropertiesToInclude propertiesToInclude)
+static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(Style::Extractor& computedStyle, EditingStyle::PropertiesToInclude propertiesToInclude)
 {
     switch (propertiesToInclude) {
     case EditingStyle::PropertiesToInclude::OnlyEditingInheritableProperties:
@@ -154,7 +155,7 @@ static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(ComputedStyle
 
 static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(Node* node, EditingStyle::PropertiesToInclude propertiesToInclude)
 {
-    ComputedStyleExtractor computedStyle(node);
+    Style::Extractor computedStyle(node);
     return copyPropertiesFromComputedStyle(computedStyle, propertiesToInclude);
 }
 
@@ -163,7 +164,7 @@ static RefPtr<CSSValue> extractPropertyValue(const StyleProperties& style, CSSPr
     return style.getPropertyCSSValue(propertyID);
 }
 
-static RefPtr<CSSValue> extractPropertyValue(ComputedStyleExtractor& computedStyle, CSSPropertyID propertyID)
+static RefPtr<CSSValue> extractPropertyValue(Style::Extractor& computedStyle, CSSPropertyID propertyID)
 {
     return computedStyle.propertyValue(propertyID);
 }
@@ -562,7 +563,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     else if (tabSpanNode(node))
         node = node->parentNode();
 
-    ComputedStyleExtractor computedStyleAtPosition(node);
+    Style::Extractor computedStyleAtPosition(node);
     // FIXME: It's strange to not set background-color and text-decoration when propertiesToInclude is EditingPropertiesInEffect.
     // However editing/selection/contains-boundaries.html fails without this ternary.
     m_mutableStyle = copyPropertiesFromComputedStyle(computedStyleAtPosition,
@@ -905,7 +906,7 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
     bool nodeIsStart = true;
     for (auto node = selection.start().protectedDeprecatedNode(); node; node = NodeTraversal::next(*node)) {
         if (node->renderer() && node->hasEditableStyle()) {
-            ComputedStyleExtractor computedStyle(node.get());
+            Style::Extractor computedStyle(node.get());
             TriState nodeState = triStateOfStyle(computedStyle, node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
             if (nodeIsStart) {
                 state = nodeState;
@@ -1117,7 +1118,7 @@ bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node& node) const
 {
     if (isEmpty())
         return true;
-    ComputedStyleExtractor computedStyle(&node);
+    Style::Extractor computedStyle(&node);
 
     bool shouldAddUnderline = underlineChange() == TextDecorationChange::Add;
     bool shouldAddLineThrough = strikeThroughChange() == TextDecorationChange::Add;
@@ -1427,7 +1428,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element, S
     // For example: style="height: 1%; overflow: visible;" in quirksmode
     // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
     auto fromComputedStyle = MutableStyleProperties::create();
-    ComputedStyleExtractor computedStyle(&element);
+    Style::Extractor computedStyle(&element);
 
     bool shouldRemoveFontFamily = false;
     {
@@ -1700,7 +1701,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         for (auto& intersectingNode : intersectingNodes(*makeSimpleRange(position, end))) {
             if (!intersectingNode.isStyledElement())
                 continue;
-            auto value = valueID(ComputedStyleExtractor(&intersectingNode).propertyValue(CSSPropertyUnicodeBidi).get());
+            auto value = valueID(Style::Extractor(&intersectingNode).propertyValue(CSSPropertyUnicodeBidi).get());
             if (value == CSSValueEmbed || value == CSSValueBidiOverride)
                 return WritingDirection::Natural;
         }
@@ -1725,7 +1726,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!node->isStyledElement())
             continue;
 
-        ComputedStyleExtractor computedStyle(node.get());
+        Style::Extractor computedStyle(node.get());
         RefPtr<CSSValue> unicodeBidi = computedStyle.propertyValue(CSSPropertyUnicodeBidi);
         if (!is<CSSPrimitiveValue>(unicodeBidi))
             continue;
@@ -1833,7 +1834,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     if (!node)
         return;
 
-    ComputedStyleExtractor computedStyle(node.get());
+    Style::Extractor computedStyle(node.get());
 
     // FIXME: take care of background-color in effect
     auto mutableStyle = style->style() ? getPropertiesNotIn(*style->protectedStyle(), computedStyle) : MutableStyleProperties::create();
@@ -2065,7 +2066,7 @@ bool hasTransparentBackgroundColor(StyleProperties* style)
 RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
     for (RefPtr ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        auto value = ComputedStyleExtractor(ancestor.get()).propertyValue(CSSPropertyBackgroundColor);
+        auto value = Style::Extractor(ancestor.get()).propertyValue(CSSPropertyBackgroundColor);
         if (!isTransparentColorValue(value.get()))
             return value;
     }

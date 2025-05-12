@@ -970,7 +970,6 @@ css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/CSSViewTransitionRule.cpp
 css/ComputedStyleDependencies.cpp
-css/ComputedStyleExtractor.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
 css/DOMCSSRegisterCustomProperty.cpp
@@ -3118,6 +3117,7 @@ style/RuleSetBuilder.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
+style/StyleExtractor.cpp
 style/StyleChange.cpp
 style/StyleFontSizeFunctions.cpp
 style/StyleInterpolation.cpp
@@ -3462,6 +3462,7 @@ MathMLElementFactory.cpp
 ProcessSyncClient.cpp
 SVGElementFactory.cpp
 StyleBuilderGenerated.cpp
+StyleExtractorGenerated.cpp
 StyleInterpolationWrapperMap.cpp
 StylePropertyShorthandFunctions.cpp
 UserAgentStyleSheetsData.cpp

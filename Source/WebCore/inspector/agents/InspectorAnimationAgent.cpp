@@ -36,7 +36,6 @@
 #include "CSSTransition.h"
 #include "CSSValue.h"
 #include "CSSValuePool.h"
-#include "ComputedStyleExtractor.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
@@ -51,6 +50,7 @@
 #include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"
+#include "StyleExtractor.h"
 #include "StyleOriginatedAnimation.h"
 #include "Styleable.h"
 #include "TimingFunction.h"
@@ -132,7 +132,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
 
         auto pseudoElementIdentifier = target->pseudoId() == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { target->pseudoId() });
-        ComputedStyleExtractor computedStyleExtractor(target, false, pseudoElementIdentifier);
+        Style::Extractor computedStyleExtractor(target, false, pseudoElementIdentifier);
 
         for (size_t i = 0; i < blendingKeyframes.size(); ++i) {
             auto& blendingKeyframe = blendingKeyframes[i];

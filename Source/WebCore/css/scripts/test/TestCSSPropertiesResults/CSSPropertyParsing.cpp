@@ -71,6 +71,16 @@ namespace WebCore {
 
 using namespace CSSPropertyParserHelpers;
 
+static bool isKeywordValidForTestAutoFunctions(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueAuto:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isKeywordValidForTestKeyword(CSSValueID keyword)
 {
     switch (keyword) {
@@ -189,6 +199,15 @@ static bool isKeywordValidForTestUsingSharedRuleWithOverrideFunction(CSSValueID 
     default:
         return false;
     }
+}
+
+static RefPtr<CSSValue> consumeTestAutoFunctions(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // auto
+    if (auto result = consumeIdent(range, isKeywordValidForTestAutoFunctions))
+        return result;
+    // <number>
+    return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
 }
 
 static RefPtr<CSSValue> consumeTestBoundedRepetitionWithCommas(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -3200,14 +3219,19 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStyleProperty(CSSParserTokenRange& ran
     case CSSPropertyID::CSSPropertyTestAnimationWrapper:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
+    case CSSPropertyID::CSSPropertyTestCustonmExtractor:
+    case CSSPropertyID::CSSPropertyTestExtractorConverter:
     case CSSPropertyID::CSSPropertyTestProperty:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
+    case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
     case CSSPropertyID::CSSPropertyTestSinkPriority:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalInline:
         return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+    case CSSPropertyID::CSSPropertyTestAutoFunctions:
+        return consumeTestAutoFunctions(range, state);
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas:
         return consumeTestBoundedRepetitionWithCommas(range, state);
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed:
@@ -3233,6 +3257,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStyleProperty(CSSParserTokenRange& ran
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
         return consumeTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(range, state);
     case CSSPropertyID::CSSPropertyTestColor:
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute, CSS::ColorType::Current, CSS::ColorType::System } });
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute } });
@@ -3384,6 +3410,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStyleProperty(CSSParserTokenRange& ran
 bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSValueID keyword, CSS::PropertyParserState& state)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestAutoFunctions:
+        return isKeywordValidForTestAutoFunctions(keyword);
     case CSSPropertyID::CSSPropertyTestKeyword:
         return isKeywordValidForTestKeyword(keyword);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
@@ -3414,6 +3442,7 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
 bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestAutoFunctions:
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:

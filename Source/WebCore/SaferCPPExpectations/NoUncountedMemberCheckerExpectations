@@ -85,6 +85,9 @@ style/ElementRuleCollector.cpp
 style/PropertyCascade.h
 style/PseudoClassChangeInvalidation.h
 style/RuleSetBuilder.h
+style/StyleExtractor.cpp
+style/StyleExtractorConverter.h
+style/StyleExtractorCustom.h
 style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleScope.h

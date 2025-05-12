@@ -3659,6 +3659,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ShadowRealmGlobalScopeConstructors.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleExtractorGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp

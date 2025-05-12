@@ -28,7 +28,6 @@
 #include "CSSPropertyParser.h"
 #include "CSSValuePool.h"
 #include "ColorBlending.h"
-#include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CursorList.h"
 #include "CustomPropertyRegistry.h"
@@ -52,6 +51,7 @@
 #include "ScrollbarGutter.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
+#include "StyleExtractor.h"
 #include "StyleImage.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -1299,8 +1299,8 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
     auto& propertiesB = bData.customPaintWatchedProperties;
 
     if (!propertiesA.isEmpty() || !propertiesB.isEmpty()) [[unlikely]] {
-        // FIXME: We should not need to use ComputedStyleExtractor here.
-        ComputedStyleExtractor extractor((Element*) nullptr);
+        // FIXME: We should not need to use Style::Extractor here.
+        Style::Extractor extractor((Element*) nullptr);
         auto& pool = CSSValuePool::singleton();
 
         for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
@@ -3839,7 +3839,7 @@ float RenderStyle::outlineWidth() const
     auto& outline = m_nonInheritedData->backgroundData->outline;
     if (outline.style() == BorderStyle::None)
         return 0;
-    if (outlineStyleIsAuto() == OutlineIsAuto::On)
+    if (hasAutoOutlineStyle())
         return std::max(outline.width(), RenderTheme::platformFocusRingWidth());
     return outline.width();
 }
@@ -3847,7 +3847,7 @@ float RenderStyle::outlineWidth() const
 float RenderStyle::outlineOffset() const
 {
     auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outlineStyleIsAuto() == OutlineIsAuto::On)
+    if (hasAutoOutlineStyle())
         return (outline.offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
     return outline.offset();
 }

@@ -1,4 +1,5 @@
 EventNames.h
+StyleExtractorGenerated.cpp
 Modules/ShapeDetection/BarcodeDetector.cpp
 Modules/ShapeDetection/FaceDetector.cpp
 Modules/ShapeDetection/TextDetector.cpp
@@ -448,7 +449,6 @@ css/CSSValuePair.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/CSSViewValue.h
-css/ComputedStyleExtractor.cpp
 css/DeprecatedCSSOMPrimitiveValue.h
 css/DeprecatedCSSOMRGBColor.h
 css/DeprecatedCSSOMRect.h
@@ -1234,6 +1234,9 @@ style/StyleBuilder.cpp
 style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
+style/StyleExtractor.cpp
+style/StyleExtractorConverter.h
+style/StyleExtractorCustom.h
 style/StyleInterpolation.cpp
 style/StyleInterpolationFunctions.h
 style/StyleInterpolationWrappers.h

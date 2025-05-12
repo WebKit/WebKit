@@ -65,7 +65,7 @@ protected:
     unsigned m_style : 4; // BorderStyle
 
     // This is only used by OutlineValue but moved here to keep the bits packed.
-    unsigned m_isAuto : 1; // OutlineIsAuto
+    unsigned m_isAuto : 1; // bool
 };
 
 } // namespace WebCore

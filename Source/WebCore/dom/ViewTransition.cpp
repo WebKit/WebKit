@@ -32,7 +32,6 @@
 #include "CSSTransformListValue.h"
 #include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
-#include "ComputedStyleExtractor.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
@@ -53,6 +52,8 @@
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
+#include "StyleExtractor.h"
+#include "StyleExtractorConverter.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
@@ -832,7 +833,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
 {
     std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
     ASSERT(styleable);
-    ComputedStyleExtractor styleExtractor(&styleable->element, false, styleable->pseudoElementIdentifier);
+    Style::Extractor styleExtractor { &styleable->element, false, styleable->pseudoElementIdentifier };
 
     CSSPropertyID transitionProperties[] = {
         CSSPropertyWritingMode,
@@ -871,7 +872,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
             transform->translate(size.width() / 2, size.height() / 2);
             transform->translateRight(-size.width() / 2, -size.height() / 2);
 
-            Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::valueForTransformationMatrix(renderer.style(), *transform));
+            Ref transformListValue = CSSTransformListValue::create(Style::ExtractorConverter::convertTransformationMatrix(renderer.style(), *transform));
             props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
         }
     }

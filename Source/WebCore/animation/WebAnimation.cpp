@@ -36,7 +36,6 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ComputedStyleExtractor.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -51,6 +50,7 @@
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "RenderElement.h"
+#include "StyleExtractor.h"
 #include "StyleOriginatedAnimation.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -1772,7 +1772,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return RenderStyle::clone(renderer->style());
     }();
 
-    auto computedStyleExtractor = ComputedStyleExtractor(styledElement.get());
+    Style::Extractor computedStyleExtractor { styledElement.get() };
 
     auto inlineStyle = [&]() {
         if (auto existinInlineStyle = styledElement->inlineStyle())
@@ -1809,7 +1809,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
             effect->animation()->resolve(*animatedStyle, { nullptr });
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, CSSValuePool::singleton(), nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, CSSValuePool::singleton(), nullptr, Style::ExtractorState::PropertyValueType::Computed))
                     return inlineStyle->setProperty(propertyId, cssValue->cssText(CSS::defaultSerializationContext()), { styledElement->document() });
                 return false;
             },

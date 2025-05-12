@@ -29,7 +29,6 @@
 #include "StyleGradient.h"
 
 #include "ColorInterpolation.h"
-#include "ComputedStyleExtractor.h"
 #include "FloatConversion.h"
 #include "GeometryUtilities.h"
 #include "Gradient.h"

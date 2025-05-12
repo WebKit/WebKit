@@ -680,6 +680,7 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
+                "color-property": true,
                 "parser-grammar": "<color>"
             }
         },
@@ -687,6 +688,7 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
+                "color-property": true,
                 "parser-grammar": "<color allowed-types=absolute>"
             }
         },
@@ -730,6 +732,56 @@
             "initial": "none",
             "codegen-properties": {
                 "parser-grammar": "none | <url allowed-modifiers=crossorigin,integrity,referrerpolicy>"
+            }
+        },
+
+        "test-extractor-converter": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "style-extractor-converter": "TestExtractorOnlyConversion",
+                "parser-grammar": "<number>"
+            }
+        },
+        "test-shared-builder-extractor-converter": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "style-converter": "TestSharedBuilderExtractorConversion",
+                "parser-grammar": "<number>"
+            }
+        },
+        "test-custonm-extractor": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "style-extractor-custom": true,
+                "parser-grammar": "<number>"
+            }
+        },
+        "test-auto-functions": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "auto-functions": true,
+                "parser-grammar": "auto | <number>"
+            }
+        },
+        "test-color-property-with-no-visited-link-support": {
+            "animation-type": "discrete",
+            "initial": "currentColor",
+            "codegen-properties": {
+                "color-property": true,
+                "parser-grammar": "<color>"
+            }
+        },
+        "test-color-property-with-visited-link-support": {
+            "animation-type": "discrete",
+            "initial": "currentColor",
+            "codegen-properties": {
+                "visited-link-color-support": true,
+                "color-property": true,
+                "parser-grammar": "<color>"
             }
         }
     },

@@ -29,7 +29,6 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParser.h"
-#include "ComputedStyleExtractor.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentClasses.h"
@@ -63,6 +62,7 @@
 #include "SVGUseElement.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
+#include "StyleExtractor.h"
 #include "StyleResolver.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
@@ -695,7 +695,7 @@ ColorInterpolation SVGElement::colorInterpolation() const
         return renderer->style().svgStyle().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
-    if (auto value = ComputedStyleExtractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, ComputedStyleExtractor::UpdateLayout::No))
+    if (auto value = Style::Extractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, Style::Extractor::UpdateLayout::No))
         return fromCSSValue<ColorInterpolation>(*value);
 
     return ColorInterpolation::Auto;

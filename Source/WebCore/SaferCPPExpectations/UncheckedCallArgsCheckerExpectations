@@ -1,3 +1,4 @@
+StyleExtractorGenerated.cpp
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
@@ -148,7 +149,6 @@ css/CSSStyleSheet.cpp
 css/CSSStyleSheetObservableArray.cpp
 css/CSSToLengthConversionData.cpp
 css/CSSVariableReferenceValue.cpp
-css/ComputedStyleExtractor.cpp
 css/MediaQueryList.cpp
 css/MediaQueryMatcher.cpp
 css/SelectorChecker.cpp
@@ -907,6 +907,9 @@ style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
 style/StyleBuilderStateInlines.h
+style/StyleExtractor.cpp
+style/StyleExtractorConverter.h
+style/StyleExtractorCustom.h
 style/StyleInterpolation.cpp
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp

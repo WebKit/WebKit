@@ -517,7 +517,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (AXObjectCache* cache = parent.document().axObjectCache())
         cache->childrenChanged(parent, newChild);
 
-    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On)
+    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().hasAutoOutlineStyle())
         if (!is<RenderMultiColumnSet>(newChild->previousSibling())) 
             newChild->setHasOutlineAutoAncestor();
 }
