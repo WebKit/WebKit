@@ -6431,7 +6431,7 @@ void HTMLMediaElement::updatePlayState()
         return;
     }
 
-    bool shouldBePlaying = potentiallyPlaying();
+    bool shouldBePlaying = !m_paused && !m_pausedInternal && potentiallyPlaying();
     bool playerPaused = m_player->paused();
 
     HTMLMEDIAELEMENT_RELEASE_LOG(HTMLMEDIAELEMENT_UPDATEPLAYSTATE, shouldBePlaying, playerPaused);
