@@ -214,7 +214,7 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
     if (progressString.isEmpty())
         return NO;
     bool validProgress;
-    progress = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
+    progress = std::clamp<float>(progressString.toFloat(&validProgress), 0, 1);
     return validProgress;
 }
 

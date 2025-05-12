@@ -39,6 +39,7 @@ namespace WebCore {
 
 FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& max) const
 {
+    // Unable to use std::clamp() here as `min` may be greater than `max`.
     return {
         std::max(min.width(), std::min(max.width(), m_width)),
         std::max(min.height(), std::min(max.height(), m_height))

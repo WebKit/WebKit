@@ -350,7 +350,7 @@ void Scavenger::threadRunLoop()
         if (!m_isInMiniMode) {
             timeSpentScavenging *= s_newWaitMultiplier;
             std::chrono::milliseconds newWaitTime = std::chrono::duration_cast<std::chrono::milliseconds>(timeSpentScavenging);
-            m_waitTime = std::min(std::max(newWaitTime, std::chrono::milliseconds(s_minWaitTimeMilliseconds)), std::chrono::milliseconds(s_maxWaitTimeMilliseconds));
+            m_waitTime = std::clamp(newWaitTime, std::chrono::milliseconds(s_minWaitTimeMilliseconds), std::chrono::milliseconds(s_maxWaitTimeMilliseconds));
         }
 
         if (verbose)

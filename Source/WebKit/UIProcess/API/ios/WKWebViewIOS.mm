@@ -912,7 +912,7 @@ static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoin
     CGPoint minimumContentOffset = CGPointMake(-contentInsets.left, -contentInsets.top);
     CGPoint maximumContentOffset = CGPointMake(std::max(minimumContentOffset.x, contentSize.width + contentInsets.right - scrollViewSize.width), std::max(minimumContentOffset.y, contentSize.height + contentInsets.bottom - scrollViewSize.height));
 
-    return CGPointMake(std::max(std::min(contentOffset.x, maximumContentOffset.x), minimumContentOffset.x), std::max(std::min(contentOffset.y, maximumContentOffset.y), minimumContentOffset.y));
+    return CGPointMake(std::clamp(contentOffset.x, minimumContentOffset.x, maximumContentOffset.x), std::clamp(contentOffset.y, minimumContentOffset.y, maximumContentOffset.y));
 }
 
 static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, WebCore::FloatPoint contentOffset)
@@ -1953,8 +1953,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     double horizontalScale = unobscuredContentSize.width() * currentScale / targetRect.width();
     double verticalScale = unobscuredContentSize.height() * currentScale / targetRect.height();
 
-    horizontalScale = std::min(std::max(horizontalScale, minimumScale), maximumScale);
-    verticalScale = std::min(std::max(verticalScale, minimumScale), maximumScale);
+    horizontalScale = std::clamp(horizontalScale, minimumScale, maximumScale);
+    verticalScale = std::clamp(verticalScale, minimumScale, maximumScale);
 
     return fitEntireRect ? std::min(horizontalScale, verticalScale) : horizontalScale;
 }

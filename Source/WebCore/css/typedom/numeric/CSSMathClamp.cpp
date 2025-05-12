@@ -89,7 +89,7 @@ auto CSSMathClamp::toSumValue() const -> std::optional<SumValue>
     if (!validateSumValue(upper, &lower->first().units))
         return std::nullopt;
 
-    value->first().value = std::max(lower->first().value, std::min(value->first().value, upper->first().value));
+    value->first().value = std::clamp(value->first().value, lower->first().value, upper->first().value);
     return value;
 }
 

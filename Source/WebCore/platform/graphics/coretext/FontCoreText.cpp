@@ -602,7 +602,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 
     auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer, CGPoint** newOffsetsPointer, CFIndex** newIndicesPointer)
     {
-        range.location = std::min(std::max(range.location, static_cast<CFIndex>(0)), static_cast<CFIndex>(glyphBuffer.size()));
+        range.location = std::clamp<CFIndex>(range.location, 0, glyphBuffer.size());
         if (range.length < 0) {
             range.length = std::min(range.location, -range.length);
             range.location = range.location - range.length;

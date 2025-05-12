@@ -180,7 +180,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& da
         auto animationIsBackwards = data.playbackRate < 0;
 
         // https://drafts.csswg.org/web-animations-1/#before-active-boundary-time
-        auto beforeActiveBoundaryTime = std::max(std::min(startDelay, endTime), endTime.matchingZero());
+        auto beforeActiveBoundaryTime = std::clamp(startDelay, endTime.matchingZero(), endTime);
 
         // An animation effect is in the before phase if the animation effect's local time is not unresolved and
         // either of the following conditions are met:
@@ -191,7 +191,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& da
             return AnimationEffectPhase::Before;
 
         // https://drafts.csswg.org/web-animations-1/#active-after-boundary-time
-        auto activeAfterBoundaryTime = std::max(std::min(startDelay + activeDuration, endTime), endTime.matchingZero());
+        auto activeAfterBoundaryTime = std::clamp(startDelay + activeDuration, endTime.matchingZero(), endTime);
 
         // An animation effect is in the after phase if the animation effect's local time is not unresolved
         // and either of the following conditions are met:
@@ -236,7 +236,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& da
             // If the fill mode is forwards or both, return the result of evaluating
             // max(min(local time - start delay, active duration), 0).
             if (fill == FillMode::Forwards || fill == FillMode::Both)
-                return std::max(std::min(*localTime - startDelay, activeDuration), localTime->matchingZero());
+                return std::clamp(*localTime - startDelay, localTime->matchingZero(), activeDuration);
             // Otherwise, return an unresolved time value.
             return std::nullopt;
         }

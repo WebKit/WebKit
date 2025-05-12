@@ -111,7 +111,7 @@ MediaRecorderPrivate::BitRates MediaRecorderPrivate::computeBitRates(const Media
         auto totalBitsPerSecond = *options.bitsPerSecond;
 
         if (hasAudio && hasVideo) {
-            auto audioBitsPerSecond =  std::min(LargeAudioBitRate, std::max(SmallAudioBitRate, totalBitsPerSecond / 10));
+            auto audioBitsPerSecond =  std::clamp(totalBitsPerSecond / 10, SmallAudioBitRate, LargeAudioBitRate);
             auto remainingBitsPerSecond = totalBitsPerSecond > audioBitsPerSecond ? (totalBitsPerSecond - audioBitsPerSecond) : 0;
             return { audioBitsPerSecond, std::max(remainingBitsPerSecond, SmallVideoBitRate) };
         }

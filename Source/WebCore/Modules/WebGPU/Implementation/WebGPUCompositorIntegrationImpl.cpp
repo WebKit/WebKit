@@ -71,8 +71,8 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     }
 
     constexpr int max2DTextureSize = 16384;
-    width = std::max(1, std::min(max2DTextureSize, width));
-    height = std::max(1, std::min(max2DTextureSize, height));
+    width = std::clamp(width, 1, max2DTextureSize);
+    height = std::clamp(height, 1, max2DTextureSize);
     IOSurface::Format colorFormat;
     switch (textureFormat) {
     case TextureFormat::Rgba8unorm:

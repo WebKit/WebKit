@@ -363,12 +363,12 @@ FloatRect LocalDOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingC
         window.setHeight(pendingChanges.height());
 
     FloatSize minimumSize = page.chrome().client().minimumWindowSize();
-    window.setWidth(std::min(std::max(minimumSize.width(), window.width()), screen.width()));
-    window.setHeight(std::min(std::max(minimumSize.height(), window.height()), screen.height()));
+    window.setWidth(std::clamp(window.width(), minimumSize.width(), screen.width()));
+    window.setHeight(std::clamp(window.height(), minimumSize.height(), screen.height()));
 
     // Constrain the window position within the valid screen area.
-    window.setX(std::max(screen.x(), std::min(window.x(), screen.maxX() - window.width())));
-    window.setY(std::max(screen.y(), std::min(window.y(), screen.maxY() - window.height())));
+    window.setX(std::clamp(window.x(), screen.x(), screen.maxX() - window.width()));
+    window.setY(std::clamp(window.y(), screen.y(), screen.maxY() - window.height()));
 
     return window;
 }

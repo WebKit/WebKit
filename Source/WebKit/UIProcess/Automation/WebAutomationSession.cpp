@@ -1848,8 +1848,8 @@ void WebAutomationSession::resetClickCount()
 void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, const String& pointerType, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
     page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, interaction, mouseButton, locationInViewport, pointerType](WebCore::FloatRect windowFrame) mutable {
-        auto clippedX = std::min(std::max(0.0f, (float)locationInViewport.x()), windowFrame.size().width());
-        auto clippedY = std::min(std::max(0.0f, (float)locationInViewport.y()), windowFrame.size().height());
+        auto clippedX = std::clamp<float>(locationInViewport.x(), 0, windowFrame.size().width());
+        auto clippedY = std::clamp<float>(locationInViewport.y(), 0, windowFrame.size().height());
         if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
             completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(TargetOutOfBounds));
             return;
@@ -1937,8 +1937,8 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
 void WebAutomationSession::simulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta, AutomationCompletionHandler&& completionHandler)
 {
     page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, locationInViewport, delta](WebCore::FloatRect windowFrame) mutable {
-        auto clippedX = std::min(std::max(0.0f, static_cast<float>(locationInViewport.x())), windowFrame.size().width());
-        auto clippedY = std::min(std::max(0.0f, static_cast<float>(locationInViewport.y())), windowFrame.size().height());
+        auto clippedX = std::clamp<float>(locationInViewport.x(), 0, windowFrame.size().width());
+        auto clippedY = std::clamp<float>(locationInViewport.y(), 0, windowFrame.size().height());
         if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
             completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(TargetOutOfBounds));
             return;
@@ -2021,8 +2021,8 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
     }
 
     page->getWindowFrameWithCallback([this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = Ref { *page }, floatX, floatY, mouseInteraction, mouseButton, keyModifiers](WebCore::FloatRect windowFrame) mutable {
-        floatX = std::min(std::max(0.0f, floatX), windowFrame.size().width());
-        floatY = std::min(std::max(0.0f, floatY), windowFrame.size().height());
+        floatX = std::clamp(floatX, 0.0f, windowFrame.size().width());
+        floatY = std::clamp(floatY, 0.0f, windowFrame.size().height());
 
         WebCore::IntPoint locationInViewport = WebCore::IntPoint(static_cast<int>(floatX), static_cast<int>(floatY));
 

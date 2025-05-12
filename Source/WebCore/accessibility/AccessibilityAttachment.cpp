@@ -52,7 +52,7 @@ bool AccessibilityAttachment::hasProgress(float* progress) const
 {
     auto& progressString = getAttribute(progressAttr);
     bool validProgress;
-    float result = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
+    float result = std::clamp<float>(progressString.toFloat(&validProgress), 0, 1);
     if (progress)
         *progress = result;
     return validProgress;

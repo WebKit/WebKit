@@ -399,10 +399,10 @@ unsigned AccessibilityTableCell::colSpan() const
     if (auto colSpan = parseHTMLInteger(getAttribute(colspanAttr)); colSpan && *colSpan >= 1) {
         // https://html.spec.whatwg.org/multipage/tables.html
         // If colspan is greater than 1000, let it be 1000 instead.
-        return std::min(std::max(*colSpan, 1), 1000);
+        return std::clamp(*colSpan, 1, 1000);
     }
     if (auto ariaColSpan = parseHTMLInteger(getAttribute(aria_colspanAttr)); ariaColSpan && *ariaColSpan >= 1)
-        return std::min(std::max(*ariaColSpan, 1), 1000);
+        return std::clamp(*ariaColSpan, 1, 1000);
     return 1;
 }
 

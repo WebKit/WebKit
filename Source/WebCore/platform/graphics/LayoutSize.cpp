@@ -33,8 +33,8 @@ namespace WebCore {
 LayoutSize LayoutSize::constrainedBetween(const LayoutSize& min, const LayoutSize& max) const
 {
     return {
-        std::max(min.width(), std::min(max.width(), m_width)),
-        std::max(min.height(), std::min(max.height(), m_height))
+        std::clamp(m_width, min.width(), max.width()),
+        std::clamp(m_height, min.height(), max.height())
     };
 }
 

@@ -101,6 +101,7 @@ public:
 
     LayoutUnit constrainSizeByMinMax(const LayoutUnit size) const
     {
+        // Unable to use std::clamp here as minMaxSizes.first may be greater than minMaxSizes.second.
         return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
     }
 

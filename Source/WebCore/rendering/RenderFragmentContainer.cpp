@@ -460,12 +460,12 @@ LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox& box, 
             if (this != startFragment)
                 mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFragmentedFlowContent(), mappedRect.y()));
             if (this != endFragment)
-                mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.y(), mappedRect.height())));
+                mappedRect.setHeight(std::clamp<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.y(), 0, mappedRect.height()));
         } else {
             if (this != startFragment)
                 mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFragmentedFlowContent(), mappedRect.x()));
             if (this != endFragment)
-                mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.x(), mappedRect.width())));
+                mappedRect.setWidth(std::clamp<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.x(), 0, mappedRect.width()));
         }
     }
 

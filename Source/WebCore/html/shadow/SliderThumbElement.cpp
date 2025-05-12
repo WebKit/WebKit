@@ -273,7 +273,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     thumbRenderer = nullptr;
     trackRenderer = nullptr;
 
-    position = std::max<LayoutUnit>(0, std::min(position, trackLength));
+    position = std::clamp<LayoutUnit>(position, 0, trackLength);
     auto ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
     auto fraction = isInlineFlipped ? Decimal(1) - ratio : ratio;
     auto stepRange = input->createStepRange(AnyStepHandling::Reject);

@@ -37,7 +37,7 @@ static constexpr unsigned maxCapacity = String::MaxLength;
 unsigned StringBuilder::expandedCapacity(unsigned capacity, unsigned requiredCapacity)
 {
     static constexpr unsigned minimumCapacity = 16;
-    return std::max(requiredCapacity, std::max(minimumCapacity, std::min(capacity * 2, maxCapacity)));
+    return std::max(requiredCapacity, std::clamp(capacity * 2, minimumCapacity, maxCapacity));
 }
 
 void StringBuilder::didOverflow()

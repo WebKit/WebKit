@@ -160,7 +160,7 @@ inline unsigned clampHTMLNonNegativeIntegerToRange(StringView stringValue, unsig
     ASSERT(defaultValue <= max);
     auto optionalValue = parseHTMLNonNegativeInteger(stringValue);
     if (optionalValue)
-        return std::min(std::max(optionalValue.value(), min), max);
+        return std::clamp(optionalValue.value(), min, max);
 
     return optionalValue.error() == HTMLIntegerParsingError::PositiveOverflow ? max : defaultValue;
 }

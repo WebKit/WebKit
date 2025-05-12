@@ -869,7 +869,7 @@ void GraphicsLayerCA::setBackfaceVisibility(bool visible)
 
 void GraphicsLayerCA::setOpacity(float opacity)
 {
-    float clampedOpacity = std::max(0.0f, std::min(opacity, 1.0f));
+    float clampedOpacity = std::clamp(opacity, 0.0f, 1.0f);
 
     if (clampedOpacity == m_opacity)
         return;

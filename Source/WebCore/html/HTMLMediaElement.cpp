@@ -4872,7 +4872,7 @@ double HTMLMediaElement::nextScanRate()
     if (m_scanDirection == Backward)
         rate *= -1;
 #if PLATFORM(IOS_FAMILY)
-    rate = std::min(std::max(rate, minFastReverseRate()), maxFastForwardRate());
+    rate = std::clamp(rate, minFastReverseRate(), maxFastForwardRate());
 #endif
     return rate;
 }

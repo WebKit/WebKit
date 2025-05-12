@@ -77,7 +77,7 @@ unsigned MathMLElement::rowSpan() const
     if (!hasTagName(mtdTag))
         return 1u;
     auto& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
-    return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), HTMLTableCellElement::maxRowspan));
+    return std::clamp(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), 1u, HTMLTableCellElement::maxRowspan);
 }
 
 void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

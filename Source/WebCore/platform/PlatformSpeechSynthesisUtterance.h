@@ -60,15 +60,15 @@ public:
 
     // Range = [0, 1] where 1 is the default.
     float volume() const { return m_volume; }
-    void setVolume(float volume) { m_volume = std::max(std::min(1.0f, volume), 0.0f); }
+    void setVolume(float volume) { m_volume = std::clamp(volume, 0.0f, 1.0f); }
     
     // Range = [0.1, 10] where 1 is the default.
     float rate() const { return m_rate; }
-    void setRate(float rate) { m_rate = std::max(std::min(10.0f, rate), 0.1f); }
+    void setRate(float rate) { m_rate = std::clamp(rate, 0.1f, 10.0f); }
     
     // Range = [0, 2] where 1 is the default.
     float pitch() const { return m_pitch; }
-    void setPitch(float pitch) { m_pitch = std::max(std::min(2.0f, pitch), 0.0f); }
+    void setPitch(float pitch) { m_pitch = std::clamp(pitch, 0.0f, 2.0f); }
 
     MonotonicTime startTime() const { return m_startTime; }
     void setStartTime(MonotonicTime startTime) { m_startTime = startTime; }

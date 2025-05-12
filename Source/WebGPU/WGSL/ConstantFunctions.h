@@ -903,7 +903,7 @@ UNARY_OPERATION(Abs, Number, [&]<typename T>(T n) -> T {
 
 BINARY_OPERATION(Atan2, Float, WRAP_STD(atan2))
 UNARY_OPERATION(Ceil, Float, WRAP_STD(ceil))
-TERNARY_OPERATION(Clamp, Number, [&](auto e, auto low, auto high) { return std::min(std::max(e, low), high); })
+TERNARY_OPERATION(Clamp, Number, [&](auto e, auto low, auto high) { return std::clamp(e, low, high); })
 
 UNARY_OPERATION(CountLeadingZeros, ConcreteInteger, [&]<typename T>(T arg) -> T {
     return std::countl_zero(static_cast<unsigned>(arg));
@@ -1419,7 +1419,7 @@ UNARY_OPERATION(ReverseBits, Integer, [&]<typename T>(T e) -> T {
 UNARY_OPERATION(Round, Float, WRAP_STD(rint))
 
 UNARY_OPERATION(Saturate, Float, [&](auto e) {
-    return std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));
+    return std::clamp(e, static_cast<decltype(e)>(0), static_cast<decltype(e)>(1));
 })
 
 UNARY_OPERATION(Sign, Number, [&]<typename T>(T e) -> T {
@@ -1435,7 +1435,7 @@ UNARY_OPERATION(Sign, Number, [&]<typename T>(T e) -> T {
 
 TERNARY_OPERATION(Smoothstep, Float, [&](auto low, auto high, auto x) {
     auto e = (x - low) / (high - low);
-    auto t = std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));
+    auto t = std::clamp(e, static_cast<decltype(e)>(0), static_cast<decltype(e)>(1));
     return t * t * (3.0 - 2.0 * t);
 })
 
@@ -1467,7 +1467,7 @@ CONSTANT_FUNCTION(Pack4x8snorm)
     std::array<int8_t, 4> packed;
     for (unsigned i = 0; i < 4; ++i) {
         auto e = std::get<float>(vector.elements[i]);
-        packed[i] = static_cast<int8_t>(std::floor(0.5 + 127 * std::min(1.f, std::max(-1.f, e))));
+        packed[i] = static_cast<int8_t>(std::floor(0.5 + 127 * std::clamp(e, -1.f, 1.f)));
     }
     return { { std::bit_cast<uint32_t>(packed) } };
 }
@@ -1479,7 +1479,7 @@ CONSTANT_FUNCTION(Pack4x8unorm)
     std::array<uint8_t, 4> packed;
     for (unsigned i = 0; i < 4; ++i) {
         auto e = std::get<float>(vector.elements[i]);
-        packed[i] = static_cast<uint8_t>(std::floor(0.5 + 255 * std::min(1.f, std::max(0.f, e))));
+        packed[i] = static_cast<uint8_t>(std::floor(0.5 + 255 * std::clamp(e, 0.f, 1.f)));
     }
     return { { std::bit_cast<uint32_t>(packed) } };
 }
@@ -1515,7 +1515,7 @@ CONSTANT_FUNCTION(Pack4xI8Clamp)
     std::array<uint8_t, 4> packed;
     for (unsigned i = 0; i < 4; ++i) {
         auto e = std::get<int32_t>(vector.elements[i]);
-        packed[i] = static_cast<uint8_t>(std::min(127, std::max(-128, e)));
+        packed[i] = static_cast<uint8_t>(std::clamp(e, -128, 127));
     }
     return { { std::bit_cast<uint32_t>(packed) } };
 }
@@ -1539,7 +1539,7 @@ CONSTANT_FUNCTION(Pack2x16snorm)
     std::array<int16_t, 2> packed;
     for (unsigned i = 0; i < 2; ++i) {
         auto e = std::get<float>(vector.elements[i]);
-        packed[i] = static_cast<int16_t>(std::floor(0.5 + 32767 * std::min(1.f, std::max(-1.f, e))));
+        packed[i] = static_cast<int16_t>(std::floor(0.5 + 32767 * std::clamp(e, -1.f, 1.f)));
     }
     return { { std::bit_cast<uint32_t>(packed) } };
 }
@@ -1551,7 +1551,7 @@ CONSTANT_FUNCTION(Pack2x16unorm)
     std::array<uint16_t, 2> packed;
     for (unsigned i = 0; i < 2; ++i) {
         auto e = std::get<float>(vector.elements[i]);
-        packed[i] = static_cast<uint16_t>(std::floor(0.5 + 65535 * std::min(1.f, std::max(0.f, e))));
+        packed[i] = static_cast<uint16_t>(std::floor(0.5 + 65535 * std::clamp(e, 0.f, 1.f)));
     }
     return { { std::bit_cast<uint32_t>(packed) } };
 }

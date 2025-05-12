@@ -823,7 +823,7 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) c
 static float clampEdgeValue(float f)
 {
     ASSERT(!std::isnan(f));
-    return std::min<float>(std::max<float>(f, -LayoutUnit::max() / 2), LayoutUnit::max() / 2);
+    return std::clamp<float>(f, -LayoutUnit::max() / 2, LayoutUnit::max() / 2);
 }
 
 LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const

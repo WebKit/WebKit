@@ -385,11 +385,11 @@ void WebInspectorUIProxy::platformAttach()
     if (m_attachmentSide == AttachmentSide::Bottom) {
         unsigned inspectedWindowHeight = (inspectedWindowRect.bottom - inspectedWindowRect.top) / deviceScaleFactor;
         unsigned maximumAttachedHeight = inspectedWindowHeight * s_maximumAttachedHeightRatio;
-        platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
+        platformSetAttachedWindowHeight(std::clamp(s_defaultAttachedSize, s_minimumAttachedHeight, maximumAttachedHeight));
     } else {
         unsigned inspectedWindowWidth = (inspectedWindowRect.right - inspectedWindowRect.left) / deviceScaleFactor;
         unsigned maximumAttachedWidth = inspectedWindowWidth * s_maximumAttachedHeightRatio;
-        platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
+        platformSetAttachedWindowWidth(std::clamp(s_defaultAttachedSize, s_minimumAttachedWidth, maximumAttachedWidth));
     }
     ::ShowWindow(m_inspectorViewWindow, SW_SHOW);
 }

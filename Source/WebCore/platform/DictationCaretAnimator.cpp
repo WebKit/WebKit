@@ -241,7 +241,7 @@ Path DictationCaretAnimator::makeDictationTailConePath(const FloatRect& rect) co
     const float minimumTailWidth = coneStart(height);
     const auto nonTruncatedTailWidth = coneEnd(height);
     const auto coneRectangleMorphConstant = (width - minimumTailWidth) / (nonTruncatedTailWidth - minimumTailWidth);
-    auto verticalOffset = -height * .3f + height * 0.5f * std::min(1.f, std::max(0.f, coneRectangleMorphConstant));
+    auto verticalOffset = -height * .3f + height * 0.5f * std::clamp(coneRectangleMorphConstant, 0.f, 1.f);
     bool isLTR = isLeftToRightLayout();
 
     const auto verticalOffsetLTR = isLTR ? verticalOffset : 0.f;

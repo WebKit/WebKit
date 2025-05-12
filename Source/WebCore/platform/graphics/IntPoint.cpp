@@ -40,6 +40,7 @@ IntPoint::IntPoint(const FloatPoint& p)
 
 IntPoint IntPoint::constrainedBetween(const IntPoint& min, const IntPoint& max) const
 {
+    // Unable to use std::clamp() here as `min` may be greater than `max`.
     return {
         std::max(min.x(), std::min(max.x(), m_x)),
         std::max(min.y(), std::min(max.y(), m_y))

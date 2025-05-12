@@ -248,8 +248,8 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
     [dict setObject:[NSNumber numberWithUnsignedChar:static_cast<uint8_t>(m_data.networkServiceType)] forKey:@"networkServiceType"];
 
-    int clampedRequestPriority = std::min(std::max(m_data.requestPriority, -1),
-        static_cast<int>(WTF::enumToUnderlyingType(WebCore::ResourceLoadPriority::Highest)));
+    int clampedRequestPriority = std::clamp<int>(m_data.requestPriority, -1,
+        WTF::enumToUnderlyingType(WebCore::ResourceLoadPriority::Highest));
     [dict setObject:[NSNumber numberWithInt:clampedRequestPriority] forKey:@"requestPriority"];
 
     SET_DICT_FROM_OPTIONAL_PRIMITIVE(isHTTP, NSNumber, Bool);

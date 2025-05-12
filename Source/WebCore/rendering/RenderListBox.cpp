@@ -659,7 +659,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     int yDelta = lastKnownMousePosition.y() - panStartMousePosition.y();
 
     // If the point is too far from the center we limit the speed
-    yDelta = std::max<int>(std::min<int>(yDelta, maxSpeed), -maxSpeed);
+    yDelta = std::clamp<int>(yDelta, -maxSpeed, maxSpeed);
     
     if (std::abs(yDelta) < iconRadius) // at the center we let the space for the icon
         return;

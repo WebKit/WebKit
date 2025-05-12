@@ -193,7 +193,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
     auto computedMaxWidth = formattingGeometry.computedMaxWidth(tableBox, horizontalConstraintForResolvingWidth);
     auto computedMinWidth = formattingGeometry.computedMinWidth(tableBox, horizontalConstraintForResolvingWidth);
     // Use the generic shrink-to-fit-width logic as the initial width for the table.
-    auto usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, availableHorizontalSpace), intrinsicWidthConstraints.maximum);
+    auto usedWidth = std::clamp(availableHorizontalSpace, intrinsicWidthConstraints.minimum, intrinsicWidthConstraints.maximum);
     if (computedWidth || computedMinWidth || computedMaxWidth) {
         if (computedWidth) {
             // Normalize the computed width value first.

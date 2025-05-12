@@ -273,7 +273,7 @@ void Biquad::reset()
 void Biquad::setLowpassParams(size_t index, double cutoff, double resonance)
 {
     // Limit cutoff to 0 to 1.
-    cutoff = std::max(0.0, std::min(cutoff, 1.0));
+    cutoff = std::clamp(cutoff, 0.0, 1.0);
     
     if (cutoff == 1) {
         // When cutoff is 1, the z-transform is 1.
@@ -306,7 +306,7 @@ void Biquad::setLowpassParams(size_t index, double cutoff, double resonance)
 void Biquad::setHighpassParams(size_t index, double cutoff, double resonance)
 {
     // Limit cutoff to 0 to 1.
-    cutoff = std::max(0.0, std::min(cutoff, 1.0));
+    cutoff = std::clamp(cutoff, 0.0, 1.0);
 
     if (cutoff == 1) {
         // The z-transform is 0.
@@ -352,7 +352,7 @@ void Biquad::setNormalizedCoefficients(size_t index, double b0, double b1, doubl
 void Biquad::setLowShelfParams(size_t index, double frequency, double dbGain)
 {
     // Clip frequencies to between 0 and 1, inclusive.
-    frequency = std::max(0.0, std::min(frequency, 1.0));
+    frequency = std::clamp(frequency, 0.0, 1.0);
     
     double A = pow(10.0, dbGain / 40);
 
@@ -385,7 +385,7 @@ void Biquad::setLowShelfParams(size_t index, double frequency, double dbGain)
 void Biquad::setHighShelfParams(size_t index, double frequency, double dbGain)
 {
     // Clip frequencies to between 0 and 1, inclusive.
-    frequency = std::max(0.0, std::min(frequency, 1.0));
+    frequency = std::clamp(frequency, 0.0, 1.0);
 
     double A = pow(10.0, dbGain / 40);
 
@@ -418,7 +418,7 @@ void Biquad::setHighShelfParams(size_t index, double frequency, double dbGain)
 void Biquad::setPeakingParams(size_t index, double frequency, double Q, double dbGain)
 {
     // Clip frequencies to between 0 and 1, inclusive.
-    frequency = std::max(0.0, std::min(frequency, 1.0));
+    frequency = std::clamp(frequency, 0.0, 1.0);
 
     // Don't let Q go negative, which causes an unstable filter.
     Q = std::max(0.0, Q);
@@ -454,7 +454,7 @@ void Biquad::setPeakingParams(size_t index, double frequency, double Q, double d
 void Biquad::setAllpassParams(size_t index, double frequency, double Q)
 {
     // Clip frequencies to between 0 and 1, inclusive.
-    frequency = std::max(0.0, std::min(frequency, 1.0));
+    frequency = std::clamp(frequency, 0.0, 1.0);
 
     // Don't let Q go negative, which causes an unstable filter.
     Q = std::max(0.0, Q);
@@ -488,7 +488,7 @@ void Biquad::setAllpassParams(size_t index, double frequency, double Q)
 void Biquad::setNotchParams(size_t index, double frequency, double Q)
 {
     // Clip frequencies to between 0 and 1, inclusive.
-    frequency = std::max(0.0, std::min(frequency, 1.0));
+    frequency = std::clamp(frequency, 0.0, 1.0);
 
     // Don't let Q go negative, which causes an unstable filter.
     Q = std::max(0.0, Q);

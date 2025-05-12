@@ -297,7 +297,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(WebAnimationTime cancelationT
             // Web Animations spec does not specify how to account for them.
             auto zero = timing.activeDuration.matchingZero();
             intervalStart = std::max(zero, timing.activeDuration);
-            intervalEnd = std::max(zero, std::min(timing.endTime, timing.activeDuration));
+            intervalEnd = std::clamp(timing.endTime, zero, timing.activeDuration);
         } else {
             auto activeDuration = timing.activeDuration.time()->milliseconds();
             intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, activeDuration)));

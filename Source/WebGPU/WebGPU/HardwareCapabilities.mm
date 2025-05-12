@@ -54,7 +54,7 @@ static uint64_t maxBufferSize(id<MTLDevice> device)
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     auto result = std::max<uint64_t>(std::min<uint64_t>(device.maxBufferLength, GB), std::min<uint64_t>(INT_MAX, device.maxBufferLength / 10));
 #else
-    auto result = std::max<uint64_t>(defaultMaxBufferSize, std::min<uint64_t>(INT_MAX, device.maxBufferLength / 10));
+    auto result = std::clamp<uint64_t>(device.maxBufferLength / 10, defaultMaxBufferSize, static_cast<uint64_t>(INT_MAX));
 #endif
     return multipleOf4(result);
 }

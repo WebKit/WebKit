@@ -1566,7 +1566,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::currentTime() const
         itemTime += MediaTime::createWithDouble(elapsedMediaTime.seconds());
     }
 
-    return std::min(std::max(itemTime, MediaTime::zeroTime()), m_cachedDuration);
+    return std::clamp(itemTime, MediaTime::zeroTime(), m_cachedDuration);
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)

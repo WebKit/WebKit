@@ -1913,7 +1913,7 @@ std::optional<double> WebAnimation::overallProgress() const
         return 0;
 
     // Otherwise, overallProgress = min(max(current time / animation's associated effect end, 0), 1)
-    return std::min(std::max(*currentTime / endTime, 0.0), 1.0);
+    return std::clamp(*currentTime / endTime, 0.0, 1.0);
 }
 
 void WebAnimation::setBindingsRangeStart(TimelineRangeValue&& rangeStartValue)

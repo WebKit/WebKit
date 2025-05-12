@@ -230,6 +230,7 @@ template<> struct OperatorExecutor<Clamp> {
     {
         if (std::isnan(min) || std::isnan(val) || std::isnan(max))
             return std::numeric_limits<T>::quiet_NaN();
+        // Unable to use std::clamp as `min` may be greater than `max`.
         return std::max(min, std::min(val, max));
     }
 
