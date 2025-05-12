@@ -320,8 +320,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     case JITCompilationMode::UnlinkedDFG: {
         dfg.m_fixpointState = FixpointConverged;
 
-        RUN_PHASE(performTierUpCheckInjection);
-
         RUN_PHASE(performFastStoreBarrierInsertion);
         RUN_PHASE(performStoreBarrierClustering);
         RUN_PHASE(performCleanUp);
@@ -330,6 +328,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performPhantomInsertion);
         RUN_PHASE(performStackLayout);
         RUN_PHASE(performVirtualRegisterAllocation);
+        RUN_PHASE(performTierUpCheckInjection);
+
         if (m_mode == JITCompilationMode::UnlinkedDFG) {
             if (DFG::canCompileUnlinked(dfg) == DFG::CannotCompile) {
                 m_finalizer = makeUnique<FailedFinalizer>(*this);
