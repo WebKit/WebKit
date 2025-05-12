@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,10 @@ static ASCIILiteral toFeatureNameForLogging(PermissionsPolicy::Feature feature)
 #endif
     case PermissionsPolicy::Feature::PrivateToken:
         return "PrivateToken"_s;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    case PermissionsPolicy::Feature::Tonemapping:
+        return "Tonemapping"_s;
+#endif
     case PermissionsPolicy::Feature::Invalid:
         return "Invalid"_s;
     }
@@ -129,6 +133,9 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     constexpr auto xrSpatialTrackingToken { "xr-spatial-tracking"_s };
 #endif
     constexpr auto privateTokenToken { "private-token"_s };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    constexpr auto tonemapping { "tonemapping"_s };
+#endif
 
     if (value.startsWith(cameraToken)) {
         feature = PermissionsPolicy::Feature::Camera;
@@ -190,6 +197,11 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     } else if (value.startsWith(privateTokenToken)) {
         feature = PermissionsPolicy::Feature::PrivateToken;
         remainingValue = value.substring(privateTokenToken.length());
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    } else if (value.startsWith(tonemapping)) {
+        feature = PermissionsPolicy::Feature::Tonemapping;
+        remainingValue = value.substring(tonemapping.length());
+#endif
     }
 
     // FIXME: webkit.org/b/274159.
@@ -230,6 +242,9 @@ static ASCIILiteral defaultAllowlistValue(PermissionsPolicy::Feature feature)
 #endif
     case PermissionsPolicy::Feature::PrivateToken:
         return "'self'"_s;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    case PermissionsPolicy::Feature::Tonemapping:
+#endif
     case PermissionsPolicy::Feature::Invalid:
         return "'none'"_s;
     }
@@ -262,7 +277,7 @@ static bool checkPermissionsPolicy(const PermissionsPolicy& permissionsPolicy, P
     if (!permissionsPolicy.inheritedPolicyValueForFeature(feature))
         return false;
 
-    return isFeatureAllowedByDefaultAllowlist(feature, origin, documentOrigin);
+    return permissionsPolicy.isFeatureAllowedByAllowlist(feature, origin, documentOrigin);
 }
 
 // Similar to https://infra.spec.whatwg.org/#split-on-ascii-whitespace but only extract one token at a time.
@@ -346,14 +361,20 @@ static Allowlist parseAllowlist(StringView value, const SecurityOriginData& cont
 }
 
 // https://w3c.github.io/webappsec-permissions-policy/#algo-parse-policy-directive
-static PermissionsPolicy::PolicyDirective parsePolicyDirective(StringView value, const SecurityOriginData& containerOrigin, const SecurityOriginData& targetOrigin)
+static PermissionsPolicy::PolicyDirective parsePolicyDirective(StringView value, const HTMLIFrameElement& iframe)
 {
+    auto& containerOrigin = iframe.document().securityOrigin().data();
+    auto& targetOrigin = declaredOrigin(iframe)->data();
+
     PermissionsPolicy::PolicyDirective result;
     for (auto item : value.split(';')) {
         auto [feature, remainingItem] = readFeatureIdentifier(item);
         if (feature == PermissionsPolicy::Feature::Invalid)
             continue;
-
+#if HAVE(SUPPORT_HDR_DISPLAY)
+        if (feature == PermissionsPolicy::Feature::Tonemapping && !iframe.document().settings().iFramePolicyTonemappingEnabled())
+            continue;
+#endif
         result.add(feature, parseAllowlist(remainingItem, containerOrigin, targetOrigin));
     }
 
@@ -364,7 +385,7 @@ static PermissionsPolicy::PolicyDirective parsePolicyDirective(StringView value,
 PermissionsPolicy::PolicyDirective PermissionsPolicy::processPermissionsPolicyAttribute(const HTMLIFrameElement& iframe)
 {
     auto allowAttributeValue = iframe.attributeWithoutSynchronization(allowAttr);
-    auto policyDirective = parsePolicyDirective(allowAttributeValue, iframe.document().securityOrigin().data(), declaredOrigin(iframe)->data());
+    auto policyDirective = parsePolicyDirective(allowAttributeValue, iframe);
 
     if (iframe.hasAttribute(allowfullscreenAttr) || iframe.hasAttribute(webkitallowfullscreenAttr))
         policyDirective.add(Feature::Fullscreen, Allowlist::AllowAllOrigins { });
@@ -407,6 +428,14 @@ bool PermissionsPolicy::inheritedPolicyValueForFeature(Feature feature) const
     return m_inheritedPolicy.contains(feature);
 }
 
+bool PermissionsPolicy::isFeatureAllowedByAllowlist(Feature feature, const SecurityOriginData& origin, const SecurityOriginData& documentOrigin) const
+{
+    if (auto iterator = m_policyDirective.find(feature); iterator != m_policyDirective.end())
+        return iterator->value.matches(origin);
+
+    return isFeatureAllowedByDefaultAllowlist(feature, origin, documentOrigin);
+}
+
 // https://w3c.github.io/webappsec-permissions-policy/#algo-create-for-navigable
 PermissionsPolicy::PermissionsPolicy(const Document& document)
 {
@@ -415,6 +444,8 @@ PermissionsPolicy::PermissionsPolicy(const Document& document)
         if (computeInheritedPolicyValueInContainer(feature, ownerPermissionsPolicy, document.securityOrigin().data()))
             m_inheritedPolicy.add(feature);
     });
+    if (ownerPermissionsPolicy)
+        m_policyDirective = WTFMove(ownerPermissionsPolicy->containerPolicy);
 }
 
 // https://w3c.github.io/webappsec-permissions-policy/#empty-permissions-policy

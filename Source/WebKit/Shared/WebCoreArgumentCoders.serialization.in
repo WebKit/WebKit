@@ -8896,6 +8896,9 @@ struct WebCore::OwnerPermissionsPolicyData {
     XRSpatialTracking,
 #endif
     PrivateToken,
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    Tonemapping,
+#endif
     Invalid
 };
 

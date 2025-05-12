@@ -5917,6 +5917,9 @@ static bool hasVisibleBoxDecorationsOrBackground(const RenderElement& renderer)
 #if HAVE(SUPPORT_HDR_DISPLAY)
 static bool rendererHasHDRContent(const RenderElement& renderer)
 {
+    if (PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Tonemapping, renderer.document(), PermissionsPolicy::ShouldReportViolation::No))
+        return false;
+
     auto& style = renderer.style();
     if (style.dynamicRangeLimit() == Style::DynamicRangeLimit(CSS::Keyword::Standard { }))
         return false;

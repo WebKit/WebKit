@@ -3412,6 +3412,20 @@ ICECandidateFilteringEnabled:
     WebCore:
       default: true
 
+IFramePolicyTonemappingEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Frame Tonemapping for HDR Contents"
+  humanReadableDescription: "Frame Tonemapping for HDR Contents"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 IFrameResourceMonitoringEnabled:
   type: bool
   status: internal

@@ -25,6 +25,7 @@
 
 #include "FontBaseline.h"
 #include "LayoutRect.h"
+#include "PlatformDynamicRangeLimit.h"
 #include "RectEdges.h"
 #include "RenderLayerModelObject.h"
 
@@ -236,6 +237,7 @@ public:
     bool fixedBackgroundPaintsInLocalCoordinates() const;
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&) const;
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
+    PlatformDynamicRangeLimit dynamicRangeLimitForImageDraw(const Image&) const;
 
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 

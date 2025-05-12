@@ -356,6 +356,30 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     return defaultDecodingMode();
 }
 
+PlatformDynamicRangeLimit RenderBoxModelObject::dynamicRangeLimitForImageDraw(const Image& image) const
+{
+    if (!image.hasHDRContent())
+        return PlatformDynamicRangeLimit::standard();
+
+    CheckedPtr rendererLayer = enclosingLayer();
+    if (!rendererLayer)
+        return PlatformDynamicRangeLimit::standard();
+
+    CheckedPtr layer = rendererLayer->enclosingCompositingLayer();
+    if (!layer)
+        return PlatformDynamicRangeLimit::standard();
+
+    if (!layer->backing())
+        return PlatformDynamicRangeLimit::standard();
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (!layer->backing()->graphicsLayer()->drawsHDRContent())
+        return PlatformDynamicRangeLimit::standard();
+#endif
+
+    return style().dynamicRangeLimit().toPlatformDynamicRangeLimit();
+}
+
 LayoutSize RenderBoxModelObject::relativePositionOffset() const
 {
     auto* containingBlock = this->containingBlock();

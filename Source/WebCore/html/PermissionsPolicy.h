@@ -70,11 +70,15 @@ public:
         XRSpatialTracking,
 #endif
         PrivateToken,
+#if HAVE(SUPPORT_HDR_DISPLAY)
+        Tonemapping,
+#endif
         Invalid
     };
     enum class ShouldReportViolation : bool { No, Yes };
     static bool isFeatureEnabled(Feature, const Document&, ShouldReportViolation = ShouldReportViolation::Yes);
     bool inheritedPolicyValueForFeature(Feature) const;
+    bool isFeatureAllowedByAllowlist(Feature, const SecurityOriginData&, const SecurityOriginData&) const;
 
     // InheritedPolicy contains enabled features.
     using InheritedPolicy = HashSet<Feature, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
@@ -92,6 +96,7 @@ private:
     bool computeInheritedPolicyValueInContainer(Feature, const std::optional<OwnerPermissionsPolicyData>&, const SecurityOriginData&) const;
 
     InheritedPolicy m_inheritedPolicy;
+    PolicyDirective m_policyDirective;
 };
 
 } // namespace WebCore
