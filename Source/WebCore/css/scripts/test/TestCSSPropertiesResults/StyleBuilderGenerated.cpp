@@ -80,6 +80,26 @@ public:
     {
         builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(fromCSSValueDeducingType(builderState, value));
     }
+    static void applyInitialTestAutoFunctions(BuilderState& builderState)
+    {
+        builderState.style().setHasAutoTestAutoFunctions();
+    }
+    static void applyInheritTestAutoFunctions(BuilderState& builderState)
+    {
+        if (builderState.parentStyle().hasAutoTestAutoFunctions()) {
+            builderState.style().setHasAutoTestAutoFunctions();
+            return;
+        }
+        builderState.style().setTestAutoFunctions(forwardInheritedValue(builderState.parentStyle().testAutoFunctions()));
+    }
+    static void applyValueTestAutoFunctions(BuilderState& builderState, CSSValue& value)
+    {
+        if (value.valueID() == CSSValueAuto) {
+            builderState.style().setHasAutoTestAutoFunctions();
+            return;
+        }
+        builderState.style().setTestAutoFunctions(fromCSSValueDeducingType(builderState, value));
+    }
     static void applyInitialTestBoundedRepetitionWithCommas(BuilderState& builderState)
     {
         builderState.style().setTestBoundedRepetitionWithCommas(RenderStyle::initialTestBoundedRepetitionWithCommas());
@@ -234,7 +254,7 @@ public:
     }
     static void applyValueTestColor(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColor(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestColor(builderState.createStyleColor(value, ForVisitedLink::No));
     }
     static void applyInitialTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
@@ -246,7 +266,64 @@ public:
     }
     static void applyValueTestColorAllowsTypesAbsolute(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColorAllowsTypesAbsolute(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestColorAllowsTypesAbsolute(builderState.createStyleColor(value, ForVisitedLink::No));
+    }
+    static void applyInitialTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState)
+    {
+        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithNoVisitedLinkSupport());
+    }
+    static void applyInheritTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState)
+    {
+        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithNoVisitedLinkSupport()));
+    }
+    static void applyValueTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(builderState.createStyleColor(value, ForVisitedLink::No));
+    }
+    static void applyInitialTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
+    {
+        if (builderState.applyPropertyToRegularStyle())
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithVisitedLinkSupport());
+        if (builderState.applyPropertyToVisitedLinkStyle())
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithVisitedLinkSupport());
+    }
+    static void applyInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
+    {
+        if (builderState.applyPropertyToRegularStyle())
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport());
+        if (builderState.applyPropertyToVisitedLinkStyle())
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport());
+    }
+    static void applyValueTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
+    {
+        if (builderState.applyPropertyToRegularStyle())
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(builderState.createStyleColor(fromCSSValueDeducingType(builderState, value), ForVisitedLink::No));
+        if (builderState.applyPropertyToVisitedLinkStyle())
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(builderState.createStyleColor(fromCSSValueDeducingType(builderState, value), ForVisitedLink::Yes));
+    }
+    static void applyInitialTestCustonmExtractor(BuilderState& builderState)
+    {
+        builderState.style().setTestCustonmExtractor(RenderStyle::initialTestCustonmExtractor());
+    }
+    static void applyInheritTestCustonmExtractor(BuilderState& builderState)
+    {
+        builderState.style().setTestCustonmExtractor(forwardInheritedValue(builderState.parentStyle().testCustonmExtractor()));
+    }
+    static void applyValueTestCustonmExtractor(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestCustonmExtractor(fromCSSValueDeducingType(builderState, value));
+    }
+    static void applyInitialTestExtractorConverter(BuilderState& builderState)
+    {
+        builderState.style().setTestExtractorConverter(RenderStyle::initialTestExtractorConverter());
+    }
+    static void applyInheritTestExtractorConverter(BuilderState& builderState)
+    {
+        builderState.style().setTestExtractorConverter(forwardInheritedValue(builderState.parentStyle().testExtractorConverter()));
+    }
+    static void applyValueTestExtractorConverter(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestExtractorConverter(fromCSSValueDeducingType(builderState, value));
     }
     static void applyInitialTestFunctionBoundedParameters(BuilderState& builderState)
     {
@@ -956,6 +1033,18 @@ public:
     {
         builderState.style().setTestSettingsOne(fromCSSValueDeducingType(builderState, value));
     }
+    static void applyInitialTestSharedBuilderExtractorConverter(BuilderState& builderState)
+    {
+        builderState.style().setTestSharedBuilderExtractorConverter(RenderStyle::initialTestSharedBuilderExtractorConverter());
+    }
+    static void applyInheritTestSharedBuilderExtractorConverter(BuilderState& builderState)
+    {
+        builderState.style().setTestSharedBuilderExtractorConverter(forwardInheritedValue(builderState.parentStyle().testSharedBuilderExtractorConverter()));
+    }
+    static void applyValueTestSharedBuilderExtractorConverter(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestSharedBuilderExtractorConverter(BuilderConverter::convertTestSharedBuilderExtractorConversion(builderState, value));
+    }
     static void applyInitialTestUnboundedRepetitionWithCommasWithMin(BuilderState& builderState)
     {
         builderState.style().setTestUnboundedRepetitionWithCommasWithMin(RenderStyle::initialTestUnboundedRepetitionWithCommasWithMin());
@@ -1231,6 +1320,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
+    case CSSPropertyID::CSSPropertyTestAutoFunctions:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestAutoFunctions(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestAutoFunctions(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestAutoFunctions(builderState, value);
+            break;
+        }
+        break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas:
         switch (valueType) {
         case ApplyValueType::Initial:
@@ -1410,6 +1512,58 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestColorAllowsTypesAbsolute(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestColorPropertyWithNoVisitedLinkSupport(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestColorPropertyWithNoVisitedLinkSupport(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestColorPropertyWithNoVisitedLinkSupport(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestColorPropertyWithVisitedLinkSupport(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestColorPropertyWithVisitedLinkSupport(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestColorPropertyWithVisitedLinkSupport(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestCustonmExtractor:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestCustonmExtractor(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestCustonmExtractor(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestCustonmExtractor(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestExtractorConverter:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestExtractorConverter(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestExtractorConverter(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestExtractorConverter(builderState, value);
             break;
         }
         break;
@@ -2177,6 +2331,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestSettingsOne(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestSharedBuilderExtractorConverter(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestSharedBuilderExtractorConverter(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestSharedBuilderExtractorConverter(builderState, value);
             break;
         }
         break;

@@ -44,6 +44,7 @@
 #include "MainThreadStylePropertyMapReadOnly.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
+#include "StyleExtractor.h"
 #include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {
@@ -61,7 +62,7 @@ CustomPaintImage::~CustomPaintImage() = default;
 
 static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
 {
-    ComputedStyleExtractor extractor(&element);
+    Style::Extractor extractor(&element);
 
     if (isCustomPropertyName(name))
         return extractor.customPropertyValue(name);
@@ -70,7 +71,7 @@ static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element&
     if (!propertyID)
         return nullptr;
 
-    return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
+    return extractor.propertyValue(propertyID, Style::Extractor::UpdateLayout::No);
 }
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)

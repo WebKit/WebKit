@@ -27,9 +27,9 @@
 
 #include "CSSPropertyParser.h"
 #include "CSSSerializationContext.h"
-#include "ComputedStyleExtractor.h"
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
+#include "StyleExtractor.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -85,7 +85,7 @@ protected:
 
         // Don't include any properties resulting from CSS Transitions/Animations or SMIL animations, as we want to retrieve the "base value".
         targetElement.setUseOverrideComputedStyle(true);
-        RefPtr<CSSValue> value = ComputedStyleExtractor(&targetElement).propertyValue(id);
+        RefPtr value = Style::Extractor(&targetElement).propertyValue(id);
         targetElement.setUseOverrideComputedStyle(false);
         if (!value)
             return String();

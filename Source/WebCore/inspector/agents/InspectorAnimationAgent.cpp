@@ -35,7 +35,7 @@
 #include "CSSSerializationContext.h"
 #include "CSSTransition.h"
 #include "CSSValue.h"
-#include "ComputedStyleExtractor.h"
+#include "CSSValuePool.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"
+#include "StyleExtractor.h"
 #include "StyleOriginatedAnimation.h"
 #include "Styleable.h"
 #include "TimingFunction.h"
@@ -131,7 +132,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
 
         auto pseudoElementIdentifier = target->pseudoId() == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { target->pseudoId() });
-        ComputedStyleExtractor computedStyleExtractor(target, false, pseudoElementIdentifier);
+        Style::Extractor computedStyleExtractor(target, false, pseudoElementIdentifier);
 
         for (size_t i = 0; i < blendingKeyframes.size(); ++i) {
             auto& blendingKeyframe = blendingKeyframes[i];
@@ -161,7 +162,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 WTF::switchOn(property,
                     [&] (CSSPropertyID cssPropertyId) {
                         stylePayloadBuilder.append(nameString(cssPropertyId), ": "_s);
-                        if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                        if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, CSSValuePool::singleton(), renderer))
                             stylePayloadBuilder.append(value->cssText(CSS::defaultSerializationContext()));
                     },
                     [&] (const AtomString& customProperty) {

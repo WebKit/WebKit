@@ -33,8 +33,8 @@
 #include "CSSSerializationContext.h"
 #include "CSSTokenizer.h"
 #include "CalculationValue.h"
-#include "ComputedStyleExtractor.h"
 #include "RenderStyle.h"
+#include "StyleExtractorConverter.h"
 #include "StyleURL.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -93,7 +93,7 @@ String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& co
         }, [&](const String& value) {
             return value;
         }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyleSingleton());
+            auto cssValue = Style::ExtractorConverter::convertTransformOperation(RenderStyle::defaultStyleSingleton(), value.transform);
             if (!cssValue)
                 return emptyString();
             return cssValue->cssText(context);

@@ -195,7 +195,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
     def check_descriptor(self, descriptor_name, descriptor_value):
         keys_and_validators = {
-            '*': self.validate_comment,
             'values': self.validate_array,
             'codegen-properties': self.validate_codegen_properties,
             'status': self.validate_status,
@@ -349,10 +348,10 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
     def check_property(self, property_name, value):
         keys_and_validators = {
-            '*': self.validate_comment,
             'animation-type': self.validate_string,
             'animation-type-comment': self.validate_comment,
             'codegen-properties': self.validate_codegen_properties,
+            'comment': self.validate_comment,
             'inherited': self.validate_boolean,
             'initial': self.validate_string,
             'initial-comment': self.validate_comment,
@@ -396,7 +395,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'cascade-alias': self.validate_string,
             'color-property': self.validate_boolean,
             'comment': self.validate_string,
-            'computable': self.validate_boolean,
             'disables-native-appearance': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
@@ -430,12 +428,19 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'separator': self.validate_string,
             'settings-flag': self.validate_string,
             'sink-priority': self.validate_boolean,
+            'shorthand-pattern': self.validate_string,
             'skip-codegen': self.validate_boolean,
             'skip-parser': self.validate_boolean,
             'skip-style-builder': self.validate_boolean,
+            'skip-style-extractor': self.validate_boolean,
+            'skip-style-extractor-comment': self.validate_comment,
             'style-builder-conditional-converter': self.validate_string,
             'style-builder-converter': self.validate_string,
             'style-builder-custom': self.validate_string,
+            'style-converter': self.validate_string,
+            'style-extractor-converter': self.validate_string,
+            'style-extractor-converter-comment': self.validate_comment,
+            'style-extractor-custom': self.validate_boolean,
             'svg': self.validate_boolean,
             'top-priority': self.validate_boolean,
             'top-priority-reason': self.validate_string,

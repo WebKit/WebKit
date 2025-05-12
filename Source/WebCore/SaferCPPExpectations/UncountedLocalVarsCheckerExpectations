@@ -227,14 +227,12 @@ css/CSSValue.cpp
 css/CSSValueList.cpp
 css/CSSValueList.h
 css/CSSVariableReferenceValue.cpp
-css/ComputedStyleExtractor.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
 css/ImmutableStyleProperties.cpp
 css/MediaList.cpp
 css/MediaQueryMatcher.cpp
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/ShorthandSerializer.cpp
@@ -696,6 +694,9 @@ style/StyleBuilder.cpp
 style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
+style/StyleExtractor.cpp
+style/StyleExtractorConverter.h
+style/StyleExtractorCustom.h
 style/StyleInterpolationFunctions.h
 style/StyleInterpolationWrappers.h
 style/StyleInvalidationFunctions.h

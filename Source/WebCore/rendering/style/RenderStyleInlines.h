@@ -470,7 +470,6 @@ inline LengthPoint RenderStyle::initialOffsetPosition() { return { { LengthType:
 constexpr OffsetRotation RenderStyle::initialOffsetRotate() { return { true }; }
 inline OrderedNamedGridLinesMap RenderStyle::initialOrderedNamedGridColumnLines() { return { }; }
 inline OrderedNamedGridLinesMap RenderStyle::initialOrderedNamedGridRowLines() { return { }; }
-constexpr OutlineIsAuto RenderStyle::initialOutlineStyleIsAuto() { return OutlineIsAuto::Off; }
 constexpr OverflowAnchor RenderStyle::initialOverflowAnchor() { return OverflowAnchor::Auto; }
 inline OverflowContinue RenderStyle::initialOverflowContinue() { return OverflowContinue::Auto; }
 constexpr OverflowWrap RenderStyle::initialOverflowWrap() { return OverflowWrap::Normal; }
@@ -685,7 +684,7 @@ inline const OrderedNamedGridLinesMap& RenderStyle::orderedNamedGridRowLines() c
 inline unsigned short RenderStyle::orphans() const { return m_rareInheritedData->orphans; }
 inline const Style::Color& RenderStyle::outlineColor() const { return m_nonInheritedData->backgroundData->outline.color(); }
 inline BorderStyle RenderStyle::outlineStyle() const { return m_nonInheritedData->backgroundData->outline.style(); }
-inline OutlineIsAuto RenderStyle::outlineStyleIsAuto() const { return static_cast<OutlineIsAuto>(m_nonInheritedData->backgroundData->outline.isAuto()); }
+inline bool RenderStyle::hasAutoOutlineStyle() const { return m_nonInheritedData->backgroundData->outline.isAuto(); }
 inline OverflowAnchor RenderStyle::overflowAnchor() const { return static_cast<OverflowAnchor>(m_nonInheritedData->rareData->overflowAnchor); }
 inline OverflowContinue RenderStyle::overflowContinue() const { return m_nonInheritedData->rareData->overflowContinue; }
 inline OverflowWrap RenderStyle::overflowWrap() const { return static_cast<OverflowWrap>(m_rareInheritedData->overflowWrap); }

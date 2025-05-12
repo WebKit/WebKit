@@ -25,10 +25,10 @@
 #include "config.h"
 #include "StyleScrollMargin.h"
 
-#include "ComputedStyleExtractor.h"
 #include "LayoutRect.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
+#include "StyleExtractorConverter.h"
 
 namespace WebCore {
 namespace Style {
@@ -91,9 +91,9 @@ float ScrollMarginEdge::evaluate(float referenceLength) const
     return 0.0f;
 }
 
-Ref<CSSValue> ScrollMarginEdge::toCSS(const RenderStyle& style) const
+Ref<CSSValue> ScrollMarginEdge::toCSS(ExtractorState& state) const
 {
-    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(m_value, style);
+    return ExtractorConverter::convertLength(state, m_value);
 }
 
 ScrollMarginEdge scrollMarginEdgeFromCSSValue(const CSSValue& value, BuilderState& state)

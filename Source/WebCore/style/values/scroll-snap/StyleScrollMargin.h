@@ -39,6 +39,7 @@ class RenderStyle;
 namespace Style {
 
 class BuilderState;
+struct ExtractorState;
 
 // <'scroll-margin-*'> = <length>
 // https://drafts.csswg.org/css-scroll-snap-1/#margin-longhands-physical
@@ -62,7 +63,7 @@ struct ScrollMarginEdge {
     LayoutUnit evaluate(LayoutUnit referenceLength) const;
     float evaluate(float referenceLength) const;
 
-    Ref<CSSValue> toCSS(const RenderStyle&) const;
+    Ref<CSSValue> toCSS(ExtractorState&) const;
 
     bool isZero() const { return m_value.isZero(); }
 

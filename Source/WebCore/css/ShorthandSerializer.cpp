@@ -39,9 +39,9 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
-#include "ComputedStyleExtractor.h"
 #include "FontSelectionValueInlines.h"
 #include "Quad.h"
+#include "StyleExtractor.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include "TimelineRange.h"
@@ -103,7 +103,7 @@ private:
 
     bool subsequentLonghandsHaveInitialValues(unsigned index) const;
 
-    bool commonSerializationChecks(const ComputedStyleExtractor&);
+    bool commonSerializationChecks(const Style::Extractor&);
     bool commonSerializationChecks(const StyleProperties&);
 
     String serializeLonghands() const;
@@ -201,7 +201,7 @@ bool ShorthandSerializer::subsequentLonghandsHaveInitialValues(unsigned startInd
     return true;
 }
 
-bool ShorthandSerializer::commonSerializationChecks(const ComputedStyleExtractor& properties)
+bool ShorthandSerializer::commonSerializationChecks(const Style::Extractor& properties)
 {
     ASSERT(length() && length() <= maxShorthandLength);
 
@@ -1447,7 +1447,7 @@ String serializeShorthandValue(const CSS::SerializationContext& context, const S
     return ShorthandSerializer(context, properties, shorthand).serialize();
 }
 
-String serializeShorthandValue(const CSS::SerializationContext& context, const ComputedStyleExtractor& extractor, CSSPropertyID shorthand)
+String serializeShorthandValue(const CSS::SerializationContext& context, const Style::Extractor& extractor, CSSPropertyID shorthand)
 {
     return ShorthandSerializer(context, extractor, shorthand).serialize();
 }

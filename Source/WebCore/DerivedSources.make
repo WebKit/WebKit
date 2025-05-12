@@ -1929,6 +1929,7 @@ all : \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
     StyleBuilderGenerated.cpp \
+    StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \
     StyleInterpolationWrapperMap.h \
     StylePropertyShorthandFunctions.cpp \
@@ -1971,6 +1972,7 @@ CSS_PROPERTY_NAME_FILES = \
     CSSPropertyParsing.h \
     CSSStyleProperties+PropertyNames.idl \
     StyleBuilderGenerated.cpp \
+    StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \
     StyleInterpolationWrapperMap.h \
     StylePropertyShorthandFunctions.cpp \

@@ -1363,7 +1363,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().usedVisibility() == Visibility::Visible) {
         // Don't paint focus ring for anonymous block continuation because the
         // inline element having outline-style:auto paints the whole focus ring.
-        bool hasOutlineStyleAuto = style().outlineStyleIsAuto() == OutlineIsAuto::On;
+        bool hasOutlineStyleAuto = style().hasAutoOutlineStyle();
         if (!hasOutlineStyleAuto || !isContinuation())
             paintOutline(paintInfo, LayoutRect(paintOffset, size()));
     }

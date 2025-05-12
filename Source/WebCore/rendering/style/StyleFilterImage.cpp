@@ -33,7 +33,6 @@
 #include "CSSValuePool.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "ComputedStyleExtractor.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "NullGraphicsContext.h"

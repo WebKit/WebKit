@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class CSSValue;
@@ -32,12 +34,11 @@ enum CSSPropertyID : uint16_t;
 
 namespace Style {
 
-class BuilderState;
-enum class ApplyValueType : uint8_t;
+struct ExtractorState;
 
-class BuilderGenerated {
+class ExtractorGenerated {
 public:
-    static void applyProperty(CSSPropertyID, BuilderState&, CSSValue&, ApplyValueType);
+    static RefPtr<CSSValue> extractValue(ExtractorState&, CSSPropertyID);
 };
 
 } // namespace Style

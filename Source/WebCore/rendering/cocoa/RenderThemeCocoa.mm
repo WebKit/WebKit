@@ -869,7 +869,7 @@ void RenderThemeCocoa::adjustSwitchStyle(RenderStyle& style, const Element* elem
 
     adjustSwitchStyleDisplay(style);
 
-    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+    if (style.hasAutoOutlineStyle())
         style.setOutlineStyle(BorderStyle::None);
 #endif
 }

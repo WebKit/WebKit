@@ -5994,7 +5994,7 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     // For the list of animations to be current, we need to account for any pending CSS changes,
     // such as updates to CSS Animations and CSS Transitions. This requires updating layout as
     // well since resolving layout-dependent media queries could yield animations.
-    // FIXME: We might be able to use ComputedStyleExtractor which is more optimized.
+    // FIXME: We might be able to use Style::Extractor which is more optimized.
     if (RefPtr owner = document->ownerElement())
         owner->protectedDocument()->updateLayout();
     document->updateStyleIfNeeded();

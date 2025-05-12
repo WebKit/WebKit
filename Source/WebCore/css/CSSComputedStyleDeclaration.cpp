@@ -31,7 +31,6 @@
 #include "CSSSerializationContext.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
-#include "ComputedStyleExtractor.h"
 #include "DeprecatedCSSOMValue.h"
 #include "NodeInlines.h"
 #include "RenderBox.h"
@@ -99,18 +98,18 @@ ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
 // http://www.w3.org/TR/CSS21/cascade.html#used-value
 // http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle#Notes
-RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, ComputedStyleExtractor::UpdateLayout updateLayout) const
+RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, Style::Extractor::UpdateLayout updateLayout) const
 {
     if (!isExposed(propertyID, protectedSettings().get()) || m_isEmpty)
         return nullptr;
-    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).propertyValue(propertyID, updateLayout);
+    return Style::Extractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).propertyValue(propertyID, updateLayout);
 }
 
 Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
 {
     if (m_isEmpty)
         return MutableStyleProperties::create();
-    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).copyProperties();
+    return Style::Extractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).copyProperties();
 }
 
 const Settings* CSSComputedStyleDeclaration::settings() const
@@ -159,7 +158,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (m_isEmpty)
         return 0;
 
-    ComputedStyleExtractor::updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+    Style::Extractor::updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
 
     CheckedPtr style = protectedElement()->computedStyle(m_pseudoElementIdentifier);
     if (!style)
@@ -212,7 +211,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
         return nullptr;
 
     if (isCustomPropertyName(propertyName)) {
-        auto value = ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).customPropertyValue(AtomString { propertyName });
+        auto value = Style::Extractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).customPropertyValue(AtomString { propertyName });
         if (!value)
             return nullptr;
         return value->createDeprecatedCSSOMWrapper(*this);
@@ -233,7 +232,7 @@ String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
         return String();
 
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).customPropertyText(AtomString { propertyName });
+        return Style::Extractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier).customPropertyText(AtomString { propertyName });
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)

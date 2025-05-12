@@ -132,6 +132,7 @@ rendering/line/LineWidth.h
 rendering/style/StyleCachedImage.cpp
 rendering/svg/SVGRenderingContext.h
 style/StyleBuilderState.h
+style/StyleExtractorState.h
 style/StyleScope.h
 testing/Internals.cpp
 workers/DedicatedWorkerThread.cpp

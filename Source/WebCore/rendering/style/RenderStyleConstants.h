@@ -242,11 +242,6 @@ enum class BorderPrecedence : uint8_t {
     Cell
 };
 
-enum class OutlineIsAuto : bool {
-    Off,
-    On
-};
-
 enum class PositionType : uint8_t {
     Static = 0,
     Relative = 1,

@@ -39,6 +39,7 @@ class RenderStyle;
 namespace Style {
 
 class BuilderState;
+struct ExtractorState;
 
 // <'scroll-padding-*'> = auto | <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-scroll-snap-1/#padding-longhands-physical
@@ -67,7 +68,7 @@ struct ScrollPaddingEdge {
     LayoutUnit evaluate(LayoutUnit referenceLength) const;
     float evaluate(float referenceLength) const;
 
-    Ref<CSSValue> toCSS(const RenderStyle&) const;
+    Ref<CSSValue> toCSS(ExtractorState&) const;
 
     bool isZero() const { return m_value.isZero(); }
 

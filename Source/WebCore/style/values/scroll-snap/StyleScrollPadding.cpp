@@ -25,10 +25,10 @@
 #include "config.h"
 #include "StyleScrollPadding.h"
 
-#include "ComputedStyleExtractor.h"
 #include "LayoutRect.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
+#include "StyleExtractorConverter.h"
 
 namespace WebCore {
 namespace Style {
@@ -95,9 +95,9 @@ float ScrollPaddingEdge::evaluate(float referenceLength) const
     return 0;
 }
 
-Ref<CSSValue> ScrollPaddingEdge::toCSS(const RenderStyle& style) const
+Ref<CSSValue> ScrollPaddingEdge::toCSS(ExtractorState& state) const
 {
-    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(m_value, style);
+    return ExtractorConverter::convertLength(state, m_value);
 }
 
 ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue& value, BuilderState& state)

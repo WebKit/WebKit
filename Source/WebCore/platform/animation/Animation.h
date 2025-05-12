@@ -222,6 +222,7 @@ public:
     bool isDurationFilled() const { return m_durationFilled; }
     bool isFillModeFilled() const { return m_fillModeFilled; }
     bool isIterationCountFilled() const { return m_iterationCountFilled; }
+    bool isNameFilled() const { return false; } // Needed for property generation generalization.
     bool isPlayStateFilled() const { return m_playStateFilled; }
     bool isPropertyFilled() const { return m_propertyFilled; }
     bool isTimelineFilled() const { return m_timelineFilled; }

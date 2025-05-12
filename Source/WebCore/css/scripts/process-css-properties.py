@@ -471,7 +471,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("auto-functions", allowed_types=[bool], default_value=False),
         Schema.Entry("cascade-alias", allowed_types=[str]),
         Schema.Entry("color-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("computable", allowed_types=[bool]),
         Schema.Entry("disables-native-appearance", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
@@ -502,13 +501,18 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("separator", allowed_types=[str]),
         Schema.Entry("settings-flag", allowed_types=[str]),
         Schema.Entry("sink-priority", allowed_types=[bool], default_value=False),
+        Schema.Entry("shorthand-pattern", allowed_types=[str]),
         Schema.Entry("skip-codegen", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-style-builder", allowed_types=[bool], default_value=False),
+        Schema.Entry("skip-style-extractor", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
         Schema.Entry("style-builder-conditional-converter", allowed_types=[str]),
         Schema.Entry("style-builder-converter", allowed_types=[str]),
         Schema.Entry("style-builder-custom", allowed_types=[str]),
+        Schema.Entry("style-converter", allowed_types=[str]),
+        Schema.Entry("style-extractor-converter", allowed_types=[str]),
+        Schema.Entry("style-extractor-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("svg", allowed_types=[bool], default_value=False),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("top-priority-reason", allowed_types=[str]),
@@ -576,6 +580,14 @@ class StylePropertyCodeGenProperties:
             json_value["style-builder-custom"] = "Initial|Inherit|Value"
         json_value["style-builder-custom"] = frozenset(json_value["style-builder-custom"].split("|"))
 
+        if "style-converter" in json_value:
+            if "style-builder-converter" in json_value:
+                raise Exception(f"{key_path} can't specify both 'style-converter' and 'style-builder-converter'.")
+            if "style-extractor-converter" in json_value:
+                raise Exception(f"{key_path} can't specify both 'style-converter' and 'style-extractor-converter'.")
+            json_value["style-builder-converter"] = json_value["style-converter"]
+            json_value["style-extractor-converter"] = json_value["style-converter"]
+
         if "logical-property-group" in json_value:
             if json_value.get("longhands"):
                 raise Exception(f"{key_path} is a shorthand, but belongs to a logical property group.")
@@ -585,16 +597,6 @@ class StylePropertyCodeGenProperties:
             json_value["longhands"] = list(compact_map(lambda value: Longhand.from_json(parsing_context, f"{key_path}.codegen-properties", value), json_value["longhands"]))
             if not json_value["longhands"]:
                 del json_value["longhands"]
-
-        if "computable" in json_value:
-            if json_value["computable"]:
-                if json_value.get("internal-only", False):
-                    raise Exception(f"{key_path} can't be both internal-only and computable.")
-        else:
-            if json_value.get("internal-only", False):
-                json_value["computable"] = False
-            else:
-                json_value["computable"] = True
 
         if json_value.get("top-priority", False):
             if json_value.get("top-priority-reason") is None:
@@ -819,7 +821,7 @@ class StyleProperty:
         if self.codegen_properties.internal_only:
             return True
 
-        if not self.codegen_properties.computable:
+        if self.codegen_properties.skip_style_extractor:
             return True
 
         if self.codegen_properties.skip_style_builder and not self.codegen_properties.is_logical and not self.codegen_properties.cascade_alias:
@@ -4142,11 +4144,8 @@ class GenerateStyleBuilderGenerated:
                     to.write(f"builderState.style().setHasAuto{property.codegen_properties.render_style_name_for_methods}();")
                     to.write(f"return;")
                 to.write(f"}}")
-                if property.codegen_properties.svg:
-                    self._generate_svg_property_value_setter(to, property, converted_value(property))
-                else:
-                    self._generate_property_value_setter(to, property, converted_value(property))
-            elif property.codegen_properties.visited_link_color_support:
+
+            if property.codegen_properties.visited_link_color_support:
                 self._generate_color_property_value_setter(to, property, converted_value(property))
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_value_setter(to, property)
@@ -4154,20 +4153,19 @@ class GenerateStyleBuilderGenerated:
                 self._generate_font_property_value_setter(to, property, converted_value(property))
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_value_setter(to, property)
-            else:
-                if property.codegen_properties.style_builder_conditional_converter:
-                    to.write(f"auto convertedValue = BuilderConverter::convert{property.codegen_properties.style_builder_conditional_converter}(builderState, value);")
-                    to.write(f"if (convertedValue)")
-                    with to.indent():
-                        if property.codegen_properties.svg:
-                            self._generate_svg_property_value_setter(to, property, converted_value(property))
-                        else:
-                            self._generate_property_value_setter(to, property, converted_value(property))
-                else:
+            elif property.codegen_properties.style_builder_conditional_converter:
+                to.write(f"auto convertedValue = BuilderConverter::convert{property.codegen_properties.style_builder_conditional_converter}(builderState, value);")
+                to.write(f"if (convertedValue)")
+                with to.indent():
                     if property.codegen_properties.svg:
                         self._generate_svg_property_value_setter(to, property, converted_value(property))
                     else:
                         self._generate_property_value_setter(to, property, converted_value(property))
+            else:
+                if property.codegen_properties.svg:
+                    self._generate_svg_property_value_setter(to, property, converted_value(property))
+                else:
+                    self._generate_property_value_setter(to, property, converted_value(property))
 
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")
@@ -4287,6 +4285,227 @@ class GenerateStyleBuilderGenerated:
                 )
 
                 self._generate_style_builder_generated_cpp_builder_generated_apply(
+                    to=writer
+                )
+
+
+# Generates `StyleExtractorGenerated.cpp`.
+class GenerateStyleExtractorGenerated:
+    def __init__(self, generation_context):
+        self.generation_context = generation_context
+
+    def generate(self):
+        self.generate_style_extractor_generated_cpp()
+
+    @property
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
+    def style_properties(self):
+        return self.generation_context.properties_and_descriptors.style_properties
+
+    # MARK: - Helper generator functions for StyleExtractorGenerated.cpp
+
+    @staticmethod
+    def wrap_in_converter(property, value):
+        if property.codegen_properties.style_extractor_converter:
+            return f"ExtractorConverter::convert{property.codegen_properties.style_extractor_converter}(extractorState, {value})"
+        elif property.codegen_properties.animation_property:
+            return f"ExtractorConverter::convertAnimation{property.codegen_properties.animation_name_for_methods}(extractorState, {value}, animation, animationList)"
+        elif property.codegen_properties.fill_layer_property:
+            return f"ExtractorConverter::convertFillLayer{property.codegen_properties.fill_layer_name_for_methods}(extractorState, {value})"
+        elif property.codegen_properties.color_property:
+            return f"ExtractorConverter::convertColor(extractorState, {value})"
+        else:
+            return f"ExtractorConverter::convert(extractorState, {value})"
+
+    # Color property getters.
+
+    def _generate_color_property_value_getter(self, to, property):
+        to.write(f"if (extractorState.allowVisitedStyle)")
+        with to.indent():
+            to.write(f"return extractorState.pool.createColorValue(extractorState.style.visitedDependentColor({property.id}));")
+        self._generate_property_value_getter(to, property)
+
+    # Animation property getters.
+
+    def _generate_animation_property_value_getter(self, to, property):
+        to.write(f"auto mapper = [](auto& extractorState, const Animation* animation, const AnimationList* animationList) -> RefPtr<CSSValue> {{")
+        with to.indent():
+            to.write(f"if (!animation)")
+            with to.indent():
+                to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'Animation::{property.codegen_properties.animation_initial}()')};")
+            to.write(f"if (!animation->is{property.codegen_properties.animation_name_for_methods}Filled())")
+            with to.indent():
+                to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'animation->{property.codegen_properties.animation_getter}()')};")
+            to.write(f"return nullptr;")
+        to.write(f"}};")
+        to.write(f"return extractAnimationOrTransitionValue(extractorState, extractorState.style.{property.method_name_for_animations_or_transitions}(), mapper);")
+
+    # Font property getters.
+
+    def _generate_font_property_value_getter(self, to, property):
+        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.fontDescription().{property.codegen_properties.font_description_getter}()')};")
+
+    # Fill Layer property getters.
+
+    def _generate_fill_layer_property_value_getter(self, to, property):
+        to.write(f"auto mapper = [](auto& extractorState, auto& layer) -> Ref<CSSValue> {{")
+        with to.indent():
+            to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'layer.{property.codegen_properties.fill_layer_getter}()')};")
+        to.write(f"}};")
+        to.write(f"return extractFillLayerValue(extractorState, extractorState.style.{property.method_name_for_layers}(), mapper);")
+
+    # SVG property getters.
+
+    def _generate_svg_property_value_getter(self, to, property):
+        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.svgStyle().{property.codegen_properties.render_style_getter}()')};")
+
+    # All other property getters.
+
+    def _generate_property_value_getter(self, to, property):
+        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.{property.codegen_properties.render_style_getter}()')};")
+
+    # Property getter dispatch.
+
+    def _generate_style_extractor_generated_cpp_shorthand_value_extractor(self, to, property):
+        to.write(f"static RefPtr<CSSValue> extractValue{property.id_without_prefix}Shorthand(ExtractorState& extractorState)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return extract{property.codegen_properties.shorthand_pattern}Shorthand(extractorState, {property.id_without_prefix_with_lowercase_first_letter}Shorthand());")
+        to.write(f"}}")
+
+    def _generate_style_extractor_generated_cpp_value_extractor(self, to, property):
+        to.write(f"static RefPtr<CSSValue> extractValue{property.id_without_prefix}(ExtractorState& extractorState)")
+        to.write(f"{{")
+
+        with to.indent():
+            if property.codegen_properties.auto_functions:
+                to.write(f"if (extractorState.style.hasAuto{property.codegen_properties.render_style_name_for_methods}())")
+                with to.indent():
+                    to.write(f"return CSSPrimitiveValue::create(CSSValueAuto);")
+
+            if property.codegen_properties.visited_link_color_support:
+                self._generate_color_property_value_getter(to, property)
+            elif property.codegen_properties.animation_property:
+                self._generate_animation_property_value_getter(to, property)
+            elif property.codegen_properties.font_property:
+                self._generate_font_property_value_getter(to, property)
+            elif property.codegen_properties.fill_layer_property:
+                self._generate_fill_layer_property_value_getter(to, property)
+            elif property.codegen_properties.svg:
+                self._generate_svg_property_value_getter(to, property)
+            else:
+                self._generate_property_value_getter(to, property)
+
+        to.write(f"}}")
+
+    def _generate_style_extractor_generated_cpp_extractor_functions_class(self, *, to):
+        to.write(f"class ExtractorFunctions {{")
+        to.write(f"public:")
+
+        with to.indent():
+            for property in self.properties_and_descriptors.all_unique:
+                if not isinstance(property, StyleProperty):
+                    continue
+                if property.codegen_properties.internal_only:
+                    continue
+                if property.codegen_properties.skip_style_extractor:
+                    continue
+                if property.codegen_properties.style_extractor_custom:
+                    continue
+                if property.codegen_properties.is_logical:
+                    continue
+                if property.codegen_properties.longhands:
+                    if not property.codegen_properties.shorthand_pattern:
+                        continue
+                    self._generate_style_extractor_generated_cpp_shorthand_value_extractor(to, property)
+                else:
+                    self._generate_style_extractor_generated_cpp_value_extractor(to, property)
+
+        to.write(f"}};")
+
+    def _generate_style_extractor_generated_cpp_extractor_generated_extract(self, *, to):
+        to.write_block("""
+            RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState, CSSPropertyID id)
+            {
+                switch (id) {
+                case CSSPropertyID::CSSPropertyInvalid:
+                    break;
+                case CSSPropertyID::CSSPropertyCustom:
+                    ASSERT_NOT_REACHED();
+                    break;""")
+
+        with to.indent():
+            def scope_for_function(property):
+                if property.codegen_properties.style_extractor_custom:
+                    return "ExtractorCustom"
+                if property.codegen_properties.longhands and not property.codegen_properties.shorthand_pattern:
+                    return "ExtractorCustom"
+                return "ExtractorFunctions"
+
+            for property in self.properties_and_descriptors.all_unique:
+                to.write(f"case {property.id}:")
+                with to.indent():
+                    # FIXME: Unimplemented (page, all, etc.)
+
+                    if not isinstance(property, StyleProperty):
+                        to.write(f"// Skipped - Descriptor-only property")
+                        to.write(f"return nullptr;")
+                    elif property.codegen_properties.internal_only:
+                        to.write(f"// Skipped - Internal only")
+                        to.write(f"return nullptr;")
+                    elif property.codegen_properties.skip_style_extractor:
+                        to.write(f"// Skipped - Not computable")
+                        to.write(f"return nullptr;")
+                    elif property.codegen_properties.is_logical and not property.codegen_properties.style_extractor_custom:
+                        to.write(f"// Logical properties are handled by recursing using the direction resolved property.")
+                        to.write(f"return extractValue(extractorState, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style.writingMode()));")
+                    elif property.codegen_properties.longhands:
+                        to.write(f"ASSERT(isShorthand(id));")
+                        to.write(f"return {scope_for_function(property)}::extractValue{property.id_without_prefix}Shorthand(extractorState);")
+                    else:
+                        to.write(f"return {scope_for_function(property)}::extractValue{property.id_without_prefix}(extractorState);")
+
+            to.write(f"}}")
+            to.write(f"ASSERT_NOT_REACHED();")
+            to.write(f"return nullptr;")
+        to.write(f"}}")
+        to.newline()
+
+    def generate_style_extractor_generated_cpp(self):
+        with open('StyleExtractorGenerated.cpp', 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_cpp_required_includes(
+                to=writer,
+                header="StyleExtractorGenerated.h"
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=[
+                    "CSSPrimitiveValueMappings.h",
+                    "CSSProperty.h",
+                    "RenderStyle.h",
+                    "StyleExtractorConverter.h",
+                    "StyleExtractorCustom.h",
+                    "StyleExtractorState.h",
+                    "StylePropertyShorthand.h",
+                ]
+            )
+
+            with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
+                self._generate_style_extractor_generated_cpp_extractor_functions_class(
+                    to=writer
+                )
+
+                self._generate_style_extractor_generated_cpp_extractor_generated_extract(
                     to=writer
                 )
 
@@ -8228,6 +8447,7 @@ def main():
         GenerateCSSPropertyParsing,
         GenerateCSSStylePropertiesPropertyNames,
         GenerateStyleBuilderGenerated,
+        GenerateStyleExtractorGenerated,
         GenerateStyleInterpolationWrapperMap,
         GenerateStylePropertyShorthandFunctions,
     ]

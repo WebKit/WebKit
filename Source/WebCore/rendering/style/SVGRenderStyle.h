@@ -159,7 +159,7 @@ public:
     SVGPaintType strokePaintType() const { return static_cast<SVGPaintType>(m_strokeData->paintType); }
     const Style::Color& strokePaintColor() const { return m_strokeData->paintColor; }
     const Style::URL& strokePaintUri() const { return m_strokeData->paintUri; }
-    Vector<SVGLengthValue> strokeDashArray() const { return m_strokeData->dashArray; }
+    const Vector<SVGLengthValue>& strokeDashArray() const { return m_strokeData->dashArray; }
     const Length& strokeDashOffset() const { return m_strokeData->dashOffset; }
     float stopOpacity() const { return m_stopData->opacity; }
     const Style::Color& stopColor() const { return m_stopData->color; }

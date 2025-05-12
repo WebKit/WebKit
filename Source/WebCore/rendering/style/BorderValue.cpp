@@ -30,7 +30,7 @@ namespace WebCore {
 BorderValue::BorderValue()
     : m_color(Style::Color::currentColor())
     , m_style(static_cast<unsigned>(BorderStyle::None))
-    , m_isAuto(static_cast<unsigned>(OutlineIsAuto::Off))
+    , m_isAuto(static_cast<unsigned>(false))
 {
 }
 

@@ -1094,8 +1094,8 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         protectedFrame()->checkedEventHandler()->scheduleCursorUpdate();
 #endif
 
-    bool hadOutlineAuto = oldStyle && oldStyle->outlineStyleIsAuto() == OutlineIsAuto::On;
-    bool hasOutlineAuto = outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On;
+    bool hadOutlineAuto = oldStyle && oldStyle->hasAutoOutlineStyle();
+    bool hasOutlineAuto = outlineStyleForRepaint().hasAutoOutlineStyle();
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
         issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().outlineSize() : oldStyle->outlineSize());
@@ -2133,7 +2133,7 @@ static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, con
 
 void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle& style, const Vector<LayoutRect>& focusRingRects) const
 {
-    ASSERT(style.outlineStyleIsAuto() == OutlineIsAuto::On);
+    ASSERT(style.hasAutoOutlineStyle());
     float outlineOffset = style.outlineOffset();
     Vector<FloatRect> pixelSnappedFocusRingRects;
     float deviceScaleFactor = document().deviceScaleFactor();
@@ -2190,7 +2190,7 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
         if (hasOutlineAuto == child->hasOutlineAutoAncestor())
             continue;
         child->setHasOutlineAutoAncestor(hasOutlineAuto);
-        bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On;
+        bool childHasOutlineAuto = child->outlineStyleForRepaint().hasAutoOutlineStyle();
         if (childHasOutlineAuto)
             continue;
         if (auto* element = dynamicDowncast<RenderElement>(child.get()))

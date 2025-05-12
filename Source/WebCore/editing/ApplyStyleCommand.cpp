@@ -47,6 +47,7 @@
 #include "RenderObject.h"
 #include "RenderText.h"
 #include "ScriptDisallowedScope.h"
+#include "StyleExtractor.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "Text.h"
@@ -474,7 +475,7 @@ RefPtr<HTMLElement> ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node,
     RefPtr<Node> nextHighestAncestorWithUnicodeBidi;
     int highestAncestorUnicodeBidi = 0;
     for (auto ancestor = RefPtr { node->parentNode() }; ancestor != block; ancestor = ancestor->parentNode()) {
-        int unicodeBidi = valueID(ComputedStyleExtractor(ancestor.get()).propertyValue(CSSPropertyUnicodeBidi).get());
+        int unicodeBidi = valueID(Style::Extractor(ancestor.get()).propertyValue(CSSPropertyUnicodeBidi).get());
         if (unicodeBidi && unicodeBidi != CSSValueNormal) {
             highestAncestorUnicodeBidi = unicodeBidi;
             nextHighestAncestorWithUnicodeBidi = highestAncestorWithUnicodeBidi;
@@ -524,7 +525,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         if (!element)
             continue;
 
-        int unicodeBidi = valueID(ComputedStyleExtractor(element.get()).propertyValue(CSSPropertyUnicodeBidi).get());
+        int unicodeBidi = valueID(Style::Extractor(element.get()).propertyValue(CSSPropertyUnicodeBidi).get());
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -550,7 +551,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 static RefPtr<Node> highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
     for (RefPtr currentNode = startNode; currentNode && currentNode != enclosingNode; currentNode = currentNode->parentNode()) {
-        if (currentNode->isHTMLElement() && valueID(ComputedStyleExtractor(currentNode.get()).propertyValue(CSSPropertyUnicodeBidi).get()) == CSSValueEmbed)
+        if (currentNode->isHTMLElement() && valueID(Style::Extractor(currentNode.get()).propertyValue(CSSPropertyUnicodeBidi).get()) == CSSValueEmbed)
             return currentNode;
     }
 
@@ -1515,7 +1516,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     if (!node)
         return 0;
 
-    auto value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
+    auto value = Style::Extractor(node).propertyValue(CSSPropertyFontSize);
     if (!value)
         return 0;
     return downcast<CSSPrimitiveValue>(*value).resolveAsLengthDeprecated();
