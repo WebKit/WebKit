@@ -37,7 +37,11 @@
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(MAC)
+#if HAVE(CA_DISPLAY_LINK_MAC)
+OBJC_CLASS WKDisplayLinkHandler;
+#else
 #include <CoreVideo/CVDisplayLink.h>
+#endif
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -49,7 +53,7 @@ struct wpe_playstation_display;
 #endif
 
 namespace WTF {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !HAVE(CA_DISPLAY_LINK_MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 template<> struct DefaultRefDerefTraits<__CVDisplayLink> {
     static CVDisplayLinkRef refIfNotNull(CVDisplayLinkRef displayLink) { return CVDisplayLinkRetain(displayLink); }
@@ -94,12 +98,16 @@ public:
 
     void setObserverPreferredFramesPerSecond(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
+#if HAVE(CA_DISPLAY_LINK_MAC)
+    void displayLinkHandlerCallbackFired();
+#endif
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
     DisplayVBlankMonitor& vblankMonitor() const { return *m_vblankMonitor; }
 #endif
 
 private:
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !HAVE(CA_DISPLAY_LINK_MAC)
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 #endif
@@ -124,7 +132,11 @@ private:
     };
 
 #if PLATFORM(MAC)
+#if HAVE(CA_DISPLAY_LINK_MAC)
+    RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
+#else
     RefPtr<__CVDisplayLink> m_displayLink;
+#endif
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;

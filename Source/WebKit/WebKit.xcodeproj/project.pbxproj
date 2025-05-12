@@ -6600,6 +6600,7 @@
 		71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTouchActionGestureRecognizer.mm; path = ios/WKTouchActionGestureRecognizer.mm; sourceTree = "<group>"; };
 		71BAA73125FFCCBA00D7CD5D /* WKModelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelView.h; path = ios/WKModelView.h; sourceTree = "<group>"; };
 		71BAA73225FFCCBA00D7CD5D /* WKModelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKModelView.mm; path = ios/WKModelView.mm; sourceTree = "<group>"; };
+		71D72F7B2D7702A200627A29 /* DisplayLinkMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayLinkMac.mm; sourceTree = "<group>"; };
 		71E9650F2745682E00ADCF43 /* ModelIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelIdentifier.h; sourceTree = "<group>"; };
 		71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteSimulatedMouseEventsDispatchPolicy.h; sourceTree = "<group>"; };
 		7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MonotonicObjectIdentifier.h; sourceTree = "<group>"; };
@@ -6668,7 +6669,7 @@
 		7AF2361E1E79A3B400438A05 /* WebErrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebErrors.cpp; sourceTree = "<group>"; };
 		7AF2361F1E79A3D800438A05 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebErrorsCocoa.mm; sourceTree = "<group>"; };
-		7AFA6F682A9F57C50055322A /* DisplayLinkMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLinkMac.cpp; sourceTree = "<group>"; };
+		7AFA6F682A9F57C50055322A /* LegacyDisplayLinkMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyDisplayLinkMac.cpp; sourceTree = "<group>"; };
 		7AFA6F692A9F58300055322A /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		7AFA6F6A2A9F58300055322A /* DisplayLinkProcessProxyClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLinkProcessProxyClient.cpp; sourceTree = "<group>"; };
 		7AFA6F6B2A9F58300055322A /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
@@ -15630,7 +15631,8 @@
 				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
 				07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */,
 				07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */,
-				7AFA6F682A9F57C50055322A /* DisplayLinkMac.cpp */,
+				71D72F7B2D7702A200627A29 /* DisplayLinkMac.mm */,
+				7AFA6F682A9F57C50055322A /* LegacyDisplayLinkMac.cpp */,
 				1AFDE65B1954E8D500C48FFA /* LegacySessionStateCoding.cpp */,
 				0FCB4E5818BBE3D9000FCFC9 /* PageClientImplMac.h */,
 				0FCB4E5918BBE3D9000FCFC9 /* PageClientImplMac.mm */,
