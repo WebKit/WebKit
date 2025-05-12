@@ -234,7 +234,6 @@ css/FontVariantBuilder.cpp
 css/ImmutableStyleProperties.cpp
 css/MediaList.cpp
 css/MediaQueryMatcher.cpp
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/ShorthandSerializer.cpp

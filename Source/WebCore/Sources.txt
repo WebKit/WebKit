@@ -993,7 +993,6 @@ css/MediaQueryMatcher.cpp
 css/MediaQueryParserContext.cpp
 css/MutableStyleProperties.cpp
 css/PropertySetCSSDescriptors.cpp
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/ShorthandSerializer.cpp

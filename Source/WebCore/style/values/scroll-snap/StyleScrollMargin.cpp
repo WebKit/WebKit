@@ -93,7 +93,7 @@ float ScrollMarginEdge::evaluate(float referenceLength) const
 
 Ref<CSSValue> ScrollMarginEdge::toCSS(const RenderStyle& style) const
 {
-    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(m_value, style);
+    return ComputedStyleExtractor::valueForZoomAdjustedPixelLength(style, m_value);
 }
 
 ScrollMarginEdge scrollMarginEdgeFromCSSValue(const CSSValue& value, BuilderState& state)

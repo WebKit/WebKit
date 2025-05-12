@@ -97,7 +97,7 @@ float ScrollPaddingEdge::evaluate(float referenceLength) const
 
 Ref<CSSValue> ScrollPaddingEdge::toCSS(const RenderStyle& style) const
 {
-    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(m_value, style);
+    return ComputedStyleExtractor::valueForZoomAdjustedPixelLength(style, m_value);
 }
 
 ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue& value, BuilderState& state)

@@ -17475,7 +17475,6 @@
 		B222795F0D00BF210071B782 /* SVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomAndPan.cpp; sourceTree = "<group>"; };
 		B22279600D00BF210071B782 /* SVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGZoomAndPan.h; sourceTree = "<group>"; };
 		B22279610D00BF210071B782 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; };
-		B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGCSSValueKeywords.in; sourceTree = "<group>"; };
 		B222F6960AB771950022EFAD /* JSSVGAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAngle.cpp; sourceTree = "<group>"; };
 		B222F6970AB771950022EFAD /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAngle.h; sourceTree = "<group>"; };
@@ -38207,7 +38206,6 @@
 				A8EA80020A19516E00A8EF5F /* StyleSheetList.h */,
 				850656DF0AAB454F002D15C0 /* StyleSheetList.idl */,
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
-				B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
 				31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */,
 			);

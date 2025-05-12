@@ -151,7 +151,6 @@ css/CSSVariableReferenceValue.cpp
 css/ComputedStyleExtractor.cpp
 css/MediaQueryList.cpp
 css/MediaQueryMatcher.cpp
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorCheckerTestFunctions.h
 css/SelectorFilter.cpp

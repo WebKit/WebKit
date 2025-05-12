@@ -33,6 +33,7 @@
 #include "CSSStyleProperties.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
+#include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComputedStyleExtractor.h"
@@ -1808,7 +1809,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
             effect->animation()->resolve(*animatedStyle, { nullptr });
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, CSSValuePool::singleton(), nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
                     return inlineStyle->setProperty(propertyId, cssValue->cssText(CSS::defaultSerializationContext()), { styledElement->document() });
                 return false;
             },

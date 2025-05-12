@@ -461,7 +461,6 @@ css/MediaQueryMatcher.cpp
 css/MutableStyleProperties.cpp
 css/Quad.h
 css/Rect.h
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorCheckerTestFunctions.h
 css/SelectorFilter.cpp
@@ -1166,12 +1165,10 @@ rendering/style/StyleGeneratedImage.cpp
 rendering/style/StyleMiscNonInheritedData.cpp
 rendering/style/StyleMultiImage.cpp
 rendering/style/StylePaintImage.cpp
-rendering/svg/RenderSVGEllipse.cpp
 rendering/svg/RenderSVGImage.cpp
 rendering/svg/RenderSVGInline.cpp
 rendering/svg/RenderSVGInlineText.cpp
 rendering/svg/RenderSVGPath.cpp
-rendering/svg/RenderSVGRect.cpp
 rendering/svg/RenderSVGResourceFilterInlines.h
 rendering/svg/RenderSVGResourceFilterPrimitive.cpp
 rendering/svg/RenderSVGResourcePattern.cpp
@@ -1183,12 +1180,10 @@ rendering/svg/SVGPaintServerHandling.h
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
-rendering/svg/legacy/LegacyRenderSVGEllipse.cpp
 rendering/svg/legacy/LegacyRenderSVGForeignObject.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
-rendering/svg/legacy/LegacyRenderSVGRect.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipperInlines.h

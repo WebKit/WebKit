@@ -96,7 +96,6 @@ css/CSSStyleSheet.cpp
 css/ComputedStyleExtractor.cpp
 css/FontFaceSet.cpp
 css/MediaQueryMatcher.cpp
-css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/StyleAttributeMutationScope.h

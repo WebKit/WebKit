@@ -93,7 +93,7 @@ String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& co
         }, [&](const String& value) {
             return value;
         }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyleSingleton());
+            auto cssValue = ComputedStyleExtractor::valueForTransformOperation(RenderStyle::defaultStyleSingleton(), value.transform);
             if (!cssValue)
                 return emptyString();
             return cssValue->cssText(context);

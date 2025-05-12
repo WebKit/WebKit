@@ -871,7 +871,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
             transform->translate(size.width() / 2, size.height() / 2);
             transform->translateRight(-size.width() / 2, -size.height() / 2);
 
-            Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
+            Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::valueForTransformationMatrix(renderer.style(), *transform));
             props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
         }
     }

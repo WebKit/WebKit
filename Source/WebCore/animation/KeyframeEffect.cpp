@@ -42,6 +42,7 @@
 #include "CSSUnitValue.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "ComputedStyleExtractor.h"
 #include "DocumentInlines.h"
 #include "Element.h"
@@ -1048,7 +1049,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
                 }
             }
             if (styleString.isEmpty()) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, CSSValuePool::singleton(), nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
                     styleString = cssValue->cssText(CSS::defaultSerializationContext());
             }
             computedKeyframe.styleStrings.set(cssPropertyId, styleString);

@@ -35,6 +35,7 @@
 #include "CSSSerializationContext.h"
 #include "CSSTransition.h"
 #include "CSSValue.h"
+#include "CSSValuePool.h"
 #include "ComputedStyleExtractor.h"
 #include "Element.h"
 #include "Event.h"
@@ -161,7 +162,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 WTF::switchOn(property,
                     [&] (CSSPropertyID cssPropertyId) {
                         stylePayloadBuilder.append(nameString(cssPropertyId), ": "_s);
-                        if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                        if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, CSSValuePool::singleton(), renderer))
                             stylePayloadBuilder.append(value->cssText(CSS::defaultSerializationContext()));
                     },
                     [&] (const AtomString& customProperty) {

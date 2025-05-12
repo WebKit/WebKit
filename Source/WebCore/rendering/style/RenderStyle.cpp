@@ -26,6 +26,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSValuePool.h"
 #include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
@@ -1300,6 +1301,7 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
     if (!propertiesA.isEmpty() || !propertiesB.isEmpty()) [[unlikely]] {
         // FIXME: We should not need to use ComputedStyleExtractor here.
         ComputedStyleExtractor extractor((Element*) nullptr);
+        auto& pool = CSSValuePool::singleton();
 
         for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
             for (auto& name : watchPropertiesMap) {
@@ -1312,8 +1314,8 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
                     CSSPropertyID propertyID = cssPropertyID(name);
                     if (!propertyID)
                         continue;
-                    valueA = extractor.valueForPropertyInStyle(a, propertyID);
-                    valueB = extractor.valueForPropertyInStyle(b, propertyID);
+                    valueA = extractor.valueForPropertyInStyle(a, propertyID, pool);
+                    valueB = extractor.valueForPropertyInStyle(b, propertyID, pool);
                 }
 
                 if ((valueA && !valueB) || (!valueA && valueB))
