@@ -89,8 +89,7 @@ public:
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
     virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
 
-    // FIXME: These should be pure virtual.
-    virtual void setBackingStoreIsDiscardable(bool) { }
+    virtual void setBackingStoreIsDiscardable(bool) = 0;
 
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
@@ -100,7 +99,7 @@ public:
     virtual void windowKindDidChange() { }
 
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
-    virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
+    virtual void commitTransientZoom(double, WebCore::FloatPoint) = 0;
 
     virtual void viewIsBecomingVisible() { }
     virtual void viewIsBecomingInvisible() { }
@@ -168,10 +167,9 @@ private:
     virtual void sizeDidChange() = 0;
 
     // Message handlers.
-    // FIXME: These should be pure virtual.
-    virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-    virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-    virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
+    virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) = 0;
+    virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) = 0;
+    virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&);
 #if PLATFORM(MAC)
     RunLoop::Timer m_viewExposedRectChangedTimer;
     std::optional<WebCore::FloatRect> m_lastSentViewExposedRect;
