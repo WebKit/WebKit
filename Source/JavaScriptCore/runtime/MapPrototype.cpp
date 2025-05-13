@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo MapPrototype::s_info = { "Map"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
+constinit const ClassInfo MapPrototype::s_info = { "Map"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncClear);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncDelete);

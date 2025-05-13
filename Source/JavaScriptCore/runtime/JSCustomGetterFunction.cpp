@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo JSCustomGetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomGetterFunction) };
+constinit const ClassInfo JSCustomGetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomGetterFunction) };
 static JSC_DECLARE_HOST_FUNCTION(customGetterFunctionCall);
 
 JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -73,7 +73,7 @@ static const std::array<HashTableValue, 2> JSSharedWorkerGlobalScopeTableValues 
 };
 
 static const HashTable JSSharedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopeTableValues.data(), JSSharedWorkerGlobalScopeTableIndex };
-template<> const ClassInfo JSSharedWorkerGlobalScopeDOMConstructor::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopeDOMConstructor) };
+template<> constinit const ClassInfo JSSharedWorkerGlobalScopeDOMConstructor::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSSharedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -102,7 +102,7 @@ static const std::array<HashTableValue, 1> JSSharedWorkerGlobalScopePrototypeTab
 };
 
 static const HashTable JSSharedWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopePrototypeTableValues.data(), JSSharedWorkerGlobalScopePrototypeTableIndex };
-const ClassInfo JSSharedWorkerGlobalScopePrototype::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopePrototype) };
+constinit const ClassInfo JSSharedWorkerGlobalScopePrototype::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopePrototype) };
 
 void JSSharedWorkerGlobalScopePrototype::finishCreation(VM& vm)
 {
@@ -111,7 +111,7 @@ void JSSharedWorkerGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSSharedWorkerGlobalScope::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScope) };
+constinit const ClassInfo JSSharedWorkerGlobalScope::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScope) };
 
 JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structure, Ref<SharedWorkerGlobalScope>&& impl)
     : JSWorkerGlobalScope(vm, structure, WTFMove(impl))

@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWrapForValidIterator::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWrapForValidIterator) };
+constinit const ClassInfo JSWrapForValidIterator::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWrapForValidIterator) };
 
 JSWrapForValidIterator* JSWrapForValidIterator::createWithInitialValues(VM& vm, Structure* structure)
 {

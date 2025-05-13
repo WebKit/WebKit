@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSIterator::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIterator) };
+constinit const ClassInfo JSIterator::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIterator) };
 
 Structure* JSIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

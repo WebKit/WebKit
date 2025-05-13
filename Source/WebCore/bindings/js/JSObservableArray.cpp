@@ -55,7 +55,7 @@ static bool observableArraySetLength(JSObservableArray* object, JSGlobalObject* 
     return true;
 }
 
-const ClassInfo JSObservableArray::s_info = { "JSObservableArray"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSObservableArray) };
+constinit const ClassInfo JSObservableArray::s_info = { "JSObservableArray"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSObservableArray) };
 
 static JSC_DECLARE_CUSTOM_GETTER(arrayLengthGetter);
 

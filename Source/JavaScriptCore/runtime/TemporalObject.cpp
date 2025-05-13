@@ -131,7 +131,7 @@ namespace JSC {
 @end
 */
 
-const ClassInfo TemporalObject::s_info = { "Temporal"_s, &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
+constinit const ClassInfo TemporalObject::s_info = { "Temporal"_s, &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
 
 TemporalObject::TemporalObject(VM& vm, Structure* structure)
     : Base(vm, structure)

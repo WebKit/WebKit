@@ -47,7 +47,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatFuncFormat);
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat"_s, &Base::s_info, &numberFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
+constinit const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat"_s, &Base::s_info, &numberFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
 
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable

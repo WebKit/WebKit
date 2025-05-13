@@ -996,7 +996,7 @@ static const std::array<HashTableValue, 1> JSTestGlobalObjectConstructorTableVal
 #endif
 };
 
-template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
+template<> constinit const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
 
 template<> JSValue JSTestGlobalObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -1027,7 +1027,7 @@ static const std::array<HashTableValue, 1> JSTestGlobalObjectPrototypeTableValue
 };
 
 static const HashTable JSTestGlobalObjectPrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSTestGlobalObject::info(), JSTestGlobalObjectPrototypeTableValues.data(), JSTestGlobalObjectPrototypeTableIndex };
-const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
+constinit const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
 
 void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
 {
@@ -1035,7 +1035,7 @@ void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestGlobalObject::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObject) };
+constinit const ClassInfo JSTestGlobalObject::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObject) };
 
 JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGlobalObject>&& impl)
     : JSDOMWrapper<TestGlobalObject>(structure, globalObject, WTFMove(impl))

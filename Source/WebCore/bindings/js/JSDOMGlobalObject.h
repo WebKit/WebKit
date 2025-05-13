@@ -55,7 +55,7 @@ public:
 
     using Base = JSC::JSGlobalObject;
 
-    static const JSC::ClassInfo s_info;
+    static constinit const JSC::ClassInfo s_info;
 
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }

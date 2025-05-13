@@ -48,7 +48,7 @@ namespace JSC {
 @end
 */
 
-const ClassInfo ShadowRealmPrototype::s_info = { "ShadowRealm"_s, &Base::s_info, &shadowRealmPrototypeTable, nullptr, CREATE_METHOD_TABLE(ShadowRealmPrototype) };
+constinit const ClassInfo ShadowRealmPrototype::s_info = { "ShadowRealm"_s, &Base::s_info, &shadowRealmPrototypeTable, nullptr, CREATE_METHOD_TABLE(ShadowRealmPrototype) };
 
 ShadowRealmPrototype::ShadowRealmPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

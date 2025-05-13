@@ -50,9 +50,11 @@
 #include "JSArrayBuffer.h"
 #include "JSBasePrivate.h"
 #include "JSBigInt.h"
+#include "JSDestructibleObject.h"
 #include "JSFinalizationRegistry.h"
 #include "JSFunction.h"
 #include "JSFunctionInlines.h"
+#include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "JSLock.h"
 #include "JSNativeStdFunction.h"
@@ -551,6 +553,7 @@ class GlobalObject final : public JSGlobalObject {
 public:
     using Base = JSGlobalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertyNames;
+    static constexpr bool isResizableOrGrowableSharedTypedArray = false;
 
     static GlobalObject* create(VM& vm, Structure* structure, const Vector<String>& arguments)
     {
@@ -950,7 +953,7 @@ static bool shellSupportsRichSourceInfo(const JSGlobalObject*)
     return supportsRichSourceInfo;
 }
 
-const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
+constinit const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &shellSupportsRichSourceInfo,
     &shouldInterruptScript,
@@ -1806,6 +1809,8 @@ public:
         return &vm.destructibleObjectSpace();
     }
 
+    static constexpr bool isResizableOrGrowableSharedTypedArray = false;
+
     JSCMemoryFootprint(VM& vm, Structure* structure)
         : Base(vm, structure)
     { }
@@ -1847,7 +1852,7 @@ private:
     }
 };
 
-const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
+constinit const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
 
 JSC_DEFINE_HOST_FUNCTION(functionMemoryUsageStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -2193,6 +2198,7 @@ public:
     {
         return &vm.destructibleObjectSpace();
     }
+    static constexpr bool isResizableOrGrowableSharedTypedArray = false;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -2237,7 +2243,7 @@ private:
     FILE* m_descriptor;
 };
 
-const ClassInfo JSFileDescriptor::s_info = { "FileDescriptor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileDescriptor) };
+constinit const ClassInfo JSFileDescriptor::s_info = { "FileDescriptor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileDescriptor) };
 
 JSC_DEFINE_HOST_FUNCTION(functionOpenFile, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

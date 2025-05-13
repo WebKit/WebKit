@@ -164,16 +164,16 @@ struct CLASS_INFO_ALIGNMENT ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".
-    ASCIILiteral className;
+    ASCIILiteral className { };
     // Pointer to the class information of the base class.
     // nullptrif there is none.
-    const ClassInfo* parentClass;
-    const HashTable* staticPropHashTable;
-    CheckJSCastSnippetFunctionPtr checkSubClassSnippet;
-    const std::optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
-    MethodTable methodTable;
-    const unsigned staticClassSize;
-    const bool isResizableOrGrowableSharedTypedArray;
+    const ClassInfo* parentClass { nullptr };
+    const HashTable* staticPropHashTable { nullptr };
+    CheckJSCastSnippetFunctionPtr checkSubClassSnippet { };
+    const std::optional<JSTypeRange> inheritsJSTypeRange { std::nullopt }; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
+    MethodTable methodTable { };
+    const unsigned staticClassSize { 0 };
+    const bool isResizableOrGrowableSharedTypedArray { false };
 
     static constexpr ptrdiff_t offsetOfParentClass()
     {

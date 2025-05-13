@@ -44,7 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalPlainDateTimeConstructorFuncCompare);
 
 namespace JSC {
 
-const ClassInfo TemporalPlainDateTimeConstructor::s_info = { "Function"_s, &Base::s_info, &temporalPlainDateTimeConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainDateTimeConstructor) };
+constinit const ClassInfo TemporalPlainDateTimeConstructor::s_info = { "Function"_s, &Base::s_info, &temporalPlainDateTimeConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainDateTimeConstructor) };
 
 /* Source for TemporalPlainDateTimeConstructor.lut.h
 @begin temporalPlainDateTimeConstructorTable

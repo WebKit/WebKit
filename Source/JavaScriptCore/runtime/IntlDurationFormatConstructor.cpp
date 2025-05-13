@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlDurationFormatConstructorSupportedLocalesOf
 
 namespace JSC {
 
-const ClassInfo IntlDurationFormatConstructor::s_info = { "Function"_s, &Base::s_info, &durationFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlDurationFormatConstructor) };
+constinit const ClassInfo IntlDurationFormatConstructor::s_info = { "Function"_s, &Base::s_info, &durationFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlDurationFormatConstructor) };
 
 /* Source for IntlDurationFormatConstructor.lut.h
 @begin durationFormatConstructorTable

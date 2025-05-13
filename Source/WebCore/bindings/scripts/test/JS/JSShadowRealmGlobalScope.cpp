@@ -70,7 +70,7 @@ static const std::array<HashTableValue, 1> JSShadowRealmGlobalScopeTableValues {
 };
 
 static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues.data(), JSShadowRealmGlobalScopeTableIndex };
-template<> const ClassInfo JSShadowRealmGlobalScopeDOMConstructor::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScopeDOMConstructor) };
+template<> constinit const ClassInfo JSShadowRealmGlobalScopeDOMConstructor::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScopeDOMConstructor) };
 
 template<> JSValue JSShadowRealmGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -87,7 +87,7 @@ template<> void JSShadowRealmGlobalScopeDOMConstructor::initializeProperties(VM&
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
 }
 
-const ClassInfo JSShadowRealmGlobalScope::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, &JSShadowRealmGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScope) };
+constinit const ClassInfo JSShadowRealmGlobalScope::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, &JSShadowRealmGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScope) };
 
 JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure, Ref<ShadowRealmGlobalScope>&& impl)
     : JSDOMWrapper<ShadowRealmGlobalScope>(vm, structure, WTFMove(impl))

@@ -94,7 +94,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestAsyncIterablePrototype, JSTestAsyncIte
 
 using JSTestAsyncIterableDOMConstructor = JSDOMConstructorNotConstructable<JSTestAsyncIterable>;
 
-template<> const ClassInfo JSTestAsyncIterableDOMConstructor::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterableDOMConstructor) };
+template<> constinit const ClassInfo JSTestAsyncIterableDOMConstructor::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterableDOMConstructor) };
 
 template<> JSValue JSTestAsyncIterableDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -120,7 +120,7 @@ static const std::array<HashTableValue, 4> JSTestAsyncIterablePrototypeTableValu
     HashTableValue { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncIterablePrototypeFunction_values, 0 } },
 };
 
-const ClassInfo JSTestAsyncIterablePrototype::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterablePrototype) };
+constinit const ClassInfo JSTestAsyncIterablePrototype::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterablePrototype) };
 
 void JSTestAsyncIterablePrototype::finishCreation(VM& vm)
 {
@@ -130,7 +130,7 @@ void JSTestAsyncIterablePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestAsyncIterable::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterable) };
+constinit const ClassInfo JSTestAsyncIterable::s_info = { "TestAsyncIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncIterable) };
 
 JSTestAsyncIterable::JSTestAsyncIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestAsyncIterable>&& impl)
     : JSDOMWrapper<TestAsyncIterable>(structure, globalObject, WTFMove(impl))
@@ -222,11 +222,11 @@ using TestAsyncIterableIteratorPrototype = JSDOMAsyncIteratorPrototype<JSTestAsy
 JSC_ANNOTATE_HOST_FUNCTION(TestAsyncIterableIteratorPrototypeNext, TestAsyncIterableIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo TestAsyncIterableIteratorBase::s_info = { "TestAsyncIterableBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIteratorBase) };
-const JSC::ClassInfo TestAsyncIterableIterator::s_info = { "TestAsyncIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIterator) };
+constinit const JSC::ClassInfo TestAsyncIterableIteratorBase::s_info = { "TestAsyncIterableBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIteratorBase) };
+constinit const JSC::ClassInfo TestAsyncIterableIterator::s_info = { "TestAsyncIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIterator) };
 
 template<>
-const JSC::ClassInfo TestAsyncIterableIteratorPrototype::s_info = { "TestAsyncIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIteratorPrototype) };
+constinit const JSC::ClassInfo TestAsyncIterableIteratorPrototype::s_info = { "TestAsyncIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncIterableIteratorPrototype) };
 
 static inline EncodedJSValue jsTestAsyncIterablePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestAsyncIterable* thisObject)
 {

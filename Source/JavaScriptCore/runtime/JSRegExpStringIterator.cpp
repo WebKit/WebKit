@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSRegExpStringIterator::s_info = { "RegExpStringIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRegExpStringIterator) };
+constinit const ClassInfo JSRegExpStringIterator::s_info = { "RegExpStringIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRegExpStringIterator) };
 
 JSRegExpStringIterator* JSRegExpStringIterator::createWithInitialValues(VM& vm, Structure* structure)
 {

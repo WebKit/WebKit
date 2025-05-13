@@ -216,7 +216,7 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
     return ok;
 }
 
-const ClassInfo DatePrototype::s_info = { "Object"_s, &Base::s_info, &datePrototypeTable, nullptr, CREATE_METHOD_TABLE(DatePrototype) };
+constinit const ClassInfo DatePrototype::s_info = { "Object"_s, &Base::s_info, &datePrototypeTable, nullptr, CREATE_METHOD_TABLE(DatePrototype) };
 
 /* Source for DatePrototype.lut.h
 @begin datePrototypeTable

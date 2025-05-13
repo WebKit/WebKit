@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo JSIteratorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorConstructor) };
+constinit const ClassInfo JSIteratorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorConstructor) };
 
 Structure* JSIteratorConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

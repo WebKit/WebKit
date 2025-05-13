@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo ExecutableBase::s_info = { "Executable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ExecutableBase) };
+constinit const ClassInfo ExecutableBase::s_info = { "Executable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ExecutableBase) };
 
 void ExecutableBase::destroy(JSCell* cell)
 {

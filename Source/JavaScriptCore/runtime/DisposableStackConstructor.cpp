@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo DisposableStackConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackConstructor) };
+constinit const ClassInfo DisposableStackConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackConstructor) };
 
 Structure* DisposableStackConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

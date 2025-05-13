@@ -92,7 +92,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestScheduledActionPrototype, JSTestSchedu
 
 using JSTestScheduledActionDOMConstructor = JSDOMConstructorNotConstructable<JSTestScheduledAction>;
 
-template<> const ClassInfo JSTestScheduledActionDOMConstructor::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledActionDOMConstructor) };
+template<> constinit const ClassInfo JSTestScheduledActionDOMConstructor::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledActionDOMConstructor) };
 
 template<> JSValue JSTestScheduledActionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -116,7 +116,7 @@ static const std::array<HashTableValue, 2> JSTestScheduledActionPrototypeTableVa
     HashTableValue { "method"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestScheduledActionPrototypeFunction_method, 1 } },
 };
 
-const ClassInfo JSTestScheduledActionPrototype::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledActionPrototype) };
+constinit const ClassInfo JSTestScheduledActionPrototype::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledActionPrototype) };
 
 void JSTestScheduledActionPrototype::finishCreation(VM& vm)
 {
@@ -125,7 +125,7 @@ void JSTestScheduledActionPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestScheduledAction::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledAction) };
+constinit const ClassInfo JSTestScheduledAction::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledAction) };
 
 JSTestScheduledAction::JSTestScheduledAction(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestScheduledAction>&& impl)
     : JSDOMWrapper<TestScheduledAction>(structure, globalObject, WTFMove(impl))

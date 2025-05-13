@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
+constinit const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator);
 

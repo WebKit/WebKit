@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSWorkletGlobalScopeBase::s_info = { "WorkletGlobalScope"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeBase) };
+constinit const ClassInfo JSWorkletGlobalScopeBase::s_info = { "WorkletGlobalScope"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeBase) };
 
 const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable()
 {

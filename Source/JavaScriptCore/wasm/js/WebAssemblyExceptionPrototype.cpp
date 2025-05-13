@@ -44,7 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception"_s, &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
+constinit const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception"_s, &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
 
 /* Source for WebAssemblyExceptionPrototype.lut.h
  @begin prototypeTableWebAssemblyException

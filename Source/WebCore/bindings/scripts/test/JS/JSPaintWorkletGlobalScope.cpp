@@ -72,7 +72,7 @@ static const std::array<HashTableValue, 2> JSPaintWorkletGlobalScopeTableValues 
 };
 
 static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues.data(), JSPaintWorkletGlobalScopeTableIndex };
-template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
+template<> constinit const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -101,7 +101,7 @@ static const std::array<HashTableValue, 1> JSPaintWorkletGlobalScopePrototypeTab
 };
 
 static const HashTable JSPaintWorkletGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopePrototypeTableValues.data(), JSPaintWorkletGlobalScopePrototypeTableIndex };
-const ClassInfo JSPaintWorkletGlobalScopePrototype::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopePrototype) };
+constinit const ClassInfo JSPaintWorkletGlobalScopePrototype::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopePrototype) };
 
 void JSPaintWorkletGlobalScopePrototype::finishCreation(VM& vm)
 {
@@ -110,7 +110,7 @@ void JSPaintWorkletGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSPaintWorkletGlobalScope::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScope) };
+constinit const ClassInfo JSPaintWorkletGlobalScope::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScope) };
 
 JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope(VM& vm, Structure* structure, Ref<PaintWorkletGlobalScope>&& impl)
     : JSWorkletGlobalScope(vm, structure, WTFMove(impl))

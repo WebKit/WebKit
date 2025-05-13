@@ -69,7 +69,7 @@ static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncIMul);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncF16Round);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncSumPrecise);
 
-const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
+constinit const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
 
 MathObject::MathObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

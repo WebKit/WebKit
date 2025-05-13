@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo DisposableStackPrototype::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackPrototype) };
+constinit const ClassInfo DisposableStackPrototype::s_info = { "DisposableStack"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DisposableStackPrototype) };
 
 void DisposableStackPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {

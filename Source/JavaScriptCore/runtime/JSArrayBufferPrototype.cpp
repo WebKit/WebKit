@@ -523,7 +523,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncMaxByteLength, (JSGloba
     return JSValue::encode(jsNumber(thisObject->impl()->byteLength(std::memory_order_relaxed)));
 }
 
-const ClassInfo JSArrayBufferPrototype::s_info = {
+constinit const ClassInfo JSArrayBufferPrototype::s_info = {
     "ArrayBuffer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
 };
 

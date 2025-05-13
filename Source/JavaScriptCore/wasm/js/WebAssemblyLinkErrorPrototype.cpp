@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
+constinit const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
 
 WebAssemblyLinkErrorPrototype* WebAssemblyLinkErrorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

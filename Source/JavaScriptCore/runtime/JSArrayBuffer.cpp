@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSArrayBuffer::s_info = { "ArrayBuffer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBuffer) };
+constinit const ClassInfo JSArrayBuffer::s_info = { "ArrayBuffer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBuffer) };
 
 JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer)
     : Base(vm, structure)

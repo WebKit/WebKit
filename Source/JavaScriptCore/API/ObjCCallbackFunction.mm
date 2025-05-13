@@ -533,7 +533,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
     return const_cast<JSObjectRef>(result);
 }
 
-const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
+constinit const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
 static JSC_DECLARE_HOST_FUNCTION(callObjCCallbackFunction);
 static JSC_DECLARE_HOST_FUNCTION(constructObjCCallbackFunction);

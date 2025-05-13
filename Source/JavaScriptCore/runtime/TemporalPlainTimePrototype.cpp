@@ -61,7 +61,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterCalendar);
 
 namespace JSC {
 
-const ClassInfo TemporalPlainTimePrototype::s_info = { "Temporal.PlainTime"_s, &Base::s_info, &plainTimePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainTimePrototype) };
+constinit const ClassInfo TemporalPlainTimePrototype::s_info = { "Temporal.PlainTime"_s, &Base::s_info, &plainTimePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainTimePrototype) };
 
 /* Source for TemporalPlainTimePrototype.lut.h
 @begin plainTimePrototypeTable

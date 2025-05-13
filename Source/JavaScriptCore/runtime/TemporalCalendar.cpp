@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo TemporalCalendar::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalCalendar) };
+constinit const ClassInfo TemporalCalendar::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalCalendar) };
 
 TemporalCalendar* TemporalCalendar::create(VM& vm, Structure* structure, CalendarID identifier)
 {

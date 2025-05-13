@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSAsyncFromSyncIterator::s_info = { "AsyncFromSyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncFromSyncIterator) };
+constinit const ClassInfo JSAsyncFromSyncIterator::s_info = { "AsyncFromSyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncFromSyncIterator) };
 
 void JSAsyncFromSyncIterator::finishCreation(VM& vm, JSValue syncIterator, JSValue nextMethod)
 {

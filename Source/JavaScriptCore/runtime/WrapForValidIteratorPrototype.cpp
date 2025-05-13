@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo WrapForValidIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WrapForValidIteratorPrototype) };
+constinit const ClassInfo WrapForValidIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WrapForValidIteratorPrototype) };
 
 void WrapForValidIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

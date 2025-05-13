@@ -95,7 +95,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestAsyncKeyValueIterablePrototype, JSTest
 
 using JSTestAsyncKeyValueIterableDOMConstructor = JSDOMConstructorNotConstructable<JSTestAsyncKeyValueIterable>;
 
-template<> const ClassInfo JSTestAsyncKeyValueIterableDOMConstructor::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterableDOMConstructor) };
+template<> constinit const ClassInfo JSTestAsyncKeyValueIterableDOMConstructor::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterableDOMConstructor) };
 
 template<> JSValue JSTestAsyncKeyValueIterableDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -121,7 +121,7 @@ static const std::array<HashTableValue, 4> JSTestAsyncKeyValueIterablePrototypeT
     HashTableValue { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncKeyValueIterablePrototypeFunction_values, 0 } },
 };
 
-const ClassInfo JSTestAsyncKeyValueIterablePrototype::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterablePrototype) };
+constinit const ClassInfo JSTestAsyncKeyValueIterablePrototype::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterablePrototype) };
 
 void JSTestAsyncKeyValueIterablePrototype::finishCreation(VM& vm)
 {
@@ -131,7 +131,7 @@ void JSTestAsyncKeyValueIterablePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestAsyncKeyValueIterable::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterable) };
+constinit const ClassInfo JSTestAsyncKeyValueIterable::s_info = { "TestAsyncKeyValueIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestAsyncKeyValueIterable) };
 
 JSTestAsyncKeyValueIterable::JSTestAsyncKeyValueIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestAsyncKeyValueIterable>&& impl)
     : JSDOMWrapper<TestAsyncKeyValueIterable>(structure, globalObject, WTFMove(impl))
@@ -223,11 +223,11 @@ using TestAsyncKeyValueIterableIteratorPrototype = JSDOMAsyncIteratorPrototype<J
 JSC_ANNOTATE_HOST_FUNCTION(TestAsyncKeyValueIterableIteratorPrototypeNext, TestAsyncKeyValueIterableIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo TestAsyncKeyValueIterableIteratorBase::s_info = { "TestAsyncKeyValueIterableBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIteratorBase) };
-const JSC::ClassInfo TestAsyncKeyValueIterableIterator::s_info = { "TestAsyncKeyValueIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIterator) };
+constinit const JSC::ClassInfo TestAsyncKeyValueIterableIteratorBase::s_info = { "TestAsyncKeyValueIterableBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIteratorBase) };
+constinit const JSC::ClassInfo TestAsyncKeyValueIterableIterator::s_info = { "TestAsyncKeyValueIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIterator) };
 
 template<>
-const JSC::ClassInfo TestAsyncKeyValueIterableIteratorPrototype::s_info = { "TestAsyncKeyValueIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIteratorPrototype) };
+constinit const JSC::ClassInfo TestAsyncKeyValueIterableIteratorPrototype::s_info = { "TestAsyncKeyValueIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestAsyncKeyValueIterableIteratorPrototype) };
 
 static inline EncodedJSValue jsTestAsyncKeyValueIterablePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestAsyncKeyValueIterable* thisObject)
 {
