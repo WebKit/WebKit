@@ -22,6 +22,7 @@
 
 #if USE(TEXTURE_MAPPER)
 
+#include "AnimationUtilities.h"
 #include "LayoutSize.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/Scope.h>

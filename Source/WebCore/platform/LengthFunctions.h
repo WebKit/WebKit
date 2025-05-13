@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "LayoutPoint.h"
 #include "LayoutUnit.h"
 #include "Length.h"
 

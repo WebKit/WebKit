@@ -27,6 +27,7 @@
 
 #include "AXTextRun.h"
 #include "CharacterRange.h"
+#include "Color.h"
 #include "ColorConversion.h"
 #include "HTMLTextFormControlElement.h"
 #include "InputType.h"

@@ -53,6 +53,7 @@ class DOMMatrixReadOnly;
 class DOMPointReadOnly;
 class Event;
 class GraphicsLayer;
+class LayoutPoint;
 class LayoutSize;
 class Model;
 class ModelPlayer;

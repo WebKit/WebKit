@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "AnimationUtilities.h"
+#include "LayoutUnit.h"
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>

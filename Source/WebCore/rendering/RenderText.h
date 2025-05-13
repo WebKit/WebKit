@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include "FontCascade.h"
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"

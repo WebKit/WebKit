@@ -27,6 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "FloatRect.h"
+#include "LayoutSize.h"
 #include "Region.h"
 #include <wtf/ForbidHeapAllocation.h>
 

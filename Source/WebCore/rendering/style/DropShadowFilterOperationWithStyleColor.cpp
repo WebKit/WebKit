@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DropShadowFilterOperationWithStyleColor.h"
 
+#include "AnimationUtilities.h"
 #include "ColorBlending.h"
 #include "RenderStyle.h"
 

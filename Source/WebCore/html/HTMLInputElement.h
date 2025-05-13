@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Color;
 class Decimal;
 class DragData;
 class FileList;

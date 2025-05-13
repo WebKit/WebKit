@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 #include "AnimationEffect.h"
+#include "AnimationUtilities.h"
 #include "BlendingKeyframes.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
