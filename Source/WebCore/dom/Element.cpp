@@ -4601,7 +4601,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     for (auto& element : makeReversedRange(elementsRequiringComputedStyle)) {
         if (computedStyle && computedStyle->containerType() != ContainerType::Normal && mode != ResolveComputedStyleMode::Editability) {
             // If we find a query container we need to bail out and do full style update to resolve it.
-            if (document->updateStyleIfNeeded())
+            if (!document->inStyleRecalc() && document->updateStyleIfNeeded())
                 return this->computedStyle();
         };
         auto style = document->styleForElementIgnoringPendingStylesheets(*element, computedStyle);
