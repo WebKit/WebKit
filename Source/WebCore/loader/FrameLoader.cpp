@@ -117,6 +117,7 @@
 #include "ReportingScope.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"
@@ -2610,6 +2611,16 @@ void FrameLoader::clientRedirected(const URL& url, double seconds, WallTime fire
     // no "original" load on which to base a redirect, so we treat the redirect as a normal load.
     // Loads triggered by JavaScript form submissions never count as quick redirects.
     m_quickRedirectComing = (lockBackForwardList == LockBackForwardList::Yes || protectedHistory()->currentItemShouldBeReplaced()) && m_documentLoader && !m_isExecutingJavaScriptFormAction;
+
+    ++m_clientSideRedirectCount;
+    if (m_clientSideRedirectCount > defaultMaxRedirectCount
+        && m_frame->document() && m_frame->document()->loader()
+        && m_frame->document()->loader()->request().wasSchemeOptimisticallyUpgraded()
+        && m_frame->document()->url().protocolIs("https"_s)
+        && url.protocolIs("http"_s)
+        && RegistrableDomain(m_frame->document()->url()) == RegistrableDomain(url)) {
+        m_isHTTPFallbackInProgress = true;
+    }
 }
 
 bool FrameLoader::shouldReload(const URL& currentURL, const URL& destinationURL)

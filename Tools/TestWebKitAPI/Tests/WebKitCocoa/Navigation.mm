@@ -2979,6 +2979,148 @@ TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackHTTPDowngradeAndSame
     EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
 }
 
+TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackClientSideHTTPDowngradeAndSameSiteNavigation)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpsServer({
+        { "/secure"_s, { "<head><script>window.location = location.href.replace(\"https:\", \"http:\");</script></head><body>body</body>"_s } },
+        { "/secure2"_s, { { }, "body"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer httpServer({
+        { "http://site.example/secure"_s, { "<body><a href=\"/secure2\">Link</a></body>"_s } },
+        { "http://site.example/secure2"_s, { "<body><a href=\"http://site2.example/secure2\">Link</a></body>"_s } },
+        { "http://site2.example/secure2"_s, { "<body>Done</body>"_s } },
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    configuration.get().defaultWebpagePreferences.preferredHTTPSNavigationPolicy = WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block int errorCode { 0 };
+    __block bool finishedSuccessfully { false };
+    __block unsigned loadCount { 0 };
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        ++loadCount;
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        errorCode = error.code;
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Load the site with http, it should be upgrade to https. That will
+    // successfully load and then perform a client-side redirect to http:. This
+    // will create a redirect loop.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/secure"]]];
+    
+    constexpr unsigned expectedLoadCount { 21 };
+    while (loadCount < expectedLoadCount) {
+        TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+        EXPECT_EQ(errorCode, 0);
+        EXPECT_TRUE(finishedSuccessfully);
+        WTFLogAlways("loadCount: %u, finishedSuccessfully: %d", finishedSuccessfully, loadCount);
+        if (!finishedSuccessfully)
+            break;
+        finishedSuccessfully = false;
+    }
+    EXPECT_EQ(loadCount, expectedLoadCount);
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView evaluateJavaScript:@"window.location.protocol" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http:", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView evaluateJavaScript:@"window.location.toString()" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        auto url = [NSURL URLWithString:(NSString *)value];
+        EXPECT_WK_STREQ(@"http", url.scheme);
+        EXPECT_WK_STREQ(@"http://site.example/secure", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView evaluateJavaScript:@"window.hasOwnProperty('crypto')" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value boolValue]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView evaluateJavaScript:@"window.crypto.hasOwnProperty('subtle')" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_FALSE([value boolValue]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView evaluateJavaScript:@"window.location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://site.example/secure", (NSString *)value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    finishedSuccessfully = false;
+    errorCode = 0;
+    loadCount = 0;
+    doneEvaluatingJavaScript = false;
+
+    // Clicking the link should be a same-site navigation, so we shouldn't attempt upgrading.
+    [webView evaluateJavaScript:@"document.querySelector(\"a\").click()" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 1u);
+
+    finishedSuccessfully = false;
+    errorCode = 0;
+    loadCount = 0;
+    doneEvaluatingJavaScript = false;
+
+    // Clicking the link should be a cross-site navigation, so we should attempt upgrading.
+    [webView evaluateJavaScript:@"document.querySelector(\"a\").click()" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 2u);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+}
+
 TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackHTTPDowngradeRedirect)
 {
     using namespace TestWebKitAPI;

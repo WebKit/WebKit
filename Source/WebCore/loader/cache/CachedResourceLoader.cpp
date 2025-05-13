@@ -833,7 +833,8 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
     if (frame) {
         RefPtr page = frame->page();
         bool isHTTPSByDefaultEnabled = page ? page->protectedSettings()->httpsByDefault() : false;
-        if (shouldPerformHTTPSUpgrade(preRedirectURL, request.url(), *frame, type, isHTTPSByDefaultEnabled, m_documentLoader->advancedPrivacyProtections(), m_documentLoader->httpsByDefaultMode())) {
+        bool isHTTPSUpgradeDisabledByQuirk = Quirks::shouldNotAutoUpgradeToHTTPS(request.url());
+        if (!isHTTPSUpgradeDisabledByQuirk && shouldPerformHTTPSUpgrade(preRedirectURL, request.url(), *frame, type, isHTTPSByDefaultEnabled, m_documentLoader->advancedPrivacyProtections(), m_documentLoader->httpsByDefaultMode())) {
             auto portsForUpgradingInsecureScheme = page ? std::optional { page->portsForUpgradingInsecureSchemeForTesting() } : std::nullopt;
             auto upgradePort = (portsForUpgradingInsecureScheme && request.url().port() == portsForUpgradingInsecureScheme->first) ? std::optional { portsForUpgradingInsecureScheme->second } : std::nullopt;
             request.upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress::No, upgradePort);
@@ -1144,7 +1145,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     Ref page = *frame->page();
     URL committedDocumentURL { frame->document() ? frame->document()->url() : URL { } };
     if (RefPtr documentLoader = m_documentLoader.get()) {
-        if (shouldPerformHTTPSUpgrade(committedDocumentURL, request.resourceRequest().url(), frame, type, page->protectedSettings()->httpsByDefault(), documentLoader->advancedPrivacyProtections(), documentLoader->httpsByDefaultMode())) {
+        bool isHTTPSUpgradeDisabledByQuirk = Quirks::shouldNotAutoUpgradeToHTTPS(request.resourceRequest().url());
+        if (!isHTTPSUpgradeDisabledByQuirk && shouldPerformHTTPSUpgrade(committedDocumentURL, request.resourceRequest().url(), frame, type, page->protectedSettings()->httpsByDefault(), documentLoader->advancedPrivacyProtections(), documentLoader->httpsByDefaultMode())) {
             auto portsForUpgradingInsecureScheme = page->portsForUpgradingInsecureSchemeForTesting();
             auto upgradePort = (portsForUpgradingInsecureScheme && request.resourceRequest().url().port() == portsForUpgradingInsecureScheme->first) ? std::optional { portsForUpgradingInsecureScheme->second } : std::nullopt;
             request.resourceRequest().upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress::No, upgradePort);

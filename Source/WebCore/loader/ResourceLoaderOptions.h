@@ -164,6 +164,8 @@ static constexpr unsigned bitWidthOfLoadedFromPluginElement = 1;
 enum class LoadedFromFetch : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromFetch = 1;
 
+static constexpr unsigned defaultMaxRedirectCount = 20;
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions()
         : ResourceLoaderOptions(FetchOptions())
@@ -228,7 +230,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
-    uint8_t maxRedirectCount { 20 };
+    uint8_t maxRedirectCount { defaultMaxRedirectCount };
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 
     SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;

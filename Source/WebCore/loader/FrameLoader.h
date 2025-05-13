@@ -541,6 +541,7 @@ private:
 
     bool m_inStopForBackForwardCache { false };
     bool m_isHTTPFallbackInProgress { false };
+    uint8_t m_clientSideRedirectCount { 0 };
     bool m_shouldSkipHTTPSUpgradeForSameSiteNavigation { false };
     bool m_shouldRestoreScrollPositionAndViewState { false };
 
