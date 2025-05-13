@@ -249,7 +249,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (CGFloat)currentAlpha
 {
-    return std::max(static_cast<CGFloat>(0), std::min(static_cast<CGFloat>(1), _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
+    return std::clamp<CGFloat>(_initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha), 0, 1);
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress

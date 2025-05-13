@@ -272,7 +272,7 @@ public:
         }
 
         if (m_ideal)
-            value = std::max(min, std::min(max, m_ideal.value()));
+            value = std::clamp(m_ideal.value(), min, max);
 
         return value;
     }

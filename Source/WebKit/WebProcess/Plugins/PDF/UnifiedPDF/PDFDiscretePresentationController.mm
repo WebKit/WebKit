@@ -527,7 +527,7 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
                 float distance = std::abs(relevantAxisForDirection(direction, endOffset - startOffset));
 
                 transitionDuration = Seconds { distance / velocity };
-                transitionDuration = std::min(std::max(transitionDuration, minimumTransitionDuration), maximumTransitionDuration);
+                transitionDuration = std::clamp(transitionDuration, minimumTransitionDuration, maximumTransitionDuration);
             }
         } else {
             auto timingFunctionPreset = isNextDirection(direction) ? CubicBezierTimingFunction::TimingFunctionPreset::EaseIn : CubicBezierTimingFunction::TimingFunctionPreset::EaseOut;

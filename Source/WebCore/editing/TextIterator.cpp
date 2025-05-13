@@ -2355,7 +2355,7 @@ nextMatch:
             unsigned wordBoundaryContextStart = matchStart;
             U16_BACK_1(m_buffer.span(), 0, wordBoundaryContextStart);
             wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.subspan(0, wordBoundaryContextStart));
-            overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
+            overlap = std::clamp(overlap, size - wordBoundaryContextStart, size - 1);
         }
         memcpySpan(m_buffer.mutableSpan(), m_buffer.span().last(overlap));
         m_prefixLength -= std::min(m_prefixLength, size - overlap);

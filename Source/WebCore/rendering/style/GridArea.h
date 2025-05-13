@@ -164,7 +164,7 @@ public:
     {
         ASSERT(m_type != Indefinite);
         m_startLine = std::max(m_startLine, 0);
-        m_endLine = std::max(std::min(m_endLine, max), 1);
+        m_endLine = std::clamp(m_endLine, 1, max);
         if (m_startLine >= m_endLine)
             m_startLine = m_endLine - 1;
     }
@@ -197,8 +197,8 @@ private:
         }
 #endif
 
-        m_startLine = std::max(GridPosition::min(), std::min(startLine, GridPosition::max() - 1));
-        m_endLine = std::max(GridPosition::min() + 1, std::min(endLine, GridPosition::max()));
+        m_startLine = std::clamp(startLine, GridPosition::min(), GridPosition::max() - 1);
+        m_endLine = std::clamp(endLine, GridPosition::min() + 1, GridPosition::max());
     }
 
     int m_startLine;

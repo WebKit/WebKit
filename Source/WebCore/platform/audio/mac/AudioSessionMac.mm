@@ -424,7 +424,7 @@ void AudioSessionMac::setPreferredBufferSize(size_t bufferSize)
 
     size_t minBufferSize = static_cast<size_t>(bufferSizeRange.mMinimum);
     size_t maxBufferSize = static_cast<size_t>(bufferSizeRange.mMaximum);
-    UInt32 bufferSizeOut = std::min(maxBufferSize, std::max(minBufferSize, bufferSize));
+    UInt32 bufferSizeOut = std::clamp(bufferSize, minBufferSize, maxBufferSize);
 
     result = AudioObjectSetPropertyData(defaultDevice(), &bufferSizeAddress(), 0, 0, sizeof(bufferSizeOut), (void*)&bufferSizeOut);
 

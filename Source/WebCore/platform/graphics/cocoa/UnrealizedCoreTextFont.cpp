@@ -288,11 +288,11 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
         m_slope = fontSelectionRequest.slope.value_or(normalItalicValue());
         m_fontStyleAxis = fontDescription.fontStyleAxis();
         if (auto weightValue = fontCreationContext.fontFaceCapabilities().weight)
-            m_weight = std::max(std::min(m_weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
+            m_weight = std::clamp<float>(m_weight, weightValue->minimum, weightValue->maximum);
         if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
-            m_width = std::max(std::min(m_width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
+            m_width = std::clamp<float>(m_width, widthValue->minimum, widthValue->maximum);
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
-            m_slope = std::max(std::min(m_slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
+            m_slope = std::clamp<float>(m_slope, slopeValue->minimum, slopeValue->maximum);
         if (shouldEnhanceTextLegibility && fontTypeForPreparation == FontTypeForPreparation::SystemFont) {
             auto ctWeight = denormalizeCTWeight(m_weight);
             ctWeight = CTFontGetAccessibilityBoldWeightOfWeight(ctWeight);

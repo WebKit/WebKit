@@ -684,8 +684,8 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
     // Narrows |start| and |end| into |caretMinOffset| and |caretMaxOffset| to ignore unrendered leading 
     // and trailing whitespaces.
-    start = std::min(std::max(caretMinOffset, start), caretMaxOffset);
-    end = std::min(std::max(caretMinOffset, end), caretMaxOffset);
+    start = std::clamp(start, caretMinOffset, caretMaxOffset);
+    end = std::clamp(end, caretMinOffset, caretMaxOffset);
 
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(*this)) {

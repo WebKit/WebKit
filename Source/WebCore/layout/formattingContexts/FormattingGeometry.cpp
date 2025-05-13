@@ -161,7 +161,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layo
         // If the available space in a given axis is definite, equal to min(max-content size,
         // max(min-content size, stretch-fit size)). Otherwise, equal to the max-content size in that axis.
         // FIXME: We don't yet have indefinite available size.
-        return std::min(intrinsicWidthConstraints.maximum, std::max(intrinsicWidthConstraints.minimum, containingBlockWidth));
+        return std::clamp(containingBlockWidth, intrinsicWidthConstraints.minimum, intrinsicWidthConstraints.maximum);
     }
     return { };
 }
@@ -316,7 +316,7 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
         }
         return LayoutContext::createFormattingContext(*root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
     }();
-    return std::min(std::max(computedIntrinsicWidthConstraints.minimum, availableWidth), computedIntrinsicWidthConstraints.maximum);
+    return std::clamp(availableWidth, computedIntrinsicWidthConstraints.minimum, computedIntrinsicWidthConstraints.maximum);
 }
 
 VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const ElementBox& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const

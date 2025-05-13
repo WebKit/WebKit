@@ -768,6 +768,7 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
     LayoutUnit minHeight = computedLogicalMinHeight ? computedLogicalMinHeight.value() : LayoutUnit();
     if (styleToUse.hasAspectRatio())
         constrainLogicalMinMaxSizesByAspectRatio(minHeight, maxHeight, logicalHeight, minimumSizeType, ConstrainDimension::Height);
+    // Unable to use std::clamp() as minHeight may be greater than maxHeight.
     logicalHeight = std::min(logicalHeight, maxHeight);
     return std::max(logicalHeight, minHeight);
 }
@@ -2813,7 +2814,7 @@ LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLengt
     if (logicalWidthLength.isFitContent()) {
         minLogicalWidth += borderAndPadding;
         maxLogicalWidth += borderAndPadding;
-        return std::max(minLogicalWidth, std::min(maxLogicalWidth, fillAvailableMeasure(availableLogicalWidth)));
+        return std::clamp(fillAvailableMeasure(availableLogicalWidth), minLogicalWidth, maxLogicalWidth);
     }
 
     ASSERT_NOT_REACHED();
@@ -2842,7 +2843,7 @@ LayoutUnit RenderBox::computeLogicalWidthUsing(SizeType widthType, Length logica
         logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
 
     if (widthType == SizeType::MainOrPreferredSize && sizesLogicalWidthToFitContent(widthType))
-        return std::max(minPreferredLogicalWidth(), std::min(maxPreferredLogicalWidth(), logicalWidthResult));
+        return std::clamp(logicalWidthResult, minPreferredLogicalWidth(), maxPreferredLogicalWidth());
     return logicalWidthResult;
 }
 
@@ -3536,6 +3537,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUni
     bool useLogicalWidthForMaxWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isUndefined();
     auto minLogicalWidth =  useLogicalWidthForMinWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MinSize, logicalMinWidth);
     auto maxLogicalWidth =  useLogicalWidthForMaxWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MaxSize, logicalMaxWidth);
+    // Unable to use std::clamp as minLogicalWidth may be greater than maxLogicalWidth.
     return std::max(minLogicalWidth, std::min(logicalWidth, maxLogicalWidth));
 }
 
@@ -3693,6 +3695,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutU
     LayoutUnit maxLogicalHeight = logicalHeight;
     if (!replacedMinMaxLogicalHeightComputesAsNone(SizeType::MaxSize))
         maxLogicalHeight = computeReplacedLogicalHeightUsing(SizeType::MaxSize, style().logicalMaxHeight());
+    // Unable to use std::clamp as minLogicalHeight may be greater than maxLogicalHeight.
     return std::max(minLogicalHeight, std::min(logicalHeight, maxLogicalHeight));
 }
 
@@ -4084,7 +4087,7 @@ LayoutUnit RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Len
     if (shrinkToFit) {
         LayoutUnit preferredWidth = maxPreferredLogicalWidth() - inlineConstraints.bordersPlusPadding();
         LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - inlineConstraints.bordersPlusPadding();
-        return std::min(std::max(preferredMinWidth, inlineConstraints.availableContentSpace()), preferredWidth);
+        return std::clamp(inlineConstraints.availableContentSpace(), preferredMinWidth, preferredWidth);
     }
 
     return std::max(0_lu, inlineConstraints.availableContentSpace());

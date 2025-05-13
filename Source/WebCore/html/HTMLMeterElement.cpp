@@ -113,7 +113,7 @@ void HTMLMeterElement::setMax(double max)
 double HTMLMeterElement::value() const
 {
     double value = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(valueAttr), 0);
-    return std::min(std::max(value, min()), max());
+    return std::clamp(value, min(), max());
 }
 
 void HTMLMeterElement::setValue(double value)
@@ -124,7 +124,7 @@ void HTMLMeterElement::setValue(double value)
 double HTMLMeterElement::low() const
 {
     double low = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(lowAttr), min());
-    return std::min(std::max(low, min()), max());
+    return std::clamp(low, min(), max());
 }
 
 void HTMLMeterElement::setLow(double low)
@@ -135,7 +135,7 @@ void HTMLMeterElement::setLow(double low)
 double HTMLMeterElement::high() const
 {
     double high = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(highAttr), max());
-    return std::min(std::max(high, low()), max());
+    return std::clamp(high, low(), max());
 }
 
 void HTMLMeterElement::setHigh(double high)

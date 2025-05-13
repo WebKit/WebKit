@@ -365,7 +365,7 @@ template<> ConversionResult<IDLLongLong> convertToIntegerClamp<IDLLongLong>(JSC:
 
     RETURN_IF_EXCEPTION(scope, ConversionResult<IDLLongLong>::exception());
 
-    return std::isnan(x) ? 0 : static_cast<int64_t>(std::min<double>(std::max<double>(x, -kJSMaxInteger), kJSMaxInteger));
+    return std::isnan(x) ? 0 : static_cast<int64_t>(std::clamp<double>(x, -kJSMaxInteger, kJSMaxInteger));
 }
 
 template<> ConversionResult<IDLUnsignedLongLong> convertToIntegerClamp<IDLUnsignedLongLong>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
@@ -380,7 +380,7 @@ template<> ConversionResult<IDLUnsignedLongLong> convertToIntegerClamp<IDLUnsign
 
     RETURN_IF_EXCEPTION(scope, ConversionResult<IDLUnsignedLongLong>::exception());
 
-    return std::isnan(x) ? 0 : static_cast<uint64_t>(std::min<double>(std::max<double>(x, 0), kJSMaxInteger));
+    return std::isnan(x) ? 0 : static_cast<uint64_t>(std::clamp<double>(x, 0, kJSMaxInteger));
 }
 
 template<> ConversionResult<IDLLongLong> convertToInteger<IDLLongLong>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

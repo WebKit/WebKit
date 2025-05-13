@@ -386,7 +386,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
         desiredColumnCount = std::max<unsigned>(1, ((availWidth + colGap) / (colWidth + colGap)).toUnsigned());
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     } else {
-        desiredColumnCount = std::max<unsigned>(std::min(colCount, ((availWidth + colGap) / (colWidth + colGap)).toUnsigned()), 1);
+        desiredColumnCount = std::clamp<unsigned>(((availWidth + colGap) / (colWidth + colGap)).toUnsigned(), 1, colCount);
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     }
     setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);

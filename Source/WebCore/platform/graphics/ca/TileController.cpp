@@ -663,9 +663,13 @@ IntSize TileController::computeTileSize()
     if (m_scrollability == Scrollability::NotScrollable) {
         IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
         tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), maxTileSize);
-    } else if (m_scrollability == Scrollability::VerticallyScrollable)
-        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
-
+    } else if (m_scrollability == Scrollability::VerticallyScrollable) {
+        tileSize.setWidth(std::clamp<int>(
+            ceilf(boundsWithoutMargin().width() * tileGrid().scale()),
+            kDefaultTileSize,
+            maxTileSize.width()
+        ));
+    }
     LOG_WITH_STREAM(Tiling, stream << "TileController::tileSize newSize=" << tileSize);
 
     m_tileSizeLocked = true;

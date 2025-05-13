@@ -1857,7 +1857,7 @@ inline float BuilderConverter::convertOpacity(BuilderState& builderState, const 
         return { };
 
     float opacity = primitiveValue->valueDividingBy100IfPercentage(builderState.cssToLengthConversionData());
-    return std::max(0.0f, std::min(1.0f, opacity));
+    return std::clamp(opacity, 0.0f, 1.0f);
 }
 
 inline Style::URL BuilderConverter::convertSVGURIReference(BuilderState& builderState, const CSSValue& value)

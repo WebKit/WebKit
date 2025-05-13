@@ -120,7 +120,7 @@ RefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1, HRT
         return nullptr;
  
     ASSERT(x >= 0.0 && x < 1.0);
-    x = std::min(1.0f, std::max(0.0f, x));
+    x = std::clamp(x, 0.0f, 1.0f);
     
     float sampleRate1 = kernel1->sampleRate();
     float sampleRate2 = kernel2->sampleRate();

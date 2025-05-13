@@ -88,7 +88,7 @@ Decimal StepRange::alignValueForStep(const Decimal& currentValue, const Decimal&
 
 Decimal StepRange::clampValue(const Decimal& value) const
 {
-    const Decimal inRangeValue = std::max(m_minimum, std::min(value, m_maximum));
+    const Decimal inRangeValue = std::clamp(value, m_minimum, m_maximum);
     if (!m_hasStep)
         return inRangeValue;
     // Rounds inRangeValue to stepBase + N * step.

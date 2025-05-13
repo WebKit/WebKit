@@ -393,7 +393,7 @@ double ViewportConfiguration::minimumScale() const
             minimumScale = m_viewLayoutSize.height() / contentHeight;
     }
 
-    minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
+    minimumScale = std::clamp(minimumScale, m_configuration.minimumScale, m_configuration.maximumScale);
 
     return minimumScale;
 }
@@ -505,7 +505,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::testingParameters()
 static inline bool applyViewportArgument(double& value, float viewportArgumentValue, float minimum, float maximum)
 {
     if (viewportArgumentValueIsValid(viewportArgumentValue)) {
-        value = std::min(maximum, std::max(minimum, viewportArgumentValue));
+        value = std::clamp(viewportArgumentValue, minimum, maximum);
         return true;
     }
 

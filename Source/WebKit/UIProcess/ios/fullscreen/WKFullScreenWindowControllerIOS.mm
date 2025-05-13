@@ -1804,7 +1804,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     CGPoint translation = [_interactivePanDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
     CGPoint velocity = [_interactivePanDismissGestureRecognizer velocityInView:_fullscreenViewController.get().view];
     CGFloat progress = translation.y / (_fullscreenViewController.get().view.bounds.size.height / 2);
-    progress = std::min(1., std::max(0., progress));
+    progress = std::clamp(progress, 0., 1.);
 
     if (_interactivePanDismissGestureRecognizer.get().state == UIGestureRecognizerStateEnded) {
         _inInteractiveDismiss = false;

@@ -52,7 +52,7 @@ static inline float clampLengthValue(float value)
 
     // Limits as previously defined in the css-device-adapt spec.
     if (value != ViewportArguments::ValueAuto)
-        return std::min<float>(10000, std::max<float>(value, 1));
+        return std::clamp<float>(value, 1, 10000);
     return value;
 }
 
@@ -63,7 +63,7 @@ static inline float clampScaleValue(float value)
 
     // Limits as previously defined in the css-device-adapt spec.
     if (value != ViewportArguments::ValueAuto)
-        return std::min<float>(10, std::max<float>(value, 0.1));
+        return std::clamp<float>(value, 0.1, 10);
     return value;
 }
 
@@ -130,7 +130,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     }
 
     // Constrain initial-scale value to minimum-scale/maximum-scale range.
-    result.initialScale = std::min(result.maximumScale, std::max(result.minimumScale, result.initialScale));
+    result.initialScale = std::clamp(result.initialScale, result.minimumScale, result.maximumScale);
 
     // Resolve width value.
     if (resultWidth == ViewportArguments::ValueAuto) {

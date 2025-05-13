@@ -505,7 +505,7 @@ static double scaleAfterViewportWidthChange(double currentScale, bool scaleToFit
     // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
     double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
     double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
-    scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
+    scale = std::clamp(newScale, viewportConfiguration.minimumScale(), viewportConfiguration.maximumScale());
     LOG(VisibleRects, "scaleAfterViewportWidthChange scaling content to fit: %.2f", scale);
     return scale;
 }
@@ -554,7 +554,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
     FloatSize currentMinimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
     if (historyItem.minimumLayoutSizeInScrollViewCoordinates() == currentMinimumLayoutSizeInScrollViewCoordinates) {
         float boundedScale = historyItem.scaleIsInitial() ? m_viewportConfiguration.initialScale() : historyItem.pageScaleFactor();
-        boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), boundedScale));
+        boundedScale = std::clamp<float>(boundedScale, m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
         scalePage(boundedScale, IntPoint());
 
         std::optional<FloatPoint> scrollPosition;
@@ -4860,7 +4860,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
     double scale;
     if (m_userHasChangedPageScaleFactor && zoomToInitialScale == ZoomToInitialScale::No)
-        scale = std::max(std::min(pageScaleFactor(), m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
+        scale = std::clamp(pageScaleFactor(), m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
     else
         scale = initialScale;
 
@@ -5002,7 +5002,7 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
         scaleFromUIProcess = currentScale;
     }
     
-    scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
+    scaleFromUIProcess = std::clamp<float>(scaleFromUIProcess, m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
     if (scalesAreEssentiallyEqual(currentScale, scaleFromUIProcess))
         return std::nullopt;
 

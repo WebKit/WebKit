@@ -851,7 +851,7 @@ SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resol
         minValue = 0;
         maxValue = SMILTime::indefinite();
     }
-    return resolvedBegin + std::min(maxValue, std::max(minValue, preliminaryActiveDuration));
+    return resolvedBegin + std::clamp(preliminaryActiveDuration, minValue, maxValue);
 }
 
 void SVGSMILElement::resolveInterval(bool first, SMILTime& beginResult, SMILTime& endResult) const

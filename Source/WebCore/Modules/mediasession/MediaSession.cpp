@@ -382,7 +382,7 @@ std::optional<double> MediaSession::currentPosition() const
 
     auto elapsedTime = (MonotonicTime::now() - m_timeAtLastPositionUpdate) * actualPlaybackRate;
 
-    return std::max(0., std::min(*m_lastReportedPosition + elapsedTime.value(), m_positionState->duration));
+    return std::clamp(*m_lastReportedPosition + elapsedTime.value(), 0., m_positionState->duration);
 }
 
 Document* MediaSession::document() const

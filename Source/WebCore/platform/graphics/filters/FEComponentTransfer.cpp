@@ -260,7 +260,7 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
                 double v1 = tableValues[k];
                 double v2 = tableValues[std::min((k + 1), (n - 1))];
                 double val = 255.0 * (v1 + (c * (n - 1) - k) * (v2 - v1));
-                val = std::max(0.0, std::min(255.0, val));
+                val = std::clamp(val, 0.0, 255.0);
                 values[i] = static_cast<uint8_t>(val);
             }
         },
@@ -275,7 +275,7 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
                 unsigned k = static_cast<unsigned>((i * n) / 255.0);
                 k = std::min(k, n - 1);
                 double val = 255 * tableValues[k];
-                val = std::max(0.0, std::min(255.0, val));
+                val = std::clamp(val, 0.0, 255.0);
                 values[i] = static_cast<uint8_t>(val);
             }
         },
@@ -284,7 +284,7 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
         {
             for (unsigned i = 0; i < values.size(); ++i) {
                 double val = transferFunction.slope * i + 255 * transferFunction.intercept;
-                val = std::max(0.0, std::min(255.0, val));
+                val = std::clamp(val, 0.0, 255.0);
                 values[i] = static_cast<uint8_t>(val);
             }
         },
@@ -294,7 +294,7 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
             for (unsigned i = 0; i < values.size(); ++i) {
                 double exponent = transferFunction.exponent; // RCVT doesn't like passing a double and a float to pow, so promote this to double
                 double val = 255.0 * (transferFunction.amplitude * pow((i / 255.0), exponent) + transferFunction.offset);
-                val = std::max(0.0, std::min(255.0, val));
+                val = std::clamp(val, 0.0, 255.0);
                 values[i] = static_cast<uint8_t>(val);
             }
         }

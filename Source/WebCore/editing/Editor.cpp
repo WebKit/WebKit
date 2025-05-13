@@ -2580,7 +2580,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
                 renderer->repaint();
 
             unsigned start = std::min(baseOffset + selectionStart, extentOffset);
-            unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);
+            unsigned end = std::clamp(baseOffset + selectionEnd, start, extentOffset);
             auto range = SimpleRange { { *baseNode, start }, { *baseNode, end } };
             document->selection().setSelectedRange(range, Affinity::Downstream, FrameSelection::ShouldCloseTyping::No);
         }

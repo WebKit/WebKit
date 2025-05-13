@@ -99,7 +99,7 @@ double ViewGestureController::resistanceForDelta(double deltaScale, double curre
     // Outside of the extremes, resist further scaling.
     double limit = currentScale < minMagnification ? minMagnification : maxMagnification;
     double scaleDistance = std::abs(limit - currentScale);
-    double scalePercent = std::min(std::max(scaleDistance / limit, 0.), 1.);
+    double scalePercent = std::clamp(scaleDistance / limit, 0., 1.);
     double resistance = zoomOutResistance + scalePercent * (0.01 - zoomOutResistance);
 
     return resistance;
@@ -148,7 +148,7 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
     auto maxElasticMagnification = maxMagnification * 1.333;
 
     m_magnification += m_magnification * scaleWithResistance;
-    m_magnification = std::min(std::max(m_magnification, minElasticMagnification), maxElasticMagnification);
+    m_magnification = std::clamp(m_magnification, minElasticMagnification, maxElasticMagnification);
 
     LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleMagnificationGestureEvent - gesture scale " << scale << " with resistance " << scaleWithResistance << " clamped to " << m_magnification << " origin in view coords " << origin);
 
@@ -215,7 +215,7 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
 
     auto minMagnification = page->minPageZoomFactor();
     auto maxMagnification = page->maxPageZoomFactor();
-    targetMagnification = std::min(std::max(targetMagnification, minMagnification), maxMagnification);
+    targetMagnification = std::clamp(targetMagnification, minMagnification, maxMagnification);
 
     // Allow panning between elements via double-tap while magnified, unless the target rect is
     // similar to the last one or the mouse has not moved, in which case we'll zoom all the way out.
@@ -294,7 +294,7 @@ void ViewGestureController::trackSwipeGesture(PlatformScrollEvent event, SwipeDi
         }
         if (phase == NSEventPhaseBegan)
             this->beginSwipeGesture(targetItem.get(), direction);
-        CGFloat clampedProgress = std::min(std::max(progress, minProgress), maxProgress);
+        CGFloat clampedProgress = std::clamp(progress, minProgress, maxProgress);
         this->handleSwipeGesture(targetItem.get(), clampedProgress, direction);
         if (phase == NSEventPhaseCancelled)
             swipeCancelled = true;
@@ -566,7 +566,7 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     double swipingLayerOffset = floor(width * progress);
 
     double dimmingProgress = swipingLeft ? 1 - progress : -progress;
-    dimmingProgress = std::min(1., std::max(dimmingProgress, 0.));
+    dimmingProgress = std::clamp(dimmingProgress, 0., 1.);
     [m_swipeDimmingLayer setOpacity:dimmingProgress * swipeOverlayDimmingOpacity];
 
     double absoluteProgress = std::abs(progress);

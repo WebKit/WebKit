@@ -436,7 +436,7 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
         if (isSingleLineFlexContainer()) {
             auto minimumCrossSize = crossAxis.minimumSize.value_or(flexLinesCrossSizeList[lineIndex]);
             auto maximumCrossSize = crossAxis.maximumSize.value_or(LayoutUnit::max());
-            flexLinesCrossSizeList[lineIndex] = std::min(maximumCrossSize, std::max(minimumCrossSize, flexLinesCrossSizeList[lineIndex]));
+            flexLinesCrossSizeList[lineIndex] = std::clamp(flexLinesCrossSizeList[lineIndex], minimumCrossSize, maximumCrossSize);
         }
     }
     return flexLinesCrossSizeList;
@@ -497,7 +497,7 @@ FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexI
                         stretchedInnerCrossSize -= flexItem.crossAxis().borderAndPadding;
                     auto maximum = flexItem.crossAxis().maximumSize.value_or(stretchedInnerCrossSize);
                     auto minimum = flexItem.crossAxis().minimumSize.value_or(stretchedInnerCrossSize);
-                    return std::min(maximum, std::max(minimum, stretchedInnerCrossSize));
+                    return std::clamp(stretchedInnerCrossSize, minimum, maximum);
                 };
                 crossSizeList[flexItemIndex] = stretchedInnerCrossSize();
                 // FIXME: This requires re-layout to get percentage-sized descendants updated.

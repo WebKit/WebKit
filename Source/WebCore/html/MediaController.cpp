@@ -179,7 +179,7 @@ double MediaController::currentTime() const
 
     if (m_position == MediaPlayer::invalidTime()) {
         // Some clocks may return times outside the range of [0..duration].
-        m_position = std::max<double>(0, std::min(duration(), m_clock->currentTime()));
+        m_position = std::clamp<double>(m_clock->currentTime(), 0, duration());
         m_clearPositionTimer.startOneShot(0_s);
     }
 

@@ -40,6 +40,7 @@ IntSize::IntSize(const FloatSize& s)
 
 IntSize IntSize::constrainedBetween(const IntSize& min, const IntSize& max) const
 {
+    // Unable to use std::clamp() here as `min` may be greater than `max`.
     return {
         std::max(min.width(), std::min(max.width(), m_width)),
         std::max(min.height(), std::min(max.height(), m_height))

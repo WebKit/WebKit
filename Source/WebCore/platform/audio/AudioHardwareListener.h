@@ -59,7 +59,7 @@ public:
         size_t minimum { 0 };
         size_t maximum { 0 };
         operator bool() const { return minimum && maximum; }
-        size_t nearest(size_t value) const { return std::min(std::max(value, minimum), maximum); }
+        size_t nearest(size_t value) const { return std::clamp(value, minimum, maximum); }
     };
     BufferSizeRange supportedBufferSizes() const { return m_supportedBufferSizes; }
 

@@ -127,7 +127,7 @@ float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
     // When the page scale is 1, the curve should be the identity.
     // Linearly interpolate between the curve above and identity based on the page scale.
     // Beware that depending on the specific values picked in the curve, this interpolation might change the shape of the curve for very small pageScales.
-    pageScale = std::min(std::max(pageScale, 0.5f), 1.0f);
+    pageScale = std::clamp(pageScale, 0.5f, 1.0f);
     auto scalePoint = [&](FloatPoint point) {
         float fraction = 3.0f - 3.0f * pageScale;
         point.setY(point.x() + (point.y() - point.x()) * fraction);

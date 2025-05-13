@@ -33,8 +33,8 @@ namespace WebCore {
 LayoutPoint LayoutPoint::constrainedBetween(const LayoutPoint& min, const LayoutPoint& max) const
 {
     return {
-        std::max(min.x(), std::min(max.x(), m_x)),
-        std::max(min.y(), std::min(max.y(), m_y))
+        std::clamp(m_x, min.x(), max.x()),
+        std::clamp(m_y, min.y(), max.y())
     };
 }
 

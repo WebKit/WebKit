@@ -458,11 +458,11 @@ void WebInspectorUIProxy::platformAttach()
     if (m_attachmentSide == AttachmentSide::Bottom) {
         unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protectedInspectedPage()->viewWidget());
         unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
-        platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
+        platformSetAttachedWindowHeight(std::clamp(s_defaultAttachedSize, s_minimumAttachedHeight, maximumAttachedHeight));
     } else {
         unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protectedInspectedPage()->viewWidget());
         unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
-        platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
+        platformSetAttachedWindowWidth(std::clamp(s_defaultAttachedSize, s_minimumAttachedWidth, maximumAttachedWidth));
     }
 
     if (m_client && m_client->attach(*this))
