@@ -42,7 +42,7 @@ JSInstruction* returnToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING
-    if (Options::traceLLIntSlowPath()) [[unlikely]] {
+    if (UNLIKELY(Options::traceLLIntSlowPath())) {
         auto scope = DECLARE_CATCH_SCOPE(vm);
         dataLog("Throwing exception ", JSValue(scope.exception()), " (returnToThrow).\n");
     }
@@ -54,7 +54,7 @@ WasmInstruction* wasmReturnToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING
-    if (Options::traceLLIntSlowPath()) [[unlikely]] {
+    if (UNLIKELY(Options::traceLLIntSlowPath())) {
         auto scope = DECLARE_CATCH_SCOPE(vm);
         dataLog("Throwing exception ", JSValue(scope.exception()), " (returnToThrow).\n");
     }
@@ -66,7 +66,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING
-    if (Options::traceLLIntSlowPath()) [[unlikely]] {
+    if (UNLIKELY(Options::traceLLIntSlowPath())) {
         auto scope = DECLARE_CATCH_SCOPE(vm);
         dataLog("Throwing exception ", JSValue(scope.exception()), " (callToThrow).\n");
     }

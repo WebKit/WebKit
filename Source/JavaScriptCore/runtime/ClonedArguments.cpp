@@ -48,10 +48,10 @@ ClonedArguments* ClonedArguments::createEmpty(VM& vm, JSGlobalObject* nullOrGlob
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return nullptr;
 
-    if (structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()) [[unlikely]] {
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing())) {
         if (!butterfly) {
             butterfly = tryCreateArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
-            if (!butterfly) [[unlikely]] {
+            if (UNLIKELY(!butterfly)) {
                 if (nullOrGlobalObjectForOOM) {
                     auto scope = DECLARE_THROW_SCOPE(vm);
                     throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
@@ -66,7 +66,7 @@ ClonedArguments* ClonedArguments::createEmpty(VM& vm, JSGlobalObject* nullOrGlob
             indexingHeader.setVectorLength(vectorLength);
             indexingHeader.setPublicLength(length);
             butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
-            if (!butterfly) [[unlikely]] {
+            if (UNLIKELY(!butterfly)) {
                 if (nullOrGlobalObjectForOOM) {
                     auto scope = DECLARE_THROW_SCOPE(vm);
                     throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
@@ -311,7 +311,7 @@ void ClonedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* fir
         unsigned i;
         for (i = offset; i < limit; ++i) {
             JSValue value = data[i].get();
-            if (!value) [[unlikely]] {
+            if (UNLIKELY(!value)) {
                 value = get(globalObject, i);
                 RETURN_IF_EXCEPTION(scope, void());
             }
@@ -349,13 +349,13 @@ bool ClonedArguments::isIteratorProtocolFastAndNonObservable()
     if (structure->didTransition())
         return false;
 
-    if (structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()) [[unlikely]]
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()))
         return false;
 
     // Even though Structure is not transitioned, it is possible that length property is replaced with random value.
     // To avoid side-effect, we need to ensure that this value is Int32.
     JSValue lengthValue = getDirect(clonedArgumentsLengthPropertyOffset);
-    if (lengthValue.isInt32() && lengthValue.asInt32() >= 0) [[likely]]
+    if (LIKELY(lengthValue.isInt32() && lengthValue.asInt32() >= 0))
         return true;
 
     return false;

@@ -77,7 +77,7 @@ ALWAYS_INLINE void CatchScope::clearException()
 
 ALWAYS_INLINE bool CatchScope::clearExceptionExceptTermination()
 {
-    if (m_vm.hasPendingTerminationException()) [[unlikely]] {
+    if (UNLIKELY(m_vm.hasPendingTerminationException())) {
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
         m_vm.exception();
 #endif
@@ -88,7 +88,7 @@ ALWAYS_INLINE bool CatchScope::clearExceptionExceptTermination()
 }
 
 #define CLEAR_AND_RETURN_IF_EXCEPTION(scope__, value__) do { \
-        if ((scope__).exception()) [[unlikely]] { \
+        if (UNLIKELY((scope__).exception())) { \
             (scope__).clearException(); \
             return value__; \
         } \

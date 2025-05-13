@@ -80,7 +80,7 @@ inline Butterfly* Butterfly::tryCreateUninitialized(VM& vm, JSObject*, size_t pr
 {
     size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
     void* base = vm.auxiliarySpace().allocate(vm, size, deferralContext, AllocationFailureMode::ReturnNull);
-    if (!base) [[unlikely]]
+    if (UNLIKELY(!base))
         return nullptr;
 
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);

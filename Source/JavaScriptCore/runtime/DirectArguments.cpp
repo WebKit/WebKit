@@ -125,7 +125,7 @@ void DirectArguments::overrideThings(JSGlobalObject* globalObject)
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocate(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
-    if (!backingStore) [[unlikely]] {
+    if (UNLIKELY(!backingStore)) {
         throwOutOfMemoryError(globalObject, scope);
         return;
     }
@@ -182,7 +182,7 @@ bool DirectArguments::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
-    if (m_mappedArguments) [[unlikely]]
+    if (UNLIKELY(m_mappedArguments))
         return false;
 
     if (structure->didTransition())
@@ -196,19 +196,19 @@ JSArray* DirectArguments::fastSlice(JSGlobalObject* globalObject, DirectArgument
     if (count >= MIN_SPARSE_ARRAY_INDEX)
         return nullptr;
 
-    if (arguments->m_mappedArguments) [[unlikely]]
+    if (UNLIKELY(arguments->m_mappedArguments))
         return nullptr;
 
     if (startIndex + count > arguments->m_length)
         return nullptr;
 
     Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
-    if (hasAnyArrayStorage(resultStructure->indexingType())) [[unlikely]]
+    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
         return nullptr;
 
     ObjectInitializationScope scope(globalObject->vm());
     JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
-    if (!resultArray) [[unlikely]]
+    if (UNLIKELY(!resultArray))
         return nullptr;
 
     auto& resultButterfly = *resultArray->butterfly();

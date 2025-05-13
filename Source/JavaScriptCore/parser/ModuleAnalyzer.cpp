@@ -147,7 +147,7 @@ Expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze
     for (const auto& pair : m_moduleRecord->lexicalVariables())
         exportVariable(moduleProgramNode, pair.key, pair.value);
 
-    if (Options::dumpModuleRecord()) [[unlikely]]
+    if (UNLIKELY(Options::dumpModuleRecord()))
         m_moduleRecord->dump();
 
     return m_moduleRecord;

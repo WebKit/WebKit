@@ -102,10 +102,10 @@ namespace JSC {
 
 #define CHECK_EXCEPTION() do {                    \
         doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc);   \
-        if (throwScope.exception()) [[unlikely]] {   \
-            RETURN_TO_THROW(pc);                     \
-            END_IMPL();                              \
-        }                                            \
+        if (UNLIKELY(throwScope.exception())) {   \
+            RETURN_TO_THROW(pc);            \
+            END_IMPL();                           \
+        }                                         \
     } while (false)
 
 #define END() do {                        \
@@ -523,7 +523,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_object)
     BEGIN();
     auto bytecode = pc->as<OpToObject>();
     JSValue argument = GET_C(bytecode.m_operand).jsValue();
-    if (argument.isUndefinedOrNull()) [[unlikely]] {
+    if (UNLIKELY(argument.isUndefinedOrNull())) {
         const Identifier& ident = codeBlock->identifier(bytecode.m_message);
         if (!ident.isEmpty())
             THROW(createTypeError(globalObject, ident.impl()));
@@ -911,7 +911,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enter)
     BEGIN();
     Heap::heap(codeBlock)->writeBarrier(codeBlock);
     GET(codeBlock->scopeRegister()) = jsCast<JSCallee*>(callFrame->jsCallee())->scope();
-    if (codeBlock->couldBeTainted()) [[unlikely]]
+    if (UNLIKELY(codeBlock->couldBeTainted()))
         vm.setMightBeExecutingTaintedCode();
     END();
 }
@@ -1159,7 +1159,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
     JSValue thisValue = GET_C(bytecode.m_thisValue).jsValue();
     JSValue subscript = GET_C(bytecode.m_property).jsValue();
 
-    if (baseValue.isCell() && subscript.isString()) [[likely]] {
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure();
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             auto existingAtomString = asString(subscript)->toExistingAtomString(globalObject);
@@ -1299,17 +1299,17 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
         } else
             checkedArraySize += 1;
     }
-    if (checkedArraySize.hasOverflowed()) [[unlikely]]
+    if (UNLIKELY(checkedArraySize.hasOverflowed()))
         THROW(createOutOfMemoryError(globalObject));
 
     unsigned arraySize = checkedArraySize;
-    if (arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH) [[unlikely]]
+    if (UNLIKELY(arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH))
         THROW(createOutOfMemoryError(globalObject));
 
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
     JSArray* result = JSArray::tryCreate(vm, structure, arraySize);
-    if (!result) [[unlikely]]
+    if (UNLIKELY(!result))
         THROW(createOutOfMemoryError(globalObject));
     CHECK_EXCEPTION();
 
@@ -1350,11 +1350,11 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_species)
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, array, length);
     EXCEPTION_ASSERT(!!throwScope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
 
-    if (speciesResult.first == SpeciesConstructResult::Exception) [[unlikely]]
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         CHECK_EXCEPTION();
 
-    if (speciesResult.first == SpeciesConstructResult::FastPath) [[likely]] {
-        if (length > std::numeric_limits<unsigned>::max()) [[unlikely]]
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
+        if (UNLIKELY(length > std::numeric_limits<unsigned>::max()))
             THROW(createRangeError(globalObject, ArrayInvalidLengthError));
 
         JSArray* result = constructEmptyArray(globalObject, &arrayAllocationProfile, static_cast<unsigned>(length));
@@ -1379,7 +1379,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
     ASSERT(isCopyOnWrite(indexingMode));
     ASSERT(!structure->outOfLineCapacity());
 
-    if (immutableButterfly->indexingMode() != indexingMode) [[unlikely]] {
+    if (UNLIKELY(immutableButterfly->indexingMode() != indexingMode)) {
         auto* newButterfly = JSImmutableButterfly::create(vm, indexingMode, immutableButterfly->length());
         for (unsigned i = 0; i < immutableButterfly->length(); ++i)
             newButterfly->setIndex(vm, i, immutableButterfly->get(i));

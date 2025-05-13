@@ -137,7 +137,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
     JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
     JSValue result = vm.interpreter.executeProgram(source, globalObject, thisObj);
 
-    if (scope.exception()) [[unlikely]] {
+    if (UNLIKELY(scope.exception())) {
         returnedException = scope.exception();
         scope.clearException();
         return jsUndefined();
@@ -278,7 +278,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
         return { };
 
     auto* optionsObject = jsDynamicCast<JSObject*>(options);
-    if (!optionsObject) [[unlikely]] {
+    if (UNLIKELY(!optionsObject)) {
         throwTypeError(globalObject, scope, "dynamic import's options should be an object"_s);
         return { };
     }
@@ -290,7 +290,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
         return { };
 
     auto* attributesObject = jsDynamicCast<JSObject*>(attributes);
-    if (!attributesObject) [[unlikely]] {
+    if (UNLIKELY(!attributesObject)) {
         throwTypeError(globalObject, scope, "dynamic import's options.with should be an object"_s);
         return { };
     }
@@ -304,7 +304,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
         JSValue value = attributesObject->get(globalObject, key);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!value.isString()) [[unlikely]] {
+        if (UNLIKELY(!value.isString())) {
             throwTypeError(globalObject, scope, "dynamic import's options.with includes non string property"_s);
             return { };
         }
@@ -316,7 +316,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
     }
 
     for (auto& [key, value] : result) {
-        if (!supportedImportAttributes.contains(key.get())) [[unlikely]] {
+        if (UNLIKELY(!supportedImportAttributes.contains(key.get()))) {
             throwTypeError(globalObject, scope, makeString("dynamic import's options.with includes unsupported attribute \""_s, StringView(key.get()), "\""_s));
             return { };
         }

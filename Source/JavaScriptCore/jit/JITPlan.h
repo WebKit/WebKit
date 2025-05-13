@@ -113,13 +113,13 @@ public:
 
     void beginSignpost()
     {
-        if (Options::useCompilerSignpost()) [[unlikely]]
+        if (UNLIKELY(Options::useCompilerSignpost()))
             beginSignpostImpl();
     }
 
     void endSignpost(SignpostDetail detail = SignpostDetail::None)
     {
-        if (Options::useCompilerSignpost()) [[unlikely]]
+        if (UNLIKELY(Options::useCompilerSignpost()))
             endSignpostImpl(detail);
     }
 

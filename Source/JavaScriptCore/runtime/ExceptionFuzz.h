@@ -40,7 +40,7 @@ void doExceptionFuzzing(JSGlobalObject*, ThrowScope&, ASCIILiteral where, const 
 // This is what you should call if you don't know if fuzzing is enabled.
 ALWAYS_INLINE void doExceptionFuzzingIfEnabled(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILiteral where, const void* returnPC)
 {
-    if (!Options::useExceptionFuzz()) [[likely]]
+    if (LIKELY(!Options::useExceptionFuzz()))
         return;
     doExceptionFuzzing(globalObject, scope, where, returnPC);
 }

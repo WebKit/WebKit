@@ -53,13 +53,13 @@ ALWAYS_INLINE static JSFinalizationRegistry* getFinalizationRegistry(VM& vm, JSG
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!value.isObject()) [[unlikely]] {
+    if (UNLIKELY(!value.isObject())) {
         throwTypeError(globalObject, scope, "Called FinalizationRegistry function on non-object"_s);
         return nullptr;
     }
 
     auto* group = jsDynamicCast<JSFinalizationRegistry*>(asObject(value));
-    if (group) [[likely]]
+    if (LIKELY(group))
         return group;
 
     throwTypeError(globalObject, scope, "Called FinalizationRegistry function on a non-FinalizationRegistry object"_s);
@@ -75,15 +75,15 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister, (JSGlobalObject*
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue target = callFrame->argument(0);
-    if (!canBeHeldWeakly(target)) [[unlikely]]
+    if (UNLIKELY(!canBeHeldWeakly(target)))
         return throwVMTypeError(globalObject, scope, "register requires an object or a non-registered symbol as the target"_s);
 
     JSValue holdings = callFrame->argument(1);
-    if (target == holdings) [[unlikely]]
+    if (UNLIKELY(target == holdings))
         return throwVMTypeError(globalObject, scope, "register expects the target object and the holdings parameter are not the same. Otherwise, the target can never be collected"_s);
 
     JSValue unregisterToken = callFrame->argument(2);
-    if (!unregisterToken.isUndefined() && !canBeHeldWeakly(unregisterToken)) [[unlikely]]
+    if (UNLIKELY(!unregisterToken.isUndefined() && !canBeHeldWeakly(unregisterToken)))
         return throwVMTypeError(globalObject, scope, "register requires an object or a non-registered symbol as the unregistration token"_s);
 
     group->registerTarget(vm, target.asCell(), holdings, unregisterToken);
@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister, (JSGlobalObjec
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue token = callFrame->argument(0);
-    if (!canBeHeldWeakly(token)) [[unlikely]]
+    if (UNLIKELY(!canBeHeldWeakly(token)))
         return throwVMTypeError(globalObject, scope, "unregister requires an object or a non-registered symbol as the unregistration token"_s);
 
     bool result = group->unregister(vm, token.asCell());

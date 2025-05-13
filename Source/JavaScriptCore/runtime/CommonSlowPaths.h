@@ -66,10 +66,8 @@ inline JSValue opEnumeratorGetByVal(JSGlobalObject* globalObject, JSValue baseVa
 
     switch (mode) {
     case JSPropertyNameEnumerator::IndexedMode: {
-        if (arrayProfile) {
-            if (baseValue.isCell()) [[likely]]
-                arrayProfile->observeStructureID(baseValue.asCell()->structureID());
-        }
+        if (arrayProfile && LIKELY(baseValue.isCell()))
+            arrayProfile->observeStructureID(baseValue.asCell()->structureID());
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, static_cast<unsigned>(index)));
     }
     case JSPropertyNameEnumerator::OwnStructureMode: {
@@ -199,7 +197,7 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
     if (result)
         *result = structure;
 
-    if (canPutDirectFast(vm, structure, propertyName, isJSFunction)) [[likely]] {
+    if (LIKELY(canPutDirectFast(vm, structure, propertyName, isJSFunction))) {
         bool success = baseObject->putDirect(vm, propertyName, value, 0, slot);
         ASSERT_UNUSED(success, success);
     } else {
@@ -239,7 +237,7 @@ inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSImmutable
 
     JSArray* result = JSArray::createWithButterfly(vm, nullptr, originalStructure, immutableButterfly->toButterfly());
     // FIXME: This works but it's slow. If we cared enough about the perf when having a bad time then we could fix it.
-    if (originalStructure != structure) [[unlikely]] {
+    if (UNLIKELY(originalStructure != structure)) {
         ASSERT(hasSlowPutArrayStorage(structure->indexingMode()));
         ASSERT(globalObject->isHavingABadTime());
 

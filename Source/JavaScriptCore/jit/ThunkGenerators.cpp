@@ -81,20 +81,20 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
     // This thunk is tail called from other thunks, and the return address is always already tagged
 
     // Exception fuzzing can call a runtime function. So, we need to preserve the return address here.
-    if (Options::useExceptionFuzz()) [[unlikely]]
+    if (UNLIKELY(Options::useExceptionFuzz()))
         jit.emitCTIThunkPrologue(/* returnAddressAlreadyTagged: */ true);
 
     CCallHelpers::Jump handleException = jit.emitNonPatchableExceptionCheck(vm);
 
-    if (Options::useExceptionFuzz()) [[unlikely]]
+    if (UNLIKELY(Options::useExceptionFuzz()))
         jit.emitCTIThunkEpilogue();
     jit.ret();
 
     auto jumpTarget = CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>() };
-    if (Options::useExceptionFuzz()) [[unlikely]]
+    if (UNLIKELY(Options::useExceptionFuzz()))
         jumpTarget = CodeLocationLabel { vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator).retaggedCode<NoPtrTag>() };
 #if CPU(X86_64)
-    if (!Options::useExceptionFuzz()) [[likely]] {
+    if (LIKELY(!Options::useExceptionFuzz())) {
         handleException.link(&jit);
         jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CPURegister)), X86Registers::esp); // pop return address.
         handleException = jit.jump();

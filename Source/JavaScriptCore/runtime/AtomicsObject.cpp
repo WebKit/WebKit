@@ -126,7 +126,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned accessIndex = 0;
     size_t length = typedArrayView->length();
-    if (accessIndexValue.isUInt32()) [[likely]]
+    if (LIKELY(accessIndexValue.isUInt32()))
         accessIndex = accessIndexValue.asUInt32();
     else {
         accessIndex = accessIndexValue.toIndex(globalObject, "accessIndex"_s);
@@ -549,7 +549,7 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncPause, (JSGlobalObject* globalObject, CallFr
 
     JSValue argument = callFrame->argument(0);
     if (!argument.isUndefined()) {
-        if (!argument.isNumber() || !isInteger(argument.asNumber())) [[unlikely]]
+        if (UNLIKELY(!argument.isNumber() || !isInteger(argument.asNumber())))
             return throwVMTypeError(globalObject, scope, "Atomics.pause argument needs to be either undefined or integer number"_s);
         // Right now, argument integer is not used.
     }

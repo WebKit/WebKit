@@ -85,7 +85,7 @@ auto JITWorklistThread::poll(const AbstractLocker& locker) -> PollResult
             continue;
 
         m_plan = queue.takeFirst();
-        if (!m_plan) [[unlikely]] {
+        if (UNLIKELY(!m_plan)) {
             if (Options::verboseCompilationQueue()) {
                 m_worklist.dump(locker, WTF::dataFile());
                 dataLog(": Thread shutting down\n");

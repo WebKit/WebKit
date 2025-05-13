@@ -99,7 +99,7 @@ void initialize()
 
 #else // !ENABLE(C_LOOP)
 
-    if (g_jscConfig.vmEntryDisallowed) [[unlikely]]
+    if (UNLIKELY(g_jscConfig.vmEntryDisallowed))
         neuterOpcodeMaps();
     else {
         llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);

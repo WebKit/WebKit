@@ -434,7 +434,7 @@ void ArrayBuffer::notifyDetaching(VM& vm)
 Expected<int64_t, GrowFailReason> ArrayBuffer::grow(VM& vm, size_t newByteLength)
 {
     auto shared = m_contents.m_shared;
-    if (!shared) [[unlikely]]
+    if (UNLIKELY(!shared))
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
     auto result = shared->grow(vm, newByteLength);
     if (result && result.value() > 0)
@@ -445,7 +445,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::grow(VM& vm, size_t newByteLength
 Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLength)
 {
     auto memoryHandle = m_contents.m_memoryHandle;
-    if (!memoryHandle || m_contents.m_shared) [[unlikely]]
+    if (UNLIKELY(!memoryHandle || m_contents.m_shared))
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
 
     int64_t deltaByteLength = 0;

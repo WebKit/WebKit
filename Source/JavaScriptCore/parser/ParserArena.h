@@ -169,7 +169,7 @@ namespace JSC {
             ASSERT(size <= freeablePoolSize);
             size_t alignedSize = alignSize(size);
             ASSERT(alignedSize <= freeablePoolSize);
-            if (static_cast<size_t>(m_freeablePoolEnd - m_freeableMemory) < alignedSize) [[unlikely]]
+            if (UNLIKELY(static_cast<size_t>(m_freeablePoolEnd - m_freeableMemory) < alignedSize))
                 allocateFreeablePool();
             void* block = m_freeableMemory;
             m_freeableMemory += alignedSize;

@@ -53,9 +53,9 @@ void SourceProvider::getID()
 
 const String& SourceProvider::sourceURLStripped()
 {
-    if (m_sourceURL.isNull()) [[unlikely]]
+    if (UNLIKELY(m_sourceURL.isNull()))
         return m_sourceURLStripped;
-    if (!m_sourceURLStripped.isNull()) [[likely]]
+    if (LIKELY(!m_sourceURLStripped.isNull()))
         return m_sourceURLStripped;
     m_sourceURLStripped = URL(m_sourceURL).strippedForUseAsReport();
     return m_sourceURLStripped;

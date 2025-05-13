@@ -109,7 +109,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (!thisValue.isCallable()) [[unlikely]]
+    if (UNLIKELY(!thisValue.isCallable()))
         return throwVMTypeError(globalObject, scope, "|this| is not a function inside Function.prototype.bind"_s);
     JSObject* target = asObject(thisValue);
 
@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
     double length = 0;
     JSString* name = nullptr;
     JSFunction* function = jsDynamicCast<JSFunction*>(target);
-    if (function && function->canAssumeNameAndLengthAreOriginal(vm)) [[likely]] {
+    if (LIKELY(function && function->canAssumeNameAndLengthAreOriginal(vm))) {
         // Do nothing! 'length' and 'name' computation are lazily done.
         // And this is totally OK since we know that wrapped functions have canAssumeNameAndLengthAreOriginal condition
         // at the time of creation of JSBoundFunction.

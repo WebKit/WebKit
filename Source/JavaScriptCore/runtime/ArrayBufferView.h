@@ -87,10 +87,10 @@ public:
 
     size_t byteOffset() const
     {
-        if (isDetached()) [[unlikely]]
+        if (UNLIKELY(isDetached()))
             return 0;
 
-        if (!isResizableOrGrowableShared()) [[likely]]
+        if (LIKELY(!isResizableOrGrowableShared()))
             return byteOffsetRaw();
 
         size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
@@ -100,7 +100,7 @@ public:
             byteOffsetEnd = bufferByteLength;
         else
             byteOffsetEnd = byteOffsetStart + byteLengthRaw();
-        if (byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength) [[unlikely]]
+        if (UNLIKELY(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength))
             return 0;
         return byteOffsetRaw();
     }
@@ -109,10 +109,10 @@ public:
 
     size_t byteLength() const
     {
-        if (isDetached()) [[unlikely]]
+        if (UNLIKELY(isDetached()))
             return 0;
 
-        if (!isResizableOrGrowableShared()) [[likely]]
+        if (LIKELY(!isResizableOrGrowableShared()))
             return byteLengthRaw();
 
         size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
@@ -122,7 +122,7 @@ public:
             byteOffsetEnd = bufferByteLength;
         else
             byteOffsetEnd = byteOffsetStart + byteLengthRaw();
-        if (byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength) [[unlikely]]
+        if (UNLIKELY(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength))
             return 0;
         if (!isAutoLength())
             return byteLengthRaw();

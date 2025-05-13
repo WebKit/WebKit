@@ -58,9 +58,9 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         JSValue lengthValue;
-        if (!structure()->didTransition()) [[likely]] {
+        if (LIKELY(!structure()->didTransition())) {
             lengthValue = getDirect(clonedArgumentsLengthPropertyOffset);
-            if (lengthValue.isInt32()) [[likely]]
+            if (LIKELY(lengthValue.isInt32()))
                 return std::max(lengthValue.asInt32(), 0);
         } else {
             lengthValue = get(globalObject, vm.propertyNames->length);

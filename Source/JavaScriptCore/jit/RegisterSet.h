@@ -66,7 +66,7 @@ public:
         ASSERT_UNDER_CONSTEXPR_CONTEXT(!!reg);
         m_bits.set(reg.index());
 
-        if (width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)) [[unlikely]]
+        if (UNLIKELY(width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)))
             m_upperBits.set(reg.index());
         return *this;
     }
@@ -238,9 +238,7 @@ public:
     inline constexpr bool contains(Reg reg, Width width) const
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(m_bits.count() >= m_upperBits.count());
-        if (width < conservativeWidth(reg)) [[likely]]
-            return m_bits.get(reg.index());
-        if (conservativeWidth(reg) <= conservativeWidthWithoutVectors(reg))
+        if (LIKELY(width < conservativeWidth(reg)) || conservativeWidth(reg) <= conservativeWidthWithoutVectors(reg))
             return m_bits.get(reg.index());
         return m_bits.get(reg.index()) && m_upperBits.get(reg.index());
     }
@@ -364,7 +362,7 @@ public:
         ASSERT_UNDER_CONSTEXPR_CONTEXT(!!reg);
         m_bits.set(reg.index());
 
-        if (width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)) [[unlikely]]
+        if (UNLIKELY(width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)))
             m_upperBits.set(reg.index());
         return *this;
     }

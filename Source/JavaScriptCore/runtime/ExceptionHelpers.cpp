@@ -271,7 +271,7 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto errorMessage = constructErrorMessage(globalObject, value, message);
-    if (scope.exception() || !errorMessage) [[unlikely]] {
+    if (UNLIKELY(scope.exception() || !errorMessage)) {
         // When we see an exception, we're not returning immediately because
         // we're in a CatchScope, i.e. no exceptions are thrown past this scope.
         // We're using a CatchScope because the contract for createError() is

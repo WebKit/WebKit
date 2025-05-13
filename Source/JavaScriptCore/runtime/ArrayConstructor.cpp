@@ -114,7 +114,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     while (true) {
-        if (proxy->isRevoked()) [[unlikely]] {
+        if (UNLIKELY(proxy->isRevoked())) {
             auto* callFrame = vm.topJSCallFrame();
             auto* callee = callFrame && !callFrame->isNativeCalleeFrame() ? callFrame->jsCallee() : nullptr;
             ASCIILiteral calleeName = "Array.isArray"_s;

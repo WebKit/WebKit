@@ -74,7 +74,7 @@ auto MarkedVectorBase::slowEnsureCapacity(size_t requestedCapacity) -> Status
 {
     setNeedsOverflowCheck();
     auto checkedNewCapacity = CheckedInt32(requestedCapacity);
-    if (checkedNewCapacity.hasOverflowed()) [[unlikely]]
+    if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
         return Status::Overflowed;
     return expandCapacity(checkedNewCapacity);
 }
@@ -83,7 +83,7 @@ auto MarkedVectorBase::expandCapacity() -> Status
 {
     setNeedsOverflowCheck();
     auto checkedNewCapacity = CheckedInt32(m_capacity) * 2;
-    if (checkedNewCapacity.hasOverflowed()) [[unlikely]]
+    if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
         return Status::Overflowed;
     return expandCapacity(checkedNewCapacity);
 }
@@ -93,7 +93,7 @@ auto MarkedVectorBase::expandCapacity(unsigned newCapacity) -> Status
     setNeedsOverflowCheck();
     ASSERT(m_capacity < newCapacity);
     auto checkedSize = CheckedSize(newCapacity) * sizeof(EncodedJSValue);
-    if (checkedSize.hasOverflowed()) [[unlikely]]
+    if (UNLIKELY(checkedSize.hasOverflowed()))
         return Status::Overflowed;
     EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(FastMalloc::tryMalloc(checkedSize));
     if (!newBuffer)

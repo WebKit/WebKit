@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncToString, (JSGlobalObject* globalObject
         return JSValue::encode(vm.smallStrings.trueString());
 
     auto* thisObject = jsDynamicCast<BooleanObject*>(thisValue);
-    if (!thisObject) [[unlikely]]
+    if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
     Integrity::auditStructureID(thisObject->structureID());
@@ -93,7 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncValueOf, (JSGlobalObject* globalObject,
         return JSValue::encode(thisValue);
 
     auto* thisObject = jsDynamicCast<BooleanObject*>(thisValue);
-    if (!thisObject) [[unlikely]]
+    if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
     Integrity::auditStructureID(thisObject->structureID());

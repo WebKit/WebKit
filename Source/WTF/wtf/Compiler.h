@@ -244,6 +244,12 @@
 #define LIFETIME_BOUND
 #endif
 
+/* LIKELY */
+
+#if !defined(LIKELY)
+#define LIKELY(x) __builtin_expect(!!(x), 1)
+#endif
+
 /* NEVER_INLINE */
 
 #if !defined(NEVER_INLINE)
@@ -366,6 +372,12 @@
 
 #if !defined(NO_REORDER)
 #define NO_REORDER
+#endif
+
+/* UNLIKELY */
+
+#if !defined(UNLIKELY)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #endif
 
 /* UNUSED_LABEL */

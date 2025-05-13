@@ -62,7 +62,7 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallDat
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue result = call(globalObject, functionObject, callData, thisValue, args);
-    if (scope.exception()) [[unlikely]] {
+    if (UNLIKELY(scope.exception())) {
         returnedException = scope.exception();
         scope.clearException();
         return jsUndefined();

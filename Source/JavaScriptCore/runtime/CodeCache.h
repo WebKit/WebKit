@@ -166,7 +166,7 @@ private:
     {
         if constexpr (std::is_base_of_v<UnlinkedCodeBlock, UnlinkedCodeBlockType> && !std::is_same_v<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>) {
             UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
-            if (Options::forceDiskCache()) [[unlikely]] {
+            if (UNLIKELY(Options::forceDiskCache())) {
                 if (isMainThread())
                     RELEASE_ASSERT(codeBlock);
             }

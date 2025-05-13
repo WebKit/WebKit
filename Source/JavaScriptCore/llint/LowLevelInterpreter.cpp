@@ -254,7 +254,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // caller (or one of its ancestors) is responsible for ensuring that this
     // is only called once during the initialization of the VM before threads
     // are at play.
-    if (isInitializationPass) [[unlikely]] {
+    if (UNLIKELY(isInitializationPass)) {
         Opcode* opcodeMap = LLInt::opcodeMap();
         Opcode* opcodeMapWide16 = LLInt::opcodeMapWide16();
         Opcode* opcodeMapWide32 = LLInt::opcodeMapWide32();
