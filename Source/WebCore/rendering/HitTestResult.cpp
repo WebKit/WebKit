@@ -57,6 +57,7 @@
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
+#include "OriginAccessPatterns.h"
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -217,6 +218,32 @@ bool HitTestResult::isSelected() const
         return false;
 
     return frame->selection().contains(m_hitTestLocation.point());
+}
+
+bool HitTestResult::allowsFollowingLink() const
+{
+    auto linkURL = absoluteLinkURL();
+    if (linkURL.isEmpty())
+        return false;
+
+    auto* innerFrame = innerNodeFrame();
+    if (!innerFrame)
+        return false;
+
+    return innerFrame->protectedDocument()->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
+}
+
+bool HitTestResult::allowsFollowingImageURL() const
+{
+    auto linkURL = absoluteImageURL();
+    if (linkURL.isEmpty())
+        return false;
+
+    auto* innerFrame = innerNodeFrame();
+    if (!innerFrame)
+        return false;
+
+    return innerFrame->protectedDocument()->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 String HitTestResult::selectedText() const

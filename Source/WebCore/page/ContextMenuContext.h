@@ -65,6 +65,8 @@ public:
     const String& selectedText() const { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
+    bool allowsFollowingLink() const { return m_allowsFollowingLink; }
+    bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
 #if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
@@ -85,6 +87,8 @@ private:
     RefPtr<Event> m_event;
     String m_selectedText;
     bool m_hasEntireImage { false };
+    bool m_allowsFollowingLink { false };
+    bool m_allowsFollowingImageURL { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;

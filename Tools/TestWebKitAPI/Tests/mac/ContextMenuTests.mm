@@ -840,6 +840,46 @@ TEST(ContextMenuTests, HitTestResultLinkWithInvalidURL)
     EXPECT_NOT_NULL([elementInfo hitTestResult]);
 }
 
+TEST(ContextMenuTests, ContextMenuElementInfoAllowsFollowingImageURLTrue)
+{
+    CGFloat iconWidth = 215;
+    CGFloat iconHeight = 174;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, iconWidth * 2, iconHeight * 2)]);
+    [webView synchronouslyLoadHTMLString:@"<img src='icon.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(iconWidth, iconHeight)];
+    EXPECT_TRUE(elementInfo.allowsFollowingImageURL);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoAllowsFollowingImageURLFalse)
+{
+    CGFloat iconWidth = 215;
+    CGFloat iconHeight = 174;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, iconWidth * 2, iconHeight * 2)]);
+    [webView synchronouslyLoadHTMLString:@"<img src='file:///icon.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(iconWidth, iconHeight)];
+    EXPECT_FALSE(elementInfo.allowsFollowingImageURL);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoAllowsFollowingLinkTrue)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<a href='icon.png' style='font-size: 100px;'>Link</a>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(50, 350)];
+    EXPECT_TRUE(elementInfo.allowsFollowingLink);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoAllowsFollowingLinkFalse)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<a href='file:///simple.html' style='font-size: 100px;'>Hello world</a>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(50, 350)];
+    EXPECT_FALSE(elementInfo.allowsFollowingLink);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

@@ -53,6 +53,8 @@ ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, con
     , m_webHitTestResultData({ context.hitTestResult(), true })
     , m_selectedText(context.selectedText())
     , m_hasEntireImage(context.hasEntireImage())
+    , m_allowsFollowingLink(context.allowsFollowingLink())
+    , m_allowsFollowingImageURL(context.allowsFollowingImageURL())
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
 #endif
@@ -155,6 +157,8 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
     , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     , bool hasEntireImage
+    , bool allowsFollowingLink
+    , bool allowsFollowingImageURL
 )
     : m_type(type)
     , m_menuLocation(WTFMove(menuLocation))
@@ -162,6 +166,8 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
     , m_webHitTestResultData(WTFMove(webHitTestResultData))
     , m_selectedText(WTFMove(selectedText))
     , m_hasEntireImage(hasEntireImage)
+    , m_allowsFollowingLink(allowsFollowingLink)
+    , m_allowsFollowingImageURL(allowsFollowingImageURL)
 #if ENABLE(SERVICE_CONTROLS)
     , m_controlledSelection(WTFMove(controlledSelection))
     , m_selectedTelephoneNumbers(WTFMove(selectedTelephoneNumbers))

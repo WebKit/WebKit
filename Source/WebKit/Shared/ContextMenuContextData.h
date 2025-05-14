@@ -71,6 +71,8 @@ public:
         , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
         , bool hasEntireImage
+        , bool allowsFollowingLink
+        , bool allowsFollowingImageURL
     );
 
     Type type() const { return m_type; }
@@ -82,6 +84,8 @@ public:
     const String& selectedText() const { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
+    bool allowsFollowingLink() const { return m_allowsFollowingLink; }
+    bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::AttributedString&& controlledSelection, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
@@ -140,6 +144,8 @@ private:
     std::optional<WebHitTestResultData> m_webHitTestResultData;
     String m_selectedText;
     bool m_hasEntireImage { false };
+    bool m_allowsFollowingLink { false };
+    bool m_allowsFollowingImageURL { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     void setImage(WebCore::Image&);

@@ -49,18 +49,24 @@ public:
     WebKit::WebPageProxy* page() { return m_page.get(); }
     const WTF::String& qrCodePayloadString() const { return m_qrCodePayloadString; }
     bool hasEntireImage() const { return m_hasEntireImage; }
+    bool allowsFollowingLink() const { return m_allowsFollowingLink; }
+    bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
 private:
     ContextMenuElementInfoMac(const WebKit::ContextMenuContextData& data, WebKit::WebPageProxy& page)
         : m_hitTestResultData(data.webHitTestResultData().value())
         , m_page(page)
         , m_qrCodePayloadString(data.qrCodePayloadString())
-        , m_hasEntireImage(data.hasEntireImage()) { }
+        , m_hasEntireImage(data.hasEntireImage())
+        , m_allowsFollowingLink(data.allowsFollowingLink())
+        , m_allowsFollowingImageURL(data.allowsFollowingImageURL()) { }
 
     WebKit::WebHitTestResultData m_hitTestResultData;
     WeakPtr<WebKit::WebPageProxy> m_page;
     WTF::String m_qrCodePayloadString;
     bool m_hasEntireImage { false };
+    bool m_allowsFollowingLink { false };
+    bool m_allowsFollowingImageURL { false };
 };
 
 } // namespace API
