@@ -170,6 +170,43 @@ private:
     Int128 m_epochNanoseconds { };
 };
 
+// https://tc39.es/proposal-temporal/#sec-temporal-internal-duration-records
+// Represents a duration as an ISO8601::Duration (in which all time fields
+// are ignored) along with an Int128 time duration that represents the sum
+// of all time fields. Used to avoid losing precision in intermediate calculations.
+class InternalDuration final {
+public:
+    InternalDuration(Duration d, Int128 t)
+        : m_dateDuration(d), m_time(t) { }
+    InternalDuration()
+        : m_dateDuration(Duration()), m_time(0) { }
+    static constexpr Int128 maxTimeDuration = 9'007'199'254'740'992 * ExactTime::nsPerSecond - 1;
+
+    int32_t sign() const;
+
+    int32_t timeDurationSign() const
+    {
+        return m_time < 0 ? -1 : m_time > 0 ? 1 : 0;
+    }
+
+    Int128 time() const { return m_time; }
+
+    Duration dateDuration() const { return m_dateDuration; }
+
+    static InternalDuration combineDateAndTimeDuration(Duration, Int128);
+private:
+
+    // Time fields are ignored
+    Duration m_dateDuration;
+
+    // A time duration is an integer in the inclusive interval from -maxTimeDuration
+    // to maxTimeDuration, where
+    // maxTimeDuration = 2**53 × 10**9 - 1 = 9,007,199,254,740,991,999,999,999.
+    // It represents the portion of a Temporal.Duration object that deals with time
+    // units, but as a combined value of total nanoseconds.
+    Int128 m_time;
+};
+
 class PlainTime {
     WTF_MAKE_TZONE_ALLOCATED(PlainTime);
 public:
