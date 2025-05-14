@@ -4387,7 +4387,7 @@
                 "animation-wrapper-requires-render-style": true,
                 "style-converter": "Opacity",
                 "svg": true,
-                "parser-grammar": "<alpha-value>"
+                "parser-grammar": "<opacity-value>"
             },
             "specification": {
                 "category": "svg",
@@ -4461,7 +4461,7 @@
                 "animation-wrapper-requires-render-style": true,
                 "style-converter": "Opacity",
                 "svg": true,
-                "parser-grammar": "<alpha-value>"
+                "parser-grammar": "<opacity-value>"
             },
             "specification": {
                 "category": "css-filters",
@@ -6474,7 +6474,7 @@
                 "animation-wrapper": "Wrapper<float>",
                 "animation-wrapper-acceleration": "always",
                 "style-converter": "Opacity",
-                "parser-grammar": "<alpha-value>"
+                "parser-grammar": "<opacity-value>"
             },
             "status": {
                 "comment": "Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets."
@@ -7376,7 +7376,7 @@
                 "animation-wrapper-requires-render-style": true,
                 "style-converter": "Opacity",
                 "svg": true,
-                "parser-grammar": "<alpha-value>"
+                "parser-grammar": "<opacity-value>"
             },
             "specification": {
                 "category": "svg",
@@ -7526,7 +7526,7 @@
                 "animation-wrapper-requires-render-style": true,
                 "style-converter": "Opacity",
                 "svg": true,
-                "parser-grammar": "<alpha-value>"
+                "parser-grammar": "<opacity-value>"
             },
             "specification": {
                 "category": "svg",
@@ -12906,11 +12906,11 @@
         }
     },
     "shared-grammar-rules": {
-        "<alpha-value>": {
-            "grammar": "<number> | <percentage>",
+        "<opacity-value>": {
+            "grammar": "<number-or-percentage-resolved-to-number>",
             "specification": {
                 "category": "css-color",
-                "url": "https://www.w3.org/TR/css-color-4/#typedef-alpha-value"
+                "url": "https://www.w3.org/TR/css-color-4/#typedef-opacity-opacity-value"
             }
         },
         "<marker-ref>": {
