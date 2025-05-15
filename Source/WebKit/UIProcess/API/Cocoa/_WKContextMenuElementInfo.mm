@@ -68,6 +68,16 @@
     return _contextMenuElementInfoMac->hasEntireImage();
 }
 
+- (BOOL)allowsFollowingLink
+{
+    return _contextMenuElementInfoMac->allowsFollowingLink();
+}
+
+- (BOOL)allowsFollowingImageURL
+{
+    return _contextMenuElementInfoMac->allowsFollowingImageURL();
+}
+
 // MARK: WKObject protocol implementation
 
 - (API::Object&)_apiObject

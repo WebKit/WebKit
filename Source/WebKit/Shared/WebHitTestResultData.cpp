@@ -106,6 +106,8 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , toolTipText(toolTipText)
     , hasLocalDataForLinkURL(hitTestResult.hasLocalDataForLinkURL())
     , hasEntireImage(hitTestResult.hasEntireImage())
+    , allowsFollowingLink(hitTestResult.allowsFollowingLink())
+    , allowsFollowingImageURL(hitTestResult.allowsFollowingImageURL())
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
@@ -136,6 +138,8 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     , frameInfo(frameInfoDataFromHitTestResult(hitTestResult))
     , hasLocalDataForLinkURL(hitTestResult.hasLocalDataForLinkURL())
     , hasEntireImage(hitTestResult.hasEntireImage())
+    , allowsFollowingLink(hitTestResult.allowsFollowingLink())
+    , allowsFollowingImageURL(hitTestResult.allowsFollowingImageURL())
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
@@ -174,7 +178,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     }
 }
 
-WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, const String& imageSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, bool isActivePDFAnnotation, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL, bool hasEntireImage,
+WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, const String& imageSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, bool isActivePDFAnnotation, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL, bool hasEntireImage, bool allowsFollowingLink, bool allowsFollowingImageURL,
 #if PLATFORM(MAC)
     const WebHitTestResultPlatformData& platformData,
 #endif
@@ -207,6 +211,8 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , linkLocalDataMIMEType(linkLocalDataMIMEType)
         , hasLocalDataForLinkURL(hasLocalDataForLinkURL)
         , hasEntireImage(hasEntireImage)
+        , allowsFollowingLink(allowsFollowingLink)
+        , allowsFollowingImageURL(allowsFollowingImageURL)
 #if PLATFORM(MAC)
         , platformData(platformData)
 #endif

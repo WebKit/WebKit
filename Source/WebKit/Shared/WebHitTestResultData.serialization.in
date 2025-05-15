@@ -64,6 +64,8 @@ struct WebKit::WebHitTestResultData {
     String linkLocalDataMIMEType;
     bool hasLocalDataForLinkURL;
     bool hasEntireImage;
+    bool allowsFollowingLink;
+    bool allowsFollowingImageURL;
 
 #if PLATFORM(MAC)
     WebKit::WebHitTestResultPlatformData platformData;
