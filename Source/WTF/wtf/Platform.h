@@ -118,9 +118,6 @@
 #define U_HIDE_DEPRECATED_API 1
 #define U_SHOW_CPLUSPLUS_API 0
 #define U_SHOW_CPLUSPLUS_HEADER_API 0
-#ifdef __cplusplus
-#define UCHAR_TYPE char16_t
-#endif
 #if PLATFORM(COCOA)
 #define U_DISABLE_RENAMING 1
 #endif

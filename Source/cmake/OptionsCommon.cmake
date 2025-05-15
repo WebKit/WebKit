@@ -7,6 +7,7 @@ add_definitions(-DBUILDING_WITH_CMAKE=1)
 add_definitions(-DBUILDING_WEBKIT=1)
 add_definitions(-DHAVE_CONFIG_H=1)
 add_definitions(-DPAS_BMALLOC=1)
+add_definitions(-DUCHAR_TYPE=char16_t)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 define_property(TARGET PROPERTY FOLDER INHERITED BRIEF_DOCS "folder" FULL_DOCS "IDE folder name")
