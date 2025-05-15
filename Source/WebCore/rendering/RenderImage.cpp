@@ -243,6 +243,15 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     if (imageSize == intrinsicSize())
         return ImageSizeChangeNone;
 
+    // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
+    if (imageSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
+        RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
+        if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
+            imageSize.setWidth(box->contentBoxLogicalWidth());
+            imageSize.setHeight(box->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+        }
+    }
+
     setIntrinsicSize(imageSize);
     return ImageSizeChangeForAltText;
 }
@@ -356,10 +365,20 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         cache->deferRecomputeIsIgnoredIfNeeded(element());
 }
 
-void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
+void RenderImage::updateIntrinsicSizeIfNeeded(LayoutSize newSize)
 {
     if (imageResource().errorOccurred() || !m_imageResource->cachedImage())
         return;
+
+    // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
+    if (newSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
+        RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
+        if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
+            newSize.setWidth(box->contentBoxLogicalWidth());
+            newSize.setHeight(box->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+        }
+    }
+
     setIntrinsicSize(newSize);
 }
 
@@ -882,15 +901,6 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
 {
     ASSERT(!shouldApplySizeContainment());
     RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
-
-    // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
-    if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
-        RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
-        if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
-            intrinsicSize.setWidth(box->contentBoxLogicalWidth());
-            intrinsicSize.setHeight(box->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
-        }
-    }
 
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
