@@ -118,7 +118,7 @@ bool DocumentThreadableLoader::shouldSetHTTPHeadersToKeep() const
 }
 
 DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, std::optional<CrossOriginEmbedderPolicy>&& crossOriginEmbedderPolicy, String&& referrer, ShouldLogError shouldLogError)
-    : m_client(&client)
+    : m_client(client)
     , m_document(document)
     , m_options(options)
     , m_origin(WTFMove(origin))
@@ -188,6 +188,16 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     }
 
     makeCrossOriginAccessRequest(WTFMove(request));
+}
+
+void DocumentThreadableLoader::clearClient()
+{
+    m_client = nullptr;
+}
+
+inline CheckedPtr<ThreadableLoaderClient> DocumentThreadableLoader::checkedClient()
+{
+    return m_client.get();
 }
 
 bool DocumentThreadableLoader::checkURLSchemeAsCORSEnabled(const URL& url)
@@ -264,10 +274,11 @@ void DocumentThreadableLoader::cancel()
     Ref protectedThis { *this };
 
     // Cancel can re-enter and m_resource might be null here as a result.
-    if (m_client && m_resource) {
+    CheckedPtr client = m_client.get();
+    if (client && m_resource) {
         // FIXME: This error is sent to the client in didFail(), so it should not be an internal one. Use LocalFrameLoaderClient::cancelledError() instead.
         ResourceError error(errorDomainWebKitInternal, 0, m_resource->url(), "Load cancelled"_s, ResourceError::Type::Cancellation);
-        m_client->didFail(m_document->identifier(), error); // May destroy the client.
+        client->didFail(m_document->identifier(), error); // May destroy the client.
     }
     clearResource();
     m_client = nullptr;
@@ -276,14 +287,14 @@ void DocumentThreadableLoader::cancel()
 void DocumentThreadableLoader::computeIsDone()
 {
     if (!m_async || m_preflightChecker || !m_resource) {
-        if (m_client)
-            m_client->notifyIsDone(m_async && !m_preflightChecker && !m_resource);
+        if (CheckedPtr client = m_client.get())
+            client->notifyIsDone(m_async && !m_preflightChecker && !m_resource);
         return;
     }
     platformStrategies()->loaderStrategy()->isResourceLoadFinished(*protectedResource(), [weakThis = WeakPtr { *this }](bool isDone) {
         RefPtr protectedThis = weakThis.get();
-        if (protectedThis && protectedThis->m_client)
-            protectedThis->m_client->notifyIsDone(isDone);
+        if (CheckedPtr client = protectedThis ? protectedThis->m_client.get() : nullptr)
+            client->notifyIsDone(isDone);
     });
 }
 
@@ -388,9 +399,10 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
 
 void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    ASSERT(m_client);
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
     ASSERT_UNUSED(resource, &resource == m_resource);
-    m_client->didSendData(bytesSent, totalBytesToBeSent);
+    client->didSendData(bytesSent, totalBytesToBeSent);
 }
 
 void DocumentThreadableLoader::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
@@ -415,7 +427,8 @@ void DocumentThreadableLoader::responseReceived(const CachedResource& resource, 
 
 void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, ResourceResponse&& response)
 {
-    ASSERT(m_client);
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
     ASSERT(response.type() != ResourceResponse::Type::Error);
 
     // https://fetch.spec.whatwg.org/commit-snapshots/6257e220d70f560a037e46f1b4206325400db8dc/#main-fetch step 17.
@@ -432,21 +445,20 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
         return;
 
     if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
-        m_client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
+        client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
         return;
     }
 
     if (response.type() == ResourceResponse::Type::Default) {
-        m_client->didReceiveResponse(m_document->identifier(), identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
+        client->didReceiveResponse(m_document->identifier(), identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
         if (response.tainting() == ResourceResponse::Tainting::Opaque) {
             clearResource();
-            if (m_client)
-                m_client->didFinishLoading(m_document->identifier(), identifier, { });
+            client->didFinishLoading(m_document->identifier(), identifier, { });
         }
         return;
     }
     ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect || response.source() == ResourceResponse::Source::ServiceWorker || response.source() == ResourceResponse::Source::MemoryCache);
-    m_client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
+    client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
 }
 
 void DocumentThreadableLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
@@ -457,12 +469,13 @@ void DocumentThreadableLoader::dataReceived(CachedResource& resource, const Shar
 
 void DocumentThreadableLoader::didReceiveData(const SharedBuffer& buffer)
 {
-    ASSERT(m_client);
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
 
     if (m_delayCallbacksForIntegrityCheck)
         return;
 
-    m_client->didReceiveData(buffer);
+    client->didReceiveData(buffer);
 }
 
 void DocumentThreadableLoader::finishedTimingForWorkerLoad(CachedResource& resource, const ResourceTiming& resourceTiming)
@@ -477,7 +490,7 @@ void DocumentThreadableLoader::finishedTimingForWorkerLoad(const ResourceTiming&
 {
     ASSERT(m_options.initiatorContext == InitiatorContext::Worker);
 
-    m_client->didFinishTiming(resourceTiming);
+    checkedClient()->didFinishTiming(resourceTiming);
 }
 
 void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess)
@@ -493,7 +506,8 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
 
 void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
 {
-    ASSERT(m_client);
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
 
     if (m_delayCallbacksForIntegrityCheck) {
         CachedResourceHandle resource = m_resource;
@@ -508,24 +522,25 @@ void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIden
         if (resource->resourceBuffer())
             buffer = resource->resourceBuffer()->makeContiguous();
         if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
-            m_client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
+            client->didReceiveResponse(m_document->identifier(), identifier, WTFMove(response));
             if (buffer)
-                m_client->didReceiveData(*buffer);
+                client->didReceiveData(*buffer);
         } else {
             ASSERT(response.type() == ResourceResponse::Type::Default);
 
-            m_client->didReceiveResponse(m_document->identifier(), identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
+            client->didReceiveResponse(m_document->identifier(), identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
             if (buffer)
-                m_client->didReceiveData(*buffer);
+                client->didReceiveData(*buffer);
         }
     }
 
-    m_client->didFinishLoading(m_document->identifier(), identifier, metrics);
+    client->didFinishLoading(m_document->identifier(), identifier, metrics);
 }
 
 void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, const ResourceError& error)
 {
-    ASSERT(m_client);
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
     if (m_bypassingPreflightForServiceWorkerRequest && error.isCancellation()) {
         clearResource();
 
@@ -537,8 +552,8 @@ void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, 
     if (m_shouldLogError == ShouldLogError::Yes)
         logError(protectedDocument(), error, m_options.initiatorType);
 
-    if (m_client)
-        m_client->didFail(m_document->identifier(), error); // May cause the client to get destroyed.
+    if (client)
+        client->didFail(m_document->identifier(), error); // May cause the client to get destroyed.
 }
 
 Ref<Document> DocumentThreadableLoader::protectedDocument()
@@ -568,7 +583,7 @@ void DocumentThreadableLoader::preflightFailure(std::optional<ResourceLoaderIden
     if (m_shouldLogError == ShouldLogError::Yes)
         logError(protectedDocument(), error, m_options.initiatorType);
 
-    m_client->didFail(m_document->identifier(), error);
+    checkedClient()->didFail(m_document->identifier(), error);
 }
 
 void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCheckPolicy securityCheck)
@@ -793,9 +808,10 @@ void DocumentThreadableLoader::logErrorAndFail(const ResourceError& error)
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
         logError(document, error, m_options.initiatorType);
     }
-    ASSERT(m_client);
-    if (m_client)
-        m_client->didFail(m_document->identifier(), error); // May cause the client to get destroyed.
+    CheckedPtr client = m_client.get();
+    ASSERT(client);
+    if (client)
+        client->didFail(m_document->identifier(), error); // May cause the client to get destroyed.
 }
 
 } // namespace WebCore

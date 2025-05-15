@@ -62,7 +62,7 @@ class CachedRawResource;
         void cancel() override;
         virtual void setDefersLoading(bool);
         void computeIsDone() final;
-        void clearClient() { m_client = nullptr; }
+        void clearClient();
 
         friend CrossOriginPreflightChecker;
         friend class InspectorInstrumentation;
@@ -119,6 +119,7 @@ class CachedRawResource;
         Document& document() { return *m_document; }
         Ref<Document> protectedDocument();
 
+        inline CheckedPtr<ThreadableLoaderClient> checkedClient();
         const ThreadableLoaderOptions& options() const { return m_options; }
         const String& referrer() const { return m_referrer; }
         bool isLoading() { return m_resource || m_preflightChecker; }
@@ -135,7 +136,7 @@ class CachedRawResource;
         CachedResourceHandle<CachedRawResource> protectedResource() const;
 
         CachedResourceHandle<CachedRawResource> m_resource;
-        ThreadableLoaderClient* m_client; // FIXME: Use a smart pointer.
+        WeakPtr<ThreadableLoaderClient> m_client;
         WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
         ThreadableLoaderOptions m_options;
         bool m_responsesCanBeOpaque { true };
