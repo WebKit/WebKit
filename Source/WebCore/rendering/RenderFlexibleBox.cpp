@@ -1143,8 +1143,6 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
 
     auto flexItemIntrinsicSize = flexItem.intrinsicSize();
     auto preferredAspectRatio = [&] {
-        if (flexItem.isRenderOrLegacyRenderSVGRoot())
-            return downcast<RenderReplaced>(flexItem).computeIntrinsicAspectRatio();
         if (flexItem.style().aspectRatioType() == AspectRatioType::Ratio || (flexItem.style().aspectRatioType() == AspectRatioType::AutoAndRatio && flexItemIntrinsicSize.isEmpty()))
             return flexItem.style().aspectRatioWidth() / flexItem.style().aspectRatioHeight();
         if (auto* replacedElement = dynamicDowncast<RenderReplaced>(flexItem))
