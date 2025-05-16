@@ -214,6 +214,15 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
             length = SVGLengthValue(SVGLengthMode::Width, "100%"_s);
         }
         Ref { m_width }->setBaseValInternal(length);
+        if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(renderer())) {
+            auto intrinsicWidth = LayoutUnit(floatValueForLength(this->intrinsicWidth(), 0));
+            if (!intrinsicWidth)
+                intrinsicWidth = 300;
+            auto intrinsicHeight = LayoutUnit(floatValueForLength(this->intrinsicHeight(), 0));
+            if (!intrinsicHeight)
+                intrinsicHeight = 150;
+            renderReplaced->setIntrinsicSize({ intrinsicWidth, intrinsicHeight });
+        }
         break;
     }
     case AttributeNames::heightAttr: {
@@ -224,6 +233,16 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
             length = SVGLengthValue(SVGLengthMode::Height, "100%"_s);
         }
         Ref { m_height }->setBaseValInternal(length);
+        if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(renderer())) {
+            auto intrinsicWidth = LayoutUnit(floatValueForLength(this->intrinsicWidth(), 0));
+            if (!intrinsicWidth)
+                intrinsicWidth = 300;
+            auto intrinsicHeight = LayoutUnit(floatValueForLength(this->intrinsicHeight(), 0));
+            if (!intrinsicHeight)
+                intrinsicHeight = 150;
+            renderReplaced->setIntrinsicSize({ intrinsicWidth, intrinsicHeight });
+        }
+
         break;
     }
     default:
