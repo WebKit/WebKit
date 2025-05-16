@@ -1113,7 +1113,6 @@ enum ContentsFormat {
     boolean isReadableStreamDisturbed(ReadableStream stream);
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
-    undefined setTrackingPreventionEnabled(boolean enable);
 
     undefined setCanShowModalDialogOverride(boolean allow);
 

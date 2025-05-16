@@ -5811,11 +5811,6 @@ String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
     return ResourceLoadObserver::shared().statisticsForURL(url.href());
 }
 
-void Internals::setTrackingPreventionEnabled(bool enable)
-{
-    DeprecatedGlobalSettings::setTrackingPreventionEnabled(enable);
-}
-
 String Internals::composedTreeAsText(Node& node)
 {
     if (!is<ContainerNode>(node))

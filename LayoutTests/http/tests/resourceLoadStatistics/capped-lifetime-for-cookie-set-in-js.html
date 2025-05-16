@@ -9,8 +9,7 @@
     description("Check that cookies created by JavaScript with max-age or expiry longer than a week get capped to a week.");
     jsTestIsAsync = true;
 
-    if (internals)
-        internals.setTrackingPreventionEnabled(true);
+    testRunner?.setStatisticsEnabled(true);
 
     let passedTests = 0;
     function checkThatCookieDoesNotExpireAfter(cookieData, maxAgeInSeconds) {
@@ -73,8 +72,7 @@
     } else
         testFailed("No internals object.");
 
-    if (internals)
-        internals.setTrackingPreventionEnabled(false);
+    testRunner?.setStatisticsEnabled(false);
 
     finishJSTest();
 </script>

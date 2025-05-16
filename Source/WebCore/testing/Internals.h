@@ -940,7 +940,6 @@ public:
     void setShowAllPlugins(bool);
 
     String resourceLoadStatisticsForURL(const DOMURL&);
-    void setTrackingPreventionEnabled(bool);
 
     bool isReadableStreamDisturbed(ReadableStream&);
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);

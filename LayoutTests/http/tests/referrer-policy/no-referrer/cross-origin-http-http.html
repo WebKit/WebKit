@@ -9,15 +9,13 @@
 description("Tests the behavior of no-referrer referrer policy when cross origin.");
 jsTestIsAsync = true;
 
-if (window.internals)
-    internals.setTrackingPreventionEnabled(false);
+testRunner?.setStatisticsEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the empty string
     shouldBeEqualToString("referrer", "");
-    if (window.internals)
-        internals.setTrackingPreventionEnabled(true);
+    testRunner?.setStatisticsEnabled(true);
     finishJSTest();
 }
 </script>

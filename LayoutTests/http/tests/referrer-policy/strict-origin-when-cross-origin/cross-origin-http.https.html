@@ -9,17 +9,15 @@
 description("Tests the behavior of strict-origin-when-cross-origin referrer policy when cross origin from HTTPS to HTTP.");
 jsTestIsAsync = true;
 
-if (window.internals) {
+if (window.internals)
     internals.settings.setAllowDisplayOfInsecureContent(true);
-    internals.setTrackingPreventionEnabled(false);
-}
+testRunner?.setStatisticsEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the empty string because we are cross-origin and going from HTTPS to HTTP.
     shouldBeEqualToString("referrer", "");
-    if (window.internals)
-        internals.setTrackingPreventionEnabled(true);
+    testRunner?.setStatisticsEnabled(true);
     finishJSTest();
 }
 </script>

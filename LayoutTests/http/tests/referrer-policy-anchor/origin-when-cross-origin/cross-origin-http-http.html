@@ -4,8 +4,7 @@
 <script>
 if (window.testRunner)
     testRunner.waitUntilDone();
-if (window.internals)
-    internals.setTrackingPreventionEnabled(false);
+testRunner?.setStatisticsEnabled(false);
 
 function clickLink() {
     // Should be the origin, not the full URL, because we are cross-origin.

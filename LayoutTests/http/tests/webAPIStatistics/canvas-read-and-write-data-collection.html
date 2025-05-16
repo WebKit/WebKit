@@ -4,7 +4,7 @@
     <title>Test for canvas read and write data collection in resource load statistics</title>
 </head>
 <script>
-    internals.setTrackingPreventionEnabled(false);
+    testRunner?.setStatisticsEnabled(false);
 </script>
 <body>
 <p> Tests for canvas read and write data collection in ResourceLoadStatistics plist by rendering and reading text on the canvas and dumping the entire resource load statistics map. </p>
@@ -31,7 +31,7 @@
         testRunner.dumpAsText();
         testRunner.dumpResourceLoadStatistics();
         testRunner.waitUntilDone();
-        internals.setTrackingPreventionEnabled(true);
+        testRunner?.setStatisticsEnabled(true);
         runTestRunnerTest();
     }
 </script>

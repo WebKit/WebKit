@@ -9,8 +9,7 @@
         <script>
             window.jsTestIsAsync = true;
 
-            if (internals)
-                internals.setTrackingPreventionEnabled(false);
+            testRunner?.setStatisticsEnabled(false);
 
             if (window.testRunner)
                 testRunner.setUserMediaPermission(true);
@@ -52,8 +51,7 @@
                 devices.forEach(device => checkID(self.origin, device));
 
                 debug('');
-                if (internals)
-                    internals.setTrackingPreventionEnabled(true);
+                testRunner?.setStatisticsEnabled(true);
                 finishJSTest();
             }
 

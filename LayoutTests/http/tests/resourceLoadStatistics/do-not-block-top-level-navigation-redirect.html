@@ -8,7 +8,7 @@
     description("Tests that blocking is not applied to top-level navigation redirects.");
     jsTestIsAsync = true;
 
-    internals.setTrackingPreventionEnabled(true);
+    testRunner?.setStatisticsEnabled(true);
 
     function doRedirect()
     {

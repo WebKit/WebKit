@@ -8,8 +8,7 @@
 description("Tests the behavior of unsafe-url referrer policy when cross origin.");
 jsTestIsAsync = true;
 
-if (window.internals)
-    internals.setTrackingPreventionEnabled(false);
+testRunner?.setStatisticsEnabled(false);
 
 if (window.testRunner) {
     testRunner.setStatisticsShouldDowngradeReferrer(false, function () {
@@ -20,8 +19,7 @@ if (window.testRunner) {
         img.onload = function() { testPassed('referrer is "' + expected + '"'); finishJSTest(); }
         img.onerror = function() { testFailed("referrer is not as expected"); finishJSTest(); }
         img.src = "http://127.0.0.1:8000/referrer-policy/resources/image.py?expected=" + expected;
-        if (window.internals)
-            internals.setTrackingPreventionEnabled(true);
+        testRunner?.setStatisticsEnabled(true);
     });
 }
 

@@ -9,7 +9,7 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpBackForwardList();
-    window.internals.setTrackingPreventionEnabled(true);
+    testRunner.setStatisticsEnabled(true);
     testRunner.waitUntilDone();
 }
 onload = function() {

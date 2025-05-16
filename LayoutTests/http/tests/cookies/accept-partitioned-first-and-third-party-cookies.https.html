@@ -30,7 +30,7 @@
 
             switch (document.location.hash) {
                 case "":
-                    internals.setTrackingPreventionEnabled(true);
+                    testRunner.setStatisticsEnabled(true);
                     testRunner.setStatisticsIsRunningTest(true);
                     testRunner.setOnlyAcceptFirstPartyCookies(false);
                     testRunner.dumpChildFramesAsText();
@@ -71,12 +71,12 @@
                     injectThirdPartyIframe(iframeUrls.resetCookies);
                     break;
                 case "#7":
-                    internals.setTrackingPreventionEnabled(false);
+                    testRunner.setStatisticsEnabled(false);
                     testRunner.setStatisticsIsRunningTest(false);
                     finishJSTest();
                     break;
                 default:
-                    internals.setTrackingPreventionEnabled(false);
+                    testRunner.setStatisticsEnabled(false);
                     testRunner.setStatisticsIsRunningTest(false);
                     testFailed("Unknown location hash value.");
                     finishJSTest();

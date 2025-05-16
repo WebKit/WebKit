@@ -2,13 +2,13 @@ function setEnableFeature(enable, completionHandler) {
     if (typeof completionHandler !== "function")
         testFailed("setEnableFeature() requires a completion handler function.");
     if (enable) {
-        internals.setTrackingPreventionEnabled(true);
+        testRunner.setStatisticsEnabled(true);
         testRunner.setStatisticsIsRunningTest(true);
         completionHandler();
     } else {
         testRunner.statisticsResetToConsistentState(function() {
             testRunner.setStatisticsIsRunningTest(false);
-            internals.setTrackingPreventionEnabled(false);
+            testRunner.setStatisticsEnabled(false);
             completionHandler();
         });
     }
