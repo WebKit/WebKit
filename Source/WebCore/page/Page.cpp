@@ -5170,12 +5170,11 @@ void Page::willChangeLocationInCompletelyLoadedSubframe()
 
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
+    deleteRemovedNodes();
     OptionSet<JSC::VM::SchedulerOptions> options;
     if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
-
-    deleteRemovedNodes();
 }
 
 void Page::deleteRemovedNodes()
