@@ -142,7 +142,7 @@ private:
     static_assert(s_chunkSize == (1 << s_chunkSizeShift), "bad chunkSizeShift");
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    typedef typename std::aligned_storage<s_pageSize, std::alignment_of<uintptr_t>::value>::type Buffer;
+    using Buffer = typename std::aligned_storage<s_pageSize, std::alignment_of<uintptr_t>::value>::type;
     ALLOW_DEPRECATED_DECLARATIONS_END
     Buffer m_buffer;
 };

@@ -76,7 +76,7 @@ static void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unl
 template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
 UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, DerivedContextType derivedContextType, bool isArrowFunctionContext, const TDZEnvironment* variablesUnderTDZ = nullptr, const PrivateNameEnvironment* privateNameEnvironment = nullptr, ExecutableType* executable = nullptr)
 {
-    typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
+    using RootNode = typename CacheTypes<UnlinkedCodeBlockType>::RootNode;
     bool isInsideOrdinaryFunction = executable && executable->isInsideOrdinaryFunction();
 
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(

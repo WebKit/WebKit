@@ -62,7 +62,7 @@ static constexpr bool verbose = false;
 // some patchpoints to share the same one as a signal that they will return the same value if executed
 // in the same heap with the same inputs.
 
-typedef Vector<MemoryValue*, 1> MemoryMatches;
+using MemoryMatches = Vector<MemoryValue*, 1>;
 
 class MemoryValueMap {
 public:

@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-typedef WriteBarrierBase<Unknown>* PropertyStorage;
-typedef const WriteBarrierBase<Unknown>* ConstPropertyStorage;
+using PropertyStorage = WriteBarrierBase<Unknown>*;
+using ConstPropertyStorage = const WriteBarrierBase<Unknown>*;
 
 } // namespace JSC

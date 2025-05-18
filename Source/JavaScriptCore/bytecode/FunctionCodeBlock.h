@@ -36,7 +36,7 @@ namespace JSC {
 
 class FunctionCodeBlock final : public CodeBlock {
 public:
-    typedef CodeBlock Base;
+    using Base = CodeBlock;
     DECLARE_INFO;
 
     template<typename, SubspaceAccess>

@@ -36,7 +36,7 @@ class Structure;
 class VM;
 
 class LazyClassStructure {
-    typedef LazyProperty<JSGlobalObject, Structure>::Initializer StructureInitializer;
+    using StructureInitializer = LazyProperty<JSGlobalObject, Structure>::Initializer;
     
 public:
     struct Initializer {

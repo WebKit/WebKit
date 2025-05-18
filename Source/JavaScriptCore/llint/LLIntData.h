@@ -38,7 +38,7 @@ namespace JSC {
 class VM;
 
 #if ENABLE(C_LOOP)
-typedef OpcodeID LLIntCode;
+using LLIntCode = OpcodeID;
 #else
 typedef void (SYSV_ABI *LLIntCode)();
 #endif

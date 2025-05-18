@@ -36,10 +36,10 @@ class JITMulGenerator;
 class JITNegGenerator;
 class JITSubGenerator;
 
-typedef JITBinaryMathIC<JITAddGenerator> JITAddIC;
-typedef JITBinaryMathIC<JITMulGenerator> JITMulIC;
-typedef JITUnaryMathIC<JITNegGenerator> JITNegIC;
-typedef JITBinaryMathIC<JITSubGenerator> JITSubIC;
+using JITAddIC = JITBinaryMathIC<JITAddGenerator>;
+using JITMulIC = JITBinaryMathIC<JITMulGenerator>;
+using JITNegIC = JITUnaryMathIC<JITNegGenerator>;
+using JITSubIC = JITBinaryMathIC<JITSubGenerator>;
 
 } // namespace JSC
 

@@ -55,7 +55,7 @@ namespace JSC {
     class RegisterID;
     class ScopeNode;
 
-    typedef SmallSet<UniquedStringImpl*> UniquedStringImplPtrSet;
+    using UniquedStringImplPtrSet = SmallSet<UniquedStringImpl*>;
 
     enum class Operator : uint8_t {
         Equal,
@@ -90,7 +90,7 @@ namespace JSC {
     inline FallThroughMode invert(FallThroughMode fallThroughMode) { return static_cast<FallThroughMode>(!fallThroughMode); }
 
     namespace DeclarationStacks {
-        typedef Vector<FunctionMetadataNode*> FunctionStack;
+        using FunctionStack = Vector<FunctionMetadataNode*>;
     }
 
     struct SwitchInfo {
@@ -272,7 +272,7 @@ namespace JSC {
     class VariableEnvironmentNode : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(VariableEnvironmentNode);
     public:
-        typedef DeclarationStacks::FunctionStack FunctionStack;
+        using FunctionStack = DeclarationStacks::FunctionStack;
 
         VariableEnvironmentNode() = default;
         VariableEnvironmentNode(VariableEnvironment&& lexicalDeclaredVariables);
@@ -2091,7 +2091,7 @@ namespace JSC {
     class ImportSpecifierListNode final : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ImportSpecifierListNode);
     public:
-        typedef Vector<ImportSpecifierNode*, 3> Specifiers;
+        using Specifiers = Vector<ImportSpecifierNode*, 3>;
 
         const Specifiers& specifiers() const { return m_specifiers; }
         void append(ImportSpecifierNode* specifier)
@@ -2206,7 +2206,7 @@ namespace JSC {
     class ExportSpecifierListNode final : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ExportSpecifierListNode);
     public:
-        typedef Vector<ExportSpecifierNode*, 3> Specifiers;
+        using Specifiers = Vector<ExportSpecifierNode*, 3>;
 
         const Specifiers& specifiers() const { return m_specifiers; }
         void append(ExportSpecifierNode* specifier)

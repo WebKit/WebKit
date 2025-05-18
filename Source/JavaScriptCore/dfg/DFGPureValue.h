@@ -164,8 +164,8 @@ template<> struct HashTraits<JSC::DFG::PureValue> : SimpleClassHashTraits<JSC::D
 
 namespace JSC { namespace DFG {
 
-typedef UncheckedKeyHashMap<PureValue, Node*> PureMap;
-typedef UncheckedKeyHashMap<PureValue, Vector<Node*>> PureMultiMap;
+using PureMap = UncheckedKeyHashMap<PureValue, Node*>;
+using PureMultiMap = UncheckedKeyHashMap<PureValue, Vector<Node*>>;
 
 } } // namespace JSC::DFG
 

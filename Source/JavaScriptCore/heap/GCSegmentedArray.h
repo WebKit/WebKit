@@ -90,7 +90,7 @@ public:
     void fillVector(Vector<T>&);
     void clear();
 
-    typedef GCSegmentedArrayIterator<T> iterator;
+    using iterator = GCSegmentedArrayIterator<T>;
     iterator begin() const { return GCSegmentedArrayIterator<T>(m_segments.head(), m_top); }
     iterator end() const { return GCSegmentedArrayIterator<T>(); }
 

@@ -122,7 +122,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
         uint32_t m_tryDepthForThrow { 0 };
     };
 
-    typedef uint8_t LexicallyScopedFeatures;
+    using LexicallyScopedFeatures = uint8_t;
 
     class Interpreter {
         WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Interpreter);

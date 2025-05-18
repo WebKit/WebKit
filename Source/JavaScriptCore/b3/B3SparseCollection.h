@@ -37,7 +37,7 @@ namespace JSC { namespace B3 {
 
 template<typename T>
 class SparseCollection {
-    typedef Vector<std::unique_ptr<T>> VectorType;
+    using VectorType = Vector<std::unique_ptr<T>>;
     
 public:
     SparseCollection()

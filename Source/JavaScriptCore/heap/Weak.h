@@ -100,15 +100,15 @@ template<typename T> struct VectorTraits<JSC::Weak<T>> : SimpleClassVectorTraits
 };
 
 template<typename T> struct HashTraits<JSC::Weak<T>> : SimpleClassHashTraits<JSC::Weak<T>> {
-    typedef JSC::Weak<T> StorageType;
+    using StorageType = JSC::Weak<T>;
 
-    typedef std::nullptr_t EmptyValueType;
+    using EmptyValueType = std::nullptr_t;
     static EmptyValueType emptyValue() { return nullptr; }
 
     static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const JSC::Weak<T>& value) { return value.isHashTableEmptyValue(); }
 
-    typedef T* PeekType;
+    using PeekType = T*;
     static PeekType peek(const StorageType& value) { return value.get(); }
     static PeekType peek(EmptyValueType) { return PeekType(); }
 };

@@ -33,7 +33,7 @@ class ProxyObject;
 
 class ProxyRevoke final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess mode>

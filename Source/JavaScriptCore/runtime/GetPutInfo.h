@@ -220,7 +220,7 @@ struct ResolveOp {
 };
 
 class GetPutInfo {
-    typedef unsigned Operand;
+    using Operand = unsigned;
 public:
     // Give each field 10 bits for simplicity.
     static_assert(sizeof(Operand) * 8 > 31, "Not enough bits for GetPutInfo");

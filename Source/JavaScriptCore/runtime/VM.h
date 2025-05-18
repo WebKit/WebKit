@@ -613,7 +613,7 @@ public:
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
 
-    typedef UncheckedKeyHashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
+    using SourceProviderCacheMap = UncheckedKeyHashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>>;
     SourceProviderCacheMap sourceProviderCacheMap;
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;

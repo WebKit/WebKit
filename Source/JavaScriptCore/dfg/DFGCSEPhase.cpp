@@ -219,7 +219,7 @@ public:
     }
 
 private:
-    typedef UncheckedKeyHashSet<std::unique_ptr<ImpureDataSlot>, ImpureDataSlotHash> Map;
+    using Map = UncheckedKeyHashSet<std::unique_ptr<ImpureDataSlot>, ImpureDataSlotHash>;
 
     const ImpureDataSlot* addImpl(const HeapLocation& location, const LazyNode& node)
     {

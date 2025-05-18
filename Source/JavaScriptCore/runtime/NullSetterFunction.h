@@ -31,7 +31,7 @@ namespace JSC {
 
 class NullSetterFunction final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static NullSetterFunction* create(VM& vm, Structure* structure, ECMAMode ecmaMode)
     {

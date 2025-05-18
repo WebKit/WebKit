@@ -89,7 +89,7 @@ public:
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_length); }
     static constexpr ptrdiff_t offsetOfArguments() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_arguments); }
 
-    typedef CagedUniquePtr<Gigacage::Primitive, ScopeOffset> ArgumentsPtr;
+    using ArgumentsPtr = CagedUniquePtr<Gigacage::Primitive, ScopeOffset>;
 
 private:
     ScopedArgumentsTable* tryClone(VM&);

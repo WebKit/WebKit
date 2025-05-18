@@ -73,8 +73,8 @@ enum class LinkTimeConstant : int32_t;
 template<typename CodeBlockType>
 class CachedCodeBlock;
 
-typedef unsigned UnlinkedArrayAllocationProfile;
-typedef unsigned UnlinkedObjectAllocationProfile;
+using UnlinkedArrayAllocationProfile = unsigned;
+using UnlinkedObjectAllocationProfile = unsigned;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedCodeBlock_RareData);
 
@@ -137,7 +137,7 @@ struct UnlinkedSimpleJumpTable {
 
 class UnlinkedCodeBlock : public JSCell {
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static constexpr DestructionMode needsDestruction = NeedsDestruction;

@@ -65,8 +65,8 @@ static constexpr unsigned numberOfInlineBits = 8;
 
 class TypeInfo {
 public:
-    typedef uint8_t InlineTypeFlags;
-    typedef uint16_t OutOfLineTypeFlags;
+    using InlineTypeFlags = uint8_t;
+    using OutOfLineTypeFlags = uint16_t;
 
     constexpr TypeInfo(JSType type, unsigned flags)
         : TypeInfo(type, flags & 0xff, flags >> numberOfInlineBits)

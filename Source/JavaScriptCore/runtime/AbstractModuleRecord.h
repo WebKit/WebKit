@@ -97,9 +97,9 @@ public:
         Identifier localName;
     };
 
-    typedef WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> OrderedIdentifierSet;
-    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ImportEntries;
-    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportEntries;
+    using OrderedIdentifierSet = WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+    using ImportEntries = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
+    using ExportEntries = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
 
     struct ModuleRequest {
         RefPtr<UniquedStringImpl> m_specifier;
@@ -212,7 +212,7 @@ private:
     // So here, we don't visit each object for GC. The resolution cache map caches the once
     // looked up correctly resolved resolution, since (1) we rarely looked up the non-resolved one,
     // and (2) if we cache all the attempts the size of the map becomes infinitely large.
-    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Resolution, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> Resolutions;
+    using Resolutions = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Resolution, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
     Resolutions m_resolutionCache;
 };
 

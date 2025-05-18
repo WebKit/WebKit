@@ -34,7 +34,7 @@ class GetterSetter;
 
 class WeakSetConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static WeakSetConstructor* create(VM& vm, Structure* structure, WeakSetPrototype* prototype)
     {

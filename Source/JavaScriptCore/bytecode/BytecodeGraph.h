@@ -45,7 +45,7 @@ public:
     using BasicBlocksVector = typename BasicBlockType::BasicBlockVector;
     using InstructionStreamType = typename BasicBlockType::InstructionStreamType;
 
-    typedef WTF::IndexedContainerIterator<BytecodeGraph> iterator;
+    using iterator = WTF::IndexedContainerIterator<BytecodeGraph>;
 
     template <typename CodeBlockType>
     inline BytecodeGraph(CodeBlockType*, const InstructionStreamType&);

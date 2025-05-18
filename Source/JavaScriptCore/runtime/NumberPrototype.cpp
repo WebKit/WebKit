@@ -38,7 +38,7 @@
 using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 
 // To avoid conflict with WTF::StringBuilder.
-typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
+using DoubleConversionStringBuilder = WTF::double_conversion::StringBuilder;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

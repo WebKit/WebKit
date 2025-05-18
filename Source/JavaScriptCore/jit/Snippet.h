@@ -35,7 +35,7 @@ namespace JSC {
 class SnippetParams;
 
 typedef CCallHelpers::JumpList SnippetCompilerFunction(CCallHelpers&, SnippetParams&);
-typedef SharedTask<SnippetCompilerFunction> SnippetCompiler;
+using SnippetCompiler = SharedTask<SnippetCompilerFunction>;
 
 // Snippet is the way to inject an opaque code generator into DFG and FTL.
 // While B3::Patchpoint is self-contained about its compilation information,

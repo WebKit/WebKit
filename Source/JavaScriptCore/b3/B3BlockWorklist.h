@@ -35,7 +35,7 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 
-typedef GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> BlockWorklist;
+using BlockWorklist = GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>>;
 
 // When you say BlockWith<int> you should read it as "block with an int".
 template<typename T> using BlockWith = GraphNodeWith<BasicBlock*, T>;
@@ -46,11 +46,11 @@ template<typename T> using BlockWith = GraphNodeWith<BasicBlock*, T>;
 // successor index.
 template<typename T> using ExtendedBlockWorklist = ExtendedGraphNodeWorklist<BasicBlock*, T, IndexSet<BasicBlock*>>;
 
-typedef GraphVisitOrder VisitOrder;
+using VisitOrder = GraphVisitOrder;
 
-typedef GraphNodeWithOrder<BasicBlock*> BlockWithOrder;
+using BlockWithOrder = GraphNodeWithOrder<BasicBlock*>;
 
-typedef PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> PostOrderBlockWorklist;
+using PostOrderBlockWorklist = PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>>;
 
 } } // namespace JSC::B3
 

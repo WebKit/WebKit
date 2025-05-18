@@ -38,7 +38,7 @@ class WebAssemblyInstancePrototype;
 
 class WebAssemblyInstanceConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyInstanceConstructor* create(VM&, Structure*, WebAssemblyInstancePrototype*);

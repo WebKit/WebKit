@@ -137,12 +137,12 @@ struct PrivateNameEntryHashTraits : HashTraits<PrivateNameEntry> {
     static constexpr bool needsDestruction = false;
 };
 
-typedef UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
+using PrivateNameEnvironment = UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits>;
 
 class VariableEnvironment {
     WTF_MAKE_TZONE_ALLOCATED(VariableEnvironment);
 private:
-    typedef UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
+    using Map = UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits>;
 
 public:
 

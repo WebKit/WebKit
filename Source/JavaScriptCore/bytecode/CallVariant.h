@@ -166,7 +166,7 @@ struct CallVariantHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-typedef Vector<CallVariant, 1> CallVariantList;
+using CallVariantList = Vector<CallVariant, 1>;
 
 // Returns a new variant list by attempting to either append the given variant or merge it with one
 // of the variants we already have by despecifying closures.

@@ -114,7 +114,7 @@ struct OpCatch;
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
 class CodeBlock : public JSCell {
-    typedef JSCell Base;
+    using Base = JSCell;
     friend class BytecodeLivenessAnalysis;
     friend class JIT;
     friend class LLIntOffsetsExtractor;
@@ -644,7 +644,7 @@ public:
         return m_unlinkedCode->llintExecuteCounter();
     }
 
-    typedef UncheckedKeyHashMap<std::tuple<StructureID, BytecodeIndex>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
+    using StructureWatchpointMap = UncheckedKeyHashMap<std::tuple<StructureID, BytecodeIndex>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>>;
     StructureWatchpointMap& llintGetByIdWatchpointMap() { return m_llintGetByIdWatchpointMap; }
 
     // Functions for controlling when tiered compilation kicks in. This

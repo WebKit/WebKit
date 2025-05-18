@@ -77,11 +77,11 @@ class SpeculativeJIT : public JITCompiler {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
     friend struct OSRExit;
 private:
-    typedef JITCompiler::TrustedImm32 TrustedImm32;
-    typedef JITCompiler::Imm32 Imm32;
-    typedef JITCompiler::ImmPtr ImmPtr;
-    typedef JITCompiler::TrustedImm64 TrustedImm64;
-    typedef JITCompiler::Imm64 Imm64;
+    using TrustedImm32 = JITCompiler::TrustedImm32;
+    using Imm32 = JITCompiler::Imm32;
+    using ImmPtr = JITCompiler::ImmPtr;
+    using TrustedImm64 = JITCompiler::TrustedImm64;
+    using Imm64 = JITCompiler::Imm64;
 
     // These constants are used to set priorities for spill order for
     // the register allocator.

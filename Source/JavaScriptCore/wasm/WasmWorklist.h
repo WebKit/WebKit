@@ -67,7 +67,7 @@ private:
     class Thread;
     friend class Thread;
 
-    typedef uint64_t Ticket;
+    using Ticket = uint64_t;
     Ticket nextTicket() { return m_lastGrantedTicket++; }
 
     struct QueueElement {

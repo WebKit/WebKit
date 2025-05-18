@@ -57,7 +57,7 @@ bool verbose() { return Options::airLinearScanVerbose(); }
 const unsigned firstPhase = 0;
 const unsigned secondPhase = 1;
 
-typedef Range<size_t> Interval;
+using Interval = Range<size_t>;
 
 struct TmpData {
     void dump(PrintStream& out) const

@@ -46,7 +46,7 @@ public:
 private:
     void kill(StaticPropertyAnalysis*);
 
-    typedef UncheckedKeyHashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> AnalysisMap;
+    using AnalysisMap = UncheckedKeyHashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
     AnalysisMap m_analyses;
 };
 

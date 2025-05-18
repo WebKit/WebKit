@@ -252,9 +252,9 @@ public:
     }
 };
 
-typedef JITBinaryMathIC<JITAddGenerator> JITAddIC;
-typedef JITBinaryMathIC<JITMulGenerator> JITMulIC;
-typedef JITBinaryMathIC<JITSubGenerator> JITSubIC;
+using JITAddIC = JITBinaryMathIC<JITAddGenerator>;
+using JITMulIC = JITBinaryMathIC<JITMulGenerator>;
+using JITSubIC = JITBinaryMathIC<JITSubGenerator>;
 
 template <typename GeneratorType>
 class JITUnaryMathIC : public JITMathIC<GeneratorType, UnaryArithProfile> {
@@ -265,7 +265,7 @@ public:
     }
 };
 
-typedef JITUnaryMathIC<JITNegGenerator> JITNegIC;
+using JITNegIC = JITUnaryMathIC<JITNegGenerator>;
 
 } // namespace JSC
 

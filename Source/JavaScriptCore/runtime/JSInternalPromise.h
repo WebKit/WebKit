@@ -41,7 +41,7 @@ class JSFunction;
 // CAUTION: Must not leak the JSInternalPromise to the user space to keep its integrity.
 class JSInternalPromise final : public JSPromise {
 public:
-    typedef JSPromise Base;
+    using Base = JSPromise;
 
     JS_EXPORT_PRIVATE static JSInternalPromise* create(VM&, Structure*);
     static JSInternalPromise* createWithInitialValues(VM&, Structure*);

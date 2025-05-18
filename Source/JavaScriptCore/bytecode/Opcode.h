@@ -195,9 +195,9 @@ IGNORE_WARNINGS_BEGIN("type-limits")
 IGNORE_WARNINGS_END
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-typedef void* Opcode;
+using Opcode = void*;
 #else
-typedef OpcodeID Opcode;
+using Opcode = OpcodeID;
 #endif
 
 extern ASCIILiteral const opcodeNames[];

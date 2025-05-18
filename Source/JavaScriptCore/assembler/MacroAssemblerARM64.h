@@ -81,10 +81,10 @@ public:
     {
     }
 
-    typedef Assembler::LinkRecord LinkRecord;
-    typedef Assembler::JumpType JumpType;
-    typedef Assembler::JumpLinkType JumpLinkType;
-    typedef Assembler::Condition Condition;
+    using LinkRecord = Assembler::LinkRecord;
+    using JumpType = Assembler::JumpType;
+    using JumpLinkType = Assembler::JumpLinkType;
+    using Condition = Assembler::Condition;
 
     static constexpr Assembler::Condition DefaultCondition = Assembler::ConditionInvalid;
     static constexpr Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;

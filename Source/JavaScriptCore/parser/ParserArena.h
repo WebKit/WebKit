@@ -59,7 +59,7 @@ namespace JSC {
 
     public:
         static const int MaximumCachableCharacter = 128;
-        typedef SegmentedVector<Identifier, 64> IdentifierVector;
+        using IdentifierVector = SegmentedVector<Identifier, 64>;
         void clear()
         {
             m_identifiers.clear();

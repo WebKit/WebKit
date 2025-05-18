@@ -45,7 +45,7 @@ enum RuntimeType : uint16_t {
     TypeBigInt             = 0x200,
 };
 
-typedef uint16_t RuntimeTypeMask;
+using RuntimeTypeMask = uint16_t;
 
 static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefined | TypeNull | TypeBoolean | TypeAnyInt | TypeNumber | TypeString | TypeObject | TypeSymbol | TypeBigInt;
 

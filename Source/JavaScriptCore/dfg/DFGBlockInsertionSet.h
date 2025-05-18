@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-typedef WTF::Insertion<std::unique_ptr<BasicBlock>> BlockInsertion;
+using BlockInsertion = WTF::Insertion<std::unique_ptr<BasicBlock>>;
 
 class BlockInsertionSet {
 public:

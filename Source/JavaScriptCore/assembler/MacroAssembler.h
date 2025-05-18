@@ -116,7 +116,7 @@ using Probe::SavedFPWidth;
 namespace Printer {
 
 struct PrintRecord;
-typedef Vector<PrintRecord> PrintRecordList;
+using PrintRecordList = Vector<PrintRecord>;
 
 } // namespace Printer
 

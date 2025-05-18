@@ -37,9 +37,9 @@ namespace JSC { namespace B3 {
 // Const64Value depending on platform.
 
 #if CPU(ADDRESS64)
-typedef Const64Value ConstPtrValueBase;
+using ConstPtrValueBase = Const64Value;
 #else
-typedef Const32Value ConstPtrValueBase;
+using ConstPtrValueBase = Const32Value;
 #endif
 
 class ConstPtrValue : public ConstPtrValueBase {

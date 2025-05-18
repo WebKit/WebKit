@@ -159,7 +159,7 @@ private:
     int m_value;
 };
 
-typedef ARM64LogicalImmediate LogicalImmediate;
+using LogicalImmediate = ARM64LogicalImmediate;
 
 inline uint16_t getHalfword(uint64_t value, int which)
 {
@@ -204,9 +204,9 @@ class ARM64Assembler {
 public:
     static constexpr size_t instructionSize = sizeof(unsigned);
 
-    typedef ARM64Registers::RegisterID RegisterID;
-    typedef ARM64Registers::SPRegisterID SPRegisterID;
-    typedef ARM64Registers::FPRegisterID FPRegisterID;
+    using RegisterID = ARM64Registers::RegisterID;
+    using SPRegisterID = ARM64Registers::SPRegisterID;
+    using FPRegisterID = ARM64Registers::FPRegisterID;
     
     static constexpr RegisterID firstRegister() { return ARM64Registers::x0; }
     static constexpr RegisterID lastRegister() { return ARM64Registers::sp; }

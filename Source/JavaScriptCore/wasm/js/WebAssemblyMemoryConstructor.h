@@ -38,7 +38,7 @@ class WebAssemblyMemoryPrototype;
 
 class WebAssemblyMemoryConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyMemoryConstructor* create(VM&, Structure*, WebAssemblyMemoryPrototype*);

@@ -1490,7 +1490,7 @@ class YarrGenerator final : public YarrJITInfo {
         };
 
     public:
-        typedef Vector<ReturnAddressRecord, 4> BacktrackRecords;
+        using BacktrackRecords = Vector<ReturnAddressRecord, 4>;
 
         BacktrackingState()
             : m_pendingFallthrough(false)

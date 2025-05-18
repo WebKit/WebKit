@@ -30,7 +30,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-typedef struct _GBytes GBytes;
+using GBytes = struct _GBytes;
 
 namespace Inspector {
 

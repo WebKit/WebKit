@@ -118,7 +118,7 @@ public:
 
         bool contains(Value* value) const { return m_values->contains(value); }
 
-        typedef Vector<UpsilonValue*>::const_iterator iterator;
+        using iterator = Vector<UpsilonValue*>::const_iterator;
         Vector<UpsilonValue*>::const_iterator begin() const { return m_values->begin(); }
         Vector<UpsilonValue*>::const_iterator end() const { return m_values->end(); }
 

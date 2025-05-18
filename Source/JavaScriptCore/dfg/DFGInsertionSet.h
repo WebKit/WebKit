@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-typedef WTF::Insertion<Node*> Insertion;
+using Insertion = WTF::Insertion<Node*>;
 
 class InsertionSet {
 public:

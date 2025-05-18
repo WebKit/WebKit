@@ -43,7 +43,7 @@ class JSArray : public JSNonFinalObject {
     WTF_ALLOW_COMPACT_POINTERS;
 
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)

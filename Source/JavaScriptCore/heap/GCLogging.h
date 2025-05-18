@@ -43,7 +43,7 @@ public:
     static void dumpObjectGraph(Heap*);
 };
 
-typedef GCLogging::Level gcLogLevel;
+using gcLogLevel = GCLogging::Level;
 
 } // namespace JSC
 

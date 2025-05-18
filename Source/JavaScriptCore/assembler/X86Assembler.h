@@ -65,7 +65,7 @@ typedef enum : int8_t {
 
 class X86Assembler {
 public:
-    typedef X86Registers::RegisterID RegisterID;
+    using RegisterID = X86Registers::RegisterID;
     
     static constexpr RegisterID firstRegister() { return X86Registers::eax; }
     static constexpr RegisterID lastRegister()
@@ -74,14 +74,14 @@ public:
     }
     static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
     
-    typedef X86Registers::SPRegisterID SPRegisterID;
+    using SPRegisterID = X86Registers::SPRegisterID;
 
     static constexpr SPRegisterID firstSPRegister() { return X86Registers::eip; }
     static constexpr SPRegisterID lastSPRegister() { return X86Registers::eflags; }
     static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
     
-    typedef X86Registers::XMMRegisterID XMMRegisterID;
-    typedef XMMRegisterID FPRegisterID;
+    using XMMRegisterID = X86Registers::XMMRegisterID;
+    using FPRegisterID = XMMRegisterID;
     
     static constexpr FPRegisterID firstFPRegister() { return X86Registers::xmm0; }
     static constexpr FPRegisterID lastFPRegister()

@@ -32,7 +32,7 @@ class GetterSetter;
 
 class RegExpConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)

@@ -34,7 +34,7 @@ class JSAsyncFunction final : public JSFunction {
     friend class JIT;
     friend class VM;
 public:
-    typedef JSFunction Base;
+    using Base = JSFunction;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 

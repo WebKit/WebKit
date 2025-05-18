@@ -40,7 +40,7 @@ class UniquedStringImpl;
 namespace JSC {
 
 class BrandedStructure final : public Structure {
-    typedef Structure Base;
+    using Base = Structure;
 
 public:
 

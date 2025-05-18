@@ -303,8 +303,8 @@ class Heap;
     \
     FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v)
 
-typedef HashCountedSet<JSCell*> ProtectCountSet;
-typedef HashCountedSet<ASCIILiteral> TypeCountSet;
+using ProtectCountSet = HashCountedSet<JSCell*>;
+using TypeCountSet = HashCountedSet<ASCIILiteral>;
 
 enum class HeapType : uint8_t { Small, Medium, Large };
 
@@ -723,7 +723,7 @@ private:
     void clearMutatorWaiting();
     void notifyThreadStopping(const AbstractLocker&);
     
-    typedef uint64_t Ticket;
+    using Ticket = uint64_t;
     Ticket requestCollection(GCRequest);
     void waitForCollection(Ticket);
     

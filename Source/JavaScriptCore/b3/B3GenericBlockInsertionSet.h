@@ -40,7 +40,7 @@ class InsertionSet;
 template<typename BasicBlock>
 class GenericBlockInsertionSet {
 public:
-    typedef WTF::Insertion<std::unique_ptr<BasicBlock>> BlockInsertion;
+    using BlockInsertion = WTF::Insertion<std::unique_ptr<BasicBlock>>;
     
     GenericBlockInsertionSet(Vector<std::unique_ptr<BasicBlock>>& blocks)
         : m_blocks(blocks)

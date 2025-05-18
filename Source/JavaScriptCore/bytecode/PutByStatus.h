@@ -41,7 +41,7 @@ class Structure;
 class StructureChain;
 class StructureStubInfo;
 
-typedef UncheckedKeyHashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
+using StubInfoMap = UncheckedKeyHashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PutByStatus);
 

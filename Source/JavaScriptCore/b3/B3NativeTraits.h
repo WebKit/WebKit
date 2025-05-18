@@ -36,70 +36,70 @@ namespace JSC { namespace B3 {
 template<typename> struct NativeTraits;
 
 template<> struct NativeTraits<int8_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width8;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint8_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width8;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int16_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width16;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint16_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width16;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int32_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width32;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint32_t> {
-    typedef int32_t CanonicalType;
+    using CanonicalType = int32_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width32;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int64_t> {
-    typedef int64_t CanonicalType;
+    using CanonicalType = int64_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width64;
     static constexpr Type type = Int64;
 };
 
 template<> struct NativeTraits<uint64_t> {
-    typedef int64_t CanonicalType;
+    using CanonicalType = int64_t;
     static constexpr Bank bank = GP;
     static constexpr Width width = Width64;
     static constexpr Type type = Int64;
 };
 
 template<> struct NativeTraits<float> {
-    typedef float CanonicalType;
+    using CanonicalType = float;
     static constexpr Bank bank = FP;
     static constexpr Width width = Width32;
     static constexpr Type type = Float;
 };
 
 template<> struct NativeTraits<double> {
-    typedef double CanonicalType;
+    using CanonicalType = double;
     static constexpr Bank bank = FP;
     static constexpr Width width = Width64;
     static constexpr Type type = Double;

@@ -43,8 +43,8 @@ namespace JSC { namespace DFG {
 class Graph;
 class InsertionSet;
 
-typedef Vector<BasicBlock*, 2> PredecessorList;
-typedef Vector<Node*, 8> BlockNodeList;
+using PredecessorList = Vector<BasicBlock*, 2>;
+using BlockNodeList = Vector<Node*, 8>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
 
@@ -279,7 +279,7 @@ private:
     BlockNodeList m_nodes;
 };
 
-typedef Vector<BasicBlock*> BlockList;
+using BlockList = Vector<BasicBlock*>;
     
 static inline BytecodeIndex getBytecodeBeginForBlock(BasicBlock** basicBlock)
 {

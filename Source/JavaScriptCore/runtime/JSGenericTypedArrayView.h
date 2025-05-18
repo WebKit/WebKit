@@ -69,9 +69,9 @@ FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_DECLARE_CLASS_INFO_FUNCTION)
 // interface; I use int8_t as an example:
 //
 // struct Adaptor {
-//     typedef int8_t Type;
-//     typedef Int8Array ViewType;
-//     typedef JSInt8Array JSViewType;
+//     using Type = int8_t;
+//     using ViewType = Int8Array;
+//     using JSViewType = JSInt8Array;
 //     static int8_t toNativeFromInt32(int32_t);
 //     static int8_t toNativeFromUint32(uint32_t);
 //     static int8_t toNativeFromDouble(double);

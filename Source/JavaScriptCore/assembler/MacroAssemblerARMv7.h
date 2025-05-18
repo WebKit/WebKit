@@ -99,10 +99,10 @@ public:
     {
     }
 
-    typedef ARMv7Assembler::LinkRecord LinkRecord;
-    typedef ARMv7Assembler::JumpType JumpType;
-    typedef ARMv7Assembler::JumpLinkType JumpLinkType;
-    typedef ARMv7Assembler::Condition Condition;
+    using LinkRecord = ARMv7Assembler::LinkRecord;
+    using JumpType = ARMv7Assembler::JumpType;
+    using JumpLinkType = ARMv7Assembler::JumpLinkType;
+    using Condition = ARMv7Assembler::Condition;
 
     static constexpr ARMv7Assembler::Condition DefaultCondition = ARMv7Assembler::ConditionInvalid;
     static constexpr ARMv7Assembler::JumpType DefaultJump = ARMv7Assembler::JumpNoConditionFixedSize;

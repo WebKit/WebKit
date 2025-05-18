@@ -34,7 +34,7 @@ enum class SourceTaintedOrigin : uint8_t;
 
 class FunctionConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static FunctionConstructor* create(VM& vm, Structure* structure, FunctionPrototype* functionPrototype)
     {

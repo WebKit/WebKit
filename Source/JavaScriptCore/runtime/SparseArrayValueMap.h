@@ -40,11 +40,11 @@ class SparseArrayEntry;
 
 class SparseArrayValueMap final : public JSCell {
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
 private:
-    typedef UncheckedKeyHashMap<uint64_t, SparseArrayEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Map;
+    using Map = UncheckedKeyHashMap<uint64_t, SparseArrayEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
     enum Flags {
         Normal                             = 0,
@@ -60,9 +60,9 @@ private:
 public:
     DECLARE_EXPORT_INFO;
     
-    typedef Map::iterator iterator;
-    typedef Map::const_iterator const_iterator;
-    typedef Map::AddResult AddResult;
+    using iterator = Map::iterator;
+    using const_iterator = Map::const_iterator;
+    using AddResult = Map::AddResult;
 
     static SparseArrayValueMap* create(VM&);
     

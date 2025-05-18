@@ -36,7 +36,7 @@ class MarkedBlock;
 class WeakSet;
 class VM;
 
-typedef uint32_t HeapVersion;
+using HeapVersion = uint32_t;
 
 // This is how we abstract over either MarkedBlock& or PreciseAllocation&. Put things in here as you
 // find need for them.

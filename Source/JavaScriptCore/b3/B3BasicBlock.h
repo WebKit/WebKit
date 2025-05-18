@@ -48,9 +48,9 @@ class BasicBlock {
     WTF_MAKE_NONCOPYABLE(BasicBlock);
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(BasicBlock);
 public:
-    typedef Vector<Value*> ValueList;
-    typedef Vector<BasicBlock*, 2> PredecessorList;
-    typedef Vector<FrequentedBlock, 2> SuccessorList;
+    using ValueList = Vector<Value*>;
+    using PredecessorList = Vector<BasicBlock*, 2>;
+    using SuccessorList = Vector<FrequentedBlock, 2>;
 
     static constexpr unsigned uninsertedIndex = UINT_MAX;
     static const char* const dumpPrefix;

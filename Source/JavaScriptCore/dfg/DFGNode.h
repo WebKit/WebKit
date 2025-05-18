@@ -3996,8 +3996,8 @@ public:
 };
 
 // Uncomment this to log NodeSet operations.
-// typedef LoggingHashSet<Node::HashSetTemplateInstantiationString, Node*> NodeSet;
-typedef UncheckedKeyHashSet<Node*> NodeSet;
+// using NodeSet = LoggingHashSet<Node::HashSetTemplateInstantiationString, Node*>;
+using NodeSet = UncheckedKeyHashSet<Node*>;
 
 struct NodeComparator {
     template<typename NodePtrType>

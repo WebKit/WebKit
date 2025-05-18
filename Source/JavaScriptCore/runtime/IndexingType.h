@@ -58,7 +58,7 @@ namespace JSC {
     It's also common to refer to shape + copyOnWrite as IndexingShapeWithWritability.
 */
 
-typedef uint8_t IndexingType;
+using IndexingType = uint8_t;
 
 // Flags for testing the presence of capabilities.
 static const IndexingType IsArray                  = 0x01;
@@ -248,6 +248,6 @@ static const IndexingType AllArrayTypes            = AllWritableArrayTypes | Cop
 static const IndexingType AllWritableArrayTypesAndHistory = AllWritableArrayTypes | MayHaveIndexedAccessors;
 static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
 
-typedef LockAlgorithm<IndexingType, IndexingTypeLockIsHeld, IndexingTypeLockHasParked> IndexingTypeLockAlgorithm;
+using IndexingTypeLockAlgorithm = LockAlgorithm<IndexingType, IndexingTypeLockIsHeld, IndexingTypeLockHasParked>;
 
 } // namespace JSC

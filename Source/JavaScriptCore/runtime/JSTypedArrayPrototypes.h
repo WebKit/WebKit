@@ -30,17 +30,17 @@
 
 namespace JSC {
 
-typedef JSGenericTypedArrayViewPrototype<JSInt8Array> JSInt8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt16Array> JSInt16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt32Array> JSInt32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8Array> JSUint8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8ClampedArray> JSUint8ClampedArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint16Array> JSUint16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint32Array> JSUint32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat16Array> JSFloat16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat32Array> JSFloat32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat64Array> JSFloat64ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSBigInt64Array> JSBigInt64ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSBigUint64Array> JSBigUint64ArrayPrototype;
+using JSInt8ArrayPrototype = JSGenericTypedArrayViewPrototype<JSInt8Array>;
+using JSInt16ArrayPrototype = JSGenericTypedArrayViewPrototype<JSInt16Array>;
+using JSInt32ArrayPrototype = JSGenericTypedArrayViewPrototype<JSInt32Array>;
+using JSUint8ArrayPrototype = JSGenericTypedArrayViewPrototype<JSUint8Array>;
+using JSUint8ClampedArrayPrototype = JSGenericTypedArrayViewPrototype<JSUint8ClampedArray>;
+using JSUint16ArrayPrototype = JSGenericTypedArrayViewPrototype<JSUint16Array>;
+using JSUint32ArrayPrototype = JSGenericTypedArrayViewPrototype<JSUint32Array>;
+using JSFloat16ArrayPrototype = JSGenericTypedArrayViewPrototype<JSFloat16Array>;
+using JSFloat32ArrayPrototype = JSGenericTypedArrayViewPrototype<JSFloat32Array>;
+using JSFloat64ArrayPrototype = JSGenericTypedArrayViewPrototype<JSFloat64Array>;
+using JSBigInt64ArrayPrototype = JSGenericTypedArrayViewPrototype<JSBigInt64Array>;
+using JSBigUint64ArrayPrototype = JSGenericTypedArrayViewPrototype<JSBigUint64Array>;
 
 } // namespace JSC

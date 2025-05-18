@@ -35,7 +35,7 @@ class IntlDateTimeFormatPrototype;
 
 class IntlDateTimeFormatConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlDateTimeFormatConstructor* create(VM&, Structure*, IntlDateTimeFormatPrototype*);

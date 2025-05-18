@@ -131,7 +131,7 @@ protected:
 
 template<typename T> struct Printer;
 
-typedef Vector<PrintRecord> PrintRecordList;
+using PrintRecordList = Vector<PrintRecord>;
 
 inline void appendPrinter(PrintRecordList&) { }
 

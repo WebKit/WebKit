@@ -62,6 +62,6 @@ inline CallEdge::CallEdge()
 {
 }
 
-typedef Vector<CallEdge, 1> CallEdgeList;
+using CallEdgeList = Vector<CallEdge, 1>;
 
 } // namespace JSC

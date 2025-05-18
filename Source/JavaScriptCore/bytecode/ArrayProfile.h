@@ -40,7 +40,7 @@ class UnlinkedArrayProfile;
 // This is a bitfield where each bit represents an type of array access that we have seen.
 // There are 19 indexing types that use the lower bits.
 // There are 11 typed array types taking the bits 16-20 and 26-31.
-typedef unsigned ArrayModes;
+using ArrayModes = unsigned;
 
 // The possible IndexingTypes are limited within (0 - 16, 21, 23, 25).
 // This is because CoW types only appear for JSArrays.

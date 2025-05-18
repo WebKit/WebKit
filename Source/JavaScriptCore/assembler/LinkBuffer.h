@@ -62,18 +62,18 @@ class LinkBuffer {
     WTF_MAKE_TZONE_ALLOCATED(LinkBuffer);
     
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
-    typedef MacroAssembler::Label Label;
-    typedef MacroAssembler::Jump Jump;
-    typedef MacroAssembler::PatchableJump PatchableJump;
-    typedef MacroAssembler::JumpList JumpList;
-    typedef MacroAssembler::Call Call;
-    typedef MacroAssembler::DataLabelCompact DataLabelCompact;
-    typedef MacroAssembler::DataLabel32 DataLabel32;
-    typedef MacroAssembler::DataLabelPtr DataLabelPtr;
-    typedef MacroAssembler::ConvertibleLoadLabel ConvertibleLoadLabel;
+    using Label = MacroAssembler::Label;
+    using Jump = MacroAssembler::Jump;
+    using PatchableJump = MacroAssembler::PatchableJump;
+    using JumpList = MacroAssembler::JumpList;
+    using Call = MacroAssembler::Call;
+    using DataLabelCompact = MacroAssembler::DataLabelCompact;
+    using DataLabel32 = MacroAssembler::DataLabel32;
+    using DataLabelPtr = MacroAssembler::DataLabelPtr;
+    using ConvertibleLoadLabel = MacroAssembler::ConvertibleLoadLabel;
 #if ENABLE(BRANCH_COMPACTION)
-    typedef MacroAssembler::LinkRecord LinkRecord;
-    typedef MacroAssembler::JumpLinkType JumpLinkType;
+    using LinkRecord = MacroAssembler::LinkRecord;
+    using JumpLinkType = MacroAssembler::JumpLinkType;
 #endif
 
 public:

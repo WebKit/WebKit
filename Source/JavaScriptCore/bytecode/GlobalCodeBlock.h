@@ -37,7 +37,7 @@ namespace JSC {
 // responsible for marking it.
 
 class GlobalCodeBlock : public CodeBlock {
-    typedef CodeBlock Base;
+    using Base = CodeBlock;
 
 protected:
     GlobalCodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, GlobalCodeBlock& other)

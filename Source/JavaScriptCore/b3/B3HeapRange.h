@@ -37,7 +37,7 @@ namespace JSC { namespace B3 {
 // to be used for TBAA-style alias analysis used by the DFG, FTL, and LLVM: you just turn each node
 // in the tree of abstract heaps into a pre/post range.
 
-typedef Range<unsigned> HeapRange;
+using HeapRange = Range<unsigned>;
 
 } } // namespace JSC::B3
 

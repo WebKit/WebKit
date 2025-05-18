@@ -34,7 +34,7 @@
 
 namespace JSC { namespace B3 {
 
-typedef WTF::NaturalLoop<CFG> NaturalLoop;
+using NaturalLoop = WTF::NaturalLoop<CFG>;
 
 class NaturalLoops : public WTF::NaturalLoops<CFG> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);

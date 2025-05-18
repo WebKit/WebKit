@@ -104,7 +104,7 @@ enum DeclarationResult {
     InvalidPrivateStaticNonStatic = 1 << 2
 };
 
-typedef uint8_t DeclarationResultMask;
+using DeclarationResultMask = uint8_t;
 
 enum class DeclarationDefaultContext {
     Standard,
@@ -991,7 +991,7 @@ private:
     int m_switchDepth { 0 };
     InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
 
-    typedef Vector<ScopeLabelInfo, 2> LabelStack;
+    using LabelStack = Vector<ScopeLabelInfo, 2>;
     std::unique_ptr<LabelStack> m_labels;
     UniquedStringImplPtrSet m_declaredParameters;
     VariableEnvironment m_declaredVariables;
@@ -1003,7 +1003,7 @@ private:
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
 
-typedef Vector<Scope, 10> ScopeStack;
+using ScopeStack = Vector<Scope, 10>;
 
 struct ScopeRef {
     ScopeRef(ScopeStack* scopeStack, unsigned index)

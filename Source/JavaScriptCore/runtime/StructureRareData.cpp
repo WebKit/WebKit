@@ -98,7 +98,7 @@ DEFINE_VISIT_CHILDREN(StructureRareData);
 class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
     WTF_MAKE_TZONE_ALLOCATED(CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint);
 public:
-    typedef AdaptiveInferredPropertyValueWatchpointBase Base;
+    using Base = AdaptiveInferredPropertyValueWatchpointBase;
     CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
 private:

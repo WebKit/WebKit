@@ -51,7 +51,7 @@ private:
     }
 
     JSInstructionStream::MutableRef m_instructionRef;
-    typedef UncheckedKeyHashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> PropertyIndexSet;
+    using PropertyIndexSet = UncheckedKeyHashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
     PropertyIndexSet m_propertyIndexes;
 };
 

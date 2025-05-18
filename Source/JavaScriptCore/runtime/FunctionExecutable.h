@@ -39,7 +39,7 @@ class FunctionExecutable final : public ScriptExecutable {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 public:
-    typedef ScriptExecutable Base;
+    using Base = ScriptExecutable;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess>

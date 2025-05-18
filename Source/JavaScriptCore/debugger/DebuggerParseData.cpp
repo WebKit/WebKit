@@ -156,14 +156,14 @@ typedef enum { Program, Module } DebuggerParseInfoTag;
 template <DebuggerParseInfoTag T> struct DebuggerParseInfo { };
 
 template <> struct DebuggerParseInfo<Program> {
-    typedef JSC::ProgramNode RootNode;
+    using RootNode = JSC::ProgramNode;
     static constexpr LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
     static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
     static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
 };
 
 template <> struct DebuggerParseInfo<Module> {
-    typedef JSC::ModuleProgramNode RootNode;
+    using RootNode = JSC::ModuleProgramNode;
     static constexpr LexicallyScopedFeatures lexicallyScopedFeatures = StrictModeLexicallyScopedFeature;
     static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
     static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Module;
@@ -172,7 +172,7 @@ template <> struct DebuggerParseInfo<Module> {
 template <DebuggerParseInfoTag T>
 bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData& debuggerParseData)
 {
-    typedef typename DebuggerParseInfo<T>::RootNode RootNode;
+    using RootNode = typename DebuggerParseInfo<T>::RootNode;
     LexicallyScopedFeatures lexicallyScopedFeatures = DebuggerParseInfo<T>::lexicallyScopedFeatures;
     SourceParseMode parseMode = DebuggerParseInfo<T>::parseMode;
     JSParserScriptMode scriptMode = DebuggerParseInfo<T>::scriptMode;

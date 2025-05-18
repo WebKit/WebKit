@@ -40,7 +40,7 @@ class Graph;
 class PhiChildren {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(PhiChildren);
 public:
-    typedef Vector<Node*, 3> List;
+    using List = Vector<Node*, 3>;
     
     PhiChildren();
     PhiChildren(Graph&);

@@ -35,7 +35,7 @@ class IntlCollatorPrototype;
 
 class IntlCollatorConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlCollatorConstructor* create(VM&, Structure*, IntlCollatorPrototype*);

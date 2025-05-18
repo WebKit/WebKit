@@ -36,7 +36,7 @@ class WebAssemblyTablePrototype;
 
 class WebAssemblyTableConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyTableConstructor* create(VM&, Structure*, WebAssemblyTablePrototype*);

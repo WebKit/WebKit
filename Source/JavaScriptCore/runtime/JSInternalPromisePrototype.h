@@ -31,7 +31,7 @@ namespace JSC {
 
 class JSInternalPromisePrototype final : public JSPromisePrototype {
 public:
-    typedef JSPromisePrototype Base;
+    using Base = JSPromisePrototype;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static JSInternalPromisePrototype* create(VM&, JSGlobalObject*, Structure*);

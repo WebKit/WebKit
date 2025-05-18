@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 
 struct Node;
 
-typedef uint32_t BlockIndex;
+using BlockIndex = uint32_t;
 static constexpr BlockIndex NoBlock = UINT_MAX;
 
 extern const char* const tierName;

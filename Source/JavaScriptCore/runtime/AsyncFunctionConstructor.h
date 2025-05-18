@@ -34,7 +34,7 @@ class AsyncFunctionPrototype;
 
 class AsyncFunctionConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     DECLARE_INFO;
 

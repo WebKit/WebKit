@@ -33,7 +33,7 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 
-typedef GenericFrequentedBlock<BasicBlock> FrequentedBlock;
+using FrequentedBlock = GenericFrequentedBlock<BasicBlock>;
 
 } } // namespace JSC::B3
 

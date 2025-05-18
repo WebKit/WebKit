@@ -42,7 +42,7 @@ enum NoResultTag { NoResult };
 // compiler adequately. The register naming conventions are described at the
 // top of the LowLevelInterpreter.asm file.
 
-typedef MacroAssembler::RegisterID GPRReg;
+using GPRReg = MacroAssembler::RegisterID;
 static constexpr GPRReg InvalidGPRReg { GPRReg::InvalidGPRReg };
 
 #if ENABLE(ASSEMBLER)
@@ -342,7 +342,7 @@ private:
 
 class GPRInfo {
 public:
-    typedef GPRReg RegisterType;
+    using RegisterType = GPRReg;
     static constexpr unsigned numberOfRegisters = 10;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
     static constexpr unsigned numberOfCalleeSaveRegisters = 5;
@@ -471,7 +471,7 @@ static_assert(GPRInfo::returnValueGPR2 == X86Registers::edx);
 
 class GPRInfo {
 public:
-    typedef GPRReg RegisterType;
+    using RegisterType = GPRReg;
     static constexpr unsigned numberOfRegisters = 10;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
@@ -571,7 +571,7 @@ public:
 
 class GPRInfo {
 public:
-    typedef GPRReg RegisterType;
+    using RegisterType = GPRReg;
     static constexpr unsigned numberOfRegisters = 16;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
     static constexpr unsigned numberOfCalleeSaveRegisters = 10;
@@ -720,7 +720,7 @@ public:
 
 class GPRInfo {
 public:
-    typedef GPRReg RegisterType;
+    using RegisterType = GPRReg;
     static constexpr unsigned numberOfRegisters = 13;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 

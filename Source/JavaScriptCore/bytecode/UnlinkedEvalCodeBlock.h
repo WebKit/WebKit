@@ -34,7 +34,7 @@ class CachedEvalCodeBlock;
 
 class UnlinkedEvalCodeBlock final : public UnlinkedGlobalCodeBlock {
 public:
-    typedef UnlinkedGlobalCodeBlock Base;
+    using Base = UnlinkedGlobalCodeBlock;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess mode>

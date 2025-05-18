@@ -40,7 +40,7 @@ class HeapAnalyzer;
 class MarkingConstraint;
 class MarkingConstraintSolver;
 
-typedef uint32_t HeapVersion;
+using HeapVersion = uint32_t;
 
 class SlotVisitor final : public AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);

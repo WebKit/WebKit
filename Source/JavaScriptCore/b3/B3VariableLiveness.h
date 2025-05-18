@@ -39,8 +39,8 @@ namespace JSC { namespace B3 {
 
 struct VariableLivenessAdapter {
     static constexpr const char* name = "VariableLiveness";
-    typedef B3::CFG CFG;
-    typedef Variable* Thing;
+    using CFG = B3::CFG;
+    using Thing = Variable*;
     
     VariableLivenessAdapter(Procedure& proc)
         : proc(proc)

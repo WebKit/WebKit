@@ -236,7 +236,7 @@ public:
         DollarVMAssertScope assertScope;
     }
 
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
@@ -369,7 +369,7 @@ public:
         DollarVMAssertScope assertScope;
     }
 
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
@@ -441,7 +441,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::OverridesGetOwnPropertySlot;
 
     template<typename CellType, SubspaceAccess>
@@ -523,7 +523,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
 
     template<typename CellType, SubspaceAccess>
@@ -601,7 +601,7 @@ static JSC_DECLARE_CUSTOM_GETTER(runtimeArrayLengthGetter);
 
 class RuntimeArray : public JSArray {
 public:
-    typedef JSArray Base;
+    using Base = JSArray;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
 IGNORE_WARNINGS_BEGIN("unused-const-variable")
@@ -1045,7 +1045,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess>
@@ -1107,7 +1107,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef DOMJITNode Base;
+    using Base = DOMJITNode;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1213,7 +1213,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef DOMJITNode Base;
+    using Base = DOMJITNode;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1313,7 +1313,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef DOMJITNode Base;
+    using Base = DOMJITNode;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1437,7 +1437,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef DOMJITNode Base;
+    using Base = DOMJITNode;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1519,7 +1519,7 @@ public:
     }
 
     DECLARE_INFO;
-    typedef DOMJITNode Base;
+    using Base = DOMJITNode;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

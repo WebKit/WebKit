@@ -86,7 +86,7 @@ namespace JSC {
                 static constexpr bool safeToCompareToEmptyOrDeleted = false;
             };
 
-            typedef SimpleClassHashTraits<CacheKey> HashTraits;
+            using HashTraits = SimpleClassHashTraits<CacheKey>;
 
         private:
             RefPtr<StringImpl> m_source;
@@ -159,7 +159,7 @@ namespace JSC {
 
         void setSlow(JSGlobalObject*, JSCell* owner, const CacheLookupKey& cacheKey, DirectEvalExecutable*);
 
-        typedef UncheckedKeyHashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
+        using EvalCacheMap = UncheckedKeyHashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits>;
         EvalCacheMap m_cacheMap;
         Lock m_lock;
     };

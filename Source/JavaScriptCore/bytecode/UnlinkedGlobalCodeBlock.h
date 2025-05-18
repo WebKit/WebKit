@@ -31,7 +31,7 @@ namespace JSC {
 
 class UnlinkedGlobalCodeBlock : public UnlinkedCodeBlock {
 public:
-    typedef UnlinkedCodeBlock Base;
+    using Base = UnlinkedCodeBlock;
 
 protected:
     UnlinkedGlobalCodeBlock(VM& vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)

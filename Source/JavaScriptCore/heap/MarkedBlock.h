@@ -49,7 +49,7 @@ class MarkedSpace;
 class SlotVisitor;
 class Subspace;
 
-typedef uint32_t HeapVersion;
+using HeapVersion = uint32_t;
 
 // A marked block is a page-aligned container for heap-allocated objects.
 // Objects are allocated within cells of the marked block. For a given
@@ -95,13 +95,13 @@ public:
     static_assert(!(blockSize & (blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
 
     struct VoidFunctor {
-        typedef void ReturnType;
+        using ReturnType = void;
         void returnValue() { }
     };
     
     class CountFunctor {
     public:
-        typedef size_t ReturnType;
+        using ReturnType = size_t;
 
         CountFunctor() : m_count(0) { }
         void count(size_t count) const { m_count += count; }

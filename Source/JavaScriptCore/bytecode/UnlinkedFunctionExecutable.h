@@ -64,7 +64,7 @@ public:
     friend class VM;
     friend class CachedFunctionExecutable;
 
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess>

@@ -33,7 +33,7 @@ class CachedProgramCodeBlock;
 
 class UnlinkedProgramCodeBlock final : public UnlinkedGlobalCodeBlock {
 public:
-    typedef UnlinkedGlobalCodeBlock Base;
+    using Base = UnlinkedGlobalCodeBlock;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess mode>

@@ -224,7 +224,7 @@ namespace JSC {
     };
 
     struct ControlFlowScope {
-        typedef uint8_t Type;
+        using Type = uint8_t;
         enum {
             Label,
             Finally
@@ -349,7 +349,7 @@ namespace JSC {
         friend void rewriteOp(BytecodeGenerator&, TupleType&);
 
     public:
-        typedef DeclarationStacks::FunctionStack FunctionStack;
+        using FunctionStack = DeclarationStacks::FunctionStack;
 
         BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const FixedVector<Identifier>*, const PrivateNameEnvironment*);
         BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const FixedVector<Identifier>*, const PrivateNameEnvironment*);
@@ -1239,7 +1239,7 @@ namespace JSC {
             Optimize,
             DoNotOptimize
         };
-        typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
+        using TDZMap = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash>;
 
     public:
         JSString* addStringConstant(const Identifier&);
@@ -1379,7 +1379,7 @@ namespace JSC {
         // Constant pool
         IdentifierMap m_identifierMap;
 
-        typedef UncheckedKeyHashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
+        using JSValueMap = UncheckedKeyHashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits>;
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
         IdentifierBigIntMap m_bigIntMap;

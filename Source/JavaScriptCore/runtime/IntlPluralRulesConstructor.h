@@ -35,7 +35,7 @@ class IntlPluralRulesPrototype;
 
 class IntlPluralRulesConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlPluralRulesConstructor* create(VM&, Structure*, IntlPluralRulesPrototype*);

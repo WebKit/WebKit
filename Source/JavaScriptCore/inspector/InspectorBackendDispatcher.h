@@ -38,7 +38,7 @@ namespace Inspector {
 
 class BackendDispatcher;
 
-typedef String ErrorString;
+using ErrorString = String;
 
 template<typename T>
 using CommandResult = Inspector::Protocol::ErrorStringOr<T>;

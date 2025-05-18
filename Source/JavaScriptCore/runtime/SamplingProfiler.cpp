@@ -237,7 +237,7 @@ protected:
 
 class CFrameWalker : public FrameWalker {
 public:
-    typedef FrameWalker Base;
+    using Base = FrameWalker;
 
     CFrameWalker(VM& vm, void* machineFrame, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
         : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker)

@@ -28,8 +28,8 @@
 namespace JSC {
 
 class ProfileTreeNode {
-    typedef UncheckedKeyHashMap<String, ProfileTreeNode> Map;
-    typedef Map::KeyValuePairType MapEntry;
+    using Map = UncheckedKeyHashMap<String, ProfileTreeNode>;
+    using MapEntry = Map::KeyValuePairType;
 
 public:
     ProfileTreeNode()

@@ -34,7 +34,7 @@ class GetterSetter;
 
 class MapConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
     static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype)
     {

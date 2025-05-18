@@ -32,7 +32,7 @@
 
 namespace JSC { namespace FTL {
 
-typedef Vector<LValue, 16> StackmapArgumentList;
+using StackmapArgumentList = Vector<LValue, 16>;
 
 } } // namespace JSC::FTL
 

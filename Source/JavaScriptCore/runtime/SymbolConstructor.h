@@ -35,7 +35,7 @@ class GetterSetter;
 
 class SymbolConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype)

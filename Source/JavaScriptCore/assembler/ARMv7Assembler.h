@@ -102,7 +102,7 @@ class ARMv7Assembler;
 class ARMThumbImmediate {
     friend class ARMv7Assembler;
 
-    typedef uint8_t ThumbImmediateType;
+    using ThumbImmediateType = uint8_t;
     static constexpr ThumbImmediateType TypeInvalid = 0;
     static constexpr ThumbImmediateType TypeEncoded = 1;
     static constexpr ThumbImmediateType TypeUInt16 = 2;
@@ -338,14 +338,14 @@ private:
 
 class ARMv7Assembler {
 public:
-    typedef ARMRegisters::RegisterID RegisterID;
-    typedef ARMRegisters::FPSingleRegisterID FPSingleRegisterID;
-    typedef ARMRegisters::FPDoubleRegisterID FPDoubleRegisterID;
+    using RegisterID = ARMRegisters::RegisterID;
+    using FPSingleRegisterID = ARMRegisters::FPSingleRegisterID;
+    using FPDoubleRegisterID = ARMRegisters::FPDoubleRegisterID;
 #if CPU(ARM_NEON)
-    typedef ARMRegisters::FPQuadRegisterID FPQuadRegisterID;
+    using FPQuadRegisterID = ARMRegisters::FPQuadRegisterID;
 #endif
-    typedef ARMRegisters::SPRegisterID SPRegisterID;
-    typedef FPDoubleRegisterID FPRegisterID;
+    using SPRegisterID = ARMRegisters::SPRegisterID;
+    using FPRegisterID = FPDoubleRegisterID;
     
     static constexpr RegisterID firstRegister() { return ARMRegisters::r0; }
     static constexpr RegisterID lastRegister() { return ARMRegisters::r15; }

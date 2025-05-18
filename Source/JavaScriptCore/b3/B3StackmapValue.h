@@ -42,7 +42,7 @@ namespace B3 {
 class StackmapGenerationParams;
 
 typedef void StackmapGeneratorFunction(CCallHelpers&, const StackmapGenerationParams&);
-typedef SharedTask<StackmapGeneratorFunction> StackmapGenerator;
+using StackmapGenerator = SharedTask<StackmapGeneratorFunction>;
 
 class JS_EXPORT_PRIVATE StackmapValue : public Value {
 public:
