@@ -665,4 +665,66 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
     return download.leakRef();
 }
 
+/**
+ * webkit_network_session_download_uri_finish:
+  * @session: a #WebKitNetworkSession
+  * @result: a #GAsyncResult
+  * @error: return location for error or %NULL to ignore
+  *
+  * Finish an asynchronous operation started with webkit_network_session_download_uri_async().
+  *
+  * Returns: (transfer full): a new #WebKitDownload representing the download operation.
+  * Since: 2.48
+  */
+WebKitDownload* webkit_network_session_download_uri_finish(WebKitNetworkSession* session, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_NETWORK_SESSION(session), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, session), nullptr);
+    g_return_val_if_fail(!error || !*error, nullptr);
+
+    return WEBKIT_DOWNLOAD(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_network_session_download_uri_async:
+ * @session: a #WebKitNetworkSession
+ * @uri: the URI to download
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the download request is satisfied
+ * @user_data: the data to pass to callback
+ *
+ * Asynchronously requests downloading of the specified URI string.
+ *
+ * Since: 2.48
+ */
+void webkit_network_session_download_uri_async(WebKitNetworkSession* session, const char* uri, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
+    g_return_if_fail(uri);
+
+    WebCore::ResourceRequest request(String::fromUTF8(uri));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    Ref downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(session, cancellable, callback, userData));
+    downloadProxy->setDidStartCallback([task = WTFMove(task)](auto* downloadProxy) {
+        if (g_task_return_error_if_cancelled(task.get()))
+            return;
+
+        if (!downloadProxy) {
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to create download");
+            return;
+        }
+
+        auto download = webkitDownloadCreate(*downloadProxy, nullptr);
+
+        webkitDownloadStarted(download.get());
+        webkitNetworkSessionDownloadStarted(WEBKIT_NETWORK_SESSION(g_task_get_source_object(task.get())), download.get());
+
+        g_task_return_pointer(task.get(), download.leakRef(), g_object_unref);
+    });
+
+    websiteDataStore->download(downloadProxy, { });
+}
+
 #endif // ENABLE(2022_GLIB_API)

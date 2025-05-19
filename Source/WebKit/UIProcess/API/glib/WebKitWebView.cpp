@@ -5005,6 +5005,74 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
 }
 
 /**
+  * webkit_web_view_download_uri_finish:
+  * @web_view: a #WebKitWebView
+  * @result: a #GAsyncResult
+  * @error: return location for error or %NULL to ignore
+  *
+  * Finish an asynchronous operation started with webkit_web_view_download_uri_async().
+  *
+  * Returns: (transfer full): a new #WebKitDownload representing the download operation.
+  * Since: 2.48
+  */
+WebKitDownload* webkit_web_view_download_uri_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
+    g_return_val_if_fail(!error || !*error, nullptr);
+
+    return WEBKIT_DOWNLOAD(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_web_view_download_uri_async:
+ * @web_view: a #WebKitWebView
+ * @uri: the URI to download
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the download is created
+ * @user_data: the data to pass to the callback function
+ *
+ * Requests downloading of the specified URI string for @web_view.
+ *
+ * Since: 2.48
+ */
+void webkit_web_view_download_uri_async(WebKitWebView* webView, const char* uri, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(uri);
+
+    Ref page = getPage(webView);
+    ResourceRequest request(String::fromUTF8(uri));
+    Ref websiteDataStore = page->protectedWebsiteDataStore();
+    Ref downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, page.ptr(), { });
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    downloadProxy->setDidStartCallback([task = WTFMove(task)](auto* downloadProxy) {
+        if (g_task_return_error_if_cancelled(task.get()))
+            return;
+
+        if (!downloadProxy) {
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to create download");
+            return;
+        }
+
+        auto* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
+        auto download = webkitDownloadCreate(*downloadProxy, webView);
+
+        webkitDownloadStarted(download.get());
+#if ENABLE(2022_GLIB_API)
+        webkitNetworkSessionDownloadStarted(webView->priv->networkSession.get(), download.get());
+#else
+        webkitWebContextDownloadStarted(webView->priv->context.get(), download.get());
+#endif
+
+        g_task_return_pointer(task.get(), download.leakRef(), g_object_unref);
+    });
+
+    websiteDataStore->download(downloadProxy, { });
+}
+
+/**
  * webkit_web_view_get_tls_info:
  * @web_view: a #WebKitWebView
  * @certificate: (out) (transfer none): return location for a #GTlsCertificate

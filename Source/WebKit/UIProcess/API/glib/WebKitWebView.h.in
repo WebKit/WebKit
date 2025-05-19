@@ -772,6 +772,18 @@ WEBKIT_API WebKitDownload *
 webkit_web_view_download_uri                         (WebKitWebView             *web_view,
                                                       const char                *uri);
 
+WEBKIT_API WebKitDownload*
+webkit_web_view_download_uri_finish                  (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+
+WEBKIT_API void
+webkit_web_view_download_uri_async                   (WebKitWebView             *web_view,
+                                                      const char                *uri,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
 WEBKIT_API gboolean
 webkit_web_view_get_tls_info                         (WebKitWebView             *web_view,
                                                       GTlsCertificate          **certificate,

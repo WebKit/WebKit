@@ -668,14 +668,12 @@ public:
 #endif
 };
 
-static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
+static void runAssertionsForDownloadTest(WebViewDownloadTest* test, WebKitDownload* download)
 {
-    GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_view_download_uri(test->m_webView, kServer->getURIForPath("/test.pdf").data()));
-    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
-    test->waitUntilDownloadStarted();
-    g_assert_true(test->m_webView == webkit_download_get_web_view(download.get()));
+    g_assert_nonnull(download);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
 
-    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    WebKitURIRequest* request = webkit_download_get_request(download);
     g_assert_nonnull(request);
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
 
@@ -683,11 +681,40 @@ static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
     g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
     test->waitUntilDownloadFinished();
 
-    GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_path(webkit_download_get_destination(download.get())));
+    GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_path(webkit_download_get_destination(download)));
     GRefPtr<GFileInfo> downloadFileInfo = adoptGRef(g_file_query_info(downloadFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), nullptr, nullptr));
     g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
+
+static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
+{
+    GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_view_download_uri(test->m_webView, kServer->getURIForPath("/test.pdf").data()));
+    g_assert_true(test->m_webView == webkit_download_get_web_view(download.get()));
+    test->waitUntilDownloadStarted();
+    runAssertionsForDownloadTest(test, download.get());
+}
+
+static void testWebViewDownloadURIAsync(WebViewDownloadTest* test, gconstpointer)
+{
+    webkit_web_view_download_uri_async(test->m_webView, kServer->getURIForPath("/test.pdf").data(), nullptr, (GAsyncReadyCallback)(+[](WebKitWebView* webView, GAsyncResult* result, WebViewDownloadTest* test) {
+        GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_view_download_uri_finish(webView, result, nullptr));
+        g_assert_true(test->m_webView == webkit_download_get_web_view(download.get()));
+        runAssertionsForDownloadTest(test, download.get());
+    }), test);
+    test->waitUntilDownloadStarted();
+}
+
+#if ENABLE(2022_GLIB_API)
+static void testSessionDownloadURIAsync(WebViewDownloadTest* test, gconstpointer)
+{
+    webkit_network_session_download_uri_async(test->m_networkSession.get(), kServer->getURIForPath("/test.pdf").data(), nullptr, (GAsyncReadyCallback)(+[](WebKitNetworkSession* networkSession, GAsyncResult* result, WebViewDownloadTest* test) {
+        GRefPtr<WebKitDownload> download = adoptGRef(webkit_network_session_download_uri_finish(networkSession, result, nullptr));
+        runAssertionsForDownloadTest(test, download.get());
+    }), test);
+    test->waitUntilDownloadStarted();
+}
+#endif
 
 static void testDownloadAsyncDecideDestination(WebViewDownloadTest* test, gconstpointer)
 {
@@ -1056,6 +1083,10 @@ void beforeAll()
     DownloadTest::add("Downloads", "remote-file", testDownloadRemoteFile);
     DownloadErrorTest::add("Downloads", "remote-file-error", testDownloadRemoteFileError);
     WebViewDownloadTest::add("WebKitWebView", "download-uri", testWebViewDownloadURI);
+    WebViewDownloadTest::add("WebKitWebView", "download-uri-async", testWebViewDownloadURIAsync);
+#if ENABLE(2022_GLIB_API)
+    WebViewDownloadTest::add("WebKitWebView", "network-session-download-uri-async", testSessionDownloadURIAsync);
+#endif
     WebViewDownloadTest::add("Downloads", "async-decide-destination", testDownloadAsyncDecideDestination);
     AsyncCancellationTest::add("Downloads", "async-decide-destination-cancel", testDownloadAsyncDecideDestinationCancel);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);

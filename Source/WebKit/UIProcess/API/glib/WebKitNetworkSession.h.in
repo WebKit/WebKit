@@ -122,6 +122,20 @@ WEBKIT_API WebKitDownload *
 webkit_network_session_download_uri                              (WebKitNetworkSession         *session,
                                                                   const char                   *uri);
 
+
+WEBKIT_API void
+webkit_network_session_download_uri_async                        (WebKitNetworkSession         *session,
+                                                                  const char                   *uri,
+                                                                  GCancellable                 *cancellable,
+                                                                  GAsyncReadyCallback           callback,
+                                                                  gpointer                      user_data);
+
+WEBKIT_API WebKitDownload *
+webkit_network_session_download_uri_finish                        (WebKitNetworkSession        *session,
+                                                                   GAsyncResult                *result,
+                                                                   GError                     **error);
+
+
 G_END_DECLS
 
 #endif
