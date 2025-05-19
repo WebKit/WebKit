@@ -731,6 +731,8 @@ private:
     FloatSize m_sizeAtLastCoverageRectUpdate;
     FloatSize m_pixelAlignmentOffset;
 
+    bool m_isPrunedFromCATree { false };
+
     Color m_contentsSolidColor;
 
     TileCoverage m_tileCoverage;

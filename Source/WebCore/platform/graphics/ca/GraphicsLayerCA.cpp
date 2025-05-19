@@ -2148,6 +2148,44 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);
 
+    // zakr: intial list of layers that can be pruned and removed (need to refine it and add better animation checks)
+    // For now, must be a leaf, not intersecting the coverage rect, and not currently running a transform animation.
+    // ideas:
+    // - add a "safe area" around the viewport for non visible tiles/layers that likely will enter the viewport soon,
+    // so we dont have too much churn from pruning and unpruning layers.
+    // - dont prune layers that have video or media.
+    // - we might be introducing some extra work when we have to prune then unprune some layers again and again, so
+    // we can probably be a lot smarter about pruning layers (like maybe only if we're dealing with >1k layers etc,
+    // or this layer has been eligible for pruning for the past 10 flushes)
+    bool isLeafLayer = children().isEmpty();
+    bool shouldBePruned = isLeafLayer && !m_intersectsCoverageRect && !isRunningTransformAnimation();
+
+    if (shouldBePruned != m_isPrunedFromCATree) {
+        m_isPrunedFromCATree = shouldBePruned;
+        layerChanged = true;
+
+        if (m_isPrunedFromCATree) {
+            RefPtr<PlatformCALayer> platformLayerToRemove = layerForSuperlayer();
+            if (platformLayerToRemove && platformLayerToRemove->superlayer())
+                platformLayerToRemove->removeFromSuperlayer();
+
+            if (m_layer)
+                m_layer->setBackingStoreAttached(false);
+
+        } else { // unprune the layer, mark all the flags as dirty so all the updated properties are correct when we add it back to the CA tree
+            noteLayerPropertyChanged(GeometryChanged | TransformChanged | ChildrenTransformChanged
+                | Preserves3DChanged | MasksToBoundsChanged | DrawsContentChanged
+                | BackgroundColorChanged | ContentsOpaqueChanged | BackfaceVisibilityChanged
+                | OpacityChanged | FiltersChanged | BackdropFiltersChanged | BlendModeChanged
+                | ShapeChanged | ContentsRectsChanged | ContentsScaleChanged | ContentsVisibilityChanged
+                | DebugIndicatorsChanged
+                , DontScheduleFlush); // need to refine this list more
+        }
+
+        if (parent())
+            downcast<GraphicsLayerCA>(*parent()).noteLayerPropertyChanged(ChildrenChanged, DontScheduleFlush);
+    }
+
     if (!m_uncommittedChanges) {
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
@@ -2406,8 +2444,13 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     };
 
     auto appendLayersFromChildren = [&](PlatformCALayerList& list) {
-        for (Ref child : children())
-            list.append(downcast<GraphicsLayerCA>(child)->layerForSuperlayer());
+        for (Ref childGraphicsLayer : children()) {
+            Ref childCA = downcast<GraphicsLayerCA>(childGraphicsLayer.get());
+            if (!childCA->m_isPrunedFromCATree) {
+                if (PlatformCALayer* platformLayerOfChild = childCA->layerForSuperlayer())
+                    list.append(platformLayerOfChild);
+            }
+        }
     };
 
     auto appendDebugLayers = [&](PlatformCALayerList& list) {
@@ -3000,6 +3043,8 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         || !allowsBackingStoreDetaching()
         || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.
         || (isRunningTransformAnimation() && !animationExtent()); // Create backing if we don't know the animation extent.
+    if (m_isPrunedFromCATree)
+        requiresBacking = false; // if we've pruned this layer, we definitely dont need a backing store.
 
 #if !LOG_DISABLED
     if (requiresBacking) {
@@ -5022,6 +5067,9 @@ void GraphicsLayerCA::propagateLayerChangeToReplicas(ScheduleFlushOrNot schedule
 
 RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState& replicaState, CloneLevel cloneLevel)
 {
+    if (m_isPrunedFromCATree)
+        return nullptr;
+
     RefPtr<PlatformCALayer> primaryLayer;
     RefPtr<PlatformCALayer> structuralLayer;
     RefPtr<PlatformCALayer> contentsLayer;
