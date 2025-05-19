@@ -64,7 +64,7 @@
     if (self == otherObject)
         return YES;
 
-    auto *other = dynamic_objc_cast<_WKTextInputContext>(otherObject);
+    auto *other = dynamicObjCDowncast<_WKTextInputContext>(otherObject);
     if (!other)
         return NO;
 

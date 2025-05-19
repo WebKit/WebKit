@@ -514,8 +514,8 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 {
 #if ENABLE(SCREEN_TIME)
     if (context == &screenTimeWebpageControllerBlockedKVOContext) {
-        BOOL urlWasBlocked = dynamic_objc_cast<NSNumber>(change[NSKeyValueChangeOldKey]).boolValue;
-        BOOL urlIsBlocked = dynamic_objc_cast<NSNumber>(change[NSKeyValueChangeNewKey]).boolValue;
+        BOOL urlWasBlocked = dynamicObjCDowncast<NSNumber>(change[NSKeyValueChangeOldKey]).boolValue;
+        BOOL urlIsBlocked = dynamicObjCDowncast<NSNumber>(change[NSKeyValueChangeNewKey]).boolValue;
         BOOL wasBlockedByScreenTime = _isBlockedByScreenTime;
 
         if (urlWasBlocked != urlIsBlocked) {
@@ -1427,7 +1427,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     NSString *errorMessage = nil;
 
     for (id key in arguments) {
-        RetainPtr keyString = dynamic_objc_cast<NSString>(key);
+        RetainPtr keyString = dynamicObjCDowncast<NSString>(key);
         if (!keyString) {
             errorMessage = @"Key value must be NSString";
             break;

@@ -409,7 +409,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
     Result result;
     // If it's a NSString already, reduce indirection and just pass the NSString.
-    if (auto *propertyKeyString = dynamic_objc_cast<NSString>(propertyKey)) {
+    if (auto *propertyKeyString = dynamicObjCDowncast<NSString>(propertyKey)) {
         auto name = OpaqueJSString::tryCreate(propertyKeyString);
         result = stringFunction([context JSGlobalContextRef], object, name.get(), arguments..., &exception);
     } else
@@ -1149,7 +1149,7 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
         if ([object isKindOfClass:[JSValue class]])
             return { object, ((JSValue *)object)->m_value, ContainerNone };
 
-        if (auto *nsString = dynamic_objc_cast<NSString>(object)) {
+        if (auto *nsString = dynamicObjCDowncast<NSString>(object)) {
             auto string = OpaqueJSString::tryCreate(nsString);
             return { object, JSValueMakeString(contextRef, string.get()), ContainerNone };
         }
@@ -1206,7 +1206,7 @@ JSValueRef objectToValue(JSContext *context, id object)
             ASSERT([current.objc isKindOfClass:[NSDictionary class]]);
             NSDictionary *dictionary = (NSDictionary *)current.objc;
             for (id key in [dictionary keyEnumerator]) {
-                if (auto *keyString = dynamic_objc_cast<NSString>(key)) {
+                if (auto *keyString = dynamicObjCDowncast<NSString>(key)) {
                     auto propertyName = OpaqueJSString::tryCreate(keyString);
                     JSObjectSetProperty(contextRef, js, propertyName.get(), convertor.convert([dictionary objectForKey:key]), 0, 0);
                 }

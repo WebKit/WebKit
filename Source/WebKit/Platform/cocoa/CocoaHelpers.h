@@ -82,7 +82,7 @@ T *objectForKey(NSDictionary *dictionary, id key, bool returningNilIfEmpty = tru
     ASSERT(returningNilIfEmpty);
     ASSERT(!containingObjectsOfClass);
     // Specialized implementations in CocoaHelpers.mm handle returningNilIfEmpty and containingObjectsOfClass for different Foundation types.
-    return dynamic_objc_cast<T>(dictionary[key]);
+    return dynamicObjCDowncast<T>(dictionary[key]);
 }
 
 template<typename T>
@@ -93,7 +93,7 @@ T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returnin
 
 inline bool boolForKey(NSDictionary *dictionary, id key, bool defaultValue)
 {
-    NSNumber *value = dynamic_objc_cast<NSNumber>(dictionary[key]);
+    NSNumber *value = dynamicObjCDowncast<NSNumber>(dictionary[key]);
     return value ? value.boolValue : defaultValue;
 }
 

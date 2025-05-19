@@ -91,7 +91,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
         if (audioAccess == kTCCAccessPreflightGranted)
             return true;
         std::call_once(audioDescriptionFlag, [] {
-            hasMicrophoneDescriptionString = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSMicrophoneUsageDescription"]).length > 0;
+            hasMicrophoneDescriptionString = dynamicObjCDowncast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSMicrophoneUsageDescription"]).length > 0;
         });
         return hasMicrophoneDescriptionString;
     case MediaPermissionType::Video:
@@ -99,7 +99,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
         if (videoAccess == kTCCAccessPreflightGranted)
             return true;
         std::call_once(videoDescriptionFlag, [] {
-            hasCameraDescriptionString = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSCameraUsageDescription"]).length > 0;
+            hasCameraDescriptionString = dynamicObjCDowncast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSCameraUsageDescription"]).length > 0;
         });
         return hasCameraDescriptionString;
     }
@@ -107,7 +107,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
 
 bool checkUsageDescriptionStringForSpeechRecognition()
 {
-    return dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
+    return dynamicObjCDowncast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
 }
 
 static RetainPtr<NSString> visibleDomain(const String& host)

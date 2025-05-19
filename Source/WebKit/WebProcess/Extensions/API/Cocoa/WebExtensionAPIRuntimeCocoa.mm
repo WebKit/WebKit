@@ -676,12 +676,12 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
                 callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
             });
 
-            if (dynamic_objc_cast<NSNumber>(returnValue).boolValue) {
+            if (dynamicObjCDowncast<NSNumber>(returnValue).boolValue) {
                 anyListenerHandledMessage = true;
                 continue;
             }
 
-            JSValue *value = dynamic_objc_cast<JSValue>(returnValue);
+            JSValue *value = dynamicObjCDowncast<JSValue>(returnValue);
             if (!value._isThenable)
                 continue;
 

@@ -443,7 +443,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
         Vector<String> result;
         result.reserveInitialCapacity(arrayLength);
         for (id element in array) {
-            if (auto *string = dynamic_objc_cast<NSString>(element))
+            if (auto *string = dynamicObjCDowncast<NSString>(element))
                 result.append(string);
             else
                 RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed with array containing <%@>", NSStringFromClass([element class]));
@@ -694,15 +694,15 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
 {
     if (CFGetTypeID((CFTypeRef)value) == CGColorGetTypeID())
         return { { AttributedString::ColorFromCGColor  { Color::createAndPreserveColorSpace((CGColorRef) value) } } };
-    if (auto* number = dynamic_objc_cast<NSNumber>(value))
+    if (auto* number = dynamicObjCDowncast<NSNumber>(value))
         return { { { number.doubleValue } } };
-    if (auto* string = dynamic_objc_cast<NSString>(value))
+    if (auto* string = dynamicObjCDowncast<NSString>(value))
         return { { { String { string } } } };
-    if (auto* url = dynamic_objc_cast<NSURL>(value))
+    if (auto* url = dynamicObjCDowncast<NSURL>(value))
         return { { { URL { url } } } };
-    if (auto* array = dynamic_objc_cast<NSArray>(value))
+    if (auto* array = dynamicObjCDowncast<NSArray>(value))
         return extractArray(array);
-    if (auto* date = dynamic_objc_cast<NSDate>(value))
+    if (auto* date = dynamicObjCDowncast<NSDate>(value))
         return { { { RetainPtr { date } } } };
     if ([value isKindOfClass:PlatformNSShadow])
         return { { { RetainPtr { (NSShadow *)value } } } };
@@ -751,7 +751,7 @@ static HashMap<String, AttributedString::AttributeValue> extractDictionary(NSDic
 {
     HashMap<String, AttributedString::AttributeValue> result;
     [dictionary enumerateKeysAndObjectsUsingBlock:[&](id key, id value, BOOL *) {
-        RetainPtr keyString = dynamic_objc_cast<NSString>(key);
+        RetainPtr keyString = dynamicObjCDowncast<NSString>(key);
         if (!keyString) {
             ASSERT_NOT_REACHED();
             return;

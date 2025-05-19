@@ -59,7 +59,7 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
         auto entitlementValue = adoptCF(SecTaskCopyValueForEntitlement(task.get(), CFSTR("com.apple.CommCenter.fine-grained"), nullptr));
         auto entitlementValueAsArray = (__bridge NSArray *)dynamic_cf_cast<CFArrayRef>(entitlementValue.get());
         for (id value in entitlementValueAsArray) {
-            if (auto string = dynamic_objc_cast<NSString>(value); [string isEqualToString:@"public-cellular-plan"])
+            if (auto string = dynamicObjCDowncast<NSString>(value); [string isEqualToString:@"public-cellular-plan"])
                 return true;
         }
         return false;

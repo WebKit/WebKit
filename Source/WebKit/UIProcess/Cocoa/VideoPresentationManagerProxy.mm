@@ -972,7 +972,7 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
     if (RefPtr page = m_page.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize), page->webPageIDInMainFrameProcess());
 
-    return dynamic_objc_cast<WKVideoView>(interface->videoView());
+    return dynamicObjCDowncast<WKVideoView>(interface->videoView());
 }
 #endif
 
@@ -1457,7 +1457,7 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
     auto [model, interface] = ensureModelAndInterface(contextId);
 
 #if USE(EXTENSIONKIT)
-    if (auto layerHostView = dynamic_objc_cast<WKLayerHostView>(interface->layerHostView()))
+    if (auto layerHostView = dynamicObjCDowncast<WKLayerHostView>(interface->layerHostView()))
         [layerHostView setVisibilityPropagationView:nil];
 #endif
 
@@ -1495,7 +1495,7 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
     MachSendRight fenceSendRight;
 #if PLATFORM(IOS_FAMILY)
 #if USE(EXTENSIONKIT)
-    auto view = dynamic_objc_cast<WKLayerHostView>(interface->layerHostView());
+    auto view = dynamicObjCDowncast<WKLayerHostView>(interface->layerHostView());
     if (view && view->_hostingView) {
         auto hostingUpdateCoordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithError:nil];
         [hostingUpdateCoordinator addLayerHierarchyHostingView:view->_hostingView.get()];

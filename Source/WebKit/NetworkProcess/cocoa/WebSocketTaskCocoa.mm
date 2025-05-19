@@ -128,7 +128,7 @@ void WebSocketTask::didConnect(const String& protocol)
 {
     String extensionsValue;
     RetainPtr response = [m_task response];
-    if (RetainPtr httpResponse  = dynamic_objc_cast<NSHTTPURLResponse>(response.get()))
+    if (RetainPtr httpResponse  = dynamicObjCDowncast<NSHTTPURLResponse>(response.get()))
         extensionsValue = [httpResponse valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"];
 
     m_receivedDidConnect = true;

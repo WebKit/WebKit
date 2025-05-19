@@ -214,7 +214,7 @@ void CDMSessionAVContentKeySession::releaseKeys()
         for (NSData* expiredSessionData in expiredSessions) {
             static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
-            RetainPtr playbackSessionIdValue = dynamic_objc_cast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
+            RetainPtr playbackSessionIdValue = dynamicObjCDowncast<NSString>([expiredSession objectForKey:PlaybackSessionIdKey]);
             if (!playbackSessionIdValue)
                 continue;
 

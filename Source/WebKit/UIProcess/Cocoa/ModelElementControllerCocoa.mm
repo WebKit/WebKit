@@ -76,7 +76,7 @@ WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifie
     if (!node)
         return nil;
 
-    return dynamic_objc_cast<WKModelView>(node->uiView());
+    return dynamicObjCDowncast<WKModelView>(node->uiView());
 }
 
 ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdentifier modelIdentifier)

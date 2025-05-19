@@ -45,7 +45,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
     if (self == object)
         return YES;
 
-    auto *other = dynamic_objc_cast<WKWebExtensionDataRecord>(object);
+    auto *other = dynamicObjCDowncast<WKWebExtensionDataRecord>(object);
     if (!other)
         return NO;
 
@@ -141,7 +141,7 @@ namespace WebKit {
 
 static std::optional<Ref<WebExtensionDataRecord>> makeVectorElement(const Ref<WebExtensionDataRecord>*, id arrayElement)
 {
-    if (auto *record = dynamic_objc_cast<WKWebExtensionDataRecord>(arrayElement))
+    if (auto *record = dynamicObjCDowncast<WKWebExtensionDataRecord>(arrayElement))
         return Ref { record._webExtensionDataRecord };
     return std::nullopt;
 }

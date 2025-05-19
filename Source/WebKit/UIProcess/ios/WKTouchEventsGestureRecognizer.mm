@@ -304,7 +304,7 @@ static CGPoint mapRootViewToViewport(CGPoint pointInRootView, WKContentView *con
 
     for (UITouch *touch in touches) {
         // Get the identifier of this touch. Or create one if one did not exist.
-        auto associatedIdentifier = dynamic_objc_cast<NSNumber>(objc_getAssociatedObject(touch, &associatedTouchIdentifierKey));
+        auto associatedIdentifier = dynamicObjCDowncast<NSNumber>(objc_getAssociatedObject(touch, &associatedTouchIdentifierKey));
 
         // Create a new identifier for trackpad events in the Begin phase regardless, because the UITouch
         // instance persists between trackpad clicks, and there is existing web content that does not expect subsequent

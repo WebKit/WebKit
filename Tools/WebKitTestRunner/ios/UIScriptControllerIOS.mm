@@ -532,7 +532,7 @@ void UIScriptControllerIOS::sendEventStream(JSStringRef eventsJSON, JSValueRef c
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     String jsonString = eventsJSON->string();
-    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    auto eventInfo = dynamicObjCDowncast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
 
     auto *webView = this->webView();
     
@@ -951,7 +951,7 @@ CGRect UIScriptControllerIOS::selectionViewBoundsClippedToContentView(UIView *vi
     rect = CGRectIntersection(contentView.bounds, rect);
 
     for (RetainPtr parent = [view superview]; parent; parent = [parent superview]) {
-        RetainPtr scroller = dynamic_objc_cast<UIScrollView>(parent.get());
+        RetainPtr scroller = dynamicObjCDowncast<UIScrollView>(parent.get());
         if (!scroller)
             continue;
 
@@ -1679,7 +1679,7 @@ id<BETextInput> UIScriptControllerIOS::asyncTextInput() const
 
 UITextSelectionDisplayInteraction *UIScriptControllerIOS::textSelectionDisplayInteraction() const
 {
-    return dynamic_objc_cast<UITextSelectionDisplayInteraction>([platformContentView() valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
+    return dynamicObjCDowncast<UITextSelectionDisplayInteraction>([platformContentView() valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
 }
 
 #endif

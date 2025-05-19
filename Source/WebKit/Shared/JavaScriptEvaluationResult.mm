@@ -153,7 +153,7 @@ auto JavaScriptEvaluationResult::toVariant(id object) -> Variant
     if (!object)
         return NullType::NullPointer;
 
-    if (auto* jsValue = dynamic_objc_cast<JSValue>(object))
+    if (auto* jsValue = dynamicObjCDowncast<JSValue>(object))
         return jsValueToVariant(jsValue);
 
     if ([object isKindOfClass:NSNull.class])
@@ -169,7 +169,7 @@ auto JavaScriptEvaluationResult::toVariant(id object) -> Variant
         return CoreIPCNumber((NSNumber *)object);
     }
 
-    if (auto* nsString = dynamic_objc_cast<NSString>(object))
+    if (auto* nsString = dynamicObjCDowncast<NSString>(object))
         return String(nsString);
 
     if ([object isKindOfClass:NSDate.class])
@@ -205,7 +205,7 @@ JSObjectID JavaScriptEvaluationResult::addObjectToMap(id object)
         return *m_nullObjectID;
     }
 
-    if (auto* jsValue = dynamic_objc_cast<JSValue>(object)) {
+    if (auto* jsValue = dynamicObjCDowncast<JSValue>(object)) {
         if (jsValue.isArray)
             return addObjectToMap([jsValue toArray]);
     }

@@ -165,7 +165,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [self deactivate];
 
     // Deactivate previous NSPopoverColorWell
-    if (RetainPtr owner = dynamic_objc_cast<NSPopoverColorWell>([NSColorWell _exclusiveColorPanelOwner]))
+    if (RetainPtr owner = dynamicObjCDowncast<NSPopoverColorWell>([NSColorWell _exclusiveColorPanelOwner]))
         [owner deactivate];
 
     RetainPtr controller = checked_objc_cast<NSColorPopoverController>([popover.get() contentViewController]);

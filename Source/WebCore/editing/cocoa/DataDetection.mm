@@ -456,7 +456,7 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
 
 std::optional<double> DataDetection::extractReferenceDate(NSDictionary *context)
 {
-    if (auto date = dynamic_objc_cast<NSDate>([context objectForKey:PAL::get_DataDetectorsUI_kDataDetectorsReferenceDateKey()]))
+    if (auto date = dynamicObjCDowncast<NSDate>([context objectForKey:PAL::get_DataDetectorsUI_kDataDetectorsReferenceDateKey()]))
         return [date timeIntervalSince1970];
     return std::nullopt;
 }

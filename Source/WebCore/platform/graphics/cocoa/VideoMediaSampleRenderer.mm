@@ -151,7 +151,7 @@ VideoMediaSampleRenderer::VideoMediaSampleRenderer(WebSampleBufferVideoRendering
     if (!renderer)
         return;
 
-    if (auto *displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderer)) {
+    if (auto *displayLayer = dynamicObjCDowncast<AVSampleBufferDisplayLayer>(renderer)) {
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
         m_renderer = [displayLayer sampleBufferRenderer];
 #endif
@@ -159,8 +159,8 @@ VideoMediaSampleRenderer::VideoMediaSampleRenderer(WebSampleBufferVideoRendering
         return;
     }
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
-    ASSERT(dynamic_objc_cast<AVSampleBufferVideoRenderer>(renderer));
-    m_renderer = dynamic_objc_cast<AVSampleBufferVideoRenderer>(renderer);
+    ASSERT(dynamicObjCDowncast<AVSampleBufferVideoRenderer>(renderer));
+    m_renderer = dynamicObjCDowncast<AVSampleBufferVideoRenderer>(renderer);
 #endif
 }
 

@@ -252,7 +252,7 @@ static CGFloat shortCaptionPointSizeWithContentSizeCategory(CFStringRef contentS
 {
     auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, contentSizeCategory, 0));
     auto pointSize = adoptCF(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontSizeAttribute));
-    return [dynamic_objc_cast<NSNumber>((__bridge id)pointSize.get()) floatValue];
+    return [dynamicObjCDowncast<NSNumber>((__bridge id)pointSize.get()) floatValue];
 }
 
 static CGFloat attachmentDynamicTypeScaleFactor()

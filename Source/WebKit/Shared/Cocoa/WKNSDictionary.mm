@@ -67,7 +67,7 @@ using namespace WebKit;
 
 - (id)objectForKey:(id)key
 {
-    RetainPtr str = dynamic_objc_cast<NSString>(key);
+    RetainPtr str = dynamicObjCDowncast<NSString>(key);
     if (!str)
         return nil;
 

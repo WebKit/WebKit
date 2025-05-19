@@ -63,7 +63,7 @@ namespace WebCore {
 
 static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
+    RetainPtr adapter { dynamicObjCDowncast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
     if (RefPtr protectedListener = [adapter protectedListener])
         protectedListener->effectiveRateChanged();
 }

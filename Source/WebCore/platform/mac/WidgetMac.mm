@@ -66,7 +66,7 @@ static void safeRemoveFromSuperview(NSView *view)
     // If the view is the first responder, then set the window's first responder to nil so
     // we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [view window];
-    auto *firstResponderView = dynamic_objc_cast<NSView>([window firstResponder]);
+    auto *firstResponderView = dynamicObjCDowncast<NSView>([window firstResponder]);
     if ([firstResponderView isDescendantOf:view])
         [window makeFirstResponder:nil];
 

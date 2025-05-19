@@ -757,12 +757,12 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 #if USE(UICONTEXTMENU)
     NSMutableArray<NSString *> *itemTitles = [NSMutableArray array];
     for (UIMenuElement *menuElement in [_selectMenu children]) {
-        if (auto *action = dynamic_objc_cast<UIAction>(menuElement)) {
+        if (auto *action = dynamicObjCDowncast<UIAction>(menuElement)) {
             [itemTitles addObject:action.title];
             continue;
         }
 
-        if (auto *menu = dynamic_objc_cast<UIMenu>(menuElement)) {
+        if (auto *menu = dynamicObjCDowncast<UIMenu>(menuElement)) {
             for (UIMenuElement *groupedMenuElement in [menu children])
                 [itemTitles addObject:groupedMenuElement.title];
         }
@@ -1260,7 +1260,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
 
-        if (auto sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(presentationController)) {
+        if (auto sheetPresentationController = dynamicObjCDowncast<UISheetPresentationController>(presentationController)) {
             sheetPresentationController.detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
             sheetPresentationController.widthFollowsPreferredContentSizeWhenEdgeAttached = YES;
             sheetPresentationController.prefersEdgeAttachedInCompactHeight = YES;

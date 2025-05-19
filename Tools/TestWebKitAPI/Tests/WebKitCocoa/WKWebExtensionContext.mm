@@ -959,7 +959,7 @@ TEST(WKWebExtensionContext, LoadNonExistentImage)
     EXPECT_NS_EQUAL(manager.get().context.errors, @[ ]);
 
     [NSNotificationCenter.defaultCenter addObserverForName:WKWebExtensionContextErrorsDidUpdateNotification object:nil queue:nil usingBlock:^(NSNotification *notification) {
-        auto *extensionContext = dynamic_objc_cast<WKWebExtensionContext>(notification.object);
+        auto *extensionContext = dynamicObjCDowncast<WKWebExtensionContext>(notification.object);
 
         EXPECT_EQ(extensionContext.errors.count, 1ul);
 

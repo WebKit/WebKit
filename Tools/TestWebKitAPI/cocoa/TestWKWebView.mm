@@ -300,11 +300,11 @@ static NSString *overrideBundleIdentifier(id, SEL)
     TestWebKitAPI::Util::run(&finished);
 
 #if USE(BROWSERENGINEKIT)
-    if (RetainPtr context = dynamic_objc_cast<BETextDocumentContext>(result.get()))
+    if (RetainPtr context = dynamicObjCDowncast<BETextDocumentContext>(result.get()))
         return [context _uikitDocumentContext];
 #endif
 
-    if (RetainPtr context = dynamic_objc_cast<UIWKDocumentContext>(result.get()))
+    if (RetainPtr context = dynamicObjCDowncast<UIWKDocumentContext>(result.get()))
         return context.autorelease();
 
     return nil;
@@ -359,14 +359,14 @@ static NSString *overrideBundleIdentifier(id, SEL)
 #if USE(BROWSERENGINEKIT)
     if (auto asyncTextInput = self.asyncTextInput) {
         [asyncTextInput requestTextContextForAutocorrectionWithCompletionHandler:[&](WKBETextDocumentContext *context) {
-            auto uiContext = dynamic_objc_cast<UIWKDocumentContext>(context);
-            if (auto seContext = dynamic_objc_cast<WKBETextDocumentContext>(context))
+            auto uiContext = dynamicObjCDowncast<UIWKDocumentContext>(context);
+            if (auto seContext = dynamicObjCDowncast<WKBETextDocumentContext>(context))
                 uiContext = seContext._uikitDocumentContext;
             result = {
-                dynamic_objc_cast<NSString>(uiContext.contextBefore),
-                dynamic_objc_cast<NSString>(uiContext.selectedText),
-                dynamic_objc_cast<NSString>(uiContext.contextAfter),
-                dynamic_objc_cast<NSString>(uiContext.markedText),
+                dynamicObjCDowncast<NSString>(uiContext.contextBefore),
+                dynamicObjCDowncast<NSString>(uiContext.selectedText),
+                dynamicObjCDowncast<NSString>(uiContext.contextAfter),
+                dynamicObjCDowncast<NSString>(uiContext.markedText),
                 uiContext.selectedRangeInMarkedText,
             };
             done = true;
@@ -1328,7 +1328,7 @@ static UIWindowScene *windowScene()
 
 - (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
 {
-    return dynamic_objc_cast<UITextSelectionDisplayInteraction>([self.textInputContentView valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
+    return dynamicObjCDowncast<UITextSelectionDisplayInteraction>([self.textInputContentView valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
 }
 
 #endif
@@ -1524,8 +1524,8 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
     auto rawData = [pipe fileHandleForReading].availableData;
     auto messages = [NSMutableArray<NSString *> array];
-    for (id messageData in dynamic_objc_cast<NSArray>([NSJSONSerialization JSONObjectWithData:rawData options:0 error:nil]))
-        [messages addObject:dynamic_objc_cast<NSString>([messageData objectForKey:@"eventMessage"])];
+    for (id messageData in dynamicObjCDowncast<NSArray>([NSJSONSerialization JSONObjectWithData:rawData options:0 error:nil]))
+        [messages addObject:dynamicObjCDowncast<NSString>([messageData objectForKey:@"eventMessage"])];
     return messages;
 }
 

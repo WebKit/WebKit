@@ -78,7 +78,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         return;
 
     Vector<String> keysVector;
-    NSDictionary *keysWithDefaultValues = dynamic_objc_cast<NSDictionary>(items);
+    NSDictionary *keysWithDefaultValues = dynamicObjCDowncast<NSDictionary>(items);
 
     if (keysWithDefaultValues) {
         if (!keysWithDefaultValues.count) {
@@ -89,7 +89,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         keysVector = makeVector<String>(keysWithDefaultValues.allKeys);
     }
 
-    if (NSArray *keys = dynamic_objc_cast<NSArray>(items)) {
+    if (NSArray *keys = dynamicObjCDowncast<NSArray>(items)) {
         if (!keys.count) {
             callback->call(@{ });
             return;
@@ -98,7 +98,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         keysVector = makeVector<String>(keys);
     }
 
-    if (NSString *key = dynamic_objc_cast<NSString>(items))
+    if (NSString *key = dynamicObjCDowncast<NSString>(items))
         keysVector = { key };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(webPageProxyIdentifier, m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
@@ -140,9 +140,9 @@ void WebExtensionAPIStorageArea::getBytesInUse(WebPageProxyIdentifier webPagePro
         return;
 
     Vector<String> keysVector;
-    if (NSArray *keysArray = dynamic_objc_cast<NSArray>(keys))
+    if (NSArray *keysArray = dynamicObjCDowncast<NSArray>(keys))
         keysVector = makeVector<String>(keysArray);
-    else if (NSString *key = dynamic_objc_cast<NSString>(keys))
+    else if (NSString *key = dynamicObjCDowncast<NSString>(keys))
         keysVector = { key };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(webPageProxyIdentifier, m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<size_t, WebExtensionError>&& result) {

@@ -763,7 +763,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
 
     Vector<WebExtensionTabIdentifier> identifiers;
 
-    if (NSNumber *tabID = dynamic_objc_cast<NSNumber>(tabIDs)) {
+    if (NSNumber *tabID = dynamicObjCDowncast<NSNumber>(tabIDs)) {
         auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifer)) {
             *outExceptionString = toErrorString(nullString(), @"tabIDs", @"'%@' is not a tab identifier", tabID).createNSString().autorelease();
@@ -771,7 +771,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
         }
 
         identifiers.append(tabIdentifer.value());
-    } else if (NSArray *tabIDArray = dynamic_objc_cast<NSArray>(tabIDs)) {
+    } else if (NSArray *tabIDArray = dynamicObjCDowncast<NSArray>(tabIDs)) {
         identifiers.reserveInitialCapacity(tabIDArray.count);
 
         for (NSNumber *tabID in tabIDArray) {

@@ -77,7 +77,7 @@
     if (!scrollingTreeNodeDelegate) [[unlikely]]
         return;
 
-    if (RetainPtr baseScrollView = dynamic_objc_cast<WKBaseScrollView>(scrollView))
+    if (RetainPtr baseScrollView = dynamicObjCDowncast<WKBaseScrollView>(scrollView))
         [baseScrollView updateInteractiveScrollVelocity];
 
     scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
@@ -107,7 +107,7 @@
         scrollingTreeNodeDelegate->clearActiveTouchActions();
         
         if (touchActions && !touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation })) {
-            auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
+            auto axesToPreventMomentumScrolling = dynamicObjCDowncast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
             if (!touchActions.contains(WebCore::TouchAction::PanX) || (axesToPreventMomentumScrolling & UIAxisHorizontal))
                 targetContentOffset->x = scrollView.contentOffset.x;
             if (!touchActions.contains(WebCore::TouchAction::PanY) || (axesToPreventMomentumScrolling & UIAxisVertical))
@@ -241,7 +241,7 @@
         return nil;
 
     // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
-    return dynamic_objc_cast<WKBEScrollView>(scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
+    return dynamicObjCDowncast<WKBEScrollView>(scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -483,7 +483,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(std
 WKBaseScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
 {
     if (auto* delegate = scrollLayer().delegate) {
-        auto scrollView = dynamic_objc_cast<WKBaseScrollView>(delegate);
+        auto scrollView = dynamicObjCDowncast<WKBaseScrollView>(delegate);
         ASSERT(scrollView);
         return scrollView;
     }

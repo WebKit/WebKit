@@ -231,7 +231,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 + (void)validateEntry:(id)maybeFileURL
 {
     NSString *errorMessage = nil;
-    auto* url = dynamic_objc_cast<NSURL>(maybeFileURL);
+    auto* url = dynamicObjCDowncast<NSURL>(maybeFileURL);
     if (!url)
         errorMessage = @"The NSArray associated with _WKReadAccessFileURLsOption may only contain NSURL objects.";
     else if (!url.isFileURL)
@@ -250,7 +250,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         return;
     }
 
-    auto *allowNetworkLoadsAsNumber = dynamic_objc_cast<NSNumber>(allowNetworkLoadsValue);
+    auto *allowNetworkLoadsAsNumber = dynamicObjCDowncast<NSNumber>(allowNetworkLoadsValue);
     if (!allowNetworkLoadsAsNumber)
         [self clearConfigurationAndRaiseExceptionIfNecessary:@"The value associated with _WKAllowNetworkLoadsOption must be an NSNumber."];
 
@@ -271,7 +271,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         return;
     }
 
-    auto identifier = dynamic_objc_cast<NSString>(identifierValue);
+    auto identifier = dynamicObjCDowncast<NSString>(identifierValue);
     if (!identifier)
         [self clearConfigurationAndRaiseExceptionIfNecessary:@"The value associated with _WKSourceApplicationBundleIdentifierOption must be an NSString."];
 
@@ -285,7 +285,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 + (void)maybeConsumeBundlePaths:(id)maybeReadAccessFileURLs
 {
     NSString *errorMessage = nil;
-    auto* readAccessFileURLs = dynamic_objc_cast<NSArray<NSURL *>>(maybeReadAccessFileURLs);
+    auto* readAccessFileURLs = dynamicObjCDowncast<NSArray<NSURL *>>(maybeReadAccessFileURLs);
     if (!readAccessFileURLs)
         errorMessage = @"The value associated with _WKReadAccessFileURLsOption must be an NSArray of NSURL objects.";
     else if (readAccessFileURLs.count > maximumReadOnlyAccessPaths)
@@ -408,7 +408,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 
         webView.get().navigationDelegate = navigationDelegate.get();
 
-        if (auto* textZoomFactor = dynamic_objc_cast<NSNumber>(options[NSTextSizeMultiplierDocumentOption]))
+        if (auto* textZoomFactor = dynamicObjCDowncast<NSNumber>(options[NSTextSizeMultiplierDocumentOption]))
             webView.get()._textZoomFactor = textZoomFactor.doubleValue;
         else
             webView.get()._textZoomFactor = 1;
@@ -482,7 +482,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         };
 
         auto timeoutInterval = defaultTimeoutInterval;
-        if (auto* timeoutOption = dynamic_objc_cast<NSNumber>(options[NSTimeoutDocumentOption])) {
+        if (auto* timeoutOption = dynamicObjCDowncast<NSNumber>(options[NSTimeoutDocumentOption])) {
             if (timeoutOption.doubleValue >= 0)
                 timeoutInterval = timeoutOption.doubleValue;
         }
@@ -521,7 +521,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 + (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
     [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
-        auto* readAccessURL = dynamic_objc_cast<NSURL>(options[NSReadAccessURLDocumentOption]);
+        auto* readAccessURL = dynamicObjCDowncast<NSURL>(options[NSReadAccessURLDocumentOption]);
         return [webView loadFileURL:fileURL allowingReadAccessToURL:readAccessURL];
     } completionHandler:completionHandler];
 }
@@ -529,7 +529,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 + (void)loadFromHTMLWithString:(NSString *)string options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
     [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
-        auto* baseURL = dynamic_objc_cast<NSURL>(options[NSBaseURLDocumentOption]);
+        auto* baseURL = dynamicObjCDowncast<NSURL>(options[NSBaseURLDocumentOption]);
         return [webView loadHTMLString:string baseURL:baseURL];
     } completionHandler:completionHandler];
 }
@@ -537,9 +537,9 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 + (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
     [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
-        RetainPtr textEncodingName = dynamic_objc_cast<NSString>(options[NSTextEncodingNameDocumentOption]);
-        auto characterEncoding = static_cast<NSStringEncoding>(dynamic_objc_cast<NSNumber>(options[NSCharacterEncodingDocumentOption]).unsignedIntegerValue);
-        auto* baseURL = dynamic_objc_cast<NSURL>(options[NSBaseURLDocumentOption]);
+        RetainPtr textEncodingName = dynamicObjCDowncast<NSString>(options[NSTextEncodingNameDocumentOption]);
+        auto characterEncoding = static_cast<NSStringEncoding>(dynamicObjCDowncast<NSNumber>(options[NSCharacterEncodingDocumentOption]).unsignedIntegerValue);
+        auto* baseURL = dynamicObjCDowncast<NSURL>(options[NSBaseURLDocumentOption]);
 
         if (characterEncoding && !textEncodingName) {
             auto stringEncoding = CFStringConvertNSStringEncodingToEncoding(characterEncoding);

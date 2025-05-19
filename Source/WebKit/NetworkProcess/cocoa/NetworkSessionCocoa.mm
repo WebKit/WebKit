@@ -958,7 +958,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             return;
 
         RetainPtr<NSData> resumeData;
-        if (RetainPtr userInfo = dynamic_objc_cast<NSDictionary>(updatedError.get().userInfo)) {
+        if (RetainPtr userInfo = dynamicObjCDowncast<NSDictionary>(updatedError.get().userInfo)) {
             resumeData = userInfo.get()[@"NSURLSessionDownloadTaskResumeData"];
             if (resumeData && ![resumeData isKindOfClass:[NSData class]]) {
                 RELEASE_LOG(NetworkSession, "Download task %llu finished with resume data of wrong class: %s", (unsigned long long)task.taskIdentifier, NSStringFromClass([resumeData class]).UTF8String);
@@ -1097,7 +1097,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // FIXME: Remove when rdar://108002223 can be resolved.
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task _didReceiveInformationalResponse:(NSURLResponse *)response
 {
-    if (RetainPtr httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(response))
+    if (RetainPtr httpResponse = dynamicObjCDowncast<NSHTTPURLResponse>(response))
         [self URLSession:session task:task didReceiveInformationalResponse:httpResponse.get()];
 }
 
@@ -1130,7 +1130,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         negotiatedLegacyTLS = checkForLegacyTLS(metrics.get());
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        RetainPtr httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(response);
+        RetainPtr httpResponse = dynamicObjCDowncast<NSHTTPURLResponse>(response);
         int statusCode = httpResponse ? [httpResponse statusCode] : 0;
         RetainPtr xContentTypeOptions = httpResponse ? [httpResponse valueForHTTPHeaderField:@"X-Content-Type-Options"] : nil;
         bool isNoSniff = xContentTypeOptions && [xContentTypeOptions caseInsensitiveCompare:@"nosniff"] == NSOrderedSame;

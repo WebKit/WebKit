@@ -47,7 +47,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
     if (self == object)
         return YES;
 
-    auto *other = dynamic_objc_cast<WKWebExtensionMessagePort>(object);
+    auto *other = dynamicObjCDowncast<WKWebExtensionMessagePort>(object);
     if (!other)
         return NO;
 

@@ -143,16 +143,16 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
             if (!i) {
                 EXPECT_WK_STREQ(@"Hello ", substring.string);
 #if USE(APPKIT)
-                EXPECT_WK_STREQ(@"Times-Roman", dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]).fontName);
+                EXPECT_WK_STREQ(@"Times-Roman", dynamicObjCDowncast<NSFont>(attributes[NSFontAttributeName]).fontName);
 #else
-                EXPECT_WK_STREQ(@"TimesNewRomanPSMT", dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]).fontName);
+                EXPECT_WK_STREQ(@"TimesNewRomanPSMT", dynamicObjCDowncast<UIFont>(attributes[NSFontAttributeName]).fontName);
 #endif
             } else if (i == 1) {
                 EXPECT_WK_STREQ(@"World!", substring.string);
 #if USE(APPKIT)
-                EXPECT_WK_STREQ(@"Times-Bold", dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]).fontName);
+                EXPECT_WK_STREQ(@"Times-Bold", dynamicObjCDowncast<NSFont>(attributes[NSFontAttributeName]).fontName);
 #else
-                EXPECT_WK_STREQ(@"TimesNewRomanPS-BoldMT", dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]).fontName);
+                EXPECT_WK_STREQ(@"TimesNewRomanPS-BoldMT", dynamicObjCDowncast<UIFont>(attributes[NSFontAttributeName]).fontName);
 #endif
             } else
                 ASSERT_NOT_REACHED();
@@ -161,9 +161,9 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
         }];
 
 #if USE(APPKIT)
-        EXPECT_WK_STREQ(@"sRGB IEC61966-2.1 colorspace 1 0 0 1", dynamic_objc_cast<NSColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+        EXPECT_WK_STREQ(@"sRGB IEC61966-2.1 colorspace 1 0 0 1", dynamicObjCDowncast<NSColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
 #else
-        EXPECT_WK_STREQ(@"kCGColorSpaceModelRGB 1 0 0 1 ", dynamic_objc_cast<UIColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+        EXPECT_WK_STREQ(@"kCGColorSpaceModelRGB 1 0 0 1 ", dynamicObjCDowncast<UIColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
 #endif
 
         finished = true;
@@ -193,9 +193,9 @@ TEST(WKWebView, GetContentsWithOpticallySizedFontShouldReturnAttributedString)
                 EXPECT_WK_STREQ(@"Hello", substring.string);
 
 #if USE(APPKIT)
-                EXPECT_EQ([dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]) pointSize], 16);
+                EXPECT_EQ([dynamicObjCDowncast<NSFont>(attributes[NSFontAttributeName]) pointSize], 16);
 #else
-                EXPECT_EQ([dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]) pointSize], 16);
+                EXPECT_EQ([dynamicObjCDowncast<UIFont>(attributes[NSFontAttributeName]) pointSize], 16);
 #endif
             } else
                 ASSERT_NOT_REACHED();
@@ -553,7 +553,7 @@ TEST(WKWebView, TextWithWebFontAsAttributedString)
     [result enumerateAttributesInRange:NSMakeRange(0, [result length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         substringsAndFonts.append({
             { [[[result string] substringWithRange:range] stringByTrimmingCharactersInSet:whitespaceSet] },
-            dynamic_objc_cast<WebCore::CocoaFont>(attributes[NSFontAttributeName])
+            dynamicObjCDowncast<WebCore::CocoaFont>(attributes[NSFontAttributeName])
         });
     }];
 

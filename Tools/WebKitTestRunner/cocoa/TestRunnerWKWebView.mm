@@ -278,7 +278,7 @@ IGNORE_WARNINGS_END
 #if USE(UICONTEXTMENU)
     auto dismissContextMenuInteractionsForView = ^(UIView *view) {
         for (id<UIInteraction> interaction in view.interactions) {
-            if (auto contextMenuInteraction = dynamic_objc_cast<UIContextMenuInteraction>(interaction)) {
+            if (auto contextMenuInteraction = dynamicObjCDowncast<UIContextMenuInteraction>(interaction)) {
                 [UIView performWithoutAnimation:^{
                     [contextMenuInteraction dismissMenu];
                 }];
@@ -344,7 +344,7 @@ IGNORE_WARNINGS_END
     if (self.showingPopover)
         return;
 
-    auto controller = dynamic_objc_cast<UIPopoverPresentationController>(notification.object);
+    auto controller = dynamicObjCDowncast<UIPopoverPresentationController>(notification.object);
     static Class validationBubbleDelegateClass = [&] {
         return NSClassFromString(@"WebValidationBubbleDelegate");
     }();

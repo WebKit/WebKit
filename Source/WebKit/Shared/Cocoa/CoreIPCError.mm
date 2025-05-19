@@ -86,7 +86,7 @@ bool CoreIPCError::isSafeToEncodeUserInfo(id value)
     if ([value isKindOfClass:NSString.class] || [value isKindOfClass:NSURL.class] || [value isKindOfClass:NSNumber.class])
         return true;
 
-    if (auto array = dynamic_objc_cast<NSArray>(value)) {
+    if (auto array = dynamicObjCDowncast<NSArray>(value)) {
         for (id object in array) {
             if (!isSafeToEncodeUserInfo(object))
                 return false;
@@ -94,7 +94,7 @@ bool CoreIPCError::isSafeToEncodeUserInfo(id value)
         return true;
     }
 
-    if (auto dictionary = dynamic_objc_cast<NSDictionary>(value)) {
+    if (auto dictionary = dynamicObjCDowncast<NSDictionary>(value)) {
         for (id innerValue in dictionary.objectEnumerator) {
             if (!isSafeToEncodeUserInfo(innerValue))
                 return false;

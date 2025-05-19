@@ -47,7 +47,7 @@
     if (object == self)
         return YES;
 
-    auto *handle = dynamic_objc_cast<_WKFrameHandle>(object);
+    auto *handle = dynamicObjCDowncast<_WKFrameHandle>(object);
     if (!handle)
         return NO;
 
@@ -83,7 +83,7 @@
     if (!(self = [super init]))
         return nil;
 
-    RetainPtr frameID = dynamic_objc_cast<NSNumber>([decoder decodeObjectOfClass:[NSNumber class] forKey:@"frameID"]);
+    RetainPtr frameID = dynamicObjCDowncast<NSNumber>([decoder decodeObjectOfClass:[NSNumber class] forKey:@"frameID"]);
     if (!frameID) {
         [self release];
         return nil;

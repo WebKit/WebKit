@@ -180,7 +180,7 @@ static bool isSampleBufferVideoRenderer(id object)
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
 {
     if (context == errorContext) {
-        RetainPtr error = dynamic_objc_cast<NSError>([change valueForKey:NSKeyValueChangeNewKey]);
+        RetainPtr error = dynamicObjCDowncast<NSError>([change valueForKey:NSKeyValueChangeNewKey]);
         if (!error)
             return;
 
@@ -228,7 +228,7 @@ static bool isSampleBufferVideoRenderer(id object)
 - (void)layerFailedToDecode:(NSNotification *)notification
 {
     RetainPtr renderer = WebCore::isSampleBufferVideoRenderer(notification.object) ? (WebSampleBufferVideoRendering *)notification.object : nil;
-    RetainPtr error = dynamic_objc_cast<NSError>([notification.userInfo valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
+    RetainPtr error = dynamicObjCDowncast<NSError>([notification.userInfo valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
         if (!_videoRenderers.contains(renderer.get()))
@@ -254,7 +254,7 @@ static bool isSampleBufferVideoRenderer(id object)
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
 - (void)layerReadyForDisplayChanged:(NSNotification *)notification
 {
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object);
+    RetainPtr layer = dynamicObjCDowncast<AVSampleBufferDisplayLayer>(notification.object);
     if (!layer)
         return;
 
@@ -271,7 +271,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)audioRendererWasAutomaticallyFlushed:(NSNotification *)notification
 {
-    RetainPtr renderer = dynamic_objc_cast<AVSampleBufferAudioRenderer>(notification.object);
+    RetainPtr renderer = dynamicObjCDowncast<AVSampleBufferAudioRenderer>(notification.object);
     CMTime flushTime = [[notification.userInfo valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {

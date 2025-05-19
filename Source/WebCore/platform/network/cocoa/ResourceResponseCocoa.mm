@@ -165,7 +165,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     
     @autoreleasepool {
 
-        RetainPtr urlResponse = dynamic_objc_cast<NSHTTPURLResponse>(m_nsResponse.get());
+        RetainPtr urlResponse = dynamicObjCDowncast<NSHTTPURLResponse>(m_nsResponse.get());
         RetainPtr messageRef = urlResponse ? CFURLResponseGetHTTPResponse([urlResponse _CFURLResponse]) : nullptr;
 
         if (m_initLevel < CommonFieldsOnly) {

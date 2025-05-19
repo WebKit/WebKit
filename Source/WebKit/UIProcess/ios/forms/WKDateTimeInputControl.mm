@@ -423,34 +423,34 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)setTimePickerHour:(NSInteger)hour minute:(NSInteger)minute
 {
-    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+    if (auto picker = dynamicObjCDowncast<WKDateTimePicker>(self.control))
         [picker setHour:hour minute:minute];
 }
 
 - (NSString *)dateTimePickerCalendarType
 {
-    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+    if (auto picker = dynamicObjCDowncast<WKDateTimePicker>(self.control))
         return picker.calendarType;
     return nil;
 }
 
 - (double)timePickerValueHour
 {
-    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+    if (auto picker = dynamicObjCDowncast<WKDateTimePicker>(self.control))
         return picker.hour;
     return -1;
 }
 
 - (double)timePickerValueMinute
 {
-    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+    if (auto picker = dynamicObjCDowncast<WKDateTimePicker>(self.control))
         return picker.minute;
     return -1;
 }
 
 - (BOOL)dismissWithAnimationForTesting
 {
-    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control)) {
+    if (auto picker = dynamicObjCDowncast<WKDateTimePicker>(self.control)) {
         [picker.datePickerController assertAccessoryViewCanBeHitTestedForTesting];
         [picker.datePickerController dismissDatePicker];
         return YES;

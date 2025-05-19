@@ -38,9 +38,9 @@ namespace WebCore {
 
 Vector<Ref<SharedBuffer>> CDMPrivateFairPlayStreaming::keyIDsForRequest(AVContentKeyRequest *request)
 {
-    if (auto *identiferStr = dynamic_objc_cast<NSString>(request.identifier))
+    if (auto *identiferStr = dynamicObjCDowncast<NSString>(request.identifier))
         return { SharedBuffer::create([identiferStr dataUsingEncoding:NSUTF8StringEncoding]) };
-    if (auto *identifierData = dynamic_objc_cast<NSData>(request.identifier))
+    if (auto *identifierData = dynamicObjCDowncast<NSData>(request.identifier))
         return { SharedBuffer::create(identifierData) };
     if (request.initializationData) {
         if (auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData)))

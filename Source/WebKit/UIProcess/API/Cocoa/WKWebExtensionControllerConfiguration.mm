@@ -145,7 +145,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
     if (self == object)
         return YES;
 
-    auto *other = dynamic_objc_cast<WKWebExtensionControllerConfiguration>(object);
+    auto *other = dynamicObjCDowncast<WKWebExtensionControllerConfiguration>(object);
     if (!other)
         return NO;
 

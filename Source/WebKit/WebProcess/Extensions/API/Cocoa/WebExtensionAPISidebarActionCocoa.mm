@@ -85,7 +85,7 @@ static Variant<std::monostate, String, SidebarError> parseDetailsStringFromKey(N
         return std::monostate();
     }
 
-    RetainPtr nsStringValue = dynamic_objc_cast<NSString>(maybeValue.get());
+    RetainPtr nsStringValue = dynamicObjCDowncast<NSString>(maybeValue.get());
     if (!nsStringValue]) {
         if (required)
             return SidebarError { toErrorString(nullString(), @"details", adoptNS([[NSString alloc] initWithFormat:@"'%@' must be of type 'string'", key]).get()) };

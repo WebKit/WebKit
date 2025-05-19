@@ -1914,7 +1914,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     NSView *hitView = [contentView hitTest:locationForHitTest];
     forceWebHTMLViewHitTest = NO;
     
-    auto view = retainPtr(dynamic_objc_cast<WebHTMLView>(hitView));
+    auto view = retainPtr(dynamicObjCDowncast<WebHTMLView>(hitView));
     if (lastHitView != view && lastHitView && [lastHitView _frame]) {
         // If we are moving out of a view (or frame), let's pretend the mouse moved
         // all the way out of that view. But we have to account for scrolling, because

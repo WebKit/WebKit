@@ -797,11 +797,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document
 {
-    auto from = dynamic_objc_cast<WKPDFFoundTextPosition>(fromRange.start);
+    auto from = dynamicObjCDowncast<WKPDFFoundTextPosition>(fromRange.start);
     if (!from)
         return NSOrderedSame;
 
-    auto to = dynamic_objc_cast<WKPDFFoundTextPosition>(toRange.start);
+    auto to = dynamicObjCDowncast<WKPDFFoundTextPosition>(toRange.start);
     if (!to)
         return NSOrderedSame;
 
@@ -827,7 +827,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (style != UITextSearchFoundTextStyleHighlighted)
         return;
 
-    auto foundTextRange = dynamic_objc_cast<WKPDFFoundTextRange>(range);
+    auto foundTextRange = dynamicObjCDowncast<WKPDFFoundTextRange>(range);
     if (!foundTextRange)
         return;
 

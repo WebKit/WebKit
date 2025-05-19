@@ -134,7 +134,7 @@ static inline void performMenuItemAction(auto *menuItem)
 #if USE(APPKIT)
     [menuItem.target performSelector:menuItem.action withObject:nil];
 #else
-    [dynamic_objc_cast<CocoaMenuAction>(menuItem) performWithSender:nil target:nil];
+    [dynamicObjCDowncast<CocoaMenuAction>(menuItem) performWithSender:nil target:nil];
 #endif
 }
 
@@ -397,7 +397,7 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenus)
 
     auto *submenuItem = topLevelMenuItem.submenu.itemArray.firstObject;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(topLevelMenuItem);
 
     EXPECT_EQ(parentMenu.children.count, expectedSubmenuTitles.count);
     [parentMenu.children enumerateObjectsUsingBlock:^(CocoaMenuItem *action, NSUInteger index, BOOL *stop) {
@@ -499,7 +499,7 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenusUpdate)
 
     auto *submenuItem = topLevelMenuItem.submenu.itemArray.firstObject;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(topLevelMenuItem);
 
     EXPECT_EQ(parentMenu.children.count, expectedSubmenuTitles.count);
     [parentMenu.children enumerateObjectsUsingBlock:^(CocoaMenuItem *action, NSUInteger index, BOOL *stop) {
@@ -567,7 +567,7 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
 #if USE(APPKIT)
     menuItems = menuItems.firstObject.submenu.itemArray;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(menuItems.firstObject);
     menuItems = parentMenu.children;
 #endif
 
@@ -635,13 +635,13 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
 #if USE(APPKIT)
     menuItems = menuItems.firstObject.submenu.itemArray;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(menuItems.firstObject);
     menuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(menuItems.count, 2lu);
 
-    auto *firstMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *firstMenuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([firstMenuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_EQ(firstMenuItem.state, CocoaMenuItemStateOn);
     EXPECT_NS_EQUAL(firstMenuItem.title, @"Menu Item with Ampersand & More");
@@ -656,7 +656,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
     EXPECT_TRUE(CGSizeEqualToSize(firstMenuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
-    auto *secondMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.lastObject);
+    auto *secondMenuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.lastObject);
     EXPECT_TRUE([secondMenuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(secondMenuItem.title, @"Menu Item with Command");
 
@@ -724,13 +724,13 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
 #if USE(APPKIT)
     menuItems = menuItems.firstObject.submenu.itemArray;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(menuItems.firstObject);
     menuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(menuItems.count, 2lu);
 
-    auto *firstMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *firstMenuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([firstMenuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_EQ(firstMenuItem.state, CocoaMenuItemStateOn);
     EXPECT_NS_EQUAL(firstMenuItem.title, @"Menu Item with Ampersand & More");
@@ -745,7 +745,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
     EXPECT_TRUE(CGSizeEqualToSize(firstMenuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
-    auto *secondMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.lastObject);
+    auto *secondMenuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.lastObject);
     EXPECT_TRUE([secondMenuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(secondMenuItem.title, @"Menu Item with Command");
 
@@ -789,7 +789,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
 
@@ -848,7 +848,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithImageDataVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with ImageData Variants");
 
@@ -950,7 +950,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithMixedValidAndInvalidIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Mixed Variants");
 
@@ -1009,7 +1009,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithAnySizeVariantAndSVGDataURL)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with SVG Icon Variants");
 
@@ -1066,7 +1066,7 @@ TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
 
@@ -1124,7 +1124,7 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
 
@@ -1171,7 +1171,7 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    auto *menuItem = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
     EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
 
@@ -1226,14 +1226,14 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
 #if USE(APPKIT)
     menuItems = menuItems.firstObject.submenu.itemArray;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(menuItems.firstObject);
     menuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(menuItems.count, 2lu);
 
-    auto *checkbox1 = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    auto *checkbox2 = dynamic_objc_cast<CocoaMenuAction>(menuItems.lastObject);
+    auto *checkbox1 = dynamicObjCDowncast<CocoaMenuAction>(menuItems.firstObject);
+    auto *checkbox2 = dynamicObjCDowncast<CocoaMenuAction>(menuItems.lastObject);
 
     EXPECT_TRUE([checkbox1 isKindOfClass:[CocoaMenuItem class]]);
     EXPECT_TRUE([checkbox2 isKindOfClass:[CocoaMenuItem class]]);
@@ -1251,14 +1251,14 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
 #if USE(APPKIT)
     updatedMenuItems = updatedMenuItems.firstObject.submenu.itemArray;
 #else
-    parentMenu = dynamic_objc_cast<UIMenu>(updatedMenuItems.firstObject);
+    parentMenu = dynamicObjCDowncast<UIMenu>(updatedMenuItems.firstObject);
     updatedMenuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(updatedMenuItems.count, 2lu);
 
-    checkbox1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems.firstObject);
-    checkbox2 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems.lastObject);
+    checkbox1 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems.firstObject);
+    checkbox2 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems.lastObject);
 
     EXPECT_EQ(checkbox1.state, CocoaMenuItemStateOff);
     EXPECT_EQ(checkbox2.state, CocoaMenuItemStateOn);
@@ -1338,17 +1338,17 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
 #if USE(APPKIT)
     menuItems = menuItems.firstObject.submenu.itemArray;
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    auto *parentMenu = dynamicObjCDowncast<UIMenu>(menuItems.firstObject);
     menuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(menuItems.count, 6lu);
 
-    auto *radio1Group1 = dynamic_objc_cast<CocoaMenuAction>(menuItems[0]);
-    auto *radio2Group1 = dynamic_objc_cast<CocoaMenuAction>(menuItems[1]);
-    auto *radio1Group2 = dynamic_objc_cast<CocoaMenuAction>(menuItems[3]);
-    auto *radio2Group2 = dynamic_objc_cast<CocoaMenuAction>(menuItems[4]);
-    auto *radio3Group2 = dynamic_objc_cast<CocoaMenuAction>(menuItems[5]);
+    auto *radio1Group1 = dynamicObjCDowncast<CocoaMenuAction>(menuItems[0]);
+    auto *radio2Group1 = dynamicObjCDowncast<CocoaMenuAction>(menuItems[1]);
+    auto *radio1Group2 = dynamicObjCDowncast<CocoaMenuAction>(menuItems[3]);
+    auto *radio2Group2 = dynamicObjCDowncast<CocoaMenuAction>(menuItems[4]);
+    auto *radio3Group2 = dynamicObjCDowncast<CocoaMenuAction>(menuItems[5]);
 
     EXPECT_EQ(radio1Group1.state, CocoaMenuItemStateOn);
     EXPECT_EQ(radio2Group1.state, CocoaMenuItemStateOff);
@@ -1368,17 +1368,17 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
 #if USE(APPKIT)
     updatedMenuItems = updatedMenuItems.firstObject.submenu.itemArray;
 #else
-    parentMenu = dynamic_objc_cast<UIMenu>(updatedMenuItems.firstObject);
+    parentMenu = dynamicObjCDowncast<UIMenu>(updatedMenuItems.firstObject);
     updatedMenuItems = parentMenu.children;
 #endif
 
     EXPECT_EQ(updatedMenuItems.count, 6lu);
 
-    radio1Group1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[0]);
-    radio2Group1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[1]);
-    radio1Group2 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[3]);
-    radio2Group2 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[4]);
-    radio3Group2 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[5]);
+    radio1Group1 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems[0]);
+    radio2Group1 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems[1]);
+    radio1Group2 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems[3]);
+    radio2Group2 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems[4]);
+    radio3Group2 = dynamicObjCDowncast<CocoaMenuAction>(updatedMenuItems[5]);
 
     // The checked item as clicked again, so it does not change.
     EXPECT_EQ(radio1Group1.state, CocoaMenuItemStateOn);

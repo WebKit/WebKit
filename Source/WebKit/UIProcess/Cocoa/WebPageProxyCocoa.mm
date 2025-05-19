@@ -928,7 +928,7 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
         return;
     }
 
-    RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[request.engagementRequest.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil])]);
+    RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamicObjCDowncast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[request.engagementRequest.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil])]);
     [amsRequest setOriginatingURL:originatingURL.createNSURL().get()];
 
     auto amsBag = retainPtr([getAMSUIEngagementTaskClass() createBagForSubProfile]);

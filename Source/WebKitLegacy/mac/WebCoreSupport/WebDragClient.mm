@@ -185,7 +185,7 @@ void WebDragClient::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPoi
 {
     ASSERT(!dataTransfer.pasteboard().hasData());
 
-    RetainPtr<WebHTMLView> topWebHTMLView = dynamic_objc_cast<WebHTMLView>(m_webView.mainFrame.frameView.documentView);
+    RetainPtr<WebHTMLView> topWebHTMLView = dynamicObjCDowncast<WebHTMLView>(m_webView.mainFrame.frameView.documentView);
     ASSERT(topWebHTMLView);
 
     [topWebHTMLView _stopAutoscrollTimer];

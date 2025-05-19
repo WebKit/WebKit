@@ -1204,7 +1204,7 @@ void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
 
 bool TestRunner::isSecureEventInputEnabled() const
 {
-    return dynamic_objc_cast<WebHTMLView>(mainFrame.frameView.documentView)._secureEventInputEnabledForTesting;
+    return dynamicObjCDowncast<WebHTMLView>(mainFrame.frameView.documentView)._secureEventInputEnabledForTesting;
 }
 
 #endif // PLATFORM(MAC)

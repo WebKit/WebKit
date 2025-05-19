@@ -226,7 +226,7 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 - (UIScrollView *)_wk_parentScrollView
 {
     for (RetainPtr parent = [self superview]; parent; parent = [parent superview]) {
-        if (RetainPtr scrollView = dynamic_objc_cast<UIScrollView>(parent.get()))
+        if (RetainPtr scrollView = dynamicObjCDowncast<UIScrollView>(parent.get()))
             return scrollView.get();
     }
     return nil;
@@ -362,7 +362,7 @@ RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *
 UIScrollView *scrollViewForTouches(NSSet<UITouch *> *touches)
 {
     for (UITouch *touch in touches) {
-        if (auto scrollView = dynamic_objc_cast<UIScrollView>(touch.view))
+        if (auto scrollView = dynamicObjCDowncast<UIScrollView>(touch.view))
             return scrollView;
     }
     return nil;

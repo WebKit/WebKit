@@ -362,10 +362,10 @@ void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier,
         return;
 
     NSString *identifierString;
-    if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))
+    if (NSNumber *identifierNumber = dynamicObjCDowncast<NSNumber>(identifier))
         identifierString = identifierNumber.stringValue;
     else
-        identifierString = dynamic_objc_cast<NSString>(identifier);
+        identifierString = dynamicObjCDowncast<NSString>(identifier);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifierString, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), clickCallback = WTFMove(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifierString)](Expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
@@ -402,10 +402,10 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
         return;
 
     NSString *identifierString;
-    if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))
+    if (NSNumber *identifierNumber = dynamicObjCDowncast<NSNumber>(identifier))
         identifierString = identifierNumber.stringValue;
     else
-        identifierString = dynamic_objc_cast<NSString>(identifier);
+        identifierString = dynamicObjCDowncast<NSString>(identifier);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifierString), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier = String(identifierString)](Expected<void, WebExtensionError>&& result) {
         if (!result) {

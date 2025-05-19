@@ -3111,7 +3111,7 @@ CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(con
 
     if (menuItems.count == 1) {
         if (!allowTopLevelImages)
-            dynamic_objc_cast<NSMenuItem>(menuItems.firstObject).image = nil;
+            dynamicObjCDowncast<NSMenuItem>(menuItems.firstObject).image = nil;
         return menuItems.firstObject;
     }
 

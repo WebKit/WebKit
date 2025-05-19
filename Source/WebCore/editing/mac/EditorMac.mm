@@ -117,13 +117,13 @@ void Editor::platformPasteFont()
     auto style = MutableStyleProperties::create();
 
     Color backgroundColor;
-    if (NSColor *nsBackgroundColor = dynamic_objc_cast<NSColor>([fontAttributes objectForKey:NSBackgroundColorAttributeName]))
+    if (NSColor *nsBackgroundColor = dynamicObjCDowncast<NSColor>([fontAttributes objectForKey:NSBackgroundColorAttributeName]))
         backgroundColor = colorFromCocoaColor(nsBackgroundColor);
     if (!backgroundColor.isValid())
         backgroundColor = Color::transparentBlack;
     style->setProperty(CSSPropertyBackgroundColor, CSSValuePool::singleton().createColorValue(backgroundColor));
 
-    if (NSFont *font = dynamic_objc_cast<NSFont>([fontAttributes objectForKey:NSFontAttributeName])) {
+    if (NSFont *font = dynamicObjCDowncast<NSFont>([fontAttributes objectForKey:NSFontAttributeName])) {
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.
         style->setProperty(CSSPropertyFontFamily, [NSString stringWithFormat:@"'%@'", [font familyName]]);
@@ -139,7 +139,7 @@ void Editor::platformPasteFont()
     }
 
     Color foregroundColor;
-    if (NSColor *nsForegroundColor = dynamic_objc_cast<NSColor>([fontAttributes objectForKey:NSForegroundColorAttributeName])) {
+    if (NSColor *nsForegroundColor = dynamicObjCDowncast<NSColor>([fontAttributes objectForKey:NSForegroundColorAttributeName])) {
         foregroundColor = colorFromCocoaColor(nsForegroundColor);
         if (!foregroundColor.isValid())
             foregroundColor = Color::transparentBlack;
@@ -148,7 +148,7 @@ void Editor::platformPasteFont()
     style->setProperty(CSSPropertyColor, CSSValuePool::singleton().createColorValue(foregroundColor));
 
     FontShadow fontShadow;
-    if (NSShadow *nsFontShadow = dynamic_objc_cast<NSShadow>([fontAttributes objectForKey:NSShadowAttributeName]))
+    if (NSShadow *nsFontShadow = dynamicObjCDowncast<NSShadow>([fontAttributes objectForKey:NSShadowAttributeName]))
         fontShadow = fontShadowFromNSShadow(nsFontShadow);
     style->setProperty(CSSPropertyTextShadow, serializationForCSS(fontShadow));
 

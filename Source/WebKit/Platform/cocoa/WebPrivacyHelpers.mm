@@ -86,7 +86,7 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
 - (void)didUpdate:(NSNotification *)notification
 {
     ASSERT(PAL::isWebPrivacyFrameworkAvailable());
-    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
+    auto type = dynamicObjCDowncast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
     if (!type)
         return;
 

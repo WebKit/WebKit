@@ -45,7 +45,7 @@ WebExtensionMatchPattern::MatchPatternSet toPatterns(NSSet *set)
     matchPatterns.reserveInitialCapacity(set.count);
 
     for (id object in set) {
-        if (auto *pattern = dynamic_objc_cast<WKWebExtensionMatchPattern>(object))
+        if (auto *pattern = dynamicObjCDowncast<WKWebExtensionMatchPattern>(object))
             matchPatterns.addVoid(pattern._webExtensionMatchPattern);
     }
 

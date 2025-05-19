@@ -90,13 +90,13 @@ static NSString *classToClassString(Class classType, bool plural = false)
 
 static NSString *valueToTypeString(NSObject *value, bool plural = false)
 {
-    if (auto *number = dynamic_objc_cast<NSNumber>(value)) {
+    if (auto *number = dynamicObjCDowncast<NSNumber>(value)) {
         if (std::isnan(number.doubleValue))
             return plural ? @"NaN values" : @"NaN";
 
         if (std::isinf(number.doubleValue))
             return plural ? @"Infinity values" : @"Infinity";
-    } else if (auto *scriptValue = dynamic_objc_cast<JSValue>(value)) {
+    } else if (auto *scriptValue = dynamicObjCDowncast<JSValue>(value)) {
         if (scriptValue.isUndefined)
             return plural ? @"undefined values" : @"undefined";
 
@@ -132,7 +132,7 @@ static bool validateSingleObject(NSString *key, NSObject *value, Class expectedV
 {
     ASSERT([expectedValueType respondsToSelector:@selector(isSubclassOfClass:)]);
 
-    auto *number = dynamic_objc_cast<NSNumber>(value);
+    auto *number = dynamicObjCDowncast<NSNumber>(value);
 
     if (number && std::isnan(number.doubleValue)) {
         if (outExceptionString)
@@ -166,7 +166,7 @@ static bool validateArray(NSString *key, NSObject *value, NSArray<Class> *validC
     ASSERT(validClassesArray.count == 1);
 
     Class expectedElementType = validClassesArray.firstObject;
-    NSArray *arrayValue = dynamic_objc_cast<NSArray>(value);
+    NSArray *arrayValue = dynamicObjCDowncast<NSArray>(value);
     if (!arrayValue) {
         if (outExceptionString)
             *outExceptionString = constructExpectedMessage(key, [[NSString alloc] initWithFormat:@"an array of %@", classToClassString(expectedElementType, true)], valueToTypeString(value));
@@ -235,10 +235,10 @@ static bool validateSet(NSString *key, NSObject *value, NSOrderedSet *validClass
 
 static bool validate(NSString *key, NSObject *value, id expectedValueType, NSString **outExceptionString)
 {
-    if (NSArray<Class> *validClassesArray = dynamic_objc_cast<NSArray>(expectedValueType))
+    if (NSArray<Class> *validClassesArray = dynamicObjCDowncast<NSArray>(expectedValueType))
         return validateArray(key, value, validClassesArray, outExceptionString);
 
-    if (NSOrderedSet *validClassesSet = dynamic_objc_cast<NSOrderedSet>(expectedValueType))
+    if (NSOrderedSet *validClassesSet = dynamicObjCDowncast<NSOrderedSet>(expectedValueType))
         return validateSet(key, value, validClassesSet, outExceptionString);
 
     return validateSingleObject(key, value, expectedValueType, outExceptionString);

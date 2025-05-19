@@ -98,7 +98,7 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     [_label setAdjustsFontSizeToFitWidth:YES];
     [_label setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     WebCore::PlatformCAFilters::setBlendingFiltersOnLayer([_label layer], WebCore::BlendMode::PlusDarker);
-    if (RetainPtr visualEffectBackdropView = dynamic_objc_cast<UIVisualEffectView>(_backdropView))
+    if (RetainPtr visualEffectBackdropView = dynamicObjCDowncast<UIVisualEffectView>(_backdropView))
         [[visualEffectBackdropView contentView] addSubview:_label.get()];
     else
         [_backdropView addSubview:_label.get()];

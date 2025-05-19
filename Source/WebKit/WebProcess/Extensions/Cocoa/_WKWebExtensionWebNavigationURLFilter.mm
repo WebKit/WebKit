@@ -172,13 +172,13 @@ static NSString * const portsKey = @"ports";
         constexpr NSInteger maximumPortNumber = 65535;
         static NSOrderedSet *expectedPortOrRangeTypes = [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil];
 
-        NSUInteger count = dynamic_objc_cast<NSArray>(rawValue).count;
+        NSUInteger count = dynamicObjCDowncast<NSArray>(rawValue).count;
         for (NSUInteger i = 0; i < count; ++i) {
             id portOrRange = rawValue[i];
             if (!validateObject(portOrRange, adoptNS([[NSString alloc] initWithFormat:@"%@[%lu]", portsKey, i]).get(), expectedPortOrRangeTypes, outErrorMessage))
                 return nil;
 
-            if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {
+            if (NSNumber *number = dynamicObjCDowncast<NSNumber>(portOrRange)) {
                 NSInteger integerValue = number.integerValue;
                 if (integerValue < 0 || integerValue > maximumPortNumber) {
                     *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd' is not a valid port", integerValue).createNSString().autorelease();
@@ -186,7 +186,7 @@ static NSString * const portsKey = @"ports";
                 }
 
                 [ports addIndex:(NSUInteger)integerValue];
-            } else if (NSArray<NSNumber *> *rangeArray = dynamic_objc_cast<NSArray>(portOrRange)) {
+            } else if (NSArray<NSNumber *> *rangeArray = dynamicObjCDowncast<NSArray>(portOrRange)) {
                 if (rangeArray.count != 2) {
                     *outErrorMessage = toErrorString(nullString(), portsKey, @"a port range must specify 2 numbers").createNSString().autorelease();
                     return nil;

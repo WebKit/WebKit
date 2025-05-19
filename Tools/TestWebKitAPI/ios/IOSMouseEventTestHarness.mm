@@ -94,7 +94,7 @@ MouseEventTestHarness::MouseEventTestHarness(TestWKWebView *webView)
 
     for (UIGestureRecognizer *gestureRecognizer in contentView.gestureRecognizers) {
         if ([gestureRecognizer.name isEqualToString:@"WKMouseHover"])
-            m_hoverGestureRecognizer = dynamic_objc_cast<UIHoverGestureRecognizer>(gestureRecognizer);
+            m_hoverGestureRecognizer = dynamicObjCDowncast<UIHoverGestureRecognizer>(gestureRecognizer);
         else if ([gestureRecognizer.name isEqualToString:@"WKMouseTouch"])
             m_mouseTouchGestureRecognizer = gestureRecognizer;
     }

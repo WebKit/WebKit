@@ -583,7 +583,7 @@ bool WebProcessPool::processSuppressionEnabled() const
 
 static inline RefPtr<WebProcessPool> extractWebProcessPool(void* observer)
 {
-    RetainPtr strongObserver { dynamic_objc_cast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
+    RetainPtr strongObserver { dynamicObjCDowncast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
     if (!strongObserver)
         return nullptr;
     return [strongObserver pool];
@@ -911,7 +911,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     m_finishedMobileAssetFontDownloadObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"FontActivateNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-        RetainPtr fontFamily = dynamic_objc_cast<NSString>(notification.userInfo[@"FontActivateNotificationFontFamilyKey"]);
+        RetainPtr fontFamily = dynamicObjCDowncast<NSString>(notification.userInfo[@"FontActivateNotificationFontFamilyKey"]);
         if (fontFamily) {
             RetainPtr ctFont = adoptCF(CTFontCreateWithName(bridge_cast(fontFamily.get()), 0.0, nullptr));
             RetainPtr downloaded = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(ctFont.get(), kCTFontDownloadedAttribute)));

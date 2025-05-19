@@ -227,9 +227,9 @@ void ResourceError::platformLazyInit()
     m_errorCode = [m_platformError code];
 
     RetainPtr userInfo = [m_platformError userInfo];
-    if (auto *failingURLString = dynamic_objc_cast<NSString>([userInfo valueForKey:@"NSErrorFailingURLStringKey"]))
+    if (auto *failingURLString = dynamicObjCDowncast<NSString>([userInfo valueForKey:@"NSErrorFailingURLStringKey"]))
         m_failingURL = URL { failingURLString };
-    else if (auto *failingURL = dynamic_objc_cast<NSURL>([userInfo valueForKey:@"NSErrorFailingURLKey"]))
+    else if (auto *failingURL = dynamicObjCDowncast<NSURL>([userInfo valueForKey:@"NSErrorFailingURLKey"]))
         m_failingURL = URL { failingURL };
     // Workaround for <rdar://problem/6554067>
     m_localizedDescription = m_failingURL.string();
@@ -317,11 +317,11 @@ String ResourceError::blockedTrackerHostName() const
 bool ResourceError::hasMatchingFailingURLKeys() const
 {
     if (RetainPtr<id> nsErrorFailingURL = [nsError().userInfo objectForKey:@"NSErrorFailingURLKey"]) {
-        RetainPtr failingURL = dynamic_objc_cast<NSURL>(nsErrorFailingURL.get());
+        RetainPtr failingURL = dynamicObjCDowncast<NSURL>(nsErrorFailingURL.get());
         if (!failingURL)
             return false;
         if (RetainPtr<id> nsErrorFailingURLString = [nsError().userInfo objectForKey:@"NSErrorFailingURLStringKey"]) {
-            RetainPtr failingURLString = dynamic_objc_cast<NSString>(nsErrorFailingURLString.get());
+            RetainPtr failingURLString = dynamicObjCDowncast<NSString>(nsErrorFailingURLString.get());
             if (!failingURLString)
                 return false;
             if (![failingURL isEqual:URL(failingURLString.get()).createNSURL().get()])

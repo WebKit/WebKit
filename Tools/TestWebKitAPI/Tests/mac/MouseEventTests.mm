@@ -113,7 +113,7 @@ TEST(MouseEventTests, CoalesceMouseMoveEvents)
     NSArray<NSDictionary *> *mouseEvents = [webView objectByEvaluatingJavaScript:@"allMouseEvents"];
     auto checkEventAtIndex = [&](NSString *type, NSPoint location, NSUInteger index) {
         auto info = mouseEvents[index];
-        EXPECT_WK_STREQ(type, dynamic_objc_cast<NSString>(info[@"type"]));
+        EXPECT_WK_STREQ(type, dynamicObjCDowncast<NSString>(info[@"type"]));
         EXPECT_EQ([info[@"x"] floatValue], location.x);
         EXPECT_EQ([info[@"y"] floatValue], location.y);
     };

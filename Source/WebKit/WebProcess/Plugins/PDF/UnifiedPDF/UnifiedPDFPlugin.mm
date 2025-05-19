@@ -4014,7 +4014,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
             return;
 
 #if HAVE(PDFDOCUMENT_RESET_FORM_FIELDS)
-        if (RetainPtr resetAction = dynamic_objc_cast<PDFActionResetForm>(action))
+        if (RetainPtr resetAction = dynamicObjCDowncast<PDFActionResetForm>(action))
             [m_pdfDocument resetFormFields:resetAction.get()];
 #endif
 

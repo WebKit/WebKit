@@ -101,7 +101,7 @@
         if (classObject != NSFilePromiseReceiver.class)
             continue;
 
-        RetainPtr promisedTypeIdentifiers = dynamic_objc_cast<NSArray>([_pasteboard propertyListForType:NSFilesPromisePboardType]);
+        RetainPtr promisedTypeIdentifiers = dynamicObjCDowncast<NSArray>([_pasteboard propertyListForType:NSFilesPromisePboardType]);
         RetainPtr externalPromisedFiles = [_dragAndDropSimulator externalPromisedFiles];
         RELEASE_ASSERT([promisedTypeIdentifiers count] == [externalPromisedFiles count]);
 

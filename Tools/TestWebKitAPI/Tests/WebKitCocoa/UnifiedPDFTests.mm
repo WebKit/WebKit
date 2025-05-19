@@ -405,7 +405,7 @@ UNIFIED_PDF_TEST(LookUpSelectedText)
     [request setFlags:UIWKDocumentRequestText];
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:request.get()];
-    EXPECT_WK_STREQ(@"PDF", dynamic_objc_cast<NSString>([context selectedText]));
+    EXPECT_WK_STREQ(@"PDF", dynamicObjCDowncast<NSString>([context selectedText]));
 #endif
 
     bool done = false;

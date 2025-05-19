@@ -376,7 +376,7 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
         return @(ruleID);
     }).get();
 
-    auto *rulesToAdd = dynamic_objc_cast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
+    auto *rulesToAdd = dynamicObjCDowncast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
 
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler({ });
@@ -418,7 +418,7 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
         return @(ruleID);
     }).get();
 
-    auto *rulesToAdd = dynamic_objc_cast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
+    auto *rulesToAdd = dynamicObjCDowncast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
 
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler({ });
