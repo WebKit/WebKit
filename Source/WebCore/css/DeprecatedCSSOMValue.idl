@@ -21,6 +21,7 @@
 [
     CustomIsReachable,
     CustomToJSObject,
+    DisabledBySetting=DeprecatedCSSOMValuesInJavaScriptDisabled,
     ExportToWrappedFunction,
     InterfaceName=CSSValue,
     Exposed=Window

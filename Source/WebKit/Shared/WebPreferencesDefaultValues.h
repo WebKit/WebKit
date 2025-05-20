@@ -208,4 +208,6 @@ bool defaultMutationEventsEnabled();
 
 bool defaultTrustedTypesEnabled();
 
+bool defaultDeprecatedCSSOMValuesInJavaScriptDisabled();
+
 } // namespace WebKit

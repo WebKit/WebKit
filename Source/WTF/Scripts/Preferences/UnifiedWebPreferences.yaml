@@ -2392,6 +2392,20 @@ DefaultTextEncodingName:
     WebCore:
       default: '{ }'
 
+DeprecatedCSSOMValuesInJavaScriptDisabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Disable deprecated CSSOM values in JavaScript"
+  humanReadableDescription: "Disable deprecated CSSOM values in JavaScript"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: WebKit::defaultDeprecatedCSSOMValuesInJavaScriptDisabled()
+    WebCore:
+      default: true
+
 DeprecationReportingEnabled:
   type: bool
   status: testable

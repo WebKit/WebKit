@@ -2132,6 +2132,7 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{EnabledForContext}
         || $context->extendedAttributes->{EnabledForWorld}
         || $context->extendedAttributes->{EnabledBySetting}
+        || $context->extendedAttributes->{DisabledBySetting}
         || $context->extendedAttributes->{EnabledByQuirk}
         || $context->extendedAttributes->{DisabledByQuirk}
         || $context->extendedAttributes->{SecureContext};
@@ -4297,6 +4298,32 @@ sub GenerateRuntimeEnableConditionalString
                     push(@orconjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($orflag));
                 } else {
                     push(@orconjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($orflag));
+                }
+            }
+            my $result = join(" || ", @orconjuncts);
+            $result = "($result)" if @orconjuncts > 1;
+            push(@conjuncts, $result);
+        }
+    }
+
+    if ($context->extendedAttributes->{DisabledBySetting}) {
+        assert("Must specify value for DisabledBySetting.") if $context->extendedAttributes->{DisabledBySetting} eq "VALUE_IS_MISSING";
+
+        my @flags = split(/&/, $context->extendedAttributes->{DisabledBySetting});
+        my $exposedToWindowOnly = $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} eq "Window";
+        AddToImplIncludes($exposedToWindowOnly ? "DocumentInlines.h" : "ScriptExecutionContext.h");
+        AddToImplIncludes("Settings.h");
+        foreach my $flag (@flags) {
+            my @orflags = split(/\|/, $flag);
+            my @orconjuncts;
+            foreach my $orflag (@orflags) {
+                if ($interface->type->name eq "DOMWindow") {
+                    push(@orconjuncts, "(!scriptExecutionContext || !scriptExecutionContext->settingsValues()." . ToMethodName($orflag) . ')');
+                } elsif ($exposedToWindowOnly) {
+                    # FIXME: This downcast<Document> doesn't seem necessary.
+                    push(@orconjuncts, "!downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($orflag));
+                } else {
+                    push(@orconjuncts, "!jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($orflag));
                 }
             }
             my $result = join(" || ", @orconjuncts);
@@ -8184,6 +8211,13 @@ sub GenerateConstructorDefinition
              if ($operation->extendedAttributes->{EnabledBySetting}) {
                  my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operation, "lexicalGlobalObject");
                  push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
+                 push(@$outputArray, "        throwTypeError(lexicalGlobalObject, throwScope, \"Illegal constructor\"_s);\n");
+                 push(@$outputArray, "        return JSValue::encode(jsNull());\n");
+                 push(@$outputArray, "    }\n");
+             }
+             if ($operation->extendedAttributes->{DisabledBySetting}) {
+                 my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operation, "lexicalGlobalObject");
+                 push(@$outputArray, "    if (${runtimeEnableConditionalString}) {\n");
                  push(@$outputArray, "        throwTypeError(lexicalGlobalObject, throwScope, \"Illegal constructor\"_s);\n");
                  push(@$outputArray, "        return JSValue::encode(jsNull());\n");
                  push(@$outputArray, "    }\n");

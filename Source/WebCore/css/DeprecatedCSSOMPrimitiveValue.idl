@@ -18,6 +18,7 @@
  */
 
 [
+    DisabledBySetting=DeprecatedCSSOMValuesInJavaScriptDisabled,
     InterfaceName=CSSPrimitiveValue,
     Exposed=Window
 ] interface DeprecatedCSSOMPrimitiveValue : DeprecatedCSSOMValue {

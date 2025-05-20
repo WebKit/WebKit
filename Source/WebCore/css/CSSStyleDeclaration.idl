@@ -42,5 +42,5 @@ typedef USVString CSSOMString;
     readonly attribute CSSRule? parentRule;
 
     // Non-standard.
-    DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
+    [DisabledBySetting=DeprecatedCSSOMValuesInJavaScriptDisabled] DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 };

@@ -427,4 +427,15 @@ bool defaultContentInsetBackgroundFillEnabled()
 }
 #endif
 
+bool defaultDeprecatedCSSOMValuesInJavaScriptDisabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return !WTF::IOSApplication::isMobileMail();
+#elif PLATFORM(MAC)
+    return !WTF::MacApplication::isAppleMail();
+#else
+    return true;
+#endif
+}
+
 } // namespace WebKit

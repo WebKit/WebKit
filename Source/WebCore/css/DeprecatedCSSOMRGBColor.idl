@@ -20,6 +20,7 @@
 
 [
     ExportToWrappedFunction,
+    DisabledBySetting=DeprecatedCSSOMValuesInJavaScriptDisabled,
     InterfaceName=RGBColor,
     Exposed=Window
 ] interface DeprecatedCSSOMRGBColor {
