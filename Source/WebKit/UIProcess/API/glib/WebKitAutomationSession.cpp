@@ -51,6 +51,11 @@ using namespace WebKit;
  * #WebKitWebView to interact with it. When this happens the signal #WebKitAutomationSession::create-web-view
  * is emitted.
  *
+ * This class is used for implementation of the old WebDriver protocol and is different from
+ * the WebKitBrowserAutomation. The latter is used to implement features of the WebDriver Bidi
+ * protocol (https://w3c.github.io/webdriver-bidi/) that span beyond the scope of a single
+ * WebKitWebContext.
+ *
  * Since: 2.18
  */
 

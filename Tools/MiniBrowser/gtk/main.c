@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2025 Microsoft Corporation.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -795,6 +796,11 @@ static void setupDarkMode(GtkSettings *settings)
     g_signal_connect_swapped(interfaceSettings, "changed::color-scheme", G_CALLBACK(colorSchemeChanged), settings);
 }
 
+static void quitApplicationForAutomation(WebKitBrowserAutomation* browserAutomation, GApplication *application)
+{
+    g_application_quit(application);
+}
+
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
@@ -1071,6 +1077,10 @@ int main(int argc, char *argv[])
     GtkApplication *application = gtk_application_new("org.webkitgtk.MiniBrowser", G_APPLICATION_NON_UNIQUE);
     g_signal_connect(application, "startup", G_CALLBACK(startup), NULL);
     g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
+    if (automationMode) {
+        WebKitBrowserAutomation *browserAutomation = webkit_browser_automation_get_default();
+        g_signal_connect(browserAutomation, "quit-application", G_CALLBACK(quitApplicationForAutomation), application);
+    }
     g_application_run(G_APPLICATION(application), 0, NULL);
     g_object_unref(application);
 

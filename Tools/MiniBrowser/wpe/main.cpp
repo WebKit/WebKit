@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018, 2024 Igalia S.L.
+ * Copyright (C) 2025 Microsoft Corporation.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -418,6 +419,11 @@ void loadConfigFile(WPESettings* settings)
 }
 #endif
 
+static void quitApplicationForAutomation(WebKitBrowserAutomation*, GApplication *application)
+{
+    g_application_quit(application);
+}
+
 static void activate(GApplication* application, WPEToolingBackends::ViewBackend* backend)
 {
     g_application_hold(application);
@@ -730,6 +736,10 @@ int main(int argc, char *argv[])
 
     GApplication* application = g_application_new("org.wpewebkit.MiniBrowser", G_APPLICATION_NON_UNIQUE);
     g_signal_connect(application, "activate", G_CALLBACK(activate), backend.release());
+    if (automationMode) {
+        WebKitBrowserAutomation* browserAutomation = webkit_browser_automation_get_default();
+        g_signal_connect(browserAutomation, "quit-application", G_CALLBACK(quitApplicationForAutomation), application);
+    }
     g_application_run(application, 0, nullptr);
     g_object_unref(application);
 

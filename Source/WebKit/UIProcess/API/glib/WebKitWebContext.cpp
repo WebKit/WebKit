@@ -31,6 +31,7 @@
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
 #include "WebKitAutomationSessionPrivate.h"
+#include "WebKitBrowserAutomationPrivate.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInitialize.h"
@@ -918,8 +919,11 @@ void webkit_web_context_set_automation_allowed(WebKitWebContext* context, gboole
             return;
         }
         context->priv->automationClient = makeUnique<WebKitAutomationClient>(context);
-    } else
+        webkitBrowserAutomationMaybeSetClient(webkitWebContextGetProcessPool(context));
+    } else {
         context->priv->automationClient = nullptr;
+        webkitWebContextGetProcessPool(context).setAutomationClient(nullptr);
+    }
 #endif
 }
 

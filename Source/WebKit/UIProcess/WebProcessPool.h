@@ -223,6 +223,7 @@ public:
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
     void setLegacyDownloadClient(RefPtr<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
+    API::AutomationClient* automationClient() const { return m_automationClient.get(); }
 
     const Vector<Ref<WebProcessProxy>>& processes() const { return m_processes; }
 

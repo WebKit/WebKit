@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#include "APIAutomationClient.h"
 #include "AutomationProtocolObjects.h"
 #include "BidiUserContext.h"
 #include "WebAutomationSession.h"
@@ -79,6 +80,12 @@ Inspector::CommandResult<void> BidiBrowserAgent::close()
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     session->terminate();
+
+    // FIXME: this should not depend on a particular process pool.
+    if (auto* client = session->protectedProcessPool()->automationClient())
+        client->closeBrowser();
+    else
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "unable to close browser"_s); // Fixme: this should be a Bidi error code.
 
     return { };
 }
