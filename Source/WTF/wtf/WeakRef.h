@@ -129,7 +129,8 @@ private:
         return !m_impl
             || !m_shouldEnableAssertions
             || (m_impl->wasConstructedOnMainThread() && Thread::mayBeGCThread())
-            || m_impl->wasConstructedOnMainThread() == isMainThread();
+            || m_impl->wasConstructedOnMainThread() == isMainThread()
+            || m_impl->wasConstructedOnMainRunLoop() == isMainRunLoop();
     }
 #endif
 

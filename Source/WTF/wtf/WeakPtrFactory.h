@@ -51,15 +51,25 @@ public:
     WeakPtrFactory()
 #if ASSERT_ENABLED
         : m_wasConstructedOnMainThread(isMainThread())
+        , m_wasConstructedOnMainRunLoop(isMainRunLoop())
 #endif
     {
     }
+
+#if ASSERT_ENABLED
+    bool checkConstructionConsistency() const
+    {
+        return (m_wasConstructedOnMainThread == isMainThread()) || (m_wasConstructedOnMainRunLoop == isMainRunLoop());
+    }
+#endif
 
     void prepareForUseOnlyOnNonMainThread()
     {
 #if ASSERT_ENABLED
         ASSERT(m_wasConstructedOnMainThread);
+        ASSERT(m_wasConstructedOnMainRunLoop);
         m_wasConstructedOnMainThread = false;
+        m_wasConstructedOnMainRunLoop = false;
 #endif
     }
 
@@ -79,7 +89,7 @@ public:
         if (m_impl)
             return;
 
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        ASSERT(checkConstructionConsistency());
 
         static_assert(std::is_final_v<WeakPtrImpl>);
         m_impl = adoptRef(*new WeakPtrImpl(const_cast<T*>(&object)));
@@ -118,6 +128,7 @@ private:
     mutable RefPtr<WeakPtrImpl> m_impl;
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
+    bool m_wasConstructedOnMainRunLoop;
 #endif
 };
 
@@ -133,9 +144,17 @@ public:
     WeakPtrFactoryWithBitField()
 #if ASSERT_ENABLED
         : m_wasConstructedOnMainThread(isMainThread())
+        , m_wasConstructedOnMainRunLoop(isMainRunLoop())
 #endif
     {
     }
+
+#if ASSERT_ENABLED
+    bool checkConstructionConsistency() const
+    {
+        return (m_wasConstructedOnMainThread == isMainThread()) || (m_wasConstructedOnMainRunLoop == isMainRunLoop());
+    }
+#endif
 
     ~WeakPtrFactoryWithBitField()
     {
@@ -153,7 +172,7 @@ public:
         if (m_impl.pointer())
             return;
 
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        ASSERT(checkConstructionConsistency());
 
         static_assert(std::is_final_v<WeakPtrImpl>);
         m_impl.setPointer(adoptRef(*new WeakPtrImpl(const_cast<T*>(&object))));
@@ -199,6 +218,7 @@ private:
     mutable CompactRefPtrTuple<WeakPtrImpl, uint16_t> m_impl;
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
+    bool m_wasConstructedOnMainRunLoop;
 #endif
 };
 

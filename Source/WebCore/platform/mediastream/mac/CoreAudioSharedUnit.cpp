@@ -408,7 +408,7 @@ int CoreAudioSharedUnit::actualSampleRate() const
 
 OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     AURenderCallbackStruct callback = { microphoneCallback, this };
     if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback))) {
@@ -445,7 +445,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
 
 OSStatus CoreAudioSharedUnit::configureSpeakerProc(int sampleRate)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     AURenderCallbackStruct callback = { speakerCallback, this };
     if (auto err = m_ioUnit->set(kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, outputBus, &callback, sizeof(callback))) {
@@ -599,7 +599,7 @@ void CoreAudioSharedUnit::delaySamples(Seconds seconds)
 
 OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (!hasAudioUnit())
         return 0;
 
@@ -634,7 +634,7 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
 
 OSStatus CoreAudioSharedUnit::startInternal()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     setIsProducingMicrophoneSamples(true);
 
@@ -801,7 +801,7 @@ void CoreAudioSharedUnit::verifyIsCapturing()
 
 void CoreAudioSharedUnit::stopInternal()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (m_verifyCapturingTimer)
         m_verifyCapturingTimer->stop();
@@ -828,7 +828,7 @@ void CoreAudioSharedUnit::stopInternal()
 
 void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     setIsRenderingAudio(true);
 
@@ -847,7 +847,7 @@ void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamples
 
 void CoreAudioSharedUnit::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     {
         Locker locker { m_speakerSamplesProducerLock };

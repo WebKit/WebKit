@@ -52,7 +52,7 @@ static const Seconds deviceChangeDebounceTimerInterval { 200_ms };
 
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static NeverDestroyed<RealtimeMediaSourceCenter> center;
     return center;
 }
@@ -176,19 +176,19 @@ String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const Str
 
 void RealtimeMediaSourceCenter::addDevicesChangedObserver(RealtimeMediaSourceCenterObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_observers.add(observer);
 }
 
 void RealtimeMediaSourceCenter::removeDevicesChangedObserver(RealtimeMediaSourceCenterObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_observers.remove(observer);
 }
 
 void RealtimeMediaSourceCenter::captureDevicesChanged()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
 #if USE(GSTREAMER)
     triggerDevicesChangedObservers();

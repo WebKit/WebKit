@@ -164,8 +164,8 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
     }
 
     auto& properties = std::get<MockCameraProperties>(m_device.properties);
-    setFrameRate(properties.defaultFrameRate);
-    setFacingMode(properties.facingMode);
+    initializeFrameRate(properties.defaultFrameRate);
+    initializeFacingMode(properties.facingMode);
     m_fillColor = properties.fillColor;
 }
 

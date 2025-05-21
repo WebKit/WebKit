@@ -3201,6 +3201,7 @@ public:
 
 #if ASSERT_ENABLED
     bool wasConstructedOnMainThread() const { return true; }
+    bool wasConstructedOnMainRunLoop() const { return true; }
 #endif
 
     void resetDidUpdateRefCount() { m_didUpdateRefCount = false; }

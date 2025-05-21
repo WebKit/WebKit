@@ -53,6 +53,7 @@ public:
 
 #if ASSERT_ENABLED
     bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
+    bool wasConstructedOnMainRunLoop() const { return m_wasConstructedOnMainRunLoop; }
 #endif
 
     template<typename T>
@@ -60,6 +61,7 @@ public:
         : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
 #if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
+        , m_wasConstructedOnMainRunLoop(isMainRunLoop())
 #endif
     {
     }
@@ -68,6 +70,7 @@ private:
     void* m_ptr;
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
+    bool m_wasConstructedOnMainRunLoop;
 #endif
 };
 
@@ -99,6 +102,7 @@ public:
 
 #if ASSERT_ENABLED
     bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
+    bool wasConstructedOnMainRunLoop() const { return m_wasConstructedOnMainRunLoop; }
 #endif
 
     template<typename T>
@@ -106,6 +110,7 @@ public:
         : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
 #if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
+        , m_wasConstructedOnMainRunLoop(isMainRunLoop())
 #endif
     {
     }
@@ -127,6 +132,7 @@ private:
     void* m_ptr;
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
+    bool m_wasConstructedOnMainRunLoop;
 #endif
 };
 

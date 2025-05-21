@@ -53,7 +53,7 @@ BaseAudioSharedUnit::~BaseAudioSharedUnit()
 
 void BaseAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_clients.add(client);
     Locker locker { m_audioThreadClientsLock };
     m_audioThreadClients = m_clients.weakValues();
@@ -61,7 +61,7 @@ void BaseAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 
 void BaseAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_clients.remove(client);
     {
         Locker locker { m_audioThreadClientsLock };
@@ -74,7 +74,7 @@ void BaseAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 
 void BaseAudioSharedUnit::clearClients()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_clients.clear();
     Locker locker { m_audioThreadClientsLock };
     m_audioThreadClients.clear();
@@ -82,7 +82,7 @@ void BaseAudioSharedUnit::clearClients()
 
 void BaseAudioSharedUnit::forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>& apply) const
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_clients.forEach(apply);
 }
 
@@ -90,7 +90,7 @@ const static OSStatus lowPriorityError1 = 560557684;
 const static OSStatus lowPriorityError2 = 561017449;
 void BaseAudioSharedUnit::startProducingData()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_isAllowedToStart);
 
     if (m_suspended)
@@ -221,7 +221,7 @@ void BaseAudioSharedUnit::captureFailed()
 
 void BaseAudioSharedUnit::stopProducingData()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_producingCount);
 #if PLATFORM(MAC)
     if (!m_suspended) {
@@ -269,7 +269,7 @@ void BaseAudioSharedUnit::stopRunning()
 
 void BaseAudioSharedUnit::reconfigure()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (m_suspended) {
         m_needsReconfiguration = true;
         return;
@@ -279,7 +279,7 @@ void BaseAudioSharedUnit::reconfigure()
 
 OSStatus BaseAudioSharedUnit::resume()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (!m_suspended)
         return 0;
 
@@ -312,7 +312,7 @@ OSStatus BaseAudioSharedUnit::resume()
 
 OSStatus BaseAudioSharedUnit::suspend()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     RELEASE_LOG_INFO(WebRTC, "BaseAudioSharedUnit::suspend");
 

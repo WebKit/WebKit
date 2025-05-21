@@ -40,7 +40,7 @@ public:
 
     ~CallbackAggregatorOnThread()
     {
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        ASSERT(m_wasConstructedOnMainThread == isMainThread() || m_wasConstructedOnMainRunLoop == isMainRunLoop());
         if (m_callback)
             m_callback();
     }
@@ -50,6 +50,7 @@ private:
         : m_callback(WTFMove(callback))
 #if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
+        , m_wasConstructedOnMainRunLoop(isMainRunLoop())
 #endif
     {
     }
@@ -57,6 +58,7 @@ private:
     CompletionHandler<void()> m_callback;
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
+    bool m_wasConstructedOnMainRunLoop;
 #endif
 };
 
