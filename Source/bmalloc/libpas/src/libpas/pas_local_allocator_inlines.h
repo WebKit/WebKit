@@ -26,6 +26,7 @@
 #ifndef PAS_LOCAL_ALLOCATOR_INLINES_H
 #define PAS_LOCAL_ALLOCATOR_INLINES_H
 
+#include "pas_allocation_mode.h"
 #include "pas_allocator_counts.h"
 #include "pas_bitfit_allocator_inlines.h"
 #include "pas_bitfit_directory.h"
@@ -130,6 +131,9 @@ typedef struct {
     uintptr_t shift;
     uintptr_t page_size;
     uintptr_t granule_size;
+    pas_allocation_mode allocation_mode;
+    pas_segregated_page_config* page_config;
+    uintptr_t page_boundary;
 } pas_local_allocator_scan_bits_to_set_up_use_counts_data;
 
 static PAS_ALWAYS_INLINE unsigned pas_local_allocator_scan_bits_to_set_up_use_counts_bits_source(
@@ -160,8 +164,38 @@ static PAS_ALWAYS_INLINE bool pas_local_allocator_scan_bits_to_set_up_use_counts
     return true;
 }
 
+typedef pas_local_allocator_scan_bits_to_set_up_use_counts_data pas_local_allocator_scan_bits_to_profile_allocation_counts_data;
+
+static PAS_ALWAYS_INLINE unsigned pas_local_allocator_scan_bits_to_profile_allocation_counts_source(
+    size_t word_index, void* arg)
+{
+    pas_local_allocator_scan_bits_to_profile_allocation_counts_data* data;
+
+    data = (pas_local_allocator_scan_bits_to_profile_allocation_counts_data*)arg;
+
+    PAS_ASSERT(!word_index);
+
+    return data->free;
+}
+
+static PAS_ALWAYS_INLINE bool pas_local_allocator_scan_bits_to_profile_allocation_counts_callback(
+    pas_found_bit_index index, void* arg)
+{
+    pas_local_allocator_scan_bits_to_profile_allocation_counts_data* data;
+    uintptr_t object;
+
+    data = (pas_local_allocator_scan_bits_to_profile_allocation_counts_data*)arg;
+
+    object = data->page_boundary + (data->base_offset + (index.index << data->shift));
+
+    PAS_PROFILE(SET_UP_FREE_BITS, data->page_config, index.index, object, data->object_size, data->allocation_mode);
+
+    return true;
+}
+
 static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
     pas_local_allocator* allocator,
+    pas_allocation_mode allocation_mode,
     pas_segregated_size_directory* directory,
     pas_segregated_page* page,
     uintptr_t page_boundary,
@@ -203,6 +237,15 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
     data.shift = page_config.base.min_align_shift;
     data.page_size = page_config.base.page_size;
     data.granule_size = page_config.base.granule_size;
+    data.page_config = &page_config;
+    data.page_boundary = page_boundary;
+
+    /* When creating a new allocator, the fact that the specific object
+     * we're allocating is maybe-compact is not relevant. Most allocations
+     * will be non-compact, so we assume as such regardless of the
+     * status of our first allocation. */
+    data.allocation_mode = (allocation_mode == pas_maybe_compact_allocation_mode)
+        ? pas_non_compact_allocation_mode  : allocation_mode;
 
     if (verbose) {
         pas_log("%p, %s: Setting up alloc bits in range %u...%u\n",
@@ -263,6 +306,17 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
         
         pas_compiler_fence();
         alloc_bits[index] = alloc | full;
+
+        data.free = free;
+        data.base_offset = pas_page_base_object_offset_from_page_boundary_at_index(
+            (unsigned)PAS_BITVECTOR_BIT_INDEX(index), page_config.base);
+
+        pas_bitvector_for_each_set_bit(
+            pas_local_allocator_scan_bits_to_profile_allocation_counts_source,
+            0, 1,
+            pas_local_allocator_scan_bits_to_profile_allocation_counts_callback,
+            &data);
+
         switch (view_kind) {
         case pas_segregated_exclusive_view_kind:
             break;
@@ -272,10 +326,6 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
                 num_denullified_words++;
 
             if (page_config.base.page_size > page_config.base.granule_size) {
-                data.free = free;
-                data.base_offset = pas_page_base_object_offset_from_page_boundary_at_index(
-                    (unsigned)PAS_BITVECTOR_BIT_INDEX(index), page_config.base);
-
                 if (verbose) {
                     pas_log("Dealing with use counts at index = %zu, base_offset = %zu, free = %x\n",
                             index,
@@ -344,6 +394,7 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
 
 static PAS_ALWAYS_INLINE void
 pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
+                                     pas_allocation_mode allocation_mode,
                                      pas_segregated_view_kind view_kind,
                                      void* view,
                                      pas_segregated_size_directory* directory,
@@ -382,7 +433,7 @@ pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
                 end_offset, page_config.base) - 1) + 1;
         
         pas_local_allocator_scan_bits_to_set_up_free_bits(
-            allocator, directory, page, page_boundary, begin_offset, end_offset,
+            allocator, allocation_mode, directory, page, page_boundary, begin_offset, end_offset,
             pas_segregated_exclusive_view_kind,
             pas_full_alloc_bits_create_for_exclusive(directory, page_config), page_config);
         return;
@@ -397,7 +448,7 @@ pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
     allocator->view = partial_view_as_view;
 
     pas_local_allocator_scan_bits_to_set_up_free_bits(
-        allocator, directory, page, page_boundary,
+        allocator, allocation_mode, directory, page, page_boundary,
         full_alloc_bits.word_index_begin >> 1,
         (full_alloc_bits.word_index_end + 1) >> 1,
         pas_segregated_partial_view_kind,
@@ -419,6 +470,7 @@ pas_local_allocator_make_bump(
 static PAS_ALWAYS_INLINE void
 pas_local_allocator_prepare_to_allocate(
     pas_local_allocator* allocator,
+    pas_allocation_mode allocation_mode,
     pas_segregated_view_kind view_kind,
     void* view,
     pas_segregated_page* page,
@@ -463,6 +515,8 @@ pas_local_allocator_prepare_to_allocate(
             allocator, page_boundary, payload_begin, payload_end, page_config);
 
         pas_compiler_fence();
+
+        PAS_PROFILE(MAKE_BUMP_ALLOCATOR, allocator, payload_begin, payload_end, directory->object_size, allocation_mode);
         
         memcpy(page->alloc_bits, pas_compact_tagged_unsigned_ptr_load_non_null(&data->full_alloc_bits),
                pas_segregated_page_config_num_alloc_bytes(page_config));
@@ -481,6 +535,7 @@ pas_local_allocator_prepare_to_allocate(
         pas_log("Refilling with %p using free_bits\n", page);
     pas_local_allocator_set_up_free_bits(
         allocator,
+        allocation_mode,
         view_kind,
         view,
         directory,
@@ -1214,13 +1269,13 @@ pas_local_allocator_refill_with_known_config(
     
 prepare_exclusive:
     pas_local_allocator_prepare_to_allocate(
-        allocator, pas_segregated_exclusive_view_kind, exclusive, new_page, size_directory,
+        allocator, allocation_mode, pas_segregated_exclusive_view_kind, exclusive, new_page, size_directory,
         page_config);
     goto done;
 
 prepare_partial:
     pas_local_allocator_prepare_to_allocate(
-        allocator, pas_segregated_partial_view_kind, partial, new_page, size_directory,
+        allocator, allocation_mode, pas_segregated_partial_view_kind, partial, new_page, size_directory,
         page_config);
 
 done:
@@ -1499,6 +1554,7 @@ pas_local_allocator_try_allocate_with_free_bits(
         allocator->bits[current_offset] = current_word;
     result = page_ish + (found_bit_index << page_config.base.min_align_shift);
     
+    PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator->object_size, allocation_mode);
     if (verbose) {
         pas_log(
             "%p(%p): Returning result using free bits: %p.\n",
@@ -1506,8 +1562,6 @@ pas_local_allocator_try_allocate_with_free_bits(
             pas_segregated_view_get_size_directory(allocator->view),
             (void*)result);
     }
-
-    PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator->object_size, allocation_mode);
     
     return pas_allocation_result_create_success(result);
 }
