@@ -40,6 +40,7 @@
 #include "Watchpoint.h"
 #include "WebAssemblyGCStructure.h"
 #include "WriteBarrierInlines.h"
+#include "wtf/RawPointer.h"
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -492,8 +493,10 @@ inline void Structure::cacheSpecialProperty(JSGlobalObject* globalObject, VM& vm
     rareData()->cacheSpecialProperty(globalObject, vm, this, value, key, slot);
 }
 
+static unsigned count = 0;
+
 template<Structure::ShouldPin shouldPin, typename Func>
-inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
+inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func) // <- 0
 {
     ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
@@ -508,12 +511,19 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
         setPropertyTable(vm, table);
         break;
     }
-    
+
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
-    if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
-        setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol()) {
+        ++count;
+
+        if (propertyName == "PolyProto"_s)
+            dataLog("");
+
+        WTF::dataLogLn("Structure=", RawPointer(this), " add propertyName=", propertyName, " attributes=", attributes, " count=", count);
+        setIsQuickPropertyAccessAllowedForEnumeration(false); // <-- 0
+    }
     if (attributes & PropertyAttribute::DontEnum)
         setHasNonEnumerableProperties(true);
     if (attributes & PropertyAttribute::DontDelete) {
@@ -572,7 +582,8 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
     if (offset == invalidOffset)
         return invalidOffset;
 
-    setIsQuickPropertyAccessAllowedForEnumeration(false);
+    WTF::dataLogLn("Structure=", RawPointer(this), " remove propertyName=", propertyName, " attributes=", attributes);
+    setIsQuickPropertyAccessAllowedForEnumeration(false); // TODO
 
     table->addDeletedOffset(offset);
 
@@ -613,7 +624,8 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
 
     if (attributes & PropertyAttribute::DontEnum) {
         setHasNonEnumerableProperties(true);
-        setIsQuickPropertyAccessAllowedForEnumeration(false);
+        WTF::dataLogLn("Structure=", RawPointer(this), " attributeChange propertyName=", propertyName, " attributes=", attributes);
+        setIsQuickPropertyAccessAllowedForEnumeration(false); // TODO
     }
     if (attributes & PropertyAttribute::DontDelete) {
         setHasNonConfigurableProperties(true);
@@ -637,7 +649,7 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
 template<typename Func>
 inline PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
-    return add<ShouldPin::Yes>(vm, propertyName, attributes, func);
+    return add<ShouldPin::Yes>(vm, propertyName, attributes, func); // <-- 1
 }
 
 template<typename Func>
@@ -668,8 +680,10 @@ ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, Prop
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
-    if (newAttributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
-        setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (newAttributes & PropertyAttribute::DontEnum || propertyName.isSymbol()) {
+        WTF::dataLogLn("Structure=", RawPointer(this), " addOrReplacePropertyWithoutTransition propertyName=", propertyName, " newAttributes=", newAttributes);
+        setIsQuickPropertyAccessAllowedForEnumeration(false); // TODO
+    }
     if (newAttributes & PropertyAttribute::DontEnum)
         setHasNonEnumerableProperties(true);
     if (newAttributes & PropertyAttribute::DontDelete) {

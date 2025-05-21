@@ -27,6 +27,7 @@
 #include "JSPropertyNameEnumerator.h"
 
 #include "JSObjectInlines.h"
+#include "wtf/DataLog.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -107,25 +108,32 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto getOwnPropertyNames = [&](JSObject* object) {
+    auto getOwnPropertyNames = [&](JSObject* object, bool checkDup = false) {
         auto mode = DontEnumPropertiesMode::Exclude;
         if (object->type() == ProxyObjectType) {
             // This ensures Proxy's [[GetOwnProperty]] trap is invoked only once per property, by OpHasEnumerableProperty.
             // Although doing this for all objects is spec-conformant, collecting DontEnum properties isn't free.
             mode = DontEnumPropertiesMode::Include;
         }
+        size_t before = propertyNames.size();
         object->methodTable()->getOwnPropertyNames(object, globalObject, propertyNames, mode);
+        size_t after = propertyNames.size();
+        if (checkDup && indexedLength) {
+            for (size_t i = before; i < after; ++i) {
+                WTF::dataLogLn("check dup for proto property=", propertyNames[i]);
+            }
+        }
     };
 
     Structure* structure = base->structure();
     if (structure->canAccessPropertiesQuicklyForEnumeration() && indexedLength == base->getArrayLength()) {
         // Inlined JSObject::getOwnNonIndexPropertyNames()
-        base->methodTable()->getOwnSpecialPropertyNames(base, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        base->methodTable()->getOwnSpecialPropertyNames(base, globalObject, propertyNames, DontEnumPropertiesMode::Exclude); // TODO: 
         RETURN_IF_EXCEPTION(scope, void());
 
-        base->getNonReifiedStaticPropertyNames(vm, propertyNames, DontEnumPropertiesMode::Exclude);
+        base->getNonReifiedStaticPropertyNames(vm, propertyNames, DontEnumPropertiesMode::Exclude); // TODO: 
         unsigned nonStructurePropertyCount = propertyNames.size();
-        structure->getPropertyNamesFromStructure(vm, propertyNames, DontEnumPropertiesMode::Exclude);
+        structure->getPropertyNamesFromStructure(vm, propertyNames, DontEnumPropertiesMode::Exclude); // TODO: get bar
         scope.assertNoException();
 
         // |propertyNames| contains properties exclusively from the structure.
@@ -153,13 +161,14 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
         }
 
         object = asObject(prototype);
-        getOwnPropertyNames(object);
+        getOwnPropertyNames(object, true);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }
 
 JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JSObject* base, uint32_t& index, Flag& mode, bool shouldAllocateIndexedNameString)
 {
+    WTF::dataLogLn(">>>>> JSPropertyNameEnumerator::computeNext index=", index, " mode=", mode, " indexedLength=", indexedLength());
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 

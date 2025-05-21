@@ -63,7 +63,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
         if (Options::forcePolyProto())
             isPolyProto = true;
         else
-            isPolyProto = executable->ensurePolyProtoWatchpoint().hasBeenInvalidated() && executable->singleton().hasBeenInvalidated();
+            isPolyProto = executable->ensurePolyProtoWatchpoint().hasBeenInvalidated() && executable->singleton().hasBeenInvalidated(); // TODO: the first 2 have false && false but the next is Strue && true
     }
 
     unsigned inlineCapacity = 0;
@@ -109,7 +109,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
             inlineCapacity = JSFinalObject::maxInlineCapacity;
     }
 
-    Structure* structure = globalObject->structureCache().emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
+    Structure* structure = globalObject->structureCache().emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable); // <-- 5 // TODO: isPolyProto = true
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());

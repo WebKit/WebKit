@@ -257,7 +257,7 @@ inline FunctionRareData* JSFunction::ensureRareDataAndObjectAllocationProfile(JS
     ASSERT(canUseAllocationProfiles());
     FunctionRareData* rareData = this->rareData();
     if (!rareData)
-        return allocateAndInitializeRareData(globalObject, inlineCapacity);
+        return allocateAndInitializeRareData(globalObject, inlineCapacity); // <-- 8
     if (!rareData->isObjectAllocationProfileInitialized()) [[unlikely]]
         return initializeRareData(globalObject, inlineCapacity);
     return rareData;

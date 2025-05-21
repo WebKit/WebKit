@@ -163,7 +163,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
         size_t inlineCapacity = bytecode.m_inlineCapacity;
-        ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndObjectAllocationProfile(globalObject, inlineCapacity)->objectAllocationProfile();
+        ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndObjectAllocationProfile(globalObject, inlineCapacity)->objectAllocationProfile(); // <-- 9
         CHECK_EXCEPTION();
         Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(vm, structure);
@@ -942,7 +942,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_property_enumerator)
     JSObject* base = baseValue.toObject(globalObject);
     CHECK_EXCEPTION();
 
-    RETURN(propertyNameEnumerator(globalObject, base));
+    RETURN(propertyNameEnumerator(globalObject, base)); // TODO
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_next)
@@ -964,9 +964,13 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_next)
     CHECK_EXCEPTION();
     metadata.m_arrayProfile.observeStructureID(base->structureID());
 
-    JSString* name = enumerator->computeNext(globalObject, base, index, mode);
+    JSString* name = enumerator->computeNext(globalObject, base, index, mode); // TODO
     CHECK_EXCEPTION();
 
+    if (name)
+        WTF::dataLogLn("<<<<< JSPropertyNameEnumerator::computeNext index=", index, " mode=", mode, " name=", name->toIdentifier(globalObject));
+    else
+        WTF::dataLogLn("<<<<< JSPropertyNameEnumerator::computeNext index=", index, " mode=", mode);
     metadata.m_enumeratorMetadata |= static_cast<uint8_t>(mode);
     modeRegister = jsNumber(static_cast<uint8_t>(mode));
     indexRegister = jsNumber(index);

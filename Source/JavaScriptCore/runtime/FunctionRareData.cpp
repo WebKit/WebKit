@@ -86,7 +86,7 @@ FunctionRareData::~FunctionRareData() = default;
 void FunctionRareData::initializeObjectAllocationProfile(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, size_t inlineCapacity, JSFunction* constructor)
 {
     initializeAllocationProfileWatchpointSet();
-    m_objectAllocationProfile.initializeProfile(vm, globalObject, this, prototype, inlineCapacity, constructor, this);
+    m_objectAllocationProfile.initializeProfile(vm, globalObject, this, prototype, inlineCapacity, constructor, this); // <-- 6
 }
 
 void FunctionRareData::clear(const char* reason)

@@ -59,10 +59,10 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
 
     Structure* structure;
     if (makePolyProtoStructure) {
-        structure = Structure::create(
+        structure = Structure::create( // <-- 3
             Structure::PolyProto, vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     } else {
-        structure = Structure::create(
+        structure = Structure::create( // TODO: first 2 take this path
             vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     }
     Locker locker { m_lock };
@@ -95,7 +95,7 @@ Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalO
 
 Structure* StructureCache::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
 {
-    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure, executable);
+    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure, executable); // <-- 4
 }
 
 } // namespace JSC

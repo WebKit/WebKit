@@ -34,6 +34,8 @@
 #include "PropertyNameArray.h"
 #include "PropertyTable.h"
 #include "WebAssemblyGCStructure.h"
+#include "wtf/DataLog.h"
+#include "wtf/RawPointer.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
@@ -218,6 +220,14 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
+
+    static unsigned count = 0;
+    count++;
+
+    if (count >= 135)
+        dataLog("");
+
+    WTF::dataLogLn("Structure=", RawPointer(this), " Structure(1) isQuickPropertyAccessAllowedForEnumeration=", isQuickPropertyAccessAllowedForEnumeration(), " count=", count);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(false);
@@ -267,6 +277,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
+    WTF::dataLogLn("Structure=", RawPointer(this), " Structure(2) isQuickPropertyAccessAllowedForEnumeration=", isQuickPropertyAccessAllowedForEnumeration());
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(false);
@@ -312,6 +323,13 @@ Structure::Structure(VM& vm, StructureVariant variant, Structure* previous)
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(previous->hasNonConfigurableReadOnlyOrGetterSetterProperties());
     setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
+
+    static unsigned count = 0;
+    count++;
+
+    if (count >= 60)
+        WTF::dataLog("");
+    WTF::dataLogLn("Structure=", RawPointer(this), " Structure(3) isQuickPropertyAccessAllowedForEnumeration=", isQuickPropertyAccessAllowedForEnumeration(), " count=", count, " previous=", RawPointer(previous));
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(previous->mayBePrototype());
@@ -376,7 +394,7 @@ Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject,
     Structure* result = Structure::create(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
 
     unsigned oldOutOfLineCapacity = result->outOfLineCapacity();
-    result->addPropertyWithoutTransition(
+    result->addPropertyWithoutTransition( // <-- 2
         vm, vm.propertyNames->builtinNames().polyProtoName(), static_cast<unsigned>(PropertyAttribute::DontEnum),
         [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
             RELEASE_ASSERT(Structure::outOfLineCapacity(newMaxOffset) == oldOutOfLineCapacity);
@@ -1600,7 +1618,7 @@ bool Structure::canCachePropertyNameEnumerator(VM&) const
     
 bool Structure::canAccessPropertiesQuicklyForEnumeration() const
 {
-    if (!isQuickPropertyAccessAllowedForEnumeration())
+    if (!isQuickPropertyAccessAllowedForEnumeration()) // TODO: last 2 - isQuickPropertyAccessAllowedForEnumeration = false
         return false;
     if (hasAnyKindOfGetterSetterProperties())
         return false;
@@ -1608,7 +1626,7 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
         return false;
     if (typeInfo().overridesGetOwnPropertyNames())
         return false;
-    return true;
+    return true; // TODO: first 2
 }
 
 auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> std::optional<PropertyHashEntry>

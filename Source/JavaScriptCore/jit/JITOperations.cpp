@@ -3377,7 +3377,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         uint32_t i = *index;
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i))
-                RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(globalObject, i));
+                RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(globalObject, i)); // TODO: 
             if (arrayProfile)
                 arrayProfile->setOutOfBounds();
         } else if (baseValue.isObject()) {

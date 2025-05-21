@@ -921,7 +921,7 @@ inline GCOwnedDataScope<const String&> JSString::tryGetValue(bool allocationAllo
     return { this, valueInternal() };
 }
 
-inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
+inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i) // TODO
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1163,7 +1163,7 @@ inline bool isJSString(JSValue v)
     return v.isCell() && isJSString(v.asCell());
 }
 
-ALWAYS_INLINE GCOwnedDataScope<StringView> JSRopeString::view(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSRopeString::view(JSGlobalObject* globalObject) const // TODO
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
@@ -1176,7 +1176,7 @@ ALWAYS_INLINE GCOwnedDataScope<StringView> JSRopeString::view(JSGlobalObject* gl
     return { this, string };
 }
 
-ALWAYS_INLINE GCOwnedDataScope<StringView> JSString::view(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSString::view(JSGlobalObject* globalObject) const // TODO
 {
     if (isRope())
         return static_cast<const JSRopeString&>(*this).view(globalObject);
