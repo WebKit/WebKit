@@ -28,15 +28,15 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ErrorInstance.h"
 #include "JSObject.h"
 #include "WasmTag.h"
 
 namespace JSC {
 
-class JSWebAssemblyException final : public JSNonFinalObject {
+class JSWebAssemblyException final : public ErrorInstance {
 public:
-    using Base = JSNonFinalObject;
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
+    using Base = ErrorInstance;
     using Payload = FixedVector<uint64_t>;
 
     static void destroy(JSCell*);

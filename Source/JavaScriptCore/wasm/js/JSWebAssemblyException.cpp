@@ -49,7 +49,7 @@ Structure* JSWebAssemblyException::createStructure(VM& vm, JSGlobalObject* globa
 }
 
 JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, Ref<const Wasm::Tag>&& tag, FixedVector<uint64_t>&& payload)
-    : Base(vm, structure)
+    : Base(vm, structure, ErrorType::Error)
     , m_tag(WTFMove(tag))
     , m_payload(WTFMove(payload))
 {
@@ -57,7 +57,7 @@ JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, Ref
 
 void JSWebAssemblyException::finishCreation(VM& vm)
 {
-    Base::finishCreation(vm);
+    Base::finishCreation(vm, String(), JSValue());
     ASSERT(inherits(info()));
     vm.heap.reportExtraMemoryAllocated(this, payload().byteSize());
 }
