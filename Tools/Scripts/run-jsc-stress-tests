@@ -1840,7 +1840,7 @@ def runWebAssembly
         run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--zeroExecutableMemoryOnFree=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         run("wasm-bbq", "-m", "--useWasmLLInt=false", "--useWasmIPInt=false", *FTL_OPTIONS)
         if $isOMGPlatform
-            run("wasm-omg", "-m", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
+            run("wasm-omg", "-m", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "-m", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -1873,7 +1873,7 @@ def runWebAssemblyJetStream2
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *FTL_OPTIONS)
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
+            run("wasm-omg", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -1913,7 +1913,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
           run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-omg", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
@@ -1946,7 +1946,7 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
           run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-omg", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end        
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
@@ -1995,7 +1995,7 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
         runWasmHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         runWasmHarnessTest("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         if $isOMGPlatform
-            runWasmHarnessTest("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWasmHarnessTest("wasm-omg", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             runWasmHarnessTest("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -2025,7 +2025,7 @@ def runWebAssemblyEmscripten(mode)
           run("wasm-no-wasm-jit", "--useWasmJIT=false", *FTL_OPTIONS) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=false", *FTL_OPTIONS)
+            run("wasm-omg", "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=false", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -2060,7 +2060,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
         runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWithOutputHandler("wasm-bbq-no-consts" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isOMGPlatform
-            runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useWasmIPInt=false", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             runWithOutputHandler("wasm-simd" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
