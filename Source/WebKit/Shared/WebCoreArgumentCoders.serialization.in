@@ -9400,3 +9400,8 @@ struct WebCore::ParentalControlsURLFilterParameters {
 #endif
 };
 #endif
+
+header: <WebCore/LoadMetadata.h>
+[OptionSet] enum class WebCore::LoadMetadata : uint8_t {
+    Insecure,
+};

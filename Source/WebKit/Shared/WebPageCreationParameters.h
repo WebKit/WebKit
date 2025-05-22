@@ -50,6 +50,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>

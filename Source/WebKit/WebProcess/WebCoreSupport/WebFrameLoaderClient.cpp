@@ -177,6 +177,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.originalRequest(),
         request,
         request.url().isValid() ? String() : request.url().string(),
+        requestingFrame ? requestingFrame->loadMetadata() : OptionSet<LoadMetadata> { }
     };
 }
 

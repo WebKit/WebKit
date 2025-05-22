@@ -134,6 +134,9 @@
 		53CAC0632C6FBD8200B1A77C /* ScopedPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CAC0622C6FBD8200B1A77C /* ScopedPrintStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F202252CAB267000A33D14 /* TaggedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F202242CAB267000A33D14 /* TaggedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FC70D023FB950C005B1990 /* OSLogPrintStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */; };
+		56F5CB002E54CCCD0020E813 /* CrashAnnotations.h in Headers */ = {isa = PBXBuildFile; fileRef = 56F5CAFF2E54CCCD0020E813 /* CrashAnnotations.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		56F5CB022E54CE9D0020E813 /* CrashAnnotations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56F5CB012E54CE9D0020E813 /* CrashAnnotations.cpp */; };
+		56F5CB062E54D3CC0020E813 /* ReportCrashSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 56F5CB052E54D3CC0020E813 /* ReportCrashSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C12460E2DC25A130077D423 /* SwiftCXXThunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C12460D2DC25A130077D423 /* SwiftCXXThunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F05912164356B0039302C /* CFURLExtras.cpp */; };
 		5C1F0595216437B30039302C /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F0594216437B30039302C /* URLCF.cpp */; };
@@ -1356,6 +1359,9 @@
 		53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSLogPrintStream.mm; sourceTree = "<group>"; };
 		553071C91C40427200384898 /* TinyLRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyLRUCache.h; sourceTree = "<group>"; };
 		5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizedFixedQueue.h; sourceTree = "<group>"; };
+		56F5CAFF2E54CCCD0020E813 /* CrashAnnotations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashAnnotations.h; sourceTree = "<group>"; };
+		56F5CB012E54CE9D0020E813 /* CrashAnnotations.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CrashAnnotations.cpp; sourceTree = "<group>"; };
+		56F5CB052E54D3CC0020E813 /* ReportCrashSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReportCrashSPI.h; sourceTree = "<group>"; };
 		5B43383A5D0B463C9433D933 /* IndexMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexMap.h; sourceTree = "<group>"; };
 		5C12460D2DC25A130077D423 /* SwiftCXXThunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftCXXThunk.h; sourceTree = "<group>"; };
 		5C1F05912164356B0039302C /* CFURLExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFURLExtras.cpp; sourceTree = "<group>"; };
@@ -3200,6 +3206,7 @@
 				DDF306CD27C08654006A526F /* NSObjCRuntimeSPI.h */,
 				DDF306CC27C08654006A526F /* objcSPI.h */,
 				DDF306C927C08654006A526F /* OSLogSPI.h */,
+				56F5CB052E54D3CC0020E813 /* ReportCrashSPI.h */,
 				DDF306C827C08654006A526F /* SecuritySPI.h */,
 				E32B4F3C2E0C698F00BDA4FD /* XTSPI.h */,
 			);
@@ -3292,6 +3299,8 @@
 			isa = PBXGroup;
 			children = (
 				1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */,
+				56F5CB012E54CE9D0020E813 /* CrashAnnotations.cpp */,
+				56F5CAFF2E54CCCD0020E813 /* CrashAnnotations.h */,
 				CEA072A9236FFBF70018839C /* CrashReporter.cpp */,
 				CEA072A8236FFBF70018839C /* CrashReporter.h */,
 				143DDE9720C8BE99007F76FA /* Entitlements.h */,
@@ -3452,6 +3461,7 @@
 				FAC31B9D2D80083D006CCA20 /* CoroutineUtilities.h in Headers */,
 				DD3DC8D127A4BF8E007E5B61 /* CountingLock.h in Headers */,
 				DD3DC92627A4BF8E007E5B61 /* CPUTime.h in Headers */,
+				56F5CB002E54CCCD0020E813 /* CrashAnnotations.h in Headers */,
 				DDF3071127C086CC006A526F /* CrashReporter.h in Headers */,
 				DDF306DC27C08654006A526F /* CrashReporterClientSPI.h in Headers */,
 				DD3DC96D27A4BF8E007E5B61 /* CrossThreadCopier.h in Headers */,
@@ -3717,6 +3727,7 @@
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
 				4BF93AD32C8B53C100F0E06C /* RefTrackerMixin.h in Headers */,
 				3A5BCFA3298768E300E0ABB2 /* RefVector.h in Headers */,
+				56F5CB062E54D3CC0020E813 /* ReportCrashSPI.h in Headers */,
 				DD3DC8C727A4BF8E007E5B61 /* ResourceUsage.h in Headers */,
 				DD3DC92127A4BF8E007E5B61 /* RetainPtr.h in Headers */,
 				941C64A72CA5A2A000A63214 /* RetainReleaseSwift.h in Headers */,
@@ -4327,6 +4338,7 @@
 				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
 				E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */,
 				EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */,
+				56F5CB022E54CE9D0020E813 /* CrashAnnotations.cpp in Sources */,
 				CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */,
 				515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */,
 				517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */,

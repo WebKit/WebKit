@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebProcessPlugInFrame.h>
+#include "config.h"
+#include "LoadMetadata.h"
 
-@class JSContext;
-@class JSValue;
-@class WKWebProcessPlugInBrowserContextController;
+#include <wtf/Compiler.h>
+#include <wtf/cocoa/CrashAnnotations.h>
 
-@interface WKWebProcessPlugInFrame (WKPrivate)
+namespace WebCore {
 
-+ (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
-+ (instancetype)lookUpFrameFromJSContext:(JSContext *)context;
-+ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value;
+void RecordLoadMetadata(OptionSet<LoadMetadata> loadMetadata)
+{
+    WTF::setCrashLogInsecureLoad(loadMetadata.contains(LoadMetadata::Insecure));
+}
 
-@property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
-
-@property (nonatomic, readonly) BOOL _hasCustomContentProvider;
-@property (nonatomic, readonly) NSArray *_certificateChain;
-@property (nonatomic, readonly) SecTrustRef _serverTrust;
-@property (nonatomic, readonly) NSURL *_provisionalURL;
-@property (nonatomic, readonly) NSString *_securityOrigin;
-@property (nonatomic, readonly) BOOL _hadInsecureLoad;
-
-@property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;
-
-@end
+} // namespace WebCore

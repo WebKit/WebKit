@@ -179,6 +179,7 @@ Tests/WebKitCocoa/LoadDataWithNilMIMEType.mm
 Tests/WebKitCocoa/LoadFileThenReload.mm
 Tests/WebKitCocoa/LoadFileURL.mm
 Tests/WebKitCocoa/LoadInvalidURLRequest.mm
+Tests/WebKitCocoa/LoadMetadata.mm
 Tests/WebKitCocoa/LocalStorageClear.mm
 Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm
 Tests/WebKitCocoa/LocalStorageNullEntries.mm

@@ -44,6 +44,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPSByDefaultMode.h>
 #include <WebCore/LinkIcon.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/ResourceError.h>
@@ -504,6 +505,9 @@ public:
     OptionSet<AdvancedPrivacyProtections> navigationalAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections.value_or(m_advancedPrivacyProtections); }
     std::optional<OptionSet<AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
 
+    void setLoadMetadata(OptionSet<LoadMetadata> metadata) { m_loadMetadata = metadata; }
+    OptionSet<LoadMetadata> loadMetadata() const { return m_loadMetadata; }
+
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
 
@@ -784,6 +788,8 @@ private:
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
+
+    OptionSet<LoadMetadata> m_loadMetadata;
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 

@@ -78,6 +78,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -520,6 +521,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         { }, /* originalRequest */
         { }, /* request */
         { }, /* invalidURLString */
+        m_frame->loadMetadata(), /* loadMetadata */
     };
 
     // Notify the UIProcess.
@@ -744,6 +746,9 @@ void WebLocalFrameLoaderClient::dispatchDidFinishDocumentLoad()
     RefPtr<API::Object> userData;
 
     RefPtr documentLoader = m_localFrame->loader().documentLoader();
+
+    if (documentLoader->loadMetadata().contains(WebCore::LoadMetadata::Insecure))
+        RecordLoadMetadata(documentLoader->loadMetadata());
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFinishDocumentLoadForFrame(*webPage, m_frame, userData);
@@ -1027,6 +1032,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         { }, /* originalRequest */
         request,
         request.url().isValid() ? String() : request.url().string(), /* invalidURLString */
+        m_frame->loadMetadata(), /* loadMetadata */
     };
 
     webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNewWindowAction(navigationActionData, frameName), [frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {

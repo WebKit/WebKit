@@ -63,4 +63,5 @@ struct WebKit::NavigationActionData {
     WebCore::ResourceRequest originalRequest;
     [EncodeRequestBody] WebCore::ResourceRequest request;
     String invalidURLString;
+    OptionSet<WebCore::LoadMetadata> loadMetadata;
 };

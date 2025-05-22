@@ -1559,4 +1559,16 @@ void WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirec
     completionHandler(foundElementInRemoteFrame);
 }
 
+OptionSet<WebCore::LoadMetadata> WebFrame::loadMetadata() const
+{
+    if (m_coreFrame) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
+            if (RefPtr loader = localFrame->loader().documentLoader())
+                return loader->loadMetadata();
+        }
+    }
+
+    return { };
+}
+
 } // namespace WebKit

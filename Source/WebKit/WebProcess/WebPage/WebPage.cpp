@@ -2169,6 +2169,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         frameLoadRequest.setIsRequestFromClientOrUserInput();
     if (loadParameters.advancedPrivacyProtections)
         frameLoadRequest.setAdvancedPrivacyProtections(*loadParameters.advancedPrivacyProtections);
+    frameLoadRequest.setLoadMetadata(loadParameters.loadMetadata);
 
     if (loadParameters.effectiveSandboxFlags)
         localFrame->updateSandboxFlags(loadParameters.effectiveSandboxFlags, Frame::NotifyUIProcess::No);

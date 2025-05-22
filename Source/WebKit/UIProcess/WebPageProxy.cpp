@@ -2155,6 +2155,9 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.requiredCookiesVersion = protectedWebsiteDataStore()->cookiesVersion();
     loadParameters.originatingFrame = navigation.lastNavigationAction() ? std::optional(navigation.lastNavigationAction()->originatingFrameInfoData) : std::nullopt;
 
+    if (navigation.lastNavigationAction() && !(navigation.isRequestFromClientOrUserInput() || navigation.wasUserInitiated()))
+        loadParameters.loadMetadata = navigation.lastNavigationAction()->loadMetadata;
+
 #if ENABLE(CONTENT_EXTENSIONS)
     if (protectedPreferences()->iFrameResourceMonitoringEnabled())
         process->requestResourceMonitorRuleLists(protectedPreferences()->iFrameResourceMonitoringTestingSettingsEnabled());
@@ -2320,6 +2323,10 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.isServiceWorkerLoad = isServiceWorkerPage();
+
+    if (navigation.lastNavigationAction() && !(navigation.isRequestFromClientOrUserInput() || navigation.wasUserInitiated()))
+        loadParameters.loadMetadata = navigation.lastNavigationAction()->loadMetadata;
+
     prepareToLoadWebPage(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
@@ -5074,6 +5081,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.ownerPermissionsPolicy = navigation->ownerPermissionsPolicy();
             loadParameters.isPerformingHTTPFallback = navigationAction->data().isPerformingHTTPFallback;
             loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
+
+            if (navigation->lastNavigationAction() && !(navigation->isRequestFromClientOrUserInput() || navigation->wasUserInitiated()))
+                loadParameters.loadMetadata = navigation->lastNavigationAction()->loadMetadata;
+
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageIDInProcess(processNavigatingTo));
         }
 
@@ -5309,6 +5320,9 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.ownerPermissionsPolicy = navigation.ownerPermissionsPolicy();
         loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
         loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
+
+        if (navigation.lastNavigationAction() && !(navigation.isRequestFromClientOrUserInput() || navigation.wasUserInitiated()))
+            loadParameters.loadMetadata = navigation.lastNavigationAction()->loadMetadata;
 
         if (navigation.isInitialFrameSrcLoad())
             frame.setIsPendingInitialHistoryItem(true);
@@ -8740,6 +8754,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
 
         if (openerAppInitiatedState)
             newPage->m_lastNavigationWasAppInitiated = *openerAppInitiatedState;
+
         RefPtr openedMainFrame = newPage->m_mainFrame ? newPage->m_mainFrame->opener() : nullptr;
 
         // FIXME: Move this to WebPageProxy constructor.

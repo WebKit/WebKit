@@ -296,6 +296,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             mainFrame->remoteFrameSize()
         };
     }
+
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(creationParameters)), 0);
     if (!preferences->siteIsolationEnabled())
         process->addVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());

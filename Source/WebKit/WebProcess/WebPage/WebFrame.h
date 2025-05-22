@@ -40,6 +40,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -265,6 +266,8 @@ public:
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
 
     std::optional<WebCore::ResourceResponse> resourceResponseForURL(const URL&) const;
+
+    OptionSet<WebCore::LoadMetadata> loadMetadata() const;
 
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);

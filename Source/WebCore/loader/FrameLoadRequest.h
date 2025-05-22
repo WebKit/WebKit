@@ -27,6 +27,7 @@
 
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -132,6 +133,9 @@ public:
     bool skipNavigateEvent() const { return m_skipNavigateEvent; }
     void setSkipNavigateEvent(bool value) { m_skipNavigateEvent = value; }
 
+    void setLoadMetadata(OptionSet<LoadMetadata> metadata) { m_loadMetadata = metadata; }
+    OptionSet<LoadMetadata> loadMetadata() const { return m_loadMetadata; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -160,6 +164,7 @@ private:
     bool m_isFromNavigationAPI { false };
     bool m_isHandledByAboutSchemeHandler { false };
     bool m_skipNavigateEvent { false };
+    OptionSet<LoadMetadata> m_loadMetadata;
 };
 
 } // namespace WebCore

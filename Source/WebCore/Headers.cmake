@@ -1895,6 +1895,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
     loader/LinkPreloadResourceClients.h
+    loader/LoadMetadata.h
     loader/LoadSchedulingMode.h
     loader/LoadedFromOpaqueSource.h
     loader/LoaderMalloc.h

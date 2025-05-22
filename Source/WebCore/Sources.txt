@@ -2004,6 +2004,7 @@ loader/LinkHeader.cpp
 loader/LinkLoader.cpp
 loader/LinkPreloadResourceClients.cpp
 loader/LoaderMalloc.cpp
+loader/LoadMetadata.cpp
 loader/LoaderStrategy.cpp
 loader/LocalFrameLoaderClient.cpp
 loader/MediaResourceLoader.cpp

@@ -299,6 +299,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     auto sandboxFlags = frame->effectiveSandboxFlags();
     auto isPerformingHTTPFallback = frameLoader->isHTTPFallbackInProgress() ? IsPerformingHTTPFallback::Yes : IsPerformingHTTPFallback::No;
 
+    if (frame->loader().documentLoader())
+        frame->loader().documentLoader()->setLoadMetadata(loader->loadMetadata());
+
 #if ENABLE(CONTENT_EXTENSIONS)
     if (frame->loader().documentLoader() && frame->loader().documentLoader()->hasActiveContentRuleListActions()) {
         if (RefPtr page = frame->page()) {

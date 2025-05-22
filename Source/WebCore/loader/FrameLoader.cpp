@@ -1732,6 +1732,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
     if (auto advancedPrivacyProtections = request.advancedPrivacyProtections())
         loader->setOriginatorAdvancedPrivacyProtections(*advancedPrivacyProtections);
+    loader->setLoadMetadata(request.loadMetadata());
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protectedFrame(), loader, request);
     loader->setIsHandledByAboutSchemeHandler(request.isHandledByAboutSchemeHandler());
@@ -1769,6 +1770,11 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protectedFrame(), loader, action.initiatedByMainFrame(), action.shouldOpenExternalURLsPolicy());
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
     loader->setIsRequestFromClientOrUserInput(action.isRequestFromClientOrUserInput());
+
+    if (auto requester = action.requester(); requester && requester->documentIdentifier) {
+        if (RefPtr requestingDocument = Document::allDocumentsMap().get(requester->documentIdentifier); requestingDocument)
+            loader->setLoadMetadata(requestingDocument->loader()->loadMetadata());
+    }
 
     if (action.lockHistory() == LockHistory::Yes) {
         if (RefPtr documentLoader = m_documentLoader)
@@ -2053,6 +2059,8 @@ void FrameLoader::reload(OptionSet<ReloadOption> options, bool isRequestFromClie
 
     loader->setContentExtensionEnablement({ options.contains(ReloadOption::DisableContentBlockers) ? ContentExtensionDefaultEnablement::Disabled : ContentExtensionDefaultEnablement::Enabled, { } });
     
+    loader->setLoadMetadata(documentLoader->loadMetadata());
+
     ResourceRequest& request = loader->request();
 
     // FIXME: We don't have a mechanism to revalidate the main resource without reloading at the moment.

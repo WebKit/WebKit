@@ -41,6 +41,7 @@
 #import <WebCore/IntPoint.h>
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
+#import <WebCore/LoadMetadata.h>
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/AlignedStorage.h>
@@ -205,6 +206,11 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 - (NSURL *)_provisionalURL
 {
     return [NSURL _web_URLWithWTFString:_frame->provisionalURL()];
+}
+
+- (BOOL)_hadInsecureLoad
+{
+    return _frame->loadMetadata().contains(WebCore::LoadMetadata::Insecure);
 }
 
 #pragma mark WKObject protocol implementation

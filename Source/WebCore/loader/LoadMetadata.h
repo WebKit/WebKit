@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebProcessPlugInFrame.h>
+#include <WebCore/PlatformExportMacros.h>
 
-@class JSContext;
-@class JSValue;
-@class WKWebProcessPlugInBrowserContextController;
+#include <wtf/OptionSet.h>
 
-@interface WKWebProcessPlugInFrame (WKPrivate)
+#pragma once
 
-+ (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
-+ (instancetype)lookUpFrameFromJSContext:(JSContext *)context;
-+ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value;
+namespace WebCore {
 
-@property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
+enum class LoadMetadata : uint8_t {
+    Insecure                = 1 << 0 // Content loaded via an insecure protocol.
+};
 
-@property (nonatomic, readonly) BOOL _hasCustomContentProvider;
-@property (nonatomic, readonly) NSArray *_certificateChain;
-@property (nonatomic, readonly) SecTrustRef _serverTrust;
-@property (nonatomic, readonly) NSURL *_provisionalURL;
-@property (nonatomic, readonly) NSString *_securityOrigin;
-@property (nonatomic, readonly) BOOL _hadInsecureLoad;
+WEBCORE_EXPORT void RecordLoadMetadata(OptionSet<LoadMetadata>);
 
-@property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;
-
-@end
+} // namespace WebCore

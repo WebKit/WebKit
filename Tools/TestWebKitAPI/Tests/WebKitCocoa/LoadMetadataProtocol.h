@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebProcessPlugInFrame.h>
+#import <WebCore/LoadMetadata.h>
+#import <WebKit/WKFoundation.h>
 
-@class JSContext;
-@class JSValue;
-@class WKWebProcessPlugInBrowserContextController;
+using LoadMetadataType = std::underlying_type_t<WebCore::LoadMetadata>;
 
-@interface WKWebProcessPlugInFrame (WKPrivate)
+@protocol LoadMetadataProtocol <NSObject>
 
-+ (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
-+ (instancetype)lookUpFrameFromJSContext:(JSContext *)context;
-+ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value;
-
-@property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
-
-@property (nonatomic, readonly) BOOL _hasCustomContentProvider;
-@property (nonatomic, readonly) NSArray *_certificateChain;
-@property (nonatomic, readonly) SecTrustRef _serverTrust;
-@property (nonatomic, readonly) NSURL *_provisionalURL;
-@property (nonatomic, readonly) NSString *_securityOrigin;
-@property (nonatomic, readonly) BOOL _hadInsecureLoad;
-
-@property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;
+- (void)loadMetadata:(LoadMetadataType)value withPID:(uint64_t)pid;
 
 @end

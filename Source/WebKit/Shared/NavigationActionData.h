@@ -33,6 +33,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -89,6 +90,7 @@ struct NavigationActionData {
     WebCore::ResourceRequest originalRequest;
     WebCore::ResourceRequest request;
     String invalidURLString;
+    OptionSet<WebCore::LoadMetadata> loadMetadata;
 };
 
 }
