@@ -280,7 +280,7 @@ struct LocaleCache {
 
 static LocaleCache& localeCache()
 {
-    static MainThreadNeverDestroyed<LocaleCache> localeCache;
+    thread_local NeverDestroyed<LocaleCache> localeCache;
     return localeCache.get();
 }
 
