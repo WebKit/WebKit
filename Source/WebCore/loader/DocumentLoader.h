@@ -44,6 +44,7 @@
 #include "FrameLoaderTypes.h"
 #include "HTTPSByDefaultMode.h"
 #include "LinkIcon.h"
+#include "LoadMetadata.h"
 #include "NavigationAction.h"
 #include "NavigationIdentifier.h"
 #include "ResourceError.h"
@@ -503,6 +504,8 @@ public:
     OptionSet<AdvancedPrivacyProtections> navigationalAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections.value_or(m_advancedPrivacyProtections); }
     std::optional<OptionSet<AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
 
+    OptionSet<LoadMetadata> loadMetadata() const { return m_loadMetadata; }
+
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
 
@@ -783,6 +786,8 @@ private:
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
+
+    OptionSet<LoadMetadata> m_loadMetadata;
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 

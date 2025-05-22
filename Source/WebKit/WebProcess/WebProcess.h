@@ -38,6 +38,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
@@ -520,6 +521,9 @@ public:
     void initializeAccessibility(Vector<SandboxExtension::Handle>&&);
     bool shouldInitializeAccessibility() const { return m_shouldInitializeAccessibility; }
 #endif
+
+    void observeLoadMetadata(OptionSet<WebCore::LoadMetadata>);
+    void syncLoadMetadata(OptionSet<WebCore::LoadMetadata>);
 
 private:
     WebProcess();

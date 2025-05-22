@@ -109,4 +109,6 @@ messages -> WebProcessProxy WantsDispatchMessage {
     DeleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier)
     SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
 #endif
+
+    SyncLoadMetadata(OptionSet<WebCore::LoadMetadata> loadMetadata)
 }

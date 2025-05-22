@@ -43,6 +43,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -511,6 +512,11 @@ public:
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
     LockdownMode lockdownMode() const { return m_lockdownMode; }
 
+    OptionSet<WebCore::LoadMetadata> loadMetadata() const { return m_observedLoadMetadata; }
+    bool hasLoadMetadata(WebCore::LoadMetadata flag) const { return m_observedLoadMetadata.contains(flag); }
+    void observeLoadMetadata(OptionSet<WebCore::LoadMetadata>);
+    void syncLoadMetadata(OptionSet<WebCore::LoadMetadata>);
+
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
     std::optional<Vector<SandboxExtension::Handle>> fontdMachExtensionHandles();
@@ -867,6 +873,8 @@ private:
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableProxy>> m_serviceWorkerDebuggableProxies;
 #endif
+
+    OptionSet<WebCore::LoadMetadata> m_observedLoadMetadata;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

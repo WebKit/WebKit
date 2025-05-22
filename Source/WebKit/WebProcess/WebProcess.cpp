@@ -115,6 +115,7 @@
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/LoadMetadata.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/MediaEngineConfigurationFactory.h>
@@ -2624,6 +2625,19 @@ void WebProcess::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlComm
 {
     for (auto& page : m_pageMap.values())
         page->didReceiveRemoteCommand(type, argument);
+}
+
+void WebProcess::observeLoadMetadata(OptionSet<WebCore::LoadMetadata> loadMetadata)
+{
+    if (WebCore::ObservedLoadMetadata() != loadMetadata) {
+        WebCore::RecordLoadMetadata(loadMetadata);
+        protectedParentProcessConnection()->send(Messages::WebProcessProxy::SyncLoadMetadata(WebCore::ObservedLoadMetadata()), 0);
+    }
+}
+
+void WebProcess::syncLoadMetadata(OptionSet<WebCore::LoadMetadata> loadMetadata)
+{
+    WebCore::RecordLoadMetadata(loadMetadata);
 }
 
 } // namespace WebKit

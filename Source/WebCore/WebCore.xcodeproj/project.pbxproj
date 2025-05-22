@@ -2383,6 +2383,7 @@
 		55F1F4A427BC993300132A6B /* WebAssemblyCachedScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 55F1F4A227BC993200132A6B /* WebAssemblyCachedScriptSourceProvider.h */; };
 		55FA7FFB2110ECD7005AEFE7 /* SVGZoomAndPanType.h in Headers */ = {isa = PBXBuildFile; fileRef = 55FA7FFA2110ECD7005AEFE7 /* SVGZoomAndPanType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55FD9FC127B20D520045DA1F /* WebAssemblyScriptSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 55FD9FBF27B20D520045DA1F /* WebAssemblyScriptSourceCode.h */; };
+		56D4E80A2E30E978003861CC /* LoadMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 563D0FD82DFC4FA90024830D /* LoadMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 570440591E53936200356601 /* JSAesCbcCfbParams.h */; };
 		5706A6961DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6951DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h */; };
 		5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */; };
@@ -12378,6 +12379,8 @@
 		55FA7FFA2110ECD7005AEFE7 /* SVGZoomAndPanType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGZoomAndPanType.h; sourceTree = "<group>"; };
 		55FD9FBF27B20D520045DA1F /* WebAssemblyScriptSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAssemblyScriptSourceCode.h; sourceTree = "<group>"; };
 		560A7F202DB83BDE00B69AF8 /* SVGFilterEffectGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGFilterEffectGraph.h; sourceTree = "<group>"; };
+		563D0FD82DFC4FA90024830D /* LoadMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadMetadata.h; sourceTree = "<group>"; };
+		56D4E8082E2FEFE5003861CC /* LoadMetadata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadMetadata.cpp; sourceTree = "<group>"; };
 		570440571E53851600356601 /* CryptoAlgorithmAESCFBMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAESCFBMac.cpp; sourceTree = "<group>"; };
 		570440591E53936200356601 /* JSAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesCbcCfbParams.h; sourceTree = "<group>"; };
 		5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesCbcCfbParams.cpp; sourceTree = "<group>"; };
@@ -35854,6 +35857,8 @@
 				45B5D85F2A968620004C85A0 /* LoaderMalloc.h */,
 				51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */,
 				51E6820F16387302003BBF3C /* LoaderStrategy.h */,
+				56D4E8082E2FEFE5003861CC /* LoadMetadata.cpp */,
+				563D0FD82DFC4FA90024830D /* LoadMetadata.h */,
 				E47FC8A125B84D71005495FC /* LoadSchedulingMode.h */,
 				656D37260ADBA5DE00A4554D /* LocalFrameLoaderClient.h */,
 				CEEFCD7719DB31F7003876D7 /* MediaResourceLoader.cpp */,
@@ -43779,6 +43784,7 @@
 				45B5D8612A968620004C85A0 /* LoaderMalloc.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
+				56D4E80A2E30E978003861CC /* LoadMetadata.h in Headers */,
 				E47FC8A325B84D72005495FC /* LoadSchedulingMode.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */,

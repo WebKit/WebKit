@@ -3111,6 +3111,19 @@ void WebProcessProxy::setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleL
 }
 #endif
 
+void WebProcessProxy::observeLoadMetadata(OptionSet<WebCore::LoadMetadata> loadMetadata)
+{
+    if (m_observedLoadMetadata != loadMetadata) {
+        m_observedLoadMetadata |= loadMetadata;
+        send(Messages::WebProcess::SyncLoadMetadata(m_observedLoadMetadata), 0);
+    }
+}
+
+void WebProcessProxy::syncLoadMetadata(OptionSet<WebCore::LoadMetadata> loadMetadata)
+{
+    m_observedLoadMetadata = loadMetadata;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

@@ -324,6 +324,9 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader,
     if (!webPage)
         return;
 
+    if (loader && loader->loadMetadata())
+        WebProcess::singleton().observeLoadMetadata(loader->loadMetadata());
+
     webPage->injectedBundleResourceLoadClient().didFinishLoadForResource(*webPage, m_frame, identifier);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

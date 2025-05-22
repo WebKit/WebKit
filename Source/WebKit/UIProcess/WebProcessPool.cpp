@@ -2080,6 +2080,10 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     Ref sourceProcess = frame.process();
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
 
+    bool isRequestFromClientOrUserInput = (navigation.isRequestFromClientOrUserInput() && !navigation.substituteData()) || navigation.wasUserInitiated();
+    if (sourceProcess->hasLoadMetadata(LoadMetadata::Insecure) && !isRequestFromClientOrUserInput)
+        process->observeLoadMetadata(LoadMetadata::Insecure);
+
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
     bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
     Ref configuration = this->configuration();

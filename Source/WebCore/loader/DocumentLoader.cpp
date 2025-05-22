@@ -88,6 +88,7 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceMonitor.h"
 #include "SWClientConnection.h"
@@ -614,6 +615,9 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 
 void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    if (redirectResponse.url().protocolIs("http"_s) && !areRegistrableDomainsEqual(request.url(), redirectResponse.url()))
+        m_loadMetadata.add(LoadMetadata::Insecure);
+
     if (m_serviceWorkerRegistrationData) {
         m_serviceWorkerRegistrationData = { };
         unregisterReservedServiceWorkerClient();
@@ -985,6 +989,9 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
     if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
+
+    if (response.url().protocolIs("http"_s))
+        m_loadMetadata.add(LoadMetadata::Insecure);
 
     Ref<DocumentLoader> protectedThis(*this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
@@ -1574,7 +1581,7 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     else
         ASSERT_WITH_MESSAGE(frame, "detachFromFrame() is being called on a DocumentLoader that has never attached to any Frame");
 #endif
-    Ref protectedThis { *this };
+    Ref<DocumentLoader> protectedThis { *this };
 
     // It never makes sense to have a document loader that is detached from its
     // frame have any loads active, so kill all the loads.
