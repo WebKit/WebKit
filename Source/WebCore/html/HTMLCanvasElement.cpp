@@ -786,7 +786,11 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
         return Exception { ExceptionCode::InvalidStateError };
 
     std::unique_ptr placeholderContext = PlaceholderRenderingContext::create(*this);
-    Ref offscreen = OffscreenCanvas::create(document(), *placeholderContext);
+
+    // https://html.spec.whatwg.org/#the-canvas-element:offscreencanvas-inherited-lang, step 6.
+    const auto& language = effectiveLang();
+
+    Ref offscreen = OffscreenCanvas::create(document(), *placeholderContext, language);
     m_context = WTFMove(placeholderContext);
     if (m_context->delegatesDisplay())
         invalidateStyleAndLayerComposition();

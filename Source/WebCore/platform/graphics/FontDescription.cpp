@@ -83,7 +83,7 @@ static AtomString computeSpecializedChineseLocale()
 
 static AtomString& cachedSpecializedChineseLocale()
 {
-    static MainThreadNeverDestroyed<AtomString> specializedChineseLocale;
+    thread_local NeverDestroyed<AtomString> specializedChineseLocale;
     return specializedChineseLocale.get();
 }
 
@@ -105,7 +105,6 @@ static const AtomString& specializedChineseLocale()
 
 void FontDescription::setSpecifiedLocale(const AtomString& locale)
 {
-    ASSERT(isMainThread());
     m_specifiedLocale = locale;
     m_script = localeToScriptCodeForFontSelection(m_specifiedLocale);
     m_locale = m_script == USCRIPT_HAN ? specializedChineseLocale() : m_specifiedLocale;

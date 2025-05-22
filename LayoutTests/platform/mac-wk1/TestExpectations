@@ -2800,6 +2800,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-custom-timing-function.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
 
+webkit.org/b/290442 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText.html [ ImageOnlyFailure ]
+
 webkit.org/b/261427 media/track/track-in-band-mode.html [ Pass Crash ]
 
 webkit.org/b/261618 [ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]

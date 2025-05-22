@@ -53,6 +53,7 @@ public:
 
 private:
     PaintRenderingContext2D(CustomPaintCanvas&);
+    const AtomString& DetermineInheritedLanguage() const final;
     mutable std::optional<DisplayList::RecorderImpl> m_recordingContext;
 };
 

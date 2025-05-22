@@ -43,6 +43,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
@@ -79,13 +80,15 @@ using OffscreenRenderingContext = Variant<
 class PlaceholderRenderingContext;
 class PlaceholderRenderingContextSource;
 
+// Corresponds to the `dataHolder` of `OffscreenCanvas`'s "transfer steps" and "transfer receiving steps" of
+// https://html.spec.whatwg.org/#offscreencanvas.
 class DetachedOffscreenCanvas {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedOffscreenCanvas, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DetachedOffscreenCanvas);
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&);
+    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&, const AtomString& language);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
     const IntSize& size() const { return m_size; }
     bool originClean() const { return m_originClean; }
@@ -94,6 +97,7 @@ public:
 private:
     RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     IntSize m_size;
+    AtomString m_language;
     bool m_originClean;
 };
 
@@ -120,7 +124,9 @@ public:
 
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
-    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, PlaceholderRenderingContext&);
+    // The default value for the language parameter is required for auto-generated code.
+    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, PlaceholderRenderingContext&, const AtomString& language = nullAtom());
+
     WEBCORE_EXPORT virtual ~OffscreenCanvas();
 
     void setWidth(unsigned);
@@ -152,8 +158,10 @@ public:
     void dispatchEvent(Event&) final;
     bool isDetached() const { return m_detached; };
 
+    const AtomString& getInheritedLanguage() const { return m_inheritedLanguage; }
+
 private:
-    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&);
+    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&, const AtomString&);
 
     bool isOffscreenCanvas() const final { return true; }
 
@@ -176,6 +184,10 @@ private:
     mutable RefPtr<Image> m_copiedImage;
     bool m_detached { false };
     bool m_hasScheduledCommit { false };
+
+    // https://html.spec.whatwg.org/#offscreencanvas-inherited-lang
+    // The nullAtom represents https://html.spec.whatwg.org/#concept-explicitly-unknown.
+    const AtomString m_inheritedLanguage;
 };
 
 }
