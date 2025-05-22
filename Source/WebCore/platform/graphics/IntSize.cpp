@@ -55,8 +55,8 @@ Ref<JSON::Object> IntSize::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("width"_s, m_width);
-    object->setDouble("height"_s, m_height);
+    object->setPrimitive("width"_s, m_width);
+    object->setPrimitive("height"_s, m_height);
 
     return object;
 }

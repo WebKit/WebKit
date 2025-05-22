@@ -55,8 +55,8 @@ static Ref<JSON::Object> toJSONObject(const CDMMediaCapability& capability)
 static Ref<JSON::Object> toJSONObject(const CDMRestrictions& restrictions)
 {
     auto object = JSON::Object::create();
-    object->setBoolean("distinctiveIdentifierDenied"_s, restrictions.distinctiveIdentifierDenied);
-    object->setBoolean("persistentStateDenied"_s, restrictions.persistentStateDenied);
+    object->setPrimitive("distinctiveIdentifierDenied"_s, restrictions.distinctiveIdentifierDenied);
+    object->setPrimitive("persistentStateDenied"_s, restrictions.persistentStateDenied);
     auto deniedSessionTypes = JSON::Array::create();
     for (auto type : restrictions.deniedSessionTypes)
         deniedSessionTypes->pushString(convertEnumerationToString(type));

@@ -1103,25 +1103,25 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             sources.add(sourceID, Ref { *provider });
 
         auto result = JSON::Object::create();
-        result->setDouble("sourceID"_s, sourceID);
+        result->setPrimitive("sourceID"_s, sourceID);
         result->setString("name"_s, stackFrame.displayName(m_vm));
         result->setString("location"_s, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
-        result->setDouble("line"_s, stackFrame.semanticLocation.lineColumn.line);
-        result->setDouble("column"_s, stackFrame.semanticLocation.lineColumn.column);
+        result->setPrimitive("line"_s, stackFrame.semanticLocation.lineColumn.line);
+        result->setPrimitive("column"_s, stackFrame.semanticLocation.lineColumn.column);
         result->setString("category"_s, tierName(stackFrame));
         uint32_t flags = 0;
         if (stackFrame.frameType == SamplingProfiler::FrameType::Executable && stackFrame.executable) {
             if (auto* executable = jsDynamicCast<FunctionExecutable*>(stackFrame.executable); executable && executable->isBuiltinFunction())
                 flags = 1;
         }
-        result->setDouble("flags"_s, flags);
+        result->setPrimitive("flags"_s, flags);
 
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = stackFrame.machineLocation) {
             auto inliner = JSON::Object::create();
             inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
             inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
-            inliner->setDouble("line"_s, machineLocation->first.lineColumn.line);
-            inliner->setDouble("column"_s, machineLocation->first.lineColumn.column);
+            inliner->setPrimitive("line"_s, machineLocation->first.lineColumn.line);
+            inliner->setPrimitive("column"_s, machineLocation->first.lineColumn.column);
             inliner->setString("category"_s, tierName(stackFrame));
             result->setValue("inliner"_s, WTFMove(inliner));
         }
@@ -1130,7 +1130,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 
     auto stackTraceAsJSON = [&](StackTrace& stackTrace) {
         auto result = JSON::Object::create();
-        result->setDouble("timestamp"_s, stackTrace.timestamp.secondsSinceEpoch().seconds());
+        result->setPrimitive("timestamp"_s, stackTrace.timestamp.secondsSinceEpoch().seconds());
         {
             auto frames = JSON::Array::create();
             for (StackFrame& stackFrame : stackTrace.frames)
@@ -1142,7 +1142,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 
     auto sourceAsJSON = [&](SourceProvider& provider) {
         auto result = JSON::Object::create();
-        result->setDouble("sourceID"_s, provider.asID());
+        result->setPrimitive("sourceID"_s, provider.asID());
         if (!provider.sourceURL().isEmpty())
             result->setString("url"_s, provider.sourceURL());
         if (!provider.sourceURLDirective().isEmpty())
@@ -1153,7 +1153,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
     };
 
     auto result = JSON::Object::create();
-    result->setDouble("interval"_s, m_timingInterval.seconds());
+    result->setPrimitive("interval"_s, m_timingInterval.seconds());
     auto traces = JSON::Array::create();
     for (StackTrace& stackTrace : m_stackTraces)
         traces->pushValue(stackTraceAsJSON(stackTrace));

@@ -794,7 +794,7 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             auto acceptInsecureCerts = it->value->asBoolean();
             if (!acceptInsecureCerts)
                 return nullptr;
-            result->setBoolean(it->key, *acceptInsecureCerts);
+            result->setPrimitive(it->key, *acceptInsecureCerts);
         } else if (it->key == "browserName"_s || it->key == "browserVersion"_s || it->key == "platformName"_s) {
             auto stringValue = it->value->asString();
             if (!stringValue)
@@ -814,7 +814,7 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             auto strictFileInteractability = it->value->asBoolean();
             if (!strictFileInteractability)
                 return nullptr;
-            result->setBoolean(it->key, *strictFileInteractability);
+            result->setPrimitive(it->key, *strictFileInteractability);
         } else if (it->key == "timeouts"_s) {
             auto timeouts = it->value->asObject();
             if (!timeouts || !deserializeTimeouts(*timeouts, IgnoreUnknownTimeout::No))
@@ -833,7 +833,7 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             auto webSocketURL = it->value->asBoolean();
             if (!webSocketURL)
                 return nullptr;
-            result->setBoolean(it->key, *webSocketURL);
+            result->setPrimitive(it->key, *webSocketURL);
         } else
             return nullptr;
     }
@@ -872,11 +872,11 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
     if (platformCapabilities.platformName)
         matchedCapabilities->setString("platformName"_s, platformCapabilities.platformName.value());
     if (platformCapabilities.acceptInsecureCerts)
-        matchedCapabilities->setBoolean("acceptInsecureCerts"_s, platformCapabilities.acceptInsecureCerts.value());
+        matchedCapabilities->setPrimitive("acceptInsecureCerts"_s, platformCapabilities.acceptInsecureCerts.value());
     if (platformCapabilities.strictFileInteractability)
-        matchedCapabilities->setBoolean("strictFileInteractability"_s, platformCapabilities.strictFileInteractability.value());
+        matchedCapabilities->setPrimitive("strictFileInteractability"_s, platformCapabilities.strictFileInteractability.value());
     if (platformCapabilities.setWindowRect)
-        matchedCapabilities->setBoolean("setWindowRect"_s, platformCapabilities.setWindowRect.value());
+        matchedCapabilities->setPrimitive("setWindowRect"_s, platformCapabilities.setWindowRect.value());
 
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
@@ -1102,9 +1102,9 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
             capabilitiesObject->setString("browserName"_s, capabilities.browserName.value_or(emptyString()));
             capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.value_or(emptyString()));
             capabilitiesObject->setString("platformName"_s, capabilities.platformName.value_or(emptyString()));
-            capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value_or(false));
-            capabilitiesObject->setBoolean("strictFileInteractability"_s, capabilities.strictFileInteractability.value_or(false));
-            capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
+            capabilitiesObject->setPrimitive("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value_or(false));
+            capabilitiesObject->setPrimitive("strictFileInteractability"_s, capabilities.strictFileInteractability.value_or(false));
+            capabilitiesObject->setPrimitive("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
             switch (capabilities.unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:
                 capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss"_s);
@@ -1139,9 +1139,9 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
             if (m_session->scriptTimeout() == std::numeric_limits<double>::infinity())
                 timeoutsObject->setValue("script"_s, JSON::Value::null());
             else
-                timeoutsObject->setDouble("script"_s, m_session->scriptTimeout());
-            timeoutsObject->setDouble("pageLoad"_s, m_session->pageLoadTimeout());
-            timeoutsObject->setDouble("implicit"_s, m_session->implicitWaitTimeout());
+                timeoutsObject->setPrimitive("script"_s, m_session->scriptTimeout());
+            timeoutsObject->setPrimitive("pageLoad"_s, m_session->pageLoadTimeout());
+            timeoutsObject->setPrimitive("implicit"_s, m_session->implicitWaitTimeout());
             capabilitiesObject->setObject("timeouts"_s, WTFMove(timeoutsObject));
 
 #if ENABLE(WEBDRIVER_BIDI)
@@ -1203,7 +1203,7 @@ void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResu
     // §8.3 Status
     // https://w3c.github.io/webdriver/webdriver-spec.html#status
     auto body = JSON::Object::create();
-    body->setBoolean("ready"_s, !m_session);
+    body->setPrimitive("ready"_s, !m_session);
     body->setString("message"_s, m_session ? "A session already exists"_s : "No sessions"_s);
     completionHandler(CommandResult::success(WTFMove(body)));
 }
@@ -2709,7 +2709,7 @@ void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Fu
 {
     auto result = JSON::Object::create();
     bool ready = !m_session;
-    result->setBoolean("ready"_s, ready);
+    result->setPrimitive("ready"_s, ready);
     if (ready)
         result->setString("message"_s, "Ready for new sessions"_s);
     else

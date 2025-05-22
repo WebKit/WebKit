@@ -109,12 +109,12 @@ Ref<FormData> CSPViolationReportBody::createReportFormDataForViolation(bool uses
         cspReport->setString("effectiveDirective"_s, effectiveDirective());
         cspReport->setString("blockedURL"_s, blockedURL());
         cspReport->setString("originalPolicy"_s, originalPolicy());
-        cspReport->setInteger("statusCode"_s, statusCode());
+        cspReport->setPrimitive("statusCode"_s, statusCode());
         cspReport->setString("sample"_s, sample());
         if (!sourceFile().isNull()) {
             cspReport->setString("sourceFile"_s, sourceFile());
-            cspReport->setInteger("lineNumber"_s, lineNumber());
-            cspReport->setInteger("columnNumber"_s, columnNumber());
+            cspReport->setPrimitive("lineNumber"_s, lineNumber());
+            cspReport->setPrimitive("columnNumber"_s, columnNumber());
         }
     } else {
         cspReport->setString("document-uri"_s, documentURL());
@@ -123,11 +123,11 @@ Ref<FormData> CSPViolationReportBody::createReportFormDataForViolation(bool uses
         cspReport->setString("effective-directive"_s, effectiveDirective());
         cspReport->setString("original-policy"_s, originalPolicy());
         cspReport->setString("blocked-uri"_s, blockedURL());
-        cspReport->setInteger("status-code"_s, statusCode());
+        cspReport->setPrimitive("status-code"_s, statusCode());
         if (!sourceFile().isNull()) {
             cspReport->setString("source-file"_s, sourceFile());
-            cspReport->setInteger("line-number"_s, lineNumber());
-            cspReport->setInteger("column-number"_s, columnNumber());
+            cspReport->setPrimitive("line-number"_s, lineNumber());
+            cspReport->setPrimitive("column-number"_s, columnNumber());
         }
     }
 

@@ -296,10 +296,10 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
 
     reportDetails->setString("source_engagement_type"_s, "click"_s);
     reportDetails->setString("source_site"_s, m_sourceSite.registrableDomain.string());
-    reportDetails->setInteger("source_id"_s, m_sourceID);
+    reportDetails->setPrimitive("source_id"_s, m_sourceID);
     reportDetails->setString("attributed_on_site"_s, m_destinationSite.registrableDomain.string());
-    reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setPrimitive("trigger_data"_s, m_attributionTriggerData->data);
+    reportDetails->setPrimitive("version"_s, privateClickMeasurementVersion);
 
     // This token has been kept secret this far and cannot be linked to the unlinkable token.
     if (m_sourceSecretToken) {
@@ -377,7 +377,7 @@ Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
     reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
     // This token can not be linked to the secret token.
     reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken.valueBase64URL);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setPrimitive("version"_s, privateClickMeasurementVersion);
     return reportDetails;
 }
 
@@ -394,7 +394,7 @@ Ref<JSON::Object> PCM::AttributionTriggerData::tokenSignatureJSON() const
     reportDetails->setString("destination_nonce"_s, ephemeralDestinationNonce->nonce);
     // This token can not be linked to the secret token.
     reportDetails->setString("destination_unlinkable_token"_s, destinationUnlinkableToken->valueBase64URL);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setPrimitive("version"_s, privateClickMeasurementVersion);
     return reportDetails;
 }
 

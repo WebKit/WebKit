@@ -179,9 +179,9 @@ void Session::getTimeouts(Function<void(CommandResult&&)>&& completionHandler)
     if (m_scriptTimeout == std::numeric_limits<double>::infinity())
         parameters->setValue("script"_s, JSON::Value::null());
     else
-        parameters->setDouble("script"_s, m_scriptTimeout);
-    parameters->setDouble("pageLoad"_s, m_pageLoadTimeout);
-    parameters->setDouble("implicit"_s, m_implicitWaitTimeout);
+        parameters->setPrimitive("script"_s, m_scriptTimeout);
+    parameters->setPrimitive("pageLoad"_s, m_pageLoadTimeout);
+    parameters->setPrimitive("implicit"_s, m_implicitWaitTimeout);
     completionHandler(CommandResult::success(WTFMove(parameters)));
 }
 
@@ -366,7 +366,7 @@ void Session::go(const String& url, Function<void(CommandResult&&)>&& completion
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("url"_s, url);
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        parameters->setPrimitive("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -431,7 +431,7 @@ void Session::back(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        parameters->setPrimitive("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -458,7 +458,7 @@ void Session::forward(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        parameters->setPrimitive("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -485,7 +485,7 @@ void Session::refresh(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        parameters->setPrimitive("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -748,7 +748,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void(Command
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
                 return;
             }
-            parameters->setInteger("ordinal"_s, *frameIndex);
+            parameters->setPrimitive("ordinal"_s, *frameIndex);
         } else {
             String frameElementID = extractElementID(*frameID);
             ASSERT(!frameElementID.isEmpty());
@@ -858,10 +858,10 @@ void Session::getToplevelBrowsingContextRect(Function<void(CommandResult&&)>&& c
         }
 
         auto windowRect = JSON::Object::create();
-        windowRect->setDouble("x"_s, *x);
-        windowRect->setDouble("y"_s, *y);
-        windowRect->setDouble("width"_s, *width);
-        windowRect->setDouble("height"_s, *height);
+        windowRect->setPrimitive("x"_s, *x);
+        windowRect->setPrimitive("y"_s, *y);
+        windowRect->setPrimitive("width"_s, *width);
+        windowRect->setPrimitive("height"_s, *height);
         completionHandler(CommandResult::success(WTFMove(windowRect)));
     });
 }
@@ -899,14 +899,14 @@ void Session::setWindowRect(std::optional<double> x, std::optional<double> y, st
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         if (x && y) {
             auto windowOrigin = JSON::Object::create();
-            windowOrigin->setDouble("x"_s, x.value());
-            windowOrigin->setDouble("y"_s, y.value());
+            windowOrigin->setPrimitive("x"_s, x.value());
+            windowOrigin->setPrimitive("y"_s, y.value());
             parameters->setObject("origin"_s, WTFMove(windowOrigin));
         }
         if (width && height) {
             auto windowSize = JSON::Object::create();
-            windowSize->setDouble("width"_s, width.value());
-            windowSize->setDouble("height"_s, height.value());
+            windowSize->setPrimitive("width"_s, width.value());
+            windowSize->setPrimitive("height"_s, height.value());
             parameters->setObject("size"_s, WTFMove(windowSize));
         }
         m_host->sendCommandToBackend("setWindowFrameOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -986,7 +986,7 @@ void Session::fullscreenWindow(Function<void(CommandResult&&)>&& completionHandl
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("function"_s, StringImpl::createWithoutCopying(EnterFullscreenJavaScript));
         parameters->setArray("arguments"_s, JSON::Array::create());
-        parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
+        parameters->setPrimitive("expectsImplicitCallbackArgument"_s, true);
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -1080,7 +1080,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
     parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
-    parameters->setBoolean("scrollIntoViewIfNeeded"_s, options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
+    parameters->setPrimitive("scrollIntoViewIfNeeded"_s, options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
     parameters->setString("coordinateSystem"_s, options.contains(ElementLayoutOption::UseViewportCoordinates) ? "LayoutViewport"_s : "Page"_s);
     m_host->sendCommandToBackend("computeElementLayout"_s, WTFMove(parameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
@@ -1172,10 +1172,10 @@ void Session::findElements(const String& strategy, const String& selector, FindE
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, StringImpl::createWithoutCopying(FindNodesJavaScript));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
+        parameters->setPrimitive("expectsImplicitCallbackArgument"_s, true);
         // If there's an implicit wait, use one second more as callback timeout.
         if (m_implicitWaitTimeout)
-            parameters->setDouble("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
+            parameters->setPrimitive("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
 
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, mode, isShadowRoot, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1488,10 +1488,10 @@ void Session::getElementRect(const String& elementID, Function<void(CommandResul
                 return;
             }
             auto rectObject = JSON::Object::create();
-            rectObject->setInteger("x"_s, rect.value().origin.x);
-            rectObject->setInteger("y"_s, rect.value().origin.y);
-            rectObject->setInteger("width"_s, rect.value().size.width);
-            rectObject->setInteger("height"_s, rect.value().size.height);
+            rectObject->setPrimitive("x"_s, rect.value().origin.x);
+            rectObject->setPrimitive("y"_s, rect.value().origin.y);
+            rectObject->setPrimitive("width"_s, rect.value().size.width);
+            rectObject->setPrimitive("height"_s, rect.value().size.height);
             completionHandler(CommandResult::success(WTFMove(rectObject)));
         });
     });
@@ -1797,7 +1797,7 @@ void Session::waitForNavigationToComplete(Function<void(CommandResult&&)>&& comp
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
     if (m_currentBrowsingContext)
         parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-    parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+    parameters->setPrimitive("pageLoadTimeout"_s, m_pageLoadTimeout);
     if (auto pageLoadStrategy = pageLoadStrategyString())
         parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
     m_host->sendCommandToBackend("waitForNavigationToComplete"_s, WTFMove(parameters), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -2455,9 +2455,9 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
         parameters->setString("function"_s, makeString("function(){\n"_s, script, "\n}"_s));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         if (mode == ExecuteScriptMode::Async)
-            parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
+            parameters->setPrimitive("expectsImplicitCallbackArgument"_s, true);
         if (m_scriptTimeout != std::numeric_limits<double>::infinity())
-            parameters->setDouble("callbackTimeout"_s, m_scriptTimeout);
+            parameters->setPrimitive("callbackTimeout"_s, m_scriptTimeout);
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 auto result = CommandResult::fail(WTFMove(response.responseObject));
@@ -2506,8 +2506,8 @@ void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInt
     auto parameters = JSON::Object::create();
     parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
     auto position = JSON::Object::create();
-    position->setInteger("x"_s, x);
-    position->setInteger("y"_s, y);
+    position->setPrimitive("x"_s, x);
+    position->setPrimitive("y"_s, y);
     parameters->setObject("position"_s, WTFMove(position));
     parameters->setString("button"_s, mouseButtonForAutomation(button));
     switch (interaction) {
@@ -2619,10 +2619,10 @@ static Ref<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     cookieObject->setString("value"_s, cookie.value);
     cookieObject->setString("path"_s, cookie.path.value_or("/"_s));
     cookieObject->setString("domain"_s, cookie.domain.value_or(emptyString()));
-    cookieObject->setBoolean("secure"_s, cookie.secure.value_or(false));
-    cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value_or(false));
-    cookieObject->setBoolean("session"_s, !cookie.expiry);
-    cookieObject->setDouble("expires"_s, cookie.expiry.value_or(0));
+    cookieObject->setPrimitive("secure"_s, cookie.secure.value_or(false));
+    cookieObject->setPrimitive("httpOnly"_s, cookie.httpOnly.value_or(false));
+    cookieObject->setPrimitive("session"_s, !cookie.expiry);
+    cookieObject->setPrimitive("expires"_s, cookie.expiry.value_or(0));
     cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"_s));
     return cookieObject;
 }
@@ -2637,11 +2637,11 @@ static Ref<JSON::Object> serializeCookie(const Session::Cookie& cookie)
     if (cookie.domain)
         cookieObject->setString("domain"_s, cookie.domain.value());
     if (cookie.secure)
-        cookieObject->setBoolean("secure"_s, cookie.secure.value());
+        cookieObject->setPrimitive("secure"_s, cookie.secure.value());
     if (cookie.httpOnly)
-        cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value());
+        cookieObject->setPrimitive("httpOnly"_s, cookie.httpOnly.value());
     if (cookie.expiry)
-        cookieObject->setInteger("expiry"_s, cookie.expiry.value());
+        cookieObject->setPrimitive("expiry"_s, cookie.expiry.value());
     if (cookie.sameSite)
         cookieObject->setString("sameSite"_s, cookie.sameSite.value());
     return cookieObject;
@@ -2877,7 +2877,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                 switch (action.type) {
                 case Action::Type::None:
                     if (action.duration)
-                        state->setDouble("duration"_s, action.duration.value());
+                        state->setPrimitive("duration"_s, action.duration.value());
                     break;
                 case Action::Type::Pointer: {
                     switch (action.subtype) {
@@ -2890,8 +2890,8 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::PointerMove: {
                         state->setString("origin"_s, automationOriginType(action.origin->type));
                         auto location = JSON::Object::create();
-                        location->setInteger("x"_s, action.x.value());
-                        location->setInteger("y"_s, action.y.value());
+                        location->setPrimitive("x"_s, action.x.value());
+                        location->setPrimitive("y"_s, action.y.value());
                         state->setObject("location"_s, WTFMove(location));
                         if (action.origin->type == PointerOrigin::Type::Element)
                             state->setString("nodeHandle"_s, action.origin->elementID.value());
@@ -2899,7 +2899,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     }
                     case Action::Subtype::Pause:
                         if (action.duration)
-                            state->setDouble("duration"_s, action.duration.value());
+                            state->setPrimitive("duration"_s, action.duration.value());
                         break;
                     case Action::Subtype::PointerCancel:
                         currentState.pressedButton = std::nullopt;
@@ -2935,7 +2935,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     }
                     case Action::Subtype::Pause:
                         if (action.duration)
-                            state->setDouble("duration"_s, action.duration.value());
+                            state->setPrimitive("duration"_s, action.duration.value());
                         break;
                     case Action::Subtype::PointerUp:
                     case Action::Subtype::PointerDown:
@@ -2959,13 +2959,13 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::Scroll: {
                         state->setString("origin"_s, automationOriginType(action.origin->type));
                         auto location = JSON::Object::create();
-                        location->setInteger("x"_s, action.x.value());
-                        location->setInteger("y"_s, action.y.value());
+                        location->setPrimitive("x"_s, action.x.value());
+                        location->setPrimitive("y"_s, action.y.value());
                         state->setObject("location"_s, WTFMove(location));
 
                         auto delta = JSON::Object::create();
-                        delta->setInteger("width"_s, action.deltaX.value());
-                        delta->setInteger("height"_s, action.deltaY.value());
+                        delta->setPrimitive("width"_s, action.deltaX.value());
+                        delta->setPrimitive("height"_s, action.deltaY.value());
                         state->setObject("delta"_s, WTFMove(delta));
 
                         if (action.origin->type == PointerOrigin::Type::Element)
@@ -2974,7 +2974,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     }
                     case Action::Subtype::Pause:
                         if (action.duration)
-                            state->setDouble("duration"_s, action.duration.value());
+                            state->setPrimitive("duration"_s, action.duration.value());
                         break;
                     case Action::Subtype::PointerUp:
                     case Action::Subtype::PointerDown:
@@ -3133,9 +3133,9 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         if (elementID)
             parameters->setString("nodeHandle"_s, elementID.value());
-        parameters->setBoolean("clipToViewport"_s, true);
+        parameters->setPrimitive("clipToViewport"_s, true);
         if (scrollIntoView.value_or(false))
-            parameters->setBoolean("scrollIntoViewIfNeeded"_s, true);
+            parameters->setPrimitive("scrollIntoViewIfNeeded"_s, true);
         m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));

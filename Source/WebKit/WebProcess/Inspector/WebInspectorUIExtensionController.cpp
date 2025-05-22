@@ -229,7 +229,7 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
     if (contextSecurityOrigin)
         optionalArguments->setString("contextSecurityOrigin"_s, contextSecurityOrigin->string());
     if (useContentScriptContext)
-        optionalArguments->setBoolean("useContentScriptContext"_s, *useContentScriptContext);
+        optionalArguments->setPrimitive("useContentScriptContext"_s, *useContentScriptContext);
 
     Vector<Ref<JSON::Value>> arguments {
         JSON::Value::create(extensionID),
@@ -300,7 +300,7 @@ void WebInspectorUIExtensionController::reloadForExtension(const Inspector::Exte
 
     Ref<JSON::Object> optionalArguments = JSON::Object::create();
     if (ignoreCache)
-        optionalArguments->setBoolean("ignoreCache"_s, *ignoreCache);
+        optionalArguments->setPrimitive("ignoreCache"_s, *ignoreCache);
     if (userAgent)
         optionalArguments->setString("userAgent"_s, *userAgent);
     if (injectedScript)

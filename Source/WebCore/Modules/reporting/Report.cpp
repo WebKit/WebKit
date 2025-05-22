@@ -75,8 +75,8 @@ Ref<FormData> Report::createReportFormDataForViolation(const String& type, const
     reportObject->setString("user_agent"_s, userAgent);
     reportObject->setString("destination"_s, destination);
     reportObject->setString("type"_s, type);
-    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
-    reportObject->setInteger("attempts"_s, 0);
+    reportObject->setPrimitive("age"_s, 0); // We currently do not delay sending the reports.
+    reportObject->setPrimitive("attempts"_s, 0);
     if (url.isValid())
         reportObject->setString("url"_s, url.string());
 

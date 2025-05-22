@@ -216,7 +216,7 @@ void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result,
     // if no error occurred during an invocation, but we do not include it at all.
     Ref<JSON::Object> responseMessage = JSON::Object::create();
     responseMessage->setObject("result"_s, WTFMove(result));
-    responseMessage->setInteger("id"_s, requestId);
+    responseMessage->setPrimitive("id"_s, requestId);
     m_frontendRouter->sendResponse(responseMessage->toJSONString());
 }
 
@@ -247,20 +247,20 @@ void BackendDispatcher::sendPendingErrors()
         ASSERT_ARG(errorCode, errorCodes[errorCode]);
 
         Ref<JSON::Object> error = JSON::Object::create();
-        error->setInteger("code"_s, errorCodes[errorCode]);
+        error->setPrimitive("code"_s, errorCodes[errorCode]);
         error->setString("message"_s, errorMessage);
         payload->pushObject(WTFMove(error));
     }
 
     Ref<JSON::Object> topLevelError = JSON::Object::create();
-    topLevelError->setInteger("code"_s, errorCodes[errorCode]);
+    topLevelError->setPrimitive("code"_s, errorCodes[errorCode]);
     topLevelError->setString("message"_s, errorMessage);
     topLevelError->setArray("data"_s, WTFMove(payload));
 
     Ref<JSON::Object> message = JSON::Object::create();
     message->setObject("error"_s, WTFMove(topLevelError));
     if (m_currentRequestId)
-        message->setInteger("id"_s, m_currentRequestId.value());
+        message->setPrimitive("id"_s, m_currentRequestId.value());
     else {
         // The 'null' value for an unknown id is specified in JSON-RPC 2.0, Section 5.
         message->setValue("id"_s, JSON::Value::null());

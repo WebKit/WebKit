@@ -315,19 +315,19 @@ TEST(JSONObject, Basic)
     EXPECT_TRUE(value);
     EXPECT_TRUE(value->isNull());
 
-    object->setBoolean("boolean"_s, true);
+    object->setPrimitive("boolean"_s, true);
     EXPECT_EQ(object->size(), 2U);
     auto booleanValue = object->getBoolean("boolean"_s);
     EXPECT_TRUE(booleanValue);
     EXPECT_EQ(*booleanValue, true);
 
-    object->setInteger("integer"_s, 1);
+    object->setPrimitive("integer"_s, 1);
     EXPECT_EQ(object->size(), 3U);
     auto integerValue = object->getInteger("integer"_s);
     EXPECT_TRUE(integerValue);
     EXPECT_EQ(*integerValue, 1);
 
-    object->setDouble("double"_s, 1.5);
+    object->setPrimitive("double"_s, 1.5);
     EXPECT_EQ(object->size(), 4U);
     auto doubleValue = object->getDouble("double"_s);
     EXPECT_TRUE(doubleValue);
@@ -446,9 +446,9 @@ TEST(JSONValue, ToJSONString)
         EXPECT_EQ(object->toJSONString(), "{}"_s);
         object->setValue("null"_s, JSON::Value::null());
         EXPECT_EQ(object->toJSONString(), "{\"null\":null}"_s);
-        object->setBoolean("boolean"_s, true);
+        object->setPrimitive("boolean"_s, true);
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true}"_s);
-        object->setDouble("double"_s, 1.5);
+        object->setPrimitive("double"_s, 1.5);
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true,\"double\":1.5}"_s);
         object->setString("string"_s, "webkit"_s);
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true,\"double\":1.5,\"string\":\"webkit\"}"_s);
@@ -456,7 +456,7 @@ TEST(JSONValue, ToJSONString)
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true,\"double\":1.5,\"string\":\"webkit\",\"array\":[]}"_s);
         Ref<JSON::Object> subObject = JSON::Object::create();
         subObject->setString("foo"_s, "bar"_s);
-        subObject->setInteger("baz"_s, 25);
+        subObject->setPrimitive("baz"_s, 25);
         object->setObject("object"_s, WTFMove(subObject));
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true,\"double\":1.5,\"string\":\"webkit\",\"array\":[],\"object\":{\"foo\":\"bar\",\"baz\":25}}"_s);
     }

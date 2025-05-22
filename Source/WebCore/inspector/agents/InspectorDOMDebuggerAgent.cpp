@@ -310,7 +310,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
     if (domAgent) {
         int eventListenerId = domAgent->idForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
         if (eventListenerId)
-            eventData->setInteger("eventListenerId"_s, eventListenerId);
+            eventData->setPrimitive("eventListenerId"_s, eventListenerId);
     }
 
     m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTFMove(eventData));

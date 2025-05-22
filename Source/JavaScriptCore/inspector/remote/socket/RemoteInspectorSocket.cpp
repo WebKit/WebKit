@@ -127,8 +127,8 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
 
     targetListing->setString("name"_s, target.name());
     targetListing->setString("url"_s, target.url());
-    targetListing->setInteger("targetID"_s, target.targetIdentifier());
-    targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
+    targetListing->setPrimitive("targetID"_s, target.targetIdentifier());
+    targetListing->setPrimitive("hasLocalDebugger"_s, target.hasLocalDebugger());
     if (target.type() == RemoteInspectionTarget::Type::WebPage)
         targetListing->setString("type"_s, "web-page"_s);
     else if (target.type() == RemoteInspectionTarget::Type::Page)
@@ -146,8 +146,8 @@ TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomation
     TargetListing targetListing = JSON::Object::create();
     targetListing->setString("type"_s, "automation"_s);
     targetListing->setString("name"_s, target.name());
-    targetListing->setInteger("targetID"_s, target.targetIdentifier());
-    targetListing->setBoolean("isPaired"_s, target.isPaired());
+    targetListing->setPrimitive("targetID"_s, target.targetIdentifier());
+    targetListing->setPrimitive("isPaired"_s, target.isPaired());
     return targetListing;
 }
 
@@ -165,8 +165,8 @@ void RemoteInspector::pushListingsNow()
     auto jsonEvent = JSON::Object::create();
     jsonEvent->setString("event"_s, "SetTargetList"_s);
     jsonEvent->setString("message"_s, targetListJSON->toJSONString());
-    jsonEvent->setInteger("connectionID"_s, m_clientConnection.value());
-    jsonEvent->setBoolean("remoteAutomationAllowed"_s, m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
+    jsonEvent->setPrimitive("connectionID"_s, m_clientConnection.value());
+    jsonEvent->setPrimitive("remoteAutomationAllowed"_s, m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
     sendWebInspectorEvent(jsonEvent->toJSONString());
 }
 
@@ -219,9 +219,9 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
         return;
 
     auto sendMessageEvent = JSON::Object::create();
-    sendMessageEvent->setInteger("targetID"_s, targetIdentifier);
+    sendMessageEvent->setPrimitive("targetID"_s, targetIdentifier);
     sendMessageEvent->setString("event"_s, "SendMessageToFrontend"_s);
-    sendMessageEvent->setInteger("connectionID"_s, m_clientConnection.value());
+    sendMessageEvent->setPrimitive("connectionID"_s, m_clientConnection.value());
     sendMessageEvent->setString("message"_s, message);
     sendWebInspectorEvent(sendMessageEvent->toJSONString());
 }

@@ -194,7 +194,7 @@ static Ref<JSON::Object> toJSONObject(GVariant* variant)
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_STRING))
             jsonObject->setString(String::fromLatin1(key), String::fromLatin1(g_variant_get_string(value, nullptr)));
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_DOUBLE))
-            jsonObject->setDouble(String::fromLatin1(key), g_variant_get_double(value));
+            jsonObject->setPrimitive(String::fromLatin1(key), g_variant_get_double(value));
     }
     return jsonObject;
 }

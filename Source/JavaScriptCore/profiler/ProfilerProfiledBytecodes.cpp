@@ -43,7 +43,7 @@ ProfiledBytecodes::~ProfiledBytecodes() = default;
 Ref<JSON::Value> ProfiledBytecodes::toJSON(Dumper& dumper) const
 {
     auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    result->setPrimitive(dumper.keys().m_bytecodesID, m_bytecodes->id());
     addSequenceProperties(dumper, result.get());
     return result;
 }

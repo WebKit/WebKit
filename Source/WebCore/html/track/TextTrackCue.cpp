@@ -428,8 +428,8 @@ void TextTrackCue::toJSON(JSON::Object& value) const
     }
 
     value.setString("type"_s, type);
-    value.setDouble("startTime"_s, startTime());
-    value.setDouble("endTime"_s, endTime());
+    value.setPrimitive("startTime"_s, startTime());
+    value.setPrimitive("endTime"_s, endTime());
 }
 
 String TextTrackCue::toJSONString() const

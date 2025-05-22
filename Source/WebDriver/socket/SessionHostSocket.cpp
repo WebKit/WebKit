@@ -264,7 +264,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
     m_sessionID = createVersion4UUIDString();
 
     auto capabilitiesObject = JSON::Object::create();
-    capabilitiesObject->setBoolean("acceptInsecureCerts"_s, m_capabilities.acceptInsecureCerts.value_or(false));
+    capabilitiesObject->setPrimitive("acceptInsecureCerts"_s, m_capabilities.acceptInsecureCerts.value_or(false));
 
     auto messageObject = JSON::Object::create();
     messageObject->setString("sessionID"_s, m_sessionID);
@@ -310,8 +310,8 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
 
     auto sendEvent = JSON::Object::create();
     sendEvent->setString("event"_s, "Setup"_s);
-    sendEvent->setInteger("connectionID"_s, m_connectionID);
-    sendEvent->setInteger("targetID"_s, m_target.id);
+    sendEvent->setPrimitive("connectionID"_s, m_connectionID);
+    sendEvent->setPrimitive("targetID"_s, m_target.id);
     sendWebInspectorEvent(sendEvent->toJSONString());
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
@@ -322,8 +322,8 @@ void SessionHost::sendMessageToBackend(const String& message)
 {
     auto sendEvent = JSON::Object::create();
     sendEvent->setString("event"_s, "SendMessageToBackend"_s);
-    sendEvent->setInteger("connectionID"_s, m_connectionID);
-    sendEvent->setInteger("targetID"_s, m_target.id);
+    sendEvent->setPrimitive("connectionID"_s, m_connectionID);
+    sendEvent->setPrimitive("targetID"_s, m_target.id);
     sendEvent->setString("message"_s, message);
     sendWebInspectorEvent(sendEvent->toJSONString());
 }

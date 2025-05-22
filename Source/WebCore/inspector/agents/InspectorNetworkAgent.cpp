@@ -603,7 +603,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
             
             resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
             
-            resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
+            resourceResponse->setPrimitive("status"_s, previousResourceData->httpStatusCode());
             resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
             
             resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));

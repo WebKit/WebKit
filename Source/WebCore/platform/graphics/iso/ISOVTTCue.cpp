@@ -134,8 +134,8 @@ String ISOWebVTTCue::toJSONString() const
     object->setString("originalStartTime"_s, encodeWithURLEscapeSequences(m_originalStartTime));
     object->setString("settings"_s, encodeWithURLEscapeSequences(m_settings));
 
-    object->setDouble("presentationTime"_s, m_presentationTime.toDouble());
-    object->setDouble("duration"_s, m_duration.toDouble());
+    object->setPrimitive("presentationTime"_s, m_presentationTime.toDouble());
+    object->setPrimitive("duration"_s, m_duration.toDouble());
 
     return object->toJSONString();
 }

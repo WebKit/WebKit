@@ -102,8 +102,8 @@ Ref<JSON::Object> FloatPoint::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("x"_s, m_x);
-    object->setDouble("y"_s, m_y);
+    object->setPrimitive("x"_s, m_x);
+    object->setPrimitive("y"_s, m_y);
 
     return object;
 }

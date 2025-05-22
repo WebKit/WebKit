@@ -192,7 +192,7 @@ void WebDriverBidiProcessor::sendBidiMessage(const String& message)
             bidiErrorObj->setString("message"_s, internalMsg);
             bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, internalMsg));
             if (auto commandId = msgObj->getInteger("id"_s))
-                bidiErrorObj->setInteger("id"_s, *commandId);
+                bidiErrorObj->setPrimitive("id"_s, *commandId);
 
             session->sendBidiMessage(bidiErrorObj->toJSONString());
             return;

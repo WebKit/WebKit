@@ -169,7 +169,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     object->setString("origin"_s, origin.toRawString());
 
     if (scope != WebAuthn::Scope::SameOrigin)
-        object->setBoolean("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
+        object->setPrimitive("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
 
     if (!topOrigin.isNull())
         object->setString("topOrigin"_s, topOrigin);

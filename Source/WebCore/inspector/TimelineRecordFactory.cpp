@@ -46,7 +46,7 @@ using namespace Inspector;
 Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
 {
     Ref<JSON::Object> record = JSON::Object::create();
-    record->setDouble("startTime"_s, startTime);
+    record->setPrimitive("startTime"_s, startTime);
 
     if (maxCallStackDepth) {
         Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState(), maxCallStackDepth);
@@ -67,8 +67,8 @@ Ref<JSON::Object> TimelineRecordFactory::createFunctionCallData(const String& sc
 {
     Ref<JSON::Object> data = JSON::Object::create();
     data->setString("scriptName"_s, scriptName);
-    data->setInteger("scriptLine"_s, scriptLine);
-    data->setInteger("scriptColumn"_s, scriptColumn);
+    data->setPrimitive("scriptLine"_s, scriptLine);
+    data->setPrimitive("scriptColumn"_s, scriptColumn);
     return data;
 }
 
@@ -82,8 +82,8 @@ Ref<JSON::Object> TimelineRecordFactory::createConsoleProfileData(const String& 
 Ref<JSON::Object> TimelineRecordFactory::createProbeSampleData(JSC::BreakpointActionID actionID, unsigned sampleId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger("probeId"_s, actionID);
-    data->setInteger("sampleId"_s, sampleId);
+    data->setPrimitive("probeId"_s, actionID);
+    data->setPrimitive("sampleId"_s, sampleId);
     return data;
 }
 
@@ -97,16 +97,16 @@ Ref<JSON::Object> TimelineRecordFactory::createEventDispatchData(const Event& ev
 Ref<JSON::Object> TimelineRecordFactory::createGenericTimerData(int timerId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger("timerId"_s, timerId);
+    data->setPrimitive("timerId"_s, timerId);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createTimerInstallData(int timerId, Seconds timeout, bool singleShot)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger("timerId"_s, timerId);
-    data->setInteger("timeout"_s, (int)timeout.milliseconds());
-    data->setBoolean("singleShot"_s, singleShot);
+    data->setPrimitive("timerId"_s, timerId);
+    data->setPrimitive("timeout"_s, (int)timeout.milliseconds());
+    data->setPrimitive("singleShot"_s, singleShot);
     return data;
 }
 
@@ -114,8 +114,8 @@ Ref<JSON::Object> TimelineRecordFactory::createEvaluateScriptData(const String& 
 {
     Ref<JSON::Object> data = JSON::Object::create();
     data->setString("url"_s, url);
-    data->setInteger("lineNumber"_s, lineNumber);
-    data->setInteger("columnNumber"_s, columnNumber);
+    data->setPrimitive("lineNumber"_s, lineNumber);
+    data->setPrimitive("columnNumber"_s, columnNumber);
     return data;
 }
 
@@ -129,7 +129,7 @@ Ref<JSON::Object> TimelineRecordFactory::createTimeStampData(const String& messa
 Ref<JSON::Object> TimelineRecordFactory::createAnimationFrameData(int callbackId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger("id"_s, callbackId);
+    data->setPrimitive("id"_s, callbackId);
     return data;
 }
 

@@ -177,8 +177,8 @@ static Ref<FormData> createReportFormData(const String& type, const URL& url, co
     reportObject->setString("user_agent"_s, userAgent);
     // The spec allows user agents to delay report sending, in order to reduce impact on the user and potential overhead. See https://www.w3.org/TR/reporting-1/#delivery
     // Currently we're not taking advantage of that, so setting the `age` to 0 to indicate immediate delivery.
-    reportObject->setInteger("age"_s, 0);
-    reportObject->setInteger("attempts"_s, 0);
+    reportObject->setPrimitive("age"_s, 0);
+    reportObject->setPrimitive("attempts"_s, 0);
     if (url.isValid())
         reportObject->setString("url"_s, url.strippedForUseAsReferrer().string);
 

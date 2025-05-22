@@ -285,7 +285,7 @@ void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 
     auto& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::EventDispatch);
-    entry.data->setBoolean("defaultPrevented"_s, defaultPrevented);
+    entry.data->setPrimitive("defaultPrevented"_s, defaultPrevented);
 
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
@@ -601,7 +601,7 @@ void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& e
     entry.record->setObject("data"_s, entry.data.copyRef());
     if (entry.children)
         entry.record->setArray("children"_s, *entry.children);
-    entry.record->setDouble("endTime"_s, timestamp());
+    entry.record->setPrimitive("endTime"_s, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
 

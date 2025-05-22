@@ -1403,16 +1403,16 @@ void VTTCue::toJSON(JSON::Object& object) const
 
     object.setString("text"_s, text());
     object.setString("vertical"_s, convertEnumerationToString(vertical()));
-    object.setBoolean("snapToLines"_s, snapToLines());
+    object.setPrimitive("snapToLines"_s, snapToLines());
     if (m_linePosition)
-        object.setDouble("line"_s, *m_linePosition);
+        object.setPrimitive("line"_s, *m_linePosition);
     else
         object.setString("line"_s, autoAtom());
     if (m_textPosition)
-        object.setDouble("position"_s, *m_textPosition);
+        object.setPrimitive("position"_s, *m_textPosition);
     else
         object.setString("position"_s, autoAtom());
-    object.setInteger("size"_s, m_cueSize);
+    object.setPrimitive("size"_s, m_cueSize);
     object.setString("align"_s, convertEnumerationToString(align()));
 }
 

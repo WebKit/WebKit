@@ -49,8 +49,8 @@ Ref<JSON::Value> Event::toJSON(Dumper& dumper) const
 {
     auto result = JSON::Object::create();
 
-    result->setDouble(dumper.keys().m_time, m_time.secondsSinceEpoch().value());
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    result->setPrimitive(dumper.keys().m_time, m_time.secondsSinceEpoch().value());
+    result->setPrimitive(dumper.keys().m_bytecodesID, m_bytecodes->id());
     if (m_compilation)
         result->setString(dumper.keys().m_compilationUID, makeString(m_compilation->uid()));
     result->setString(dumper.keys().m_summary, String::fromUTF8(m_summary));

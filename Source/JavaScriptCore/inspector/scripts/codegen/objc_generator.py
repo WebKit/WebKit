@@ -518,11 +518,11 @@ class ObjCGenerator(Generator):
         if (isinstance(_type, PrimitiveType)):
             raw_name = _type.raw_name()
             if raw_name == 'boolean':
-                return 'setBool'
+                return 'setPrimitive'
             if raw_name == 'integer':
-                return 'setInteger'
+                return 'setPrimitive'
             if raw_name == 'number':
-                return 'setDouble'
+                return 'setPrimitive'
             if raw_name == 'string':
                 return 'setString'
             if raw_name in ['any', 'object']:

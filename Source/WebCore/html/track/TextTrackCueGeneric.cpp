@@ -186,9 +186,9 @@ void TextTrackCueGeneric::toJSON(JSON::Object& object) const
     if (m_highlightColor.isValid())
         object.setString("highlightColor"_s, serializationForHTML(m_highlightColor));
     if (m_baseFontSizeRelativeToVideoHeight)
-        object.setDouble("relativeFontSize"_s, m_baseFontSizeRelativeToVideoHeight);
+        object.setPrimitive("relativeFontSize"_s, m_baseFontSizeRelativeToVideoHeight);
     if (m_fontSizeMultiplier)
-        object.setDouble("fontSizeMultiplier"_s, m_fontSizeMultiplier);
+        object.setPrimitive("fontSizeMultiplier"_s, m_fontSizeMultiplier);
     if (!m_fontName.isEmpty())
         object.setString("font"_s, m_fontName);
 }

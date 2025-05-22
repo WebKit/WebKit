@@ -200,7 +200,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
     libraryObject->setString("UUID"_s, uuidToString(uuid));
 
 #if HAVE(SHARED_REGION_SPI)
-    libraryObject->setBoolean("InSharedCache"_s, isAddressInSharedRegion(header));
+    libraryObject->setPrimitive("InSharedCache"_s, isAddressInSharedRegion(header));
 #endif
 
     logObject(std::initializer_list<String> { "Libraries"_s, installName }, WTFMove(libraryObject));

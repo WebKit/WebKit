@@ -582,9 +582,9 @@ String MediaPositionState::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("duration"_s, duration);
-    object->setDouble("playbackRate"_s, playbackRate);
-    object->setDouble("position"_s, position);
+    object->setPrimitive("duration"_s, duration);
+    object->setPrimitive("playbackRate"_s, playbackRate);
+    object->setPrimitive("position"_s, position);
 
     return object->toJSONString();
 }

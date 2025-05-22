@@ -548,12 +548,12 @@ Ref<JSON::Object> MediaTime::toJSONObject() const
     auto object = JSON::Object::create();
 
     if (hasDoubleValue()) {
-        object->setDouble("value"_s, toDouble());
+        object->setPrimitive("value"_s, toDouble());
         return object;
     }
 
     if (isInvalid())
-        object->setBoolean("invalid"_s, true);
+        object->setPrimitive("invalid"_s, true);
     else if (isIndefinite())
         object->setString("value"_s, "NaN"_s);
     else if (isPositiveInfinite())
@@ -561,11 +561,11 @@ Ref<JSON::Object> MediaTime::toJSONObject() const
     else if (isNegativeInfinite())
         object->setString("value"_s, "NEGATIVE_INFINITY"_s);
     else
-        object->setDouble("value"_s, toDouble());
+        object->setPrimitive("value"_s, toDouble());
 
-    object->setDouble("numerator"_s, static_cast<double>(m_timeValue));
-    object->setInteger("denominator"_s, m_timeScale);
-    object->setInteger("flags"_s, m_timeFlags);
+    object->setPrimitive("numerator"_s, static_cast<double>(m_timeValue));
+    object->setPrimitive("denominator"_s, m_timeScale);
+    object->setPrimitive("flags"_s, m_timeFlags);
 
     return object;
 }

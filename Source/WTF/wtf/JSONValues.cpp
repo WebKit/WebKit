@@ -496,21 +496,6 @@ Ref<Value> Value::null()
     return adoptRef(*new Value);
 }
 
-Ref<Value> Value::create(bool value)
-{
-    return adoptRef(*new Value(value));
-}
-
-Ref<Value> Value::create(int value)
-{
-    return adoptRef(*new Value(value));
-}
-
-Ref<Value> Value::create(double value)
-{
-    return adoptRef(*new Value(value));
-}
-
 Ref<Value> Value::create(const String& value)
 {
     return adoptRef(*new Value(value));

@@ -198,7 +198,7 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
     ASSERT(closestBreakpointOwner);
 
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
-    pauseData->setBoolean("insertion"_s, true);
+    pauseData->setPrimitive("insertion"_s, true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     // Include the new child node ID so the frontend can show the node that's about to be inserted.
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
@@ -255,7 +255,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
             if (auto targetNodeId = domAgent->pushNodeToFrontend(&node))
-                pauseData->setInteger("targetNodeId"_s, targetNodeId);
+                pauseData->setPrimitive("targetNodeId"_s, targetNodeId);
         }
     }
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
@@ -313,7 +313,7 @@ Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector
     pauseData->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(breakpointType));
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
-            pauseData->setInteger("nodeId"_s, breakpointOwnerNodeId);
+            pauseData->setPrimitive("nodeId"_s, breakpointOwnerNodeId);
     }
     return pauseData;
 }

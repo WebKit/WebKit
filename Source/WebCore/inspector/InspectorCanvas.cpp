@@ -469,10 +469,10 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
         return WTF::switchOn(item,
             [](DOMPointInit point) -> Ref<JSON::Value> {
                 auto object = JSON::Object::create();
-                object->setDouble("x"_s, point.x);
-                object->setDouble("y"_s, point.y);
-                object->setDouble("z"_s, point.z);
-                object->setDouble("w"_s, point.w);
+                object->setPrimitive("x"_s, point.x);
+                object->setPrimitive("y"_s, point.y);
+                object->setPrimitive("z"_s, point.z);
+                object->setPrimitive("w"_s, point.w);
                 // FIXME We'd likely want to either create a new RecordingSwizzleType::DOMPointInit or RecordingSwizzleType::Object to avoid
                 // encoding the same data multiple times
                 return object;
@@ -1222,8 +1222,8 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     auto initialStatePayload = Inspector::Protocol::Recording::InitialState::create().release();
 
     auto attributesPayload = JSON::Object::create();
-    attributesPayload->setInteger("width"_s, m_context->canvasBase().width());
-    attributesPayload->setInteger("height"_s, m_context->canvasBase().height());
+    attributesPayload->setPrimitive("width"_s, m_context->canvasBase().width());
+    attributesPayload->setPrimitive("height"_s, m_context->canvasBase().height());
 
     auto statesPayload = JSON::ArrayOf<JSON::Object>::create();
 
@@ -1234,16 +1234,16 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
             auto statePayload = JSON::Object::create();
 
             statePayload->setArray(stringIndexForKey("setTransform"_s), buildArrayForAffineTransform(state.transform));
-            statePayload->setDouble(stringIndexForKey("globalAlpha"_s), state.globalAlpha);
-            statePayload->setInteger(stringIndexForKey("globalCompositeOperation"_s), indexForData(state.globalCompositeOperationString()));
-            statePayload->setDouble(stringIndexForKey("lineWidth"_s), state.lineWidth);
-            statePayload->setInteger(stringIndexForKey("lineCap"_s), indexForData(convertEnumerationToString(state.canvasLineCap())));
-            statePayload->setInteger(stringIndexForKey("lineJoin"_s), indexForData(convertEnumerationToString(state.canvasLineJoin())));
-            statePayload->setDouble(stringIndexForKey("miterLimit"_s), state.miterLimit);
-            statePayload->setDouble(stringIndexForKey("shadowOffsetX"_s), state.shadowOffset.width());
-            statePayload->setDouble(stringIndexForKey("shadowOffsetY"_s), state.shadowOffset.height());
-            statePayload->setDouble(stringIndexForKey("shadowBlur"_s), state.shadowBlur);
-            statePayload->setInteger(stringIndexForKey("shadowColor"_s), indexForData(serializationForHTML(state.shadowColor)));
+            statePayload->setPrimitive(stringIndexForKey("globalAlpha"_s), state.globalAlpha);
+            statePayload->setPrimitive(stringIndexForKey("globalCompositeOperation"_s), indexForData(state.globalCompositeOperationString()));
+            statePayload->setPrimitive(stringIndexForKey("lineWidth"_s), state.lineWidth);
+            statePayload->setPrimitive(stringIndexForKey("lineCap"_s), indexForData(convertEnumerationToString(state.canvasLineCap())));
+            statePayload->setPrimitive(stringIndexForKey("lineJoin"_s), indexForData(convertEnumerationToString(state.canvasLineJoin())));
+            statePayload->setPrimitive(stringIndexForKey("miterLimit"_s), state.miterLimit);
+            statePayload->setPrimitive(stringIndexForKey("shadowOffsetX"_s), state.shadowOffset.width());
+            statePayload->setPrimitive(stringIndexForKey("shadowOffsetY"_s), state.shadowOffset.height());
+            statePayload->setPrimitive(stringIndexForKey("shadowBlur"_s), state.shadowBlur);
+            statePayload->setPrimitive(stringIndexForKey("shadowColor"_s), indexForData(serializationForHTML(state.shadowColor)));
 
             // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
             // list in an array to allow spreading.
@@ -1251,11 +1251,11 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
             setLineDash->addItem(buildArrayForVector(state.lineDash));
             statePayload->setArray(stringIndexForKey("setLineDash"_s), WTFMove(setLineDash));
 
-            statePayload->setDouble(stringIndexForKey("lineDashOffset"_s), state.lineDashOffset);
-            statePayload->setInteger(stringIndexForKey("font"_s), indexForData(state.fontString()));
-            statePayload->setInteger(stringIndexForKey("textAlign"_s), indexForData(convertEnumerationToString(state.canvasTextAlign())));
-            statePayload->setInteger(stringIndexForKey("textBaseline"_s), indexForData(convertEnumerationToString(state.canvasTextBaseline())));
-            statePayload->setInteger(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(state.direction)));
+            statePayload->setPrimitive(stringIndexForKey("lineDashOffset"_s), state.lineDashOffset);
+            statePayload->setPrimitive(stringIndexForKey("font"_s), indexForData(state.fontString()));
+            statePayload->setPrimitive(stringIndexForKey("textAlign"_s), indexForData(convertEnumerationToString(state.canvasTextAlign())));
+            statePayload->setPrimitive(stringIndexForKey("textBaseline"_s), indexForData(convertEnumerationToString(state.canvasTextBaseline())));
+            statePayload->setPrimitive(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(state.direction)));
 
             int strokeStyleIndex;
             if (auto canvasGradient = state.strokeStyle.canvasGradient())
@@ -1264,7 +1264,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
                 strokeStyleIndex = indexForData(canvasPattern);
             else
                 strokeStyleIndex = indexForData(state.strokeStyle.colorString());
-            statePayload->setInteger(stringIndexForKey("strokeStyle"_s), strokeStyleIndex);
+            statePayload->setPrimitive(stringIndexForKey("strokeStyle"_s), strokeStyleIndex);
 
             int fillStyleIndex;
             if (auto canvasGradient = state.fillStyle.canvasGradient())
@@ -1273,10 +1273,10 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
                 fillStyleIndex = indexForData(canvasPattern);
             else
                 fillStyleIndex = indexForData(state.fillStyle.colorString());
-            statePayload->setInteger(stringIndexForKey("fillStyle"_s), fillStyleIndex);
+            statePayload->setPrimitive(stringIndexForKey("fillStyle"_s), fillStyleIndex);
 
-            statePayload->setBoolean(stringIndexForKey("imageSmoothingEnabled"_s), state.imageSmoothingEnabled);
-            statePayload->setInteger(stringIndexForKey("imageSmoothingQuality"_s), indexForData(convertEnumerationToString(state.imageSmoothingQuality)));
+            statePayload->setPrimitive(stringIndexForKey("imageSmoothingEnabled"_s), state.imageSmoothingEnabled);
+            statePayload->setPrimitive(stringIndexForKey("imageSmoothingQuality"_s), indexForData(convertEnumerationToString(state.imageSmoothingQuality)));
 
             // FIXME: This is wrong: it will repeat the context's current path for every level in the stack, ignoring saved paths.
             auto setPath = JSON::ArrayOf<JSON::Value>::create();

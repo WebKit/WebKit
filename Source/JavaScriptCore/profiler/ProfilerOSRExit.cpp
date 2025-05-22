@@ -46,11 +46,11 @@ OSRExit::~OSRExit() = default;
 Ref<JSON::Value> OSRExit::toJSON(Dumper& dumper) const
 {
     auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_id, m_id);
+    result->setPrimitive(dumper.keys().m_id, m_id);
     result->setValue(dumper.keys().m_origin, m_origin.toJSON(dumper));
     result->setString(dumper.keys().m_exitKind, enumName(m_exitKind));
-    result->setBoolean(dumper.keys().m_isWatchpoint, !!m_isWatchpoint);
-    result->setDouble(dumper.keys().m_count, m_counter);
+    result->setPrimitive(dumper.keys().m_isWatchpoint, !!m_isWatchpoint);
+    result->setPrimitive(dumper.keys().m_count, m_counter);
     return result;
 }
 

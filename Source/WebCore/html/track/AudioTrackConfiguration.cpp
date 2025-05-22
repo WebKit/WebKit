@@ -39,9 +39,9 @@ Ref<JSON::Object> AudioTrackConfiguration::toJSON() const
 {
     Ref json = JSON::Object::create();
     json->setString("codec"_s, codec());
-    json->setInteger("sampleRate"_s, sampleRate());
-    json->setInteger("numberOfChannels"_s, numberOfChannels());
-    json->setInteger("bitrate"_s, bitrate());
+    json->setPrimitive("sampleRate"_s, sampleRate());
+    json->setPrimitive("numberOfChannels"_s, numberOfChannels());
+    json->setPrimitive("bitrate"_s, bitrate());
     return json;
 }
 

@@ -128,13 +128,13 @@ Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
 {
     Ref json = JSON::Object::create();
     json->setString("codec"_s, codec());
-    json->setInteger("width"_s, width());
-    json->setInteger("height"_s, height());
+    json->setPrimitive("width"_s, width());
+    json->setPrimitive("height"_s, height());
     json->setObject("colorSpace"_s, colorSpace()->toJSON());
-    json->setDouble("framerate"_s, framerate());
-    json->setInteger("bitrate"_s, bitrate());
-    json->setBoolean("isSpatial"_s, !!spatialVideoMetadata());
-    json->setBoolean("isImmersive"_s, !!videoProjectionMetadata());
+    json->setPrimitive("framerate"_s, framerate());
+    json->setPrimitive("bitrate"_s, bitrate());
+    json->setPrimitive("isSpatial"_s, !!spatialVideoMetadata());
+    json->setPrimitive("isImmersive"_s, !!videoProjectionMetadata());
     return json;
 }
 

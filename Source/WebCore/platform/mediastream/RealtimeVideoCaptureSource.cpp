@@ -564,10 +564,10 @@ Ref<JSON::Object> SizeFrameRateAndZoom::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("width"_s, width ? width.value() : 0);
-    object->setDouble("height"_s, height ? height.value() : 0);
-    object->setDouble("frameRate"_s, frameRate ? frameRate.value() : 0);
-    object->setDouble("zoom"_s, zoom ? zoom.value() : 0);
+    object->setPrimitive("width"_s, width ? width.value() : 0);
+    object->setPrimitive("height"_s, height ? height.value() : 0);
+    object->setPrimitive("frameRate"_s, frameRate ? frameRate.value() : 0);
+    object->setPrimitive("zoom"_s, zoom ? zoom.value() : 0);
 
     return object;
 }

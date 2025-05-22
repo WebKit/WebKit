@@ -152,7 +152,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
     auto reply = JSON::Object::create();
 
     if (commandId)
-        reply->setInteger("id"_s, *commandId);
+        reply->setPrimitive("id"_s, *commandId);
 
     if (errorMessage)
         reply->setString("message"_s, *errorMessage);
@@ -167,7 +167,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const S
 {
     auto reply = JSON::Object::create();
     reply->setString("type"_s, type);
-    reply->setInteger("id"_s, id);
+    reply->setPrimitive("id"_s, id);
 
     if (auto resultObject = result->asObject())
         reply->setObject("result"_s, resultObject.releaseNonNull());
@@ -237,7 +237,7 @@ void WebSocketServer::sendErrorResponse(WebSocketMessageHandler::Connection conn
     errorObject->setString("error"_s, CommandResult::errorCodeToString(errorCode));
     errorObject->setString("message"_s, errorMessage);
     if (commandId)
-        errorObject->setInteger("id"_s, *commandId); // FIXME change to JSON::Value
+        errorObject->setPrimitive("id"_s, *commandId); // FIXME change to JSON::Value
     if (stacktrace)
         errorObject->setString("stacktrace"_s, *stacktrace);
 

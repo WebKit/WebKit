@@ -114,7 +114,7 @@ void Compilation::dump(PrintStream& out) const
 Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
 {
     auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    result->setPrimitive(dumper.keys().m_bytecodesID, m_bytecodes->id());
     result->setString(dumper.keys().m_compilationKind, String::fromUTF8(toCString(m_kind).span()));
 
     auto profiledBytecodes = JSON::Array::create();
@@ -131,7 +131,7 @@ Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
     for (const auto& [key, value] : m_counters) {
         auto counterEntry = JSON::Object::create();
         counterEntry->setValue(dumper.keys().m_origin, key.toJSON(dumper));
-        counterEntry->setDouble(dumper.keys().m_executionCount, value->count());
+        counterEntry->setPrimitive(dumper.keys().m_executionCount, value->count());
         counters->pushValue(WTFMove(counterEntry));
     }
     result->setValue(dumper.keys().m_counters, WTFMove(counters));
@@ -146,9 +146,9 @@ Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
         exits->pushValue(m_osrExits[i].toJSON(dumper));
     result->setValue(dumper.keys().m_osrExits, WTFMove(exits));
 
-    result->setDouble(dumper.keys().m_numInlinedGetByIds, m_numInlinedGetByIds);
-    result->setDouble(dumper.keys().m_numInlinedPutByIds, m_numInlinedPutByIds);
-    result->setDouble(dumper.keys().m_numInlinedCalls, m_numInlinedCalls);
+    result->setPrimitive(dumper.keys().m_numInlinedGetByIds, m_numInlinedGetByIds);
+    result->setPrimitive(dumper.keys().m_numInlinedPutByIds, m_numInlinedPutByIds);
+    result->setPrimitive(dumper.keys().m_numInlinedCalls, m_numInlinedCalls);
     result->setString(dumper.keys().m_jettisonReason, String::fromUTF8(toCString(m_jettisonReason).span()));
     if (!m_additionalJettisonReason.isNull())
         result->setString(dumper.keys().m_additionalJettisonReason, String::fromUTF8(m_additionalJettisonReason.span()));

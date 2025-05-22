@@ -47,12 +47,12 @@ static Ref<JSON::Object> toJSONObject(const VideoConfiguration& configuration)
 {
     auto object = JSON::Object::create();
     object->setString("contentType"_s, configuration.contentType);
-    object->setInteger("width"_s, configuration.width);
-    object->setInteger("height"_s, configuration.height);
-    object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate));
-    object->setDouble("framerate"_s, configuration.framerate);
+    object->setPrimitive("width"_s, configuration.width);
+    object->setPrimitive("height"_s, configuration.height);
+    object->setPrimitive("bitrate"_s, static_cast<int>(configuration.bitrate));
+    object->setPrimitive("framerate"_s, configuration.framerate);
     if (configuration.alphaChannel)
-        object->setBoolean("alphaChannel"_s, configuration.alphaChannel.value());
+        object->setPrimitive("alphaChannel"_s, configuration.alphaChannel.value());
     if (configuration.colorGamut)
         object->setString("colorGamut"_s, convertEnumerationToString(configuration.colorGamut.value()));
     if (configuration.hdrMetadataType)
@@ -69,11 +69,11 @@ static Ref<JSON::Object> toJSONObject(const AudioConfiguration& configuration)
     if (!configuration.channels.isNull())
         object->setString("channels"_s, configuration.channels);
     if (configuration.bitrate)
-        object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate.value()));
+        object->setPrimitive("bitrate"_s, static_cast<int>(configuration.bitrate.value()));
     if (configuration.samplerate)
-        object->setDouble("samplerate"_s, configuration.samplerate.value());
+        object->setPrimitive("samplerate"_s, configuration.samplerate.value());
     if (configuration.spatialRendering)
-        object->setBoolean("spatialRendering"_s, configuration.spatialRendering.value());
+        object->setPrimitive("spatialRendering"_s, configuration.spatialRendering.value());
     return object;
 }
 
@@ -104,9 +104,9 @@ static Ref<JSON::Object> toJSONObject(const MediaEncodingConfiguration& configur
 static Ref<JSON::Object> toJSONObject(const MediaCapabilitiesInfo& info)
 {
     auto object = JSON::Object::create();
-    object->setBoolean("supported"_s, info.supported);
-    object->setBoolean("smooth"_s, info.smooth);
-    object->setBoolean("powerEfficient"_s, info.powerEfficient);
+    object->setPrimitive("supported"_s, info.supported);
+    object->setPrimitive("smooth"_s, info.smooth);
+    object->setPrimitive("powerEfficient"_s, info.powerEfficient);
     return object;
 }
 

@@ -49,7 +49,7 @@ Ref<JSON::Object> VideoColorSpace::toJSON() const
     if (auto& matrix = this->matrix())
         json->setString("matrix"_s, convertEnumerationToString(*matrix));
     if (auto& fullRange = this->fullRange())
-        json->setBoolean("fullRange"_s, *fullRange);
+        json->setPrimitive("fullRange"_s, *fullRange);
 
     return json;
 }

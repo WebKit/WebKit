@@ -44,9 +44,9 @@ String InbandGenericCue::toJSONString() const
     auto object = JSON::Object::create();
 
     object->setString("text"_s, m_cueData.m_content);
-    object->setInteger("identifier"_s, m_cueData.m_uniqueId->toUInt64());
-    object->setDouble("start"_s, m_cueData.m_startTime.toDouble());
-    object->setDouble("end"_s, m_cueData.m_endTime.toDouble());
+    object->setPrimitive("identifier"_s, m_cueData.m_uniqueId->toUInt64());
+    object->setPrimitive("start"_s, m_cueData.m_startTime.toDouble());
+    object->setPrimitive("end"_s, m_cueData.m_endTime.toDouble());
 
     ASCIILiteral status = ""_s;
     switch (m_cueData.m_status) {
@@ -66,13 +66,13 @@ String InbandGenericCue::toJSONString() const
         object->setString("id"_s, m_cueData.m_id);
 
     if (m_cueData.m_line > 0)
-        object->setDouble("line"_s, m_cueData.m_line);
+        object->setPrimitive("line"_s, m_cueData.m_line);
 
     if (m_cueData.m_size > 0)
-        object->setDouble("size"_s, m_cueData.m_size);
+        object->setPrimitive("size"_s, m_cueData.m_size);
 
     if (m_cueData.m_position > 0)
-        object->setDouble("position"_s, m_cueData.m_position);
+        object->setPrimitive("position"_s, m_cueData.m_position);
 
     if (m_cueData.m_positionAlign != GenericCueData::Alignment::None) {
         ASCIILiteral positionAlign = ""_s;
@@ -122,10 +122,10 @@ String InbandGenericCue::toJSONString() const
         object->setString("highlightColor"_s, serializationForHTML(m_cueData.m_highlightColor));
 
     if (m_cueData.m_baseFontSize)
-        object->setDouble("baseFontSize"_s, m_cueData.m_baseFontSize);
+        object->setPrimitive("baseFontSize"_s, m_cueData.m_baseFontSize);
 
     if (m_cueData.m_relativeFontSize)
-        object->setDouble("relativeFontSize"_s, m_cueData.m_relativeFontSize);
+        object->setPrimitive("relativeFontSize"_s, m_cueData.m_relativeFontSize);
 
     if (!m_cueData.m_fontName.isEmpty())
         object->setString("font"_s, m_cueData.m_fontName);

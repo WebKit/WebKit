@@ -104,10 +104,16 @@ class CppGenerator(Generator):
 
         if isinstance(_type, PrimitiveType):
             if _type.raw_name() == 'number':
-                return 'setDouble'
+                return 'setPrimitive'
+            if _type.raw_name() == 'integer':
+                return 'setPrimitive'
+            if _type.raw_name() == 'string':
+                return 'setString'
+            if _type.raw_name() == 'boolean':
+                return 'setPrimitive'
             if _type.raw_name() == 'any':
                 return 'setValue'
-            return 'set' + ucfirst(_type.raw_name())
+            return 'setPrimitive'
 
         raise ValueError("unknown type")
 

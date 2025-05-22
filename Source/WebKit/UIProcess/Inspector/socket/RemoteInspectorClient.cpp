@@ -178,8 +178,8 @@ void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID
 
     auto setupEvent = JSON::Object::create();
     setupEvent->setString("event"_s, "Setup"_s);
-    setupEvent->setInteger("connectionID"_s, connectionID);
-    setupEvent->setInteger("targetID"_s, targetID);
+    setupEvent->setPrimitive("connectionID"_s, connectionID);
+    setupEvent->setPrimitive("targetID"_s, targetID);
     sendWebInspectorEvent(setupEvent->toJSONString());
 
     addResult.iterator->value->initialize();
@@ -189,8 +189,8 @@ void RemoteInspectorClient::sendMessageToBackend(ConnectionID connectionID, Targ
 {
     auto backendEvent = JSON::Object::create();
     backendEvent->setString("event"_s, "SendMessageToBackend"_s);
-    backendEvent->setInteger("connectionID"_s, connectionID);
-    backendEvent->setInteger("targetID"_s, targetID);
+    backendEvent->setPrimitive("connectionID"_s, connectionID);
+    backendEvent->setPrimitive("targetID"_s, targetID);
     backendEvent->setString("message"_s, message);
     sendWebInspectorEvent(backendEvent->toJSONString());
 }
@@ -199,8 +199,8 @@ void RemoteInspectorClient::closeFromFrontend(ConnectionID connectionID, TargetI
 {
     auto closedEvent = JSON::Object::create();
     closedEvent->setString("event"_s, "FrontendDidClose"_s);
-    closedEvent->setInteger("connectionID"_s, connectionID);
-    closedEvent->setInteger("targetID"_s, targetID);
+    closedEvent->setPrimitive("connectionID"_s, connectionID);
+    closedEvent->setPrimitive("targetID"_s, targetID);
     sendWebInspectorEvent(closedEvent->toJSONString());
 
     m_inspectorProxyMap.remove(std::make_pair(connectionID, targetID));

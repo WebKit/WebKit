@@ -67,8 +67,8 @@ Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
     reportBody->setString("message"_s, m_message);
     if (!m_sourceFile.isNull()) {
         reportBody->setString("sourceFile"_s, m_sourceFile);
-        reportBody->setInteger("lineNumber"_s, m_lineNumber.value_or(0));
-        reportBody->setInteger("columnNumber"_s, m_columnNumber.value_or(0));
+        reportBody->setPrimitive("lineNumber"_s, m_lineNumber.value_or(0));
+        reportBody->setPrimitive("columnNumber"_s, m_columnNumber.value_or(0));
     }
 
     auto reportObject = JSON::Object::create();

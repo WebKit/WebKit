@@ -48,8 +48,8 @@ void Origin::dump(PrintStream& out) const
 Ref<JSON::Value> Origin::toJSON(Dumper& dumper) const
 {
     auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
-    result->setDouble(dumper.keys().m_bytecodeIndex, m_bytecodeIndex.offset());
+    result->setPrimitive(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    result->setPrimitive(dumper.keys().m_bytecodeIndex, m_bytecodeIndex.offset());
     return result;
 }
 

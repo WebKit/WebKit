@@ -78,9 +78,8 @@ public:
     }
 
     static Ref<Value> null();
-    static Ref<Value> create(bool);
-    static Ref<Value> create(int);
-    static Ref<Value> create(double);
+    template<class T>
+    static Ref<Value> create(T value) requires std::is_arithmetic_v<T>;
     static Ref<Value> create(const String&);
     template<class T>
     static Ref<Value> create(T) = delete;
@@ -173,6 +172,20 @@ private:
     } m_value;
 };
 
+template<class T>
+inline Ref<Value> Value::create(T value)
+    requires std::is_arithmetic_v<T> {
+    if constexpr (std::same_as<T, bool>) {
+        return adoptRef(*new Value(value));
+    } else if constexpr (std::is_integral_v<T>) {
+        if constexpr (sizeof(T) <= sizeof(int) && std::is_signed_v<T>)
+            return adoptRef(*new Value(static_cast<int>(value)));
+        else
+            return adoptRef(*new Value(static_cast<double>(value)));
+    } else if constexpr (std::is_floating_point_v<T>)
+        return adoptRef(*new Value(static_cast<double>(value)));
+}
+
 class ObjectBase : public Value {
 private:
     friend class Value;
@@ -186,10 +199,10 @@ public:
 protected:
     ~ObjectBase();
 
+    template<typename T>
+    void setPrimitive(const String& name, T&& value) requires std::is_arithmetic_v<std::remove_cvref_t<T>>;
+
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
-    void setBoolean(const String& name, bool);
-    void setInteger(const String& name, int);
-    void setDouble(const String& name, double);
     void setString(const String& name, const String&);
     void setValue(const String& name, Ref<Value>&&);
     void setObject(const String& name, Ref<ObjectBase>&&);
@@ -240,9 +253,7 @@ public:
     static WTF_EXPORT_PRIVATE Ref<Object> create();
 
     // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
-    using ObjectBase::setBoolean;
-    using ObjectBase::setInteger;
-    using ObjectBase::setDouble;
+    using ObjectBase::setPrimitive;
     using ObjectBase::setString;
     using ObjectBase::setValue;
     using ObjectBase::setObject;
@@ -336,19 +347,11 @@ inline ObjectBase::const_iterator ObjectBase::find(const String& name) const
     return m_map.find(name);
 }
 
-inline void ObjectBase::setBoolean(const String& name, bool value)
+template<typename T>
+inline void ObjectBase::setPrimitive(const String& name, T&& value)
+    requires std::is_arithmetic_v<std::remove_cvref_t<T>>
 {
-    setValue(name, Value::create(value));
-}
-
-inline void ObjectBase::setInteger(const String& name, int value)
-{
-    setValue(name, Value::create(value));
-}
-
-inline void ObjectBase::setDouble(const String& name, double value)
-{
-    setValue(name, Value::create(value));
+    setValue(name, Value::create(std::forward<T>(value)));
 }
 
 inline void ObjectBase::setString(const String& name, const String& value)
