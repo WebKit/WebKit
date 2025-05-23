@@ -147,7 +147,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 {
     ASSERT(RunLoop::isMain());
 
-    if (auto* session = connection.protectedNetworkProcess()->networkSession(sessionID()))
+    if (auto session = connection.protectedNetworkProcess()->checkedNetworkSession(sessionID()))
         m_cache = session->cache();
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
@@ -311,7 +311,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     RefPtr cache = m_cache;
     if (isMainFrameLoad()) {
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
-        if (auto* session = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID())) {
+        if (auto session = protectedConnectionToWebProcess()->protectedNetworkProcess()->checkedNetworkSession(sessionID())) {
             if (auto entry = session->checkedPrefetchCache()->take(request.url())) {
                 LOADER_RELEASE_LOG("retrieveCacheEntry: retrieved an entry from the prefetch cache (isRedirect=%d)", !entry->redirectRequest.isNull());
                 if (!entry->redirectRequest.isNull()) {
@@ -406,7 +406,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
-    auto* networkSession = protectedConnectionToWebProcess()->networkSession();
+    auto networkSession = protectedConnectionToWebProcess()->networkSession();
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", sessionID().toUInt64());
         LOADER_RELEASE_LOG_ERROR("startNetworkLoad: Attempted to create a NetworkLoad for a session that does not exist (sessionID=%" PRIu64 ")", sessionID().toUInt64());
@@ -917,7 +917,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         connection->addNetworkLoadInformation(coreIdentifier(), WTFMove(information));
     }
 
-    if (CheckedPtr networkSession = m_response.url().protocolIs("https"_s) ? connection->networkSession() : nullptr) {
+    if (auto networkSession = m_response.url().protocolIs("https"_s) ? connection->networkSession() : nullptr) {
         if (auto metrics = computeResponseMetrics(m_response))
             networkSession->recordHTTPSConnectionTiming(*metrics);
     }
@@ -1079,7 +1079,7 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
 
     ASSERT(loader == this);
     auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
-    if (auto* session = connection->networkSession())
+    if (auto session = connection->networkSession())
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
     Site responseSite { response.url() };
     connection->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, responseSite, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connection->networkSession() }](bool success) {
