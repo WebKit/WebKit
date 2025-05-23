@@ -722,7 +722,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin, ShellMixin)
         "--buildbot-master", DNS_NAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
-    commandExtra = ['--treat-failing-as-flaky=0.7,10,20']
+    commandExtra = ['--treat-failing-as-flaky=0.7,10,20,300']
     failedTestsFormatString = "%d JSC test%s failed"
     logfiles = {"json": jsonFileName}
 
