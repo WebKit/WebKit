@@ -26,12 +26,15 @@
 #pragma once
 
 #include <glib.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 typedef struct _GSocket GSocket;
+typedef struct _GSource GSource;
 
 namespace WTF {
 

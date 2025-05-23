@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(COCOA)
 
 #include <mach/mach_port.h>
+#include <wtf/ExportMacros.h>
 
 namespace WTF {
 

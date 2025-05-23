@@ -25,6 +25,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 

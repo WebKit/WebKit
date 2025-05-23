@@ -27,7 +27,9 @@
 
 #include <span>
 #include <wtf/EnumTraits.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/SHA1.h>
+#include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 
 namespace WTF::Persistence {

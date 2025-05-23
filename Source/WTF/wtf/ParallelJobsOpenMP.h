@@ -25,8 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParallelJobsOpenMP_h
-#define ParallelJobsOpenMP_h
+#pragma once
+
+#include <wtf/Platform.h>
 
 #if ENABLE(THREADING_OPENMP)
 
@@ -78,5 +79,3 @@ private:
 } // namespace WTF
 
 #endif // ENABLE(THREADING_OPENMP)
-
-#endif // ParallelJobsOpenMP_h

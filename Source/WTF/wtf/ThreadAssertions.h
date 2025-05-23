@@ -27,6 +27,9 @@
 
 #include <atomic>
 #include <utility>
+#include <wtf/Assertions.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 namespace WTF {

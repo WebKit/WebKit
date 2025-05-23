@@ -32,6 +32,8 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/HashMap.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/text/StringHash.h>

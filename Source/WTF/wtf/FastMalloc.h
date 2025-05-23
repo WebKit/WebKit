@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/MallocCommon.h>
+#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 #if !USE(SYSTEM_MALLOC)

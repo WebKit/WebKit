@@ -26,7 +26,9 @@
 #pragma once
 
 #include <string.h>
+#include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>

@@ -25,10 +25,15 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
 #include <wtf/AutomaticThread.h>
 #include <wtf/Deque.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

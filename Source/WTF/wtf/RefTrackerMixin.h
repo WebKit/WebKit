@@ -19,14 +19,14 @@
 
 #pragma once
 
+#include <atomic>
 #include "Compiler.h"
 #include "DataLog.h"
 #include "HashMap.h"
 #include "Lock.h"
+#include "Platform.h"
 #include "StackShot.h"
 #include "StackTrace.h"
-
-#include <atomic>
 
 namespace WTF {
 

@@ -28,15 +28,16 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
-#include <wtf/JSONValues.h>
-#include <wtf/Seconds.h>
-#include <wtf/text/WTFString.h>
-
 #include <cmath>
 #include <limits>
 #include <math.h>
 #include <stdint.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Seconds.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 

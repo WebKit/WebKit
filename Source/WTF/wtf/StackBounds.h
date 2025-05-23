@@ -27,6 +27,9 @@
 #pragma once
 
 #include <algorithm>
+#include <wtf/Assertions.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
 #include <wtf/StackPointer.h>
 #include <wtf/ThreadingPrimitives.h>
 

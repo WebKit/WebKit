@@ -21,7 +21,9 @@
 #pragma once
 
 #include <array>
+#include <span>
 #include <wtf/ASCIICType.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/FastFloat.h>
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/StringView.h>

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/ExportMacros.h>
 #include <wtf/Vector.h>
 
 namespace WTF {

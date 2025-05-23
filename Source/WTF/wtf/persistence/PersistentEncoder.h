@@ -27,6 +27,7 @@
 
 #include <span>
 #include <wtf/EnumTraits.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

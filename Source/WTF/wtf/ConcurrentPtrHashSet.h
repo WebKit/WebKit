@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
+#include <wtf/Compiler.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>

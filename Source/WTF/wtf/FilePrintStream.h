@@ -26,6 +26,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {

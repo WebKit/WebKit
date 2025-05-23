@@ -26,6 +26,8 @@
 #pragma once
 
 #include <optional>
+#include <wtf/Assertions.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/FileLockMode.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>

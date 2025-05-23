@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 

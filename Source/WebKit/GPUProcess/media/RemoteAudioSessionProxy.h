@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
 #include "MessageReceiver.h"

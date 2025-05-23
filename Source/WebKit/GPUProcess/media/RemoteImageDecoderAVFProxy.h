@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
 #include "MessageReceiver.h"

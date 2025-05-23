@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(THREADING_LIBDISPATCH)
 
 #include <dispatch/dispatch.h>

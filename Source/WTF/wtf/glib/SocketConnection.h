@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

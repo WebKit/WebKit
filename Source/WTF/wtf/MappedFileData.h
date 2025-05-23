@@ -26,7 +26,9 @@
 #pragma once
 
 #include <span>
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if HAVE(MMAP)
 #include <wtf/MallocSpan.h>
