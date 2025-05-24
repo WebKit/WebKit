@@ -2133,22 +2133,28 @@ escapeChildren:
                 }
             }
 
-            for (SSACalculator::Def* phiDef : m_allocationSSA.phisForBlock(block)) {
-                SSACalculator::Variable* variable = phiDef->variable();
-                m_insertionSet.insert(0, phiDef->value());
+            // Need to prune availability based on exit site before using.
+            {
+                auto& phis = m_allocationSSA.phisForBlock(block);
+                if (!phis.isEmpty()) {
+                    auto exitAvailability = availabilityCalculator.m_availability;
+                    exitAvailability.pruneByLiveness(m_graph, block->at(0)->origin.forExit);
+                    for (SSACalculator::Def* phiDef : phis) {
+                        SSACalculator::Variable* variable = phiDef->variable();
+                        m_insertionSet.insert(0, phiDef->value());
 
-                Node* identifier = indexToNode[variable->index()];
-                m_escapeeToMaterialization.add(identifier, phiDef->value());
-                bool canExit = false;
-                insertOSRHintsForUpdate(
-                    0, block->at(0)->origin, canExit,
-                    availabilityCalculator.m_availability, identifier, phiDef->value());
+                        Node* identifier = indexToNode[variable->index()];
+                        m_escapeeToMaterialization.add(identifier, phiDef->value());
+                        bool canExit = false;
+                        insertOSRHintsForUpdate(0, block->at(0)->origin, canExit, exitAvailability, identifier, phiDef->value());
 
-                for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
-                    if (m_heap.isUnescapedAllocation(location.base())) {
-                        m_insertionSet.insert(0,
-                            location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
-                        m_localMapping.set(location, phiDef->value());
+                        for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
+                            if (m_heap.isUnescapedAllocation(location.base())) {
+                                m_insertionSet.insert(0,
+                                    location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
+                                m_localMapping.set(location, phiDef->value());
+                            }
+                        }
                     }
                 }
             }
@@ -2190,14 +2196,20 @@ escapeChildren:
                 for (std::pair<PromotedHeapLocation, Node*> pair : m_materializationSiteToHints.get(node))
                     m_insertionSet.insert(nodeIndex, createRecovery(block, pair.first, node, canExit));
 
-                // We need to put the OSR hints after the recoveries,
-                // because we only want the hints once the object is
-                // complete
-                for (Node* materialization : m_materializationSiteToMaterializations.get(node)) {
-                    Node* escapee = m_materializationToEscapee.get(materialization);
-                    insertOSRHintsForUpdate(
-                        nodeIndex, node->origin, canExit,
-                        availabilityCalculator.m_availability, escapee, materialization);
+                {
+                    // We need to put the OSR hints after the recoveries,
+                    // because we only want the hints once the object is
+                    // complete
+                    auto iterator = m_materializationSiteToMaterializations.find(node);
+                    if (iterator != m_materializationSiteToMaterializations.end()) {
+                        // Need to prune availability based on exit site before using.
+                        auto exitAvailability = availabilityCalculator.m_availability;
+                        exitAvailability.pruneByLiveness(m_graph, node->origin.forExit);
+                        for (Node* materialization : iterator->value) {
+                            Node* escapee = m_materializationToEscapee.get(materialization);
+                            insertOSRHintsForUpdate(nodeIndex, node->origin, canExit, exitAvailability, escapee, materialization);
+                        }
+                    }
                 }
 
                 if (node->origin.exitOK && !canExit) {
@@ -2402,14 +2414,14 @@ escapeChildren:
         return def->value();
     }
 
-    void insertOSRHintsForUpdate(unsigned nodeIndex, NodeOrigin origin, bool& canExit, AvailabilityMap& availability, Node* escapee, Node* materialization)
+    void insertOSRHintsForUpdate(unsigned nodeIndex, NodeOrigin origin, bool& canExit, const AvailabilityMap& exitAvailability, Node* escapee, Node* materialization)
     {
         dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose,
             "Inserting OSR hints at ", origin, ":\n",
             "    Escapee: ", escapee, "\n",
             "    Materialization: ", materialization, "\n",
-            "    Availability: ", availability);
-        
+            "    Availability: ", exitAvailability);
+
         // We need to follow() the value in the heap.
         // Consider the following graph:
         //
@@ -2435,7 +2447,7 @@ escapeChildren:
         // In order to do this, we say that we need to insert an
         // update hint for any availability whose node resolve()s to
         // the materialization.
-        for (auto entry : availability.m_heap) {
+        for (auto entry : exitAvailability.m_heap) {
             if (!entry.value.hasNode())
                 continue;
             if (m_heap.follow(entry.value.node()) != escapee)
@@ -2446,13 +2458,13 @@ escapeChildren:
                 entry.key.createHint(m_graph, origin.takeValidExit(canExit), materialization));
         }
 
-        for (unsigned i = availability.m_locals.size(); i--;) {
-            if (!availability.m_locals[i].hasNode())
+        for (unsigned i = exitAvailability.m_locals.size(); i--;) {
+            if (!exitAvailability.m_locals[i].hasNode())
                 continue;
-            if (m_heap.follow(availability.m_locals[i].node()) != escapee)
+            if (m_heap.follow(exitAvailability.m_locals[i].node()) != escapee)
                 continue;
 
-            Operand operand = availability.m_locals.operandForIndex(i);
+            Operand operand = exitAvailability.m_locals.operandForIndex(i);
             m_insertionSet.insertNode(
                 nodeIndex, SpecNone, MovHint, origin.takeValidExit(canExit), OpInfo(operand),
                 materialization->defaultEdge());
