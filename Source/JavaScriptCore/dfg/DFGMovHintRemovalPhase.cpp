@@ -83,14 +83,7 @@ public:
                     Node* node = block->at(nodeIndex);
                     if (node->op() == MovHint)
                         live.operand(node->unlinkedOperand()) = false;
-
-                    if (mayExit(m_graph, node) != DoesNotExit) {
-                        m_graph.forAllLiveInBytecode(
-                            node->origin.forExit,
-                            [&](Operand reg) {
-                                live.operand(reg) = true;
-                            });
-                    }
+                    defineLiveOperands(node, live);
                 }
 
                 if (live == liveAtHead[block])
@@ -115,6 +108,36 @@ public:
     }
 
 private:
+    void defineLiveOperands(Node* node, Operands<bool>& live)
+    {
+        switch (mayExit(m_graph, node)) {
+        case DoesNotExit:
+            return;
+
+        case Exits: {
+            m_graph.forAllLiveInBytecode(
+                node->origin.forExit,
+                [&](Operand operand) {
+                    live.operand(operand) = true;
+                });
+            return;
+        }
+
+        case ExitsForExceptions: {
+            CodeOrigin catchOrigin;
+            HandlerInfo* handler = nullptr;
+            if (m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, catchOrigin, handler)) {
+                m_graph.forAllLiveInBytecode(
+                    catchOrigin,
+                    [&](Operand operand) {
+                        live.operand(operand) = true;
+                    });
+            }
+            return;
+        }
+        }
+    }
+
     void handleBlock(BasicBlock* block, const Operands<bool>& liveAtTail)
     {
         dataLogLnIf(DFGMovHintRemovalPhaseInternal::verbose, "Handing block ", pointerDump(block));
@@ -150,14 +173,7 @@ private:
                 }
                 live.operand(node->unlinkedOperand()) = false;
             }
-
-            if (mayExit(m_graph, node) != DoesNotExit) {
-                m_graph.forAllLiveInBytecode(
-                    node->origin.forExit,
-                    [&](Operand reg) {
-                        live.operand(reg) = true;
-                    });
-            }
+            defineLiveOperands(node, live);
         }
     }
 
