@@ -101,8 +101,11 @@ void RenderFileUploadControl::updateFromElement()
     // security reasons that's the only change the DOM is allowed to make.
     RefPtr files = inputElement().files();
     ASSERT(files);
-    if (files && files->isEmpty())
+    if (files && files->isEmpty()) {
+        if (style().fieldSizing() == FieldSizing::Content)
+            setNeedsLayoutAndPreferredWidthsUpdate();
         repaint();
+    }
 }
 
 static int NODELETE nodeLogicalWidth(Node* node)
@@ -273,6 +276,31 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
 void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    if (style().fieldSizing() == FieldSizing::Content) {
+        const String label = fileTextValue();
+        const FontCascade& font = style().fontCascade();
+
+        float labelWidth = font.width(constructTextRun(label, style(), ExpansionBehavior::allowRightOnly()));
+        maxLogicalWidth = labelWidth;
+        if (RefPtr button = uploadButton()) {
+            if (CheckedPtr buttonRenderer = dynamicDowncast<RenderBox>(button->renderer())) {
+                maxLogicalWidth += buttonRenderer->maxPreferredLogicalWidth();
+                maxLogicalWidth += afterButtonSpacing;
+                if (inputElement().icon()) {
+#if PLATFORM(COCOA)
+                    int iconLogicalWidth = nodeLogicalHeight(uploadButton());
+#endif
+                    maxLogicalWidth += iconLogicalWidth;
+                    maxLogicalWidth += iconFilenameSpacing;
+                }
+            }
+        }
+
+        if (!style().logicalWidth().isPercentOrCalculated())
+            minLogicalWidth = maxLogicalWidth;
+        return;
+    }
+
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = logicalWidth.value();
@@ -306,6 +334,11 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
 void RenderFileUploadControl::computePreferredLogicalWidths()
 {
     ASSERT(needsPreferredLogicalWidthsUpdate());
+
+    if (style().fieldSizing() == FieldSizing::Content) {
+        RenderBlockFlow::computePreferredLogicalWidths();
+        return;
+    }
 
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
@@ -344,13 +377,20 @@ String RenderFileUploadControl::fileTextValue() const
     Ref input = inputElement();
     if (!input->files())
         return { };
+    auto useContentSizing = style().fieldSizing() == FieldSizing::Content;
     if (input->files()->length() && !input->displayString().isEmpty()) {
+        if (useContentSizing)
+            return input->displayString();
+
         if (input->files()->length() == 1)
             return StringTruncator::centerTruncate(input->displayString(), maxFilenameLogicalWidth(), style().fontCascade());
 
         return StringTruncator::rightTruncate(input->displayString(), maxFilenameLogicalWidth(), style().fontCascade());
     }
-    return theme().fileListNameForWidth(input->files(), style().fontCascade(), maxFilenameLogicalWidth(), input->multiple());
+    return useContentSizing
+        ? theme().fileListName(input->files(), input->multiple())
+        : theme().fileListNameForWidth(input->files(), style().fontCascade(), maxFilenameLogicalWidth(), input->multiple());
+
 }
     
 } // namespace WebCore

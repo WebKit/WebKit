@@ -2166,15 +2166,21 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCas
     if (width <= 0)
         return String();
 
-    String string;
-    if (fileList->isEmpty())
-        string = fileListDefaultLabel(multipleFilesAllowed);
-    else if (fileList->length() == 1)
-        string = fileList->item(0)->name();
-    else
-        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font);
+    String string = fileListName(fileList, multipleFilesAllowed);
+    if (fileList->length() > 1)
+        return StringTruncator::rightTruncate(string, width, font);
 
     return StringTruncator::centerTruncate(string, width, font);
+}
+
+String RenderTheme::fileListName(const FileList* fileList, bool multipleFilesAllowed) const
+{
+    if (fileList->isEmpty())
+        return fileListDefaultLabel(multipleFilesAllowed);
+    if (fileList->length() == 1)
+        return fileList->item(0)->name();
+
+    return multipleFileUploadText(fileList->length());
 }
 
 #if USE(SYSTEM_PREVIEW)

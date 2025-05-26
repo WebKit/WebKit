@@ -42,6 +42,7 @@
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "RenderFileUploadControl.h"
+#include "RenderObjectInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -365,8 +366,11 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     if (shouldRequestIcon == RequestIcon::Yes)
         requestIcon(protect(this->files())->paths());
 
-    if (CheckedPtr renderer = element->renderer())
+    if (CheckedPtr renderer = element->renderer()) {
+        if (renderer->style().fieldSizing() == FieldSizing::Content)
+            renderer->setNeedsLayoutAndPreferredWidthsUpdate();
         renderer->repaint();
+    }
 
     if (wasSetByJavaScript == WasSetByJavaScript::Yes)
         return;
