@@ -8,6 +8,7 @@ CompileFlags:
         -Wno-stringop-overread,
         -Wno-stringop-overflow,
         -Wno-maybe-uninitialized,
+        -Wunsafe-buffer-usage,
     ]
     Add: [
         $platform_specific_flags
