@@ -671,6 +671,16 @@ void WaylandSeat::handleKeyEvent(uint32_t time, uint32_t key, uint32_t state, bo
             return;
         }
         break;
+    case WPE_KEY_F11:
+        if (!state || eventModifiers)
+            break;
+        auto* toplevel = WPE_TOPLEVEL(m_keyboard.toplevel.get());
+        auto topLevelState = wpe_toplevel_get_state(toplevel);
+        if (topLevelState & WPE_TOPLEVEL_STATE_FULLSCREEN)
+            wpe_toplevel_unfullscreen(toplevel);
+        else
+            wpe_toplevel_fullscreen(toplevel);
+        break;
     }
 
     auto* event = wpe_event_keyboard_new(state ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP, view.get(), m_keyboard.source, time,
