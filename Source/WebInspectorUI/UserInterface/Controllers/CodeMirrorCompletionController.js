@@ -585,11 +585,9 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             let functionName = token.string;
             if (!functionName)
                 return [];
-
-            if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
-                return WI.CSSKeywordCompletions.forFunction(functionName).executeQuery(this._prefix);
-            else
-                return WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
+            
+            return WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
+            
         }
 
         // Scan backwards looking for the current property.
@@ -618,11 +616,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             if (this._implicitSuffix === suffix)
                 this._implicitSuffix = "";
 
-            let completions;
-            if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
-                completions = WI.CSSKeywordCompletions.forProperty(propertyName).executeQuery(this._prefix);
-            else
-                completions = WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(this._prefix);
+            let completions = WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(this._prefix);
 
             if (suffix.startsWith("("))
                 completions = completions.map((x) => x.replace(/\(\)$/, ""));
@@ -633,8 +627,6 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         this._implicitSuffix = suffix !== ":" ? ": " : "";
 
         // Complete property names.
-        if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
-            return WI.cssManager.propertyNameCompletions.executeQuery(this._prefix);
         return WI.cssManager.propertyNameCompletions.startsWith(this._prefix);
     }
 

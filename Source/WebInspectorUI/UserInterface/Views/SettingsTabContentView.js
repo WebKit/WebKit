@@ -433,7 +433,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let sourcesGroup = experimentalSettingsView.addGroup(WI.UIString("Sources:"));
         sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
-        sourcesGroup.addSetting(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion, WI.UIString("Use fuzzy matching for CSS code completion"));
         sourcesGroup.addSetting(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline, WI.UIString("Limit number of resources in navigation sidebar"));
 
         experimentalSettingsView.addSeparator();
@@ -471,7 +470,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
 
         listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
-        listenForChange(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
         listenForChange(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline);
 
         this._createReferenceLink(experimentalSettingsView);
