@@ -2231,7 +2231,7 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
     LayoutRect clipRect = LayoutRect(borderBoxRect.location() + location, borderBoxRect.size());
 
     if (!style().clipLeft().isAuto()) {
-        LayoutUnit c = valueForLength(style().clipLeft(), borderBoxRect.width());
+        LayoutUnit c = Style::evaluate(style().clipLeft(), borderBoxRect.width());
         clipRect.move(c, 0_lu);
         clipRect.contract(c, 0_lu);
     }
@@ -2240,16 +2240,16 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
     // from the left and top edges. Therefore it's better to avoid constraining to smaller widths and heights.
 
     if (!style().clipRight().isAuto())
-        clipRect.contract(width() - valueForLength(style().clipRight(), width()), 0_lu);
+        clipRect.contract(width() - Style::evaluate(style().clipRight(), width()), 0_lu);
 
     if (!style().clipTop().isAuto()) {
-        LayoutUnit c = valueForLength(style().clipTop(), borderBoxRect.height());
+        LayoutUnit c = Style::evaluate(style().clipTop(), borderBoxRect.height());
         clipRect.move(0_lu, c);
         clipRect.contract(0_lu, c);
     }
 
     if (!style().clipBottom().isAuto())
-        clipRect.contract(0_lu, height() - valueForLength(style().clipBottom(), height()));
+        clipRect.contract(0_lu, height() - Style::evaluate(style().clipBottom(), height()));
 
     return clipRect;
 }
@@ -5021,8 +5021,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
     }
 
     if (style().containIntrinsicWidthHasLength()) {
-        ASSERT(style().containIntrinsicWidth().has_value());
-        return LayoutUnit { style().containIntrinsicWidth()->value() };
+        ASSERT(style().containIntrinsicWidthLength().has_value());
+        return LayoutUnit { style().containIntrinsicWidthLength()->value };
     }
 
     ASSERT(style().containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndNone);
@@ -5045,8 +5045,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     }
 
     if (style().containIntrinsicHeightHasLength()) {
-        ASSERT(style().containIntrinsicHeight().has_value());
-        return LayoutUnit { style().containIntrinsicHeight()->value() };
+        ASSERT(style().containIntrinsicHeightLength().has_value());
+        return LayoutUnit { style().containIntrinsicHeightLength()->value };
     }
 
     ASSERT(style().containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndNone);

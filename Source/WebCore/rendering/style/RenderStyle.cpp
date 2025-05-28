@@ -2,6 +2,7 @@
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -841,9 +842,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.counterDirectives != second.counterDirectives)
         return true;
 
-    if (!arePointingToEqualData(first.scale, second.scale)
-        || !arePointingToEqualData(first.rotate, second.rotate)
-        || !arePointingToEqualData(first.translate, second.translate))
+    if (first.scale != second.scale
+        || first.rotate != second.rotate
+        || first.translate != second.translate)
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
 
     if (!arePointingToEqualData(first.offsetPath, second.offsetPath)
@@ -1938,11 +1939,11 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClipPath);
         if (first.textDecorationColor != second.textDecorationColor)
             changingProperties.m_properties.set(CSSPropertyTextDecorationColor);
-        if (!arePointingToEqualData(first.rotate, second.rotate))
+        if (first.rotate != second.rotate)
             changingProperties.m_properties.set(CSSPropertyRotate);
-        if (!arePointingToEqualData(first.scale, second.scale))
+        if (first.scale != second.scale)
             changingProperties.m_properties.set(CSSPropertyScale);
-        if (!arePointingToEqualData(first.translate, second.translate))
+        if (first.translate != second.translate)
             changingProperties.m_properties.set(CSSPropertyTranslate);
         if (!arePointingToEqualData(first.offsetPath, second.offsetPath))
             changingProperties.m_properties.set(CSSPropertyOffsetPath);
@@ -2261,15 +2262,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         m_svgStyle->conservativelyCollectChangedAnimatableProperties(*other.m_svgStyle, changingProperties);
 }
 
-void RenderStyle::setClip(Length&& top, Length&& right, Length&& bottom, Length&& left)
-{
-    auto& data = m_nonInheritedData.access().rareData.access();
-    data.clip.top() = WTFMove(top);
-    data.clip.right() = WTFMove(right);
-    data.clip.bottom() = WTFMove(bottom);
-    data.clip.left() = WTFMove(left);
-}
-
 void RenderStyle::addCursor(RefPtr<StyleImage>&& image, const std::optional<IntPoint>& hotSpot)
 {
     auto& cursorData = m_rareInheritedData.access().cursorData;
@@ -2301,19 +2293,34 @@ void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)
     m_nonInheritedData.access().rareData.access().willChange = WTFMove(willChangeData);
 }
 
-void RenderStyle::setScale(RefPtr<ScaleTransformOperation>&& t)
+void RenderStyle::setScale(Style::Scale&& t)
 {
     m_nonInheritedData.access().rareData.access().scale = WTFMove(t);
 }
 
-void RenderStyle::setRotate(RefPtr<RotateTransformOperation>&& t)
+void RenderStyle::setScale(const Style::Scale& t)
+{
+    m_nonInheritedData.access().rareData.access().scale = t;
+}
+
+void RenderStyle::setRotate(Style::Rotate&& t)
 {
     m_nonInheritedData.access().rareData.access().rotate = WTFMove(t);
 }
 
-void RenderStyle::setTranslate(RefPtr<TranslateTransformOperation>&& t)
+void RenderStyle::setRotate(const Style::Rotate& t)
+{
+    m_nonInheritedData.access().rareData.access().rotate = t;
+}
+
+void RenderStyle::setTranslate(Style::Translate&& t)
 {
     m_nonInheritedData.access().rareData.access().translate = WTFMove(t);
+}
+
+void RenderStyle::setTranslate(const Style::Translate& t)
+{
+    m_nonInheritedData.access().rareData.access().translate = t;
 }
 
 void RenderStyle::clearCursorList()
@@ -2401,10 +2408,10 @@ void RenderStyle::setHasAttrContent()
 
 bool RenderStyle::affectedByTransformOrigin() const
 {
-    if (rotate() && !rotate()->isIdentity())
+    if (!rotate().isNone() && !rotate()->isIdentity())
         return true;
 
-    if (scale() && !scale()->isIdentity())
+    if (!scale().isNone() && !scale()->isIdentity())
         return true;
 
     if (transform().affectedByTransformOrigin())
@@ -2487,19 +2494,19 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Trans
 
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
-        if (auto* translate = this->translate())
+        if (auto translate = this->translate(); !translate.isNone())
             translate->apply(transform, boundingBox.size());
     }
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
     if (options.contains(RenderStyle::TransformOperationOption::Rotate)) {
-        if (auto* rotate = this->rotate())
+        if (auto rotate = this->rotate(); !rotate.isNone())
             rotate->apply(transform, boundingBox.size());
     }
 
     // 5. Scale by the computed X, Y, and Z values of scale.
     if (options.contains(RenderStyle::TransformOperationOption::Scale)) {
-        if (auto* scale = this->scale())
+        if (auto scale = this->scale(); !scale.isNone())
             scale->apply(transform, boundingBox.size());
     }
 

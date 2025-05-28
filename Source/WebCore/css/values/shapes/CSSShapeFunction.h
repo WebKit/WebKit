@@ -310,7 +310,7 @@ struct ArcCommand {
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
 
-    using SizeOfEllipse = SpaceSeparatedSize<LengthPercentage<>>;
+    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<>>;
     SizeOfEllipse size;
 
     ArcSweep arcSweep;

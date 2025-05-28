@@ -136,6 +136,13 @@ inline DynamicRangeLimit::Kind DynamicRangeLimit::copyKind(const Kind& other)
 template<> struct ToCSS<DynamicRangeLimit> { auto operator()(const DynamicRangeLimit&, const RenderStyle&) -> CSS::DynamicRangeLimit; };
 template<> struct ToStyle<CSS::DynamicRangeLimit> { auto operator()(const CSS::DynamicRangeLimit&, const BuilderState&) -> DynamicRangeLimit; };
 
+// `DynamicRangeLimit` is special-cased to return a `CSSDynamicRangeLimitValue`.
+template<> struct CSSValueCreation<DynamicRangeLimit> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const DynamicRangeLimit&); };
+
+// MARK: Serialization
+
+template<> struct Serialize<DynamicRangeLimit> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const DynamicRangeLimit&); };
+
 // MARK: Blending
 
 template<> struct Blending<DynamicRangeLimit> {

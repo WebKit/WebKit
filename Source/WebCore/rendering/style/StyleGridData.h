@@ -29,6 +29,7 @@
 #include "GridTrackSize.h"
 #include "RenderStyleConstants.h"
 #include "StyleContentAlignmentData.h"
+#include "StyleGridTemplateAreas.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -139,11 +140,7 @@ public:
     Vector<GridTrackSize> gridAutoRows;
     Vector<GridTrackSize> gridAutoColumns;
 
-    NamedGridAreaMap namedGridArea;
-    // Because namedGridArea doesn't store the unnamed grid areas, we need to keep track
-    // of the explicit grid size defined by both named and unnamed grid areas.
-    unsigned namedGridAreaRowCount;
-    unsigned namedGridAreaColumnCount;
+    Style::GridTemplateAreas gridTemplateAreas;
 
 private:
     void computeCachedTrackData(const GridTrackList&, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType&, bool& subgrid, bool& masonry);

@@ -47,16 +47,11 @@ struct ScrollMarginEdge {
     ScrollMarginEdge(WebCore::Length&& value)
         : m_value { WTFMove(value) }
     {
-        RELEASE_ASSERT(m_value.isSpecified());
+        RELEASE_ASSERT(m_value.isFixed());
     }
 
     ScrollMarginEdge(CSS::ValueLiteral<CSS::LengthUnit::Px> pixels)
         : m_value { pixels.value, WebCore::LengthType::Fixed }
-    {
-    }
-
-    ScrollMarginEdge(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> percentage)
-        : m_value { percentage.value, WebCore::LengthType::Percent }
     {
     }
 
@@ -66,6 +61,11 @@ struct ScrollMarginEdge {
     Ref<CSSValue> toCSS(ExtractorState&) const;
 
     bool isZero() const { return m_value.isZero(); }
+
+    template<typename F> decltype(auto) switchOn(F&& functor) const
+    {
+        return functor(Style::Length<> { m_value.value() });
+    }
 
     bool operator==(const ScrollMarginEdge&) const = default;
 
@@ -107,5 +107,7 @@ LayoutBoxExtent extentForRect(const ScrollMargin&, const LayoutRect&);
 
 } // namespace Style
 } // namespace WebCore
+
+template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::ScrollMarginEdge> = true;
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ScrollMargin, 4)

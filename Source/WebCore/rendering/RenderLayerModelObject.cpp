@@ -393,7 +393,7 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
 
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
-    bool hasCSSTransform = style.hasTransform() || style.rotate() || style.translate() || style.scale();
+    bool hasCSSTransform = style.hasTransform() || !style.rotate().isNone() || !style.translate().isNone() || !style.scale().isNone();
     bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
 
     // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'

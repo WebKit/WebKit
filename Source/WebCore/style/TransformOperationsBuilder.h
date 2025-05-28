@@ -36,20 +36,21 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class CSSValue;
-class RotateTransformOperation;
-class ScaleTransformOperation;
 class TransformOperation;
 class TransformOperations;
-class TranslateTransformOperation;
 
 namespace Style {
+
+struct Translate;
+struct Rotate;
+struct Scale;
 
 Ref<TransformOperation> createTransformOperation(const CSSValue&, const CSSToLengthConversionData&);
 TransformOperations createTransformOperations(const CSSValue&, const CSSToLengthConversionData&);
 
-RefPtr<TranslateTransformOperation> createTranslate(const CSSValue&, const CSSToLengthConversionData&);
-RefPtr<RotateTransformOperation> createRotate(const CSSValue&, const CSSToLengthConversionData&);
-RefPtr<ScaleTransformOperation> createScale(const CSSValue&, const CSSToLengthConversionData&);
+Translate createTranslate(const CSSValue&, const CSSToLengthConversionData&);
+Rotate createRotate(const CSSValue&, const CSSToLengthConversionData&);
+Scale createScale(const CSSValue&, const CSSToLengthConversionData&);
 
 } // namespace Style
 } // namespace WebCore

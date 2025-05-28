@@ -360,7 +360,7 @@ private:
     void (RenderStyle::*m_setter)(T&&);
 };
 
-class OptionalLengthWrapper : public WrapperWithGetter<std::optional<WebCore::Length>> {
+class OptionalLengthWrapper final : public WrapperWithGetter<std::optional<WebCore::Length>> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
     enum class Flags {
@@ -778,21 +778,26 @@ public:
     DiscreteWrapper<NinePieceImageRule> m_verticalWrapper;
 };
 
-class ContainIntrinsicLengthWrapper final : public OptionalLengthWrapper {
+class ContainIntrinsicSizeWrapper final : public WrapperWithGetter<std::optional<ContainIntrinsicSize::Length>> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    ContainIntrinsicLengthWrapper(CSSPropertyID property, std::optional<WebCore::Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<WebCore::Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
-        : OptionalLengthWrapper(property, getter, setter, { Flags::NegativeLengthsAreInvalid })
+    ContainIntrinsicSizeWrapper(CSSPropertyID property, std::optional<ContainIntrinsicSize::Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<ContainIntrinsicSize::Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
+        : WrapperWithGetter<std::optional<ContainIntrinsicSize::Length>>(property, getter)
+        , m_setter(setter)
         , m_containIntrinsicSizeTypeGetter(typeGetter)
         , m_containIntrinsicSizeTypeSetter(typeSetter)
     {
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation operation) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         if ((from.*m_containIntrinsicSizeTypeGetter)() != (to.*m_containIntrinsicSizeTypeGetter)())
             return false;
-        return OptionalLengthWrapper::canInterpolate(from, to, operation);
+
+        if (!this->value(from) || !this->value(to))
+            return false;
+
+        return Style::canBlend(*this->value(from), *this->value(to));
     }
 
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
@@ -800,10 +805,17 @@ public:
         auto type = context.progress < 0.5 ? (from.*m_containIntrinsicSizeTypeGetter)() : (to.*m_containIntrinsicSizeTypeGetter)();
         (destination.*m_containIntrinsicSizeTypeSetter)(type);
 
-        OptionalLengthWrapper::interpolate(destination, from, to, context);
+        if (context.isDiscrete) {
+            ASSERT(!context.progress || context.progress == 1);
+            (destination.*m_setter)(context.progress ? this->value(to) : this->value(from));
+            return;
+        }
+
+        (destination.*m_setter)(Style::blend(*this->value(from), *this->value(to), context));
     }
 
 private:
+    void (RenderStyle::*m_setter)(std::optional<ContainIntrinsicSize::Length>);
     ContainIntrinsicSizeType (RenderStyle::*m_containIntrinsicSizeTypeGetter)() const;
     void (RenderStyle::*m_containIntrinsicSizeTypeSetter)(ContainIntrinsicSizeType);
 };
@@ -888,22 +900,65 @@ private:
     OptionSet<Flags> m_flags;
 };
 
-class ClipWrapper final : public LengthBoxWrapper {
+class ClipWrapper final : public WrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
     ClipWrapper()
-        : LengthBoxWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxWrapper::Flags::AllowsNegativeValues })
+        : WrapperBase(CSSPropertyClip)
     {
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
+    Clip value(const RenderStyle& style) const
     {
-        return from.hasClip() && to.hasClip() && LengthBoxWrapper::canInterpolate(from, to, compositeOperation);
+        if (!style.hasClip())
+            return { CSS::Keyword::Auto { } };
+        return { style.clip() };
+    }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        if (&a == &b)
+            return true;
+        return value(a) == value(b);
+    }
+
+#if !LOG_DISABLED
+    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+    }
+#endif
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        if (!from.hasClip() || !to.hasClip())
+            return false;
+
+        auto& fromClip = from.clip();
+        auto& toClip = to.clip();
+        return canInterpolateLengths(fromClip.value->top().length, toClip.value->top().length, false)
+            && canInterpolateLengths(fromClip.value->right().length, toClip.value->right().length, false)
+            && canInterpolateLengths(fromClip.value->bottom().length, toClip.value->bottom().length, false)
+            && canInterpolateLengths(fromClip.value->left().length, toClip.value->left().length, false);
+    }
+
+    bool requiresInterpolationForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        auto& fromClip = from.clip();
+        auto& toClip = to.clip();
+        return lengthsRequireInterpolationForAccumulativeIteration(fromClip.value->top().length, toClip.value->top().length)
+            && lengthsRequireInterpolationForAccumulativeIteration(fromClip.value->right().length, toClip.value->right().length)
+            && lengthsRequireInterpolationForAccumulativeIteration(fromClip.value->bottom().length, toClip.value->bottom().length)
+            && lengthsRequireInterpolationForAccumulativeIteration(fromClip.value->left().length, toClip.value->left().length);
     }
 
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
     {
-        LengthBoxWrapper::interpolate(destination, from, to, context);
+        if (context.isDiscrete)
+            destination.setClip(context.progress ? ClipRect { to.clip() } : ClipRect { from.clip() });
+        else
+            destination.setClip(blendFunc(from.clip(), to.clip(), context));
+
         destination.setHasClip(true);
     }
 };
@@ -2027,30 +2082,6 @@ public:
     }
 };
 
-class PerspectiveWrapper final : public FloatWrapper {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    PerspectiveWrapper()
-        : FloatWrapper(CSSPropertyPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective, FloatWrapper::ValueRange::NonNegative)
-    {
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
-    {
-        if (!from.hasPerspective() || !to.hasPerspective())
-            return false;
-        return FloatWrapper::canInterpolate(from, to, compositeOperation);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        if (context.isDiscrete)
-            (destination.*m_setter)(context.progress ? value(to) : value(from));
-        else
-            FloatWrapper::interpolate(destination, from, to, context);
-    }
-};
-
 class TabSizeWrapper final : public Wrapper<const TabSize&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
@@ -2222,9 +2253,7 @@ public:
         auto& source = context.progress ? to : from;
         destination.setImplicitNamedGridColumnLines(source.implicitNamedGridColumnLines());
         destination.setImplicitNamedGridRowLines(source.implicitNamedGridRowLines());
-        destination.setNamedGridArea(source.namedGridArea());
-        destination.setNamedGridAreaRowCount(source.namedGridAreaRowCount());
-        destination.setNamedGridAreaColumnCount(source.namedGridAreaColumnCount());
+        destination.setGridTemplateAreas(source.gridTemplateAreas());
     }
 
 #if !LOG_DISABLED

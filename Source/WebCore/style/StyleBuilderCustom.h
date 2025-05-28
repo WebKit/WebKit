@@ -54,10 +54,12 @@
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderStateInlines.h"
 #include "StyleCachedImage.h"
+#include "StyleClip.h"
 #include "StyleCursorImage.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
+#include "StyleGridTemplateAreas.h"
 #include "StyleImageSet.h"
 #include "StyleRatio.h"
 #include "StyleResolver.h"
@@ -84,6 +86,9 @@ inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { a
 inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
 inline DynamicRangeLimit forwardInheritedValue(const DynamicRangeLimit& value) { auto copy = value; return copy; }
 inline CornerShapeValue forwardInheritedValue(const CornerShapeValue& value) { auto copy = value; return copy; }
+inline ClipRect forwardInheritedValue(const ClipRect& value) { auto copy = value; return copy; }
+inline GridTemplateAreas forwardInheritedValue(const GridTemplateAreas& value) { auto copy = value; return copy; }
+inline Perspective forwardInheritedValue(const Perspective& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {
@@ -597,7 +602,7 @@ inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyInitialClip(BuilderState& builderState)
 {
-    builderState.style().setClip(WebCore::Length(), WebCore::Length(), WebCore::Length(), WebCore::Length());
+    builderState.style().setClip(ClipRect { CSS::Keyword::Auto { } });
     builderState.style().setHasClip(false);
 }
 
@@ -606,8 +611,7 @@ inline void BuilderCustom::applyInheritClip(BuilderState& builderState)
     auto& parentStyle = builderState.parentStyle();
     if (!parentStyle.hasClip())
         return applyInitialClip(builderState);
-    builderState.style().setClip(WebCore::Length { parentStyle.clipTop() }, WebCore::Length { parentStyle.clipRight() },
-        WebCore::Length { parentStyle.clipBottom() }, WebCore::Length { parentStyle.clipLeft() });
+    builderState.style().setClip(forwardInheritedValue(parentStyle.clip()));
     builderState.style().setHasClip(true);
 }
 
@@ -633,7 +637,7 @@ inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& 
         auto bottom = primitiveValueBottom->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
         auto left = primitiveValueLeft->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
 
-        builderState.style().setClip(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
+        builderState.style().setClip({ WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) });
         builderState.style().setHasClip(true);
     } else {
         ASSERT(value.valueID() == CSSValueAuto);
@@ -974,6 +978,44 @@ inline void BuilderCustom::applyInheritTextEmphasisStyle(BuilderState& builderSt
     builderState.style().setTextEmphasisCustomMark(builderState.parentStyle().textEmphasisCustomMark());
 }
 
+inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
+{
+    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
+        ASSERT(list->length() == 2);
+
+        for (auto& item : *list) {
+            auto valueID = item.valueID();
+            if (valueID == CSSValueFilled || valueID == CSSValueOpen)
+                builderState.style().setTextEmphasisFill(fromCSSValueID<TextEmphasisFill>(valueID));
+            else
+                builderState.style().setTextEmphasisMark(fromCSSValueID<TextEmphasisMark>(valueID));
+        }
+        builderState.style().setTextEmphasisCustomMark(nullAtom());
+        return;
+    }
+
+    auto primitiveValue = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    if (!primitiveValue)
+        return;
+
+    if (primitiveValue->isString()) {
+        builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
+        builderState.style().setTextEmphasisMark(TextEmphasisMark::Custom);
+        builderState.style().setTextEmphasisCustomMark(AtomString { primitiveValue->stringValue() });
+        return;
+    }
+
+    builderState.style().setTextEmphasisCustomMark(nullAtom());
+
+    if (primitiveValue->valueID() == CSSValueFilled || primitiveValue->valueID() == CSSValueOpen) {
+        builderState.style().setTextEmphasisFill(fromCSSValue<TextEmphasisFill>(value));
+        builderState.style().setTextEmphasisMark(TextEmphasisMark::Auto);
+    } else {
+        builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
+        builderState.style().setTextEmphasisMark(fromCSSValue<TextEmphasisMark>(value));
+    }
+}
+
 inline void BuilderCustom::applyInitialAspectRatio(BuilderState& builderState)
 {
     builderState.style().setAspectRatioType(RenderStyle::initialAspectRatioType());
@@ -1015,44 +1057,6 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
     auto [width, height] = resolveRatio(*ratio);
     builderState.style().setAspectRatioType(AspectRatioType::AutoAndRatio);
     builderState.style().setAspectRatio(width, height);
-}
-
-inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
-{
-    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
-        ASSERT(list->length() == 2);
-
-        for (auto& item : *list) {
-            auto valueID = item.valueID();
-            if (valueID == CSSValueFilled || valueID == CSSValueOpen)
-                builderState.style().setTextEmphasisFill(fromCSSValueID<TextEmphasisFill>(valueID));
-            else
-                builderState.style().setTextEmphasisMark(fromCSSValueID<TextEmphasisMark>(valueID));
-        }
-        builderState.style().setTextEmphasisCustomMark(nullAtom());
-        return;
-    }
-
-    auto primitiveValue = BuilderConverter::requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return;
-
-    if (primitiveValue->isString()) {
-        builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
-        builderState.style().setTextEmphasisMark(TextEmphasisMark::Custom);
-        builderState.style().setTextEmphasisCustomMark(AtomString { primitiveValue->stringValue() });
-        return;
-    }
-
-    builderState.style().setTextEmphasisCustomMark(nullAtom());
-
-    if (primitiveValue->valueID() == CSSValueFilled || primitiveValue->valueID() == CSSValueOpen) {
-        builderState.style().setTextEmphasisFill(fromCSSValue<TextEmphasisFill>(value));
-        builderState.style().setTextEmphasisMark(TextEmphasisMark::Auto);
-    } else {
-        builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
-        builderState.style().setTextEmphasisMark(fromCSSValue<TextEmphasisMark>(value));
-    }
 }
 
 template <BuilderCustom::CounterBehavior counterBehavior>
@@ -1677,9 +1681,7 @@ inline void BuilderCustom::applyInitialGridTemplateAreas(BuilderState& builderSt
     builderState.style().setImplicitNamedGridColumnLines(RenderStyle::initialNamedGridColumnLines());
     builderState.style().setImplicitNamedGridRowLines(RenderStyle::initialNamedGridRowLines());
 
-    builderState.style().setNamedGridArea(RenderStyle::initialNamedGridArea());
-    builderState.style().setNamedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount());
-    builderState.style().setNamedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount());
+    builderState.style().setGridTemplateAreas(RenderStyle::initialGridTemplateAreas());
 }
 
 inline void BuilderCustom::applyInheritGridTemplateAreas(BuilderState& builderState)
@@ -1687,9 +1689,7 @@ inline void BuilderCustom::applyInheritGridTemplateAreas(BuilderState& builderSt
     builderState.style().setImplicitNamedGridColumnLines(builderState.parentStyle().implicitNamedGridColumnLines());
     builderState.style().setImplicitNamedGridRowLines(builderState.parentStyle().implicitNamedGridRowLines());
 
-    builderState.style().setNamedGridArea(builderState.parentStyle().namedGridArea());
-    builderState.style().setNamedGridAreaRowCount(builderState.parentStyle().namedGridAreaRowCount());
-    builderState.style().setNamedGridAreaColumnCount(builderState.parentStyle().namedGridAreaColumnCount());
+    builderState.style().setGridTemplateAreas(forwardInheritedValue(builderState.parentStyle().gridTemplateAreas()));
 }
 
 inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderState, CSSValue& value)
@@ -1703,14 +1703,12 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
     if (!gridTemplateAreasValue)
         return;
 
-    const NamedGridAreaMap& newNamedGridAreas = gridTemplateAreasValue->gridAreaMap();
+    const auto& areas = gridTemplateAreasValue->areas();
 
-    builderState.style().setImplicitNamedGridColumnLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, newNamedGridAreas, GridTrackSizingDirection::ForColumns));
-    builderState.style().setImplicitNamedGridRowLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, newNamedGridAreas, GridTrackSizingDirection::ForRows));
+    builderState.style().setImplicitNamedGridColumnLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, areas.map, GridTrackSizingDirection::ForColumns));
+    builderState.style().setImplicitNamedGridRowLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, areas.map, GridTrackSizingDirection::ForRows));
 
-    builderState.style().setNamedGridArea(gridTemplateAreasValue->gridAreaMap());
-    builderState.style().setNamedGridAreaRowCount(gridTemplateAreasValue->rowCount());
-    builderState.style().setNamedGridAreaColumnCount(gridTemplateAreasValue->columnCount());
+    builderState.style().setGridTemplateAreas(toStyle(areas, builderState));
 }
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
@@ -1769,13 +1767,13 @@ inline void BuilderCustom::applyInheritColor(BuilderState& builderState)
 inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& builderState)
 {
     builderState.style().setContainIntrinsicWidthType(RenderStyle::initialContainIntrinsicWidthType());
-    builderState.style().setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
+    builderState.style().setContainIntrinsicWidthLength(RenderStyle::initialContainIntrinsicWidthLength());
 }
 
 inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState& builderState)
 {
     builderState.style().setContainIntrinsicWidthType(builderState.parentStyle().containIntrinsicWidthType());
-    builderState.style().setContainIntrinsicWidth(builderState.parentStyle().containIntrinsicWidth());
+    builderState.style().setContainIntrinsicWidthLength(builderState.parentStyle().containIntrinsicWidthLength());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builderState, CSSValue& value)
@@ -1783,14 +1781,14 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
     auto& style = builderState.style();
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone) {
-            style.setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
+            style.setContainIntrinsicWidthLength(RenderStyle::initialContainIntrinsicWidthLength());
             return style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::None);
         }
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::Length);
-            auto width = primitiveValue->resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            style.setContainIntrinsicWidth(width);
+            auto width = primitiveValue->resolveAsLength<float>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            style.setContainIntrinsicWidthLength(ContainIntrinsicSize::Length { width });
         }
         return;
     }
@@ -1805,21 +1803,21 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
     else {
         ASSERT(pair->second.isLength());
         style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = pair->second.resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-        style.setContainIntrinsicWidth(lengthValue);
+        auto lengthValue = pair->second.resolveAsLength<float>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        style.setContainIntrinsicWidthLength(ContainIntrinsicSize::Length { lengthValue });
     }
 }
 
 inline void BuilderCustom::applyInitialContainIntrinsicHeight(BuilderState& builderState)
 {
     builderState.style().setContainIntrinsicHeightType(RenderStyle::initialContainIntrinsicHeightType());
-    builderState.style().setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
+    builderState.style().setContainIntrinsicHeightLength(RenderStyle::initialContainIntrinsicHeightLength());
 }
 
 inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState& builderState)
 {
     builderState.style().setContainIntrinsicHeightType(builderState.parentStyle().containIntrinsicHeightType());
-    builderState.style().setContainIntrinsicHeight(builderState.parentStyle().containIntrinsicHeight());
+    builderState.style().setContainIntrinsicHeightLength(builderState.parentStyle().containIntrinsicHeightLength());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builderState, CSSValue& value)
@@ -1827,18 +1825,17 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
     auto& style = builderState.style();
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone) {
-            style.setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
+            style.setContainIntrinsicHeightLength(RenderStyle::initialContainIntrinsicHeightLength());
             return style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::None);
         }
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::Length);
-            auto height = primitiveValue->resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            style.setContainIntrinsicHeight(height);
+            auto height = primitiveValue->resolveAsLength<float>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            style.setContainIntrinsicHeightLength(ContainIntrinsicSize::Length { height });
         }
         return;
     }
-
 
     auto pair = BuilderConverter::requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
     if (!pair)
@@ -1850,8 +1847,8 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
     else {
         ASSERT(pair->second.isLength());
         style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = pair->second.resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-        style.setContainIntrinsicHeight(lengthValue);
+        auto lengthValue = pair->second.resolveAsLength<float>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        style.setContainIntrinsicHeightLength(ContainIntrinsicSize::Length { lengthValue });
     }
 }
 

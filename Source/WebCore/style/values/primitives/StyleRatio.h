@@ -49,6 +49,8 @@ template<size_t I> const auto& get(const Ratio& value)
 
 DEFINE_TYPE_MAPPING(CSS::Ratio, Ratio)
 
+template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Ratio&); };
+
 } // namespace Style
 } // namespace WebCore
 

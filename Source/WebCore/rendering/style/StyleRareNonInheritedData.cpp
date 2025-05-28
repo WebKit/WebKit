@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +30,7 @@
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleReflection.h"
 #include "StyleResolver.h"
 #include "StyleTextEdge.h"
@@ -41,8 +43,8 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRareNonInheritedData);
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
-    : containIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth())
-    , containIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight())
+    : containIntrinsicWidth(RenderStyle::initialContainIntrinsicWidthLength())
+    , containIntrinsicHeight(RenderStyle::initialContainIntrinsicHeightLength())
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , lineClamp(RenderStyle::initialLineClamp())
@@ -296,9 +298,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && textDecorationColor == o.textDecorationColor
         && customProperties == o.customProperties
         && customPaintWatchedProperties == o.customPaintWatchedProperties
-        && arePointingToEqualData(rotate, o.rotate)
-        && arePointingToEqualData(scale, o.scale)
-        && arePointingToEqualData(translate, o.translate)
+        && rotate == o.rotate
+        && scale == o.scale
+        && translate == o.translate
         && arePointingToEqualData(offsetPath, o.offsetPath)
         && containerNames == o.containerNames
         && columnGap == o.columnGap

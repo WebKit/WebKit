@@ -39,9 +39,7 @@ StyleGridData::StyleGridData()
     , gridAutoFlow(RenderStyle::initialGridAutoFlow())
     , gridAutoRows(RenderStyle::initialGridAutoRows())
     , gridAutoColumns(RenderStyle::initialGridAutoColumns())
-    , namedGridArea(RenderStyle::initialNamedGridArea())
-    , namedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount())
-    , namedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount())
+    , gridTemplateAreas(RenderStyle::initialGridTemplateAreas())
     , m_gridColumnTrackSizes(RenderStyle::initialGridColumnTrackSizes())
     , m_gridRowTrackSizes(RenderStyle::initialGridRowTrackSizes())
     , m_namedGridColumnLines(RenderStyle::initialNamedGridColumnLines())
@@ -72,9 +70,7 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
     , gridAutoFlow(o.gridAutoFlow)
     , gridAutoRows(o.gridAutoRows)
     , gridAutoColumns(o.gridAutoColumns)
-    , namedGridArea(o.namedGridArea)
-    , namedGridAreaRowCount(o.namedGridAreaRowCount)
-    , namedGridAreaColumnCount(o.namedGridAreaColumnCount)
+    , gridTemplateAreas(o.gridTemplateAreas)
     , m_columns(o.m_columns)
     , m_rows(o.m_rows)
     , m_gridColumnTrackSizes(o.m_gridColumnTrackSizes)
@@ -109,9 +105,7 @@ bool StyleGridData::operator==(const StyleGridData& o) const
         && gridAutoFlow == o.gridAutoFlow
         && gridAutoRows == o.gridAutoRows
         && gridAutoColumns == o.gridAutoColumns
-        && namedGridArea == o.namedGridArea
-        && namedGridAreaRowCount == o.namedGridAreaRowCount
-        && namedGridAreaColumnCount == o.namedGridAreaColumnCount
+        && gridTemplateAreas == o.gridTemplateAreas
         && m_masonryRows == o.m_masonryRows
         && m_masonryColumns == o.m_masonryColumns;
 }

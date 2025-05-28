@@ -48,6 +48,8 @@ template<size_t I> const auto& get(const Ratio& value)
         return value.denominator;
 }
 
+template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const Ratio&); };
+
 } // namespace CSS
 } // namespace WebCore
 

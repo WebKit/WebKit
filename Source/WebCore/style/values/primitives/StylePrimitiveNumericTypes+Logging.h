@@ -34,7 +34,7 @@ namespace Style {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 {
-    return ts << value.get();
+    return ts << value.protectedCalculation().get();
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Numeric auto const& value)
@@ -63,6 +63,11 @@ template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const Spac
 }
 
 template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const SpaceSeparatedSize<T>& value)
+{
+    return ts << value.width() << ' ' << value.height();
+}
+
+template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const MinimallySerializingSpaceSeparatedSize<T>& value)
 {
     return ts << value.width() << ' ' << value.height();
 }

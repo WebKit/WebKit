@@ -4334,13 +4334,13 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
         auto* tf = currentKeyframe.timingFunction();
 
         if (currentKeyframe.animatesProperty(CSSPropertyRotate))
-            rotateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->rotate(), tf));
+            rotateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->rotate().operation(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyScale))
-            scaleVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->scale(), tf));
+            scaleVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->scale().operation(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTranslate))
-            translateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->translate(), tf));
+            translateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->translate().operation(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTransform))
             transformVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->transform(), tf));
@@ -4666,11 +4666,11 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     };
 
     if (property == AnimatedProperty::Translate)
-        applyTransformOperation(renderer().style().translate());
+        applyTransformOperation(renderer().style().translate().operation());
     else if (property == AnimatedProperty::Scale)
-        applyTransformOperation(renderer().style().scale());
+        applyTransformOperation(renderer().style().scale().operation());
     else if (property == AnimatedProperty::Rotate)
-        applyTransformOperation(renderer().style().rotate());
+        applyTransformOperation(renderer().style().rotate().operation());
     else if (property == AnimatedProperty::Transform)
         renderer().style().transform().apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
     else

@@ -373,7 +373,7 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
         }
 
         if (keyframe.animatesProperty(CSSPropertyTranslate)) {
-            if (auto* translate = style->translate()) {
+            if (auto translate = style->translate(); !translate.isNone()) {
                 if (translate->x().isPercent())
                     m_hasWidthDependentTransform = true;
                 if (translate->y().isPercent())

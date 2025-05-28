@@ -1157,6 +1157,7 @@ css/values/color/CSSKeywordColor.cpp
 css/values/color/CSSLightDarkColor.cpp
 css/values/color/CSSPlatformColorResolutionState.cpp
 css/values/color/CSSResolvedColor.cpp
+css/values/grid/CSSGridTemplateAreas.cpp
 css/values/images/CSSGradient.cpp
 css/values/motion/CSSRayFunction.cpp
 css/values/primitives/CSSPosition.cpp
@@ -1165,6 +1166,7 @@ css/values/primitives/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Serialization.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.cpp
 css/values/primitives/CSSPrimitiveNumericUnits.cpp
+css/values/primitives/CSSRatio.cpp
 css/values/primitives/CSSSymbol.cpp
 css/values/primitives/CSSURL.cpp
 css/values/primitives/CSSURLModifiers.cpp
@@ -3179,9 +3181,11 @@ style/values/filter-effects/StyleOpacityFunction.cpp
 style/values/filter-effects/StyleSaturateFunction.cpp
 style/values/filter-effects/StyleSepiaFunction.cpp
 style/values/images/StyleGradient.cpp
+style/values/masking/StyleClip.cpp
 style/values/primitives/StyleLengthResolution.cpp
 style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveNumericTypes+Conversions.cpp
+style/values/primitives/StyleRatio.cpp
 style/values/primitives/StyleURL.cpp
 style/values/primitives/StyleUnevaluatedCalculation.cpp
 style/values/scroll-snap/StyleScrollMargin.cpp
@@ -3196,6 +3200,10 @@ style/values/shapes/StyleRectFunction.cpp
 style/values/shapes/StyleShapeFunction.cpp
 style/values/shapes/StyleXywhFunction.cpp
 style/values/text-decoration/StyleTextShadow.cpp
+style/values/transforms/StyleRotate.cpp
+style/values/transforms/StylePerspective.cpp
+style/values/transforms/StyleScale.cpp
+style/values/transforms/StyleTranslate.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
 svg/SVGAltGlyphDefElement.cpp

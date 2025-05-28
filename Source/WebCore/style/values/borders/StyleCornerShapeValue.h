@@ -47,13 +47,25 @@ struct CornerShapeValue {
     static constexpr CornerShapeValue straight() { return { SuperellipseFunction { std::numeric_limits<double>::infinity() } }; }
     static constexpr CornerShapeValue squircle() { return { SuperellipseFunction { 4.0 } }; }
 
+    template<typename F> decltype(auto) switchOn(F&& functor) const
+    {
+        if (*this == CornerShapeValue::round())
+            return functor(CSS::Keyword::Round { });
+        if (*this == CornerShapeValue::scoop())
+            return functor(CSS::Keyword::Scoop { });
+        if (*this == CornerShapeValue::bevel())
+            return functor(CSS::Keyword::Bevel { });
+        if (*this == CornerShapeValue::notch())
+            return functor(CSS::Keyword::Notch { });
+        if (*this == CornerShapeValue::straight())
+            return functor(CSS::Keyword::Straight { });
+        if (*this == CornerShapeValue::squircle())
+            return functor(CSS::Keyword::Squircle { });
+        return functor(superellipse);
+    }
+
     bool operator==(const CornerShapeValue&) const = default;
 };
-DEFINE_TYPE_WRAPPER_GET(CornerShapeValue, superellipse);
-
-// MARK: - Conversion
-
-Ref<CSSValue> toCSSValue(const CornerShapeValue&, const RenderStyle&);
 
 // MARK: - Blending
 
@@ -65,4 +77,4 @@ template<> struct Blending<CornerShapeValue> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::CornerShapeValue)
+template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::CornerShapeValue> = true;

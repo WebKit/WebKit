@@ -246,14 +246,14 @@ template<auto R, typename V> struct ToCSS<Length<R, V>> {
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::AnglePercentage<R, V>>> {
     auto operator()(const UnevaluatedCalculation<CSS::AnglePercentage<R, V>>& value, const RenderStyle& style) -> typename CSS::AnglePercentage<R, V>::Calc
     {
-        return typename CSS::AnglePercentage<R, V>::Calc { makeCalc(value.protectedCalculation(), style) };
+        return typename CSS::AnglePercentage<R, V>::Calc { CSSCalcValue::create(value.protectedCalculation(), style) };
     }
 };
 
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::LengthPercentage<R, V>>> {
     auto operator()(const UnevaluatedCalculation<CSS::LengthPercentage<R, V>>& value, const RenderStyle& style) -> typename CSS::LengthPercentage<R, V>::Calc
     {
-        return typename CSS::LengthPercentage<R, V>::Calc { makeCalc(value.protectedCalculation(), style) };
+        return typename CSS::LengthPercentage<R, V>::Calc { CSSCalcValue::create(value.protectedCalculation(), style) };
     }
 };
 

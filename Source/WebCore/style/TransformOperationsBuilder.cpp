@@ -41,11 +41,11 @@
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "PerspectiveTransformOperation.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
 #include "SkewTransformOperation.h"
+#include "StyleRotate.h"
+#include "StyleScale.h"
+#include "StyleTranslate.h"
 #include "TransformOperations.h"
-#include "TranslateTransformOperation.h"
 
 namespace WebCore {
 namespace Style {
@@ -422,14 +422,14 @@ TransformOperations createTransformOperations(const CSSValue& value, const CSSTo
 
 // MARK: <translate>
 
-RefPtr<TranslateTransformOperation> createTranslate(const CSSValue& value, const CSSToLengthConversionData& conversionData)
+Translate createTranslate(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     // https://drafts.csswg.org/css-transforms-2/#propdef-translate
     // none | <length-percentage> [ <length-percentage> <length>? ]?
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
-        return nullptr;
+        return Translate { CSS::Keyword::None { } };
     }
 
     auto& valueList = downcast<CSSValueList>(value);
@@ -439,26 +439,26 @@ RefPtr<TranslateTransformOperation> createTranslate(const CSSValue& value, const
     auto ty = valueList.length() > 1 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[1]), conversionData) : WebCore::Length(0, LengthType::Fixed);
     auto tz = valueList.length() > 2 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[2]), conversionData) : WebCore::Length(0, LengthType::Fixed);
 
-    return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type);
+    return Translate { TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type) };
 }
 
 // MARK: <rotate>
 
-RefPtr<RotateTransformOperation> createRotate(const CSSValue& value, const CSSToLengthConversionData& conversionData)
+Rotate createRotate(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     // https://drafts.csswg.org/css-transforms-2/#propdef-rotate
     // none | <angle> | [ x | y | z | <number>{3} ] && <angle>
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
-        return nullptr;
+        return Rotate { CSS::Keyword::None { } };
     }
 
     auto& valueList = downcast<CSSValueList>(value);
 
     // Only an angle was specified.
     if (valueList.length() == 1)
-        return RotateTransformOperation::create(downcast<CSSPrimitiveValue>(valueList[0]).resolveAsAngle(conversionData), TransformOperation::Type::Rotate);
+        return Rotate { RotateTransformOperation::create(downcast<CSSPrimitiveValue>(valueList[0]).resolveAsAngle(conversionData), TransformOperation::Type::Rotate) };
 
     // An axis identifier and angle were specified.
     if (valueList.length() == 2) {
@@ -467,16 +467,16 @@ RefPtr<RotateTransformOperation> createRotate(const CSSValue& value, const CSSTo
 
         switch (axis) {
         case CSSValueX:
-            return RotateTransformOperation::create(1, 0, 0, angle, TransformOperation::Type::RotateX);
+            return Rotate { RotateTransformOperation::create(1, 0, 0, angle, TransformOperation::Type::RotateX) };
         case CSSValueY:
-            return RotateTransformOperation::create(0, 1, 0, angle, TransformOperation::Type::RotateY);
+            return Rotate { RotateTransformOperation::create(0, 1, 0, angle, TransformOperation::Type::RotateY) };
         case CSSValueZ:
-            return RotateTransformOperation::create(0, 0, 1, angle, TransformOperation::Type::RotateZ);
+            return Rotate { RotateTransformOperation::create(0, 0, 1, angle, TransformOperation::Type::RotateZ) };
         default:
             break;
         }
         ASSERT_NOT_REACHED();
-        return RotateTransformOperation::create(angle, TransformOperation::Type::Rotate);
+        return Rotate { RotateTransformOperation::create(angle, TransformOperation::Type::Rotate) };
     }
 
     ASSERT(valueList.length() == 4);
@@ -487,19 +487,19 @@ RefPtr<RotateTransformOperation> createRotate(const CSSValue& value, const CSSTo
     double z = downcast<CSSPrimitiveValue>(valueList[2]).resolveAsNumber(conversionData);
     auto angle = downcast<CSSPrimitiveValue>(valueList[3]).resolveAsAngle(conversionData);
 
-    return RotateTransformOperation::create(x, y, z, angle, TransformOperation::Type::Rotate3D);
+    return Rotate { RotateTransformOperation::create(x, y, z, angle, TransformOperation::Type::Rotate3D) };
 }
 
 // MARK: <scale>
 
-RefPtr<ScaleTransformOperation> createScale(const CSSValue& value, const CSSToLengthConversionData& conversionData)
+Scale createScale(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     // https://drafts.csswg.org/css-transforms-2/#propdef-scale
     // none | [ <number> | <percentage> ]{1,3}
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
-        return nullptr;
+        return Scale { CSS::Keyword::None { } };
     }
 
     auto& valueList = downcast<CSSValueList>(value);
@@ -508,7 +508,7 @@ RefPtr<ScaleTransformOperation> createScale(const CSSValue& value, const CSSToLe
     auto sy = valueList.length() > 1 ? downcast<CSSPrimitiveValue>(valueList[1]).valueDividingBy100IfPercentage<double>(conversionData) : sx;
     auto sz = valueList.length() > 2 ? downcast<CSSPrimitiveValue>(valueList[2]).valueDividingBy100IfPercentage<double>(conversionData) : 1;
 
-    return ScaleTransformOperation::create(sx, sy, sz, TransformOperation::Type::Scale);
+    return Scale { ScaleTransformOperation::create(sx, sy, sz, TransformOperation::Type::Scale) };
 }
 
 } // namespace Style

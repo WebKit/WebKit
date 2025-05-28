@@ -8662,10 +8662,10 @@
                     "name": "contain-intrinsic-size",
                     "resolver": "vertical"
                 },
-                "animation-wrapper": "ContainIntrinsicLengthWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicHeight", "&RenderStyle::containIntrinsicHeight", "&RenderStyle::setContainIntrinsicHeight", "&RenderStyle::containIntrinsicHeightType", "&RenderStyle::setContainIntrinsicHeightType"],
+                "animation-wrapper": "ContainIntrinsicSizeWrapper",
+                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicHeight", "&RenderStyle::containIntrinsicHeightLength", "&RenderStyle::setContainIntrinsicHeightLength", "&RenderStyle::containIntrinsicHeightType", "&RenderStyle::setContainIntrinsicHeightType"],
                 "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "style-extractor-converter": "ContainIntrinsicSize",
                 "parser-grammar": "[ auto? [ none | <length [0,inf]> ] ]@(type=CSSValuePair)",
                 "parser-exported": true
             },
@@ -8686,10 +8686,10 @@
                     "name": "contain-intrinsic-size",
                     "resolver": "horizontal"
                 },
-                "animation-wrapper": "ContainIntrinsicLengthWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicWidth", "&RenderStyle::containIntrinsicWidth", "&RenderStyle::setContainIntrinsicWidth", "&RenderStyle::containIntrinsicWidthType", "&RenderStyle::setContainIntrinsicWidthType"],
+                "animation-wrapper": "ContainIntrinsicSizeWrapper",
+                "animation-wrapper-requires-override-parameters": ["CSSPropertyContainIntrinsicWidth", "&RenderStyle::containIntrinsicWidthLength", "&RenderStyle::setContainIntrinsicWidthLength", "&RenderStyle::containIntrinsicWidthType", "&RenderStyle::setContainIntrinsicWidthType"],
                 "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "style-extractor-converter": "ContainIntrinsicSize",
                 "parser-grammar": "[ auto? [ none | <length [0,inf]> ] ]@(type=CSSValuePair)",
                 "parser-exported": true
              },
@@ -10174,7 +10174,7 @@
                 "animation-wrapper": "GridTemplateAreasWrapper",
                 "animation-wrapper-requires-override-parameters": [],
                 "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "style-extractor-converter": "GridTemplateAreas",
                 "parser-function": "consumeGridTemplateAreas",
                 "parser-grammar-unused": "none | <string>+",
                 "parser-grammar-unused-reason": "Needs support for nested grammars in <string> values."
@@ -10676,10 +10676,8 @@
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "PerspectiveWrapper",
-                "animation-wrapper-requires-override-parameters": [],
-                "style-builder-conditional-converter": "Perspective",
-                "style-extractor-custom": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "Perspective",
                 "parser-grammar": "none | <length [0,inf]>",
                 "parser-exported": true
             },
@@ -11330,7 +11328,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "IndividualTransformWrapper<TranslateTransformOperation>",
+                "animation-wrapper": "StyleTypeWrapper",
                 "animation-wrapper-acceleration": "always",
                 "style-builder-converter": "Translate",
                 "style-extractor-custom": true,
@@ -11350,7 +11348,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "IndividualTransformWrapper<ScaleTransformOperation>",
+                "animation-wrapper": "StyleTypeWrapper",
                 "animation-wrapper-acceleration": "always",
                 "style-builder-converter": "Scale",
                 "style-extractor-custom": true,
@@ -11374,7 +11372,7 @@
                 "z"
             ],
             "codegen-properties": {
-                "animation-wrapper": "IndividualTransformWrapper<RotateTransformOperation>",
+                "animation-wrapper": "StyleTypeWrapper",
                 "animation-wrapper-acceleration": "always",
                 "style-builder-converter": "Rotate",
                 "style-extractor-custom": true,

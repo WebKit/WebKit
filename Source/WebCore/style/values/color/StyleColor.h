@@ -170,6 +170,10 @@ bool containsCurrentColor(const Color&);
 void serializationForCSS(StringBuilder&, const CSS::SerializationContext&, const Color&);
 WEBCORE_EXPORT String serializationForCSS(const CSS::SerializationContext&, const Color&);
 
+template<> struct Serialize<Color> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const Color&);
+};
+
 WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 // MARK: - Conversion
@@ -183,6 +187,10 @@ template<> struct ToCSS<Color> {
 template<> struct ToStyle<CSS::Color> {
     auto operator()(const CSS::Color&, const BuilderState&, ForVisitedLink) -> Color;
     auto operator()(const CSS::Color&, const BuilderState&) -> Color;
+};
+
+template<> struct CSSValueCreation<Color> {
+    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Color&);
 };
 
 template<typename... F> decltype(auto) Color::switchOn(F&&... f) const

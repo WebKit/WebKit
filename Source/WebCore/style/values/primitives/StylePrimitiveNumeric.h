@@ -37,6 +37,13 @@ namespace Style {
 
 template<typename> struct DimensionPercentageMapping;
 
+struct PrimitiveNumericEmptyToken { constexpr bool operator==(const PrimitiveNumericEmptyToken&) const = default; };
+
+template<typename T> struct PrimitiveNumericMarkableTraits {
+    static bool isEmptyValue(const T& value) { return value.isEmpty(); }
+    static T emptyValue() { return T(PrimitiveNumericEmptyToken { }); }
+};
+
 // Default implementation of `PrimitiveNumeric` for non-composite numeric types.
 template<CSS::Numeric CSSType> struct PrimitiveNumeric {
     using CSS = CSSType;
@@ -64,6 +71,20 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
 
     constexpr bool operator==(const PrimitiveNumeric&) const = default;
     constexpr bool operator==(ResolvedValueType other) const { return value == other; };
+
+private:
+    template<typename> friend struct PrimitiveNumericMarkableTraits;
+
+    PrimitiveNumeric(PrimitiveNumericEmptyToken) requires std::floating_point<ResolvedValueType>
+        : value { std::numeric_limits<ResolvedValueType>::quiet_NaN() }
+    {
+    }
+
+    bool isEmpty() const
+        requires std::floating_point<ResolvedValueType>
+    {
+        return std::isnan(value);
+    }
 };
 
 // Specialization of `PrimitiveNumeric` for composite dimension-percentage types.
@@ -168,6 +189,7 @@ template<CSS::Range R = CSS::All, typename V = int> struct Integer : PrimitiveNu
 template<CSS::Range R = CSS::All, typename V = double> struct Number : PrimitiveNumeric<CSS::Number<R, V>> {
     using Base = PrimitiveNumeric<CSS::Number<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Number>;
 };
 
 // MARK: Percentage Primitive
@@ -175,6 +197,7 @@ template<CSS::Range R = CSS::All, typename V = double> struct Number : Primitive
 template<CSS::Range R = CSS::All, typename V = double> struct Percentage : PrimitiveNumeric<CSS::Percentage<R, V>> {
     using Base = PrimitiveNumeric<CSS::Percentage<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Percentage>;
 };
 
 // MARK: Dimension Primitives
@@ -182,26 +205,32 @@ template<CSS::Range R = CSS::All, typename V = double> struct Percentage : Primi
 template<CSS::Range R = CSS::All, typename V = double> struct Angle : PrimitiveNumeric<CSS::Angle<R, V>> {
     using Base = PrimitiveNumeric<CSS::Angle<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Angle>;
 };
 template<CSS::Range R = CSS::All, typename V = float> struct Length : PrimitiveNumeric<CSS::Length<R, V>> {
     using Base = PrimitiveNumeric<CSS::Length<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Length>;
 };
 template<CSS::Range R = CSS::All, typename V = double> struct Time : PrimitiveNumeric<CSS::Time<R, V>> {
     using Base = PrimitiveNumeric<CSS::Time<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Time>;
 };
 template<CSS::Range R = CSS::All, typename V = double> struct Frequency : PrimitiveNumeric<CSS::Frequency<R, V>> {
     using Base = PrimitiveNumeric<CSS::Frequency<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Frequency>;
 };
 template<CSS::Range R = CSS::Nonnegative, typename V = double> struct Resolution : PrimitiveNumeric<CSS::Resolution<R, V>> {
     using Base = PrimitiveNumeric<CSS::Resolution<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Resolution>;
 };
 template<CSS::Range R = CSS::All, typename V = double> struct Flex : PrimitiveNumeric<CSS::Flex<R, V>> {
     using Base = PrimitiveNumeric<CSS::Flex<R, V>>;
     using Base::Base;
+    using MarkableTraits = PrimitiveNumericMarkableTraits<Flex>;
 };
 
 // MARK: Dimension + Percentage Primitives

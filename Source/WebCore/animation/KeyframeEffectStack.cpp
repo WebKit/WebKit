@@ -153,9 +153,9 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     auto& previousStyle = previousLastStyleChangeEventStyle ? *previousLastStyleChangeEventStyle : RenderStyle::defaultStyleSingleton();
 
     auto transformRelatedPropertyChanged = [&]() -> bool {
-        return !arePointingToEqualData(targetStyle.translate(), previousStyle.translate())
-            || !arePointingToEqualData(targetStyle.scale(), previousStyle.scale())
-            || !arePointingToEqualData(targetStyle.rotate(), previousStyle.rotate())
+        return targetStyle.translate() != previousStyle.translate()
+            || targetStyle.scale() != previousStyle.scale()
+            || targetStyle.rotate() != previousStyle.rotate()
             || targetStyle.transform() != previousStyle.transform();
     }();
 

@@ -36,9 +36,7 @@
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBoxShadowPropertyValue.h"
-#include "CSSColorSchemeValue.h"
 #include "CSSCounterValue.h"
-#include "CSSDynamicRangeLimitValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterPropertyValue.h"
 #include "CSSFontFeatureValue.h"
@@ -56,7 +54,6 @@
 #include "CSSProperty.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
 #include "CSSQuadValue.h"
-#include "CSSRatioValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
@@ -90,34 +87,51 @@
 #include "RenderInline.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
-#include "RotateTransformOperation.h"
 #include "SVGRenderStyle.h"
-#include "ScaleTransformOperation.h"
 #include "ScrollTimeline.h"
 #include "SkewTransformOperation.h"
 #include "StyleAppleColorFilterProperty.h"
+#include "StyleAspectRatio.h"
 #include "StyleBoxShadow.h"
+#include "StyleColor.h"
 #include "StyleColorScheme.h"
+#include "StyleContainIntrinsicSize.h"
 #include "StyleCornerShapeValue.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
 #include "StyleExtractorState.h"
 #include "StyleFilterProperty.h"
+#include "StyleGridTemplateAreas.h"
 #include "StyleLineBoxContain.h"
+#include "StyleLineHeight.h"
 #include "StylePathData.h"
+#include "StylePerspective.h"
+#include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleReflection.h"
+#include "StyleRotate.h"
+#include "StyleSVGPaint.h"
+#include "StyleScale.h"
 #include "StyleScrollMargin.h"
 #include "StyleScrollPadding.h"
+#include "StyleTextEmphasisStyle.h"
+#include "StyleTextIndent.h"
 #include "StyleTextShadow.h"
+#include "StyleTranslate.h"
 #include "TimelineRange.h"
 #include "TransformOperationData.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
 namespace Style {
+
+template<typename T> requires std::is_enum_v<T> struct CSSValueCreation<T> {
+    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, T value)
+    {
+        return CSSPrimitiveValue::create(toCSSValueID(value));
+    }
+};
 
 class ExtractorConverter {
 public:
@@ -137,6 +151,7 @@ public:
     static Ref<CSSPrimitiveValue> convertLength(const RenderStyle&, const WebCore::Length&);
     static Ref<CSSPrimitiveValue> convertLengthAllowingNumber(ExtractorState&, const WebCore::Length&);
     static Ref<CSSPrimitiveValue> convertLengthOrAuto(ExtractorState&, const WebCore::Length&);
+    static Ref<CSSPrimitiveValue> convertLengthOrAuto(const RenderStyle&, const WebCore::Length&);
     static Ref<CSSPrimitiveValue> convertLengthWithoutApplyingZoom(ExtractorState&, const WebCore::Length&);
 
     template<typename T> static Ref<CSSPrimitiveValue> convertNumber(ExtractorState&, T);
@@ -153,7 +168,7 @@ public:
     // MARK: SVG conversions
 
     static Ref<CSSValue> convertSVGURIReference(ExtractorState&, const URL&);
-    static Ref<CSSValue> convertSVGPaint(ExtractorState&, SVGPaintType, const URL&, const Color&);
+    static Ref<CSSValue> convertSVGPaint(ExtractorState&, const SVGPaint&);
     static Ref<CSSValue> convertSVGLengthUsingElement(ExtractorState&, const SVGLengthValue&);
     static Ref<CSSValue> convertSVGLengthNotUsingElement(ExtractorState&, const SVGLengthValue&);
 
@@ -164,9 +179,23 @@ public:
     static RefPtr<CSSValue> convertTransformOperation(ExtractorState&, const TransformOperation&);
     static RefPtr<CSSValue> convertTransformOperation(const RenderStyle&, const TransformOperation&);
 
-    // MARK: Shared conversions
+    // MARK: Strong value conversions
 
     static Ref<CSSValue> convertColor(ExtractorState&, const Color&);
+    static Ref<CSSValue> convertScrollMarginEdge(ExtractorState&, const ScrollMarginEdge&);
+    static Ref<CSSValue> convertScrollPaddingEdge(ExtractorState&, const ScrollPaddingEdge&);
+    static Ref<CSSValue> convertCornerShapeValue(ExtractorState&, const CornerShapeValue&);
+    static Ref<CSSValue> convertDynamicRangeLimit(ExtractorState&, const DynamicRangeLimit&);
+    static Ref<CSSValue> convertAspectRatio(ExtractorState&, const AspectRatio&);
+    static Ref<CSSValue> convertGridTemplateAreas(ExtractorState&, const GridTemplateAreas&);
+    static Ref<CSSValue> convertPerspective(ExtractorState&, const Perspective&);
+    static Ref<CSSValue> convertContainIntrinsicSize(ExtractorState&, const ContainIntrinsicSize&);
+#if ENABLE(DARK_MODE_CSS)
+    static Ref<CSSValue> convertColorScheme(ExtractorState&, const ColorScheme&);
+#endif
+
+    // MARK: Shared conversions
+
     static Ref<CSSValue> convertOpacity(ExtractorState&, float);
     static Ref<CSSValue> convertImageOrNone(ExtractorState&, const StyleImage*);
     static Ref<CSSValue> convertGlyphOrientation(ExtractorState&, GlyphOrientation);
@@ -182,10 +211,6 @@ public:
     static Ref<CSSValue> convertTextStrokeWidth(ExtractorState&, float);
     static Ref<CSSValue> convertFilterOperations(ExtractorState&, const FilterOperations&);
     static Ref<CSSValue> convertAppleColorFilterOperations(ExtractorState&, const FilterOperations&);
-    static Ref<CSSValue> convertScrollMarginEdge(ExtractorState&, const ScrollMarginEdge&);
-    static Ref<CSSValue> convertScrollPaddingEdge(ExtractorState&, const ScrollPaddingEdge&);
-    static Ref<CSSValue> convertCornerShapeValue(ExtractorState&, const CornerShapeValue&);
-    static Ref<CSSValue> convertDynamicRangeLimit(ExtractorState&, const DynamicRangeLimit&);
     static Ref<CSSValue> convertWebkitTextCombine(ExtractorState&, TextCombine);
     static Ref<CSSValue> convertImageOrientation(ExtractorState&, ImageOrientation);
     static Ref<CSSValue> convertLineClamp(ExtractorState&, const LineClampValue&);
@@ -220,7 +245,6 @@ public:
     static Ref<CSSValue> convertPosition(ExtractorState&, const LengthPoint&);
     static Ref<CSSValue> convertPositionOrAuto(ExtractorState&, const LengthPoint&);
     static Ref<CSSValue> convertPositionOrAutoOrNormal(ExtractorState&, const LengthPoint&);
-    static Ref<CSSValue> convertContainIntrinsicSize(ExtractorState&, const ContainIntrinsicSizeType&, const std::optional<WebCore::Length>&);
     static Ref<CSSValue> convertTouchAction(ExtractorState&, OptionSet<TouchAction>);
     static Ref<CSSValue> convertTextTransform(ExtractorState&, OptionSet<TextTransform>);
     static Ref<CSSValue> convertTextDecorationLine(ExtractorState&, OptionSet<TextDecorationLine>);
@@ -248,9 +272,6 @@ public:
     static Ref<CSSValue> convertSingleViewTimelineInsets(ExtractorState&, const ViewTimelineInsets&);
     static Ref<CSSValue> convertViewTimelineInsets(ExtractorState&, const Vector<ViewTimelineInsets>&);
     static Ref<CSSValue> convertPositionVisibility(ExtractorState&, OptionSet<PositionVisibility>);
-#if ENABLE(DARK_MODE_CSS)
-    static Ref<CSSValue> convertColorScheme(ExtractorState&, const ColorScheme&);
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
     static Ref<CSSValue> convertWebkitTextSizeAdjust(ExtractorState&, const TextSizeAdjustment&);
 #endif
@@ -390,9 +411,14 @@ inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthAllowingNumber(Ex
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthOrAuto(ExtractorState& state, const WebCore::Length& length)
 {
+    return convertLengthOrAuto(state.style, length);
+}
+
+inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthOrAuto(const RenderStyle& style, const WebCore::Length& length)
+{
     if (length.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
-    return convertLength(state, length);
+    return convertLength(style, length);
 }
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthWithoutApplyingZoom(ExtractorState& state, const WebCore::Length& length)
@@ -464,20 +490,9 @@ inline Ref<CSSValue> ExtractorConverter::convertSVGURIReference(ExtractorState& 
     return CSSURLValue::create(toCSS(marker, state.style));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertSVGPaint(ExtractorState& state, SVGPaintType paintType, const URL& url, const Color& color)
+inline Ref<CSSValue> ExtractorConverter::convertSVGPaint(ExtractorState& state, const SVGPaint& value)
 {
-    if (paintType >= SVGPaintType::URINone) {
-        CSSValueListBuilder values;
-        values.append(CSSURLValue::create(toCSS(url, state.style)));
-        if (paintType == SVGPaintType::URINone)
-            values.append(CSSPrimitiveValue::create(CSSValueNone));
-        else if (paintType == SVGPaintType::URICurrentColor || paintType == SVGPaintType::URIRGBColor)
-            values.append(convertColor(state, color));
-        return CSSValueList::createSpaceSeparated(WTFMove(values));
-    }
-    if (paintType == SVGPaintType::None)
-        return CSSPrimitiveValue::create(CSSValueNone);
-    return convertColor(state, color);
+    return createCSSValue(state.pool, state.style, value);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertSVGLengthUsingElement(ExtractorState& state, const SVGLengthValue& length)
@@ -633,12 +648,61 @@ inline RefPtr<CSSValue> ExtractorConverter::convertTransformOperation(const Rend
     return nullptr;
 }
 
-// MARK: - Shared conversions
+// MARK: - Strong value conversions
 
-inline Ref<CSSValue> ExtractorConverter::convertColor(ExtractorState& state, const Color& color)
+inline Ref<CSSValue> ExtractorConverter::convertColor(ExtractorState& state, const Color& value)
 {
-    return state.pool.createColorValue(state.style.colorResolvingCurrentColor(color));
+    return createCSSValue(state.pool, state.style, value);
 }
+
+inline Ref<CSSValue> ExtractorConverter::convertScrollMarginEdge(ExtractorState& state, const ScrollMarginEdge& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertScrollPaddingEdge(ExtractorState& state, const ScrollPaddingEdge& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertCornerShapeValue(ExtractorState& state, const CornerShapeValue& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertDynamicRangeLimit(ExtractorState& state, const DynamicRangeLimit& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertAspectRatio(ExtractorState& state, const AspectRatio& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertGridTemplateAreas(ExtractorState& state, const GridTemplateAreas& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertPerspective(ExtractorState& state, const Perspective& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+inline Ref<CSSValue> ExtractorConverter::convertContainIntrinsicSize(ExtractorState& state, const ContainIntrinsicSize& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+
+#if ENABLE(DARK_MODE_CSS)
+inline Ref<CSSValue> ExtractorConverter::convertColorScheme(ExtractorState& state, const ColorScheme& value)
+{
+    return createCSSValue(state.pool, state.style, value);
+}
+#endif
+
+// MARK: - Shared conversions
 
 inline Ref<CSSValue> ExtractorConverter::convertOpacity(ExtractorState& state, float opacity)
 {
@@ -822,26 +886,6 @@ inline Ref<CSSValue> ExtractorConverter::convertFilterOperations(ExtractorState&
 inline Ref<CSSValue> ExtractorConverter::convertAppleColorFilterOperations(ExtractorState& state, const FilterOperations& filterOperations)
 {
     return CSSAppleColorFilterPropertyValue::create(toCSSAppleColorFilterProperty(filterOperations, state.style));
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertScrollMarginEdge(ExtractorState& state, const ScrollMarginEdge& edge)
-{
-    return edge.toCSS(state);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertScrollPaddingEdge(ExtractorState& state, const ScrollPaddingEdge& edge)
-{
-    return edge.toCSS(state);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertCornerShapeValue(ExtractorState& state, const CornerShapeValue& cornerShape)
-{
-    return toCSSValue(cornerShape, state.style);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertDynamicRangeLimit(ExtractorState& state, const DynamicRangeLimit& dynamicRangeLimit)
-{
-    return CSSDynamicRangeLimitValue::create(toCSS(dynamicRangeLimit, state.style));
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertWebkitTextCombine(ExtractorState& state, TextCombine textCombine)
@@ -1280,22 +1324,6 @@ inline Ref<CSSValue> ExtractorConverter::convertPositionOrAutoOrNormal(Extractor
     if (position.x.isNormal())
         return CSSPrimitiveValue::create(CSSValueNormal);
     return convertPosition(state, position);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertContainIntrinsicSize(ExtractorState& state, const ContainIntrinsicSizeType& type, const std::optional<WebCore::Length>& containIntrinsicLength)
-{
-    switch (type) {
-    case ContainIntrinsicSizeType::None:
-        return CSSPrimitiveValue::create(CSSValueNone);
-    case ContainIntrinsicSizeType::Length:
-        return convertLength(state, *containIntrinsicLength);
-    case ContainIntrinsicSizeType::AutoAndLength:
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), convertLength(state, *containIntrinsicLength));
-    case ContainIntrinsicSizeType::AutoAndNone:
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueNone);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertTouchAction(ExtractorState&, OptionSet<TouchAction> touchActions)
@@ -1823,13 +1851,6 @@ inline Ref<CSSValue> ExtractorConverter::convertPositionVisibility(ExtractorStat
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
-
-#if ENABLE(DARK_MODE_CSS)
-inline Ref<CSSValue> ExtractorConverter::convertColorScheme(ExtractorState& state, const ColorScheme& colorScheme)
-{
-    return CSSColorSchemeValue::create(toCSS(colorScheme, state.style));
-}
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
 inline Ref<CSSValue> ExtractorConverter::convertWebkitTextSizeAdjust(ExtractorState&, const TextSizeAdjustment& textSizeAdjust)

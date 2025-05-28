@@ -34,7 +34,7 @@ namespace Style {
 // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
 // https://drafts.csswg.org/css-backgrounds-3/#propdef-border-radius
 struct BorderRadius {
-    using Corner = SpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
+    using Corner = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
 
     constexpr bool operator==(const BorderRadius&) const = default;
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2021 Google Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #pragma once
 
 #include "BoxExtents.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "PseudoElementIdentifier.h"
 #include "WritingMode.h"
 #include <unicode/utypes.h>
@@ -259,7 +261,6 @@ struct Length;
 struct LengthPoint;
 struct LengthSize;
 struct ListStyleType;
-struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
 struct SingleTimelineRange;
@@ -284,23 +285,39 @@ template<typename> class RectCorners;
 using FontVariationSettings = FontTaggedSettings<float>;
 using IntOutsets = RectEdges<int>;
 
+namespace CSS {
+struct NamedGridAreaMap;
+}
+
 namespace Style {
 class CustomPropertyRegistry;
 class ViewTransitionName;
+struct ClipEdge;
+struct ClipRect;
 struct Color;
 struct ColorScheme;
+struct ContainIntrinsicSize;
 struct CornerShapeValue;
 struct DynamicRangeLimit;
+struct GridTemplateAreas;
+struct Perspective;
 struct PositionTryFallback;
+struct Rotate;
+struct Scale;
 struct ScopedName;
 struct ScrollMargin;
 struct ScrollMarginEdge;
 struct ScrollPadding;
 struct ScrollPaddingEdge;
+struct Translate;
+
+template<CSS::Range, typename> struct Length;
 
 enum class Change : uint8_t;
 enum class LineBoxContain : uint8_t;
 enum class PositionTryOrder : uint8_t;
+
+using NamedGridAreaMap = CSS::NamedGridAreaMap;
 }
 
 constexpr auto PublicPseudoIDBits = 17;
@@ -582,11 +599,11 @@ public:
     VerticalAlign verticalAlign() const;
     const Length& verticalAlignLength() const;
 
-    inline const Length& clipLeft() const;
-    inline const Length& clipRight() const;
-    inline const Length& clipTop() const;
-    inline const Length& clipBottom() const;
-    inline const LengthBox& clip() const;
+    inline const Style::ClipEdge& clipLeft() const;
+    inline const Style::ClipEdge& clipRight() const;
+    inline const Style::ClipEdge& clipTop() const;
+    inline const Style::ClipEdge& clipBottom() const;
+    inline const Style::ClipRect& clip() const;
     inline bool hasClip() const;
 
     UnicodeBidi unicodeBidi() const { return static_cast<UnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
@@ -820,8 +837,10 @@ public:
     inline bool containIntrinsicLogicalHeightHasAuto() const;
     inline void containIntrinsicWidthAddAuto();
     inline void containIntrinsicHeightAddAuto();
-    inline std::optional<Length> containIntrinsicWidth() const;
-    inline std::optional<Length> containIntrinsicHeight() const;
+    inline std::optional<Style::Length<CSS::Nonnegative, float>> containIntrinsicWidthLength() const;
+    inline std::optional<Style::Length<CSS::Nonnegative, float>> containIntrinsicHeightLength() const;
+    inline Style::ContainIntrinsicSize containIntrinsicWidth() const;
+    inline Style::ContainIntrinsicSize containIntrinsicHeight() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;
 
     inline BoxAlignment boxAlign() const;
@@ -870,7 +889,8 @@ public:
     inline const OrderedNamedGridLinesMap& autoRepeatOrderedNamedGridRowLines() const;
     inline const NamedGridLinesMap& implicitNamedGridColumnLines() const;
     inline const NamedGridLinesMap& implicitNamedGridRowLines() const;
-    inline const NamedGridAreaMap& namedGridArea() const;
+    inline const Style::GridTemplateAreas& gridTemplateAreas() const;
+    inline const Style::NamedGridAreaMap& namedGridArea() const;
     inline size_t namedGridAreaRowCount() const;
     inline size_t namedGridAreaColumnCount() const;
     inline GridAutoFlow gridAutoFlow() const;
@@ -951,9 +971,9 @@ public:
 
     inline TransformBox transformBox() const;
 
-    inline RotateTransformOperation* rotate() const;
-    inline ScaleTransformOperation* scale() const;
-    inline TranslateTransformOperation* translate() const;
+    inline const Style::Rotate& rotate() const;
+    inline const Style::Scale& scale() const;
+    inline const Style::Translate& translate() const;
 
     inline bool affectsTransform() const;
 
@@ -1069,7 +1089,7 @@ public:
     inline bool preserves3D() const;
 
     inline BackfaceVisibility backfaceVisibility() const;
-    inline float perspective() const;
+    inline const Style::Perspective& perspective() const;
     inline float usedPerspective() const;
     inline bool hasPerspective() const;
     inline const Length& perspectiveOriginX() const;
@@ -1301,12 +1321,11 @@ public:
     void setVerticalAlignLength(Length&&);
 
     inline void setHasClip(bool = true);
-    inline void setClipLeft(Length&&);
-    inline void setClipRight(Length&&);
-    inline void setClipTop(Length&&);
-    inline void setClipBottom(Length&&);
-    void setClip(Length&& top, Length&& right, Length&& bottom, Length&& left);
-    inline void setClip(LengthBox&&);
+    inline void setClipLeft(Style::ClipEdge&&);
+    inline void setClipRight(Style::ClipEdge&&);
+    inline void setClipTop(Style::ClipEdge&&);
+    inline void setClipBottom(Style::ClipEdge&&);
+    void setClip(Style::ClipRect&&);
 
     void setUnicodeBidi(UnicodeBidi v) { m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(v); }
 
@@ -1416,8 +1435,8 @@ public:
 
     inline void setContainIntrinsicWidthType(ContainIntrinsicSizeType);
     inline void setContainIntrinsicHeightType(ContainIntrinsicSizeType);
-    inline void setContainIntrinsicWidth(std::optional<Length>);
-    inline void setContainIntrinsicHeight(std::optional<Length>);
+    inline void setContainIntrinsicWidthLength(std::optional<Style::Length<CSS::Nonnegative, float>>);
+    inline void setContainIntrinsicHeightLength(std::optional<Style::Length<CSS::Nonnegative, float>>);
 
     inline void setContentVisibility(ContentVisibility);
 
@@ -1531,9 +1550,8 @@ public:
     inline void setGridAutoRows(const Vector<GridTrackSize>&);
     inline void setImplicitNamedGridColumnLines(const NamedGridLinesMap&);
     inline void setImplicitNamedGridRowLines(const NamedGridLinesMap&);
-    inline void setNamedGridArea(const NamedGridAreaMap&);
-    inline void setNamedGridAreaRowCount(size_t);
-    inline void setNamedGridAreaColumnCount(size_t);
+    inline void setGridTemplateAreas(Style::GridTemplateAreas&&);
+    inline void setGridTemplateAreas(const Style::GridTemplateAreas&);
     inline void setGridAutoFlow(GridAutoFlow);
     inline void setGridItemColumnStart(const GridPosition&);
     inline void setGridItemColumnEnd(const GridPosition&);
@@ -1581,9 +1599,12 @@ public:
     inline void setTransformOriginZ(float);
     inline void setTransformBox(TransformBox);
 
-    void setRotate(RefPtr<RotateTransformOperation>&&);
-    void setScale(RefPtr<ScaleTransformOperation>&&);
-    void setTranslate(RefPtr<TranslateTransformOperation>&&);
+    void setRotate(Style::Rotate&&);
+    void setRotate(const Style::Rotate&);
+    void setScale(Style::Scale&&);
+    void setScale(const Style::Scale&);
+    void setTranslate(Style::Translate&&);
+    void setTranslate(const Style::Translate&);
 
     inline void setSpeakAs(OptionSet<SpeakAs>);
     inline void setTextCombine(TextCombine);
@@ -1640,7 +1661,7 @@ public:
     inline void setTransformStyle3D(TransformStyle3D);
     inline void setTransformStyleForcedToFlat(bool);
     inline void setBackfaceVisibility(BackfaceVisibility);
-    inline void setPerspective(float);
+    inline void setPerspective(Style::Perspective&&);
     inline void setPerspectiveOriginX(Length&&);
     inline void setPerspectiveOriginY(Length&&);
     inline void setPageSize(LengthSize);
@@ -2072,8 +2093,8 @@ public:
 
     static constexpr ContainIntrinsicSizeType initialContainIntrinsicWidthType();
     static constexpr ContainIntrinsicSizeType initialContainIntrinsicHeightType();
-    static inline std::optional<Length> initialContainIntrinsicWidth();
-    static inline std::optional<Length> initialContainIntrinsicHeight();
+    static inline std::optional<Style::Length<CSS::Nonnegative, float>> initialContainIntrinsicWidthLength();
+    static inline std::optional<Style::Length<CSS::Nonnegative, float>> initialContainIntrinsicHeightLength();
 
     static constexpr Order initialRTLOrdering();
     static float initialTextStrokeWidth() { return 0; }
@@ -2086,14 +2107,14 @@ public:
     static inline Length initialTransformOriginX();
     static inline Length initialTransformOriginY();
     static constexpr TransformBox initialTransformBox();
-    static RotateTransformOperation* initialRotate() { return nullptr; }
-    static ScaleTransformOperation* initialScale() { return nullptr; }
-    static TranslateTransformOperation* initialTranslate() { return nullptr; }
+    static inline Style::Rotate initialRotate();
+    static inline Style::Scale initialScale();
+    static inline Style::Translate initialTranslate();
     static constexpr PointerEvents initialPointerEvents();
     static float initialTransformOriginZ() { return 0; }
     static constexpr TransformStyle3D initialTransformStyle3D();
     static constexpr BackfaceVisibility initialBackfaceVisibility();
-    static float initialPerspective() { return -1; }
+    static inline Style::Perspective initialPerspective();
     static inline Length initialPerspectiveOriginX();
     static inline Length initialPerspectiveOriginY();
     static inline Style::Color initialBackgroundColor();
@@ -2177,8 +2198,7 @@ public:
     static inline Vector<GridTrackSize> initialGridAutoColumns();
     static inline Vector<GridTrackSize> initialGridAutoRows();
 
-    static NamedGridAreaMap initialNamedGridArea();
-    static size_t initialNamedGridAreaCount() { return 0; }
+    static Style::GridTemplateAreas initialGridTemplateAreas();
 
     static NamedGridLinesMap initialNamedGridColumnLines();
     static NamedGridLinesMap initialNamedGridRowLines();

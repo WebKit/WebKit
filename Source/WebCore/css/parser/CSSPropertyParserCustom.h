@@ -726,10 +726,10 @@ inline bool PropertyParserCustom::consumeBorderRadiusShorthand(CSSParserTokenRan
     if (!borderRadius)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(borderRadius->topLeft()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopRightRadius, WebCore::CSS::createCSSValue(borderRadius->topRight()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomRightRadius, WebCore::CSS::createCSSValue(borderRadius->bottomRight()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomLeftRadius, WebCore::CSS::createCSSValue(borderRadius->bottomLeft()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topLeft()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topRight()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomRight()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomLeft()));
     return true;
 }
 
@@ -739,10 +739,10 @@ inline bool PropertyParserCustom::consumeWebkitBorderRadiusShorthand(CSSParserTo
     if (!borderRadius)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(borderRadius->topLeft()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopRightRadius, WebCore::CSS::createCSSValue(borderRadius->topRight()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomRightRadius, WebCore::CSS::createCSSValue(borderRadius->bottomRight()));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomLeftRadius, WebCore::CSS::createCSSValue(borderRadius->bottomLeft()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topLeft()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topRight()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomRight()));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomLeft()));
     return true;
 }
 
@@ -1418,9 +1418,7 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
 
     range = rangeCopy;
 
-    NamedGridAreaMap gridAreaMap;
-    size_t rowCount = 0;
-    size_t columnCount = 0;
+    CSS::NamedGridAreaMap gridAreaMap;
     CSSValueListBuilder templateRows;
 
     // Persists between loop iterations so we can use the same value for
@@ -1442,9 +1440,8 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
         }
 
         // Handle a template-area's row.
-        if (range.peek().type() != StringToken || !parseGridTemplateAreasRow(range.consumeIncludingWhitespace().value(), gridAreaMap, rowCount, columnCount))
+        if (range.peek().type() != StringToken || !parseGridTemplateAreasRow(range.consumeIncludingWhitespace().value(), gridAreaMap))
             return false;
-        ++rowCount;
 
         // Handle template-rows's track-size.
         if (RefPtr value = consumeGridTrackSize(range, state))
@@ -1470,7 +1467,7 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
     }
     result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateRows, CSSValueList::createSpaceSeparated(WTFMove(templateRows)));
     result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateColumns, columnsValue.releaseNonNull());
-    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateAreas, CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateAreas, CSSGridTemplateAreasValue::create({ WTFMove(gridAreaMap) }));
     return true;
 }
 

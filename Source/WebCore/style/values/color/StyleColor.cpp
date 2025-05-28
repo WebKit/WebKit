@@ -308,7 +308,13 @@ String serializationForCSS(const CSS::SerializationContext& context, const Color
 
 void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const Color& value)
 {
-    return WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSS(builder, context, kind); });
+    WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSS(builder, context, kind); });
+}
+
+void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle& style, const Color& value)
+{
+    // NOTE: The specialization of Style::Serialize is used for computed value serialization, so the resolved "used" value is used.
+    builder.append(serializationForCSS(style.colorResolvingCurrentColor(value)));
 }
 
 // MARK: - TextStream.
@@ -353,6 +359,11 @@ auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState
 auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState& builderState) -> Color
 {
     return toStyle(value, builderState, ForVisitedLink::No);
+}
+
+Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const RenderStyle& style, const Color& value)
+{
+    return pool.createColorValue(style.colorResolvingCurrentColor(value));
 }
 
 } // namespace Style

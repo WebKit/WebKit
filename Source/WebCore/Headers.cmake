@@ -1022,6 +1022,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/values/color-adjust/CSSColorScheme.h
 
+    css/values/grid/CSSGridTemplateAreas.h
+
     css/values/images/CSSGradient.h
 
     css/values/motion/CSSRayFunction.h
@@ -1038,6 +1040,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.h
     css/values/primitives/CSSPrimitiveNumericTypes.h
     css/values/primitives/CSSPrimitiveNumericUnits.h
+    css/values/primitives/CSSRatio.h
     css/values/primitives/CSSSymbol.h
     css/values/primitives/CSSURL.h
     css/values/primitives/CSSURLModifiers.h
@@ -2753,17 +2756,24 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/color-adjust/StyleColorScheme.h
 
+    style/values/grid/StyleGridTemplateAreas.h
+
     style/values/images/StyleGradient.h
 
     style/values/inline/StyleLineBoxContain.h
+    style/values/inline/StyleLineHeight.h
+
+    style/values/masking/StyleClip.h
 
     style/values/motion/StyleRayFunction.h
 
     style/values/primitives/StylePosition.h
     style/values/primitives/StylePrimitiveNumeric.h
+    style/values/primitives/StylePrimitiveNumericAdaptors.h
     style/values/primitives/StylePrimitiveNumericConcepts.h
     style/values/primitives/StylePrimitiveNumericOrKeyword.h
     style/values/primitives/StylePrimitiveNumericTypes.h
+    style/values/primitives/StyleRatio.h
     style/values/primitives/StyleURL.h
     style/values/primitives/StyleUnevaluatedCalculation.h
 
@@ -2782,6 +2792,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/shapes/StyleShapeFunction.h
     style/values/shapes/StyleWindRuleComputation.h
     style/values/shapes/StyleXywhFunction.h
+
+    style/values/sizing/StyleContainIntrinsicSize.h
+
+    style/values/transforms/StylePerspective.h
+    style/values/transforms/StyleRotate.h
+    style/values/transforms/StyleScale.h
+    style/values/transforms/StyleTranslate.h
 
     style/values/StyleValueTypes.h
 

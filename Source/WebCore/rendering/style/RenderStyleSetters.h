@@ -133,11 +133,7 @@ inline void RenderStyle::setBreakBefore(BreakBetween behavior) { SET_NESTED(m_no
 inline void RenderStyle::setBreakInside(BreakInside behavior) { SET_NESTED(m_nonInheritedData, rareData, breakInside, static_cast<unsigned>(behavior)); }
 inline void RenderStyle::setCapStyle(LineCap style) { SET(m_rareInheritedData, capStyle, static_cast<unsigned>(style)); }
 inline void RenderStyle::setCaretColor(const Style::Color& color) { SET_PAIR(m_rareInheritedData, caretColor, color, hasAutoCaretColor, false); }
-inline void RenderStyle::setClip(LengthBox&& box) { SET_NESTED(m_nonInheritedData, rareData, clip, WTFMove(box)); }
-inline void RenderStyle::setClipBottom(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, clip.bottom(), WTFMove(length)); }
-inline void RenderStyle::setClipLeft(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, clip.left(), WTFMove(length)); }
-inline void RenderStyle::setClipRight(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, clip.right(), WTFMove(length)); }
-inline void RenderStyle::setClipTop(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, clip.top(), WTFMove(length)); }
+inline void RenderStyle::setClip(Style::ClipRect&& box) { SET_NESTED(m_nonInheritedData, rareData, clip, WTFMove(box)); }
 inline void RenderStyle::setColumnAxis(ColumnAxis axis) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, axis, static_cast<unsigned>(axis)); }
 inline void RenderStyle::setColumnFill(ColumnFill fill) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, fill, static_cast<unsigned>(fill)); }
 inline void RenderStyle::setColumnGap(GapLength&& length) { SET_NESTED(m_nonInheritedData, rareData, columnGap, WTFMove(length)); }
@@ -148,9 +144,9 @@ inline void RenderStyle::setColumnRuleWidth(unsigned short w) { SET_DOUBLY_NESTE
 inline void RenderStyle::setColumnSpan(ColumnSpan span) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, columnSpan, static_cast<unsigned>(span)); }
 inline void RenderStyle::setColumnWidth(float width) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, width, width, autoWidth, false); }
 inline void RenderStyle::setContain(OptionSet<Containment> containment) { SET_NESTED(m_nonInheritedData, rareData, contain, containment); }
-inline void RenderStyle::setContainIntrinsicHeight(std::optional<Length> height) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicHeight, height); }
+inline void RenderStyle::setContainIntrinsicHeightLength(std::optional<Style::Length<CSS::Nonnegative, float>> height) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicHeight, height); }
 inline void RenderStyle::setContainIntrinsicHeightType(ContainIntrinsicSizeType containIntrinsicHeightType) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicHeightType, static_cast<unsigned>(containIntrinsicHeightType)); }
-inline void RenderStyle::setContainIntrinsicWidth(std::optional<Length> width) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidth, width); }
+inline void RenderStyle::setContainIntrinsicWidthLength(std::optional<Style::Length<CSS::Nonnegative, float>> width) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidth, width); }
 inline void RenderStyle::setContainIntrinsicWidthType(ContainIntrinsicSizeType containIntrinsicWidthType) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidthType, static_cast<unsigned>(containIntrinsicWidthType)); }
 inline void RenderStyle::setContainerNames(const Vector<Style::ScopedName>& names) { SET_NESTED(m_nonInheritedData, rareData, containerNames, names); }
 inline void RenderStyle::setContainerType(ContainerType type) { SET_NESTED(m_nonInheritedData, rareData, containerType, static_cast<unsigned>(type)); }
@@ -171,6 +167,8 @@ inline void RenderStyle::setGridItemColumnEnd(const GridPosition& columnEndPosit
 inline void RenderStyle::setGridItemColumnStart(const GridPosition& columnStartPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridColumnStart, columnStartPosition); }
 inline void RenderStyle::setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridRowEnd, rowEndPosition); }
 inline void RenderStyle::setGridItemRowStart(const GridPosition& rowStartPosition) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, gridItem, gridRowStart, rowStartPosition); }
+inline void RenderStyle::setGridTemplateAreas(Style::GridTemplateAreas&& areas) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridTemplateAreas, WTFMove(areas)); }
+inline void RenderStyle::setGridTemplateAreas(const Style::GridTemplateAreas& areas) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, gridTemplateAreas, areas); }
 inline void RenderStyle::setHangingPunctuation(OptionSet<HangingPunctuation> punctuation) { SET(m_rareInheritedData, hangingPunctuation, punctuation.toRaw()); }
 inline void RenderStyle::setHasAutoAccentColor() { SET_PAIR(m_rareInheritedData, hasAutoAccentColor, true, accentColor, Style::Color::currentColor()); }
 inline void RenderStyle::setHasAutoCaretColor() { SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Style::Color::currentColor()); }
@@ -244,9 +242,6 @@ inline void RenderStyle::setMaxWidth(Length&& length) { SET_NESTED(m_nonInherite
 inline void RenderStyle::setMinHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minHeight, WTFMove(length)); }
 inline void RenderStyle::setMinWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minWidth, WTFMove(length)); }
 inline void RenderStyle::setNBSPMode(NBSPMode mode) { SET(m_rareInheritedData, nbspMode, static_cast<unsigned>(mode)); }
-inline void RenderStyle::setNamedGridArea(const NamedGridAreaMap& map) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, namedGridArea, map); }
-inline void RenderStyle::setNamedGridAreaColumnCount(size_t columnCount) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, namedGridAreaColumnCount, columnCount); }
-inline void RenderStyle::setNamedGridAreaRowCount(size_t rowCount) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, namedGridAreaRowCount, rowCount); }
 inline void RenderStyle::setObjectFit(ObjectFit fit) { SET_NESTED(m_nonInheritedData, miscData, objectFit, static_cast<unsigned>(fit)); }
 inline void RenderStyle::setObjectPosition(LengthPoint position) { SET_NESTED(m_nonInheritedData, miscData, objectPosition, WTFMove(position)); }
 inline void RenderStyle::setOffsetAnchor(LengthPoint position) { SET_NESTED(m_nonInheritedData, rareData, offsetAnchor, WTFMove(position)); }
@@ -273,7 +268,7 @@ inline void RenderStyle::setPaddingTop(Length&& length) { SET_NESTED(m_nonInheri
 inline void RenderStyle::setPageSize(LengthSize size) { SET_NESTED(m_nonInheritedData, rareData, pageSize, WTFMove(size)); }
 inline void RenderStyle::setPageSizeType(PageSizeType type) { SET_NESTED(m_nonInheritedData, rareData, pageSizeType, static_cast<unsigned>(type)); }
 inline void RenderStyle::setPaintOrder(PaintOrder order) { SET(m_rareInheritedData, paintOrder, static_cast<unsigned>(order)); }
-inline void RenderStyle::setPerspective(float perspective) { SET_NESTED(m_nonInheritedData, rareData, perspective, perspective); }
+inline void RenderStyle::setPerspective(Style::Perspective&& perspective) { SET_NESTED(m_nonInheritedData, rareData, perspective, WTFMove(perspective)); }
 inline void RenderStyle::setPerspectiveOriginX(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, perspectiveOriginX, WTFMove(length)); }
 inline void RenderStyle::setPerspectiveOriginY(Length&& length) { SET_NESTED(m_nonInheritedData, rareData, perspectiveOriginY, WTFMove(length)); }
 inline void RenderStyle::setPositionAnchor(const std::optional<Style::ScopedName>& anchor) { SET_NESTED(m_nonInheritedData, rareData, positionAnchor, anchor); }

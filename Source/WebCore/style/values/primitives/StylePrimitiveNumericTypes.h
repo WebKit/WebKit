@@ -143,6 +143,8 @@ using LengthPercentageSpaceSeparatedPointNonnegative = SpaceSeparatedPoint<Lengt
 // Standard Sizes
 using LengthPercentageSpaceSeparatedSizeAll = SpaceSeparatedSize<LengthPercentageAll>;
 using LengthPercentageSpaceSeparatedSizeNonnegative = SpaceSeparatedSize<LengthPercentageNonnegative>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeAll = MinimallySerializingSpaceSeparatedSize<LengthPercentageAll>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeNonnegative = MinimallySerializingSpaceSeparatedSize<LengthPercentageNonnegative>;
 
 // MARK: CSS -> Style
 

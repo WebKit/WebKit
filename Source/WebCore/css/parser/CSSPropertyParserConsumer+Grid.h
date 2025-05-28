@@ -33,11 +33,10 @@ class CSSGridLineNamesValue;
 class CSSParserTokenRange;
 class CSSValue;
 
-struct NamedGridAreaMap;
-
 enum CSSValueID : uint16_t;
 
 namespace CSS {
+struct NamedGridAreaMap;
 struct PropertyParserState;
 }
 
@@ -49,7 +48,7 @@ enum class AllowEmpty : bool { No, Yes };
 enum TrackListType : uint8_t { GridTemplate, GridTemplateNoRepeat, GridAuto };
 
 bool isGridBreadthIdent(CSSValueID);
-bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap&, size_t rowCount, size_t& columnCount);
+bool parseGridTemplateAreasRow(StringView gridRowNames, CSS::NamedGridAreaMap&);
 RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange&, CSS::PropertyParserState&, AllowEmpty = AllowEmpty::No);
 RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange&, CSS::PropertyParserState&);

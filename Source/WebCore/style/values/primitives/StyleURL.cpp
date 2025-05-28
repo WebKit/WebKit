@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleURL.h"
 
+#include "CSSURLValue.h"
 #include "Document.h"
 #include "StyleBuilderState.h"
 #include <wtf/text/TextStream.h>
@@ -77,6 +78,18 @@ auto ToCSS<URL>::operator()(const URL& url, const RenderStyle&) -> CSS::URL
 auto ToStyle<CSS::URL>::operator()(const CSS::URL& url, const BuilderState& state) -> URL
 {
     return toStyleWithScriptExecutionContext(url, state.protectedDocument());
+}
+
+Ref<CSSValue> CSSValueCreation<URL>::operator()(CSSValuePool&, const RenderStyle& style, const URL& value)
+{
+    return CSSURLValue::create(toCSS(value, style));
+}
+
+// MARK: - Serialization
+
+void Serialize<URL>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const URL& value)
+{
+    CSS::serializationForCSS(builder, context, toCSS(value, style));
 }
 
 // MARK: - Logging

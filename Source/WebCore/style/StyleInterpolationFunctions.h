@@ -52,19 +52,19 @@
 #include "QuotesData.h"
 #include "RenderBox.h"
 #include "RenderStyleSetters.h"
-#include "RotateTransformOperation.h"
 #include "SVGRenderStyle.h"
-#include "ScaleTransformOperation.h"
 #include "ScopedName.h"
 #include "ScrollbarGutter.h"
 #include "Settings.h"
 #include "StyleBoxShadow.h"
 #include "StyleCachedImage.h"
+#include "StyleClip.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleFilterImage.h"
 #include "StyleInterpolationClient.h"
 #include "StyleInterpolationContext.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StyleResolver.h"
 #include "StyleTextEdge.h"
 #include <algorithm>
@@ -219,108 +219,6 @@ inline TransformOperations blendFunc(const TransformOperations& from, const Tran
     return to.blend(from, context, boxSize, prefix());
 }
 
-inline RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const Context& context)
-{
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<ScaleTransformOperation> identity;
-    if (!from) {
-        identity = ScaleTransformOperation::create(1, 1, 1, to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = ScaleTransformOperation::create(1, 1, 1, from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<ScaleTransformOperation> normalizedFrom;
-        RefPtr<ScaleTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Scale3D);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Scale3D);
-        } else {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Scale);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Scale);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    auto blendedOperation = to->blend(from, context);
-    if (auto* scale = dynamicDowncast<ScaleTransformOperation>(blendedOperation.get()))
-        return ScaleTransformOperation::create(scale->x(), scale->y(), scale->z(), scale->type());
-    return nullptr;
-}
-
-inline RefPtr<RotateTransformOperation> blendFunc(RotateTransformOperation* from, RotateTransformOperation* to, const Context& context)
-{
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<RotateTransformOperation> identity;
-    if (!from) {
-        identity = RotateTransformOperation::create(0, to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = RotateTransformOperation::create(0, from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<RotateTransformOperation> normalizedFrom;
-        RefPtr<RotateTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = RotateTransformOperation::create(from->x(), from->y(), from->z(), from->angle(), TransformOperation::Type::Rotate3D);
-            normalizedTo = RotateTransformOperation::create(to->x(), to->y(), to->z(), to->angle(), TransformOperation::Type::Rotate3D);
-        } else {
-            normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::Type::Rotate);
-            normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::Type::Rotate);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    auto blendedOperation = to->blend(from, context);
-    if (auto* rotate = dynamicDowncast<RotateTransformOperation>(blendedOperation.get()))
-        return RotateTransformOperation::create(rotate->x(), rotate->y(), rotate->z(), rotate->angle(), rotate->type());
-    return nullptr;
-}
-
-inline RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation* from, TranslateTransformOperation* to, const Context& context)
-{
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<TranslateTransformOperation> identity;
-    if (!from) {
-        identity = TranslateTransformOperation::create(WebCore::Length(0, LengthType::Fixed), WebCore::Length(0, LengthType::Fixed), WebCore::Length(0, LengthType::Fixed), to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = TranslateTransformOperation::create(WebCore::Length(0, LengthType::Fixed), WebCore::Length(0, LengthType::Fixed), WebCore::Length(0, LengthType::Fixed), from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<TranslateTransformOperation> normalizedFrom;
-        RefPtr<TranslateTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Translate3D);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Translate3D);
-        } else {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Translate);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Translate);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    auto blendedOperation = to->blend(from, context);
-    if (auto* translate = dynamicDowncast<TranslateTransformOperation>(blendedOperation.get()))
-        return TranslateTransformOperation::create(translate->x(), translate->y(), translate->z(), translate->type());
-    return nullptr;
-}
-
 inline Ref<TransformOperation> blendFunc(TransformOperation& from, TransformOperation& to, const Context& context)
 {
     return to.blend(&from, context);
@@ -417,6 +315,16 @@ inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const Con
         blendFunc(from.right(), to.right(), context, valueRange),
         blendFunc(from.bottom(), to.bottom(), context, valueRange),
         blendFunc(from.left(), to.left(), context, valueRange),
+    };
+}
+
+inline ClipRect blendFunc(const ClipRect& from, const ClipRect& to, const Context& context)
+{
+    return ClipRect {
+        blendFunc(from.value->top().length, to.value->top().length, context, ValueRange::All),
+        blendFunc(from.value->right().length, to.value->right().length, context, ValueRange::All),
+        blendFunc(from.value->bottom().length, to.value->bottom().length, context, ValueRange::All),
+        blendFunc(from.value->left().length, to.value->left().length, context, ValueRange::All),
     };
 }
 

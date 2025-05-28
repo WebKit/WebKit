@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,17 +41,22 @@
 #include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
+#include "StyleClip.h"
 #include "StyleColor.h"
+#include "StyleContainIntrinsicSize.h"
 #include "StyleContentAlignmentData.h"
+#include "StylePerspective.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StyleRotate.h"
+#include "StyleScale.h"
 #include "StyleScrollMargin.h"
 #include "StyleScrollPadding.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextEdge.h"
+#include "StyleTranslate.h"
 #include "TextDecorationThickness.h"
 #include "TouchAction.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
 #include "ViewTransitionName.h"
 #include <memory>
@@ -70,8 +76,6 @@ using namespace CSS::Literals;
 class AnimationList;
 class ContentData;
 class PathOperation;
-class RotateTransformOperation;
-class ScaleTransformOperation;
 class ShadowData;
 class StyleCustomPropertyData;
 class StyleDeprecatedFlexibleBoxData;
@@ -131,8 +135,8 @@ public:
 
     OptionSet<Containment> usedContain() const;
 
-    Markable<Length> containIntrinsicWidth;
-    Markable<Length> containIntrinsicHeight;
+    Markable<Style::ContainIntrinsicSize::Length> containIntrinsicWidth;
+    Markable<Style::ContainIntrinsicSize::Length> containIntrinsicHeight;
 
     Length perspectiveOriginX;
     Length perspectiveOriginY;
@@ -159,7 +163,7 @@ public:
     DataRef<StyleGridItemData> gridItem;
 
     // Only meaningful when `hasClip` is true.
-    LengthBox clip;
+    Style::ClipRect clip { CSS::Keyword::Auto { } };
 
     Style::ScrollMargin scrollMargin { 0_css_px };
     Style::ScrollPadding scrollPadding { CSS::Keyword::Auto { } };
@@ -178,7 +182,7 @@ public:
     Length shapeMargin;
     float shapeImageThreshold;
 
-    float perspective;
+    Style::Perspective perspective;
 
     RefPtr<PathOperation> clipPath;
 
@@ -187,9 +191,9 @@ public:
     DataRef<StyleCustomPropertyData> customProperties;
     UncheckedKeyHashSet<AtomString> customPaintWatchedProperties;
 
-    RefPtr<RotateTransformOperation> rotate;
-    RefPtr<ScaleTransformOperation> scale;
-    RefPtr<TranslateTransformOperation> translate;
+    Style::Rotate rotate;
+    Style::Scale scale;
+    Style::Translate translate;
     RefPtr<PathOperation> offsetPath;
 
     Vector<Style::ScopedName> containerNames;

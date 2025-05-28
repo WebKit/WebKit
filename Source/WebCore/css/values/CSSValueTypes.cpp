@@ -25,7 +25,12 @@
 #include "config.h"
 #include "CSSValueTypes.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSMarkup.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
+#include "CSSValuePool.h"
 
 namespace WebCore {
 namespace CSS {
@@ -35,9 +40,59 @@ void Serialize<CustomIdentifier>::operator()(StringBuilder& builder, const Seria
     serializeIdentifier(value.value, builder);
 }
 
+void Serialize<WTF::AtomString>::operator()(StringBuilder& builder, const SerializationContext&, const WTF::AtomString& value)
+{
+    serializeString(value, builder);
+}
+
 void Serialize<WTF::String>::operator()(StringBuilder& builder, const SerializationContext&, const WTF::String& value)
 {
     serializeString(value, builder);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(CSSValueID value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const CustomIdentifier& value)
+{
+    return CSSPrimitiveValue::createCustomIdent(value.value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const WTF::AtomString& value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const WTF::String& value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makeFunctionCSSValue(CSSValueID name, Ref<CSSValue>&& value)
+{
+    return CSSFunctionValue::create(name, WTFMove(value));
+}
+
+Ref<CSSValue> makeSpaceSeparatedCoalescingPairCSSValue(Ref<CSSValue>&& first, Ref<CSSValue>&& second)
+{
+    return CSSValuePair::create(WTFMove(first), WTFMove(second));
+}
+
+Ref<CSSValue> makeSpaceSeparatedListCSSValue(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createSpaceSeparated(WTFMove(builder));
+}
+
+Ref<CSSValue> makeCommaSeparatedListCSSValue(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createCommaSeparated(WTFMove(builder));
+}
+
+Ref<CSSValue> makeSlashSeparatedListCSSValue(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createSlashSeparated(WTFMove(builder));
 }
 
 } // namespace CSS

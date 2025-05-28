@@ -3802,17 +3802,17 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
 static bool styleHas3DTransformOperation(const RenderStyle& style)
 {
     return style.transform().has3DOperation()
-        || (style.translate() && style.translate()->is3DOperation())
-        || (style.scale() && style.scale()->is3DOperation())
-        || (style.rotate() && style.rotate()->is3DOperation());
+        || (!style.translate().isNone() && style.translate()->is3DOperation())
+        || (!style.scale().isNone() && style.scale()->is3DOperation())
+        || (!style.rotate().isNone() && style.rotate()->is3DOperation());
 }
 
 static bool styleTransformOperationsAreRepresentableIn2D(const RenderStyle& style)
 {
     return style.transform().isRepresentableIn2D()
-        && (!style.translate() || style.translate()->isRepresentableIn2D())
-        && (!style.scale() || style.scale()->isRepresentableIn2D())
-        && (!style.rotate() || style.rotate()->isRepresentableIn2D());
+        && (style.translate().isNone() || style.translate()->isRepresentableIn2D())
+        && (style.scale().isNone() || style.scale()->isRepresentableIn2D())
+        && (style.rotate().isNone() || style.rotate()->isRepresentableIn2D());
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObject& renderer) const

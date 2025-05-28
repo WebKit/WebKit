@@ -113,11 +113,11 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     transformBox = style.transformBox();
     transform = style.transform().selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
 
-    if (auto* srcTranslate = style.translate())
+    if (auto srcTranslate = style.translate(); !srcTranslate.isNone())
         translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    if (auto* srcScale = style.scale())
+    if (auto srcScale = style.scale(); !srcScale.isNone())
         scale = srcScale->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    if (auto* srcRotate = style.rotate())
+    if (auto srcRotate = style.rotate(); !srcRotate.isNone())
         rotate = srcRotate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
     transformOrigin = nonCalculatedLengthPoint(style.transformOriginXY(), borderBoxSize);
 

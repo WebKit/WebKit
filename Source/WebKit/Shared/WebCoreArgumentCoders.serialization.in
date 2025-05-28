@@ -3179,6 +3179,13 @@ using WebCore::Style::LengthPercentageAll = WebCore::Style::LengthPercentage<Web
     WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageAll> value;
 };
 
+[CustomHeader, Nested] struct WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> {
+    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageNonnegative> value;
+};
+[CustomHeader, Nested] struct WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageAll> {
+    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageAll> value;
+};
+
 using WebCore::Style::LengthPercentageSpaceSeparatedPointAll = WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll>;
 using WebCore::Style::LengthPercentageSpaceSeparatedPointNonnegative = WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageNonnegative>;
 
@@ -3403,19 +3410,19 @@ using WebCore::Style::CloseCommand = WebCore::Constant<WebCore::CSSValueClose>;
 };
 [CustomHeader, Nested] struct WebCore::Style::ArcCommand {
     Variant<WebCore::Style::ToPosition, WebCore::Style::ByCoordinatePair> toBy;
-    WebCore::Style::LengthPercentageSpaceSeparatedSizeAll size;
+    WebCore::Style::LengthPercentageMinimallySerializingSpaceSeparatedSizeAll size;
     Variant<WebCore::CSS::Keyword::Cw, WebCore::CSS::Keyword::Ccw> arcSweep;
     Variant<WebCore::CSS::Keyword::Large, WebCore::CSS::Keyword::Small> arcSize;
     WebCore::Style::Angle<WebCore::CSS::All> rotation;
 };
-using WebCore::Style::LengthPercentageSpaceSeparatedSizeAll = WebCore::SpaceSeparatedSize<WebCore::Style::LengthPercentageAll>
+using WebCore::Style::LengthPercentageMinimallySerializingSpaceSeparatedSizeAll = WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageAll>
 
 header: <WebCore/StyleBorderRadius.h>
 [CustomHeader, Nested] struct WebCore::Style::BorderRadius {
-    WebCore::SpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topLeft;
-    WebCore::SpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topRight;
-    WebCore::SpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomRight;
-    WebCore::SpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomLeft;
+    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topLeft;
+    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topRight;
+    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomRight;
+    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomLeft;
 };
 
 header: <WebCore/StyleRayFunction.h>

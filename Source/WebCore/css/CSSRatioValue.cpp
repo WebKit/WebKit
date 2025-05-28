@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-Ref<CSSRatioValue> CSSRatioValue::create(CSS::Ratio&& ratio)
+Ref<CSSRatioValue> CSSRatioValue::create(CSS::Ratio ratio)
 {
     return adoptRef(*new CSSRatioValue(WTFMove(ratio)));
 }

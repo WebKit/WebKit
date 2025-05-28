@@ -111,6 +111,18 @@ template<typename T> struct Evaluation<SpaceSeparatedSize<T>> {
     }
 };
 
+// MARK: - MinimallySerializingSpaceSeparatedSize
+
+template<typename T> struct Evaluation<MinimallySerializingSpaceSeparatedSize<T>> {
+    FloatSize operator()(const MinimallySerializingSpaceSeparatedSize<T>& value, FloatSize referenceBox)
+    {
+        return {
+            evaluate(value.width(), referenceBox.width()),
+            evaluate(value.height(), referenceBox.height())
+        };
+    }
+};
+
 // MARK: - VariantLike
 
 template<VariantLike CSSType, typename... Rest> decltype(auto) evaluate(const CSSType& value, Rest&& ...rest)

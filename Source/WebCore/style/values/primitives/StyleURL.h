@@ -59,6 +59,13 @@ URL toStyleWithScriptExecutionContext(const CSS::URL&, const ScriptExecutionCont
 template<> struct ToCSS<URL> { auto operator()(const URL&, const RenderStyle&) -> CSS::URL; };
 template<> struct ToStyle<CSS::URL> { auto operator()(const CSS::URL&, const BuilderState&) -> URL; };
 
+// `URL` is special-cased to return a `CSSURLValue`.
+template<> struct CSSValueCreation<URL> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const URL&); };
+
+// MARK: Serialization
+
+template<> struct Serialize<URL> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const URL&); };
+
 // MARK: Logging
 
 TextStream& operator<<(TextStream&, const URL&);

@@ -29,28 +29,10 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePool.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
 namespace WebCore {
 namespace Style {
-
-// MARK: - Conversion
-
-Ref<CSSValue> toCSSValue(const CornerShapeValue& cornerShapeValue, const RenderStyle&)
-{
-    if (cornerShapeValue == CornerShapeValue::round())
-        return CSSPrimitiveValue::create(CSSValueRound);
-    if (cornerShapeValue == CornerShapeValue::scoop())
-        return CSSPrimitiveValue::create(CSSValueScoop);
-    if (cornerShapeValue == CornerShapeValue::bevel())
-        return CSSPrimitiveValue::create(CSSValueBevel);
-    if (cornerShapeValue == CornerShapeValue::notch())
-        return CSSPrimitiveValue::create(CSSValueNotch);
-    if (cornerShapeValue == CornerShapeValue::straight())
-        return CSSPrimitiveValue::create(CSSValueStraight);
-    if (cornerShapeValue == CornerShapeValue::squircle())
-        return CSSPrimitiveValue::create(CSSValueSquircle);
-    return CSSFunctionValue::create(cornerShapeValue.superellipse.name, CSSPrimitiveValue::create(cornerShapeValue.superellipse->value));
-}
 
 // MARK: - Blending
 

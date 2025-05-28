@@ -84,10 +84,13 @@ template<CSSValueID C> inline constexpr bool TreatAsNonConverting<Constant<C>> =
 // Specialize `TreatAsNonConverting` for `CustomIdentifier`, to indicate that its type does not change from the CSS representation.
 template<> inline constexpr bool TreatAsNonConverting<CustomIdentifier> = true;
 
+// Specialize `TreatAsNonConverting` for `WTF::AtomString`, to indicate that its type does not change from the CSS representation.
+template<> inline constexpr bool TreatAsNonConverting<WTF::AtomString> = true;
+
 // Specialize `TreatAsNonConverting` for `WTF::String`, to indicate that its type does not change from the CSS representation.
 template<> inline constexpr bool TreatAsNonConverting<WTF::String> = true;
 
-// Specialize `TreatAsNonConverting` for `WTF::String`, to indicate that its type does not change from the CSS representation.
+// Specialize `TreatAsNonConverting` for `WTF::URL`, to indicate that its type does not change from the CSS representation.
 template<> inline constexpr bool TreatAsNonConverting<WTF::URL> = true;
 
 
@@ -124,6 +127,7 @@ template<typename... Ts> struct ToCSSMapping<CommaSeparatedTuple<Ts...>> { using
 template<typename T> struct ToCSSMapping<SpaceSeparatedPoint<T>> { using type = SpaceSeparatedPoint<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<SpaceSeparatedSize<T>> { using type = SpaceSeparatedSize<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<SpaceSeparatedRectEdges<T>> { using type = SpaceSeparatedRectEdges<CSSType<T>>; };
+template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<CSSType<T>>; };
 
 // Standard Range-Like type mappings:
@@ -249,6 +253,7 @@ template<typename... Ts> struct ToStyleMapping<CommaSeparatedTuple<Ts...>> { usi
 template<typename T> struct ToStyleMapping<SpaceSeparatedPoint<T>> { using type = SpaceSeparatedPoint<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<SpaceSeparatedSize<T>> { using type = SpaceSeparatedSize<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<SpaceSeparatedRectEdges<T>> { using type = SpaceSeparatedRectEdges<StyleType<T>>; };
+template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<StyleType<T>>; };
 
 // Standard Range-Like type mappings:
@@ -320,6 +325,258 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CommaSeparatedV
     }
 };
 
+// MARK: - Conversion from "Style to "Ref<CSSValue>"
+
+// All leaf types must implement the following:
+//
+//    template<> struct WebCore::Style::CSSValueCreation<StyleType> {
+//        Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const StyleType&);
+//    };
+
+template<typename StyleType> struct CSSValueCreation;
+
+template<typename StyleType> Ref<CSSValue> createCSSValue(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+{
+    return CSSValueCreation<StyleType>{}(pool, style, value);
+}
+
+// Constrained for `TreatAsVariantLike`.
+template<VariantLike StyleType> struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) -> Ref<CSSValue> { return createCSSValue(pool, style, alternative); });
+    }
+};
+
+// Constrained for `TreatAsTupleLike`
+template<TupleLike StyleType> struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    {
+        if constexpr (std::tuple_size_v<StyleType> == 1 && SerializationSeparator<StyleType> == SerializationSeparatorType::None) {
+            return createCSSValue(pool, style, get<0>(value));
+        } else {
+            CSSValueListBuilder list;
+
+            auto caller = WTF::makeVisitor(
+                [&]<typename T>(const std::optional<T>& element) {
+                    if (!element)
+                        return;
+                    list.append(createCSSValue(pool, style, *element));
+                },
+                [&]<typename T>(const Markable<T>& element) {
+                    if (!element)
+                        return;
+                    list.append(createCSSValue(pool, style, *element));
+                },
+                [&](const auto& element) {
+                    list.append(createCSSValue(pool, style, element));
+                }
+            );
+            WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
+
+            return CSS::makeListCSSValue<StyleType>(WTFMove(list));
+        }
+    }
+};
+
+// Constrained for `TreatAsRangeLike`
+template<RangeLike StyleType> struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    {
+        CSSValueListBuilder list;
+        for (const auto& element : value)
+            list.append(createCSSValue(pool, style, element));
+
+        return CSS::makeListCSSValue<StyleType>(WTFMove(list));
+    }
+};
+
+// Constrained for `TreatAsNonConverting`.
+template<NonConverting StyleType> struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle&, const StyleType& value)
+    {
+        return CSS::createCSSValue(pool, value);
+    }
+};
+
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename StyleType> struct CSSValueCreation<FunctionNotation<Name, StyleType>> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const FunctionNotation<Name, StyleType>& value)
+    {
+        return CSS::makeFunctionCSSValue(value.name, createCSSValue(pool, style, value.parameters));
+    }
+};
+
+// Specialization for `MinimallySerializingSpaceSeparatedSize`.
+template<typename CSSType> struct CSSValueCreation<MinimallySerializingSpaceSeparatedSize<CSSType>> {
+    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const MinimallySerializingSpaceSeparatedSize<CSSType>& value)
+    {
+        return CSS::makeSpaceSeparatedCoalescingPairCSSValue(createCSSValue(pool, style, get<0>(value)), createCSSValue(pool, style, get<1>(value)));
+    }
+};
+
+// MARK: - Serialization
+
+// All leaf types must implement the following:
+//
+//    template<> struct WebCore::Style::Serialize<StyleType> {
+//        void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const StyleType&);
+//    };
+
+template<typename StyleType> struct Serialize;
+
+// Serialization Invokers
+template<typename StyleType> void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+{
+    Serialize<StyleType>{}(builder, context, style, value);
+}
+
+template<typename StyleType> [[nodiscard]] String serializationForCSS(const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+{
+    StringBuilder builder;
+    serializationForCSS(builder, context, style, value);
+    return builder.toString();
+}
+
+template<typename StyleType> void serializationForCSSOnOptionalLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+{
+    if (!value)
+        return;
+    serializationForCSS(builder, context, style, *value);
+}
+
+template<typename StyleType> void serializationForCSSOnTupleLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, ASCIILiteral separator)
+{
+    auto swappedSeparator = ""_s;
+    auto caller = WTF::makeVisitor(
+        [&]<typename T>(const std::optional<T>& element) {
+            if (!element)
+                return;
+            builder.append(std::exchange(swappedSeparator, separator));
+            serializationForCSS(builder, context, style, *element);
+        },
+        [&]<typename T>(const Markable<T>& element) {
+            if (!element)
+                return;
+            builder.append(std::exchange(swappedSeparator, separator));
+            serializationForCSS(builder, context, style, *element);
+        },
+        [&](const auto& element) {
+            builder.append(std::exchange(swappedSeparator, separator));
+            serializationForCSS(builder, context, style, element);
+        }
+    );
+
+    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
+}
+
+template<typename StyleType> void serializationForCSSOnRangeLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, ASCIILiteral separator)
+{
+    auto swappedSeparator = ""_s;
+    for (const auto& element : value) {
+        builder.append(std::exchange(swappedSeparator, separator));
+        serializationForCSS(builder, context, style, element);
+    }
+}
+
+template<typename StyleType> void serializationForCSSOnVariantLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+{
+    WTF::switchOn(value, [&](const auto& alternative) { serializationForCSS(builder, context, style, alternative); });
+}
+
+// Constrained for `TreatAsEmptyLike`.
+template<EmptyLike StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const StyleType&)
+    {
+    }
+};
+
+// Constrained for `TreatAsOptionalLike`.
+template<OptionalLike StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    {
+        serializationForCSSOnOptionalLike(builder, context, style, value);
+    }
+};
+
+// Constrained for `TreatAsTupleLike`.
+template<TupleLike StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    {
+        serializationForCSSOnTupleLike(builder, context, style, value, SerializationSeparatorString<StyleType>);
+    }
+};
+
+// Constrained for `TreatAsRangeLike`.
+template<RangeLike StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    {
+        serializationForCSSOnRangeLike(builder, context, style, value, SerializationSeparatorString<StyleType>);
+    }
+};
+
+// Constrained for `TreatAsVariantLike`.
+template<VariantLike StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    {
+        serializationForCSSOnVariantLike(builder, context, style, value);
+    }
+};
+
+// Constrained for `TreatAsNonConverting`.
+template<NonConverting StyleType> struct Serialize<StyleType> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const StyleType& value)
+    {
+        CSS::serializationForCSS(builder, context, value);
+    }
+};
+
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename StyleType> struct Serialize<FunctionNotation<Name, StyleType>> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const FunctionNotation<Name, StyleType>& value)
+    {
+        builder.append(nameLiteralForSerialization(value.name), '(');
+        serializationForCSS(builder, context, style, value.parameters);
+        builder.append(')');
+    }
+};
+
+// Specialization for `MinimallySerializingSpaceSeparatedSize`.
+template<typename CSSType> struct Serialize<MinimallySerializingSpaceSeparatedSize<CSSType>> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const MinimallySerializingSpaceSeparatedSize<CSSType>& value)
+    {
+        constexpr auto separator = SerializationSeparatorString<MinimallySerializingSpaceSeparatedSize<CSSType>>;
+
+        if (get<0>(value) != get<1>(value)) {
+            serializationForCSSOnTupleLike(builder, context, style, std::tuple { get<0>(value), get<1>(value) }, separator);
+            return;
+        }
+        serializationForCSS(builder, context, style, get<0>(value));
+    }
+};
+
+// Specialization for `MinimallySerializingSpaceSeparatedRectEdges`.
+template<typename StyleType> struct Serialize<MinimallySerializingSpaceSeparatedRectEdges<StyleType>> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const MinimallySerializingSpaceSeparatedRectEdges<StyleType>& value)
+    {
+        constexpr auto separator = SerializationSeparatorString<MinimallySerializingSpaceSeparatedRectEdges<StyleType>>;
+
+        if (value.left() != value.right()) {
+            serializationForCSSOnTupleLike(builder, context, style, std::tuple { value.top(), value.right(), value.bottom(), value.left() }, separator);
+            return;
+        }
+        if (value.bottom() != value.top()) {
+            serializationForCSSOnTupleLike(builder, context, style, std::tuple { value.top(), value.right(), value.bottom() }, separator);
+            return;
+        }
+        if (value.right() != value.top()) {
+            serializationForCSSOnTupleLike(builder, context, style, std::tuple { value.top(), value.right() }, separator);
+            return;
+        }
+        serializationForCSS(builder, context, style, value.top());
+    }
+};
+
 // MARK: - Evaluation
 
 // Types that want to participate in evaluation overloading must specialize the following interface:
@@ -341,7 +598,7 @@ template<typename StyleType, typename Reference> decltype(auto) evaluate(const S
     return Evaluation<StyleType>{}(value, std::forward<Reference>(reference));
 }
 
-// Specialization for `VariantLike`.
+// Constrained for `TreatAsVariantLike`.
 template<VariantLike StyleType> struct Evaluation<StyleType> {
     template<typename... Rest> decltype(auto) operator()(const StyleType& value, Rest&&... rest)
     {
@@ -652,8 +909,8 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
 // All leaf types that want to conform to IsZero must implement
 // the following:
 //
-//    template<> struct WebCore::Style::IsZero<CSSType> {
-//        bool operator()(const CSSType&);
+//    template<> struct WebCore::Style::IsZero<StyleType> {
+//        bool operator()(const StyleType&);
 //    };
 //
 // or have a member function such that the type matches the
@@ -664,15 +921,11 @@ template<typename> struct IsZero;
 // IsZero Invoker
 template<typename T> bool isZero(const T& value)
 {
-    return IsZero<T>{}(value);
-}
-
-template<HasIsZero T> struct IsZero<T> {
-    bool operator()(const T& value)
-    {
+    if constexpr (HasIsZero<T>)
         return value.isZero();
-    }
-};
+    else
+        return IsZero<T>{}(value);
+}
 
 // Constrained for `TreatAsTupleLike`.
 template<TupleLike T> struct IsZero<T> {
@@ -695,8 +948,8 @@ template<VariantLike T> struct IsZero<T> {
 // All leaf types that want to conform to IsEmpty must implement
 // the following:
 //
-//    template<> struct WebCore::Style::IsEmpty<CSSType> {
-//        bool operator()(const CSSType&);
+//    template<> struct WebCore::Style::IsEmpty<StyleType> {
+//        bool operator()(const StyleType&);
 //    };
 //
 // or have a member function such that the type matches the
@@ -707,16 +960,13 @@ template<typename> struct IsEmpty;
 // IsEmpty Invoker
 template<typename T> bool isEmpty(const T& value)
 {
-    return IsEmpty<T>{}(value);
+    if constexpr (HasIsEmpty<T>)
+        return value.isEmpty();
+    else
+        return IsEmpty<T>{}(value);
 }
 
-template<HasIsEmpty T> struct IsEmpty<T> {
-    bool operator()(const T& value)
-    {
-        return value.isEmpty();
-    }
-};
-
+// Specialization for `SpaceSeparatedSize`.
 template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
     bool operator()(const auto& value)
     {
@@ -726,17 +976,70 @@ template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
 
 // MARK: - Logging
 
-// Specialization for `VariantLike`.
-template<VariantLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType& value)
+template<typename StyleType> void logForCSSOnTupleLike(TextStream& ts, const StyleType& value, ASCIILiteral separator)
+{
+    auto swappedSeparator = ""_s;
+    auto caller = WTF::makeVisitor(
+        [&]<typename T>(const std::optional<T>& element) {
+            if (!element)
+                return;
+            ts << std::exchange(swappedSeparator, separator);
+            ts << *element;
+        },
+        [&]<typename T>(const Markable<T>& element) {
+            if (!element)
+                return;
+            ts << std::exchange(swappedSeparator, separator);
+            ts << *element;
+        },
+        [&](const auto& element) {
+            ts << std::exchange(swappedSeparator, separator);
+            ts << element;
+        }
+    );
+
+    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
+}
+
+template<typename StyleType> void logForCSSOnRangeLike(TextStream& ts, const StyleType& value, ASCIILiteral separator)
+{
+    auto swappedSeparator = ""_s;
+    for (const auto& element : value) {
+        ts << std::exchange(swappedSeparator, separator);
+        ts << element;
+    }
+}
+
+template<typename StyleType> void logForCSSOnVariantLike(TextStream& ts, const StyleType& value)
 {
     WTF::switchOn(value, [&](const auto& value) { ts << value; });
+}
+
+// Constrained for `TreatAsEmptyLike`.
+template<EmptyLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType&)
+{
     return ts;
 }
 
-// Specialization for `TupleLike` (wrapper).
-template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) TextStream& operator<<(TextStream& ts, const StyleType& value)
+// Constrained for `TreatAsTupleLike`.
+template<TupleLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType& value)
 {
-    return ts << get<0>(value);
+    logForCSSOnTupleLike(ts, value, SerializationSeparatorString<StyleType>);
+    return ts;
+}
+
+// Constrained for `TreatAsRangeLike`.
+template<RangeLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType& value)
+{
+    logForCSSOnRangeLike(ts, value, SerializationSeparatorString<StyleType>);
+    return ts;
+}
+
+// Constrained for `TreatAsVariantLike`.
+template<VariantLike StyleType> TextStream& operator<<(TextStream& ts, const StyleType& value)
+{
+    logForCSSOnVariantLike(ts, value);
+    return ts;
 }
 
 } // namespace Style
