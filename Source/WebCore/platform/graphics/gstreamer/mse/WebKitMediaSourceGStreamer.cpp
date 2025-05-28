@@ -856,6 +856,22 @@ static gboolean webKitMediaSrcSendEvent(GstElement* element, GstEvent* eventTran
             source->priv->rate = rate.value();
         return forwardToAllPads ? wasEventHandledByAllStreams : wasEventHandledByAnyStream;
     }
+    case GST_EVENT_CUSTOM_DOWNSTREAM: {
+        if (gst_structure_has_name(gst_event_get_structure(event.get()), "GstEventStillFrame")) {
+            // Drain the video stream (and only that one, assuming there's only one).
+            WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(element);
+            for (auto stream : source->priv->streams.values()) {
+                if (stream->track.get().type() == TrackPrivateBaseGStreamer::TrackType::Video) {
+                    GRefPtr<GstPad> sinkPeerPad = adoptGRef(gst_pad_get_peer(stream->pad.get()));
+                    stream->track->enqueueObject(adoptGRef(GST_MINI_OBJECT(event.leakRef())));
+                    return TRUE;
+                }
+            }
+            GST_DEBUG_OBJECT(element, "No video stream to send the still frame event to");
+            return FALSE;
+        }
+        [[fallthrough]];
+    }
     default:
         return GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event.leakRef());
     }

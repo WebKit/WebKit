@@ -445,6 +445,11 @@ bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
     return result;
 }
 
+bool MediaPlayerPrivateGStreamerMSE::hasFutureTime(const MediaTime &time) const
+{
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(time);
+}
+
 void MediaPlayerPrivateGStreamerMSE::durationChanged()
 {
     ASSERT(isMainThread());

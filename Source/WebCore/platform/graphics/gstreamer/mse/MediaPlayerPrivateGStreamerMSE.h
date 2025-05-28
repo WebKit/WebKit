@@ -96,6 +96,7 @@ public:
 #ifndef GST_DISABLE_GST_DEBUG
     void setShouldDisableSleep(bool) final;
 #endif
+    bool hasFutureTime(const MediaTime&) const;
 
 private:
     explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer*);
