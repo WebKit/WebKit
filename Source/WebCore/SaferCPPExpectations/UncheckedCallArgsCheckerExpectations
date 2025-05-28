@@ -910,7 +910,6 @@ style/Styleable.cpp
 style/Styleable.h
 style/values/color/StyleColor.cpp
 style/values/color/StyleKeywordColor.cpp
-style/values/color/StyleLightDarkColor.cpp
 style/values/primitives/StyleLengthResolution.cpp
 svg/SVGAElement.cpp
 svg/SVGAltGlyphElement.cpp

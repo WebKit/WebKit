@@ -28,6 +28,7 @@
 
 #include "CSSLightDarkColor.h"
 #include "Document.h"
+#include "RenderStyle.h"
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include "StyleColorResolutionState.h"
@@ -40,7 +41,8 @@ Color toStyleColor(const CSS::LightDarkColor& unresolved, ColorResolutionState& 
     ColorResolutionStateNester nester { state };
 
     Ref<const Document> document = state.document;
-    if (document->useDarkAppearance(&state.style))
+    CheckedRef<const RenderStyle> style = state.style;
+    if (document->useDarkAppearance(style.ptr()))
         return toStyleColor(unresolved.darkColor, state);
     return toStyleColor(unresolved.lightColor, state);
 }
