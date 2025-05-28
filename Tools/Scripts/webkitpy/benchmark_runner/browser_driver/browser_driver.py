@@ -58,6 +58,9 @@ class BrowserDriver:
     def diagnose_test_failure(self, debug_directory, error):
         pass
 
+    def save_successful_screenshot(self, diagnose_directory):
+        pass
+
     @contextmanager
     def prevent_sleep(self, timeout):
         yield

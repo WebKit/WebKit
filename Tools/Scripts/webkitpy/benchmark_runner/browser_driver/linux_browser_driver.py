@@ -127,6 +127,9 @@ class LinuxBrowserDriver(BrowserDriver):
         # FIXME: store a screenshoot or some debug data for later analysis before closing the browser.
         self.close_browsers()
 
+    def save_successful_screenshot(self, diagnose_directory):
+        pass
+
     def _get_first_executable_path_from_list(self, searchlist):
         searchpath = [os.path.curdir] + os.environ['PATH'].split(os.pathsep)
         for program in searchlist:

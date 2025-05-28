@@ -28,7 +28,7 @@ class WebDriverBenchmarkRunner(BenchmarkRunner):
             raise error
         else:
             if not any(file.startswith('test-successful-screenshot-') for file in os.listdir(self._diagnose_dir)):
-                self._browser_driver._save_screenshot_to_path(self._diagnose_dir, f'test-successful-screenshot-{int(time.time())}.jpg')
+                self._browser_driver.save_successful_screenshot(self.diagnose_dir)
             self._browser_driver.close_browsers()
 
         return json.loads(result)
