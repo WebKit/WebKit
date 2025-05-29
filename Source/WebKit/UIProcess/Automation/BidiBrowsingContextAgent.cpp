@@ -29,13 +29,18 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#include "APIPageConfiguration.h"
 #include "AutomationProtocolObjects.h"
+#include "BrowsingContextGroup.h"
+#include "FrameInfoData.h"
+#include "FrameTreeNodeData.h"
 #include "Logging.h"
 #include "PageLoadState.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiFrontendDispatchers.h"
 #include "WebDriverBidiProtocolObjects.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 
@@ -125,35 +130,158 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     });
 }
 
+class PageTreeAggregator : public RefCounted<PageTreeAggregator> {
+public:
+    static Ref<PageTreeAggregator> create(CommandCallback<Ref<JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>>>&& completionHandler, WebAutomationSession& session, size_t expectedTrees, std::optional<double> maxDepth, std::optional<BrowsingContext> optionalRoot)
+    {
+        return adoptRef(*new PageTreeAggregator(WTFMove(completionHandler), session, expectedTrees, WTFMove(maxDepth), WTFMove(optionalRoot)));
+    }
+
+    void addTree(BrowsingContext rootHandle, std::optional<FrameTreeNodeData>&& data)
+    {
+        m_results.set(rootHandle, WTFMove(data));
+        checkIfComplete();
+    }
+
+    void noteEmpty(BrowsingContext rootHandle)
+    {
+        m_results.set(rootHandle, std::nullopt);
+        checkIfComplete();
+    }
+
+private:
+    PageTreeAggregator(CommandCallback<Ref<JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>>>&& completionHandler, WebAutomationSession& session, size_t expectedTrees, std::optional<double> maxDepth, std::optional<BrowsingContext> optionalRoot)
+        : m_completionHandler(WTFMove(completionHandler)), m_session(session), m_expectedTrees(expectedTrees), m_maxDepth(WTFMove(maxDepth)), m_optionalRoot(WTFMove(optionalRoot))
+    {
+        if (m_expectedTrees <= 0)
+            checkIfComplete();
+    }
+
+    std::optional<Ref<Protocol::BidiBrowsingContext::Info>> convertFrameTreeNodeDataToBidiInfo(const FrameTreeNodeData& node, int currentDepth)
+    {
+
+        auto contextHandle = m_session->handleForWebFrameID(node.info.frameID);
+        if (contextHandle.isEmpty())
+            return std::nullopt;
+
+        RefPtr<WebPageProxy> page = m_session->webPageProxyForHandle(contextHandle);
+        if (!page)
+            return std::nullopt;
+
+        auto info = Protocol::BidiBrowsingContext::Info::create()
+            .setContext(contextHandle)
+            .setUrl(node.info.request.url().string())
+            .setUserContext("default"_s)
+            .setClientWindow("defaut"_s)
+            .release();
+
+        if (page->mainFrame()->frameID() == node.info.frameID) {
+            if (auto openerInfo = page->configuration().openerInfo()) {
+                auto openerHandle = m_session->handleForWebFrameID(openerInfo->frameID);
+                if (!openerHandle.isEmpty())
+                    info->setOriginalOpener(openerHandle);
+            }
+        }
+
+        if (node.info.parentFrameID) {
+            auto parentContextHandle = m_session->handleForWebFrameID(node.info.parentFrameID);
+            info->setParent(parentContextHandle);
+        }
+
+        bool atMaxDepth = m_maxDepth.has_value() && currentDepth >= m_maxDepth.value();
+        if (!atMaxDepth) {
+            auto childrenInfo = JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>::create();
+            for (const auto& childNode : node.children) {
+                if (auto childInfo = convertFrameTreeNodeDataToBidiInfo(childNode, currentDepth + 1))
+                    childrenInfo->addItem(WTFMove(childInfo.value()));
+            }
+
+            if (childrenInfo->length() > 0)
+                info->setChildren(WTFMove(childrenInfo));
+        }
+
+        return info;
+    }
+
+    void checkIfComplete()
+    {
+        if (m_results.size() < m_expectedTrees)
+            return;
+
+        auto finalArray = JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>::create();
+        for (auto& entry : m_results) {
+            const auto& rootHandle = entry.key;
+            auto& rootData = entry.value;
+
+            if (rootData) {
+                if (auto rootInfo = convertFrameTreeNodeDataToBidiInfo(*rootData, 0)) {
+                    if (m_optionalRoot.has_value() && m_optionalRoot.value() == rootHandle) {
+                        if (rootData->info.parentFrameID) {
+                            auto parentContextHandle = m_session->handleForWebFrameID(rootData->info.parentFrameID);
+                            if (!parentContextHandle.isEmpty())
+                                rootInfo.value()->setParent(parentContextHandle);
+                        }
+                    }
+                    finalArray->addItem(rootInfo.value());
+                }
+            }
+        }
+        m_completionHandler({ { WTFMove(finalArray) } });
+    }
+
+    CommandCallback<Ref<JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>>> m_completionHandler;
+    Ref<WebAutomationSession> m_session;
+    size_t m_expectedTrees { 0 };
+    std::optional<double> m_maxDepth;
+    std::optional<BrowsingContext> m_optionalRoot;
+    HashMap<BrowsingContext, std::optional<FrameTreeNodeData>> m_results;
+};
+
 void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, CommandCallback<Ref<JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: implement `root` option.
-    // FIXME: implement `maxDepth` option.
+    Vector<RefPtr<WebFrameProxy>> navigableRoots;
 
-    auto infos = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
-    for (Ref process : session->protectedProcessPool()->processes()) {
-        for (Ref page : process->pages()) {
-            if (!page->isControlledByAutomation())
-                continue;
+    if (!optionalRoot.isEmpty()) {
+        auto page = session->webPageProxyForHandle(optionalRoot);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, InternalError);
 
-            // FIXME: implement `parent` field.
-            // FIXME: implement `children` field.
-            // FIXME: implement `originalOpener` field.
-            // FIXME: implement `clientWindow` field.
-            // FIXME: implement `userContext` field.
-            infos->addItem(Inspector::Protocol::BidiBrowsingContext::Info::create()
-                .setContext(session->handleForWebPageProxy(page))
-                .setUrl(page->currentURL())
-                .setClientWindow("placeholder_window"_s)
-                .setUserContext("placeholder_context"_s)
-                .release());
+        RefPtr<WebFrameProxy> rootFrame = page->mainFrame();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!rootFrame, InternalError);
+
+        navigableRoots.append(rootFrame);
+
+    } else {
+        for (auto& process : m_session->protectedProcessPool()->processes()) {
+            for (auto& page : process->pages()) {
+                if (!page->isControlledByAutomation())
+                    continue;
+                navigableRoots.append(page->mainFrame());
+            }
         }
     }
 
-    callback({ { WTFMove(infos) } });
+    if (navigableRoots.isEmpty()) {
+        callback({ { JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>::create() } });
+        return;
+    }
+
+    Ref aggregator = PageTreeAggregator::create(WTFMove(callback), *session, navigableRoots.size(), WTFMove(optionalMaxDepth), optionalRoot);
+    for (RefPtr rootFrame : navigableRoots) {
+        if (!rootFrame) {
+            continue;
+        }
+        auto rootContext = session->handleForWebPageProxy(*rootFrame->page());
+        rootFrame->getFrameTree([aggregator, rootContext = WTFMove(rootContext)](std::optional<FrameTreeNodeData>&& data) mutable {
+            if (data)
+                aggregator->addTree(WTFMove(rootContext), WTFMove(data));
+            else
+                aggregator->noteEmpty(WTFMove(rootContext));
+        });
+    }
+
 }
 
 void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingContext, std::optional<bool>&& optionalShouldAccept, const String&, CommandCallback<void>&& callback)
