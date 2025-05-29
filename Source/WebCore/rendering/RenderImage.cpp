@@ -741,7 +741,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #if USE(SKIA)
         StrictImageClamping::No,
 #endif
-        style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
+        dynamicRangeLimitForImageDraw(*image)
     };
 
     auto drawResult = ImageDrawResult::DidNothing;

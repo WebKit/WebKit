@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<style>
+    iframe {
+        width: 300px;
+        height: 300px;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <iframe></iframe>
+    <iframe allow="tonemapping 'self'"></iframe>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+ 
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            var iframes = document.querySelectorAll("iframe");
+            var iframePendingCount = iframes.length;
+
+            iframes.forEach((iframe) => {
+                iframe.addEventListener("load", () => {
+                    if (!--iframePendingCount && window.testRunner) {
+                        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                        testRunner.notifyDone();
+                    }
+                });
+                iframe.srcdoc = "<div style='position: fixed;'><img src='" + image.src + "' style='width:300px'></div>";
+            });
+        });
+        image.src = "../../fast/images/resources/green-400x400.png";
+    </script>
+</body>
+</html>

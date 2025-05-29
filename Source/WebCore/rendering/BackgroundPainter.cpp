@@ -497,7 +497,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
                 m_renderer.chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize),
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
-                style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
+                m_renderer.dynamicRangeLimitForImageDraw(*image)
             };
 
             auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
