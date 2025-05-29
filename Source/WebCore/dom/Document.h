@@ -471,6 +471,9 @@ public:
 
     MediaQueryMatcher& mediaQueryMatcher();
 
+    const RenderStyle& mediaQueryDefaultStyle() const;
+    void invalidateMediaQueryDefaultStyle();
+
     using ContainerNode::ref;
     using ContainerNode::deref;
     using TreeScope::rootNode;
@@ -2375,7 +2378,9 @@ private:
     DocumentEventTiming m_eventTiming;
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
-    
+
+    mutable std::unique_ptr<RenderStyle> m_cachedMediaQueryDefaultStyle;
+
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif

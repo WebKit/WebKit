@@ -1071,6 +1071,7 @@ void Page::setNeedsRecalcStyleInAllFrames()
 {
     // FIXME: Figure out what this function is actually trying to add in different call sites.
     forEachDocument([] (Document& document) {
+        document.invalidateMediaQueryDefaultStyle();
         document.checkedStyleScope()->didChangeStyleSheetEnvironment();
     });
 }

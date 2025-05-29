@@ -99,6 +99,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FocusOptions.h"
+#include "FontCascade.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "FragmentDirective.h"
@@ -289,6 +290,7 @@
 #include "StyleAdjuster.h"
 #include "StyleColorOptions.h"
 #include "StyleColorScheme.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleOriginatedTimelinesController.h"
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
@@ -1327,6 +1329,27 @@ MediaQueryMatcher& Document::mediaQueryMatcher()
     return *m_mediaQueryMatcher;
 }
 
+const RenderStyle& Document::mediaQueryDefaultStyle() const
+{
+    if (!m_cachedMediaQueryDefaultStyle) {
+        std::unique_ptr defaultStyle = RenderStyle::createPtr();
+        auto size = Style::fontSizeForKeyword(CSSValueMedium, false, settingsValues(), inQuirksMode());
+        if (size != defaultStyle->fontDescription().specifiedSize()) {
+            auto fontDescription = defaultStyle->fontDescription();
+            fontDescription.setSpecifiedSize(size);
+            fontDescription.setComputedSize(size);
+            defaultStyle->setFontDescription(WTFMove(fontDescription));
+        }
+        m_cachedMediaQueryDefaultStyle = WTFMove(defaultStyle);
+    }
+    return *m_cachedMediaQueryDefaultStyle;
+}
+
+void Document::invalidateMediaQueryDefaultStyle()
+{
+    m_cachedMediaQueryDefaultStyle = nullptr;
+}
+
 void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 {
     if (m_compatibilityModeLocked || mode == m_compatibilityMode)
@@ -1335,6 +1358,7 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
     m_compatibilityMode = mode;
 
     if (inQuirksMode() != wasInQuirksMode) {
+        invalidateMediaQueryDefaultStyle();
         // All user stylesheets have to reparse using the different mode.
         if (auto* extensionStyleSheets = extensionStyleSheetsIfExists()) {
             extensionStyleSheets->clearPageUserSheet();
