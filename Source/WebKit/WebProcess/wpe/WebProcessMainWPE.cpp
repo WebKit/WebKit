@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <glib.h>
+#include <wtf/StackBounds.h>
 
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
@@ -97,6 +98,7 @@ public:
 
 int WebProcessMain(int argc, char** argv)
 {
+    WTF::StackBounds::setBottomOfMainThreadMain(__builtin_frame_address(0));
     return AuxiliaryProcessMain<WebProcessMainWPE>(argc, argv);
 }
 

@@ -65,6 +65,7 @@ public:
         result.checkConsistency();
         return result;
     }
+    WTF_EXPORT_PRIVATE static void setBottomOfMainThreadMain(void*);
 
     void* origin() const
     {
@@ -144,10 +145,10 @@ private:
 
     void checkConsistency() const
     {
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || OS(LINUX)
         void* currentPosition = currentStackPointer();
-        ASSERT(m_origin != m_bound);
-        ASSERT(currentPosition < m_origin && currentPosition > m_bound);
+        RELEASE_ASSERT(m_origin != m_bound);
+        RELEASE_ASSERT(currentPosition < m_origin && currentPosition > m_bound);
 #endif
     }
 

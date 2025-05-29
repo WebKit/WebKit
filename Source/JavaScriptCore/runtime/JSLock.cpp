@@ -155,6 +155,10 @@ void JSLock::didAcquireLock()
             samplingProfiler->noticeJSLockAcquisition();
     }
 #endif
+#if ASSERT_ENABLED
+    StackBounds::currentThreadStackBounds(); // Check stack bounds consistency.
+#endif
+
 }
 
 void JSLock::unlock()

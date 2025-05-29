@@ -4531,6 +4531,7 @@ int jscmain(int argc, char** argv)
     JSC::Config::enableRestrictedOptions();
     JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
 
+    WTF::StackBounds::setBottomOfMainThreadMain(__builtin_frame_address(0));
     WTF::initializeMainThread();
 
     // Note that the options parsing can affect VM creation, and thus

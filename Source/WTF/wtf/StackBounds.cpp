@@ -21,6 +21,8 @@
 #include "config.h"
 #include <wtf/StackBounds.h>
 
+#include "MainThread.h"
+
 #if OS(DARWIN)
 
 #include <pthread.h>
@@ -49,6 +51,18 @@
 #endif
 
 namespace WTF {
+
+#if !CPU(ADDRESS64)
+static std::atomic<void*> bottomOfMainThreadMain = nullptr;
+#endif
+
+void StackBounds::setBottomOfMainThreadMain([[maybe_unused]] void* stack)
+{
+#if !CPU(ADDRESS64)
+    RELEASE_ASSERT(bottomOfMainThreadMain == nullptr);
+    bottomOfMainThreadMain = stack;
+#endif
+}
 
 #if OS(DARWIN)
 
@@ -161,15 +175,23 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         static char** oldestEnviron = environ;
 
-        // In 32bit architecture, it is possible that environment variables are having a characters which looks like a pointer,
-        // and conservative GC will find it as a live pointer. We would like to avoid that to precisely exclude non user stack
-        // data region from this stack bounds. As the article (https://lwn.net/Articles/631631/) and the elf loader implementation
-        // explain how Linux main thread stack is organized, environment variables vector is placed on the stack, so we can exclude
-        // environment variables if we use `environ` global variable as a origin of the stack.
+        // On 32bit, it is possible that environment variables and other random data in libc have bytes which look like a pointer,
+        // and conservative GC will find it as a live pointer. We would like to avoid that, so we exclude the non-user stack
+        // data region from these stack bounds. This article explains how the main thread looks (https://lwn.net/Articles/631631/).
+        //
+        // First, we exclude environment variables by using `environ` global variable as a origin of the stack.
         // But `setenv` / `putenv` may alter `environ` variable's content. So we record the oldest `environ` variable content, and use it.
+
         StackBounds stackBounds { origin, bound };
         if (stackBounds.contains(oldestEnviron))
             stackBounds = { oldestEnviron, bound };
+
+        // Then, we exclude any greater region based on manual calls to setBottomOfMainThreadMain.
+#if !CPU(ADDRESS64)
+        if (stackBounds.contains(bottomOfMainThreadMain))
+            stackBounds = { bottomOfMainThreadMain, bound };
+#endif
+
         return stackBounds;
     }
 #endif

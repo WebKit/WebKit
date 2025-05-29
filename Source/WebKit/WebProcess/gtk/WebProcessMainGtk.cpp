@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <libintl.h>
+#include <wtf/StackBounds.h>
 
 #if !USE(GTK4) && USE(CAIRO)
 #include <gtk/gtk.h>
@@ -114,6 +115,7 @@ int WebProcessMain(int argc, char** argv)
     unsetenv("GTK_THEME");
 #endif
 
+    WTF::StackBounds::setBottomOfMainThreadMain(__builtin_frame_address(0));
     return AuxiliaryProcessMain<WebProcessMainGtk>(argc, argv);
 }
 
