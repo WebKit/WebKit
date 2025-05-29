@@ -624,7 +624,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                     setHeight(paintAdvance, height(paintAdvance) - glyphOrigin(glyphIndexIntoComplexTextController + 1).y() + m_complexTextRuns[currentRunIndex + 1]->initialAdvance().height());
                 }
                 setHeight(paintAdvance, -height(paintAdvance)); // Increasing y points down
-                glyphBuffer->add(m_adjustedGlyphs[glyphIndexIntoComplexTextController], complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun), FloatPoint(textAutoSpaceSpacing, 0));
+                glyphBuffer->add(m_adjustedGlyphs[glyphIndexIntoComplexTextController], complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun) + complexTextRun.stringLocation(), FloatPoint(textAutoSpaceSpacing, 0));
             }
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
