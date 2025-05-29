@@ -147,6 +147,7 @@ namespace JSC { namespace B3 {
     case Load8S: \
     case Load16Z: \
     case Load16S: \
+    case Load32S: \
     case Load: \
     case Store8: \
     case Store16: \

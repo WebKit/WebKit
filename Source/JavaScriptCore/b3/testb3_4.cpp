@@ -92,7 +92,7 @@ void testStoreAddLoad8(int amount, B3::Opcode loadOpcode)
         proc, Store8, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             arguments[0]),
         slotPtr, 0);
     root->appendNewControlValue(
@@ -115,7 +115,7 @@ void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
         root->appendNew<Value>(
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(
-                proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+                proc, loadOpcode, Int32, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
             arguments[0]),
         slotPtr, 0, HeapRange(42), HeapRange(42));
     root->appendNewControlValue(
@@ -141,7 +141,7 @@ void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
     int8_t slot = 37;
     ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
     Value* loadedValue = root->appendNew<MemoryValue>(
-        proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42));
+        proc, loadOpcode, Int32, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42));
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
     patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator(
@@ -183,7 +183,7 @@ void testStoreAddLoadImm8(int amount, B3::Opcode loadOpcode)
         proc, Store8, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
         slotPtr, 0);
     root->appendNewControlValue(
@@ -205,7 +205,7 @@ void testStoreAddLoad16(int amount, B3::Opcode loadOpcode)
         proc, Store16, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             arguments[0]),
         slotPtr, 0);
     root->appendNewControlValue(
@@ -228,7 +228,7 @@ void testStoreRelAddLoadAcq16(int amount, B3::Opcode loadOpcode)
         root->appendNew<Value>(
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(
-                proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+                proc, loadOpcode, Int32, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
             arguments[0]),
         slotPtr, 0, HeapRange(42), HeapRange(42));
     root->appendNewControlValue(
@@ -256,7 +256,7 @@ void testStoreAddLoadImm16(int amount, B3::Opcode loadOpcode)
         proc, Store16, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
         slotPtr, 0);
     root->appendNewControlValue(
@@ -421,7 +421,7 @@ void testStoreAddLoad8Index(int amount, B3::Opcode loadOpcode)
         proc, Store8, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             arguments[0]),
         slotPtr);
     root->appendNewControlValue(
@@ -451,7 +451,7 @@ void testStoreAddLoadImm8Index(int amount, B3::Opcode loadOpcode)
         proc, Store8, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
         slotPtr);
     root->appendNewControlValue(
@@ -482,7 +482,7 @@ void testStoreAddLoad16Index(int amount, B3::Opcode loadOpcode)
         proc, Store16, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             arguments[0]),
         slotPtr);
     root->appendNewControlValue(
@@ -512,7 +512,7 @@ void testStoreAddLoadImm16Index(int amount, B3::Opcode loadOpcode)
         proc, Store16, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
-            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
         slotPtr);
     root->appendNewControlValue(
@@ -2088,7 +2088,7 @@ void testBranchLoad8S()
     root->appendNewControlValue(
         proc, Branch, Origin(),
         root->appendNew<MemoryValue>(
-            proc, Load8S, Origin(),
+            proc, Load8S, Int32, Origin(),
             arguments[0]),
         FrequentedBlock(thenCase), FrequentedBlock(elseCase));
 
@@ -2119,7 +2119,7 @@ void testBranchLoad8Z()
     root->appendNewControlValue(
         proc, Branch, Origin(),
         root->appendNew<MemoryValue>(
-            proc, Load8Z, Origin(),
+            proc, Load8Z, Int32, Origin(),
             arguments[0]),
         FrequentedBlock(thenCase), FrequentedBlock(elseCase));
 
@@ -2150,7 +2150,7 @@ void testBranchLoad16S()
     root->appendNewControlValue(
         proc, Branch, Origin(),
         root->appendNew<MemoryValue>(
-            proc, Load16S, Origin(),
+            proc, Load16S, Int32, Origin(),
             arguments[0]),
         FrequentedBlock(thenCase), FrequentedBlock(elseCase));
 
@@ -2181,7 +2181,7 @@ void testBranchLoad16Z()
     root->appendNewControlValue(
         proc, Branch, Origin(),
         root->appendNew<MemoryValue>(
-            proc, Load16Z, Origin(),
+            proc, Load16Z, Int32, Origin(),
             arguments[0]),
         FrequentedBlock(thenCase), FrequentedBlock(elseCase));
 
@@ -2215,7 +2215,7 @@ void testBranch8WithLoad8ZIndex()
         root->appendNew<Value>(
             proc, Above, Origin(),
             root->appendNew<MemoryValue>(
-                proc, Load8Z, Origin(),
+                proc, Load8Z, Int32, Origin(),
                 root->appendNew<Value>(
                     proc, Add, Origin(),
                     arguments[0],

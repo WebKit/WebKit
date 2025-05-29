@@ -1020,7 +1020,7 @@ public:
     {
         load8(setupArmAddress(address), dest);
     }
-    
+
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         load8SignedExtendTo32(setupArmAddress(address), dest);

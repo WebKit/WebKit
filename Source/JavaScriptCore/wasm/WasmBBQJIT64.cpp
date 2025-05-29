@@ -387,8 +387,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::load(LoadOpType loadOp, Value pointer, 
                 m_jit.load8SignedExtendTo32(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I64Load8S:
-                m_jit.load8SignedExtendTo32(location, resultLocation.asGPR());
-                m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
+                m_jit.load8SignedExtendTo64(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I32Load8U:
                 m_jit.load8(location, resultLocation.asGPR());
@@ -400,8 +399,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::load(LoadOpType loadOp, Value pointer, 
                 m_jit.load16SignedExtendTo32(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I64Load16S:
-                m_jit.load16SignedExtendTo32(location, resultLocation.asGPR());
-                m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
+                m_jit.load16SignedExtendTo64(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I32Load16U:
                 m_jit.load16(location, resultLocation.asGPR());
@@ -416,8 +414,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::load(LoadOpType loadOp, Value pointer, 
                 m_jit.load32(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I64Load32S:
-                m_jit.load32(location, resultLocation.asGPR());
-                m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
+                m_jit.load32SignedExtendTo64(location, resultLocation.asGPR());
                 break;
             case LoadOpType::I64Load:
                 m_jit.load64(location, resultLocation.asGPR());

@@ -788,6 +788,7 @@ Effects Value::effects() const
     case Load8S:
     case Load16Z:
     case Load16S:
+    case Load32S:
     case Load: {
         const MemoryValue* memory = as<MemoryValue>();
         result.reads = memory->range();

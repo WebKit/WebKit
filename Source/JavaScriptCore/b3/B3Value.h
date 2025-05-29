@@ -448,6 +448,7 @@ protected:
         case Load8S:
         case Load16Z:
         case Load16S:
+        case Load32S:
         case Load:
         case Switch:
         case Upsilon:

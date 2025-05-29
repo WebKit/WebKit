@@ -863,6 +863,25 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void load8SignedExtendTo64(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lbInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load8SignedExtendTo64(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lbInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load8SignedExtendTo64(const void* address, RegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(TrustedImmPtr(address), temp.memory());
+        m_assembler.lbInsn(dest, temp.memory(), Imm::I<0>());
+    }
+
     void load16(Address address, RegisterID dest)
     {
         auto resolution = resolveAddress(address, lazyTemp<Memory>());
@@ -921,6 +940,44 @@ public:
         loadImmediate(TrustedImmPtr(address), temp.memory());
         m_assembler.lhInsn(dest, temp.memory(), Imm::I<0>());
         m_assembler.maskRegister<32>(dest);
+    }
+
+    void load16SignedExtendTo64(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lhInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load16SignedExtendTo64(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lhInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load16SignedExtendTo64(const void* address, RegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(TrustedImmPtr(address), temp.memory());
+        m_assembler.lhInsn(dest, temp.memory(), Imm::I<0>());
+    }
+
+    void load32SignedExtendTo64(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load32SignedExtendTo64(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
+
+    void load32SignedExtendTo64(const void* address, RegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(TrustedImmPtr(address), temp.memory());
+        m_assembler.lwInsn(dest, temp.memory(), Imm::I<0>());
     }
 
     void load32(Address address, RegisterID dest)

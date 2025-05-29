@@ -81,34 +81,16 @@ MemoryValue::MemoryValue(MemoryValue::MemoryValueLoad, Kind kind, Type type, Ori
     if (ASSERT_ENABLED) {
         switch (kind.opcode()) {
         case Load:
-            break;
         case Load8Z:
         case Load8S:
         case Load16Z:
         case Load16S:
-            ASSERT(type == Int32);
+        case Load32S:
             break;
         case Store8:
         case Store16:
         case Store:
             ASSERT(type == Void);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-}
-
-// Use this form for loads where the return type is implied.
-MemoryValue::MemoryValue(MemoryValue::MemoryValueLoadImplied, Kind kind, Origin origin, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
-    : MemoryValue(kind, Int32, origin, pointer, offset, range, fenceRange)
-{
-    if (ASSERT_ENABLED) {
-        switch (kind.opcode()) {
-        case Load8Z:
-        case Load8S:
-        case Load16Z:
-        case Load16S:
             break;
         default:
             ASSERT_NOT_REACHED();

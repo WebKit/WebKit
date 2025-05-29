@@ -107,11 +107,8 @@ private:
     bool isLegalOffsetImpl(int64_t offset) const;
 
     enum MemoryValueLoad { MemoryValueLoadTag };
-    enum MemoryValueLoadImplied { MemoryValueLoadImpliedTag };
     enum MemoryValueStore { MemoryValueStoreTag };
 
-    // Use this form for Load (but not Load8Z, Load8S, or any of the Loads that have a suffix that
-    // describes the returned type).
     MemoryValue(Kind kind, Type type, Origin origin, Value* pointer)
         : MemoryValue(MemoryValueLoadTag, kind, type, origin, pointer)
     {
@@ -119,17 +116,6 @@ private:
     template<typename Int, typename = IsLegalOffset<Int>>
     MemoryValue(Kind kind, Type type, Origin origin, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange())
         : MemoryValue(MemoryValueLoadTag, kind, type, origin, pointer, offset, range, fenceRange)
-    {
-    }
-
-    // Use this form for loads where the return type is implied.
-    MemoryValue(Kind kind, Origin origin, Value* pointer)
-        : MemoryValue(MemoryValueLoadImpliedTag, kind, origin, pointer)
-    {
-    }
-    template<typename Int, typename = IsLegalOffset<Int>>
-    MemoryValue(Kind kind, Origin origin, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange())
-        : MemoryValue(MemoryValueLoadImpliedTag, kind, origin, pointer, offset, range, fenceRange)
     {
     }
 
@@ -146,7 +132,6 @@ private:
 
     // The above templates forward to these implementations.
     MemoryValue(MemoryValueLoad, Kind, Type, Origin, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
-    MemoryValue(MemoryValueLoadImplied, Kind, Origin, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
     MemoryValue(MemoryValueStore, Kind, Origin, Value*, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
 
     OffsetType m_offset { 0 };

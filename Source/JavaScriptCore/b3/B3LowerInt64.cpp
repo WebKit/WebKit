@@ -990,6 +990,7 @@ private:
         case Load8S:
         case Load16Z:
         case Load16S:
+        case Load32S:
         case Mod:
         case Oops:
         case PurifyNaN:

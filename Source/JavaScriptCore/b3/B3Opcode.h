@@ -170,11 +170,12 @@ enum Opcode : uint8_t {
     Select,
 
     // Memory loads. Opcode indicates how we load and the loaded type. These use MemoryValue.
-    // These return Int32:
     Load8Z,
     Load8S,
     Load16Z,
     Load16S,
+    Load32S,
+
     // This returns whatever the return type is:
     Load,
 
@@ -536,6 +537,7 @@ inline bool isLoad(Opcode opcode)
     case Load8S:
     case Load16Z:
     case Load16S:
+    case Load32S:
     case Load:
         return true;
     default:
@@ -562,6 +564,7 @@ inline bool isLoadStore(Opcode opcode)
     case Load8S:
     case Load16Z:
     case Load16S:
+    case Load32S:
     case Load:
     case Store8:
     case Store16:
@@ -636,13 +639,4 @@ inline Opcode signExtendOpcode(Width width)
 JS_EXPORT_PRIVATE Opcode storeOpcode(Bank bank, Width width);
 
 } } // namespace JSC::B3
-
-namespace WTF {
-
-class PrintStream;
-
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Opcode);
-
-} // namespace WTF
-
 #endif // ENABLE(B3_JIT)

@@ -328,7 +328,7 @@ void testCheckMegaCombo()
         proc, Check, Origin(),
         root->appendNew<Value>(
             proc, LessThan, Origin(),
-            root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+            root->appendNew<MemoryValue>(proc, Load8S, Int32, Origin(), ptr),
             root->appendNew<Const32Value>(proc, Origin(), 42)));
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -386,7 +386,7 @@ void testCheckTrickyMegaCombo()
         proc, Check, Origin(),
         root->appendNew<Value>(
             proc, LessThan, Origin(),
-            root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+            root->appendNew<MemoryValue>(proc, Load8S, Int32, Origin(), ptr),
             root->appendNew<Const32Value>(proc, Origin(), 42)));
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -441,7 +441,7 @@ void testCheckTwoMegaCombos()
 
     Value* predicate = root->appendNew<Value>(
         proc, LessThan, Origin(),
-        root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+        root->appendNew<MemoryValue>(proc, Load8S, Int32, Origin(), ptr),
         root->appendNew<Const32Value>(proc, Origin(), 42));
 
     CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), predicate);
@@ -518,7 +518,7 @@ void testCheckTwoNonRedundantMegaCombos()
 
     Value* checkPredicate = root->appendNew<Value>(
         proc, LessThan, Origin(),
-        root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+        root->appendNew<MemoryValue>(proc, Load8S, Int32, Origin(), ptr),
         root->appendNew<Const32Value>(proc, Origin(), 42));
 
     root->appendNewControlValue(

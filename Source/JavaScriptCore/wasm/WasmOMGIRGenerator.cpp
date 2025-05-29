@@ -2274,38 +2274,36 @@ inline Value* OMGIRGenerator::emitLoadOp(LoadOpType op, Value* pointer, uint32_t
 
     switch (op) {
     case LoadOpType::I32Load8S: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), origin(), pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), Int32, origin(), pointer, offset);
     }
 
     case LoadOpType::I64Load8S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), origin(), pointer, offset);
-        return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin(), value);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), Int64, origin(), pointer, offset);
     }
 
     case LoadOpType::I32Load8U: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), origin(), pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), pointer, offset);
     }
 
     case LoadOpType::I64Load8U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), origin(), pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), value);
     }
 
     case LoadOpType::I32Load16S: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), Int32, origin(), pointer, offset);
     }
 
     case LoadOpType::I64Load16S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
-        return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin(), value);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), Int64, origin(), pointer, offset);
     }
 
     case LoadOpType::I32Load16U: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), origin(), pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), Int32, origin(), pointer, offset);
     }
 
     case LoadOpType::I64Load16U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), origin(), pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), Int32, origin(), pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), value);
     }
 
@@ -2319,8 +2317,7 @@ inline Value* OMGIRGenerator::emitLoadOp(LoadOpType op, Value* pointer, uint32_t
     }
 
     case LoadOpType::I64Load32S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin(), pointer, offset);
-        return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin(), value);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load32S), Int64, origin(), pointer, offset);
     }
 
     case LoadOpType::I64Load: {
@@ -3826,7 +3823,7 @@ Value* OMGIRGenerator::emitLoadRTTFromObject(Value* reference)
 
 Value* OMGIRGenerator::emitNotRTTKind(Value* rtt, RTTKind targetKind)
 {
-    Value* kind = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), origin(), rtt, safeCast<int32_t>(RTT::offsetOfKind()));
+    Value* kind = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), rtt, safeCast<int32_t>(RTT::offsetOfKind()));
     return m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), kind, constant(Int32, static_cast<uint8_t>(targetKind)));
 }
 

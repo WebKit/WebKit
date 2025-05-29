@@ -63,6 +63,8 @@ inline Width MemoryValue::accessWidth() const
     case Load16S:
     case Store16:
         return Width16;
+    case Load32S:
+        return Width32;
     case Load:
         return widthForType(type());
     case Store:
