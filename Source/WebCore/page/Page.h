@@ -1304,7 +1304,7 @@ public:
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
 #endif
 
-    void setLastAuthentication(LoginStatusAuthenticationType);
+    WEBCORE_EXPORT void setLastAuthentication(LoginStatusAuthenticationType, const String& username);
     const LoginStatus* lastAuthentication() const { return m_lastAuthentication.get(); }
 
 #if ENABLE(FULLSCREEN_API)

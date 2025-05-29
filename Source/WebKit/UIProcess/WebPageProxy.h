@@ -2749,6 +2749,7 @@ public:
 
     Ref<AboutSchemeHandler> protectedAboutSchemeHandler();
 
+    void didFillPasswordForUsername(const String& username);
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

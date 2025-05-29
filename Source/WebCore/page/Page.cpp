@@ -5554,9 +5554,9 @@ void Page::updateActiveNowPlayingSessionNow()
     chrome().client().hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
 
-void Page::setLastAuthentication(LoginStatus::AuthenticationType authType)
+void Page::setLastAuthentication(LoginStatus::AuthenticationType authType, const String& username)
 {
-    auto loginStatus = LoginStatus::create(RegistrableDomain(mainFrameURL()), emptyString(), LoginStatus::CredentialTokenType::HTTPStateToken, authType, LoginStatus::TimeToLiveAuthentication);
+    auto loginStatus = LoginStatus::create(RegistrableDomain(mainFrameURL()), username, LoginStatus::CredentialTokenType::HTTPStateToken, authType, LoginStatus::TimeToLiveAuthentication);
     if (loginStatus.hasException())
         return;
     m_lastAuthentication = loginStatus.releaseReturnValue().moveToUniquePtr();

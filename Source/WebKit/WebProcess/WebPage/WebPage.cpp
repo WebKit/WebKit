@@ -8638,6 +8638,14 @@ void WebPage::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool
     WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsLoggedIn(WTFMove(domain)), WTFMove(completionHandler));
 }
 
+void WebPage::didFillPasswordForUsername(const String& username)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return;
+    page->setLastAuthentication(LoginStatusAuthenticationType::PasswordManager, username);
+}
+
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
 {
     m_internals->domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(resourceDomain);
