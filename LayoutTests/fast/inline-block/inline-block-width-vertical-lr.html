@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <meta charset="utf-8"/>
+  <title>Testcase, bug 1473789</title>
+  <style>
+    div {
+      background-color:silver;
+      display:inline-block;
+    }
+    span {
+      writing-mode:vertical-lr;
+      font-size: 12px;
+    }
+  </style>
+
+<div id="testContent">
+  <div id = "t1"><span>Test Content 1</span></div>
+  <div id = "t2"><span>Test Content 1</span><span>Test Content 2</span></div>
+</div>
+
+  <script src="../../resources/js-test-pre.js"></script>
+  <script>
+    description("Test case for bug 187454. This tests that the width of inline blocks containing vertical-lr child elements is calculated correctly.");
+    shouldBe('document.getElementById("t1").offsetWidth', '17');
+    shouldBe('document.getElementById("t2").offsetWidth', '34');
+    document.getElementById("testContent").style.display = 'none';
+</script>
+<script src="../../resources/js-test-post.js"></script>

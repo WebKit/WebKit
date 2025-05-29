@@ -4781,9 +4781,12 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 LayoutUnit childMaxPreferredLogicalWidth;
                 CheckedPtr box = dynamicDowncast<RenderBox>(*child);
                 if (box->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-                    auto extent = box->computeLogicalHeight(box->borderAndPaddingLogicalHeight(), 0).m_extent;
-                    childMinPreferredLogicalWidth = extent;
-                    childMaxPreferredLogicalWidth = extent;
+                    // If the child is an orthogonal flow, child's height determines the width,
+                    // but the height is not available until layout.
+                    if (box->needsLayout())
+                        box->layout();
+                    childMinPreferredLogicalWidth = box->minPreferredLogicalWidth();
+                    childMaxPreferredLogicalWidth = box->maxPreferredLogicalWidth();
                 } else
                     computeChildPreferredLogicalWidths(*box, childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth);
                 childMin += childMinPreferredLogicalWidth.ceilToFloat();

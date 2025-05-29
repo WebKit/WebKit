@@ -1,0 +1,11 @@
+Test case for bug 187454. This tests that the width of inline blocks containing vertical-lr child elements is calculated correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("t1").offsetWidth is 17
+PASS document.getElementById("t2").offsetWidth is 34
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
