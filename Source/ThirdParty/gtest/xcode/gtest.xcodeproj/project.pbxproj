@@ -22,6 +22,21 @@
 			name = Check;
 			productName = Check;
 		};
+		DD8706092DD3CA3F008AA5ED /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD87060D2DD3CA3F008AA5ED /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DD87060F2DD3CA45008AA5ED /* PBXTargetDependency */,
+				DD8706132DD3CA4F008AA5ED /* PBXTargetDependency */,
+				DD8706112DD3CA46008AA5ED /* PBXTargetDependency */,
+			);
+			name = All;
+			packageProductDependencies = (
+			);
+			productName = All;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -197,6 +212,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 40C84989101A36A60083642A;
 			remoteInfo = "sample1_unittest-static";
+		};
+		DD87060E2DD3CA45008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 40C848F9101A209C0083642A;
+			remoteInfo = "gtest-static";
+		};
+		DD8706102DD3CA46008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
+		DD8706122DD3CA4F008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 40C8490A101A217E0083642A;
+			remoteInfo = "gtest_main-static";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -702,6 +738,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				DD8706092DD3CA3F008AA5ED /* All */,
 				40C848F9101A209C0083642A /* gtest-static */,
 				8D07F2BC0486CC7A007CD1D0 /* gtest-framework */,
 				40C8490A101A217E0083642A /* gtest_main-static */,
@@ -864,6 +901,21 @@
 			isa = PBXTargetDependency;
 			target = 40C84989101A36A60083642A /* sample1_unittest-static */;
 			targetProxy = 40C849F8101A43490083642A /* PBXContainerItemProxy */;
+		};
+		DD87060F2DD3CA45008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 40C848F9101A209C0083642A /* gtest-static */;
+			targetProxy = DD87060E2DD3CA45008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706112DD3CA46008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D07F2BC0486CC7A007CD1D0 /* gtest-framework */;
+			targetProxy = DD8706102DD3CA46008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706132DD3CA4F008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 40C8490A101A217E0083642A /* gtest_main-static */;
+			targetProxy = DD8706122DD3CA4F008AA5ED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1105,6 +1157,24 @@
 			};
 			name = Release;
 		};
+		DD87060A2DD3CA3F008AA5ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		DD87060B2DD3CA3F008AA5ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		DD87060C2DD3CA3F008AA5ED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1194,6 +1264,16 @@
 				4FADC24708B4156D00ABE55E /* Debug */,
 				4FADC24808B4156D00ABE55E /* Release */,
 				44C48E0414A409DE00A2D9C7 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DD87060D2DD3CA3F008AA5ED /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD87060A2DD3CA3F008AA5ED /* Debug */,
+				DD87060B2DD3CA3F008AA5ED /* Release */,
+				DD87060C2DD3CA3F008AA5ED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

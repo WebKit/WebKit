@@ -29,6 +29,20 @@
 			name = "Generate Unified Sources";
 			productName = "Generate Unified Sources";
 		};
+		DD8705ED2DD3C957008AA5ED /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD8705F12DD3C957008AA5ED /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DD8705F32DD3C967008AA5ED /* PBXTargetDependency */,
+				DD8705F52DD3C967008AA5ED /* PBXTargetDependency */,
+			);
+			name = All;
+			packageProductDependencies = (
+			);
+			productName = All;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -683,6 +697,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5C9D925022D7E835008E9266;
 			remoteInfo = "Generate Unified Sources";
+		};
+		DD8705F22DD3C967008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C9D925022D7E835008E9266;
+			remoteInfo = "Generate Unified Sources";
+		};
+		DD8705F42DD3C967008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9398100A0824BF01008DF038;
+			remoteInfo = WebKitLegacy;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -3131,6 +3159,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				DD8705ED2DD3C957008AA5ED /* All */,
 				9398100A0824BF01008DF038 /* WebKitLegacy */,
 				5C9D925022D7E835008E9266 /* Generate Unified Sources */,
 				537CF83D22EFC4C900C6EBB3 /* Apply Configuration to XCFileLists */,
@@ -3574,6 +3603,16 @@
 			target = 5C9D925022D7E835008E9266 /* Generate Unified Sources */;
 			targetProxy = 5C9D925522D7E841008E9266 /* PBXContainerItemProxy */;
 		};
+		DD8705F32DD3C967008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C9D925022D7E835008E9266 /* Generate Unified Sources */;
+			targetProxy = DD8705F22DD3C967008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8705F52DD3C967008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9398100A0824BF01008DF038 /* WebKitLegacy */;
+			targetProxy = DD8705F42DD3C967008AA5ED /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3689,6 +3728,24 @@
 			};
 			name = Production;
 		};
+		DD8705EE2DD3C957008AA5ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		DD8705EF2DD3C957008AA5ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		DD8705F02DD3C957008AA5ED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3728,6 +3785,16 @@
 				5C9D925122D7E836008E9266 /* Debug */,
 				5C9D925222D7E836008E9266 /* Release */,
 				5C9D925322D7E836008E9266 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DD8705F12DD3C957008AA5ED /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD8705EE2DD3C957008AA5ED /* Debug */,
+				DD8705EF2DD3C957008AA5ED /* Release */,
+				DD8705F02DD3C957008AA5ED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

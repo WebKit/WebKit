@@ -76,6 +76,11 @@ OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_NOT_$(USE_INTERNAL_SDK));
 WK_AUDIT_SPI = $(WK_DEFAULT_WK_AUDIT_SPI);
 
+// When building schemes in Dependency scope, include dependencies of aggregate
+// targets in the scope.
+WK_DEFAULT_DEPENDENCY_SCOPE_INCLUDES_DIRECT_DEPENDENCIES = YES;
+DEPENDENCY_SCOPE_INCLUDES_DIRECT_DEPENDENCIES = $(WK_DEFAULT_DEPENDENCY_SCOPE_INCLUDES_DIRECT_DEPENDENCIES);
+
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 
 WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla;

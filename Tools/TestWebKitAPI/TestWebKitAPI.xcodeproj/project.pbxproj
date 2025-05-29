@@ -36,6 +36,13 @@
 				537CF84822EFD72000C6EBB3 /* Check .xcfilelists */,
 			);
 			dependencies = (
+				DDC299BE2DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299C02DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299C22DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299C42DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299C62DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299C82DDFFCC5000AF281 /* PBXTargetDependency */,
+				DDC299CA2DDFFCC5000AF281 /* PBXTargetDependency */,
 				3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */,
 				7B9FC58828A26D83007570E7 /* PBXTargetDependency */,
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
@@ -1521,6 +1528,55 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC57597F126E74AF006F0F12;
 			remoteInfo = InjectedBundle;
+		};
+		DDC299BD2DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C9D921422D7DA02008E9266;
+			remoteInfo = "Generate Unified Sources";
+		};
+		DDC299BF2DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC57597F126E74AF006F0F12;
+			remoteInfo = InjectedBundleTestWebKitAPI;
+		};
+		DDC299C12DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C83DE951D0A590C00FEBCF3;
+			remoteInfo = TestWTFLibrary;
+		};
+		DDC299C32DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C58012C9AA12F009DD0B5;
+			remoteInfo = TestWebKitAPIApp;
+		};
+		DDC299C52DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
+			remoteInfo = TestWebKitAPILibrary;
+		};
+		DDC299C72DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C46452C98E3430023F3C7;
+			remoteInfo = TestWebKitAPIResources;
+		};
+		DDC299C92DDFFCC5000AF281 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A13EBB481B87339E00097110;
+			remoteInfo = WebProcessPlugIn;
 		};
 		DDF3A83428930475005920CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -7895,6 +7951,41 @@
 			isa = PBXTargetDependency;
 			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
 			targetProxy = BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */;
+		};
+		DDC299BE2DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C9D921422D7DA02008E9266 /* Generate Unified Sources */;
+			targetProxy = DDC299BD2DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299C02DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
+			targetProxy = DDC299BF2DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299C22DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
+			targetProxy = DDC299C12DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299C42DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
+			targetProxy = DDC299C32DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299C62DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+			targetProxy = DDC299C52DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299C82DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */;
+			targetProxy = DDC299C72DDFFCC5000AF281 /* PBXContainerItemProxy */;
+		};
+		DDC299CA2DDFFCC5000AF281 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A13EBB481B87339E00097110 /* WebProcessPlugIn */;
+			targetProxy = DDC299C92DDFFCC5000AF281 /* PBXContainerItemProxy */;
 		};
 		DDF3A851289305E3005920CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -56,6 +56,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "31339FA12CEEFECC0054D8D5"
+               BuildableName = "libwebrtc"
+               BlueprintName = "libwebrtc"
+               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "31DB794F2491C33300982878"
                BuildableName = "ANGLE"
                BlueprintName = "ANGLE"
@@ -70,9 +84,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1CEBD7E22716AFBA00A5254D"
-               BuildableName = "WebGPU.framework"
-               BlueprintName = "WebGPU"
+               BlueprintIdentifier = "DD8705E02DD3C8A3008AA5ED"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:Source/WebGPU/WebGPU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -98,23 +112,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A54C2256148B23DF00373FA3"
-               BuildableName = "WebInspectorUI.framework"
-               BlueprintName = "WebInspectorUI"
-               ReferencedContainer = "container:Source/WebInspectorUI/WebInspectorUI.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9398100A0824BF01008DF038"
-               BuildableName = "WebKitLegacy.framework"
-               BlueprintName = "WebKitLegacy"
+               BlueprintIdentifier = "DD8705ED2DD3C957008AA5ED"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:Source/WebKitLegacy/WebKitLegacy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -130,6 +130,20 @@
                BuildableName = "Everything"
                BlueprintName = "Everything"
                ReferencedContainer = "container:Source/WebKit/WebKit.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DD8706652DD3F0CC008AA5ED"
+               BuildableName = "WebInspectorUI (Platform Filters)"
+               BlueprintName = "WebInspectorUI (Platform Filters)"
+               ReferencedContainer = "container:Source/WebInspectorUI/WebInspectorUI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -159,15 +173,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5D247B6114689B8600E78B76"
-            BuildableName = "libWTF.a"
-            BlueprintName = "WTF"
-            ReferencedContainer = "container:Source/WTF/WTF.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -35,6 +35,8 @@
 			buildPhases = (
 			);
 			dependencies = (
+				DD8706082DD3CA24008AA5ED /* PBXTargetDependency */,
+				DD8706592DD3E855008AA5ED /* PBXTargetDependency */,
 				CEB754D41BBDA26D009F0401 /* PBXTargetDependency */,
 				2D403F211508736C005358D2 /* PBXTargetDependency */,
 				A134E52D188FC09200901D06 /* PBXTargetDependency */,
@@ -174,6 +176,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = A1158D7E18927E7A0088C17B;
 			remoteInfo = DumpRenderTree.app;
+		};
+		DD8706072DD3CA24008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F18E6F21D6B9CAE0027E547;
+			remoteInfo = "Derived Sources";
+		};
+		DD8706582DD3E855008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1321C9D188F9A3600125434;
+			remoteInfo = "DumpRenderTree (Library)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1153,6 +1169,16 @@
 			isa = PBXTargetDependency;
 			target = A1158D7E18927E7A0088C17B /* DumpRenderTree.app */;
 			targetProxy = CEB754D31BBDA26D009F0401 /* PBXContainerItemProxy */;
+		};
+		DD8706082DD3CA24008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F18E6F21D6B9CAE0027E547 /* Derived Sources */;
+			targetProxy = DD8706072DD3CA24008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706592DD3E855008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1321C9D188F9A3600125434 /* DumpRenderTree (Library) */;
+			targetProxy = DD8706582DD3E855008AA5ED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

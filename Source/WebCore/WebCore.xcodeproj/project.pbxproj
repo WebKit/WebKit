@@ -13,6 +13,13 @@
 			buildPhases = (
 			);
 			dependencies = (
+				DD87066F2DD3F371008AA5ED /* PBXTargetDependency */,
+				DD8706312DD3D3F0008AA5ED /* PBXTargetDependency */,
+				DD8706332DD3D3F0008AA5ED /* PBXTargetDependency */,
+				DD8706222DD3D3D1008AA5ED /* PBXTargetDependency */,
+				DD87061D2DD3CCCF008AA5ED /* PBXTargetDependency */,
+				DD8705DF2DD3C88B008AA5ED /* PBXTargetDependency */,
+				DD8705DD2DD3C88A008AA5ED /* PBXTargetDependency */,
 				41816F8313859C7A0057AAA4 /* PBXTargetDependency */,
 				41816F8513859C7D0057AAA4 /* PBXTargetDependency */,
 			);
@@ -6823,6 +6830,83 @@
 			proxyType = 1;
 			remoteGlobalIDString = DD041FBE09D9DDBE0010AF2A;
 			remoteInfo = "Derived Sources";
+		};
+		DD8705DC2DD3C88A008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5355E8D11F967E9D0031E08C;
+			remoteInfo = "Generate Unified Sources";
+		};
+		DD8705DE2DD3C88B008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD041FBE09D9DDBE0010AF2A;
+			remoteInfo = "Derived Sources";
+		};
+		DD87061C2DD3CCCF008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C09D04B1E31C32800725F18 /* PAL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C09D03C1E31C32800725F18;
+			remoteInfo = PAL;
+		};
+		DD8706212DD3D3D1008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FACD428FC70C000FFE212;
+			remoteInfo = dav1d;
+		};
+		DD8706282DD3D3D2008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FACD528FC70C000FFE212;
+			remoteInfo = dav1d;
+		};
+		DD87062A2DD3D3D2008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5428FC7CEC00FFE212;
+			remoteInfo = bitdepth_8;
+		};
+		DD87062C2DD3D3D2008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5D28FC7CF500FFE212;
+			remoteInfo = bitdepth_16;
+		};
+		DD87062E2DD3D3D2008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 444A6F112AEB1D1C005FE121;
+			remoteInfo = dav1d_fuzzer;
+		};
+		DD8706302DD3D3F0008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FAE5C28FC7CF500FFE212;
+			remoteInfo = bitdepth_16;
+		};
+		DD8706322DD3D3F0008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FAE5328FC7CEC00FFE212;
+			remoteInfo = bitdepth_8;
+		};
+		DD87066E2DD3F371008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 444A6F102AEB1D1C005FE121;
+			remoteInfo = dav1d_fuzzer;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -19795,6 +19879,7 @@
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		DD76D1502C7B63B600DFDD70 /* LayoutIntegrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutIntegrationUtils.cpp; sourceTree = "<group>"; };
 		DD76D1512C7B63BE00DFDD70 /* LayoutIntegrationUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIntegrationUtils.h; sourceTree = "<group>"; };
+		DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dav1d.xcodeproj; path = /Volumes/Data/OpenSource/Source/WebCore/PAL/ThirdParty/dav1d/dav1d.xcodeproj; sourceTree = "<absolute>"; };
 		DD8A30B3291DFC8F00AD537C /* BlockLayoutState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockLayoutState.h; sourceTree = "<group>"; };
 		DD8E4EBA2B9F952500108D7A /* TextBreakingPositionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakingPositionContext.h; sourceTree = "<group>"; };
 		DD91A3152B8989D900317AF7 /* TextBreakingPositionCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakingPositionCache.cpp; sourceTree = "<group>"; };
@@ -22617,6 +22702,7 @@
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
+				DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */,
 			);
 			name = WebCore;
 			sourceTree = "<group>";
@@ -36821,6 +36907,17 @@
 			path = ../../ThirdParty/pdfjs;
 			sourceTree = "<group>";
 		};
+		DD87061F2DD3D3D1008AA5ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DD8706292DD3D3D2008AA5ED /* libdav1d.a */,
+				DD87062B2DD3D3D2008AA5ED /* libdav1d_bitdepth_8.a */,
+				DD87062D2DD3D3D2008AA5ED /* libdav1d_bitdepth_16.a */,
+				DD87062F2DD3D3D2008AA5ED /* dav1d_fuzzer */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DDBF8DAD2AB51F7200B3318A /* ruby */ = {
 			isa = PBXGroup;
 			children = (
@@ -45946,6 +46043,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = DD87061F2DD3D3D1008AA5ED /* Products */;
+					ProjectRef = DD87061E2DD3D3D1008AA5ED /* dav1d.xcodeproj */;
+				},
+				{
 					ProductGroup = 1C09D04C1E31C32800725F18 /* Products */;
 					ProjectRef = 1C09D04B1E31C32800725F18 /* PAL.xcodeproj */;
 				},
@@ -45968,6 +46069,34 @@
 			fileType = archive.ar;
 			path = libPAL.a;
 			remoteRef = 1C09D04F1E31C32900725F18 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DD8706292DD3D3D2008AA5ED /* libdav1d.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d.a;
+			remoteRef = DD8706282DD3D3D2008AA5ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DD87062B2DD3D3D2008AA5ED /* libdav1d_bitdepth_8.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_8.a;
+			remoteRef = DD87062A2DD3D3D2008AA5ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DD87062D2DD3D3D2008AA5ED /* libdav1d_bitdepth_16.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_16.a;
+			remoteRef = DD87062C2DD3D3D2008AA5ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DD87062F2DD3D3D2008AA5ED /* dav1d_fuzzer */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = dav1d_fuzzer;
+			remoteRef = DD87062E2DD3D3D2008AA5ED /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -47120,6 +47249,41 @@
 			isa = PBXTargetDependency;
 			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
 			targetProxy = DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */;
+		};
+		DD8705DD2DD3C88A008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5355E8D11F967E9D0031E08C /* Generate Unified Sources */;
+			targetProxy = DD8705DC2DD3C88A008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8705DF2DD3C88B008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
+			targetProxy = DD8705DE2DD3C88B008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD87061D2DD3CCCF008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PAL;
+			targetProxy = DD87061C2DD3CCCF008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706222DD3D3D1008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dav1d;
+			targetProxy = DD8706212DD3D3D1008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706312DD3D3F0008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = bitdepth_16;
+			targetProxy = DD8706302DD3D3F0008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706332DD3D3F0008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = bitdepth_8;
+			targetProxy = DD8706322DD3D3F0008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD87066F2DD3F371008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dav1d_fuzzer;
+			targetProxy = DD87066E2DD3F371008AA5ED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

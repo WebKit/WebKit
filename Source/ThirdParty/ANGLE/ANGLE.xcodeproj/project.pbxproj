@@ -17,6 +17,7 @@
 				314C6E8C2CD2FA12001EA6B3 /* PBXTargetDependency */,
 				314C6E8A2CD2F9F8001EA6B3 /* PBXTargetDependency */,
 				31DB79572491C35400982878 /* PBXTargetDependency */,
+				DD8705BD2DD3C7EA008AA5ED /* PBXTargetDependency */,
 			);
 			name = ANGLE;
 			productName = ANGLE;
@@ -1074,6 +1075,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7BF5549A2C81EDE0002B101E;
 			remoteInfo = translator;
+		};
+		DD8705BC2DD3C7EA008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FFDA50C4269F845100AE11E2;
+			remoteInfo = ANGLEMetalLib;
 		};
 		FF194FF52744331A006A97A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4575,6 +4583,11 @@
 			isa = PBXTargetDependency;
 			target = 7BF5549A2C81EDE0002B101E /* translator */;
 			targetProxy = 7BF555922C81F4A0002B101E /* PBXContainerItemProxy */;
+		};
+		DD8705BD2DD3C7EA008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */;
+			targetProxy = DD8705BC2DD3C7EA008AA5ED /* PBXContainerItemProxy */;
 		};
 		FF194FF62744331A006A97A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

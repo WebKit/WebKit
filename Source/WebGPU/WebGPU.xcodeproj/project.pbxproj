@@ -6,6 +6,23 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DD8705E02DD3C8A3008AA5ED /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD8705E42DD3C8A3008AA5ED /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DD8705E62DD3C8AA008AA5ED /* PBXTargetDependency */,
+				DD8705E82DD3C8AB008AA5ED /* PBXTargetDependency */,
+			);
+			name = All;
+			packageProductDependencies = (
+			);
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D212A642BC26336001160BF /* CoreGraphics.framework */; };
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
@@ -258,6 +275,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1CA5B4F02A6F28C400E5F297;
 			remoteInfo = wgslfuzz;
+		};
+		DD8705E52DD3C8AA008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CEBD7F12716B2CC00A5254D;
+			remoteInfo = WGSL;
+		};
+		DD8705E72DD3C8AB008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CEBD7E22716AFBA00A5254D;
+			remoteInfo = WebGPU;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1165,6 +1196,9 @@
 					97FA1A7E29C085740052D650 = {
 						CreatedOnToolsVersion = 14.3;
 					};
+					DD8705E02DD3C8A3008AA5ED = {
+						CreatedOnToolsVersion = 16.3;
+					};
 				};
 			};
 			buildConfigurationList = 1CEBD7DD2716AFBA00A5254D /* Build configuration list for PBXProject "WebGPU" */;
@@ -1180,6 +1214,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				DD8705E02DD3C8A3008AA5ED /* All */,
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
 				97FA1A7E29C085740052D650 /* wgslc */,
@@ -1385,6 +1420,16 @@
 			target = 1CA5B4F02A6F28C400E5F297 /* wgslfuzz */;
 			targetProxy = 31EAB9DE2CD039A100E92E40 /* PBXContainerItemProxy */;
 		};
+		DD8705E62DD3C8AA008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
+			targetProxy = DD8705E52DD3C8AA008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8705E82DD3C8AB008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CEBD7E22716AFBA00A5254D /* WebGPU */;
+			targetProxy = DD8705E72DD3C8AB008AA5ED /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -1493,6 +1538,24 @@
 			};
 			name = Production;
 		};
+		DD8705E12DD3C8A3008AA5ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		DD8705E22DD3C8A3008AA5ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		DD8705E32DD3C8A3008AA5ED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1542,6 +1605,16 @@
 				97FA1A8329C085740052D650 /* Debug */,
 				97FA1A8429C085740052D650 /* Release */,
 				97FA1A8529C085740052D650 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DD8705E42DD3C8A3008AA5ED /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD8705E12DD3C8A3008AA5ED /* Debug */,
+				DD8705E22DD3C8A3008AA5ED /* Release */,
+				DD8705E32DD3C8A3008AA5ED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -24,8 +24,11 @@
 			buildPhases = (
 			);
 			dependencies = (
+				DD8706192DD3CA95008AA5ED /* PBXTargetDependency */,
+				DD87061B2DD3CA99008AA5ED /* PBXTargetDependency */,
 				E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */,
 				A115CCBC1B9D76C400E89159 /* PBXTargetDependency */,
+				DD8706172DD3CA91008AA5ED /* PBXTargetDependency */,
 				A115CCBA1B9D76BF00E89159 /* PBXTargetDependency */,
 			);
 			name = All;
@@ -239,6 +242,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC952D7711F3BF5D003398B4;
 			remoteInfo = "Derived Sources";
+		};
+		DD8706162DD3CA91008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC25186111D15D54002EBC01;
+			remoteInfo = WebKitTestRunnerInjectedBundle;
+		};
+		DD8706182DD3CA95008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC952D7711F3BF5D003398B4;
+			remoteInfo = "Derived Sources";
+		};
+		DD87061A2DD3CA99008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A18510261B9ADE4800744AEB;
+			remoteInfo = "WebKitTestRunner (Library)";
 		};
 		E30604EF2CCB2B920033AC72 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1497,6 +1521,21 @@
 			isa = PBXTargetDependency;
 			target = BC952D7711F3BF5D003398B4 /* Derived Sources */;
 			targetProxy = BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */;
+		};
+		DD8706172DD3CA91008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC25186111D15D54002EBC01 /* WebKitTestRunnerInjectedBundle */;
+			targetProxy = DD8706162DD3CA91008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD8706192DD3CA95008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC952D7711F3BF5D003398B4 /* Derived Sources */;
+			targetProxy = DD8706182DD3CA95008AA5ED /* PBXContainerItemProxy */;
+		};
+		DD87061B2DD3CA99008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A18510261B9ADE4800744AEB /* WebKitTestRunner (Library) */;
+			targetProxy = DD87061A2DD3CA99008AA5ED /* PBXContainerItemProxy */;
 		};
 		E30604F02CCB2B920033AC72 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

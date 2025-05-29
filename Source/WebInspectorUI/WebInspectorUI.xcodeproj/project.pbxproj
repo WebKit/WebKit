@@ -6,12 +6,38 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DD8706652DD3F0CC008AA5ED /* WebInspectorUI (Platform Filters) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD8706692DD3F0CC008AA5ED /* Build configuration list for PBXAggregateTarget "WebInspectorUI (Platform Filters)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DD87066B2DD3F0D5008AA5ED /* PBXTargetDependency */,
+			);
+			name = "WebInspectorUI (Platform Filters)";
+			packageProductDependencies = (
+			);
+			productName = "WebInspectorUI (Platform Filters)";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C60FF1314E6E35D006CD77D /* localizedStrings.js */; };
 		1C78EE1717611340002F6AA5 /* WebInspectorUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C78EE1617611340002F6AA5 /* WebInspectorUI.c */; };
 		DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992FB278D078100F60D26 /* libWebKitAdditions.a */; };
 		DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DD87066A2DD3F0D5008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A54C224D148B23DE00373FA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A54C2256148B23DF00373FA3;
+			remoteInfo = WebInspectorUI;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		DDE992FA278D076300F60D26 /* Product Dependencies */ = {
@@ -150,6 +176,7 @@
 			projectRoot = "";
 			targets = (
 				A54C2256148B23DF00373FA3 /* WebInspectorUI */,
+				DD8706652DD3F0CC008AA5ED /* WebInspectorUI (Platform Filters) */,
 			);
 		};
 /* End PBXProject section */
@@ -169,7 +196,13 @@
 		1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
 			name = "Copy User Interface Resources";
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit\nfi\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
@@ -205,6 +238,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DD87066B2DD3F0D5008AA5ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = A54C2256148B23DF00373FA3 /* WebInspectorUI */;
+			targetProxy = DD87066A2DD3F0D5008AA5ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		1C60FF1314E6E35D006CD77D /* localizedStrings.js */ = {
@@ -260,6 +304,24 @@
 			};
 			name = Release;
 		};
+		DD8706662DD3F0CC008AA5ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		DD8706672DD3F0CC008AA5ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		DD8706682DD3F0CC008AA5ED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -279,6 +341,16 @@
 				A54C226D148B23DF00373FA3 /* Debug */,
 				A54C226E148B23DF00373FA3 /* Release */,
 				1C60FE3614E5F47E006CD77D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DD8706692DD3F0CC008AA5ED /* Build configuration list for PBXAggregateTarget "WebInspectorUI (Platform Filters)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD8706662DD3F0CC008AA5ED /* Debug */,
+				DD8706672DD3F0CC008AA5ED /* Release */,
+				DD8706682DD3F0CC008AA5ED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

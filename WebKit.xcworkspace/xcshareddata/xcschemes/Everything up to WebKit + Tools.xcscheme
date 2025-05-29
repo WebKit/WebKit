@@ -56,10 +56,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1CEBD7E22716AFBA00A5254D"
-               BuildableName = "WebGPU.framework"
-               BlueprintName = "WebGPU"
-               ReferencedContainer = "container:Source/WebGPU/WebGPU.xcodeproj">
+               BlueprintIdentifier = "31339FA12CEEFECC0054D8D5"
+               BuildableName = "libwebrtc"
+               BlueprintName = "libwebrtc"
+               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -84,6 +84,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DD8705E02DD3C8A3008AA5ED"
+               BuildableName = "All"
+               BlueprintName = "All"
+               ReferencedContainer = "container:Source/WebGPU/WebGPU.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "41816F7913859C550057AAA4"
                BuildableName = "All"
                BlueprintName = "All"
@@ -98,9 +112,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A54C2256148B23DF00373FA3"
-               BuildableName = "WebInspectorUI.framework"
-               BlueprintName = "WebInspectorUI"
+               BlueprintIdentifier = "DD8706652DD3F0CC008AA5ED"
+               BuildableName = "WebInspectorUI (Platform Filters)"
+               BlueprintName = "WebInspectorUI (Platform Filters)"
                ReferencedContainer = "container:Source/WebInspectorUI/WebInspectorUI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -112,9 +126,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9398100A0824BF01008DF038"
-               BuildableName = "WebKitLegacy.framework"
-               BlueprintName = "WebKitLegacy"
+               BlueprintIdentifier = "DD8705ED2DD3C957008AA5ED"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:Source/WebKitLegacy/WebKitLegacy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

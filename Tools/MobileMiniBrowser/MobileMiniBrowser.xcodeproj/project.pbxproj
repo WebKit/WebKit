@@ -14,6 +14,7 @@
 			);
 			dependencies = (
 				DD2A1D0A2888D1D300342472 /* PBXTargetDependency */,
+				DD8706152DD3CA74008AA5ED /* PBXTargetDependency */,
 			);
 			name = "MobileMiniBrowser (Platform filters)";
 			productName = "MiniBrowser (Platform filters)";
@@ -69,6 +70,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = CD1DAF911D709E3600017CF0;
 			remoteInfo = MobileMiniBrowser;
+		};
+		DD8706142DD3CA74008AA5ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD1DAF8A1D709E3600017CF0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD498B3A1D76348000681FA7;
+			remoteInfo = MobileMiniBrowser.framework;
 		};
 /* End PBXContainerItemProxy section */
 
