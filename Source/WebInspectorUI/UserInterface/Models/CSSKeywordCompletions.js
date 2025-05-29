@@ -1233,6 +1233,9 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "dominant-baseline": [
         "middle", "auto", "alphabetic", "central", "text-before-edge", "text-after-edge", "ideographic", "hanging", "mathematical", "use-script", "no-change", "reset-size",
     ],
+    "dynamic-range-limit": [
+        "standard", "no-limit",
+    ],
     "empty-cells": [
         "hide", "show",
     ],
