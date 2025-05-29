@@ -47,7 +47,8 @@ public:
     // InspectorInstrumentation
     void didInvalidateLayout();
     void willLayout();
-    void didLayout(RenderObject&);
+    void setLayoutQuads(RenderObject&);
+    void didLayout();
     void willComposite();
     void didComposite();
     void willPaint();

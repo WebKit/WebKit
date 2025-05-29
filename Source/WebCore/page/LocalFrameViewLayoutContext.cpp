@@ -286,10 +286,11 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
+        InspectorInstrumentation::setLayoutQuads(frame, *layoutRoot);
         protectedView()->didLayout(layoutRoot, canDeferUpdateLayerPositions);
         runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
     }
-    InspectorInstrumentation::didLayout(frame, *layoutRoot);
+    InspectorInstrumentation::didLayout(frame);
     DebugPageOverlays::didLayout(frame);
 }
 

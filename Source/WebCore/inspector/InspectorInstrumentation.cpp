@@ -528,10 +528,16 @@ void InspectorInstrumentation::willLayoutImpl(InstrumentingAgents& instrumenting
         pageTimelineAgent->willLayout();
 }
 
-void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents, RenderObject& root)
+void InspectorInstrumentation::setLayoutQuadsImpl(InstrumentingAgents& instrumentingAgents, RenderObject& root)
 {
     if (auto* pageTimelineAgent = instrumentingAgents.trackingPageTimelineAgent())
-        pageTimelineAgent->didLayout(root);
+        pageTimelineAgent->setLayoutQuads(root);
+}
+
+void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (auto* pageTimelineAgent = instrumentingAgents.trackingPageTimelineAgent())
+        pageTimelineAgent->didLayout();
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didLayout();
 }
