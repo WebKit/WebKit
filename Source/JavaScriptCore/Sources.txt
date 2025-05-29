@@ -486,7 +486,6 @@ ftl/FTLFail.cpp
 ftl/FTLForOSREntryJITCode.cpp
 ftl/FTLJITCode.cpp
 ftl/FTLJITFinalizer.cpp
-ftl/FTLLazySlowPath.cpp
 ftl/FTLLink.cpp
 ftl/FTLLocation.cpp
 // This file takes a long time to compile so we do it individually.

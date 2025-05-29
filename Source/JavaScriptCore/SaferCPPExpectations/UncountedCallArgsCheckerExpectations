@@ -64,7 +64,6 @@ dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
 ftl/FTLCompile.cpp
 ftl/FTLFail.cpp
 ftl/FTLJITFinalizer.cpp
-ftl/FTLLazySlowPath.cpp
 ftl/FTLLink.cpp
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLSlowPathCall.cpp

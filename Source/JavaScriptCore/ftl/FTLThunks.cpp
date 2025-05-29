@@ -133,13 +133,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
         vm, operationCompileFTLOSRExit, OSRExitPtrTag, "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& vm)
-{
-    unsigned extraPopsToRestore = 1;
-    return genericGenerationThunkGenerator(
-        vm, operationCompileFTLLazySlowPath, JITStubRoutinePtrTag, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
-}
-
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSetBuilder dontClobber)
 {
     ASSERT(Options::clobberAllRegsInFTLICSlowPath());

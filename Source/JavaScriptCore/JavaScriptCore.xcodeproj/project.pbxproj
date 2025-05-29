@@ -469,8 +469,6 @@
 		0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4677B1FDDA6D8003FCB09 /* IsoCellSetInlines.h */; };
 		0FB4767E1D99AEA9008EA6CB /* GCDeferralContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4767C1D99AEA7008EA6CB /* GCDeferralContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB4767F1D99AEAD008EA6CB /* GCDeferralContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4767D1D99AEA7008EA6CB /* GCDeferralContextInlines.h */; };
-		0FB4FB741BC843140025CA5A /* FTLLazySlowPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4FB711BC843140025CA5A /* FTLLazySlowPath.h */; };
-		0FB4FB751BC843140025CA5A /* FTLLazySlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4FB721BC843140025CA5A /* FTLLazySlowPathCall.h */; };
 		0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38915ED8E3800F167B2 /* ArrayConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3254,9 +3252,6 @@
 		0FB4B51E16B62772003F696B /* DFGNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNode.cpp; path = dfg/DFGNode.cpp; sourceTree = "<group>"; };
 		0FB4B52116B6278D003F696B /* FunctionExecutableDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionExecutableDump.cpp; sourceTree = "<group>"; };
 		0FB4B52216B6278D003F696B /* FunctionExecutableDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionExecutableDump.h; sourceTree = "<group>"; };
-		0FB4FB701BC843140025CA5A /* FTLLazySlowPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLazySlowPath.cpp; path = ftl/FTLLazySlowPath.cpp; sourceTree = "<group>"; };
-		0FB4FB711BC843140025CA5A /* FTLLazySlowPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLazySlowPath.h; path = ftl/FTLLazySlowPath.h; sourceTree = "<group>"; };
-		0FB4FB721BC843140025CA5A /* FTLLazySlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLazySlowPathCall.h; path = ftl/FTLLazySlowPathCall.h; sourceTree = "<group>"; };
 		0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyOperandValueProfile.h; sourceTree = "<group>"; };
 		0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodOfGettingAValueProfile.h; sourceTree = "<group>"; };
 		0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MethodOfGettingAValueProfile.cpp; sourceTree = "<group>"; };
@@ -6440,9 +6435,6 @@
 				0FEA0A03170513DB00BB722C /* FTLJITCode.h */,
 				A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */,
 				A78A977E179738D5009DF744 /* FTLJITFinalizer.h */,
-				0FB4FB701BC843140025CA5A /* FTLLazySlowPath.cpp */,
-				0FB4FB711BC843140025CA5A /* FTLLazySlowPath.h */,
-				0FB4FB721BC843140025CA5A /* FTLLazySlowPathCall.h */,
 				0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */,
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
 				0FCEFADD180738C000472CE4 /* FTLLocation.cpp */,
@@ -10951,8 +10943,6 @@
 				0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
-				0FB4FB741BC843140025CA5A /* FTLLazySlowPath.h in Headers */,
-				0FB4FB751BC843140025CA5A /* FTLLazySlowPathCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */,
