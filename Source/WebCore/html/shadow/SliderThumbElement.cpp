@@ -71,6 +71,10 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderThumbElement);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderContainerElement);
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/SliderThumbElementAdditions.mm>)
+#import <WebKitAdditions/SliderThumbElementAdditions.mm>
+#endif
+
 inline static Decimal sliderPosition(HTMLInputElement& element)
 {
     const StepRange stepRange(element.createStepRange(AnyStepHandling::Reject));
@@ -166,6 +170,20 @@ void RenderSliderContainer::layout()
     availableExtent -= isVertical ? thumb->height() : thumb->width();
     LayoutUnit offset { percentageOffset * availableExtent };
     LayoutPoint thumbLocation = thumb->location();
+
+    auto updateThumbLocationAndRepaint = [&] {
+        thumb->setLocation(thumbLocation);
+        track->repaint();
+        thumb->repaint();
+    };
+
+#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
+    if (adjustThumbLocationForVectorBasedControls(thumbLocation, *track, *thumb, percentageOffset, offset)) {
+        updateThumbLocationAndRepaint();
+        return;
+    }
+#endif
+
     if (isVertical) {
         // appearance: slider-vertical in horizontal writing mode.
         if (writingMode().isHorizontal())
@@ -182,9 +200,8 @@ void RenderSliderContainer::layout()
         else
             thumbLocation.setX(thumbLocation.x() - offset);
     }
-    thumb->setLocation(thumbLocation);
-    track->repaint();
-    thumb->repaint();
+
+    updateThumbLocationAndRepaint();
 }
 
 // --------------------------------
