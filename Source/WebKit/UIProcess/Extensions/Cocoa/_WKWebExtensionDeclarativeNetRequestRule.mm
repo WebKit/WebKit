@@ -26,6 +26,10 @@
 #import "config.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 
+NSString * const declarativeNetRequestRuleActionTypeKey = @"type";
+NSString * const declarativeNetRequestRuleActionTypeAllow = @"allow";
+NSString * const declarativeNetRequestRuleActionTypeAllowAllRequests = @"allowAllRequests";
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #if !__has_feature(objc_arc)
@@ -45,9 +49,6 @@ static NSString * const declarativeNetRequestRuleActionKey = @"action";
 static NSString * const declarativeNetRequestRuleConditionKey = @"condition";
 
 // Key and values in the `action` dictionary.
-static NSString * const declarativeNetRequestRuleActionTypeKey = @"type";
-static NSString * const declarativeNetRequestRuleActionTypeAllow = @"allow";
-static NSString * const declarativeNetRequestRuleActionTypeAllowAllRequests = @"allowAllRequests";
 static NSString * const declarativeNetRequestRuleActionTypeBlock = @"block";
 static NSString * const declarativeNetRequestRuleActionTypeUpgradeScheme = @"upgradeScheme";
 

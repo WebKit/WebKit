@@ -27,6 +27,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_EXTERN NSString * const declarativeNetRequestRuleActionTypeKey;
+WK_EXTERN NSString * const declarativeNetRequestRuleActionTypeAllow;
+WK_EXTERN NSString * const declarativeNetRequestRuleActionTypeAllowAllRequests;
+
 WK_EXTERN
 @interface _WKWebExtensionDeclarativeNetRequestRule : NSObject
 

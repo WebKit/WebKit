@@ -2832,8 +2832,8 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByPriorityFromDifferentRul
     NSArray *sortedTranslatedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:rules errorStrings:nil];
     EXPECT_NOT_NULL(sortedTranslatedRules);
 
-    EXPECT_NS_EQUAL(sortedTranslatedRules[0][@"action"][@"type"], @"ignore-previous-rules");
-    EXPECT_NS_EQUAL(sortedTranslatedRules[1][@"action"][@"type"], @"block");
+    EXPECT_NS_EQUAL(sortedTranslatedRules[0][@"action"][@"type"], @"block");
+    EXPECT_NS_EQUAL(sortedTranslatedRules[1][@"action"][@"type"], @"ignore-previous-rules");
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortWithoutExplicitPriority)
@@ -2929,6 +2929,58 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByActionType)
     EXPECT_NS_EQUAL(sortedTranslatedRules[3][@"action"][@"type"], @"block");
     EXPECT_NS_EQUAL(sortedTranslatedRules[4][@"action"][@"type"], @"ignore-previous-rules");
     EXPECT_NS_EQUAL(sortedTranslatedRules[5][@"action"][@"type"], @"ignore-previous-rules");
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortWithMixedPriorityAndActionTypes)
+{
+    NSArray *rules = @[
+        @[
+            @{
+                @"id": @1,
+                @"priority": @1,
+                @"action": @{ @"type": @"allow" },
+                @"condition": @{
+                    @"regexFilter": @"apple.com",
+                    @"resourceTypes": @[ @"script" ],
+                }
+            },
+            @{
+                @"id": @1,
+                @"priority": @2,
+                @"action": @{ @"type": @"block" },
+                @"condition": @{
+                    @"regexFilter": @"bananas.com",
+                    @"resourceTypes": @[ @"script" ],
+                },
+            },
+            @{
+                @"id": @1,
+                @"priority": @4,
+                @"action": @{ @"type": @"allow" },
+                @"condition": @{
+                    @"regexFilter": @"cars.com",
+                    @"resourceTypes": @[ @"script" ],
+                }
+            },
+            @{
+                @"id": @1,
+                @"priority": @3,
+                @"action": @{ @"type": @"block" },
+                @"condition": @{
+                    @"regexFilter": @"dji.com",
+                    @"resourceTypes": @[ @"script" ],
+                },
+            },
+        ]
+    ];
+
+    NSArray *sortedTranslatedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:rules errorStrings:nil];
+    EXPECT_NOT_NULL(sortedTranslatedRules);
+
+    EXPECT_NS_EQUAL(sortedTranslatedRules[0][@"action"][@"type"], @"ignore-previous-rules");
+    EXPECT_NS_EQUAL(sortedTranslatedRules[1][@"action"][@"type"], @"block");
+    EXPECT_NS_EQUAL(sortedTranslatedRules[2][@"action"][@"type"], @"block");
+    EXPECT_NS_EQUAL(sortedTranslatedRules[3][@"action"][@"type"], @"ignore-previous-rules");
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RemoveAllContentRuleListsDoesNotRemoveWebExtensionRuleLists)

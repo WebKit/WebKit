@@ -68,6 +68,36 @@ using namespace WebKit;
         return [a compare:b];
     }].mutableCopy;
 
+    // Because WebKit Content Blocking "allow" rules just ignore all previous rules, they have to go *after* lower priority rules, rather than before.
+    BOOL (^isAllowRule)(_WKWebExtensionDeclarativeNetRequestRule *) = ^BOOL (_WKWebExtensionDeclarativeNetRequestRule *rule) {
+        NSString *allowRuleType = rule.action[declarativeNetRequestRuleActionTypeKey];
+        return [allowRuleType isEqualToString:declarativeNetRequestRuleActionTypeAllow] || [allowRuleType isEqualToString:declarativeNetRequestRuleActionTypeAllowAllRequests];
+    };
+
+    NSMutableArray<_WKWebExtensionDeclarativeNetRequestRule *> *allowRules = [filterObjects((NSArray *)allValidatedRules, ^bool (id key, _WKWebExtensionDeclarativeNetRequestRule *rule) {
+        return isAllowRule(rule);
+    }) mutableCopy];
+    NSMutableArray<_WKWebExtensionDeclarativeNetRequestRule *> *otherRules = [filterObjects((NSArray *)allValidatedRules, ^bool (id key, _WKWebExtensionDeclarativeNetRequestRule *rule) {
+        return !isAllowRule(rule);
+    }) mutableCopy];
+    [allValidatedRules removeAllObjects];
+
+    while (allowRules.count || otherRules.count) {
+        if (!allowRules.count) {
+            [allValidatedRules addObject:otherRules.firstObject];
+            [otherRules removeObjectAtIndex:0];
+        } else if (!otherRules.count) {
+            [allValidatedRules addObject:allowRules.lastObject];
+            [allowRules removeLastObject];
+        } else if (allowRules.lastObject.priority < otherRules.firstObject.priority) {
+            [allValidatedRules addObject:allowRules.lastObject];
+            [allowRules removeLastObject];
+        } else {
+            [allValidatedRules addObject:otherRules.firstObject];
+            [otherRules removeObjectAtIndex:0];
+        }
+    }
+
     NSMutableArray<NSDictionary<NSString *, id> *> *translatedRules = [NSMutableArray array];
     for (_WKWebExtensionDeclarativeNetRequestRule *rule in allValidatedRules) {
         NSArray<NSDictionary<NSString *, id> *> *translatedRule = rule.ruleInWebKitFormat;
